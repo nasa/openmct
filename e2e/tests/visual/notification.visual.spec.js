@@ -47,12 +47,15 @@ test.describe('Visual - Check Notification Info Banner of \'Save successful\'', 
         expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
         // Verify the div with role="dialog" contains text "Save successful"
         expect(await page.locator('div[role="dialog"]').innerText()).toContain('Save successful');
-        await percySnapshot(page, `Notification banner - ${theme}`);
+        await percySnapshot(page, `Notification banner shows Save successful (theme: '${theme}')`);
         // Verify there is a button with text "Dismiss"
         expect(await page.locator('button:has-text("Dismiss")').isVisible()).toBe(true);
+        await percySnapshot(page, `Notification banner shows Dismiss (theme: '${theme}')`);
         // Click on button with text "Dismiss"
         await page.locator('button:has-text("Dismiss")').click();
         // Verify there is no div with role="dialog"
         expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
+        await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
+
     });
 });
