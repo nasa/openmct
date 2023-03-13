@@ -32,7 +32,6 @@ test.describe('recycled_local_storage @localStorage @generatedata', () => {
     test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
     test('Can use recycled_local_storage file', async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        await page.pause();
     });
 });
 
