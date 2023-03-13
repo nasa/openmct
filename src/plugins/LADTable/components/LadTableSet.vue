@@ -32,7 +32,7 @@
                 <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
                 <th v-if="showType">Type</th>
-                <th v-if="hasUnits">Unit</th>
+                <th v-if="hasUnits">Units</th>
             </tr>
         </thead>
         <tbody>

@@ -31,7 +31,7 @@
                 <th>Name</th>
                 <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
-                <th v-if="hasUnits">Unit</th>
+                <th v-if="hasUnits">Units</th>
                 <th v-if="showType">Type</th>
             </tr>
         </thead>
