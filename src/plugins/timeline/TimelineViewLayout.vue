@@ -109,8 +109,10 @@ export default {
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
-            if (this.isPlanLikeObject(domainObject)) {
+            if (domainObject.type === 'plan') {
                 rowCount = Object.keys(getValidatedData(domainObject)).length;
+            } else if (domainObject.type === 'gantt-chart') {
+                rowCount = Object.keys(domainObject.configuration.swimlanes).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
@@ -191,9 +193,6 @@ export default {
                 this.timeContext.off('bounds', this.updateViewBounds);
                 this.timeContext.off('clock', this.updateViewBounds);
             }
-        },
-        isPlanLikeObject(domainObject) {
-            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
         }
     }
 };

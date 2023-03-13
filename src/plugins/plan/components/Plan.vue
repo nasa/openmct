@@ -87,7 +87,8 @@ export default {
             type: Object,
             default() {
                 return {
-                    compact: false
+                    compact: false,
+                    isChildObject: false
                 };
             }
         },
@@ -123,6 +124,7 @@ export default {
         }
     },
     mounted() {
+        this.isNested = this.options.isChildObject;
         this.swimlanes = this.configuration.swimlanes;
         if (this.domainObject.type === 'plan') {
             this.planData = getValidatedData(this.domainObject);
@@ -501,8 +503,7 @@ export default {
                     });
                 });
 
-                const isNested = this.options.isChildObject;
-                const status = isNested ? '' : this.status;
+                const status = this.isNested ? '' : this.status;
                 const { swimlaneHeight, swimlaneWidth } = this.getGroupDimensions(activitiesByRow);
                 activityGroups.push({
                     heading: groupName,
