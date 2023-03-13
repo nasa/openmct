@@ -108,6 +108,19 @@ describe('The Notifiation API', () => {
         });
     });
 
+    describe('the error method notificiation', () => {
+        let message = 'Minimized error message';
+
+        it('is not shown if configured to show minimized', (done) => {
+            notificationAPIInstance.error(message, { minimized: true });
+            window.setTimeout(() => {
+                expect(notificationAPIInstance.notifications.length).toEqual(1);
+                expect(notificationAPIInstance.activeNotification).toEqual(undefined);
+                done();
+            }, defaultTimeout);
+        });
+    });
+
     describe('the progress method', () => {
         let title = 'This is a progress notification';
         let message1 = 'Example progress message 1';
