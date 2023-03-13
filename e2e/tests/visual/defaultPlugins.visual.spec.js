@@ -42,28 +42,20 @@ test.describe('Visual - Default', () => {
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
 
-    test('Visual - Root and About', async ({ page, theme }) => {
+    test('Visual - Default Dashboard', async ({ page, theme }) => {
         // Verify that Create button is actionable
         await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
         // Take a snapshot of the Dashboard
-        await percySnapshot(page, `Root (theme: '${theme}')`);
-
-        // Click About button
-        await page.click('.l-shell__app-logo');
-
-        // Modify the Build information in 'about' to be consistent run-over-run
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-        await expect(versionInformationLocator).toBeEnabled();
-        await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
-
-        // Take a snapshot of the About modal
-        await percySnapshot(page, `About (theme: '${theme}')`);
+        await percySnapshot(page, `Default Dashboard (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Default Condition Set', async ({ page, theme }) => {
+    test('Visual - Default Condition Set', async ({ page, theme }) => {
 
-        await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Condition Set',
+            name: 'Default Condition Set'
+        });
 
         // Take a snapshot of the newly created Condition Set object
         await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
@@ -71,7 +63,10 @@ test.describe('Visual - Default', () => {
 
     test('Visual - Default Condition Widget', async ({ page, theme }) => {
 
-        await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Condition Widget',
+            name: 'Default Condition Widget'
+        });
 
         // Take a snapshot of the newly created Condition Widget object
         await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
@@ -93,19 +88,7 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Save Successful Banner', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, { type: 'Timer' });
-
-        await page.locator('.c-message-banner__message').hover({ trial: true });
-        await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
-
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-        await percySnapshot(page, `Banner message gone (theme: '${theme}')`);
-    });
-
-    test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
+    test('Visual - Display Layout Icon is correct in Create Menu', async ({ page, theme }) => {
         // Click the Create button
         await page.click('button:has-text("Create")');
 
@@ -114,8 +97,11 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Default Gauge is correct', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+    test('Visual - Default Gauge', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, {
+            type: 'Gauge',
+            name: 'Default Gauge'
+        });
 
         // Take a snapshot of the newly created Gauge object
         await percySnapshot(page, `Default Gauge (theme: '${theme}')`);

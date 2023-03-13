@@ -36,7 +36,10 @@ test.describe('Visual - Check Notification Info Banner of \'Save successful\'', 
 
     test('Create a clock, click on \'Save successful\' banner and dismiss it', async ({ page, theme }) => {
         // Create a clock domain object
-        await createDomainObjectWithDefaults(page, { type: 'Clock' });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Clock',
+            name: 'Default Clock'
+        });
         // Verify there is a button with aria-label="Review 1 Notification"
         expect(await page.locator('button[aria-label="Review 1 Notification"]').isVisible()).toBe(true);
         // Verify there is a button with aria-label="Clear all notifications"
