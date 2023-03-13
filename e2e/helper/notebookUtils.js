@@ -32,9 +32,8 @@ async function enterTextEntry(page, text) {
     await page.locator(NOTEBOOK_DROP_AREA).click();
 
     // enter text
-    await page.locator('div.c-ne__text').click();
-    await page.locator('div.c-ne__text').fill(text);
-    await page.locator('div.c-ne__text').press('Enter');
+    await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
+    await commitEntry(page);
 }
 
 /**
@@ -51,6 +50,15 @@ async function dragAndDropEmbed(page, notebookObject) {
     await page.click('button[title="Show selected item in tree"]');
     // Drag and drop the SWG into the notebook
     await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+    await commitEntry(page);
+}
+
+/**
+ * @private
+ * @param {import('@playwright/test').Page} page
+ */
+async function commitEntry(page) {
+    await page.locator('.c-ne__save-button > button').click();
 }
 
 // eslint-disable-next-line no-undef
