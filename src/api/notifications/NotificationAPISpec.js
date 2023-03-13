@@ -112,6 +112,7 @@ describe('The Notifiation API', () => {
         let message = 'Minimized error message';
 
         it('is not shown if configured to show minimized', (done) => {
+            notificationAPIInstance.activeNotification = undefined;
             notificationAPIInstance.error(message, { minimized: true });
             window.setTimeout(() => {
                 expect(notificationAPIInstance.notifications.length).toEqual(1);
