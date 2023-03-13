@@ -29,7 +29,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Timestamp</th>
+                <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
                 <th>Type</th>
                 <th v-if="hasUnits">Unit</th>
@@ -54,6 +54,7 @@
                     :path-to-table="ladTable.objectPath"
                     :has-units="hasUnits"
                     :is-stale="staleObjects.includes(combineKeys(ladTable.key, ladRow.key))"
+                    :configuration="configuration"
                     @rowContextClick="updateViewContext"
                 />
             </template>
@@ -71,7 +72,7 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct', 'objectPath', 'currentView'],
+    inject: ['openmct', 'objectPath', 'currentView', 'ladTableConfiguration'],
     props: {
         domainObject: {
             type: Object,
@@ -84,12 +85,15 @@ export default {
             ladTelemetryObjects: {},
             compositions: [],
             viewContext: {},
-            staleObjects: []
+            staleObjects: [],
+            configuration: this.ladTableConfiguration.getConfiguration()
         };
     },
     computed: {
         hasUnits() {
-            let ladTables = Object.values(this.ladTelemetryObjects);
+            const ladTables = Object.values(this.ladTelemetryObjects);
+            let showUnits = false;
+
             for (let ladTable of ladTables) {
                 for (let telemetryObject of ladTable) {
                     let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
@@ -97,14 +101,17 @@ export default {
                     if (metadata) {
                         for (let metadatum of metadata.valueMetadatas) {
                             if (metadatum.unit) {
-                                return true;
+                                showUnits = true;
                             }
                         }
                     }
                 }
             }
 
-            return false;
+            return showUnits && !this.configuration?.hiddenColumns?.units;
+        },
+        showTimestamp() {
+            return !this.configuration?.hiddenColumns?.timestamp;
         },
         staleClass() {
             if (this.staleObjects.length !== 0) {
@@ -115,6 +122,7 @@ export default {
         }
     },
     mounted() {
+        this.ladTableConfiguration.on('change', this.handleConfigurationChange);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addLadTable);
         this.composition.on('remove', this.removeLadTable);
@@ -124,6 +132,7 @@ export default {
         this.stalenessSubscription = {};
     },
     destroyed() {
+        this.ladTableConfiguration.off('change', this.handleConfigurationChange);
         this.composition.off('add', this.addLadTable);
         this.composition.off('remove', this.removeLadTable);
         this.composition.off('reorder', this.reorderLadTables);
@@ -230,6 +239,9 @@ export default {
             this.handleStaleness(combinedKey, { isStale: false }, SKIP_CHECK);
 
             delete this.stalenessSubscription[combinedKey];
+        },
+        handleConfigurationChange(configuration) {
+            this.configuration = configuration;
         },
         handleStaleness(combinedKey, stalenessResponse, skipCheck = false) {
             if (skipCheck || this.stalenessSubscription[combinedKey].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {

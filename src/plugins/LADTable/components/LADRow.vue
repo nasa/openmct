@@ -27,7 +27,10 @@
     @contextmenu.prevent="showContextMenu"
 >
     <td class="js-first-data">{{ domainObject.name }}</td>
-    <td class="js-second-data">{{ formattedTimestamp }}</td>
+    <td
+        v-if="showTimestamp"
+        class="js-second-data"
+    >{{ formattedTimestamp }}</td>
     <td
         class="js-third-data"
         :class="valueClasses"
@@ -74,6 +77,10 @@ export default {
             default() {
                 return false;
             }
+        },
+        configuration: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -137,6 +144,9 @@ export default {
         },
         objectPath() {
             return [this.domainObject, ...this.pathToTable];
+        },
+        showTimestamp() {
+            return !this.configuration?.hiddenColumns?.timestamp;
         }
     },
     async mounted() {
