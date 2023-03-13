@@ -76,8 +76,11 @@ test.describe('Visual - Notebook', () => {
 
     });
     test("Blur 'Add tag' on Notebook", async ({ page, theme }) => {
-        createDomainObjectWithDefaults(page, { type: 'Notebook' });
-
+        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+        await createDomainObjectWithDefaults(page, {
+            type: 'Notebook',
+            name: "Add Tag Test Notebook"
+        });
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
         const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 0`;
         await page.locator(entryLocator).click();
