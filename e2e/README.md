@@ -76,7 +76,9 @@ To read about how to write a good visual test, please see [How to write a great 
 
 #### Percy.io
 
-To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics)
+To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics).
+
+At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots.
 
 ### (Advanced) Snapshot Testing
 
@@ -173,15 +175,14 @@ Test tags are a great way of organizing tests outside of a file structure. To le
 
 Current list of test tags:
 
-|Test Tag|Description|
-|:-:|-|
-|`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
-|`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
-|`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
-|`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).|
-|`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
-|`@unstable` | A new test or test which is known to be flaky.|
-|`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
+- `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
+- `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
+- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.
+- `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
+- `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
+- `@unstable` - A new test or test which is known to be flaky.
+- `@2p` - Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.
+- `@generatedata` - Indicates that a test is used to generate testdata or test the generated test data. Usually to be associated with localstorage, but this may grow over time.
 
 ### Continuous Integration
 
@@ -200,25 +201,25 @@ CircleCI
 - Stable e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
+- Visual tests are run in a single resolution
 
 #### 2. Per-Merge Testing
 
 Github Actions / Workflow
 
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
-- CouchDB Tests. Triggered on PR Create and again with Github Label Event 'pr:e2e:couchdb'
-- Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
 
 Nightly Testing in Circle CI
 
-- Full e2e suite against ubuntu and chrome
+- Full e2e suite against ubuntu and chrome, firefox, and an MMOC resolution profile
 - Performance tests against ubuntu and chrome
+- Visual Tests are run in `full`
 
 Github Actions / Workflow
 
-- Visual Test baseline generation.
+- TBD
 
 #### Parallelism and Fast Feedback
 
@@ -264,6 +265,8 @@ We also have the need to execute our e2e tests across this published list of bro
   - A stable version of Chromium from the official chromium channels. This is always at least 1 version ahead of desktop chrome.
 - `playwright-chrome`
   - The stable channel of Chrome from the official chrome channels. This is always 2 versions behind chromium.
+- `firefox`
+  - Firefox Latest Stable. From official channels.
 
 #### **Mobile**
 
