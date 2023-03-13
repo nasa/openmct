@@ -31,7 +31,6 @@
         <svg
             :height="height"
             :width="width"
-            :viewBox="'0 0 ' + width + ' ' + height"
         >
             <template v-for="(activity, index) in activities">
                 <template v-if="clipActivityNames === true">
