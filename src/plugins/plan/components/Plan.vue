@@ -37,22 +37,21 @@
         </swim-lane>
     </template>
     <div
-        ref="planHolder"
         class="c-plan__contents u-contents"
     >
-    </div>
-    <ActivityTimeline
-        v-for="(group, index) in visibleActivityGroups"
-        :key="index"
-        :activities="group.activities"
-        :clip-activity-names="clipActivityNames"
-        :heading="group.heading"
-        :height="group.height"
-        :width="group.width"
-        :is-nested="options.isChildObject"
-        :status="status"
-    />
+        <ActivityTimeline
+            v-for="(group, index) in visibleActivityGroups"
+            :key="index"
+            :activities="group.activities"
+            :clip-activity-names="clipActivityNames"
+            :heading="group.heading"
+            :height="group.height"
+            :width="group.width"
+            :is-nested="options.isChildObject"
+            :status="status"
+        />
 
+    </div>
 </div>
 </template>
 
