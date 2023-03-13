@@ -134,7 +134,7 @@ export default {
         this.setDimensions();
         this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-        this.status = this.openmct.status.get(this.domainObject.identifier);
+        this.setStatus(this.openmct.status.get(this.domainObject.identifier));
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.handleConfigurationChange(this.configuration);
         this.planViewConfiguration.on('change', this.handleConfigurationChange);
@@ -428,7 +428,6 @@ export default {
 
                 let activitiesByRow = {};
                 let currentRow = 0;
-                let activities = [];
 
                 const rawActivities = this.planData[groupName];
                 rawActivities.forEach((rawActivity) => {
@@ -488,17 +487,16 @@ export default {
                         rectWidth: rectWidth
                     };
                     activitiesByRow[currentRow].push(activity);
-                    activities.push(activity);
                 });
 
-                const status = this.isNested ? '' : this.status;
                 const { swimlaneHeight, swimlaneWidth } = this.getGroupDimensions(activitiesByRow);
+                const activities = Array.from(Object.values(activitiesByRow)).flat();
                 activityGroups.push({
                     heading: groupName,
                     activities,
                     height: swimlaneHeight,
                     width: swimlaneWidth,
-                    status
+                    status: this.isNested ? '' : this.status
                 });
             });
 
@@ -558,21 +556,6 @@ export default {
                 swimlaneHeight,
                 swimlaneWidth
             };
-        },
-        setSelectionForActivity(element, activity, multiSelect) {
-            this.openmct.selection.select([{
-                element: element,
-                context: {
-                    type: 'activity',
-                    activity: activity
-                }
-            }, {
-                element: this.openmct.layout.$refs.browseObject.$el,
-                context: {
-                    item: this.domainObject,
-                    supportsMultiSelect: true
-                }
-            }], multiSelect);
         },
 
         setStatus(status) {
