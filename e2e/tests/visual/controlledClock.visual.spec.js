@@ -26,7 +26,6 @@ clockOptions plugin fixture.
 */
 
 const { test, expect } = require('../../pluginFixtures');
-const { setFixedTimeMode } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {
