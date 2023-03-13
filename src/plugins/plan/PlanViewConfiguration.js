@@ -33,10 +33,9 @@ export default class PlanViewConfiguration extends EventEmitter {
 
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.swimlaneVisibility = {};
 
-        this.objectMutated = this.objectMutated.bind(this);
-        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
+        this.configurationChanged = this.configurationChanged.bind(this);
+        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.configurationChanged);
     }
 
     /**
@@ -51,11 +50,55 @@ export default class PlanViewConfiguration extends EventEmitter {
         return configuration;
     }
 
-    updateConfiguration(configuration) {
+    #updateConfiguration(configuration) {
         this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
     }
 
-    objectMutated(configuration) {
+    /**
+     * @param {string} swimlaneName
+     * @param {boolean} isVisible
+     */
+    setSwimlaneVisibility(swimlaneName, isVisible) {
+        const configuration = this.getConfiguration();
+        const { swimlaneVisibility } = configuration;
+        swimlaneVisibility[swimlaneName] = isVisible;
+        this.#updateConfiguration(configuration);
+    }
+
+    resetSwimlaneVisibility() {
+        const configuration = this.getConfiguration();
+        const swimlaneVisibility = {};
+        configuration.swimlaneVisibility = swimlaneVisibility;
+        this.#updateConfiguration(configuration);
+    }
+
+    initializeSwimlaneVisibility(swimlaneNames) {
+        const configuration = this.getConfiguration();
+        const { swimlaneVisibility } = configuration;
+        let shouldMutate = false;
+        for (const swimlaneName of swimlaneNames) {
+            if (swimlaneVisibility[swimlaneName] === undefined) {
+                swimlaneVisibility[swimlaneName] = true;
+                shouldMutate = true;
+            }
+
+            if (shouldMutate) {
+                configuration.swimlaneVisibility = swimlaneVisibility;
+                this.#updateConfiguration(configuration);
+            }
+        }
+    }
+
+    /**
+     * @param {boolean} isEnabled
+     */
+    setClipActivityNames(isEnabled) {
+        const configuration = this.getConfiguration();
+        configuration.clipActivityNames = isEnabled;
+        this.#updateConfiguration(configuration);
+    }
+
+    configurationChanged(configuration) {
         if (configuration !== undefined) {
             this.emit('change', configuration);
         }

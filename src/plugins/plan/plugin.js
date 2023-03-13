@@ -30,7 +30,7 @@ export default function (configuration) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'A non-configurable timeline-like view for a compatible mission plan file.',
+            description: 'A non-configurable timeline-like view for a compatible plan file.',
             creatable: false,
             cssClass: 'icon-plan',
             form: [],
@@ -44,7 +44,7 @@ export default function (configuration) {
         openmct.types.addType('gantt-chart', {
             name: 'Gantt Chart',
             key: 'gantt-chart',
-            description: 'A configurable timeline-like view for a compatible mission plan file.',
+            description: 'A configurable timeline-like view for a compatible plan file.',
             creatable: true,
             cssClass: 'icon-plan',
             form: [],

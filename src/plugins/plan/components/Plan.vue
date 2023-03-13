@@ -41,7 +41,7 @@
     >
         <ActivityTimeline
             v-for="(group, index) in visibleActivityGroups"
-            :key="index"
+            :key="`activityGroup-${group.heading}-${index}`"
             :activities="group.activities"
             :clip-activity-names="clipActivityNames"
             :heading="group.heading"
@@ -61,6 +61,8 @@ import TimelineAxis from "../../../ui/components/TimeSystemAxis.vue";
 import ActivityTimeline from "./ActivityTimeline.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedData, getContrastingColor } from "../util";
+import PlanViewConfiguration from '../PlanViewConfiguration';
+import { v4 as uuid } from 'uuid';
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -79,7 +81,7 @@ export default {
         SwimLane,
         ActivityTimeline
     },
-    inject: ['openmct', 'domainObject', 'path', 'composition', 'planViewConfiguration'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -103,7 +105,8 @@ export default {
             viewBounds: null,
             timeSystem: null,
             planData: {},
-            configuration: this.planViewConfiguration.getConfiguration(),
+            swimlaneVisibility: {},
+            clipActivityNames: false,
             height: 0
         };
     },
@@ -112,18 +115,23 @@ export default {
             if (this.domainObject.type === 'plan') {
                 return this.activityGroups;
             } else {
-                return this.activityGroups.filter(group => this.swimlaneVisibility[group.heading] === true);
+                return this.activityGroups.filter(group =>
+                    this.swimlaneVisibility[group.heading] === true);
             }
         }
     },
     watch: {
         clipActivityNames() {
-            this.setScaleAndPlotActivities();
+            this.setScaleAndGenerateActivities();
         }
     },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        this.planViewConfiguration = new PlanViewConfiguration(this.domainObject, this.openmct);
+        this.configuration = this.planViewConfiguration.getConfiguration();
         this.isNested = this.options.isChildObject;
         this.swimlaneVisibility = this.configuration.swimlaneVisibility;
+        this.clipActivityNames = this.configuration.clipActivityNames;
         if (this.domainObject.type === 'plan') {
             this.planData = getValidatedData(this.domainObject);
         }
@@ -172,7 +180,7 @@ export default {
         followTimeContext() {
             this.updateViewBounds(this.timeContext.bounds());
 
-            this.timeContext.on("timeSystem", this.setScaleAndPlotActivities);
+            this.timeContext.on("timeSystem", this.setScaleAndGenerateActivities);
             this.timeContext.on("bounds", this.updateViewBounds);
             this.timeContext.on("clock", this.updateBounds);
         },
@@ -186,79 +194,67 @@ export default {
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
+                this.timeContext.off("timeSystem", this.setScaleAndGenerateActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
                 this.timeContext.off("clock", this.updateBounds);
             }
         },
         showReplacePlanDialog(domainObject) {
-            return new Promise((resolve) => {
-                let dialog = this.openmct.overlays.dialog({
-                    iconClass: 'alert',
-                    message: 'This action will replace the current Plan. Do you want to continue?',
-                    buttons: [
-                        {
-                            label: 'Ok',
-                            emphasis: true,
-                            callback: () => {
-                                this.removeFromComposition(this.planObject);
-                                this.planObject = domainObject;
-                                this.planData = getValidatedData(domainObject);
-                                this.setScaleAndPlotActivities();
-                                resolve();
-                                dialog.dismiss();
-                            }
-                        },
-                        {
-                            label: 'Cancel',
-                            callback: () => {
-                                this.removeFromComposition(domainObject);
-                                resolve();
-                                dialog.dismiss();
-                            }
+            let dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current Plan. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            this.removeFromComposition(this.planObject);
+                            this.planObject = domainObject;
+                            this.planData = getValidatedData(domainObject);
+                            this.setScaleAndGenerateActivities();
+                            dialog.dismiss();
                         }
-                    ]
-                });
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(domainObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
             });
-
         },
-        async handleCompositionAdd(domainObject) {
+        handleCompositionAdd(domainObject) {
             if (this.planObject) {
-                await this.showReplacePlanDialog(domainObject);
+                this.showReplacePlanDialog(domainObject);
             } else {
                 this.planObject = domainObject;
                 this.swimlaneVisibility = this.configuration.swimlaneVisibility;
                 this.planData = getValidatedData(domainObject);
-                this.setScaleAndPlotActivities();
+                this.setScaleAndGenerateActivities();
             }
         },
         handleConfigurationChange(newConfiguration) {
             Object.keys(newConfiguration).forEach((key) => {
                 this[key] = newConfiguration[key];
             });
-            this.setScaleAndPlotActivities();
         },
         handleCompositionRemove(identifier) {
             if (this.planObject && this.openmct.objects.areIdsEqual(identifier, this.planObject?.identifier)) {
                 this.planObject = null;
                 this.planData = {};
-                this.swimlaneVisibility = {};
-                this.configuration.swimlaneVisibility = this.swimlaneVisibility;
-                this.planViewConfiguration.updateConfiguration(this.configuration);
+                this.planViewConfiguration.resetSwimlaneVisibility();
             }
 
-            this.setScaleAndPlotActivities();
+            this.setScaleAndGenerateActivities();
         },
         handleSelectFileChange() {
             this.planData = getValidatedData(this.domainObject);
-            this.setScaleAndPlotActivities();
+            this.setScaleAndGenerateActivities();
         },
         removeFromComposition(domainObject) {
             this.composition.remove(domainObject);
-        },
-        observeForChanges(mutatedObject) {
-            this.planData = getValidatedData(mutatedObject);
-            this.setScaleAndPlotActivities();
         },
         resize() {
             let clientWidth = this.getClientWidth();
@@ -312,16 +308,16 @@ export default {
                 this.timeSystem = this.openmct.time.timeSystem();
             }
 
-            this.setScaleAndPlotActivities();
+            this.setScaleAndGenerateActivities();
         },
-        setScaleAndPlotActivities(timeSystem) {
+        setScaleAndGenerateActivities(timeSystem) {
             if (timeSystem) {
                 this.timeSystem = timeSystem;
             }
 
             this.setScale(this.timeSystem);
             if (this.xScale) {
-                this.calculatePlanLayout();
+                this.generateActivities();
             }
         },
         setDimensions() {
@@ -414,17 +410,17 @@ export default {
 
             return currentRow || 0;
         },
-        calculatePlanLayout() {
+        generateActivities() {
             const groupNames = Object.keys(this.planData);
+
+            if (!groupNames.length) {
+                return;
+            }
+
             const activityGroups = [];
-            let shouldUpdateConfig = false;
+            this.planViewConfiguration.initializeSwimlaneVisibility(groupNames);
 
             groupNames.forEach((groupName) => {
-                if (this.swimlaneVisibility[groupName] === undefined) {
-                    this.swimlaneVisibility[groupName] = true;
-                    shouldUpdateConfig = true;
-                }
-
                 let activitiesByRow = {};
                 let currentRow = 0;
 
@@ -483,7 +479,8 @@ export default {
                         textY: textY,
                         rectStart: rectX1,
                         rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
-                        rectWidth: rectWidth
+                        rectWidth: rectWidth,
+                        clipPathId: this.getClipPathId()
                     };
                     activitiesByRow[currentRow].push(activity);
                 });
@@ -500,10 +497,6 @@ export default {
             });
 
             this.activityGroups = activityGroups;
-            if (shouldUpdateConfig) {
-                this.configuration.swimlaneVisibility = this.swimlaneVisibility;
-                this.planViewConfiguration.updateConfiguration(this.configuration);
-            }
         },
         /**
          * Format the activity name to fit within the activity rect with a max of 2 lines
@@ -556,9 +549,11 @@ export default {
                 swimlaneWidth
             };
         },
-
         setStatus(status) {
             this.status = status;
+        },
+        getClipPathId() {
+            return `clipPath-${uuid()}`;
         }
     }
 };

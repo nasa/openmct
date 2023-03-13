@@ -35,8 +35,8 @@
             <template v-for="(activity, index) in activities">
                 <template v-if="clipActivityNames === true">
                     <clipPath
-                        :id="getClipId(activity, index)"
-                        :key="`clipPath-${index}`"
+                        :id="activity.clipPathId"
+                        :key="activity.clipPathId"
                     >
                         <rect
                             :x="activity.rectStart"
@@ -66,7 +66,7 @@
                         :x="activity.textStart"
                         :y="activity.textY + (textIndex * lineHeight)"
                         :fill="activity.textColor"
-                        :clip-path="clipActivityNames === true ? `url(#${getClipId(activity, index)})` : ''"
+                        :clip-path="clipActivityNames === true ? `url(#${activity.clipPathId})` : ''"
                     >
                         {{ textLine }}
                     </text>
@@ -125,17 +125,12 @@ export default {
             }
         }
     },
-    computed: {
-        lineHeight() {
-            return 12;
-        }
+    data() {
+        return {
+            lineHeight: 12
+        };
     },
     methods: {
-        getClipId(activity, index) {
-            const activityName = activity.name.toLowerCase().replace(/ /g, '-');
-
-            return `clipPath-${activityName}-${activity.start}-${activity.end}-${index}`;
-        },
         setSelectionForActivity(activity, event) {
             const element = event.currentTarget;
             const multiSelect = event.metaKey;

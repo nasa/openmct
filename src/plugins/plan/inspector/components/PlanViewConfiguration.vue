@@ -129,18 +129,16 @@ export default {
         setIsEditing(isEditing) {
             this.isEditing = isEditing;
         },
+        toggleClipActivityNames() {
+            this.planViewConfiguration.setClipActivityNames(!this.configuration.clipActivityNames);
+        },
         /**
          * @param {string} swimlaneName
          */
         toggleHideSwimlane(swimlaneName) {
-            const visible = this.configuration.swimlaneVisibility[swimlaneName] === true;
-            this.configuration.swimlaneVisibility[swimlaneName] = !visible;
-            this.planViewConfiguration.updateConfiguration(this.configuration);
-        },
-        toggleClipActivityNames() {
-            this.configuration.clipActivityNames = !this.configuration.clipActivityNames;
-            this.planViewConfiguration.updateConfiguration(this.configuration);
+            this.planViewConfiguration.setSwimlaneVisibility(swimlaneName, !this.configuration.swimlaneVisibility[swimlaneName]);
         }
+
     }
 };
 </script>

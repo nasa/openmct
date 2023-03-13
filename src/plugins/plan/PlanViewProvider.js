@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewConfiguration from './PlanViewConfiguration';
 import Plan from './components/Plan.vue';
 import Vue from 'vue';
 
@@ -58,9 +57,7 @@ export default function PlanViewProvider(openmct) {
                         provide: {
                             openmct,
                             domainObject,
-                            path: objectPath,
-                            composition: openmct.composition.get(domainObject),
-                            planViewConfiguration: new PlanViewConfiguration(domainObject, openmct)
+                            path: objectPath
                         },
                         data() {
                             return {
