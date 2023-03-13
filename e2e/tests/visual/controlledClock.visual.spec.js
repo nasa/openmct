@@ -25,16 +25,17 @@ Collection of Visual Tests set to run with browser clock manipulate made possibl
 clockOptions plugin fixture.
 */
 
-const { test } = require('../../pluginFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const { setFixedTimeMode } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
-test.describe('Visual - Controlled Clock', () => {
+test.describe.only('Visual - Controlled Clock', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
     test.use({
+        storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
         clockOptions: {
             shouldAdvanceTime: false //Don't advance the clock
         }
@@ -45,8 +46,9 @@ test.describe('Visual - Controlled Clock', () => {
         const startTimeInput = page.locator('input[type="text"].c-input--datetime').nth(0);
         const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
 
-        // verify no error msg
-        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
+        await page.locator('a').filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' }).click();
+        //Ensure that we're on the Unnamed Overlay Plot object
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Overlay Plot with Telemetry Object');
 
         let date = await endTimeInput.inputValue();
         date = new Date(date);

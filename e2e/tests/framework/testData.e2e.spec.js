@@ -21,16 +21,18 @@
  *****************************************************************************/
 
 /*
-* This test suite template is to be used when verifying Test Data files found in /e2e/test-data/
+* This test suite template is to be used to verify Test Data files found in /e2e/test-data/.
+* Specifically, the use of recycled localstorage should be tested here.
 */
 
 const { test } = require('../../baseFixtures');
 
-test.describe('recycled_local_storage @localStorage', () => {
+test.describe('recycled_local_storage @localStorage @generatedata', () => {
     //We may want to do some additional level of verification of this file. For now, we just verify that it exists and can be used in a test suite.
     test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
     test('Can use recycled_local_storage file', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.pause();
     });
 });
 

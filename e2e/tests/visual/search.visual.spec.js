@@ -41,6 +41,7 @@ test.describe('Grand Search', () => {
         // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
         // await page.locator('text=Save and Finish Editing').click();
         const folder1 = 'Folder1';
+
         await createDomainObjectWithDefaults(page, {
             type: 'Folder',
             name: folder1

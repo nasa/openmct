@@ -33,10 +33,16 @@
 const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults, createExampleTelemetryObject } = require('../../appActions.js');
 
-test.describe('Generate Visual Test Data @localStorage', () => {
+const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
-    test('Generate Overlay Plot with Telemetry Object @localStorage', async ({ page, context }) => {
-        const overlayPlotName = 'Overlay Plot with Telemetry Object';
+test.describe.only('Generate Visual Test Data @localStorage @generatedata', () => {
+    // test.use({
+    //     clockOptions: {
+    //         shouldAdvanceTime: false //Don't advance the clock
+    //     }
+    // });
+
+    test('Generate Overlay Plot with Telemetry Object', async ({ page, context }) => {
 
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -73,13 +79,15 @@ test.describe('Generate Visual Test Data @localStorage', () => {
         // Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
     });
-    test('Generate Overlay Plot with 5s Delay @localStorage', async ({ page, context }) => {
+    test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
         // Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // add overlay plot with defaults
-        const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
-
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot',
+            name: overlayPlotName
+        });
         // click create button
         await page.locator('button:has-text("Create")').click();
 
@@ -103,3 +111,4 @@ test.describe('Generate Visual Test Data @localStorage', () => {
         await context.storageState({ path: './e2e/test-data/overlay_plot_with_delay_storage.json' });
     });
 });
+

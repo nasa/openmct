@@ -272,6 +272,9 @@ async function _isInEditMode(page, identifier) {
 module.exports = {
     createDomainObjectWithDefaults,
     createExampleTelemetryObject,
+    createNotification,
+    expandTreePaneItemByName,
+    expandEntireTree,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
