@@ -35,7 +35,7 @@ const { createDomainObjectWithDefaults, createExampleTelemetryObject } = require
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
-test.describe.only('Generate Visual Test Data @localStorage @generatedata', () => {
+test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     // test.use({
     //     clockOptions: {
     //         shouldAdvanceTime: false //Don't advance the clock
