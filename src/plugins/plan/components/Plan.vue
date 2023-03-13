@@ -1,4 +1,3 @@
-/*****************************************************************************
 * Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
@@ -379,16 +378,23 @@ export default {
 
             return 0;
         },
-        // Get the row where the next activity will land.
-        getRowForActivity(rectX, width, activitiesByRow) {
+        /**
+         * Get the row where the next activity will land.
+         * @param {number} rectX the x coordinate of the activity rect
+         * @param {number} width the width of the activity rect
+         * @param {Object.<string, Array.<Object>>} activitiesByRow activity arrays mapped by row value
+         */
+        getRowForActivity(rectX, rectWidth, activitiesByRow) {
             const sortedActivityRows = Object.keys(activitiesByRow).sort(this.sortIntegerAsc);
             let currentRow;
 
             function activitiesHaveOverlap(rects) {
                 return rects.some(rect => {
-                    const { start, end } = rect;
-                    const calculatedEnd = rectX + width;
-                    const hasOverlap = (rectX >= start && rectX <= end) || (calculatedEnd >= start && calculatedEnd <= end) || (rectX <= start && calculatedEnd >= end);
+                    const { rectStart, rectEnd } = rect;
+                    const calculatedEnd = rectX + rectWidth;
+                    const hasOverlap = (rectX >= rectStart && rectX <= rectEnd)
+                                    || (calculatedEnd >= rectStart && calculatedEnd <= rectEnd)
+                                    || (rectX <= rectStart && calculatedEnd >= rectEnd);
 
                     return hasOverlap;
                 });
@@ -425,29 +431,29 @@ export default {
                 let activities = [];
 
                 const rawActivities = this.planData[groupName];
-                rawActivities.forEach((activity) => {
-                    if (!this.isActivityInBounds(activity)) {
+                rawActivities.forEach((rawActivity) => {
+                    if (!this.isActivityInBounds(rawActivity)) {
                         return;
                     }
 
-                    const currentStart = Math.max(this.viewBounds.start, activity.start);
-                    const currentEnd = Math.min(this.viewBounds.end, activity.end);
+                    const currentStart = Math.max(this.viewBounds.start, rawActivity.start);
+                    const currentEnd = Math.min(this.viewBounds.end, rawActivity.end);
                     const rectX1 = this.xScale(currentStart);
                     const rectX2 = this.xScale(currentEnd);
                     const rectWidth = Math.max(rectX2 - rectX1, MIN_ACTIVITY_WIDTH);
 
                     //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
-                    const showTextInsideRect = this.clipActivityNames || this.activityNameFitsRect(activity.name, rectWidth);
+                    const showTextInsideRect = this.clipActivityNames || this.activityNameFitsRect(rawActivity.name, rectWidth);
                     const textStart = (showTextInsideRect ? rectX1 : rectX2) + TEXT_LEFT_PADDING;
-                    const color = activity.color || DEFAULT_COLOR;
+                    const color = rawActivity.color || DEFAULT_COLOR;
                     let textColor = '';
-                    if (activity.textColor) {
-                        textColor = activity.textColor;
+                    if (rawActivity.textColor) {
+                        textColor = rawActivity.textColor;
                     } else if (showTextInsideRect) {
                         textColor = getContrastingColor(color);
                     }
 
-                    const textLines = this.getActivityDisplayText(this.canvasContext, activity.name, showTextInsideRect);
+                    const textLines = this.getActivityDisplayText(this.canvasContext, rawActivity.name, showTextInsideRect);
                     const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
 
                     if (showTextInsideRect) {
@@ -462,36 +468,16 @@ export default {
                         activitiesByRow[currentRow] = [];
                     }
 
-                    activitiesByRow[currentRow].push({
-                        activity: {
-                            color: color,
-                            textColor: textColor,
-                            name: activity.name,
-                            exceeds: {
-                                start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
-                                end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
-                            },
-                            start: activity.start,
-                            end: activity.end
-                        },
-                        textLines: textLines,
-                        textStart: textStart,
-                        textClass: showTextInsideRect ? "" : "activity-label--outside-rect",
-                        textY: textY,
-                        start: rectX1,
-                        end: showTextInsideRect ? rectX2 : textStart + textWidth,
-                        rectWidth: rectWidth
-                    });
-                    activities.push({
+                    const activity = {
                         color: color,
                         textColor: textColor,
-                        name: activity.name,
+                        name: rawActivity.name,
                         exceeds: {
-                            start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
-                            end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
+                            start: this.xScale(this.viewBounds.start) > this.xScale(rawActivity.start),
+                            end: this.xScale(this.viewBounds.end) < this.xScale(rawActivity.end)
                         },
-                        start: activity.start,
-                        end: activity.end,
+                        start: rawActivity.start,
+                        end: rawActivity.end,
                         row: currentRow,
                         textLines: textLines,
                         textStart: textStart,
@@ -500,7 +486,9 @@ export default {
                         rectStart: rectX1,
                         rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
                         rectWidth: rectWidth
-                    });
+                    };
+                    activitiesByRow[currentRow].push(activity);
+                    activities.push(activity);
                 });
 
                 const status = this.isNested ? '' : this.status;
