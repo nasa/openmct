@@ -134,7 +134,7 @@ export default {
         getClipId(activity, index) {
             const activityName = activity.name.toLowerCase().replace(/ /g, '-');
 
-            return `clipPath-${activityName}-${index}`;
+            return `clipPath-${activityName}-${activity.start}-${activity.end}-${index}`;
         },
         setSelectionForActivity(activity, event) {
             const element = event.currentTarget;
