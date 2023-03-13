@@ -29,7 +29,7 @@ const { test, expect } = require('../../pluginFixtures');
 const { setFixedTimeMode } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
-test.describe.only('Visual - Controlled Clock', () => {
+test.describe('Visual - Controlled Clock', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
