@@ -26,15 +26,27 @@ import GanttChartInspectorViewProvider from "./inspector/GanttChartInspectorView
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
 import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration';
 
-export default function (configuration) {
+export default function (options = {}) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
             description: 'A non-configurable timeline-like view for a compatible plan file.',
-            creatable: false,
+            creatable: options.creatable ?? false,
             cssClass: 'icon-plan',
-            form: [],
+            form: [
+                {
+                    name: 'Upload Plan (JSON File)',
+                    key: 'selectFile',
+                    control: 'file-input',
+                    required: true,
+                    text: 'Select File...',
+                    type: 'application/json',
+                    property: [
+                        "selectFile"
+                    ]
+                }
+            ],
             initialize: function (domainObject) {
                 domainObject.configuration = {
                     clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames
