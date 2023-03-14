@@ -96,7 +96,9 @@ export default class MoveAction {
             newObjectPath = parentDomainObjectpath && [this.object].concat(parentDomainObjectpath);
         } else {
             const root = await this.openmct.objects.getRoot();
-            const rootChildCount = root.composition.length;
+            const rootCompositionCollection = this.openmct.composition.get(root);
+            const rootComposition = await rootCompositionCollection.load();
+            const rootChildCount = rootComposition.length;
             newObjectPath = await this.openmct.objects.getOriginalPath(this.object.identifier);
 
             // if not multiple root children, remove root from path
