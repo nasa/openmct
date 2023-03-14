@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,7 @@
 Testsuite for plot autoscale.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
     viewport: {
@@ -50,6 +51,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
+        await selectInspectorTab(page, 'Config');
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -264,7 +264,7 @@ export default class TelemetryAPI {
      *          telemetry data
      */
     async request(domainObject) {
-        if (this.noRequestProviderForAllObjects) {
+        if (this.noRequestProviderForAllObjects || domainObject.type === 'unknown') {
             return [];
         }
 
@@ -318,6 +318,10 @@ export default class TelemetryAPI {
      *          the subscription
      */
     subscribe(domainObject, callback, options) {
+        if (domainObject.type === 'unknown') {
+            return () => {};
+        }
+
         const provider = this.#findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {

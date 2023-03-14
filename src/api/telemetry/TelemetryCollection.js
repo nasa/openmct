@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -129,6 +129,9 @@ export default class TelemetryCollection extends EventEmitter {
             this.emit('requestStarted');
             const modifiedOptions = await this.openmct.telemetry.applyRequestInterceptors(this.domainObject, options);
             historicalData = await historicalProvider.request(this.domainObject, modifiedOptions);
+            if (!historicalData || !historicalData.length) {
+                return;
+            }
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');

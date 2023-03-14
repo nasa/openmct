@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,24 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<template>
-<li class="c-inspect-properties__row">
-    <div class="c-inspect-properties__label">
-        {{ detail.name }}
-    </div>
-    <div class="c-inspect-properties__value">
-        {{ detail.value }}
-    </div>
-</li>
-</template>
+import EventEmitter from 'EventEmitter';
 
-<script>
-export default {
-    props: {
-        detail: {
-            type: Object,
-            required: true
+export default class LADTableConfiguration extends EventEmitter {
+    constructor(domainObject, openmct) {
+        super();
+
+        this.domainObject = domainObject;
+        this.openmct = openmct;
+
+        this.objectMutated = this.objectMutated.bind(this);
+        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
+    }
+
+    getConfiguration() {
+        const configuration = this.domainObject.configuration || {};
+        configuration.hiddenColumns = configuration.hiddenColumns || {};
+
+        return configuration;
+    }
+
+    updateConfiguration(configuration) {
+        this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+    }
+
+    objectMutated(configuration) {
+        if (configuration !== undefined) {
+            this.emit('change', configuration);
         }
     }
-};
-</script>
+
+    destroy() {
+        this.unlistenFromMutation();
+    }
+}

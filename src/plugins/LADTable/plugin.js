@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,12 +22,14 @@
 import LADTableViewProvider from './LADTableViewProvider';
 import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './LADTableCompositionPolicy';
+import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider';
 
 export default function plugin() {
     return function install(openmct) {
 
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
         openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new LADTableConfigurationViewProvider(openmct));
 
         openmct.types.addType('LadTable', {
             name: "LAD Table",

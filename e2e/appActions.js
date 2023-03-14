@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -383,6 +383,25 @@ async function setEndOffset(page, offset) {
     await setTimeConductorOffset(page, offset, endOffsetButton);
 }
 
+/**
+ * Selects an inspector tab based on the provided tab name
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {String} name the name of the tab
+ */
+async function selectInspectorTab(page, name) {
+    const inspectorTabs = page.getByRole('tablist');
+    const inspectorTab = inspectorTabs.getByTitle(name);
+    const inspectorTabClass = await inspectorTab.getAttribute('class');
+    const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
+
+    // do not click a tab that is already selected or it will timeout your test
+    // do to a { pointer-events: none; } on selected tabs
+    if (!isSelectedInspectorTab) {
+        await inspectorTab.click();
+    }
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
@@ -396,5 +415,6 @@ module.exports = {
     setFixedTimeMode,
     setRealTimeMode,
     setStartOffset,
-    setEndOffset
+    setEndOffset,
+    selectInspectorTab
 };
