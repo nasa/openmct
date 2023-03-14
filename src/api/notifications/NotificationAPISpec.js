@@ -111,6 +111,10 @@ describe('The Notifiation API', () => {
     describe('the error method notificiation', () => {
         let message = 'Minimized error message';
 
+        afterAll(() => {
+            notificationAPIInstance.dismissAllNotifications();
+        });
+
         it('is not shown if configured to show minimized', (done) => {
             notificationAPIInstance.activeNotification = undefined;
             notificationAPIInstance.error(message, { minimized: true });
