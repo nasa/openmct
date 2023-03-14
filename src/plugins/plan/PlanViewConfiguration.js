@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 
-const DEFAULT_CONFIGURATION = {
+export const DEFAULT_CONFIGURATION = {
     clipActivityNames: false,
     swimlaneVisibility: {}
 };

@@ -24,6 +24,7 @@ import PlanViewProvider from './PlanViewProvider';
 import ActivityInspectorViewProvider from "./inspector/ActivityInspectorViewProvider";
 import GanttChartInspectorViewProvider from "./inspector/GanttChartInspectorViewProvider";
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
+import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration';
 
 export default function (configuration) {
     return function install(openmct) {
@@ -36,7 +37,7 @@ export default function (configuration) {
             form: [],
             initialize: function (domainObject) {
                 domainObject.configuration = {
-                    clipActivityNames: false
+                    clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames
                 };
             }
         });
