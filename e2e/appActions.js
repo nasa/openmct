@@ -168,8 +168,8 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     // Click the Create button
     await page.click('button:has-text("Create")');
 
-    // Click 'Gantt Chart' menu option
-    await page.click(`li:text("Gantt Chart")`);
+    // Click 'Plan' menu option
+    await page.click(`li:text("Plan")`);
 
     // Modify the name input field of the domain object to accept 'name'
     if (name) {
@@ -194,7 +194,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     ]);
 
     // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
+    await page.waitForURL(`**/${parent}/*`);
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
 

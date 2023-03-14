@@ -19,21 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON } = require('../../../appActions');
-const { testPlan1 } = require('./util/examplePlans');
+const { test, expect } = require('../../../pluginFixtures');
+const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
+const { testPlan1, testPlan2 } = require('./util/examplePlans');
 const { assertPlanActivities } = require('./util/helper');
 
-test.describe("Plan", () => {
-    let plan;
+test.describe("Gantt Chart", () => {
+    let ganttChart;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        plan = await createPlanFromJSON(page, {
-            json: testPlan1
+        ganttChart = await createDomainObjectWithDefaults(page, {
+            type: 'Gantt Chart'
+        });
+        await createPlanFromJSON(page, {
+            json: testPlan1,
+            parent: ganttChart.uuid
         });
     });
 
     test("Displays all plan events", async ({ page }) => {
-        await assertPlanActivities(page, testPlan1, plan.url);
+        await page.goto(ganttChart.url);
+
+        await assertPlanActivities(page, testPlan1, ganttChart.url);
+    });
+    test("Replaces a plan with a new plan", async ({ page }) => {
+        await assertPlanActivities(page, testPlan1, ganttChart.url);
+        await createPlanFromJSON(page, {
+            json: testPlan2,
+            parent: ganttChart.uuid
+        });
+        const replaceModal = page.getByRole('dialog').filter({ hasText: "This action will replace the current Plan. Do you want to continue?" });
+        await expect(replaceModal).toBeVisible();
+        await page.getByRole('button', { name: 'OK' }).click();
+
+        await assertPlanActivities(page, testPlan2, ganttChart.url);
     });
 });

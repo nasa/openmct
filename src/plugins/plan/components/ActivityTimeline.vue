@@ -48,7 +48,7 @@
                 </template>
                 <g
                     :key="`g-${activity.clipPathId}`"
-                    class="c-plan__activity"
+                    class="c-plan__activity activity-bounds"
                     @click="setSelectionForActivity(activity, $event)"
                 >
                     <title>{{ activity.name }}</title>
