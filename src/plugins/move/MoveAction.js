@@ -67,10 +67,6 @@ export default class MoveAction {
         const parentDomainObjectpath = changes.location || [this.parent];
         const parent = parentDomainObjectpath[0];
 
-        if (inNavigationPath && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
-
         if (this.openmct.objects.areIdsEqual(parent.identifier, this.oldParent.identifier)) {
             this.openmct.notifications.error(`Error: new location cant not be same as old`);
 
