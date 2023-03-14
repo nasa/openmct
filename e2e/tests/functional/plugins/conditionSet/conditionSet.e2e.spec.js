@@ -30,6 +30,7 @@ const { test, expect } = require('../../../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 let conditionSetUrl;
+let getConditionSetIdentifierFromUrl;
 
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     test.beforeAll(async ({ browser}) => {
@@ -48,6 +49,12 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         //Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/recycled_local_storage.json' });
+
+        //Set object identifier from url
+        conditionSetUrl = page.url();
+
+        getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
+        console.debug(`getConditionSetIdentifierFromUrl ${getConditionSetIdentifierFromUrl}` + getConditionSetIdentifierFromUrl);
         await page.close();
     });
 
