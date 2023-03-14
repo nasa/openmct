@@ -782,16 +782,16 @@ export default class ObjectAPI {
     }
 
     /**
-     * Check if a child domainObject is an alias (link)
+     * Check if a child domainObject is a link (alias)
      * by comparing the it's location to the parents identifier.
      * If the location does not match the parent's identifier, then
-     * the domainObject is an alias.
+     * the domainObject is an link.
      *
      * @param {DomainObject} childDomainObject
      * @param {DomainObject} parentDomainObject
-     * @returns {boolean} true if alias, false if not
+     * @returns {boolean} true if link, false if not
      */
-    isAlias(childDomainObject, parentDomainObject) {
+    isLink(childDomainObject, parentDomainObject) {
         if (parentDomainObject === undefined) {
             // then it's a root item, not an alias
             return false;

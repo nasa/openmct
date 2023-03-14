@@ -111,7 +111,7 @@ export default class RemoveAction {
         const composition = this.openmct.composition.get(parent);
         composition.remove(child);
 
-        if (!this.openmct.objects.isAlias(child, parent)) {
+        if (!this.openmct.objects.isLink(child, parent)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
 
@@ -129,7 +129,7 @@ export default class RemoveAction {
         const locked = child.locked ? child.locked : parent && parent.locked;
         const isEditing = this.openmct.editor.isEditing();
         const isPersistable = this.openmct.objects.isPersistable(child.identifier);
-        const isAlias = this.openmct.objects.isAlias(child, parent);
+        const isAlias = this.openmct.objects.isLink(child, parent);
 
         if (!isAlias && (locked || !isPersistable)) {
             return false;
