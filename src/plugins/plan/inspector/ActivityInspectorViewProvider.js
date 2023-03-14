@@ -26,7 +26,7 @@ import Vue from 'vue';
 export default function ActivityInspectorViewProvider(openmct) {
     return {
         key: 'activity-inspector',
-        name: 'Activity Inspector View',
+        name: 'Activity',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;

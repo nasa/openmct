@@ -48,8 +48,10 @@
                 </template>
                 <g
                     :key="`g-${activity.clipPathId}`"
+                    class="c-plan__activity"
                     @click="setSelectionForActivity(activity, $event)"
                 >
+                    <title>{{ activity.name }}</title>
                     <rect
                         :key="`rect-${index}`"
                         :x="activity.rectStart"
@@ -62,7 +64,7 @@
                     <text
                         v-for="(textLine, textIndex) in activity.textLines"
                         :key="`text-${index}-${textIndex}`"
-                        :class="`activity-label ${activity.textClass}`"
+                        :class="`c-plan__activity-label ${activity.textClass}`"
                         :x="activity.textStart"
                         :y="activity.textY + (textIndex * lineHeight)"
                         :fill="activity.textColor"
@@ -76,9 +78,9 @@
                 v-if="activities.length === 0"
                 x="10"
                 y="20"
-                class="activity-label--outside-rect"
+                class="c-plan__activity-label--outside-rect"
             >
-                No activities within timeframe
+                No activities within current timeframe
             </text>
         </svg>
     </template>

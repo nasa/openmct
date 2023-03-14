@@ -474,7 +474,7 @@ export default {
                         row: currentRow,
                         textLines: textLines,
                         textStart: textStart,
-                        textClass: showTextInsideRect ? "" : "activity-label--outside-rect",
+                        textClass: showTextInsideRect ? "" : "c-plan__activity-label--outside-rect",
                         textY: textY,
                         rectStart: rectX1,
                         rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
