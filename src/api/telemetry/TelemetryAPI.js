@@ -241,10 +241,6 @@ export default class TelemetryAPI {
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
     requestCollection(domainObject, options = {}) {
-        if (domainObject.type === 'unknown') {
-            return ''; // not sure what to return here
-        }
-
         return new TelemetryCollection(
             this.openmct,
             domainObject,
