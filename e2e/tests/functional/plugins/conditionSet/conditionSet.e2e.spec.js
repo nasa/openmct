@@ -30,7 +30,6 @@ const { test, expect } = require('../../../../pluginFixtures.js');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
 let conditionSetUrl;
-let getConditionSetIdentifierFromUrl;
 
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     test.beforeAll(async ({ browser}) => {
