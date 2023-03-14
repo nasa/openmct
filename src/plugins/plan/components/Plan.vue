@@ -62,7 +62,6 @@ import ActivityTimeline from "./ActivityTimeline.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedData, getContrastingColor } from "../util";
 import PlanViewConfiguration from '../PlanViewConfiguration';
-import { v4 as uuid } from 'uuid';
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
@@ -480,7 +479,7 @@ export default {
                         rectStart: rectX1,
                         rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
                         rectWidth: rectWidth,
-                        clipPathId: this.getClipPathId()
+                        clipPathId: this.getClipPathId(rawActivity)
                     };
                     activitiesByRow[currentRow].push(activity);
                 });
@@ -552,8 +551,9 @@ export default {
         setStatus(status) {
             this.status = status;
         },
-        getClipPathId() {
-            return `clipPath-${uuid()}`;
+        getClipPathId(activity) {
+            const name = activity.name.toLowerCase().replace(/ /g, '-');
+            return `clipPath-${name}-${activity.start}-${activity.end}`
         }
     }
 };

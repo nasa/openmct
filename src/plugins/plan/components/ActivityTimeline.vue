@@ -47,7 +47,7 @@
                     </clipPath>
                 </template>
                 <g
-                    :key="`g-${index}`"
+                    :key="`g-${activity.clipPathId}`"
                     @click="setSelectionForActivity(activity, $event)"
                 >
                     <rect
