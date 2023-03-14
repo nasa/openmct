@@ -81,11 +81,11 @@ export default class PlanViewConfiguration extends EventEmitter {
                 swimlaneVisibility[swimlaneName] = true;
                 shouldMutate = true;
             }
+        }
 
-            if (shouldMutate) {
-                configuration.swimlaneVisibility = swimlaneVisibility;
-                this.#updateConfiguration(configuration);
-            }
+        if (shouldMutate) {
+            configuration.swimlaneVisibility = swimlaneVisibility;
+            this.#updateConfiguration(configuration);
         }
     }
 
