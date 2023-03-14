@@ -285,7 +285,7 @@ export default class TelemetryAPI {
      *          telemetry data
      */
     async request(domainObject) {
-        if (this.noRequestProviderForAllObjects) {
+        if (this.noRequestProviderForAllObjects || domainObject.type === 'unknown') {
             return [];
         }
 
@@ -339,6 +339,10 @@ export default class TelemetryAPI {
      *          the subscription
      */
     subscribe(domainObject, callback, options) {
+        if (domainObject.type === 'unknown') {
+            return () => {};
+        }
+
         const provider = this.#findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
