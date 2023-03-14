@@ -479,7 +479,7 @@ export default {
                         rectStart: rectX1,
                         rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
                         rectWidth: rectWidth,
-                        clipPathId: this.getClipPathId(rawActivity)
+                        clipPathId: this.getClipPathId(groupName, rawActivity, currentRow)
                     };
                     activitiesByRow[currentRow].push(activity);
                 });
@@ -551,9 +551,11 @@ export default {
         setStatus(status) {
             this.status = status;
         },
-        getClipPathId(activity) {
-            const name = activity.name.toLowerCase().replace(/ /g, '-');
-            return `clipPath-${name}-${activity.start}-${activity.end}`
+        getClipPathId(groupName, activity, row) {
+            groupName = groupName.toLowerCase().replace(/ /g, '-');
+            const activityName = activity.name.toLowerCase().replace(/ /g, '-');
+
+            return `${groupName}-${activityName}-${activity.start}-${activity.end}-${row}`;
         }
     }
 };
