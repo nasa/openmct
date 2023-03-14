@@ -72,13 +72,15 @@ Visual Testing is an essential part of our e2e strategy as it ensures that the a
 For a better understanding of the visual issues which affect Open MCT, please see our bug tracker with the `label:visual` filter applied [here](https://github.com/nasa/openmct/issues?q=label%3Abug%3Avisual+)
 To read about how to write a good visual test, please see [How to write a great Visual Test](#how-to-write-a-great-visual-test).
 
-`npm run test:e2e:visual` will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
+`npm run test:e2e:visual` commands will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
 
+ - `npm run test:e2e:visual:ci` will run against every commit and PR.
+ - `npm run test:e2e:visual:full` will run every night with additional comparisons made for Larger Displays and with the `snow` theme.
 #### Percy.io
 
 To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics).
 
-At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots.
+At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots. 
 
 ### (Advanced) Snapshot Testing
 
@@ -135,24 +137,22 @@ These tests are expected to become blocking and gating with assertions as we ext
 
 ## Test Architecture and CI
 
-### Architecture (TODO)
+### Architecture
 
 ### File Structure
 
 Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
-|File Path|Description|
-|:-:|-|
-|`./helper`                    | Contains helper functions or scripts which are leveraged directly within the test suites (e.g.: non-default plugin scripts injected into the DOM)|
-|`./test-data`                 | Contains test data which is leveraged or generated in the functional, performance, or visual test suites (e.g.: localStorage data).|
-|`./tests/functional`          | The bulk of the tests are contained within this folder to verify the functionality of Open MCT.|
-|`./tests/functional/example/` | Tests which specifically verify the example plugins (e.g.: Sine Wave Generator).|
-|`./tests/functional/plugins/` | Tests which loosely test each plugin. This folder is the most likely to change. Note: some `@snapshot` tests are still contained within this structure.|
-|`./tests/framework/`          | Tests which verify that our testing framework's functionality and assumptions will continue to work based on further refactoring or Playwright version changes (e.g.: verifying custom fixtures and appActions).|
-|`./tests/performance/`        | Performance tests.|
-|`./tests/visual/`             | Visual tests.|
-|`./appActions.js`             | Contains common methods which can be leveraged by test case authors to quickly move through the application when writing new tests.|
-|`./baseFixture.js`            | Contains base fixtures which only extend default `@playwright/test` functionality. The expectation is that these fixtures will be removed as the native Playwright API improves|
+- `./helper` - contains helper functions or scripts which are leveraged directly within the testsuites. i.e. non-default plugin scripts injected into DOM.
+- `./test-data` - contains test data which is leveraged or generated in the functional, performance, or visual test suites. i.e. localStorage data
+- `./tests/functional` - the bulk of the tests are contained within this folder to verify the functionality of open mct
+- `./tests/functional/example/` - tests which specifically verify the example plugins
+- `./tests/functional/plugins/` - tests which loosely test each plugin. This folder is the most likely to change. Note: some @snapshot tests are still contained within this structure
+- `./tests/framework/` - tests which verify that our testframework functionality and assumptions will continue to work based on further refactoring or playwright version changes
+- `./tests/performance/` - performance tests
+- `./tests/visual/` - Visual tests
+- `./appActions.js` - Contains common fixtures which can be leveraged by testcase authors to quickly move through the application when writing new tests.
+- `./baseFixture.js` - Contains base fixtures which only extend default `@playwright/test` functionality. The goal is to remove these fixtures as native Playwright APIs improve.
 
 Our functional tests end in `*.e2e.spec.js`, visual tests in `*.visual.spec.js` and performance tests in `*.perf.spec.js`.
 
@@ -201,7 +201,7 @@ CircleCI
 - Stable e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
-- Visual tests are run in a single resolution
+- Visual tests are run in a single resolution on the default `espresso` theme
 
 #### 2. Per-Merge Testing
 
@@ -215,11 +215,11 @@ Nightly Testing in Circle CI
 
 - Full e2e suite against ubuntu and chrome, firefox, and an MMOC resolution profile
 - Performance tests against ubuntu and chrome
-- Visual Tests are run in `full`
+- Visual Tests are run in the full profile.
 
 Github Actions / Workflow
 
-- TBD
+- None at the moment.
 
 #### Parallelism and Fast Feedback
 
@@ -251,7 +251,7 @@ A testcase and testsuite are to be unmarked as @unstable when:
 
 #### **What's supported:**
 
-We are leveraging the `browserslist` project to declare our supported list of browsers.
+We are leveraging the `browserslist` project to declare our supported list of browsers. We support macOS, Windows, and ubuntu 20+.
 
 #### **Where it's tested:**
 
@@ -265,12 +265,16 @@ We also have the need to execute our e2e tests across this published list of bro
   - A stable version of Chromium from the official chromium channels. This is always at least 1 version ahead of desktop chrome.
 - `playwright-chrome`
   - The stable channel of Chrome from the official chrome channels. This is always 2 versions behind chromium.
-- `firefox`
-  - Firefox Latest Stable. From official channels.
+- `playwright-firefox`
+  - Firefox Latest Stable. Modified slightly by the playwright team to support a CDP Shim.
+
+In terms of operating system testing, we're only limited by what the CI providers are able to support. The bulk of our testing is performed on the official playwright container which is based on ubuntu. Github Actions allows us to use `windows-latest` and `mac-latest` and is run as needed.
 
 #### **Mobile**
 
 We have the Mission-need to support iPad. To run our iPad suite, please see our `playwright-*.config.js` with the 'iPad' project.
+
+In general, our test suite is not designed to run against mobile devices as the mobile experience is a focused version of the application. Core functionality is missing (chiefly the 'Create' button) and so this will likely turn into a separate suite.
 
 #### **Skipping or executing tests based on browser, os, and/os browser version:**
 
