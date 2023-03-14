@@ -49,11 +49,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
         //Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/recycled_local_storage.json' });
-
-        //Set object identifier from url
-        conditionSetUrl = page.url();
-
-        getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
         await page.close();
     });
 
