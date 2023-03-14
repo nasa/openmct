@@ -186,7 +186,7 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
     await page.locator('[aria-label="Save"]').click();
 
     // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
+    await page.waitForURL(`**/${parent}/*`);
 
     const uuid = getFocusedObjectUuid(page);
     const url = await getHashUrlToDomainObject(page, uuid);
