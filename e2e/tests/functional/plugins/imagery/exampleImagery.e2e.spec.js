@@ -29,7 +29,7 @@ const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
-const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
+const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
