@@ -77,7 +77,6 @@ export default {
                 selectionPath[0].context.updateTelemetryFormat(newFormat);
             });
             this.telemetryFormat = newFormat;
-            console.debug(`👹 Set telemetry format to `, newFormat);
         },
         handleSelection(selection) {
             if (selection.length === 0 || selection[0].length < 2) {
