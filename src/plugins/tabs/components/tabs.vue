@@ -105,7 +105,7 @@ export default {
             currentTab: {},
             currentTabIndex: undefined,
             tabsList: [],
-            setCurrentTab: true,
+            setCurrentTab: false,
             isDragging: false,
             allowDrop: false,
             searchTabKey: `tabs.pos.${keyString}`,
@@ -123,6 +123,7 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
             this.composition.load().then(() => {
+                this.setCurrentTab = true;
                 let currentTabIndexFromURL = this.openmct.router.getSearchParam(this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
 
@@ -131,6 +132,9 @@ export default {
                 } else if (currentTabIndexFromDomainObject !== undefined) {
                     this.setCurrentTabByIndex(currentTabIndexFromDomainObject);
                     this.storeCurrentTabIndexInURL(currentTabIndexFromDomainObject);
+                } else {
+                    this.setCurrentTabByIndex(0);
+                    this.storeCurrentTabIndexInURL(0);
                 }
             });
         }
