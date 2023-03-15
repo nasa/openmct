@@ -50,6 +50,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.lastBounds = undefined;
         this.requestAbort = undefined;
         this.isStrategyLatest = this.options.strategy === 'latest';
+        this.dataOutsideTimeBounds = false;
     }
 
     /**
@@ -226,12 +227,17 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
-            // if latest strategy is requested, we need to check if the value is the latest unmitted value
+            // if latest strategy is requested, we need to check if the value is the latest unemitted value
             if (this.isStrategyLatest) {
                 this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
+                    if (this.dataOutsideTimeBounds) {
+                        this.dataOutsideTimeBounds = false;
+                        this.emit('dataInsideTimeBounds');
+                    }
+
                     this.emit('add', this.boundedTelemetry);
                 }
             } else {
@@ -328,7 +334,8 @@ export default class TelemetryCollection extends EventEmitter {
                     // since it IS strategy latest, we can assume there will be at least 1 datum
                     // unless no data was returned in the first request, we need to account for that
                     } else if (this.boundedTelemetry.length === 1) {
-                        this.emit('datumOutsideTimeBounds');
+                        this.dataOutsideTimeBounds = true;
+                        this.emit('dataOutsideTimeBounds');
                     }
                 }
             }
@@ -341,6 +348,11 @@ export default class TelemetryCollection extends EventEmitter {
                 if (!this.isStrategyLatest) {
                     this.boundedTelemetry = [...this.boundedTelemetry, ...added];
                 } else {
+                    if (this.dataOutsideTimeBounds) {
+                        this.dataOutsideTimeBounds = false;
+                        this.emit('dataInsideTimeBounds');
+                    }
+
                     added = [added[added.length - 1]];
                     this.boundedTelemetry = added;
                 }
