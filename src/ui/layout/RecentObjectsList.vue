@@ -205,9 +205,9 @@ export default {
                     {
                         label: 'OK',
                         callback: () => {
-                            dialog.dismiss();
                             localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
                             this.recents = [];
+                            dialog.dismiss();
                         }
                     },
                     {
