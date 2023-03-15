@@ -21,8 +21,8 @@
  *****************************************************************************/
 const { test } = require('../../../pluginFixtures');
 const { createPlanFromJSON } = require('../../../appActions');
-const { testPlan1 } = require('./util/examplePlans');
-const { assertPlanActivities } = require('./util/helper');
+const { testPlan1 } = require('../../../test-data/examplePlans');
+const { assertPlanActivities } = require('../../../helper/planningUtils');
 
 test.describe("Plan", () => {
     let plan;

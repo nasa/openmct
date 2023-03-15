@@ -21,8 +21,8 @@
  *****************************************************************************/
 const { test, expect } = require('../../../pluginFixtures');
 const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
-const { testPlan1, testPlan2 } = require('./util/examplePlans');
-const { assertPlanActivities } = require('./util/helper');
+const { testPlan1, testPlan2 } = require('../../../test-data/examplePlans');
+const { assertPlanActivities } = require('../../../helper/planningUtils');
 
 test.describe("Gantt Chart", () => {
     let ganttChart;
