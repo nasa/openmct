@@ -122,8 +122,8 @@ export default {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
-            this.composition.load().then(() => {
-                this.setCurrentTab = true;
+
+            this.composition.load().then(tabObjects => {
                 let currentTabIndexFromURL = this.openmct.router.getSearchParam(this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
 
@@ -132,9 +132,11 @@ export default {
                 } else if (currentTabIndexFromDomainObject !== undefined) {
                     this.setCurrentTabByIndex(currentTabIndexFromDomainObject);
                     this.storeCurrentTabIndexInURL(currentTabIndexFromDomainObject);
-                } else {
+                } else if (tabObjects?.length) {
                     this.setCurrentTabByIndex(0);
                     this.storeCurrentTabIndexInURL(0);
+                } else {
+                    this.setCurrentTab = true;
                 }
             });
         }
@@ -208,6 +210,7 @@ export default {
             }
 
             this.currentTab = tab;
+            this.setCurrentTab = false;
             this.addTabToLoaded(tab);
         },
         shouldLoadTab(tab) {
@@ -267,7 +270,6 @@ export default {
 
             if (this.setCurrentTab) {
                 this.showTab(tabItem);
-                this.setCurrentTab = false;
             }
         },
         reset() {
@@ -306,7 +308,6 @@ export default {
             });
         },
         onDrop(e) {
-            this.setCurrentTab = true;
             this.storeCurrentTabIndexInURL(this.tabsList.length);
         },
         dragstart(e) {
