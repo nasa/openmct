@@ -318,7 +318,7 @@ export default class TelemetryCollection extends EventEmitter {
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
                 } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
-                    // if greedyLAD is active and there is no new data to replace don't discard
+                    // if greedyLAD is active and there is no new data to replace, don't discard
                     const isGreedyLAD = this.openmct.telemetry.greedyLAD();
                     const shouldRemove = (!isGreedyLAD || (isGreedyLAD && added.length > 0));
 
