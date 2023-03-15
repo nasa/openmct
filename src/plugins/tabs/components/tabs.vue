@@ -274,6 +274,7 @@ export default {
         },
         reset() {
             this.currentTab = {};
+            this.currentTabIndex = undefined;
             this.setCurrentTab = true;
         },
         removeItem(identifier) {
