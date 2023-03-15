@@ -197,7 +197,7 @@ export default {
          * Before clearing, prompts the user to confirm the action with a dialog.
          */
         clearRecentObjects() {
-            let dialog = this.openmct.overlays.dialog({
+            const dialog = this.openmct.overlays.dialog({
                 title: 'Clear Recently Viewed Objects',
                 iconClass: 'alert',
                 message: 'This action will clear the Recently Viewed Objects list. Are you sure you want to continue?',
