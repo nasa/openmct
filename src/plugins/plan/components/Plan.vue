@@ -184,7 +184,6 @@ export default {
 
             this.timeContext.on("timeSystem", this.setScaleAndGenerateActivities);
             this.timeContext.on("bounds", this.updateViewBounds);
-            this.timeContext.on("clock", this.updateBounds);
         },
         loadComposition() {
             if (this.composition) {
@@ -198,7 +197,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndGenerateActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
-                this.timeContext.off("clock", this.updateBounds);
             }
         },
         showReplacePlanDialog(domainObject) {
@@ -287,7 +285,7 @@ export default {
             let clientHeight = this.$refs.plan.clientHeight;
 
             if (!clientHeight) {
-            //this is a hack - need a better way to find the parent of this component
+                //this is a hack - need a better way to find the parent of this component
                 let parent = this.openmct.layout.$refs.browseObject.$el;
                 if (parent) {
                     clientHeight = parent.getBoundingClientRect().height;
@@ -296,14 +294,9 @@ export default {
 
             return clientHeight;
         },
-        updateBounds(clock) {
-            if (clock === undefined) {
-                this.viewBounds = Object.create(this.timeContext.bounds());
-            }
-        },
         updateViewBounds(bounds) {
             if (bounds) {
-                this.viewBounds = Object.create(bounds);
+                this.viewBounds = bounds;
             }
 
             if (this.timeSystem === null) {
