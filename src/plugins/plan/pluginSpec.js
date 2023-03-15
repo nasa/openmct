@@ -208,7 +208,7 @@ describe('the plugin', function () {
             openmct.time.bounds(bounds);
 
             await Vue.nextTick();
-            const rectEls = element.querySelectorAll('.c-plan__contents rect');
+            const rectEls = element.querySelectorAll('.c-plan__contents use');
             expect(rectEls.length).toEqual(2);
             const textEls = element.querySelectorAll('.c-plan__contents text');
             expect(textEls.length).toEqual(3);
