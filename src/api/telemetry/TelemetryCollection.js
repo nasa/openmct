@@ -236,6 +236,7 @@ export default class TelemetryCollection extends EventEmitter {
                     if (this.dataOutsideTimeBounds) {
                         this.dataOutsideTimeBounds = false;
                         this.emit('dataInsideTimeBounds');
+                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
                     }
 
                     this.emit('add', this.boundedTelemetry);
@@ -336,6 +337,7 @@ export default class TelemetryCollection extends EventEmitter {
                     } else if (this.boundedTelemetry.length === 1) {
                         this.dataOutsideTimeBounds = true;
                         this.emit('dataOutsideTimeBounds');
+                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is outside of current time bounds`);
                     }
                 }
             }
@@ -351,6 +353,7 @@ export default class TelemetryCollection extends EventEmitter {
                     if (this.dataOutsideTimeBounds) {
                         this.dataOutsideTimeBounds = false;
                         this.emit('dataInsideTimeBounds');
+                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
                     }
 
                     added = [added[added.length - 1]];
