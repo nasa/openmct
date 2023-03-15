@@ -228,8 +228,9 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Get or set greedy LAD. For stategy "latest" requests and realtime the start
-     * bound will be ignored if true and respected if false
+     * Get or set greedy LAD. For stategy "latest" telemetry in
+     * realtime mode the start bound will be ignored if true and
+     * there is no new data to replace the existing data
      *
      * @method greedyLAD
      * @returns {boolean} if greedyLAD is active or not
