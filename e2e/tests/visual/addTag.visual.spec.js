@@ -28,14 +28,14 @@ const { test } = require("../../pluginFixtures");
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
-test.describe("Visual - Check blur of Add Tag button", () => {
+test.describe("Visual - Check for cancellation of Add Tag button", () => {
 
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all network events to resolve
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 
-    test("Blur 'Add tag'", async ({ page, theme }) => {
+    test("Cancel 'Add tag'", async ({ page, theme }) => {
         createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
         await page.locator('text=To start a new entry, click here or drag and drop any object').click();
@@ -56,13 +56,10 @@ test.describe("Visual - Check blur of Add Tag button", () => {
         // Take snapshot of the notebook with the AutoComplete field visible
         await percySnapshot(page, `Notebook Add Tag (theme: '${theme}')`);
 
-        // Click inside the AutoComplete field
-        await page.locator('[placeholder="Type to select tag"]').click();
-
         // Click on the "Tags" header (simulating a click outside the autocomplete field)
         await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
 
         // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
-        await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
+        await percySnapshot(page, `Notebook Annotation cancel (theme: '${theme}')`);
     });
 });
