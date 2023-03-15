@@ -47,14 +47,14 @@ export default function PropertiesViewProvider(openmct) {
                         template: `<Properties />`
                     });
                 },
+                priority: function () {
+                    return openmct.priority.DEFAULT;
+                },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return this.openmct.priority.DEFAULT;
         }
     };
 }

@@ -54,6 +54,9 @@ export default function PlanInspectorViewProvider(openmct) {
                         template: '<plan-activities-view></plan-activities-view>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -61,9 +64,6 @@ export default function PlanInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
         }
     };
 }
