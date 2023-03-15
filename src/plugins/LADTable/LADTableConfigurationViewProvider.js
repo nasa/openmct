@@ -52,6 +52,9 @@ export default function LADTableConfigurationViewProvider(openmct) {
                         template: '<LADTableConfiguration />'
                     });
                 },
+                priority() {
+                    return 1;
+                },
                 destroy() {
                     if (component) {
                         component.$destroy();
@@ -59,9 +62,6 @@ export default function LADTableConfigurationViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority() {
-            return 1;
         }
     };
 }
