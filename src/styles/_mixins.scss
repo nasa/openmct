@@ -201,6 +201,12 @@
     &.is-limit--orange { background: $colorLimitOrangeBg !important; color: $colorLimitOrangeFg !important; }
     &.is-limit--yellow { background: $colorLimitYellowBg !important; color: $colorLimitYellowFg !important; }
     &.is-limit--cyan { background: $colorLimitCyanBg !important; color: $colorLimitCyanFg !important; }
+
+    &.is-event-limit--purple { background: $colorLimitPurpleBg !important; color: $colorLimitPurpleFg !important; }
+    &.is-event-limit--red { background: $colorLimitRedBg !important; color: $colorLimitRedFg !important; }
+    &.is-event-limit--orange { background: $colorLimitOrangeBg !important; color: $colorLimitOrangeFg !important; }
+    &.is-event-limit--yellow { background: $colorLimitYellowBg !important; color: $colorLimitYellowFg !important; }
+    &.is-event-limit--cyan { background: $colorLimitCyanBg !important; color: $colorLimitCyanFg !important; }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
