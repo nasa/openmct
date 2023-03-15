@@ -30,8 +30,8 @@ export default class TelemetryCollection extends EventEmitter {
     /**
      * Creates a Telemetry Collection
      *
-     * @param  {object} openmct - Openm MCT
-     * @param  {object} domainObject - Domain Object to user for telemetry collection
+     * @param  {OpenMCT} openmct - Open MCT
+     * @param  {module:openmct.DomainObject} domainObject - Domain Object to use for telemetry collection
      * @param  {object} options - Any options passed in for request/subscribe
      */
     constructor(openmct, domainObject, options) {
@@ -50,6 +50,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.lastBounds = undefined;
         this.requestAbort = undefined;
         this.isStrategyLatest = this.options.strategy === 'latest';
+        this.isGreedyLAD = this.openmct.telemetry.greedyLAD();
     }
 
     /**
@@ -104,7 +105,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     async _requestHistoricalTelemetry() {
-        let options = { ...this.options };
+        const options = { ...this.options };
         let historicalProvider;
 
         this.openmct.telemetry.standardizeRequestOptions(options);
@@ -294,6 +295,17 @@ export default class TelemetryCollection extends EventEmitter {
             let added = [];
             let testDatum = {};
 
+            if (endChanged) {
+                testDatum[this.timeKey] = bounds.end;
+                // Calculate the new index of the last item in bounds
+                endIndex = _.sortedLastIndexBy(
+                    this.futureBuffer,
+                    testDatum,
+                    datum => this.parseTime(datum)
+                );
+                added = this.futureBuffer.splice(0, endIndex);
+            }
+
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
 
@@ -307,20 +319,12 @@ export default class TelemetryCollection extends EventEmitter {
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
                 } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
-                    discarded = this.boundedTelemetry;
-                    this.boundedTelemetry = [];
+                    const shouldRemove = (!this.isGreedyLAD || (this.isGreedyLAD && added.length > 0));
+                    if (shouldRemove) {
+                        discarded = this.boundedTelemetry;
+                        this.boundedTelemetry = [];
+                    }
                 }
-            }
-
-            if (endChanged) {
-                testDatum[this.timeKey] = bounds.end;
-                // Calculate the new index of the last item in bounds
-                endIndex = _.sortedLastIndexBy(
-                    this.futureBuffer,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                added = this.futureBuffer.splice(0, endIndex);
             }
 
             if (discarded.length > 0) {
