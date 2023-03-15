@@ -62,6 +62,6 @@ export default function LADTableConfigurationViewProvider(openmct) {
                     }
                 }
             };
-        },
+        }
     };
 }
