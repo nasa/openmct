@@ -53,6 +53,52 @@ test.describe('Main Tree', () => {
 
     });
 
+    test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({ page, openmctConfig }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6391'
+        });
+
+        const { myItemsFolderName } = openmctConfig;
+        const page2 = await page.context().newPage();
+
+        // Both pages: Go to baseURL
+        await Promise.all([
+            page.goto('./', { waitUntil: 'networkidle' }),
+            page2.goto('./', { waitUntil: 'networkidle' })
+        ]);
+
+        const page1Folder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder'
+        });
+
+        await expandTreePaneItemByName(page2, myItemsFolderName);
+        await assertTreeItemIsVisible(page2, page1Folder.name);
+    });
+
+    test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({ page, openmctConfig }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6391'
+        });
+
+        const { myItemsFolderName } = openmctConfig;
+        const page2 = await page.context().newPage();
+
+        // Both pages: Go to baseURL
+        await Promise.all([
+            page.goto('./', { waitUntil: 'networkidle' }),
+            page2.goto('./', { waitUntil: 'networkidle' })
+        ]);
+
+        const page1Folder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder'
+        });
+
+        await expandTreePaneItemByName(page2, myItemsFolderName);
+        await assertTreeItemIsVisible(page2, page1Folder.name);
+    });
+
     test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 

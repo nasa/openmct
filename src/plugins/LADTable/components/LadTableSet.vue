@@ -31,6 +31,7 @@
                 <th>Name</th>
                 <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
+                <th v-if="showType">Type</th>
                 <th v-if="hasUnits">Units</th>
             </tr>
         </thead>
@@ -111,6 +112,9 @@ export default {
         },
         showTimestamp() {
             return !this.configuration?.hiddenColumns?.timestamp;
+        },
+        showType() {
+            return !this.configuration?.hiddenColumns?.type;
         },
         staleClass() {
             if (this.staleObjects.length !== 0) {

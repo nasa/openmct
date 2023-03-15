@@ -54,6 +54,7 @@ import EventEmitter from 'eventemitter3';
 /**
  * @typedef {object} NotificationOptions
  * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
+ * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
  * @property {NotificationLink} [link] A link for the notification
  */
 
@@ -327,7 +328,7 @@ export default class NotificationAPI extends EventEmitter {
         /*
         Check if there is already an active (ie. visible) notification
             */
-        if (!this.activeNotification) {
+        if (!this.activeNotification && !notification?.model?.options?.minimized) {
             this._setActiveNotification(notification);
         } else if (!this.activeTimeout) {
             /*
