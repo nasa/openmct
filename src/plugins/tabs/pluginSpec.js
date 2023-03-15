@@ -22,8 +22,7 @@
 
 import {
     createOpenMct,
-    resetApplicationState,
-    spyOnBuiltins
+    resetApplicationState
 } from 'utils/testing';
 import TabsLayout from './plugin';
 import Vue from "vue";
@@ -155,17 +154,8 @@ describe('the plugin', function () {
         let tabsLayoutViewProvider;
         let mockComposition;
         let count = 0;
-        let resizeCallback;
 
         beforeEach(() => {
-            class mockResizeObserver {
-                constructor(cb) {
-                    resizeCallback = cb;
-                }
-                observe() { }
-                disconnect() { }
-            }
-
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
                 if (count === 0) {
@@ -178,9 +168,6 @@ describe('the plugin', function () {
             };
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-            spyOnBuiltins(['ResizeObserver']);
-            window.ResizeObserver.and.callFake(mockResizeObserver);
 
             const applicableViews = openmct.objectViews.get(testViewObject, []);
             tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
