@@ -108,12 +108,12 @@ export default function (config) {
         let configResult = hasRequiredOptions(config) || validateConfiguration(config, openmct);
         throwIfError(configResult);
 
-        const defaultMenuOptions = config.menuOptions[0];
-        if (defaultMenuOptions.clock) {
-            openmct.time.clock(defaultMenuOptions.clock, defaultMenuOptions.clockOffsets);
-            openmct.time.timeSystem(defaultMenuOptions.timeSystem, openmct.time.bounds());
+        const defaults = config.menuOptions[0];
+        if (defaults.clock) {
+            openmct.time.clock(defaults.clock, defaults.clockOffsets);
+            openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
         } else {
-            openmct.time.timeSystem(defaultMenuOptions.timeSystem, defaultMenuOptions.bounds);
+            openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
         }
 
         openmct.on('start', function () {
