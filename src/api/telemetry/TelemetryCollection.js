@@ -325,6 +325,8 @@ export default class TelemetryCollection extends EventEmitter {
                     if (shouldRemove) {
                         discarded = this.boundedTelemetry;
                         this.boundedTelemetry = [];
+                    } else {
+                        this.emit('datumOutsideTimeBounds');
                     }
                 }
             }
