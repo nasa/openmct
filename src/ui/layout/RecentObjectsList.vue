@@ -200,7 +200,7 @@ export default {
             let dialog = this.openmct.overlays.dialog({
                 title: 'Clear Recently Viewed Objects',
                 iconClass: 'alert',
-                message: 'This action will clear the Recently View items list. Are you sure you want to continue?',
+                message: 'This action will clear the Recently Viewed Objects list. Are you sure you want to continue?',
                 buttons: [
                     {
                         label: 'OK',
