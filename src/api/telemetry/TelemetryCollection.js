@@ -325,7 +325,9 @@ export default class TelemetryCollection extends EventEmitter {
                     if (shouldRemove) {
                         discarded = this.boundedTelemetry;
                         this.boundedTelemetry = [];
-                    } else {
+                    // since it IS strategy latest, we can assume there will be at least 1 datum
+                    // unless no data was returned in the first request, we need to account for that
+                    } else if (this.boundedTelemetry.length === 1) {
                         this.emit('datumOutsideTimeBounds');
                     }
                 }
