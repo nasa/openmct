@@ -234,9 +234,7 @@ export default class TelemetryCollection extends EventEmitter {
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
                     if (this.dataOutsideTimeBounds) {
-                        this.dataOutsideTimeBounds = false;
-                        this.emit('dataInsideTimeBounds');
-                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
+                        this._handleDataInsideBounds();
                     }
 
                     this.emit('add', this.boundedTelemetry);
@@ -335,9 +333,7 @@ export default class TelemetryCollection extends EventEmitter {
                     // since it IS strategy latest, we can assume there will be at least 1 datum
                     // unless no data was returned in the first request, we need to account for that
                     } else if (this.boundedTelemetry.length === 1) {
-                        this.dataOutsideTimeBounds = true;
-                        this.emit('dataOutsideTimeBounds');
-                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is outside of current time bounds`);
+                        this._handleDataOutsideBounds();
                     }
                 }
             }
@@ -351,9 +347,7 @@ export default class TelemetryCollection extends EventEmitter {
                     this.boundedTelemetry = [...this.boundedTelemetry, ...added];
                 } else {
                     if (this.dataOutsideTimeBounds) {
-                        this.dataOutsideTimeBounds = false;
-                        this.emit('dataInsideTimeBounds');
-                        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
+                        this._handleDataInsideBounds();
                     }
 
                     added = [added[added.length - 1]];
@@ -368,6 +362,18 @@ export default class TelemetryCollection extends EventEmitter {
             this._reset();
         }
 
+    }
+
+    _handleDataInsideBounds() {
+        this.dataOutsideTimeBounds = false;
+        this.emit('dataInsideTimeBounds');
+        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
+    }
+
+    _handleDataOutsideBounds() {
+        this.dataOutsideTimeBounds = true;
+        this.emit('dataOutsideTimeBounds');
+        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is outside of current time bounds`);
     }
 
     /**
