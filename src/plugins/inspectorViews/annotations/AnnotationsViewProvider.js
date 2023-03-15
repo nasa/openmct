@@ -49,14 +49,14 @@ export default function ElementsViewProvider(openmct) {
                         template: `<Annotations />`
                     });
                 },
+                priority: function () {
+                    return openmct.priority.DEFAULT;
+                },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return this.openmct.priority.DEFAULT;
         }
     };
 }

@@ -110,6 +110,30 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
+    test('Can cancel adding tags', async ({ page }) => {
+        await createNotebookAndEntry(page);
+
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        await selectInspectorTab(page, 'Annotations');
+
+        // Test canceling adding a tag after we click "Type to select tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Test canceling adding a tag after we just click "Add Tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+    });
     test('Can search for tags and preview works properly', async ({ page }) => {
         await createNotebookEntryAndTags(page);
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
