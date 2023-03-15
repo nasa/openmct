@@ -32,6 +32,30 @@
             :height="height"
             :width="width"
         >
+            <symbol
+                id="activity-bar-bg"
+                :height="rowHeight"
+                width="2"
+                preserveAspectRatio="none"
+            >
+                <rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="currentColor"
+                />
+                <line
+                    x1="100%"
+                    y1="0"
+                    x2="100%"
+                    y2="100%"
+                    stroke="black"
+                    stroke-width="1"
+                    opacity="0.3"
+                    transform="translate(-0.5, 0)"
+                />
+            </symbol>
             <template v-for="(activity, index) in activities">
                 <template v-if="clipActivityNames === true">
                     <clipPath
@@ -41,8 +65,8 @@
                         <rect
                             :x="activity.rectStart"
                             :y="activity.row"
-                            :width="activity.rectWidth"
-                            :height="25"
+                            :width="activity.rectWidth - 1"
+                            :height="rowHeight"
                         />
                     </clipPath>
                 </template>
@@ -52,14 +76,15 @@
                     @click="setSelectionForActivity(activity, $event)"
                 >
                     <title>{{ activity.name }}</title>
-                    <rect
+                    <use
                         :key="`rect-${index}`"
+                        href="#activity-bar-bg"
                         :x="activity.rectStart"
                         :y="activity.row"
                         :width="activity.rectWidth"
-                        :height="25"
+                        :height="rowHeight"
                         :class="activity.class"
-                        :fill="activity.color"
+                        :color="activity.color"
                     />
                     <text
                         v-for="(textLine, textIndex) in activity.textLines"
@@ -125,11 +150,15 @@ export default {
             default() {
                 return '';
             }
+        },
+        rowHeight: {
+            type: Number,
+            default: 22
         }
     },
     data() {
         return {
-            lineHeight: 12
+            lineHeight: 10
         };
     },
     methods: {

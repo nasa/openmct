@@ -34,7 +34,9 @@
 
         &[s-selected] {
             rect, use {
-                stroke: $colorSelectedFg;
+                outline-style: dotted;
+                outline-width: 2px;
+                stroke: $colorGanttSelectedBorder;
                 stroke-width: 2px;
             }
         }

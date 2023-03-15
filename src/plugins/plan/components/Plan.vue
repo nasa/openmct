@@ -46,6 +46,7 @@
             :clip-activity-names="clipActivityNames"
             :heading="group.heading"
             :height="group.height"
+            :row-height="rowHeight"
             :width="group.width"
             :is-nested="options.isChildObject"
             :status="status"
@@ -65,14 +66,15 @@ import PlanViewConfiguration from '../PlanViewConfiguration';
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
-const INNER_TEXT_PADDING = 17;
+const INNER_TEXT_PADDING = 15;
 const TEXT_LEFT_PADDING = 5;
-const ROW_PADDING = 12;
+const ROW_PADDING = 5;
+const SWIMLANE_PADDING = 3;
 const RESIZE_POLL_INTERVAL = 200;
-const ROW_HEIGHT = 25;
+const ROW_HEIGHT = 22;
 const MAX_TEXT_WIDTH = 300;
 const MIN_ACTIVITY_WIDTH = 2;
-const DEFAULT_COLOR = '#cc9922';
+const DEFAULT_COLOR = '#999';
 
 export default {
     components: {
@@ -106,7 +108,8 @@ export default {
             planData: {},
             swimlaneVisibility: {},
             clipActivityNames: false,
-            height: 0
+            height: 0,
+            rowHeight: ROW_HEIGHT
         };
     },
     computed: {
@@ -407,7 +410,7 @@ export default {
                 currentRow = row + ROW_HEIGHT + ROW_PADDING;
             }
 
-            return currentRow || 0;
+            return currentRow || SWIMLANE_PADDING;
         },
         generateActivities() {
             const groupNames = Object.keys(this.planData);
@@ -539,7 +542,7 @@ export default {
 
             if (rows.length) {
                 const lastActivityRow = rows[rows.length - 1];
-                swimlaneHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
+                swimlaneHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT + SWIMLANE_PADDING;
                 swimlaneWidth = this.width;
             }
 
