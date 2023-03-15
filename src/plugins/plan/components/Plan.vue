@@ -202,7 +202,7 @@ export default {
             }
         },
         showReplacePlanDialog(domainObject) {
-            let dialog = this.openmct.overlays.dialog({
+            const dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
                 message: 'This action will replace the current Plan. Do you want to continue?',
                 buttons: [
@@ -529,7 +529,7 @@ export default {
         },
         getGroupDimensions(activityRows) {
             let swimlaneHeight = 30;
-            let swimlaneWidth = 200;
+            let swimlaneWidth = this.width;
 
             if (!activityRows) {
                 return {
