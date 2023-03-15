@@ -228,7 +228,7 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Get or set the greedy LAD. For stategy "latest" requests and realtime the start
+     * Get or set greedy LAD. For stategy "latest" requests and realtime the start
      * bound will be ignored if true and respected if false
      *
      * @method greedyLAD

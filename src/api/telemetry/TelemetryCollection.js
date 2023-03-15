@@ -50,7 +50,6 @@ export default class TelemetryCollection extends EventEmitter {
         this.lastBounds = undefined;
         this.requestAbort = undefined;
         this.isStrategyLatest = this.options.strategy === 'latest';
-        this.isGreedyLAD = this.openmct.telemetry.greedyLAD();
     }
 
     /**
@@ -105,7 +104,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     async _requestHistoricalTelemetry() {
-        const options = { ...this.options };
+        let options = { ...this.options };
         let historicalProvider;
 
         this.openmct.telemetry.standardizeRequestOptions(options);
@@ -319,7 +318,10 @@ export default class TelemetryCollection extends EventEmitter {
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
                 } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
-                    const shouldRemove = (!this.isGreedyLAD || (this.isGreedyLAD && added.length > 0));
+                    // if greedyLAD is active and there is no new data to replace don't discard
+                    const isGreedyLAD = this.openmct.telemetry.greedyLAD();
+                    const shouldRemove = (!isGreedyLAD || (isGreedyLAD && added.length > 0));
+
                     if (shouldRemove) {
                         discarded = this.boundedTelemetry;
                         this.boundedTelemetry = [];
