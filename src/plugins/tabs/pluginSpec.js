@@ -35,9 +35,8 @@ describe('the plugin', function () {
     let openmct;
     let tabsLayoutDefinition;
     const testViewObject = {
-        id: 'af3f0e11-354e-48b5-9887-de47dfb6ecf6',
         identifier: {
-            key: 'af3f0e11-354e-48b5-9887-de47dfb6ecf6',
+            key: 'mock-tabs-object',
             namespace: ''
         },
         type: 'tabs',
@@ -47,13 +46,13 @@ describe('the plugin', function () {
             {
                 'identifier': {
                     'namespace': '',
-                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
+                    'key': 'swg-1'
                 }
             },
             {
                 'identifier': {
                     'namespace': '',
-                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca90'
+                    'key': 'swg-2'
                 }
             }
         ]
@@ -74,18 +73,16 @@ describe('the plugin', function () {
     };
     let telemetryItem1 = Object.assign({}, telemetryItemTemplate, {
         'name': 'Sine Wave Generator 1',
-        'id': '55122607-e65e-44d5-9c9d-9c31a914ca89',
         'identifier': {
             'namespace': '',
-            'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
+            'key': 'swg-1'
         }
     });
     let telemetryItem2 = Object.assign({}, telemetryItemTemplate, {
         'name': 'Sine Wave Generator 2',
-        'id': '55122607-e65e-44d5-9c9d-9c31a914ca90',
         'identifier': {
             'namespace': '',
-            'key': '55122607-e65e-44d5-9c9d-9c31a914ca90'
+            'key': 'swg-2'
         }
     });
 
@@ -206,22 +203,18 @@ describe('the plugin', function () {
 
         describe('with domainObject.keep_alive set to', () => {
 
-            it ('true, will keep all views loaded, regardless of current tab view', (done) => {
-                resizeCallback();
+            it ('true, will keep all views loaded, regardless of current tab view', async () => {
+                let tabEls = element.querySelectorAll('.js-tab');
 
-                // the function called by the resize observer is debounced 500ms,
-                // this is to account for that
-                let promise = new Promise((resolve, reject) => {
-                    setTimeout(resolve, 501);
-                });
+                for (let i = 0; i < tabEls.length; i++) {
+                    const tab = tabEls[i];
 
-                Promise.all([Vue.nextTick(), promise]).then(() => {
-                    let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+                    tab.click();
+                    await Vue.nextTick();
 
+                    const tabViewEls = element.querySelectorAll('.c-tabs-view__object');
                     expect(tabViewEls.length).toEqual(2);
-                }).finally(() => {
-                    done();
-                });
+                }
             });
 
             it ('false, will only keep the current tab view loaded', async () => {
