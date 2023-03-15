@@ -22,7 +22,8 @@
 
 <template>
 <tr
-    class="js-lad-table__body__row"
+    class="js-lad-table__body__row c-table__selectable-row"
+    @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
 >
     <td class="js-first-data">{{ domainObject.name }}</td>
@@ -40,6 +41,10 @@
     >
         {{ unit }}
     </td>
+    <td
+        v-if="showType"
+        class="js-type-data"
+    >{{ typeLabel }}</td>
 </tr>
 </template>
 
@@ -51,6 +56,9 @@ const CONTEXT_MENU_ACTIONS = [
     'remove'
 ];
 const BLANK_VALUE = '---';
+
+import identifierToString from '/src/tools/url';
+import PreviewAction from "@/ui/preview/PreviewAction.js";
 
 export default {
     inject: ['openmct', 'currentView'],
@@ -83,16 +91,27 @@ export default {
             datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
+            composition: [],
             unit: ''
         };
     },
     computed: {
         value() {
-            if (!this.datum) {
+            if (!this.datum || this.isAggregate) {
                 return BLANK_VALUE;
             }
 
             return this.formats[this.valueKey].format(this.datum);
+        },
+        typeLabel() {
+            if (this.isAggregate) {
+                return 'Aggregate';
+            }
+
+            return "Telemetry";
+        },
+        isAggregate() {
+            return this.composition && this.composition.length > 0;
         },
         valueClasses() {
             let classes = [];
@@ -113,7 +132,7 @@ export default {
 
         },
         formattedTimestamp() {
-            if (!this.timestamp) {
+            if (!this.timestamp || this.isAggregate) {
                 return BLANK_VALUE;
             }
 
@@ -131,12 +150,19 @@ export default {
         },
         showTimestamp() {
             return !this.configuration?.hiddenColumns?.timestamp;
+        },
+        showType() {
+            return !this.configuration?.hiddenColumns?.type;
         }
     },
-    mounted() {
+    async mounted() {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        const compositionCollection = this.openmct.composition.get(this.domainObject);
+        if (compositionCollection) {
+            this.composition = await compositionCollection.load();
+        }
 
         this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
@@ -170,11 +196,15 @@ export default {
         if (this.hasUnits) {
             this.setUnit();
         }
+
+        this.previewAction = new PreviewAction(this.openmct);
+        this.previewAction.on('isVisible', this.togglePreviewState);
     },
     destroyed() {
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.telemetryCollection.off('add', this.setLatestValues);
         this.telemetryCollection.off('clear', this.resetValues);
+        this.previewAction.off('isVisible', this.togglePreviewState);
 
         this.telemetryCollection.destroy();
     },
@@ -187,6 +217,20 @@ export default {
                     this.datum = this.latestDatum;
                     this.updatingView = false;
                 });
+            }
+        },
+        clickedRow(event) {
+            if (this.openmct.editor.isEditing()) {
+                event.preventDefault();
+                this.preview(this.objectPath);
+            } else {
+                const resultUrl = identifierToString(this.openmct, this.objectPath);
+                this.openmct.router.navigate(resultUrl);
+            }
+        },
+        preview(objectPath) {
+            if (this.previewAction.appliesTo(objectPath)) {
+                this.previewAction.invoke(objectPath);
             }
         },
         setLatestValues(data) {

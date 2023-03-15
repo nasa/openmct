@@ -152,21 +152,40 @@ describe("The LAD Table", () => {
             }
         }).telemetry;
 
-        // add another telemetry object as composition in lad table to test multi rows
-        mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
+        const aggregateTelemetryObj = getMockObjects({
+            objectKeyStrings: ['telemetry'],
+            overwrite: {
+                telemetry: {
+                    name: "Aggregate Telemetry Object",
+                    identifier: {
+                        namespace: "",
+                        key: "aggregate-telemetry-object"
+                    }
+                }
+            }
+        }).telemetry;
+
+        // add another aggregate telemetry object as composition in lad table to test multi rows
+        aggregateTelemetryObj.composition = [anotherTelemetryObj.identifier];
+        mockObj.ladTable.composition.push(aggregateTelemetryObj.identifier);
 
         beforeEach(async () => {
             let telemetryRequestResolve;
             let telemetryObjectResolve;
             let anotherTelemetryObjectResolve;
-            let telemetryRequestPromise = new Promise((resolve) => {
+            let aggregateTelemetryObjectResolve;
+            const telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
             });
-            let telemetryObjectPromise = new Promise((resolve) => {
+            const telemetryObjectPromise = new Promise((resolve) => {
                 telemetryObjectResolve = resolve;
             });
-            let anotherTelemetryObjectPromise = new Promise((resolve) => {
+            const anotherTelemetryObjectPromise = new Promise((resolve) => {
                 anotherTelemetryObjectResolve = resolve;
+            });
+
+            const aggregateTelemetryObjectPromise = new Promise((resolve) => {
+                aggregateTelemetryObjectResolve = resolve;
             });
 
             spyOnBuiltins(['requestAnimationFrame']);
@@ -185,10 +204,14 @@ describe("The LAD Table", () => {
                     telemetryObjectResolve(mockObj.telemetry);
 
                     return telemetryObjectPromise;
-                } else {
+                } else if (obj.key === 'another-telemetry-object') {
                     anotherTelemetryObjectResolve(anotherTelemetryObj);
 
                     return anotherTelemetryObjectPromise;
+                } else {
+                    aggregateTelemetryObjectResolve(aggregateTelemetryObj);
+
+                    return aggregateTelemetryObjectPromise;
                 }
             });
 
@@ -202,7 +225,7 @@ describe("The LAD Table", () => {
             ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
             ladTableView.show(child, true);
 
-            await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
+            await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise, aggregateTelemetryObjectResolve]);
             await Vue.nextTick();
         });
 
@@ -217,6 +240,16 @@ describe("The LAD Table", () => {
             await Vue.nextTick();
             const latestDate = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
             expect(latestDate).toBe(expectedDate);
+            const dataType = parent.querySelector(TABLE_BODY_ROWS).querySelector('.js-type-data').innerText;
+            expect(dataType).toBe('Telemetry');
+        });
+
+        it("should show aggregate telemetry type with blank data", async () => {
+            await Vue.nextTick();
+            const lastestData = parent.querySelectorAll(TABLE_BODY_ROWS)[1].querySelectorAll('td')[2].innerText;
+            expect(lastestData).toBe('---');
+            const dataType = parent.querySelectorAll(TABLE_BODY_ROWS)[1].querySelector('.js-type-data').innerText;
+            expect(dataType).toBe('Aggregate');
         });
 
         it("should show the name provided for the the telemetry producing object", () => {
