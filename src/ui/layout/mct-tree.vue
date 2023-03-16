@@ -304,8 +304,7 @@ export default {
             }
 
             // will need to listen for root composition changes as well
-
-            this.treeItems = await this.loadAndBuildTreeItemsFor(root, []);
+            this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
         },
         treeItemAction(parentItem, type) {
             if (type === 'close') {
@@ -322,12 +321,12 @@ export default {
             this.$emit('tree-item-selection', item);
         },
         async openTreeItem(parentItem) {
-            let parentPath = parentItem.navigationPath;
+            const parentPath = parentItem.navigationPath;
 
             this.startItemLoad(parentPath);
             // pass in abort signal when functional
-            let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-            let parentIndex = this.treeItems.indexOf(parentItem);
+            const childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object.identifier, parentItem.objectPath);
+            const parentIndex = this.treeItems.indexOf(parentItem);
 
             // if it's not loading, it was aborted
             if (!this.isItemLoading(parentPath) || parentIndex === -1) {
@@ -558,8 +557,10 @@ export default {
             // determine if any part of the parent's path includes a key value of mine; aka My Items
             return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
         },
-        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
-            let collection = this.openmct.composition.get(domainObject);
+        async loadAndBuildTreeItemsFor(identifier, parentObjectPath, abortSignal) {
+            const domainObject = await this.openmct.objects.get(identifier);
+
+            const collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
 
             if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {

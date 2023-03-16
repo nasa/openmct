@@ -57,14 +57,14 @@ export default function ElementsViewProvider(openmct) {
 
                     return hasComposition && isEditing;
                 },
+                priority: function () {
+                    return openmct.priority.DEFAULT;
+                },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return this.openmct.priority.DEFAULT;
         }
     };
 }
