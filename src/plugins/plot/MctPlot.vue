@@ -1689,7 +1689,7 @@ export default {
 
         resumeRealtimeData() {
             // remove annotation selections
-            this.rectangles = [];
+            //this.rectangles = [];
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
