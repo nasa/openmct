@@ -20,59 +20,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './components/Plan.vue';
+import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 import Vue from 'vue';
 
-export default function PlanViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
-
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
-
+export default function GanttChartInspectorViewProvider(openmct) {
     return {
-        key: 'plan.view',
-        name: 'Plan',
-        cssClass: 'icon-plan',
-        canView(domainObject) {
-            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
-        },
+        key: 'plan-inspector',
+        name: 'Config',
+        canView: function (selection) {
+            if (selection.length === 0 || selection[0].length === 0) {
+                return false;
+            }
 
-        canEdit(domainObject) {
-            return domainObject.type === 'gantt-chart';
-        },
+            const domainObject = selection[0][0].context.item;
 
-        view: function (domainObject, objectPath) {
+            return domainObject?.type === 'gantt-chart';
+        },
+        view: function (selection) {
             let component;
 
             return {
                 show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-
                     component = new Vue({
                         el: element,
                         components: {
-                            Plan
+                            PlanViewConfiguration
                         },
                         provide: {
                             openmct,
-                            domainObject,
-                            path: objectPath
+                            selection: selection
                         },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact,
-                                    isChildObject: isCompact
-                                }
-                            };
-                        },
-                        template: '<plan :options="options"></plan>'
+                        template: '<plan-view-configuration></plan-view-configuration>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+                    if (component) {
+                        component.$destroy();
+                        component = undefined;
+                    }
                 }
             };
         }
