@@ -20,9 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 const { test, expect } = require('../../../pluginFixtures');
-const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
-const { testPlan1, testPlan2 } = require('../../../test-data/examplePlans');
-const { assertPlanActivities } = require('../../../helper/planningUtils');
+const { createPlanFromJSON, createDomainObjectWithDefaults, selectInspectorTab } = require('../../../appActions');
+const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
+const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Small2.json');
+const { assertPlanActivities, setBoundsToSpanAllActivities } = require('../../../helper/planningUtils');
+const { getPreciseDuration } = require('../../../../src/utils/duration');
 
 test.describe("Gantt Chart", () => {
     let ganttChart;
@@ -53,5 +55,31 @@ test.describe("Gantt Chart", () => {
         await page.getByRole('button', { name: 'OK' }).click();
 
         await assertPlanActivities(page, testPlan2, ganttChart.url);
+    });
+    test("Can select a single activity and display its details in the inspector", async ({ page }) => {
+        test.slow();
+        await page.goto(ganttChart.url);
+
+        await setBoundsToSpanAllActivities(page, testPlan1, ganttChart.url);
+
+        const activities = Object.values(testPlan1).flat();
+        const activity = activities[0];
+        await page.locator('g').filter({ hasText: new RegExp(activity.name) }).click();
+        await selectInspectorTab(page, 'Activity');
+
+        const startDateTime = await page.locator('.c-inspect-properties__label:has-text("Start DateTime")+.c-inspect-properties__value').innerText();
+        const endDateTime = await page.locator('.c-inspect-properties__label:has-text("End DateTime")+.c-inspect-properties__value').innerText();
+        const duration = await page.locator('.c-inspect-properties__label:has-text("duration")+.c-inspect-properties__value').innerText();
+
+        const expectedStartDate = new Date(activity.start).toISOString();
+        const actualStartDate = new Date(startDateTime).toISOString();
+        const expectedEndDate = new Date(activity.end).toISOString();
+        const actualEndDate = new Date(endDateTime).toISOString();
+        const expectedDuration = getPreciseDuration(activity.end - activity.start);
+        const actualDuration = duration;
+
+        expect(expectedStartDate).toEqual(actualStartDate);
+        expect(expectedEndDate).toEqual(actualEndDate);
+        expect(expectedDuration).toEqual(actualDuration);
     });
 });

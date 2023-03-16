@@ -159,6 +159,10 @@ async function expandTreePaneItemByName(page, name) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    if (!name) {
+        name = `Plan:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
@@ -172,11 +176,9 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     await page.click(`li:text("Plan")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
 
     // Upload buffer from memory
     await page.locator('input#fileElem').setInputFiles({

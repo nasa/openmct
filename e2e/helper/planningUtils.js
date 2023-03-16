@@ -73,3 +73,20 @@ function activitiesWithinTimeBounds(start1, end1, start2, end2) {
          || (start2 >= start1 && start2 <= end1)
          || (end2 >= start1 && end2 <= end1);
 }
+
+/**
+ * Navigate to the plan view, switch to fixed time mode,
+ * and set the bounds to span all activities.
+ * @param {import('@playwright/test').Page} page
+ * @param {object} planJson
+ * @param {string} planObjectUrl
+ */
+export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl) {
+    const activities = Object.values(planJson).flat();
+    // Get the earliest start value
+    const start = Math.min(...activities.map(activity => activity.start));
+    // Get the latest end value
+    const end = Math.max(...activities.map(activity => activity.end));
+    // Set the start and end bounds to the earliest start and latest end
+    await page.goto(`${planObjectUrl}?tc.mode=fixed&tc.startBound=${start}&tc.endBound=${end}&tc.timeSystem=utc&view=plan.view`);
+}
