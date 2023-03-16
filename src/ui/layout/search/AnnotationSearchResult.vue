@@ -149,7 +149,7 @@ export default {
                 //wait a beat for the navigation
                 setTimeout(() => {
                     this.clickedPlotAnnotation();
-                }, 100);
+                });
             }
         },
         preview(objectPath) {

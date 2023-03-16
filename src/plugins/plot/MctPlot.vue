@@ -415,7 +415,7 @@ export default {
         this.destroy();
     },
     methods: {
-        updateSelection(selection) {
+        async updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
             // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
             // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
@@ -434,11 +434,12 @@ export default {
                 return;
             }
 
+            await this.waitForAxesToLoad();
             const currentXaxis = this.config.xAxis.get('displayRange');
             const currentYaxis = this.config.yAxis.get('displayRange');
 
-            // when there is no plot data, the ranges can be undefined
-            // in which case we should not perform selection
+            // When there is no plot data, the ranges can be undefined
+            // in which case we should not perform selection.
             if (!currentXaxis || !currentYaxis) {
                 return;
             }
@@ -451,6 +452,11 @@ export default {
 
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        async waitForAxesToLoad() {
+            while (!this.config.xAxis.get('displayRange') || !this.config.yAxis.get('displayRange')) {
+                await new Promise(resolve => setTimeout(resolve, 200)); // Wait for 200 milliseconds
+            }
         },
         showAnnotationsFromSearchResults(selectedAnnotations) {
             if (selectedAnnotations?.length) {
