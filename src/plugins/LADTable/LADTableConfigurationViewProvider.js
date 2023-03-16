@@ -20,44 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from "./PlanActivitiesView.vue";
+import LADTableConfigurationComponent from './components/LADTableConfiguration.vue';
 import Vue from 'vue';
 
-export default function PlanInspectorViewProvider(openmct) {
+export default function LADTableConfigurationViewProvider(openmct) {
     return {
-        key: 'plan-inspector',
-        name: 'Plan Inspector View',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
+        key: 'lad-table-configuration',
+        name: 'LAD Table Configuration',
+        canView(selection) {
+            if (selection.length !== 1 || selection[0].length === 0) {
                 return false;
             }
 
-            let context = selection[0][0].context;
+            const object = selection[0][0].context.item;
 
-            return context
-                && context.type === 'activity';
+            return object?.type === 'LadTable' || object?.type === 'LadTableSet';
         },
-        view: function (selection) {
+        view(selection) {
             let component;
 
             return {
-                show: function (element) {
+                show(element) {
                     component = new Vue({
                         el: element,
                         components: {
-                            PlanActivitiesView: PlanActivitiesView
+                            LADTableConfiguration: LADTableConfigurationComponent
                         },
                         provide: {
-                            openmct,
-                            selection: selection
+                            openmct
                         },
-                        template: '<plan-activities-view></plan-activities-view>'
+                        template: '<LADTableConfiguration />'
                     });
                 },
-                priority: function () {
-                    return openmct.priority.HIGH + 1;
+                priority() {
+                    return 1;
                 },
-                destroy: function () {
+                destroy() {
                     if (component) {
                         component.$destroy();
                         component = undefined;

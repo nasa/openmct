@@ -21,7 +21,99 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode, selectInspectorTab } = require('../../../../appActions');
+
+test.describe('Testing LAD table configuration', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Sine Wave Generator
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: "Test Sine Wave Generator"
+        });
+
+        // Create LAD table
+        await createDomainObjectWithDefaults(page, {
+            type: 'LAD Table',
+            name: "Test LAD Table"
+        });
+    });
+    test('in edit mode, LAD Tables provide ability to hide columns', async ({ page }) => {
+        // Edit LAD table
+        await page.locator('[title="Edit"]').click();
+
+        // Expand the 'My Items' folder in the left tree
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        // Add the Sine Wave Generator to the LAD table and save changes
+        await page.dragAndDrop('role=treeitem[name=/Test Sine Wave Generator/]', '.c-lad-table-wrapper');
+        // select configuration tab in inspector
+        await selectInspectorTab(page, 'LAD Table Configuration');
+
+        // make sure headers are visible initially
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+
+        // hide timestamp column
+        await page.getByLabel('Timestamp').uncheck();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+
+        // hide units & type column
+        await page.getByLabel('Units').uncheck();
+        await page.getByLabel('Type').uncheck();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+
+        // save and reload and verify they columns are still hidden
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+        await page.reload();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+
+        // Edit LAD table
+        await page.locator('[title="Edit"]').click();
+        await selectInspectorTab(page, 'LAD Table Configuration');
+
+        // show timestamp column
+        await page.getByLabel('Timestamp').check();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+
+        // save and reload and make sure only timestamp is still visible
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+        await page.reload();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+
+        // Edit LAD table
+        await page.locator('[title="Edit"]').click();
+        await selectInspectorTab(page, 'LAD Table Configuration');
+
+        // show units and type columns
+        await page.getByLabel('Units').check();
+        await page.getByLabel('Type').check();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+
+        // save and reload and make sure all columns are still visible
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+        await page.reload();
+        await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    });
+});
 
 test.describe('Testing LAD table @unstable', () => {
     let sineWaveObject;

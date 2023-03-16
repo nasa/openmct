@@ -20,24 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function MissingObjectInterceptor(openmct) {
-    openmct.objects.addGetInterceptor({
-        appliesTo: (identifier, domainObject) => {
-            return true;
-        },
-        invoke: (identifier, object) => {
-            if (object === undefined) {
-                const keyString = openmct.objects.makeKeyString(identifier);
-                openmct.notifications.error(`Failed to retrieve object ${keyString}`, { minimized: true });
+import EventEmitter from 'EventEmitter';
 
-                return {
-                    identifier,
-                    type: 'unknown',
-                    name: 'Missing: ' + keyString
-                };
-            }
+export default class LADTableConfiguration extends EventEmitter {
+    constructor(domainObject, openmct) {
+        super();
 
-            return object;
+        this.domainObject = domainObject;
+        this.openmct = openmct;
+
+        this.objectMutated = this.objectMutated.bind(this);
+        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
+    }
+
+    getConfiguration() {
+        const configuration = this.domainObject.configuration || {};
+        configuration.hiddenColumns = configuration.hiddenColumns || {};
+
+        return configuration;
+    }
+
+    updateConfiguration(configuration) {
+        this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+    }
+
+    objectMutated(configuration) {
+        if (configuration !== undefined) {
+            this.emit('change', configuration);
         }
-    });
+    }
+
+    destroy() {
+        this.unlistenFromMutation();
+    }
 }
