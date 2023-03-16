@@ -19,10 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 const ALLOWED_TYPES = [
     'telemetry.plot.overlay',
     'telemetry.plot.stacked',
-    'plan'
+    'plan',
+    'gantt-chart'
 ];
 const DISALLOWED_TYPES = [
     'telemetry.plot.bar-graph',
