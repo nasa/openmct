@@ -367,13 +367,11 @@ export default class TelemetryCollection extends EventEmitter {
     _handleDataInsideBounds() {
         this.dataOutsideTimeBounds = false;
         this.emit('dataInsideTimeBounds');
-        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is no longer outside of current time bounds`);
     }
 
     _handleDataOutsideBounds() {
         this.dataOutsideTimeBounds = true;
         this.emit('dataOutsideTimeBounds');
-        this.openmct.notifications.info(`Latest available data for "${this.domainObject.name}" is outside of current time bounds`);
     }
 
     /**
