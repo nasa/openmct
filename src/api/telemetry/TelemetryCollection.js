@@ -193,7 +193,7 @@ export default class TelemetryCollection extends EventEmitter {
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
             afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-            if (!afterEndOfBounds && (!beforeStartOfBounds || (beforeStartOfBounds && this.strategyLatest && this.openmct.telemetry.greedyLAD()))) {
+            if (!afterEndOfBounds && (!beforeStartOfBounds || (this.strategyLatest && this.openmct.telemetry.greedyLAD()))) {
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
