@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
+import { before } from 'lodash';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
 /** Class representing a Telemetry Collection. */
@@ -185,6 +185,7 @@ export default class TelemetryCollection extends EventEmitter {
         let afterEndOfBounds;
         let added = [];
         let addedIndices = [];
+        let processedBeforeStart = false;
 
         // loop through, sort and dedupe
         for (let datum of data) {
@@ -192,7 +193,11 @@ export default class TelemetryCollection extends EventEmitter {
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
             afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-            if (!afterEndOfBounds && !beforeStartOfBounds) {
+            if (!afterEndOfBounds && (!beforeStartOfBounds || (beforeStartOfBounds && this.strategyLatest && this.openmct.telemetry.greedyLAD()))) {
+                if (!processedBeforeStart && beforeStartOfBounds) {
+                    processedBeforeStart = true;
+                }
+
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
@@ -233,7 +238,9 @@ export default class TelemetryCollection extends EventEmitter {
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
-                    if (this.dataOutsideTimeBounds) {
+                    if (processedBeforeStart && !this.dataOutsideTimeBounds) {
+                        this._handleDataOutsideBounds();
+                    } else if (this.dataOutsideTimeBounds) {
                         this._handleDataInsideBounds();
                     }
 
