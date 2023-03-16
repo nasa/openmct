@@ -192,3 +192,12 @@ tr {
         @include isStatus($glyph: $glyph-icon-alert-rect, $color: $colorWarningLo);
     }
 }
+
+.is-event {
+    &--purple { color: $colorEventPurpleFg !important; }
+    &--red { color: $colorEventRedFg !important; }
+    &--orange { color: $colorEventOrangeFg !important; }
+    &--yellow { color: $colorEventYellowFg !important; }
+    &--no-style { color: inherit; }
+}
+
