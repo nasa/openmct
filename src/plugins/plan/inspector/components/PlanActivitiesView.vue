@@ -36,16 +36,15 @@ import { getPreciseDuration } from "utils/duration";
 import { v4 as uuid } from 'uuid';
 
 const propertyLabels = {
-    'start': 'Start DateTime',
-    'end': 'End DateTime',
-    'duration': 'Duration',
-    'earliestStart': 'Earliest Start',
-    'latestEnd': 'Latest End',
-    'gap': 'Gap',
-    'overlap': 'Overlap',
-    'totalTime': 'Total Time'
+    start: 'Start DateTime',
+    end: 'End DateTime',
+    duration: 'Duration',
+    earliestStart: 'Earliest Start',
+    latestEnd: 'Latest End',
+    gap: 'Gap',
+    overlap: 'Overlap',
+    totalTime: 'Total Time'
 };
-
 export default {
     components: {
         PlanActivityView
