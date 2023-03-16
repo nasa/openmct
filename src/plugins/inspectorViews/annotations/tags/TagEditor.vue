@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-tag-applier">
+<div
+    ref="TagEditor"
+    class="c-tag-applier"
+>
     <TagSelection
         v-for="(addedTag, index) in addedTags"
         :key="index"
@@ -31,7 +34,6 @@
         :added-tags="addedTags"
         @tagRemoved="tagRemoved"
         @tagAdded="tagAdded"
-        @tagBlurred="tagBlurred"
     />
     <button
         v-show="!userAddingTag && !maxTagsAdded"
@@ -110,6 +112,9 @@ export default {
     mounted() {
         this.annotationsChanged();
     },
+    destroyed() {
+        document.body.removeEventListener('click', this.tagCanceled);
+    },
     methods: {
         annotationsChanged() {
             if (this.annotations) {
@@ -152,6 +157,7 @@ export default {
             };
             this.addedTags.push(newTagValue);
             this.userAddingTag = true;
+            document.body.addEventListener('click', this.tagCanceled);
         },
         async tagRemoved(tagToRemove) {
             // Soft delete annotations that match tag instead (that aren't already deleted)
@@ -167,11 +173,16 @@ export default {
                 }
             }
         },
-        tagBlurred() {
-            // Remove last tag when user clicks outside of TagSelection
-            this.addedTags.pop();
-            // Hide TagSelection and show "Add Tag" button
-            this.userAddingTag = false;
+        tagCanceled(event) {
+            if (this.$refs.TagEditor) {
+                const clickedInsideTagEditor = this.$refs.TagEditor.contains(event.target);
+                if (!clickedInsideTagEditor) {
+                    // Remove last tag when user clicks outside of TagSelection
+                    this.addedTags.pop();
+                    // Hide TagSelection and show "Add Tag" button
+                    this.userAddingTag = false;
+                }
+            }
         },
         async tagAdded(newTag) {
             // Either undelete an annotation, or create one (1) new annotation
@@ -197,6 +208,7 @@ export default {
             }
 
             this.userAddingTag = false;
+            document.body.removeEventListener('click', this.tagCanceled);
 
             this.$emit('tags-updated', existingAnnotation);
             if (this.onTagChange) {

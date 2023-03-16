@@ -19,25 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const ALLOWED_TYPES = [
+    'plan'
+];
 
-export default function MissingObjectInterceptor(openmct) {
-    openmct.objects.addGetInterceptor({
-        appliesTo: (identifier, domainObject) => {
-            return true;
-        },
-        invoke: (identifier, object) => {
-            if (object === undefined) {
-                const keyString = openmct.objects.makeKeyString(identifier);
-                openmct.notifications.error(`Failed to retrieve object ${keyString}`, { minimized: true });
-
-                return {
-                    identifier,
-                    type: 'unknown',
-                    name: 'Missing: ' + keyString
-                };
-            }
-
-            return object;
+export default function ganttChartCompositionPolicy(openmct) {
+    return function (parent, child) {
+        if (parent.type === 'gantt-chart') {
+            return ALLOWED_TYPES.includes(child.type);
         }
-    });
+
+        return true;
+    };
 }
+

@@ -20,27 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementInspector from './FaultManagementInspector.vue';
-
+import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 import Vue from 'vue';
 
-import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
-
-export default function FaultManagementInspectorViewProvider(openmct) {
+export default function GanttChartInspectorViewProvider(openmct) {
     return {
-        openmct: openmct,
-        key: FAULT_MANAGEMENT_INSPECTOR,
-        name: 'Fault Management Configuration',
-        canView: (selection) => {
-            if (selection.length !== 1 || selection[0].length === 0) {
+        key: 'plan-inspector',
+        name: 'Config',
+        canView: function (selection) {
+            if (selection.length === 0 || selection[0].length === 0) {
                 return false;
             }
 
-            let object = selection[0][0].context.item;
+            const domainObject = selection[0][0].context.item;
 
-            return object && object.type === FAULT_MANAGEMENT_TYPE;
+            return domainObject?.type === 'gantt-chart';
         },
-        view: (selection) => {
+        view: function (selection) {
             let component;
 
             return {
@@ -48,12 +44,13 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            FaultManagementInspector
+                            PlanViewConfiguration
                         },
                         provide: {
-                            openmct
+                            openmct,
+                            selection: selection
                         },
-                        template: '<FaultManagementInspector></FaultManagementInspector>'
+                        template: '<plan-view-configuration></plan-view-configuration>'
                     });
                 },
                 priority: function () {

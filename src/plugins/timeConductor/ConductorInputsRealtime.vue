@@ -35,7 +35,7 @@
         </div>
         <input
             ref="endDate"
-            v-model="formattedBounds.end"
+            v-model="formattedCurrentValue"
             class="c-input--datetime"
             type="text"
             autocorrect="off"
@@ -109,6 +109,7 @@ export default {
         let timeFormatter = this.getFormatter(timeSystem.timeFormat);
         let bounds = this.bounds || this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
+        let currentValue = this.openmct.time.clock()?.currentValue();
 
         return {
             showTCInputStart: false,
@@ -127,6 +128,8 @@ export default {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
+            currentValue,
+            formattedCurrentValue: timeFormatter.format(currentValue),
             isUTCBased: timeSystem.isUTCBased
         };
     },
@@ -174,6 +177,7 @@ export default {
         handleNewBounds(bounds) {
             this.setBounds(bounds);
             this.setViewFromBounds(bounds);
+            this.updateCurrentValue();
         },
         clearAllValidation() {
             [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
@@ -194,6 +198,17 @@ export default {
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+        },
+        updateCurrentValue() {
+            const currentValue = this.openmct.time.clock()?.currentValue();
+
+            if (currentValue !== undefined) {
+                this.setCurrentValue(currentValue);
+            }
+        },
+        setCurrentValue(value) {
+            this.currentValue = value;
+            this.formattedCurrentValue = this.timeFormatter.format(value);
         },
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem;
