@@ -238,9 +238,9 @@ export default class TelemetryCollection extends EventEmitter {
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
-                    if (hasDataBeforeStartBound && !this.dataOutsideTimeBounds) {
+                    if (hasDataBeforeStartBound) {
                         this._handleDataOutsideBounds();
-                    } else if (this.dataOutsideTimeBounds) {
+                    } else {
                         this._handleDataInsideBounds();
                     }
 
@@ -353,9 +353,7 @@ export default class TelemetryCollection extends EventEmitter {
                 if (!this.isStrategyLatest) {
                     this.boundedTelemetry = [...this.boundedTelemetry, ...added];
                 } else {
-                    if (this.dataOutsideTimeBounds) {
-                        this._handleDataInsideBounds();
-                    }
+                    this._handleDataInsideBounds();
 
                     added = [added[added.length - 1]];
                     this.boundedTelemetry = added;
@@ -372,13 +370,17 @@ export default class TelemetryCollection extends EventEmitter {
     }
 
     _handleDataInsideBounds() {
-        this.dataOutsideTimeBounds = false;
-        this.emit('dataInsideTimeBounds');
+        if (this.dataOutsideTimeBounds) {
+            this.dataOutsideTimeBounds = false;
+            this.emit('dataInsideTimeBounds');
+        }
     }
 
     _handleDataOutsideBounds() {
-        this.dataOutsideTimeBounds = true;
-        this.emit('dataOutsideTimeBounds');
+        if (!this.dataOutsideTimeBounds) {
+            this.dataOutsideTimeBounds = true;
+            this.emit('dataOutsideTimeBounds');
+        }
     }
 
     /**
