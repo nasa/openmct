@@ -154,7 +154,7 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
-        this.conditionManager.on('noTelemetryObjects', this.handleNoTelemetryObjects);
+        this.conditionManager.on('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
         this.stalenessSubscription = {};
     },
     methods: {
@@ -162,7 +162,7 @@ export default {
             this.currentConditionId = data.conditionId;
             this.$emit('conditionSetResultUpdated', data);
         },
-        handleNoTelemetryObjects(data) {
+        emitNoTelemetryObjectEvent(data) {
             this.$emit('noTelemetryObjects');
         },
         observeForChanges() {
