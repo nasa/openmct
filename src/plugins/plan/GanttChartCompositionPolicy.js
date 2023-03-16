@@ -19,21 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const { assertPlanActivities } = require('../../../helper/planningUtils');
+const ALLOWED_TYPES = [
+    'plan'
+];
 
-test.describe("Plan", () => {
-    let plan;
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-        plan = await createPlanFromJSON(page, {
-            json: testPlan1
-        });
-    });
+export default function ganttChartCompositionPolicy(openmct) {
+    return function (parent, child) {
+        if (parent.type === 'gantt-chart') {
+            return ALLOWED_TYPES.includes(child.type);
+        }
 
-    test("Displays all plan events", async ({ page }) => {
-        await assertPlanActivities(page, testPlan1, plan.url);
-    });
-});
+        return true;
+    };
+}
+

@@ -19,12 +19,13 @@
 * this source code distribution or the Licensing information page available
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
+
 <template>
 <swim-lane
     :icon-class="item.type.definition.cssClass"
     :status="status"
     :min-height="item.height"
-    :show-ucontents="item.domainObject.type === 'plan'"
+    :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
 >
     <template #label>
@@ -128,6 +129,9 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        isPlanLikeObject(domainObject) {
+            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
         }
     }
 };
