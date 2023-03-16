@@ -26,6 +26,8 @@ const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../ap
 const percySnapshot = require('@percy/playwright');
 const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
 
+const snapshotScope = '.c-object-view';
+
 test.describe('Visual - Planning', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -36,7 +38,9 @@ test.describe('Visual - Planning', () => {
         });
 
         await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-        await percySnapshot(page, `Plan View (theme: ${theme})`);
+        await percySnapshot(page, `Plan View (theme: ${theme})`, {
+            scope: snapshotScope
+        });
     });
     test('Gantt Chart View', async ({ page, theme }) => {
         const ganttChart = await createDomainObjectWithDefaults(page, {
@@ -47,6 +51,8 @@ test.describe('Visual - Planning', () => {
             parent: ganttChart.uuid
         });
         await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`);
+        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`, {
+            scope: snapshotScope
+        });
     });
 });
