@@ -230,7 +230,11 @@ export default class TelemetryAPI {
     /**
      * Get or set greedy LAD. For stategy "latest" telemetry in
      * realtime mode the start bound will be ignored if true and
-     * there is no new data to replace the existing data
+     * there is no new data to replace the existing data.
+     * defaults to true
+     *
+     * To turn off greedy LAD:
+     * openmct.telemetry.greedyLAD(false);
      *
      * @method greedyLAD
      * @returns {boolean} if greedyLAD is active or not
