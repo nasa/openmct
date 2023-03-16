@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode, selectInspectorTab } = require('../../../../appActions');
 
 test.describe('Testing LAD table configuration', () => {
     test.beforeEach(async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Testing LAD table configuration', () => {
         // Add the Sine Wave Generator to the LAD table and save changes
         await page.dragAndDrop('role=treeitem[name=/Test Sine Wave Generator/]', '.c-lad-table-wrapper');
         // select configuration tab in inspector
-        await page.getByRole('tab', { name: 'LAD Table Configuration' }).getByText('LAD Table Configuration').click();
+        await selectInspectorTab(page, 'LAD Table Configuration');
 
         // make sure headers are visible initially
         await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
@@ -78,7 +78,7 @@ test.describe('Testing LAD table configuration', () => {
 
         // Edit LAD table
         await page.locator('[title="Edit"]').click();
-        await page.getByRole('tab', { name: 'LAD Table Configuration' }).getByText('LAD Table Configuration').click();
+        await selectInspectorTab(page, 'LAD Table Configuration');
 
         // show timestamp column
         await page.getByLabel('Timestamp').check();
@@ -96,7 +96,7 @@ test.describe('Testing LAD table configuration', () => {
 
         // Edit LAD table
         await page.locator('[title="Edit"]').click();
-        await page.getByRole('tab', { name: 'LAD Table Configuration' }).getByText('LAD Table Configuration').click();
+        await selectInspectorTab(page, 'LAD Table Configuration');
 
         // show units and type columns
         await page.getByLabel('Units').check();

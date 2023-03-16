@@ -44,6 +44,9 @@ export default function PlotsInspectorViewProvider(openmct) {
                         template: '<plot-options></plot-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -51,9 +54,6 @@ export default function PlotsInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
         }
     };
 }
