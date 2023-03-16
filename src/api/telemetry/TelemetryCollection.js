@@ -185,7 +185,7 @@ export default class TelemetryCollection extends EventEmitter {
         let afterEndOfBounds;
         let added = [];
         let addedIndices = [];
-        let processedBeforeStart = false;
+        let hasDataBeforeStartBound = false;
 
         // loop through, sort and dedupe
         for (let datum of data) {
@@ -194,10 +194,6 @@ export default class TelemetryCollection extends EventEmitter {
             afterEndOfBounds = parsedValue > this.lastBounds.end;
 
             if (!afterEndOfBounds && (!beforeStartOfBounds || (beforeStartOfBounds && this.strategyLatest && this.openmct.telemetry.greedyLAD()))) {
-                if (!processedBeforeStart && beforeStartOfBounds) {
-                    processedBeforeStart = true;
-                }
-
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
@@ -224,6 +220,10 @@ export default class TelemetryCollection extends EventEmitter {
                     this.boundedTelemetry.splice(index, 0, datum);
                     addedIndices.push(index);
                     added.push(datum);
+
+                    if (!hasDataBeforeStartBound && beforeStartOfBounds) {
+                        hasDataBeforeStartBound = true;
+                    }
                 }
 
             } else if (afterEndOfBounds) {
@@ -238,7 +238,7 @@ export default class TelemetryCollection extends EventEmitter {
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
-                    if (processedBeforeStart && !this.dataOutsideTimeBounds) {
+                    if (hasDataBeforeStartBound && !this.dataOutsideTimeBounds) {
                         this._handleDataOutsideBounds();
                     } else if (this.dataOutsideTimeBounds) {
                         this._handleDataInsideBounds();
