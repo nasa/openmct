@@ -50,7 +50,7 @@ export default class RemoveAction {
             return; // form canceled, exit invoke
         }
 
-        await this.removeFromComposition(parent, child);
+        await this.removeFromComposition(parent, child, objectPath);
 
         if (this.inNavigationPath(child)) {
             this.navigateTo(objectPath.slice(1));
@@ -105,13 +105,13 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    async removeFromComposition(parent, child) {
+    async removeFromComposition(parent, child, objectPath) {
         this.startTransaction();
 
         const composition = this.openmct.composition.get(parent);
         composition.remove(child);
 
-        if (!this.openmct.objects.isLink(child, parent)) {
+        if (!this.openmct.objects.isObjectPathToALink(child, objectPath)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
 
@@ -129,7 +129,7 @@ export default class RemoveAction {
         const locked = child.locked ? child.locked : parent && parent.locked;
         const isEditing = this.openmct.editor.isEditing();
         const isPersistable = this.openmct.objects.isPersistable(child.identifier);
-        const isLink = this.openmct.objects.isLink(child, parent);
+        const isLink = this.openmct.objects.isObjectPathToALink(child, objectPath);
 
         if (!isLink && (locked || !isPersistable)) {
             return false;
