@@ -56,6 +56,9 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                         template: '<FaultManagementInspector></FaultManagementInspector>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -63,9 +66,6 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
         }
     };
 }
