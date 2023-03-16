@@ -453,9 +453,10 @@ export default {
             this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         showAnnotationsFromSearchResults(selectedAnnotations) {
-        //Start section
-
             if (selectedAnnotations?.length) {
+                // pause the plot if we haven't already so we can actually display
+                // the annotations
+                this.freeze();
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
                 let minX = Number.MAX_SAFE_INTEGER;
@@ -1687,6 +1688,8 @@ export default {
         },
 
         resumeRealtimeData() {
+            // remove annotation selections
+            this.rectangles = [];
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
