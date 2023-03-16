@@ -27,7 +27,69 @@
  */
 
 const { test, expect } = require('./baseFixtures');
+//const { createDomainObjectWithDefaults, getHashUrlToDomainObject } = require('./appActions');
 const path = require('path');
+
+/**
+ * @typedef {Object} ObjectCreateOptions
+ * @property {string} type
+ * @property {string} name
+ */
+
+/**
+ * **NOTE: This feature is a work-in-progress and should not currently be used.**
+ *
+ * Used to create a new domain object as a part of getOrCreateDomainObject.
+ * @type {Map<string, string>}
+ */
+// const createdObjects = new Map();
+
+/**
+ * This action will create a domain object for the test to reference and return the uuid. If an object
+ * of a given name already exists, it will return the uuid of that object to the test instead of creating
+ * a new file. The intent is to move object creation out of test suites which are not explicitly worried
+ * about object creation, while providing a consistent interface to retrieving objects in a persistentContext.
+ * @param {import('@playwright/test').Page} page
+ * @param {ObjectCreateOptions} options
+ * @returns {Promise<string>} uuid of the domain object
+ */
+// async function getOrCreateDomainObject(page, options) {
+//     const { type, name } = options;
+//     const objectName = name ? `${type}:${name}` : type;
+
+//     if (createdObjects.has(objectName)) {
+//         return createdObjects.get(objectName);
+//     }
+
+//     await createDomainObjectWithDefaults(page, type, name);
+
+//     const uuid = getHashUrlToDomainObject(page);
+
+//     createdObjects.set(objectName, uuid);
+
+//     return uuid;
+// }
+
+/**
+ * **NOTE: This feature is a work-in-progress and should not currently be used.**
+ *
+ * If provided, these options will be used to get or create the desired domain object before
+ * any tests or test hooks have run.
+ * The `uuid` of the `domainObject` will then be available to use within the scoped tests.
+ *
+ * ### Example:
+ * ```js
+ * test.describe("My test suite", () => {
+ *    test.use({ objectCreateOptions: { type: "Telemetry Table", name: "My Telemetry Table" }});
+ *    test("'My Telemetry Table' is created and provides a uuid", async ({ page, domainObject }) => {
+ *         const { uuid } = domainObject;
+ *         expect(uuid).toBeDefined();
+ *     }))
+ * });
+ * ```
+ * @type {ObjectCreateOptions}
+ */
+// const objectCreateOptions = null;
 
 /**
  * The default theme for VIPER and Open MCT is the 'espresso' theme. Overriding this value with 'snow' in our playwright config.js
@@ -83,3 +145,4 @@ exports.test = test.extend({
     }
 });
 exports.expect = expect;
+//exports.getOrCreateDomainObject = getOrCreateDomainObject;
