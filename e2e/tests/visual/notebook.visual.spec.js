@@ -42,7 +42,7 @@ test.describe('Visual - Restricted Notebook', () => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL and hide tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'networkidle' });
 
         await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 
@@ -52,9 +52,12 @@ test.describe('Visual - Restricted Notebook', () => {
 });
 
 test.describe('Visual - Notebook', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL and Hide Tree
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    });
     test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
         // Create Notebook
         const notebook = await createDomainObjectWithDefaults(page, {
@@ -70,6 +73,7 @@ test.describe('Visual - Notebook', () => {
         await expandTreePaneItemByName(page, myItemsFolderName);
 
         await page.goto(notebook.url);
+
         await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
 
         await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
