@@ -84,7 +84,9 @@
 
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.PlanLayout());
+        openmct.install(openmct.plugins.PlanLayout({
+            creatable: true
+        }));
         openmct.install(openmct.plugins.Timeline());
         openmct.install(openmct.plugins.Hyperlink());
         openmct.install(openmct.plugins.UTCTimeSystem());

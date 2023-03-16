@@ -55,6 +55,9 @@ export default function TimeListInspectorViewProvider(openmct) {
                         template: '<timelist-properties-view></timelist-properties-view>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -62,9 +65,6 @@ export default function TimeListInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
         }
     };
 }
