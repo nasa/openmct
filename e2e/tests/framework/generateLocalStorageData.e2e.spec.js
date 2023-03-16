@@ -36,16 +36,12 @@ const { createDomainObjectWithDefaults, createExampleTelemetryObject } = require
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
-    // test.use({
-    //     clockOptions: {
-    //         shouldAdvanceTime: false //Don't advance the clock
-    //     }
-    // });
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL and Hide Tree
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
 
     test('Generate Overlay Plot with Telemetry Object', async ({ page, context }) => {
-
-        //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create Overlay Plot
         const overlayPlot = await createDomainObjectWithDefaults(page, {
@@ -57,10 +53,10 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         await createExampleTelemetryObject(page);
 
         // Make Link from Telemetry Object to Overlay Plot
-        await page.locator('text=Plot Snapshot >> button').nth(2).click();
+        await page.locator('button[title="More options"]').click();
 
         // Click text=Create Link
-        await page.locator('text=Create Link').click();
+        await page.getByText('Create Link').click();
 
         // Search and Select for overlay Plot within Create Modal
         await page.locator('text=location Open MCT My Items >> [aria-label="Search Input"]').click();
@@ -79,20 +75,17 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         // Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
     });
-    test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
-        // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+    test.only('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
 
         // add overlay plot with defaults
         const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
+            type: 'Overlay Plot with 5s Delay',
             name: overlayPlotName
         });
-        // click create button
-        await page.locator('button:has-text("Create")').click();
 
-        // add sine wave generator with 5000ms delay
-        await page.locator('li:has-text("Sine Wave Generator")').click();
+        await createExampleTelemetryObject(page);
+
+        //Edit Example Telemetry Object to include 5s loading Delay
         await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
         await Promise.all([
