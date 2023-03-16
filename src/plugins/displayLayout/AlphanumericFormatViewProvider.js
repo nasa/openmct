@@ -56,6 +56,10 @@ class AlphanumericFormatView {
         return this.component.$refs.alphanumericFormat.getViewContext();
     }
 
+    priority() {
+        return 1;
+    }
+
     destroy() {
         this.component.$destroy();
         this.component = undefined;
@@ -89,9 +93,6 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
         },
         view: function (domainObject, objectPath) {
             return new AlphanumericFormatView(openmct, domainObject, objectPath);
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

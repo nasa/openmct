@@ -150,6 +150,15 @@ div.c-table {
         tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
             border-top: 1px solid $colorTabBorder;
         }
+        transition: $transOut;
+    }
+
+    &__selectable-row {cursor: pointer;
+        &:hover {
+            background: $colorListItemBgHov;
+            filter: $filterHov;
+            transition: $transIn;
+        }
     }
 
     &__group-header {

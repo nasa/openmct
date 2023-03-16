@@ -64,6 +64,9 @@ define([
                             template: '<table-configuration></table-configuration>'
                         });
                     },
+                    priority: function () {
+                        return 1;
+                    },
                     destroy: function () {
                         if (component) {
                             component.$destroy();
@@ -73,9 +76,6 @@ define([
                         tableConfiguration = undefined;
                     }
                 };
-            },
-            priority: function () {
-                return 1;
             }
         };
     }
