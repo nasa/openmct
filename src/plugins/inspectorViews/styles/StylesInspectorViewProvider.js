@@ -76,14 +76,14 @@ export default function StylesInspectorViewProvider(openmct) {
                         template: `<StylesInspectorView />`
                     });
                 },
+                priority: function () {
+                    return openmct.priority.DEFAULT;
+                },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return this.openmct.priority.DEFAULT;
         }
     };
 }

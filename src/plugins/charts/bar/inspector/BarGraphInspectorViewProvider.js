@@ -33,6 +33,9 @@ export default function BarGraphInspectorViewProvider(openmct) {
                         template: '<bar-graph-options></bar-graph-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -40,9 +43,6 @@ export default function BarGraphInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return openmct.priority.HIGH + 1;
         }
     };
 }
