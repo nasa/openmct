@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { before } from 'lodash';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
 
 /** Class representing a Telemetry Collection. */
