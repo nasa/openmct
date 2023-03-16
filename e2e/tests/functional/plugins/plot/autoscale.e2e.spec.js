@@ -34,7 +34,7 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-    test.only('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
+    test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
         //This is necessary due to the size of the test suite.
@@ -142,26 +142,6 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
 
     //Add sinewaveObject into overlayPlot
     await page.pause();
-
-    return {
-        overlayPlot: overlayPlot.name
-    };
-}
-
-/**
- * 
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
- */
-async function createDisplayLayoutWith2OverlayPlots(page, myItemsFolderName) {
-
-    //Create overlayPlot
-    let overlayPlot = await createDomainObjectWithDefaults(page, {
-        type: 'Display Layout'
-    });
-
-    //Add 2 createSinewaveOverlayPlot to this display
 
     return {
         overlayPlot: overlayPlot.name
