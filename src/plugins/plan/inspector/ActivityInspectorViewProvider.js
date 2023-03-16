@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from "./PlanActivitiesView.vue";
+import PlanActivitiesView from "./components/PlanActivitiesView.vue";
 import Vue from 'vue';
 
-export default function PlanInspectorViewProvider(openmct) {
+export default function ActivityInspectorViewProvider(openmct) {
     return {
-        key: 'plan-inspector',
-        name: 'Plan Inspector View',
+        key: 'activity-inspector',
+        name: 'Activity',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
@@ -44,6 +44,7 @@ export default function PlanInspectorViewProvider(openmct) {
                 show: function (element) {
                     component = new Vue({
                         el: element,
+                        name: "PlanActivitiesView",
                         components: {
                             PlanActivitiesView: PlanActivitiesView
                         },

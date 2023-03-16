@@ -62,6 +62,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
+ * @property {Object.<string, any>} [configuration] A key-value map containing configuration
+ *           settings for this domain object.
  * @memberof module:openmct.ObjectAPI~
  */
 
