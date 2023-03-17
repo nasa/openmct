@@ -463,10 +463,13 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         preventFocusIfNotSelected($event) {
-            if (this.selectedEntry !== undefined && !this.isSelectedEntry) {
+            if (!this.isSelectedEntry) {
                 $event.preventDefault();
                 // blur the previous focused entry if clicking on non selected entry input
-                document.activeElement.blur();
+                const focusedElementId = document.activeElement?.id;
+                if (focusedElementId !== this.entry.id) {
+                    document.activeElement.blur();
+                }
             }
         },
         editingEntry() {
