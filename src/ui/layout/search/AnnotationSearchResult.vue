@@ -148,13 +148,6 @@ export default {
 
                 this.openmct.router.navigate(resultUrl);
             }
-
-            // if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
-            //     //wait a beat for the navigation
-            //     setTimeout(() => {
-            //         this.clickedPlotAnnotation();
-            //     }, 100);
-            // }
         },
         preview(objectPath) {
             if (this.previewAction.appliesTo(objectPath)) {
