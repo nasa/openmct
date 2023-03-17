@@ -25,7 +25,10 @@
     class="c-lad-table-wrapper u-style-receiver js-style-receiver"
     :class="staleClass"
 >
-    <table class="c-table c-lad-table">
+    <table
+        class="c-table c-lad-table"
+        :class="applyLayoutClass"
+    >
         <thead>
             <tr>
                 <th>Name</th>
@@ -52,7 +55,7 @@
 </template>
 
 <script>
-
+import Vue from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -103,9 +106,32 @@ export default {
             }
 
             return '';
+        },
+        applyLayoutClass() {
+            if (this.configuration.isFixedLayout) {
+                return 'fixed-layout';
+            }
+
+            return '';
         }
     },
-    mounted() {
+    watch: {
+        configuration: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal.isFixedLayout) {
+                        this.viewActionsCollection.show(['lad-expand-columns']);
+                        this.viewActionsCollection.hide(['lad-autosize-columns']);
+                    } else {
+                        this.viewActionsCollection.show(['lad-autosize-columns']);
+                        this.viewActionsCollection.hide(['lad-expand-columns']);
+                    }
+                }
+            },
+            deep: true
+        }
+    },
+    async mounted() {
         this.ladTableConfiguration.on('change', this.handleConfigurationChange);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
@@ -113,6 +139,9 @@ export default {
         this.composition.on('reorder', this.reorder);
         this.composition.load();
         this.stalenessSubscription = {};
+        await Vue.nextTick();
+        this.viewActionsCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+        this.initializeViewActions();
     },
     destroyed() {
         this.ladTableConfiguration.off('change', this.handleConfigurationChange);
@@ -189,7 +218,25 @@ export default {
             this.viewContext.row = rowContext;
         },
         getViewContext() {
-            return this.viewContext;
+            return {
+                ...this.viewContext,
+                type: 'lad-table',
+                toggleFixedLayout: this.toggleFixedLayout
+
+            };
+        },
+        toggleFixedLayout() {
+            this.configuration.isFixedLayout = !this.configuration.isFixedLayout;
+        },
+        initializeViewActions() {
+            if (this.configuration.isFixedLayout) {
+                this.viewActionsCollection.show(['lad-expand-columns']);
+                this.viewActionsCollection.hide(['lad-autosize-columns']);
+
+            } else {
+                this.viewActionsCollection.hide(['lad-expand-columns']);
+                this.viewActionsCollection.show(['lad-autosize-columns']);
+            }
         }
     }
 };
