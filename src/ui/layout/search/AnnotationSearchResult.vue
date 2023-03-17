@@ -129,6 +129,7 @@ export default {
     mounted() {
         this.previewAction = new PreviewAction(this.openmct);
         this.previewAction.on('isVisible', this.togglePreviewState);
+        this.clickedPlotAnnotation = this.clickedPlotAnnotation.bind(this);
     },
     destroyed() {
         this.previewAction.off('isVisible', this.togglePreviewState);
@@ -141,16 +142,19 @@ export default {
                 this.preview(objectPath);
             } else {
                 const resultUrl = identifierToString(this.openmct, objectPath);
+                if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+                    this.openmct.selection.on('change', this.clickedPlotAnnotation);
+                }
 
                 this.openmct.router.navigate(resultUrl);
             }
 
-            if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
-                //wait a beat for the navigation
-                setTimeout(() => {
-                    this.clickedPlotAnnotation();
-                }, 100);
-            }
+            // if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+            //     //wait a beat for the navigation
+            //     setTimeout(() => {
+            //         this.clickedPlotAnnotation();
+            //     }, 100);
+            // }
         },
         preview(objectPath) {
             if (this.previewAction.appliesTo(objectPath)) {
@@ -158,6 +162,8 @@ export default {
             }
         },
         clickedPlotAnnotation() {
+            this.openmct.selection.off('change', this.clickedPlotAnnotation);
+
             const targetDetails = {};
             const targetDomainObjects = {};
             Object.entries(this.result.targets).forEach(([key, value]) => {
