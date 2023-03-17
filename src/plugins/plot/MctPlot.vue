@@ -22,6 +22,7 @@
 <template>
 <div
     v-if="loaded"
+    ref="plot"
     class="gl-plot"
 >
     <slot></slot>
@@ -405,6 +406,7 @@ export default {
         this.setTimeContext();
 
         this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
+        document.body.addEventListener('click', this.cancelSelection);
 
         this.loaded = true;
     },
@@ -412,6 +414,7 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.body.removeEventListener('click', this.cancelSelection);
         this.destroy();
     },
     methods: {
@@ -443,6 +446,18 @@ export default {
 
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        cancelSelection(event) {
+            if (this.$refs.plot) {
+                const clickedInsidePlot = this.$refs.plot.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+                    this.rectangles = [];
+                    this.annotationSelections = [];
+                    this.selectPlot();
+                }
+            }
         },
         waitForAxesToLoad() {
             return new Promise(resolve => {
