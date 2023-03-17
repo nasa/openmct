@@ -55,7 +55,7 @@
 </template>
 
 <script>
-
+import Vue from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -120,18 +120,18 @@ export default {
             handler(newVal) {
                 if (this.viewActionsCollection) {
                     if (newVal.isFixedLayout) {
-                        this.viewActionsCollection.show(['expand-columns']);
-                        this.viewActionsCollection.hide(['autosize-columns']);
+                        this.viewActionsCollection.show(['lad-expand-columns']);
+                        this.viewActionsCollection.hide(['lad-autosize-columns']);
                     } else {
-                        this.viewActionsCollection.show(['autosize-columns']);
-                        this.viewActionsCollection.hide(['expand-columns']);
+                        this.viewActionsCollection.show(['lad-autosize-columns']);
+                        this.viewActionsCollection.hide(['lad-expand-columns']);
                     }
                 }
             },
             deep: true
         }
     },
-    mounted() {
+    async mounted() {
         this.ladTableConfiguration.on('change', this.handleConfigurationChange);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
@@ -139,6 +139,7 @@ export default {
         this.composition.on('reorder', this.reorder);
         this.composition.load();
         this.stalenessSubscription = {};
+        await Vue.nextTick();
         this.viewActionsCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
         this.initializeViewActions();
     },
@@ -229,12 +230,12 @@ export default {
         },
         initializeViewActions() {
             if (this.configuration.isFixedLayout) {
-                this.viewActionsCollection.show(['expand-columns']);
-                this.viewActionsCollection.hide(['autosize-columns']);
+                this.viewActionsCollection.show(['lad-expand-columns']);
+                this.viewActionsCollection.hide(['lad-autosize-columns']);
 
             } else {
-                this.viewActionsCollection.hide(['expand-columns']);
-                this.viewActionsCollection.show(['autosize-columns']);
+                this.viewActionsCollection.hide(['lad-expand-columns']);
+                this.viewActionsCollection.show(['lad-autosize-columns']);
             }
         }
     }
