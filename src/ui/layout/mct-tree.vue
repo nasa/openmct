@@ -128,7 +128,6 @@ const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
 const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator selection box show
-const MY_ITEMS_PATH = '/browse/mine';
 
 export default {
     name: 'MctTree',
@@ -451,16 +450,10 @@ export default {
 
             }, Promise.resolve()).then(() => {
                 if (this.isSelectorTree) {
-                    // If this isn't a valid create path by this point,
-                    // set the path to the "My Items" folder
-                    if (!navigationPath?.includes(MY_ITEMS_PATH)) {
-                        navigationPath = MY_ITEMS_PATH;
-                    }
-
                     let item = this.getTreeItemByPath(navigationPath);
                     // If item is missing due to error in object creation,
                     // walk up the navigationPath until we find an item
-                    while (!item) {
+                    while (!item && navigationPath !== '') {
                         const startIndex = 0;
                         const endIndex = navigationPath.lastIndexOf('/');
                         navigationPath = navigationPath.substring(startIndex, endIndex);
