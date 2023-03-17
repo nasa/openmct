@@ -130,9 +130,6 @@ export default class TelemetryCollection extends EventEmitter {
             this.emit('requestStarted');
             const modifiedOptions = await this.openmct.telemetry.applyRequestInterceptors(this.domainObject, options);
             historicalData = await historicalProvider.request(this.domainObject, modifiedOptions);
-            if (!historicalData || !historicalData.length) {
-                return;
-            }
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
@@ -142,6 +139,10 @@ export default class TelemetryCollection extends EventEmitter {
 
         this.emit('requestEnded');
         this.requestAbort = undefined;
+
+        if (!historicalData || !historicalData.length) {
+            return;
+        }
 
         this._processNewTelemetry(historicalData);
 
