@@ -32,7 +32,7 @@
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
-    @click="selectEntry($event, entry)"
+    @click.prevent="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator-and-delete">
@@ -54,7 +54,7 @@
                     class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
                     title="Delete this entry"
                     tabindex="-1"
-                    @click="deleteEntry"
+                    @click.stop.prevent="deleteEntry"
                 >
                 </button>
             </span>
@@ -463,7 +463,7 @@ export default {
             this.$emit('updateEntry', this.entry);
         },
         preventFocusIfNotSelected($event) {
-            if (!this.isSelectedEntry) {
+            if (this.selectedEntry !== undefined && !this.isSelectedEntry) {
                 $event.preventDefault();
                 // blur the previous focused entry if clicking on non selected entry input
                 document.activeElement.blur();
