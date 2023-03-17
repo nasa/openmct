@@ -121,8 +121,9 @@ define([
     }
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            const objectDatum = datum[this.valueMetadata.source];
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
             if (Array.isArray(objectDatum)) {
                 return objectDatum.map((item) => {
                     return this.formatter.parse(item);
@@ -136,8 +137,9 @@ define([
     };
 
     TelemetryValueFormatter.prototype.format = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            const objectDatum = datum[this.valueMetadata.source];
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
             if (Array.isArray(objectDatum)) {
                 return objectDatum.map((item) => {
                     return this.formatter.format(item);
