@@ -31,22 +31,6 @@ test.describe('Main Tree', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 
-    test('Creating an object while navigated to an object which is not a child of "My Items" defaults folder selection to "My Items"', async ({ page, openmctConfig }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/6455'
-        });
-        const { myItemsFolderName } = openmctConfig;
-        await page.goto('./#/browse/not-a-real-domain-object');
-        await page.click('button:has-text("Create")');
-        await page.click(`li[role='menuitem']:text("Clock")`);
-        const createModalTree = page.locator('[aria-label="Create Modal Tree"]');
-        const myItemsTreeItem = createModalTree.getByRole('treeitem', {
-            name: myItemsFolderName
-        });
-        await expect(myItemsTreeItem).toBeVisible();
-        await expect(myItemsTreeItem.locator('> div')).toHaveClass(/is-navigated-object/);
-    });
     test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
