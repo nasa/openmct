@@ -22,7 +22,7 @@
 
 const expandColumns = {
     name: 'Expand Columns',
-    key: 'expand-columns',
+    key: 'lad-expand-columns',
     description: "Increase column widths to fit currently available data.",
     cssClass: 'icon-arrows-right-left labeled',
     invoke: (objectPath, view) => {
@@ -34,7 +34,7 @@ const expandColumns = {
 
 const autosizeColumns = {
     name: 'Autosize Columns',
-    key: 'autosize-columns',
+    key: 'lad-autosize-columns',
     description: "Automatically size columns to fit the table into the available space.",
     cssClass: 'icon-expand labeled',
     invoke: (objectPath, view) => {
