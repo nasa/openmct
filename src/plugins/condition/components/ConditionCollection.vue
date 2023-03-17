@@ -163,6 +163,7 @@ export default {
             this.$emit('conditionSetResultUpdated', data);
         },
         emitNoTelemetryObjectEvent(data) {
+            this.currentConditionId = '';
             this.$emit('noTelemetryObjects');
         },
         observeForChanges() {
