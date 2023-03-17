@@ -450,13 +450,14 @@ export default {
 
             }, Promise.resolve()).then(() => {
                 if (this.isSelectorTree) {
+                    let item = this.getTreeItemByPath(navigationPath);
                     // If item is missing due to error in object creation,
                     // walk up the navigationPath until we find an item
-                    let item = this.getTreeItemByPath(navigationPath);
-                    while (!item) {
+                    while (!item && navigationPath !== '') {
                         const startIndex = 0;
                         const endIndex = navigationPath.lastIndexOf('/');
                         navigationPath = navigationPath.substring(startIndex, endIndex);
+
                         item = this.getTreeItemByPath(navigationPath);
                     }
 
