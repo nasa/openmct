@@ -32,7 +32,7 @@
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
-    @click.prevent="selectEntry($event, entry)"
+    @click="selectEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator-and-delete">
