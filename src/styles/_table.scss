@@ -199,6 +199,13 @@ div.c-table {
 }
 
 .c-lad-table {
+    &.fixed-layout {
+        table-layout: fixed;
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
     th, td {
         width: 33%; // Needed to prevent size jumping as values dynamically update
     }
