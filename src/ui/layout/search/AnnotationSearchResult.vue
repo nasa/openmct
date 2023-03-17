@@ -133,6 +133,7 @@ export default {
     },
     destroyed() {
         this.previewAction.off('isVisible', this.togglePreviewState);
+        this.openmct.selection.off('change', this.clickedPlotAnnotation);
     },
     methods: {
         clickedResult(event) {
@@ -142,11 +143,19 @@ export default {
                 this.preview(objectPath);
             } else {
                 const resultUrl = identifierToString(this.openmct, objectPath);
-                if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
-                    this.openmct.selection.on('change', this.clickedPlotAnnotation);
-                }
+                if (!this.openmct.router.isNavigatedObject(objectPath)) {
+                    // if we're not on the correct page, navigate to the object,
+                    // then wait for the selection event to fire before issuing a new selection
+                    if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+                        this.openmct.selection.on('change', this.clickedPlotAnnotation);
+                    }
 
-                this.openmct.router.navigate(resultUrl);
+                    this.openmct.router.navigate(resultUrl);
+                } else {
+                    // if this is the navigated object, then we are already on the correct page
+                    // and just need to issue the selection event
+                    this.clickedPlotAnnotation();
+                }
             }
         },
         preview(objectPath) {
