@@ -193,7 +193,7 @@ export default {
         },
         telemetryValue() {
             if (!this.datum) {
-                return;
+                return '---';
             }
 
             return this.formatter && this.formatter.format(this.datum);

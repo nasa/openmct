@@ -415,7 +415,10 @@ export default class NotificationAPI extends EventEmitter {
         for (; i < this.notifications.length; i++) {
             notification = this.notifications[i];
 
-            if (!notification.model.minimized
+            const isNotificationMinimized = notification.model.minimized
+                || notification?.model?.options?.minimized;
+
+            if (!isNotificationMinimized
                 && notification !== this.activeNotification) {
                 return notification;
             }
