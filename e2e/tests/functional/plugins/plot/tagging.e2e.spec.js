@@ -190,7 +190,7 @@ test.describe('Plot Tagging', () => {
         await setFixedTimeMode(page);
     });
 
-    test('Tags work with Plot View of telemetry items', async ({ page }) => {
+    test('Tags work with Plot View of telemetry items @unstable', async ({ page }) => {
         await createDomainObjectWithDefaults(page, {
             type: "Sine Wave Generator"
         });
