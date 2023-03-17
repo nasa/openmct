@@ -25,7 +25,10 @@
     class="c-lad-table-wrapper u-style-receiver js-style-receiver"
     :class="staleClass"
 >
-    <table class="c-table c-lad-table">
+    <table
+        class="c-table c-lad-table"
+        :class="applyLayoutClass"
+    >
         <thead>
             <tr>
                 <th>Name</th>
@@ -100,6 +103,13 @@ export default {
         staleClass() {
             if (this.staleObjects.length !== 0) {
                 return 'is-stale';
+            }
+
+            return '';
+        },
+        applyLayoutClass() {
+            if (this.configuration.isFixedLayout) {
+                return 'fixed-layout';
             }
 
             return '';
@@ -189,7 +199,15 @@ export default {
             this.viewContext.row = rowContext;
         },
         getViewContext() {
-            return this.viewContext;
+            return {
+                ...this.viewContext,
+                type: 'lad-table',
+                toggleFixedLayout: this.toggleFixedLayout
+
+            };
+        },
+        toggleFixedLayout() {
+            this.configuration.isFixedLayout = !this.configuration.isFixedLayout;
         }
     }
 };
