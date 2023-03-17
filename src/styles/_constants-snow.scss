@@ -86,7 +86,7 @@ $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
-$objectLabelNameFilter: brightness(0.9);
+$objectLabelNameColorFg: darken($colorBodyFg, 10%);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -135,7 +135,7 @@ $colorPausedFg: #fff;
 
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
@@ -202,6 +202,7 @@ $colorTabsHolderBg: rgba($colorBodyFg, 0.2);
 // Buttons and Controls
 $colorBtnBg: #aaa;
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
+$shdwBtnHov: inset rgba(white, 10%) 0 0 0 20px;
 $colorBtnFg: #fff;
 $colorBtnReverseFg: $colorBodyBg;
 $colorBtnReverseBg: $colorBodyFg;
@@ -333,6 +334,12 @@ $colorLimitCyanBg: #4BA6B3;
 $colorLimitCyanFg: #D3FAFF;
 $colorLimitCyanIc: #1795c0;
 
+// Events
+$colorEventPurpleFg: #6433ff;
+$colorEventRedFg: #cc0000;
+$colorEventOrangeFg: orange;
+$colorEventYellowFg: #ffcc00;
+
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
 $colorInfoBubbleFg: #666;
@@ -390,6 +397,7 @@ $colorCurrentBorder: #fff;
 $colorFutureBg: rgba($colorKey, 0.2);
 $colorFutureFg: $colorCurrentFg;
 $colorFutureBorder: $colorCurrentBorder;
+$colorGanttSelectedBorder: #fff;
 
 // Tree
 $colorTreeBg: transparent;
@@ -463,6 +471,8 @@ $transInTime: 50ms;
 $transOutTime: 250ms;
 $transIn: all $transInTime ease-in-out;
 $transOut: all $transOutTime ease-in-out;
+$transInTransform: transform $transInTime ease-in-out;
+$transOutTransform: transform $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 

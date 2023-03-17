@@ -25,7 +25,10 @@
 <div
     class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
+    :class="{ 'locked': isLocked,
+              'is-selected': isSelectedEntry,
+              'is-editing' : editMode
+    }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
@@ -80,11 +83,16 @@
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
                     @mouseleave="canEdit = true"
+                    @mousedown="preventFocusIfNotSelected($event)"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
-                    @keydown.enter.exact.prevent
-                    @keyup.enter.exact.prevent="forceBlur($event)"
                 >
+                </div>
+                <div
+                    v-if="editMode"
+                    class="c-ne__save-button"
+                >
+                    <button class="c-button c-button--major icon-check"></button>
                 </div>
             </template>
 
@@ -453,6 +461,13 @@ export default {
             this.entry.modified = Date.now();
 
             this.$emit('updateEntry', this.entry);
+        },
+        preventFocusIfNotSelected($event) {
+            if (!this.isSelectedEntry) {
+                $event.preventDefault();
+                // blur the previous focused entry if clicking on non selected entry input
+                document.activeElement.blur();
+            }
         },
         editingEntry() {
             this.editMode = true;

@@ -71,7 +71,7 @@ function (
         StatusAPI: StatusAPI.default,
         TelemetryAPI: TelemetryAPI,
         TimeAPI: TimeAPI.default,
-        TypeRegistry: TypeRegistry,
+        TypeRegistry: TypeRegistry.default,
         UserAPI: UserAPI.default,
         AnnotationAPI: AnnotationAPI.default
     };

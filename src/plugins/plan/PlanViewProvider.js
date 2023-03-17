@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './Plan.vue';
+import Plan from './components/Plan.vue';
 import Vue from 'vue';
 
 export default function PlanViewProvider(openmct) {
@@ -35,11 +35,11 @@ export default function PlanViewProvider(openmct) {
         name: 'Plan',
         cssClass: 'icon-plan',
         canView(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
         },
 
         canEdit(domainObject) {
-            return false;
+            return domainObject.type === 'gantt-chart';
         },
 
         view: function (domainObject, objectPath) {

@@ -29,6 +29,7 @@ import DefaultMetadataProvider from './DefaultMetadataProvider';
 import objectUtils from 'objectUtils';
 
 export default class TelemetryAPI {
+    #isGreedyLAD;
 
     constructor(openmct) {
         this.openmct = openmct;
@@ -44,8 +45,8 @@ export default class TelemetryAPI {
         this.requestProviders = [];
         this.subscriptionProviders = [];
         this.valueFormatterCache = new WeakMap();
-
         this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
+        this.#isGreedyLAD = true;
     }
 
     abortAllRequests() {
@@ -227,6 +228,31 @@ export default class TelemetryAPI {
     }
 
     /**
+     * Get or set greedy LAD. For stategy "latest" telemetry in
+     * realtime mode the start bound will be ignored if true and
+     * there is no new data to replace the existing data.
+     * defaults to true
+     *
+     * To turn off greedy LAD:
+     * openmct.telemetry.greedyLAD(false);
+     *
+     * @method greedyLAD
+     * @returns {boolean} if greedyLAD is active or not
+     * @memberof module:openmct.TelemetryAPI#
+     */
+    greedyLAD(isGreedy) {
+        if (arguments.length > 0) {
+            if (isGreedy !== true && isGreedy !== false) {
+                throw new Error('Error setting greedyLAD. Greedy LAD only accepts true or false values');
+            }
+
+            this.#isGreedyLAD = isGreedy;
+        }
+
+        return this.#isGreedyLAD;
+    }
+
+    /**
      * Request telemetry collection for a domain object.
      * The `options` argument allows you to specify filters
      * (start, end, etc.), sort order, and strategies for retrieving
@@ -264,7 +290,7 @@ export default class TelemetryAPI {
      *          telemetry data
      */
     async request(domainObject) {
-        if (this.noRequestProviderForAllObjects) {
+        if (this.noRequestProviderForAllObjects || domainObject.type === 'unknown') {
             return [];
         }
 
@@ -318,6 +344,10 @@ export default class TelemetryAPI {
      *          the subscription
      */
     subscribe(domainObject, callback, options) {
+        if (domainObject.type === 'unknown') {
+            return () => {};
+        }
+
         const provider = this.#findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
