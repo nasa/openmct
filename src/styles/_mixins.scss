@@ -96,6 +96,13 @@
     animation-timing-function: ease-in-out;
 }
 
+@mixin transition($prop: all, $dur: $transInTime, $timing: ease-in-out, $delay: 0ms) {
+    transition-property: $prop;
+    transition-duration: $dur;
+    transition-timing-function: $timing;
+    transition-delay: $delay;
+}
+
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
     // Used for small icons used in combination with larger icons,
@@ -463,20 +470,10 @@
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
-    // Is this being used? Remove if not.
     background: $bg;
     color: $fg;
     border-radius: $radius;
     box-shadow: $shdw;
-}
-
-@mixin buttonBehavior() {
-    // Assign transition timings
-    transition: $transOut;
-
-    @include hover() {
-        transition: $transIn;
-    }
 }
 
 @mixin cControl() {
@@ -515,8 +512,18 @@
     }
 }
 
+@mixin cControlHov($styleConst: $shdwBtnHov) {
+    transition: box-shadow $transOutTime;
+
+    @include hover() {
+        transition: box-shadow $transInTime;
+        box-shadow: $styleConst !important;
+    }
+}
+
 @mixin cButton() {
     @include cControl();
+    @include cControlHov();
     @include themedButton();
     border-radius: $controlCr;
     color: $colorBtnFg;
@@ -526,10 +533,6 @@
     &:after,
     > * + * {
         margin-left: $interiorMarginSm;
-    }
-
-    @include hover() {
-        filter: $filterHov;
     }
 
     &[class*="--major"],
@@ -546,11 +549,11 @@
 
 @mixin cClickIcon() {
     @include cControl();
+    @include cControlHov();
     color: $colorBodyFg;
     cursor: pointer;
     padding: 4px; // Bigger hit area
     opacity: 0.7;
-    transition: $transOut;
     transform-origin: center;
 
     &[class*="--major"] {
@@ -560,7 +563,6 @@
 
     @include hover() {
         transform: scale(1.1);
-        transition: $transIn;
         opacity: 1;
     }
 }
@@ -584,20 +586,13 @@
     // Padding is included to facilitate a bigger hit area
     // Make the icon bigger relative to its container
     @include cControl();
+    @include cControlHov();
     @include cClickIconButtonLayout();
     background: none;
     color: $colorClickIconButton;
     box-shadow: none;
     cursor: pointer;
-    transition: $transOut;
     border-radius: $controlCr;
-
-    @include hover() {
-        transition: $transIn;
-        background: $colorClickIconButtonBgHov;
-        //color: $colorClickIconButtonFgHov;
-        filter: $filterHov;
-    }
 
     &[class*="--major"] {
         color: $colorBtnMajorBg !important;
@@ -652,10 +647,6 @@
 
     &:before {
         border-color: $colorFg;
-    }
-
-    @include hover {
-        filter: $filterHov;
     }
 
     &--up, &--prev {

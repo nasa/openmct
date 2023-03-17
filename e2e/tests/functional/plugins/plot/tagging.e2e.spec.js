@@ -173,6 +173,21 @@ test.describe('Plot Tagging', () => {
 
         await basicTagsTests(page, canvas);
         await testTelemetryItem(page, canvas, alphaSineWave);
+
+        // set to real time mode
+        await setRealTimeMode(page);
+
+        // Search for Science
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
+        // click on the search result
+        await page.getByRole('searchbox', { name: 'OpenMCT Search' }).getByText('Alpha Sine Wave').first().click();
+        // wait for plot progress bar to disappear
+        await page.locator('.l-view-section.c-progress-bar').waitFor({ state: 'detached' });
+        // expect plot to be paused
+        await expect(page.locator('[title="Resume displaying real-time data"]')).toBeVisible();
+
+        await setFixedTimeMode(page);
     });
 
     test('Tags work with Plot View of telemetry items', async ({ page }) => {

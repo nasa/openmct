@@ -565,7 +565,7 @@ select {
     }
 
     @include hover() {
-        filter: $filterHov;
+        box-shadow: $shdwBtnHov;
     }
 
     &.is-current {
@@ -725,11 +725,6 @@ select {
         width: $d;
         height: $d;
         text-align: center;
-        transition: $transOut;
-
-        &:hover {
-            transition: $transIn;
-        }
 
         &.is-selected {
             border-width: 1px;
@@ -1084,7 +1079,7 @@ input[type="range"] {
     // Controls that are in close proximity to an element they effect
     &--show-on-hover {
         // Hidden by default; requires a hover 1 - 3 levels above to display
-        transition: $transOut;
+        @include transition(opacity, $transOutTime);
         opacity: 0;
         pointer-events: none;
     }
@@ -1096,7 +1091,7 @@ input[type="range"] {
     > * > * > .c-local-controls--show-on-hover,
     > * > * > * > .c-local-controls--show-on-hover
     {
-        transition: $transIn;
+        @include transition(opacity);
         opacity: 1;
         pointer-events: inherit;
 
@@ -1109,6 +1104,7 @@ input[type="range"] {
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
     @include abs();
+    @include transition($prop: background-color, $dur: $transOutTime);
     background-color: $colorDropHintBg;
     color: $colorDropHintFg;
     border-radius: $basicCr;
@@ -1117,7 +1113,6 @@ input[type="range"] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: $transOut;
     z-index: 50;
 
     &:not(.c-drop-hint--always-show) {
@@ -1142,13 +1137,11 @@ input[type="range"] {
     .is-dragging &,
     &.is-dragging {
         pointer-events: inherit;
-        transition: $transIn;
         opacity: 0.8;
     }
 
     .is-mouse-over &,
     &.is-mouse-over {
-        transition: $transIn;
         background-color: $colorDropHintBgHov;
         opacity: 0.9;
     }

@@ -400,7 +400,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.$on('loadingUpdated', this.loadAnnotations);
+        this.$on('loadingComplete', this.loadAnnotations);
         this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
@@ -415,7 +415,7 @@ export default {
         this.destroy();
     },
     methods: {
-        updateSelection(selection) {
+        async updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
             // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
             // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
@@ -434,15 +434,7 @@ export default {
                 return;
             }
 
-            const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
-
-            // when there is no plot data, the ranges can be undefined
-            // in which case we should not perform selection
-            if (!currentXaxis || !currentYaxis) {
-                return;
-            }
-
+            await this.waitForAxesToLoad();
             const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
             //This section is only for the annotations search results entry to displaying annotations
             if (isAnnotationSearchResult) {
@@ -452,10 +444,26 @@ export default {
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
+        waitForAxesToLoad() {
+            return new Promise(resolve => {
+                // When there is no plot data, the ranges can be undefined
+                // in which case we should not perform selection.
+                const currentXaxis = this.config.xAxis.get('displayRange');
+                const currentYaxis = this.config.yAxis.get('displayRange');
+                if (!currentXaxis || !currentYaxis) {
+                    this.$once('loadingComplete', () => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        },
         showAnnotationsFromSearchResults(selectedAnnotations) {
-        //Start section
-
             if (selectedAnnotations?.length) {
+                // pause the plot if we haven't already so we can actually display
+                // the annotations
+                this.freeze();
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
                 let minX = Number.MAX_SAFE_INTEGER;
@@ -672,6 +680,9 @@ export default {
         stopLoading() {
             this.pending -= 1;
             this.updateLoading();
+            if (this.pending === 0) {
+                this.$emit('loadingComplete');
+            }
         },
 
         updateLoading() {
@@ -1687,6 +1698,9 @@ export default {
         },
 
         resumeRealtimeData() {
+            // remove annotation selections
+            this.rectangles = [];
+
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
