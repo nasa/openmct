@@ -43,7 +43,7 @@
     </div>
     <div
         v-if="!hideOptions && filteredOptions.length > 0"
-        class="c-menu c-input--autocomplete__options js-autocomplete-options"
+        class="c-menu c-input--autocomplete__options"
         aria-label="Autocomplete Options"
         @blur="hideOptions = true"
     >

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-inspector js-inspector">
+<div class="c-inspector">
     <object-name />
     <InspectorTabs
         :selection="selection"
