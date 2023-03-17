@@ -495,7 +495,6 @@
         &:hover {
             z-index: 2;
 
-            filter: brightness(1) contrast(1) !important;
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
@@ -518,10 +517,5 @@
         background-color: pushBack($colorBodyBg, 0.3);
         display: block;
         align-self: flex-end;
-    }
-
-    &:hover div.c-imagery-tsv__image-wrapper {
-        // TODO CH: convert to theme constants
-        filter: brightness(0.5) contrast(0.7);
     }
 }
