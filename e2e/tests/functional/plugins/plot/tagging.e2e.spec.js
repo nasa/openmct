@@ -181,7 +181,7 @@ test.describe('Plot Tagging', () => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         // click on the search result
-        page.getByText('Alpha Sine Wave').first().click();
+        await page.getByRole('searchbox', { name: 'OpenMCT Search' }).getByText('Alpha Sine Wave').first().click();
         // wait for plot progress bar to disappear
         await page.locator('.l-view-section.c-progress-bar').waitFor({ state: 'detached' });
         // expect plot to be paused

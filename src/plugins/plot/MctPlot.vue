@@ -400,7 +400,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.$on('loadingUpdated', this.loadAnnotations);
+        this.$on('loadingComplete', this.loadAnnotations);
         this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
@@ -435,15 +435,6 @@ export default {
             }
 
             await this.waitForAxesToLoad();
-            const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
-
-            // When there is no plot data, the ranges can be undefined
-            // in which case we should not perform selection.
-            if (!currentXaxis || !currentYaxis) {
-                return;
-            }
-
             const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
             //This section is only for the annotations search results entry to displaying annotations
             if (isAnnotationSearchResult) {
@@ -453,10 +444,20 @@ export default {
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
-        async waitForAxesToLoad() {
-            while (!this.config.xAxis.get('displayRange') || !this.config.yAxis.get('displayRange')) {
-                await new Promise(resolve => setTimeout(resolve, 200)); // Wait for 200 milliseconds
-            }
+        waitForAxesToLoad() {
+            return new Promise(resolve => {
+                // When there is no plot data, the ranges can be undefined
+                // in which case we should not perform selection.
+                const currentXaxis = this.config.xAxis.get('displayRange');
+                const currentYaxis = this.config.yAxis.get('displayRange');
+                if (!currentXaxis || !currentYaxis) {
+                    this.$once('loadingComplete', () => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
         },
         showAnnotationsFromSearchResults(selectedAnnotations) {
             if (selectedAnnotations?.length) {
@@ -679,6 +680,9 @@ export default {
         stopLoading() {
             this.pending -= 1;
             this.updateLoading();
+            if (this.pending === 0) {
+                this.$emit('loadingComplete');
+            }
         },
 
         updateLoading() {
