@@ -26,12 +26,13 @@
     flex-wrap: wrap;
 
     &__item {
+        $m: 1px;
         cursor: pointer;
-        margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        margin: 0 $m $m 0;
 
         .c-object-label {
-            padding: 0;
-            transition: $transOut;
+            border-radius: $smallCr;
+            padding: 2px 3px;
 
             &__type-icon {
                 width: auto;
@@ -39,9 +40,8 @@
                 min-width: auto;
             }
 
-            &:hover {
-                transition: $transIn;
-                filter: $filterHov;
+            @include hover() {
+                background: $colorItemTreeHoverBg;
             }
         }
     }
