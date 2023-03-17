@@ -19,21 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const { assertPlanActivities } = require('../../../helper/planningUtils');
 
-test.describe("Plan", () => {
-    let plan;
+const { test } = require('../../../pluginFixtures');
+const { setBoundsToSpanAllActivities } = require('../../../helper/planningUtils');
+const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../../appActions');
+const percySnapshot = require('@percy/playwright');
+const examplePlanLarge = require('../../../test-data/ExamplePlan_Large.json');
+
+test.describe('Visual - Planning', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
-        plan = await createPlanFromJSON(page, {
-            json: testPlan1
-        });
     });
+    test('Plan View', async ({ page, theme }) => {
+        const plan = await createPlanFromJSON(page, {
+            json: examplePlanLarge
+        });
 
-    test("Displays all plan events", async ({ page }) => {
-        await assertPlanActivities(page, testPlan1, plan.url);
+        await setBoundsToSpanAllActivities(page, examplePlanLarge, plan.url);
+        await percySnapshot(page, `Plan View (theme: ${theme})`);
+    });
+    test('Gantt Chart View', async ({ page, theme }) => {
+        const ganttChart = await createDomainObjectWithDefaults(page, {
+            type: 'Gantt Chart'
+        });
+        await createPlanFromJSON(page, {
+            json: examplePlanLarge,
+            parent: ganttChart.uuid
+        });
+        await setBoundsToSpanAllActivities(page, examplePlanLarge, ganttChart.url);
+        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`);
     });
 });
