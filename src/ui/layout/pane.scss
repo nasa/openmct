@@ -107,10 +107,10 @@
     /************************************************ DESKTOP STYLES */
     body.desktop & {
         &__handle {
-            background: $colorSplitterBg;
+            background-color: $colorSplitterBg;
             display: block;
             position: absolute;
-            transition: $transOut;
+            @include transition(background-color, $transOutTime);
 
             &:before {
                 // Extended hit area
@@ -121,8 +121,8 @@
             }
 
             &:hover {
-                background: $colorSplitterHover;
-                transition: $transIn;
+                background-color: $colorSplitterHover;
+                @include transition(background-color);
             }
         }
 
@@ -142,14 +142,14 @@
 
         [class*="expand-button"] {
             display: none; // Hidden by default
-            background: $splitterCollapsedBtnColorBg;
+            background-color: $splitterCollapsedBtnColorBg;
             color: $splitterCollapsedBtnColorFg;
             font-size: 0.9em;
 
             &:hover {
-                background: $splitterCollapsedBtnColorBgHov;
+                background-color: $splitterCollapsedBtnColorBgHov;
                 color: inherit;
-                transition: $transIn;
+                @include transition(background-color);
             }
         }
 
@@ -163,7 +163,7 @@
 
             .l-pane {
                 &__handle {
-                    background: $colorSplitterHover;
+                    background-color: $colorSplitterHover;
                 }
             }
         }
