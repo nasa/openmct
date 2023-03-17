@@ -138,6 +138,7 @@ test.describe('Performance tests', () => {
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
         //Clear Search
+        await page.locator('.c-search.c-notebook__search .c-search__input').hover();
         await page.locator('.c-search.c-notebook__search .c-search__clear-input').click();
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const SPECIAL_MESSAGE_TYPES = ['layout', 'flexible-layout'];
+
 export default class RemoveAction {
     #transaction;
 
@@ -39,28 +41,37 @@ export default class RemoveAction {
     }
 
     async invoke(objectPath) {
-        let object = objectPath[0];
-        let parent = objectPath[1];
+        const child = objectPath[0];
+        const parent = objectPath[1];
 
         try {
-            await this.showConfirmDialog(object);
+            await this.showConfirmDialog(child, parent);
         } catch (error) {
             return; // form canceled, exit invoke
         }
 
-        await this.removeFromComposition(parent, object);
+        await this.removeFromComposition(parent, child, objectPath);
 
-        if (this.inNavigationPath(object)) {
+        if (this.inNavigationPath(child)) {
             this.navigateTo(objectPath.slice(1));
         }
     }
 
-    showConfirmDialog(object) {
+    showConfirmDialog(child, parent) {
+        let message = 'Warning! This action will remove this object. Are you sure you want to continue?';
+
+        if (SPECIAL_MESSAGE_TYPES.includes(parent.type)) {
+            const type = this.openmct.types.get(parent.type);
+            const typeName = type.definition.name;
+
+            message = `Warning! This action will remove this item from the ${typeName}. Are you sure you want to continue?`;
+        }
+
         return new Promise((resolve, reject) => {
-            let dialog = this.openmct.overlays.dialog({
-                title: `Remove ${object.name}`,
+            const dialog = this.openmct.overlays.dialog({
+                title: `Remove ${child.name}`,
                 iconClass: 'alert',
-                message: 'Warning! This action will remove this object. Are you sure you want to continue?',
+                message,
                 buttons: [
                     {
                         label: 'OK',
@@ -94,13 +105,13 @@ export default class RemoveAction {
         this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
-    async removeFromComposition(parent, child) {
+    async removeFromComposition(parent, child, objectPath) {
         this.startTransaction();
 
         const composition = this.openmct.composition.get(parent);
         composition.remove(child);
 
-        if (!this.isAlias(child, parent)) {
+        if (!this.openmct.objects.isObjectPathToALink(child, objectPath)) {
             this.openmct.objects.mutate(child, 'location', null);
         }
 
@@ -111,18 +122,6 @@ export default class RemoveAction {
         await this.saveTransaction();
     }
 
-    isAlias(child, parent) {
-        if (parent === undefined) {
-            // then it's a root item, not an alias
-            return false;
-        }
-
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const childLocation = child.location;
-
-        return childLocation !== parentKeyString;
-    }
-
     appliesTo(objectPath) {
         const parent = objectPath[1];
         const parentType = parent && this.openmct.types.get(parent.type);
@@ -130,9 +129,9 @@ export default class RemoveAction {
         const locked = child.locked ? child.locked : parent && parent.locked;
         const isEditing = this.openmct.editor.isEditing();
         const isPersistable = this.openmct.objects.isPersistable(child.identifier);
-        const isAlias = this.isAlias(child, parent);
+        const isLink = this.openmct.objects.isObjectPathToALink(child, objectPath);
 
-        if (locked || (!isPersistable && !isAlias)) {
+        if (!isLink && (locked || !isPersistable)) {
             return false;
         }
 
@@ -142,9 +141,8 @@ export default class RemoveAction {
             }
         }
 
-        return parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+        return parentType?.definition.creatable
+            && Array.isArray(parent?.composition);
     }
 
     startTransaction() {
