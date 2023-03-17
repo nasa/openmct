@@ -93,6 +93,11 @@ export default class ConditionManager extends EventEmitter {
         );
         this.updateConditionResults({id: id});
         this.updateCurrentCondition(latestTimestamp);
+
+        if (Object.keys(this.telemetryObjects).length === 0) {
+            // no telemetry objects
+            this.emit('noTelemetryObjects');
+        }
     }
 
     initialize() {
@@ -101,6 +106,11 @@ export default class ConditionManager extends EventEmitter {
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.initCondition(conditionConfiguration, index);
             });
+        }
+
+        if (Object.keys(this.telemetryObjects).length === 0) {
+            // no telemetry objects
+            this.emit('noTelemetryObjects');
         }
     }
 
