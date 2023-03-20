@@ -28,6 +28,14 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setRealTimeMode, setFixedTimeMode } = require('../../../../appActions');
 
 test.describe('Plot Tagging', () => {
+    /**
+     * Given a canvas and a set of points, tags the points on the canvas.
+     * @param {import('@playwright/test').Page} page
+     * @param {HTMLCanvasElement} canvas a telemetry item with a plot
+     * @param {Number} xEnd a telemetry item with a plot
+     * @param {Number} yEnd a telemetry item with a plot
+     * @returns {Promise}
+     */
     async function createTags({page, canvas, xEnd, yEnd}) {
         await canvas.hover({trial: true});
 
@@ -64,6 +72,12 @@ test.describe('Plot Tagging', () => {
         await page.getByText('Science').click();
     }
 
+    /**
+     * Given a telemetry item (e.g., a Sine Wave Generator) with a plot, tests that the plot can be tagged.
+     * @param {import('@playwright/test').Page} page
+     * @param {import('../../../../appActions').CreatedObjectInfo} telemetryItem a telemetry item with a plot
+     * @returns {Promise}
+     */
     async function testTelemetryItem(page, telemetryItem) {
         // Check that telemetry item also received the tag
         await page.goto(telemetryItem.url);
@@ -87,6 +101,11 @@ test.describe('Plot Tagging', () => {
         await expect(page.getByText('Driving')).toBeHidden();
     }
 
+    /**
+     * Given a page, tests that tags are searchable, deletable, and persist across reloads.
+     * @param {import('@playwright/test').Page} page
+     * @returns {Promise}
+     */
     async function basicTagsTests(page) {
         // Search for Driving
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
@@ -119,7 +138,7 @@ test.describe('Plot Tagging', () => {
             page.waitForLoadState('networkidle')
         ]);
         // wait for plots to load
-        await waitForPlotsToFullyLoad(page);
+        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
 
         await page.getByText('Annotations').click();
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
@@ -135,11 +154,6 @@ test.describe('Plot Tagging', () => {
 
         await expect(page.getByText('Science')).toBeVisible();
         await expect(page.getByText('Driving')).toBeHidden();
-    }
-
-    async function waitForPlotsToFullyLoad(page) {
-        // Wait loading spinner to disappear
-        await page.waitForSelector('.series-data-loaded');
     }
 
     test.beforeEach(async ({ page }) => {
@@ -198,7 +212,7 @@ test.describe('Plot Tagging', () => {
         // click on the search result
         await page.getByRole('searchbox', { name: 'OpenMCT Search' }).getByText('Alpha Sine Wave').first().click();
         // wait for plots to load
-        await waitForPlotsToFullyLoad(page);
+        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
         // expect plot to be paused
         await expect(page.locator('[title="Resume displaying real-time data"]')).toBeVisible();
 
