@@ -62,9 +62,9 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     initialize(styleConfiguration) {
+        // We don't set the selectedConditionId here because we want condition set computation to happen before we apply any selected style
         this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
         this.staticStyle = styleConfiguration.staticStyle;
-        this.selectedConditionId = styleConfiguration.selectedConditionId;
         this.defaultConditionId = styleConfiguration.defaultConditionId;
         this.updateConditionStylesMap(styleConfiguration.styles || []);
     }
