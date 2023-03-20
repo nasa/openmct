@@ -80,11 +80,9 @@
         .is-editing & {
             cursor: pointer;
             pointer-events: initial;
-            transition: $transOut;
 
             &:hover {
                 background: rgba($colorBodyFg, 0.1);
-                transition: $transIn;
             }
 
             &.is-current {

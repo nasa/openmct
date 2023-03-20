@@ -50,7 +50,6 @@ test.describe('Main Tree', () => {
 
         await expandTreePaneItemByName(page, folder.name);
         await assertTreeItemIsVisible(page, clock.name);
-
     });
 
     test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({ page, openmctConfig }) => {

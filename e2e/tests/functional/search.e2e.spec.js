@@ -63,7 +63,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
 
         // Click [aria-label="OpenMCT Search"] a >> nth=0
-        await page.locator('[aria-label="OpenMCT Search"] a').first().click();
+        await page.locator('[aria-label="Search Result"] >> nth=0').click();
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]

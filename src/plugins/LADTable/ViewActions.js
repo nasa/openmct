@@ -20,38 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+const expandColumns = {
+    name: 'Expand Columns',
+    key: 'lad-expand-columns',
+    description: "Increase column widths to fit currently available data.",
+    cssClass: 'icon-arrows-right-left labeled',
+    invoke: (objectPath, view) => {
+        view.getViewContext().toggleFixedLayout();
+    },
+    showInStatusBar: true,
+    group: 'view'
+};
 
-export default class LADTableConfiguration extends EventEmitter {
-    constructor(domainObject, openmct) {
-        super();
+const autosizeColumns = {
+    name: 'Autosize Columns',
+    key: 'lad-autosize-columns',
+    description: "Automatically size columns to fit the table into the available space.",
+    cssClass: 'icon-expand labeled',
+    invoke: (objectPath, view) => {
+        view.getViewContext().toggleFixedLayout();
+    },
+    showInStatusBar: true,
+    group: 'view'
+};
 
-        this.domainObject = domainObject;
-        this.openmct = openmct;
+const viewActions = [
+    expandColumns,
+    autosizeColumns
+];
 
-        this.objectMutated = this.objectMutated.bind(this);
-        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
-    }
-
-    getConfiguration() {
-        const configuration = this.domainObject.configuration || {};
-        configuration.hiddenColumns = configuration.hiddenColumns || {};
-        configuration.isFixedLayout = configuration.isFixedLayout ?? true;
-
-        return configuration;
-    }
-
-    updateConfiguration(configuration) {
-        this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
-    }
-
-    objectMutated(configuration) {
-        if (configuration !== undefined) {
-            this.emit('change', configuration);
+viewActions.forEach(action => {
+    action.appliesTo = (objectPath, view = {}) => {
+        const viewContext = view.getViewContext && view.getViewContext();
+        if (!viewContext) {
+            return false;
         }
-    }
 
-    destroy() {
-        this.unlistenFromMutation();
-    }
-}
+        return viewContext.type === 'lad-table';
+    };
+});
+
+export default viewActions;
