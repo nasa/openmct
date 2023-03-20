@@ -64,11 +64,13 @@ test.describe('Plot Tagging', () => {
         await page.getByText('Science').click();
     }
 
-    async function testTelemetryItem(page, canvas, telemetryItem) {
+    async function testTelemetryItem(page, telemetryItem) {
         // Check that telemetry item also received the tag
         await page.goto(telemetryItem.url);
 
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
+
+        const canvas = page.locator('canvas').nth(1);
 
         //Wait for canvas to stablize.
         await canvas.hover({trial: true});
@@ -85,19 +87,26 @@ test.describe('Plot Tagging', () => {
         await expect(page.getByText('Driving')).toBeHidden();
     }
 
-    async function basicTagsTests(page, canvas) {
-        // Search for Science
+    async function basicTagsTests(page) {
+        // Search for Driving
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-        await expect(page.locator('[aria-label="Search Result"]').nth(0)).toContainText("Science");
-        await expect(page.locator('[aria-label="Search Result"]').nth(0)).not.toContainText("Drilling");
+
+        // Clicking elsewhere should cause annotation selection to be cleared
+        await expect(page.getByText('No tags to display for this item')).toBeVisible();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('driv');
+        // click on the search result
+        await page.getByRole('searchbox', { name: 'OpenMCT Search' }).getByText(/Sine Wave/).first().click();
 
         // Delete Driving
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
         await page.locator('[aria-label="Remove tag Driving"]').click();
 
-        await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText("Driving");
+        // Search for Science
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
+        await expect(page.locator('[aria-label="Search Result"]').nth(0)).toContainText("Science");
+        await expect(page.locator('[aria-label="Search Result"]').nth(0)).not.toContainText("Drilling");
 
         // Search for Driving
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
@@ -115,6 +124,7 @@ test.describe('Plot Tagging', () => {
         await page.getByText('Annotations').click();
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
+        const canvas = page.locator('canvas').nth(1);
         // click on the tagged plot point
         await canvas.click({
             position: {
@@ -176,8 +186,8 @@ test.describe('Plot Tagging', () => {
         // changing to fixed time mode rebuilds canvas?
         canvas = page.locator('canvas').nth(1);
 
-        await basicTagsTests(page, canvas);
-        await testTelemetryItem(page, canvas, alphaSineWave);
+        await basicTagsTests(page);
+        await testTelemetryItem(page, alphaSineWave);
 
         // set to real time mode
         await setRealTimeMode(page);
@@ -207,7 +217,7 @@ test.describe('Plot Tagging', () => {
             xEnd: 700,
             yEnd: 480
         });
-        await basicTagsTests(page, canvas);
+        await basicTagsTests(page);
     });
 
     test('Tags work with Stacked Plots', async ({ page }) => {
@@ -237,7 +247,7 @@ test.describe('Plot Tagging', () => {
             xEnd: 700,
             yEnd: 215
         });
-        await basicTagsTests(page, canvas);
-        await testTelemetryItem(page, canvas, alphaSineWave);
+        await basicTagsTests(page);
+        await testTelemetryItem(page, alphaSineWave);
     });
 });
