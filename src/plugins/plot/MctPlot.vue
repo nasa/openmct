@@ -410,7 +410,6 @@ export default {
         this.setTimeContext();
 
         this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
-        document.body.addEventListener('click', this.cancelSelection);
 
         this.loaded = true;
     },
@@ -452,7 +451,7 @@ export default {
             this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         cancelSelection(event) {
-            if (this.$refs.plot) {
+            if (this.$refs?.plot) {
                 const clickedInsidePlot = this.$refs.plot.contains(event.target);
                 const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
                 const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
@@ -460,6 +459,7 @@ export default {
                     this.rectangles = [];
                     this.annotationSelections = [];
                     this.selectPlot();
+                    document.body.removeEventListener('click', this.cancelSelection);
                 }
             }
         },
@@ -1295,6 +1295,8 @@ export default {
             }
 
             this.openmct.selection.select(selection, true);
+
+            document.body.addEventListener('click', this.cancelSelection);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
