@@ -35,7 +35,9 @@ export default class StyleRuleManager extends EventEmitter {
         }
 
         if (styleConfiguration) {
-            this.initialize(styleConfiguration);
+            // We don't set the selectedConditionId here because we want condition set computation to happen before we apply any selected style
+            const styleConfigurationWithNoSelection = Object.assign(styleConfiguration, {selectedConditionId: ''});
+            this.initialize(styleConfigurationWithNoSelection);
             if (styleConfiguration.conditionSetIdentifier) {
                 this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
@@ -57,13 +59,17 @@ export default class StyleRuleManager extends EventEmitter {
                 this.applySelectedConditionStyle();
             }
         } else if (this.conditionSetIdentifier) {
+            //reset the selected style and let the condition set output determine what it should be
+            this.selectedConditionId = undefined;
+            this.currentStyle = undefined;
+            this.updateDomainObjectStyle();
             this.subscribeToConditionSet();
         }
     }
 
     initialize(styleConfiguration) {
-        // We don't set the selectedConditionId here because we want condition set computation to happen before we apply any selected style
         this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
+        this.selectedConditionId = styleConfiguration.selectedConditionId;
         this.staticStyle = styleConfiguration.staticStyle;
         this.defaultConditionId = styleConfiguration.defaultConditionId;
         this.updateConditionStylesMap(styleConfiguration.styles || []);
