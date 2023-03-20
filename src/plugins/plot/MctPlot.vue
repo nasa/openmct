@@ -24,6 +24,7 @@
     v-if="loaded"
     ref="plot"
     class="gl-plot"
+    :class="{ 'series-data-loaded' : seriesDataLoaded }"
 >
     <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
@@ -348,6 +349,9 @@ export default {
             const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
             return parentLeftTickWidth || leftTickWidth;
+        },
+        seriesDataLoaded() {
+            return ((this.pending === 0) && this.loaded);
         }
     },
     watch: {
