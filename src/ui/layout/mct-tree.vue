@@ -361,8 +361,8 @@ export default {
                 return;
             }
 
-            this.treeItems = this.treeItems.filter((treeItem) => {
-                const otherPath = treeItem.navigationPath;
+            this.treeItems = this.treeItems.filter((item) => {
+                const otherPath = item.navigationPath;
                 if (otherPath !== path
                     && this.isTreeItemAChildOf(otherPath, path)) {
                     this.destroyObserverByPath(otherPath);
