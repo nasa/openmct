@@ -99,6 +99,8 @@
                 }
             }
         }
+
+        &.c-so-view--flexible-layout,
         &.c-so-view--layout {
             // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
             > .c-so-view__header {
