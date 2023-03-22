@@ -38,7 +38,6 @@
 import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
-import ticker from 'utils/clock/Ticker';
 import {SORT_ORDER_OPTIONS} from "./constants";
 
 import moment from "moment";
@@ -119,7 +118,7 @@ export default {
         this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
@@ -142,10 +141,6 @@ export default {
 
         if (this.unlistenConfig) {
             this.unlistenConfig();
-        }
-
-        if (this.unlistenTicker) {
-            this.unlistenTicker();
         }
 
         if (this.removeStatusListener) {
@@ -193,7 +188,7 @@ export default {
         },
         updateTimestamp(_bounds, isTick) {
             if (isTick === true) {
-                this.timestamp = this.openmct.time.clock().currentValue();
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
         setViewFromClock(newClock) {
@@ -202,8 +197,7 @@ export default {
             if (isFixedTime) {
                 this.hideAll = false;
                 this.showAll = true;
-                // clear invokes listActivities
-                this.clearPreviousActivities(this.openmct.time.bounds()?.start);
+                this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
             } else {
                 this.setSort();
                 this.setViewBounds();
@@ -346,12 +340,8 @@ export default {
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
         },
-        clearPreviousActivities(time) {
-            if (time instanceof Date) {
-                this.timestamp = time.getTime();
-            } else {
-                this.timestamp = time;
-            }
+        updateTimeStampAndListActivities(time) {
+            this.timestamp = time;
 
             this.listActivities();
         },
