@@ -605,8 +605,6 @@ export default {
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
             // Repeat drawing for all yAxes
             yAxisIds.forEach((id) => {
-                console.log(id);
-                console.log(this.canDraw(id));
                 if (this.canDraw(id)) {
                     this.updateViewport(id);
                     this.drawSeries(id);
