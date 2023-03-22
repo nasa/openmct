@@ -236,7 +236,7 @@ export default {
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
             notebookAnnotations: {},
-            selectedEntryId: '',
+            selectedEntryId: undefined,
             activeTransaction: false,
             savingTransaction: false
         };
@@ -381,8 +381,10 @@ export default {
             });
         },
         updateSelection(selection) {
-            if (selection?.[0]?.[0]?.context?.targetDetails?.entryId === undefined) {
-                this.selectedEntryId = '';
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            if (selection?.[0]?.[0]?.context?.targetDetails?.[keyString]?.entryId === undefined) {
+                this.selectedEntryId = undefined;
             }
         },
         async loadAnnotations() {
@@ -522,6 +524,8 @@ export default {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
 
+                this.cancelTransaction();
+
                 return;
             }
 
@@ -534,10 +538,15 @@ export default {
                         emphasis: true,
                         callback: () => {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                            entries.splice(entryPos, 1);
-                            this.updateEntries(entries);
-                            this.filterAndSortEntries();
-                            this.removeAnnotations(entryId);
+                            if (entries) {
+                                entries.splice(entryPos, 1);
+                                this.updateEntries(entries);
+                                this.filterAndSortEntries();
+                                this.removeAnnotations(entryId);
+                            } else {
+                                this.cancelTransaction();
+                            }
+
                             dialog.dismiss();
                         }
                     },

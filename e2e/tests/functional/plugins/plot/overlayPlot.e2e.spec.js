@@ -268,6 +268,9 @@ async function getCanvasPixelsWithData(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function assertLimitLinesExistAndAreVisible(page) {
+    // Wait for plot series data to load
+    await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+    // Wait for limit lines to be created
     await page.waitForSelector('.js-limit-area', { state: 'attached' });
     const limitLineCount = await page.locator('.c-plot-limit-line').count();
     // There should be 10 limit lines created by default

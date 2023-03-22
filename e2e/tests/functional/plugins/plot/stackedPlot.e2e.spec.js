@@ -115,6 +115,9 @@ test.describe('Stacked Plot', () => {
         await expect(stackedPlotItem2).toHaveAttribute('aria-label', `Stacked Plot Item ${swgC.name}`);
         await expect(stackedPlotItem3).toHaveAttribute('aria-label', `Stacked Plot Item ${swgA.name}`);
 
+        // collapse inspector
+        await page.locator('.l-shell__pane-inspector .l-pane__collapse-button').click();
+
         // Save (exit edit mode)
         await page.locator('button[title="Save"]').click();
         await page.locator('li[title="Save and Finish Editing"]').click();

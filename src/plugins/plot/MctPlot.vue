@@ -22,7 +22,9 @@
 <template>
 <div
     v-if="loaded"
+    ref="plot"
     class="gl-plot"
+    :class="{ 'js-series-data-loaded' : seriesDataLoaded }"
 >
     <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
@@ -347,6 +349,9 @@ export default {
             const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
             return parentLeftTickWidth || leftTickWidth;
+        },
+        seriesDataLoaded() {
+            return ((this.pending === 0) && this.loaded);
         }
     },
     watch: {
@@ -400,7 +405,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.$on('loadingUpdated', this.loadAnnotations);
+        this.$on('loadingComplete', this.loadAnnotations);
         this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
@@ -412,10 +417,11 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.body.removeEventListener('click', this.cancelSelection);
         this.destroy();
     },
     methods: {
-        updateSelection(selection) {
+        async updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
             // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
             // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
@@ -434,15 +440,7 @@ export default {
                 return;
             }
 
-            const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
-
-            // when there is no plot data, the ranges can be undefined
-            // in which case we should not perform selection
-            if (!currentXaxis || !currentYaxis) {
-                return;
-            }
-
+            await this.waitForAxesToLoad();
             const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
             //This section is only for the annotations search results entry to displaying annotations
             if (isAnnotationSearchResult) {
@@ -452,10 +450,39 @@ export default {
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
+        cancelSelection(event) {
+            if (this.$refs?.plot) {
+                const clickedInsidePlot = this.$refs.plot.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+                    this.rectangles = [];
+                    this.annotationSelections = [];
+                    this.selectPlot();
+                    document.body.removeEventListener('click', this.cancelSelection);
+                }
+            }
+        },
+        waitForAxesToLoad() {
+            return new Promise(resolve => {
+                // When there is no plot data, the ranges can be undefined
+                // in which case we should not perform selection.
+                const currentXaxis = this.config.xAxis.get('displayRange');
+                const currentYaxis = this.config.yAxis.get('displayRange');
+                if (!currentXaxis || !currentYaxis) {
+                    this.$once('loadingComplete', () => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        },
         showAnnotationsFromSearchResults(selectedAnnotations) {
-        //Start section
-
             if (selectedAnnotations?.length) {
+                // pause the plot if we haven't already so we can actually display
+                // the annotations
+                this.freeze();
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
                 let minX = Number.MAX_SAFE_INTEGER;
@@ -672,6 +699,9 @@ export default {
         stopLoading() {
             this.pending -= 1;
             this.updateLoading();
+            if (this.pending === 0) {
+                this.$emit('loadingComplete');
+            }
         },
 
         updateLoading() {
@@ -1265,6 +1295,8 @@ export default {
             }
 
             this.openmct.selection.select(selection, true);
+
+            document.body.addEventListener('click', this.cancelSelection);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
@@ -1687,6 +1719,9 @@ export default {
         },
 
         resumeRealtimeData() {
+            // remove annotation selections
+            this.rectangles = [];
+
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },

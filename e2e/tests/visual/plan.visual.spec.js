@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures');
-const { setBoundsToSpanAllActivities } = require('../../../helper/planningUtils');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../../appActions');
+const { test } = require('../../pluginFixtures');
+const { setBoundsToSpanAllActivities } = require('../../helper/planningUtils');
+const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
-const examplePlanLarge = require('../../../test-data/ExamplePlan_Large.json');
+const examplePlanLarge = require('../../test-data/examplePlans/ExamplePlan_Large.json');
 
 test.describe('Visual - Planning', () => {
     test.beforeEach(async ({ page }) => {

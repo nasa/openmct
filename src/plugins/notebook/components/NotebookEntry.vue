@@ -54,7 +54,7 @@
                     class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
                     title="Delete this entry"
                     tabindex="-1"
-                    @click="deleteEntry"
+                    @click.stop.prevent="deleteEntry"
                 >
                 </button>
             </span>
@@ -466,7 +466,10 @@ export default {
             if (!this.isSelectedEntry) {
                 $event.preventDefault();
                 // blur the previous focused entry if clicking on non selected entry input
-                document.activeElement.blur();
+                const focusedElementId = document.activeElement?.id;
+                if (focusedElementId !== this.entry.id) {
+                    document.activeElement.blur();
+                }
             }
         },
         editingEntry() {
