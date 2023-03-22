@@ -608,6 +608,10 @@ export default {
                 if (this.canDraw(id)) {
                     this.updateViewport(id);
                     this.drawSeries(id);
+                    if (!this.rectangleAxisId) {
+                        this.rectangleAxisId = id;
+                    }
+
                     this.drawRectangles(id);
                     this.drawHighlights(id);
 
@@ -910,6 +914,11 @@ export default {
                 return;
             }
 
+            const rectangleColor = [...rect.color];
+            if (yAxisId !== this.rectangleAxisId) {
+                rectangleColor[3] = 0;
+            }
+
             const startYIndex = rect.start.yAxisIds.findIndex(id => id === yAxisId);
             const endYIndex = rect.end.yAxisIds.findIndex(id => id === yAxisId);
             if (rect.start.y[startYIndex] && rect.end.y[endYIndex]) {
@@ -922,7 +931,7 @@ export default {
                         this.offset[yAxisId].x(rect.end.x),
                         this.offset[yAxisId].y(rect.end.y[endYIndex])
                     ],
-                    rect.color
+                    rectangleColor
                 );
             }
         }
