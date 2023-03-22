@@ -35,7 +35,7 @@
         min-height: 0;
         max-height: 15%;
         overflow: hidden;
-        transition: $transIn;
+        @include transition(min-height);
 
         &.is-expanded {
             min-height: 100px;
@@ -65,8 +65,7 @@
     }
 
     &__pane-tree,
-    &__pane-inspector,
-    &__pane-main {
+    &__pane-inspector {
         .l-pane__contents {
             display: flex;
             flex-flow: column nowrap;
@@ -74,8 +73,7 @@
         }
     }
 
-    &__pane-tree,
-    &__pane-main {
+    &__pane-tree {
         .l-pane__contents {
             > * {
                 flex: 0 0 auto;
@@ -89,6 +87,37 @@
 
     &__pane-main {
         .l-pane__header { display: none; }
+
+        .l-pane__contents {
+            .l-shell__main-.l-shell__main-view-browse-bar {
+                position: relative;
+            }
+            // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
+            .l-shell__time-conductor,
+            .l-shell__main-container {
+                position: absolute;
+                left: 0;
+                right: 0;
+                height: auto;
+                width: auto;
+            
+            }
+
+            .l-shell__main-container {
+                top: $shellMainBrowseBarH + $interiorMarginLg;
+                bottom: $shellTimeConductorH + $interiorMargin;
+            }
+
+            @include phonePortrait() {
+                .l-shell__main-container {
+                    bottom: $shellTimeConductorMobileH + $interiorMargin;
+                }
+            }
+
+            .l-shell__time-conductor {
+                bottom: 0;
+            }
+        }
     }
 
     body.mobile & {
@@ -307,6 +336,7 @@
         height: $p + 24px; // Need to standardize the height
         justify-content: space-between;
         padding: $p;
+        z-index: 2;
     }
 
     &__resizing {
@@ -332,6 +362,7 @@
         box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
         margin-left: $m;
         margin-right: $m;
+        top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
 
         &[s-selected] {
             // Provide a clearer selection context articulation for the main edit area
@@ -408,10 +439,6 @@
         flex: 0 1 auto;
     }
 
-    .c-object-label__name {
-        filter: $objectLabelNameFilter;
-    }
-
     .c-object-label__type-icon {
         opacity: $objectLabelTypeIconOpacity;
     }
@@ -433,7 +460,7 @@
 
 /************************** DRAWER */
 .c-drawer {
-    /* New sliding overlay or push element to contain things
+    /* Sliding overlay or push element to contain things
     * Designed for mobile and compact desktop scenarios
     * Variations:
     * --overlays: position absolute, overlays neighboring elements
@@ -442,7 +469,8 @@
     * &.is-expanded: applied when expanded.
      */
 
-    transition: $transOut;
+    $transProps: width, min-width, height, min-height;
+
     min-height: 0;
     min-width: 0;
     overflow: hidden;
@@ -455,11 +483,12 @@
     }
 
     &.c-drawer--align-left {
+        @include transition($prop: $transProps, $dur: $transOutTime);
         height: 100%;
     }
 
     &.c-drawer--align-top {
-        // Need anything here?
+        @include transition($prop: $transProps, $dur: $transOutTime);
     }
 
     &.c-drawer--overlays {

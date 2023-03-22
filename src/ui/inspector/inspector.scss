@@ -25,10 +25,6 @@
     }
 
     &__selected {
-        .c-object-label__name {
-            filter: $objectLabelNameFilter;
-        }
-
         .c-object-label__type-icon {
             opacity: $objectLabelTypeIconOpacity;
         }

@@ -23,6 +23,7 @@ import LADTableViewProvider from './LADTableViewProvider';
 import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './LADTableCompositionPolicy';
 import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider';
+import LADTableViewActions from './ViewActions';
 
 export default function plugin() {
     return function install(openmct) {
@@ -52,5 +53,9 @@ export default function plugin() {
         });
 
         openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
+
+        LADTableViewActions.forEach(action => {
+            openmct.actions.register(action);
+        });
     };
 }
