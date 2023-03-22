@@ -77,6 +77,7 @@ export default {
     },
     methods: {
         dataAdded(addedItems, addedItemIndices) {
+            console.debug('🕰️ dataAdded', addedItems, addedItemIndices);
             const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
             let newImageHistory = this.imageHistory.slice();
             normalizedDataToAdd.forEach(((datum, index) => {

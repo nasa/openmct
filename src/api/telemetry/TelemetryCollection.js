@@ -60,6 +60,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.unsubscribe = undefined;
         this.options = options ?? {};
+        this.options.timeContext = this.options.timeContext ?? this.timeContext;
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
@@ -122,7 +123,10 @@ export default class TelemetryCollection extends EventEmitter {
         let options = { ...this.options };
         let historicalProvider;
 
-        options.timeContext = this.timeContext;
+        // unclear why simply passing the timeContext isn't enough here
+        const bounds = this.timeContext.bounds();
+        options.start = bounds.start;
+        options.end = bounds.end;
 
         this.openmct.telemetry.standardizeRequestOptions(options);
         historicalProvider = this.openmct.telemetry.
@@ -194,6 +198,8 @@ export default class TelemetryCollection extends EventEmitter {
         if (telemetryData === undefined) {
             return;
         }
+
+        console.debug(`🍉 Processing new telemetry data: `, telemetryData);
 
         let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];

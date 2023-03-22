@@ -228,14 +228,19 @@ function getHistoricalProvider() {
                 && options.strategy !== 'latest';
         },
         request: (domainObject, options) => {
+            console.debug(`👨‍🔧 Received request for `, options);
             const delay = getImageLoadDelay(domainObject);
             let start = options.start;
             const end = Math.min(options.end, Date.now());
             const data = [];
             while (start <= end && data.length < delay) {
-                data.push(pointForTimestamp(start, domainObject.name, getImageSamples(domainObject.configuration), delay));
+                const imageSamples = getImageSamples(domainObject.configuration);
+                const generatedDataPoint = pointForTimestamp(start, domainObject.name, imageSamples, delay);
+                data.push(generatedDataPoint);
                 start += delay;
             }
+
+            console.debug(`👨‍🔧 Generated ${data.length} data items for historical data request.`);
 
             return Promise.resolve(data);
         }
