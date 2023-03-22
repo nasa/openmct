@@ -605,6 +605,8 @@ export default {
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
             // Repeat drawing for all yAxes
             yAxisIds.forEach((id) => {
+                console.log(id);
+                console.log(this.canDraw(id));
                 if (this.canDraw(id)) {
                     this.updateViewport(id);
                     this.drawSeries(id);
@@ -910,13 +912,8 @@ export default {
             }
         },
         drawRectangle(yAxisId, rect) {
-            if (!rect.start.yAxisIds || !rect.end.yAxisIds) {
+            if (!rect.start.yAxisIds || !rect.end.yAxisIds || yAxisId !== this.rectangleAxisId) {
                 return;
-            }
-
-            const rectangleColor = [...rect.color];
-            if (yAxisId !== this.rectangleAxisId) {
-                rectangleColor[3] = 0;
             }
 
             const startYIndex = rect.start.yAxisIds.findIndex(id => id === yAxisId);
@@ -931,7 +928,7 @@ export default {
                         this.offset[yAxisId].x(rect.end.x),
                         this.offset[yAxisId].y(rect.end.y[endYIndex])
                     ],
-                    rectangleColor
+                    rect.color
                 );
             }
         }
