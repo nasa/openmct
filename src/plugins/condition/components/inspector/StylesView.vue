@@ -307,6 +307,8 @@ export default {
                     delete this.stopProvidingTelemetry;
                 }
             } else {
+                //reset the selectedConditionID so that the condition set computation can drive it.
+                this.applySelectedConditionStyle('');
                 this.subscribeToConditionSet();
             }
         },

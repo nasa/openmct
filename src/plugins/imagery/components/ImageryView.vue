@@ -322,7 +322,7 @@ export default {
                                 rgba(125,125,125,.2) 8px
                             )`
                     ) : ''}`,
-                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${this.imageTranslateY / 2}px)`,
                 transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                 width: `${this.sizedImageWidth}px`,
                 height: `${this.sizedImageHeight}px`
@@ -709,7 +709,7 @@ export default {
         getVisibleLayerStyles(layer) {
             return {
                 backgroundImage: `url(${layer.source})`,
-                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${this.imageTranslateY / 2}px)`,
                 transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
             };
         },
