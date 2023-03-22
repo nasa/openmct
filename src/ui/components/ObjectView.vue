@@ -31,7 +31,8 @@ const SupportedViewTypes = [
     'plot-overlay',
     'bar-graph.view',
     'scatter-plot.view',
-    'time-strip.view'
+    'time-strip.view',
+    'example.imagery'
 ];
 export default {
     components: {
