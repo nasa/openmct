@@ -122,6 +122,8 @@ export default class TelemetryCollection extends EventEmitter {
         let options = { ...this.options };
         let historicalProvider;
 
+        options.timeContext = this.timeContext;
+
         this.openmct.telemetry.standardizeRequestOptions(options);
         historicalProvider = this.openmct.telemetry.
             findRequestProvider(this.domainObject, options);
@@ -131,6 +133,7 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         let historicalData;
+        console.debug(`🐥 Requesting historical telemetry with `, options);
 
         options.onPartialResponse = this._processNewTelemetry.bind(this);
 
@@ -167,7 +170,6 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _initiateSubscriptionTelemetry() {
-
         if (this.unsubscribe) {
             this.unsubscribe();
         }
