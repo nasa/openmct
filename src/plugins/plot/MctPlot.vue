@@ -22,7 +22,9 @@
 <template>
 <div
     v-if="loaded"
+    ref="plot"
     class="gl-plot"
+    :class="{ 'js-series-data-loaded' : seriesDataLoaded }"
 >
     <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
@@ -347,6 +349,9 @@ export default {
             const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
             return parentLeftTickWidth || leftTickWidth;
+        },
+        seriesDataLoaded() {
+            return ((this.pending === 0) && this.loaded);
         }
     },
     watch: {
@@ -412,6 +417,7 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.body.removeEventListener('click', this.cancelSelection);
         this.destroy();
     },
     methods: {
@@ -443,6 +449,19 @@ export default {
 
             //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        cancelSelection(event) {
+            if (this.$refs?.plot) {
+                const clickedInsidePlot = this.$refs.plot.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+                    this.rectangles = [];
+                    this.annotationSelections = [];
+                    this.selectPlot();
+                    document.body.removeEventListener('click', this.cancelSelection);
+                }
+            }
         },
         waitForAxesToLoad() {
             return new Promise(resolve => {
@@ -1276,6 +1295,8 @@ export default {
             }
 
             this.openmct.selection.select(selection, true);
+
+            document.body.addEventListener('click', this.cancelSelection);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
