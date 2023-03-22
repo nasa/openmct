@@ -39,7 +39,7 @@ import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
 import {SORT_ORDER_OPTIONS} from "./constants";
-
+import _ from 'lodash';
 import moment from "moment";
 import { v4 as uuid } from 'uuid';
 
@@ -119,6 +119,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
 
+        this.updateTimestamp = _.debounce(this.updateTimestamp, 500);
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
