@@ -965,7 +965,19 @@ export default {
             const childPathKeys = childNavigationPath.split('/');
             const parentPathKeys = parentNavigationPath.split('/');
 
-            return parentPathKeys.every((key) => childPathKeys.includes(key));
+            // If child path is shorter than the parent path,
+            // then it's not a child.
+            if (childPathKeys.length <= parentPathKeys.length) {
+                return false;
+            }
+
+            for (let i = 0; i < parentPathKeys.length; i++) {
+                if (childPathKeys[i] !== parentPathKeys[i]) {
+                    return false;
+                }
+            }
+
+            return true;
         },
         getElementStyleValue(el, style) {
             if (!el) {
