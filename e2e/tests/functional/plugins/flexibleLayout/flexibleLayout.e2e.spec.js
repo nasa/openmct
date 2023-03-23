@@ -157,7 +157,7 @@ test.describe('Flexible Layout', () => {
         });
         // Create a Flexible Layout
         await createDomainObjectWithDefaults(page, {
-            type: 'Flexible Layout',
+            type: 'Flexible Layout'
         });
         // Edit Display Layout
         await page.locator('[title="Edit"]').click();

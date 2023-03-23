@@ -197,7 +197,7 @@ test.describe('Display Layout', () => {
         });
         // Create a Display Layout
         await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
+            type: 'Display Layout'
         });
         // Edit Display Layout
         await page.locator('[title="Edit"]').click();
