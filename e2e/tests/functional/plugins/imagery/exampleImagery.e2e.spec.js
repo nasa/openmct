@@ -55,6 +55,50 @@ test.describe('Example Imagery Object', () => {
         await mouseZoomOnImageAndAssert(page, -2);
     });
 
+    test('Can use independent time conductor to change time', async ({ page }) => {
+        // Test independent fixed time with global fixed time
+        // flip on independent time conductor
+        await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+        await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
+        await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
+        await page.getByRole('textbox').nth(1).click();
+
+        // check image date
+        await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+        // flip it off
+        await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+        // timestamp shouldn't be in the past anymore
+        await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+        // Test independent fixed time with global realtime
+        await page.getByRole('button', { name: /Fixed Timespan/ }).click();
+        await page.getByTestId('conductor-modeOption-realtime').click();
+        await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+        // check image date to be in the past
+        await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+        // flip it off
+        await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+        // timestamp shouldn't be in the past anymore
+        await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+        // Test independent realtime with global realtime
+        await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+        // check image date
+        await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+        // change independent time to realtime
+        await page.getByRole('button', { name: /Fixed Timespan/ }).click();
+        await page.getByRole('menuitem', { name: /Local Clock/ }).click();
+        // timestamp shouldn't be in the past anymore
+        await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+        // back to the past
+        await page.getByRole('button', { name: /Local Clock/ }).first().click();
+        await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+        // check image date to be in the past
+        await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    });
+
     test('Can adjust image brightness/contrast by dragging the sliders', async ({ page, browserName }) => {
         // eslint-disable-next-line playwright/no-skipped-test
         test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
