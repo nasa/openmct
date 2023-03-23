@@ -53,7 +53,12 @@ const headerItems = [
         property: 'start',
         name: 'Start Time',
         format: function (value, object) {
-            return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            const clock = this.openmct.time.clock();
+            if (clock) {
+                return clock.parseTime(value);
+            } else {
+                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: true,
@@ -61,7 +66,12 @@ const headerItems = [
         property: 'end',
         name: 'End Time',
         format: function (value, object) {
-            return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            const clock = this.openmct.time.clock();
+            if (clock) {
+                return clock.parseTime(value);
+            } else {
+                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: false,
