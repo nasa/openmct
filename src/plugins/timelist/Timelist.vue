@@ -55,7 +55,9 @@ const headerItems = [
         format: function (value, object) {
             const clock = this.openmct.time.clock();
             if (clock) {
-                return clock.parseTime(value);
+                console.log(clock.formatTime(value));
+
+                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             } else {
                 return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             }
@@ -68,7 +70,9 @@ const headerItems = [
         format: function (value, object) {
             const clock = this.openmct.time.clock();
             if (clock) {
-                return clock.parseTime(value);
+                console.log(clock.formatTime(value));
+
+                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             } else {
                 return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             }

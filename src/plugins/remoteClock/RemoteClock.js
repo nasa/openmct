@@ -137,6 +137,10 @@ export default class RemoteClock extends DefaultClock {
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
         };
+
+        this.formatTime = (datum) => {
+            return timeFormatter.format(datum);
+        };
     }
 
     /**
