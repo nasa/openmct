@@ -77,7 +77,6 @@ export default {
     },
     methods: {
         dataAdded(addedItems, addedItemIndices) {
-            console.debug('🕰️ dataAdded', addedItems, addedItemIndices);
             const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
             let newImageHistory = this.imageHistory.slice();
             normalizedDataToAdd.forEach(((datum, index) => {
@@ -155,7 +154,6 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         boundsChange(bounds, isTick) {
-            console.debug(`🔮 ImageryView boundsChange: ${JSON.stringify(bounds)}`);
             if (isTick) {
                 return;
             }

@@ -137,7 +137,6 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         let historicalData;
-        console.debug(`🐥 Requesting historical telemetry with `, options);
 
         options.onPartialResponse = this._processNewTelemetry.bind(this);
 
@@ -198,8 +197,6 @@ export default class TelemetryCollection extends EventEmitter {
         if (telemetryData === undefined) {
             return;
         }
-
-        console.debug(`🍉 Processing new telemetry data: `, telemetryData);
 
         let latestBoundedDatum = this.boundedTelemetry[this.boundedTelemetry.length - 1];
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
@@ -388,7 +385,6 @@ export default class TelemetryCollection extends EventEmitter {
         } else {
             // user bounds change, reset
             this._reset();
-            console.debug(`🍉 detected user bound change in collection`);
         }
 
     }

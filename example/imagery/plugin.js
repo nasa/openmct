@@ -228,7 +228,6 @@ function getHistoricalProvider() {
                 && options.strategy !== 'latest';
         },
         request: (domainObject, options) => {
-            console.debug(`👨‍🔧 Received request for `, options);
             const delay = getImageLoadDelay(domainObject);
             let start = options.start;
             const end = Math.min(options.end, Date.now());
@@ -239,8 +238,6 @@ function getHistoricalProvider() {
                 data.push(generatedDataPoint);
                 start += delay;
             }
-
-            console.debug(`👨‍🔧 Generated ${data.length} data items for historical data request.`);
 
             return Promise.resolve(data);
         }
