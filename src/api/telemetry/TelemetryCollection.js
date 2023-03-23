@@ -123,7 +123,8 @@ export default class TelemetryCollection extends EventEmitter {
         let options = { ...this.options };
         let historicalProvider;
 
-        // unclear why simply passing the timeContext isn't enough here
+        // TODO: When https://github.com/nasa/openmct/issues/6493 is resolved,
+        // this should be removed.
         const bounds = this.timeContext.bounds();
         options.start = bounds.start;
         options.end = bounds.end;
