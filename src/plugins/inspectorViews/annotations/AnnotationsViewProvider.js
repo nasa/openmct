@@ -23,7 +23,7 @@
 import Annotations from './AnnotationsInspectorView.vue';
 import Vue from 'vue';
 
-export default function ElementsViewProvider(openmct) {
+export default function AnnotationsViewProvider(openmct) {
     return {
         key: 'annotationsView',
         name: 'Annotations',
