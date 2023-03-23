@@ -28,6 +28,12 @@ export default function AnnotationsViewProvider(openmct) {
         key: 'annotationsView',
         name: 'Annotations',
         canView: function (selection) {
+            const availableTags = openmct.annotation.getAvailableTags();
+
+            if (availableTags.length < 1) {
+                return false;
+            }
+
             return selection.length;
         },
         view: function (selection) {
