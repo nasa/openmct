@@ -965,8 +965,8 @@ export default {
             const childPathKeys = childNavigationPath.split('/');
             const parentPathKeys = parentNavigationPath.split('/');
 
-            // If child path is shorter than the parent path,
-            // then it's not a child.
+            // If child path is shorter than or same length as
+            // the parent path, then it's not a child.
             if (childPathKeys.length <= parentPathKeys.length) {
                 return false;
             }
