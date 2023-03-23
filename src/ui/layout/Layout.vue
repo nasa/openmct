@@ -93,9 +93,18 @@
                     :persist-position="true"
                 >
                     <RecentObjectsList
+                        ref="recentObjectsList"
                         class="l-shell__tree"
                         @openAndScrollTo="openAndScrollTo($event)"
                     />
+                    <button
+                        slot="controls"
+                        class="c-icon-button icon-clear-data"
+                        aria-label="Clear Recently Viewed"
+                        title="Clear Recently Viewed"
+                        @click="handleClearRecentObjects"
+                    >
+                    </button>
                 </pane>
             </multipane>
         </pane>
@@ -278,6 +287,9 @@ export default {
         },
         handleTreeReset() {
             this.triggerReset = !this.triggerReset;
+        },
+        handleClearRecentObjects() {
+            this.$refs.recentObjectsList.clearRecentObjects();
         },
         onStartResizing() {
             this.isResizing = true;
