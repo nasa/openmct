@@ -603,15 +603,14 @@ export default {
             const mainYAxisId = this.config.yAxis.get('id');
             //There has to be at least one yAxis
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
+            // Save the first drawable y-axis so that we only draw the marquee on that axis
+            this.firstDrawableAxis = yAxisIds.filter(axisId => this.canDraw(axisId))[0];
+
             // Repeat drawing for all yAxes
             yAxisIds.forEach((id) => {
                 if (this.canDraw(id)) {
                     this.updateViewport(id);
                     this.drawSeries(id);
-                    if (!this.rectangleAxisId) {
-                        this.rectangleAxisId = id;
-                    }
-
                     this.drawRectangles(id);
                     this.drawHighlights(id);
 
@@ -910,7 +909,7 @@ export default {
             }
         },
         drawRectangle(yAxisId, rect) {
-            if (!rect.start.yAxisIds || !rect.end.yAxisIds || yAxisId !== this.rectangleAxisId) {
+            if (!rect.start.yAxisIds || !rect.end.yAxisIds || yAxisId !== this.firstDrawableAxis) {
                 return;
             }
 
