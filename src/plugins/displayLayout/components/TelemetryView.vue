@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -193,7 +193,7 @@ export default {
         },
         telemetryValue() {
             if (!this.datum) {
-                return;
+                return '---';
             }
 
             return this.formatter && this.formatter.format(this.datum);

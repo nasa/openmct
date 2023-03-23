@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -121,8 +121,9 @@ define([
     }
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            const objectDatum = datum[this.valueMetadata.source];
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
             if (Array.isArray(objectDatum)) {
                 return objectDatum.map((item) => {
                     return this.formatter.parse(item);
@@ -136,8 +137,9 @@ define([
     };
 
     TelemetryValueFormatter.prototype.format = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            const objectDatum = datum[this.valueMetadata.source];
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
             if (Array.isArray(objectDatum)) {
                 return objectDatum.map((item) => {
                     return this.formatter.format(item);

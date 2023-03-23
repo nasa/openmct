@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,7 +29,10 @@
         class="c-tree"
         aria-label="Plot Series Properties"
     >
-        <h2 title="Plot series display properties in this object">Plot Series</h2>
+        <h2
+            class="--first"
+            title="Plot series display properties in this object"
+        >Plot Series</h2>
         <plot-options-item
             v-for="series in plotSeries"
             :key="series.key"
@@ -73,7 +76,7 @@
                 </div>
             </li>
             <li
-                v-if="!yAxis.autoscale && yAxis.rangeMin"
+                v-if="!yAxis.autoscale && yAxis.rangeMin !== ''"
                 class="grid-row"
             >
                 <div
@@ -83,7 +86,7 @@
                 <div class="grid-cell value">{{ yAxis.rangeMin }}</div>
             </li>
             <li
-                v-if="!yAxis.autoscale && yAxis.rangeMax"
+                v-if="!yAxis.autoscale && yAxis.rangeMax !== ''"
                 class="grid-row"
             >
                 <div
@@ -101,7 +104,10 @@
         <ul
             class="l-inspector-part js-legend-properties"
         >
-            <h2 title="Legend settings for this object">Legend</h2>
+            <h2
+                class="--first"
+                title="Legend settings for this object"
+            >Legend</h2>
             <li class="grid-row">
                 <div
                     class="grid-cell label"
@@ -217,8 +223,8 @@ export default {
                     autoscale: this.config.yAxis.get('autoscale'),
                     logMode: this.config.yAxis.get('logMode'),
                     autoscalePadding: this.config.yAxis.get('autoscalePadding'),
-                    rangeMin: range ? range.min : '',
-                    rangeMax: range ? range.max : ''
+                    rangeMin: range?.min ?? '',
+                    rangeMax: range?.max ?? ''
                 });
                 this.config.additionalYAxes.forEach(yAxis => {
                     range = yAxis.get('range');
@@ -230,8 +236,8 @@ export default {
                         autoscale: yAxis.get('autoscale'),
                         logMode: yAxis.get('logMode'),
                         autoscalePadding: yAxis.get('autoscalePadding'),
-                        rangeMin: range ? range.min : '',
-                        rangeMax: range ? range.max : ''
+                        rangeMin: range?.min ?? '',
+                        rangeMax: range?.max ?? ''
                     });
                 });
             }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,63 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-
-    /**
-     * A Type describes a kind of domain object that may appear or be
-     * created within Open MCT.
-     *
-     * @param {module:opemct.TypeRegistry~TypeDefinition} definition
-     * @class Type
-     * @memberof module:openmct
-     */
-    function Type(definition) {
+/**
+ * A Type describes a kind of domain object that may appear or be
+ * created within Open MCT.
+ *
+ * @param {module:opemct.TypeRegistry~TypeDefinition} definition
+ * @class Type
+ * @memberof module:openmct
+ */
+export default class Type {
+    constructor(definition) {
         this.definition = definition;
         if (definition.key) {
             this.key = definition.key;
         }
     }
-
-    /**
-     * Check if a domain object is an instance of this type.
-     * @param domainObject
-     * @returns {boolean} true if the domain object is of this type
-     * @memberof module:openmct.Type#
-     * @method check
-     */
-    Type.prototype.check = function (domainObject) {
-        // Depends on assignment from MCT.
-        return domainObject.type === this.key;
-    };
-
-    /**
-     * Get a definition for this type that can be registered using the
-     * legacy bundle format.
-     * @private
-     */
-    Type.prototype.toLegacyDefinition = function () {
-        const def = {};
-        def.name = this.definition.name;
-        def.cssClass = this.definition.cssClass;
-        def.description = this.definition.description;
-        def.properties = this.definition.form;
-
-        if (this.definition.initialize) {
-            def.model = {};
-            this.definition.initialize(def.model);
-        }
-
-        if (this.definition.creatable) {
-            def.features = ['creation'];
-        }
-
-        return def;
-    };
-
     /**
      * Create a type definition from a legacy definition.
      */
-    Type.definitionFromLegacyDefinition = function (legacyDefinition) {
+    static definitionFromLegacyDefinition(legacyDefinition) {
         let definition = {};
         definition.name = legacyDefinition.name;
         definition.cssClass = legacyDefinition.cssClass;
@@ -121,7 +83,39 @@ define(function () {
         }
 
         return definition;
-    };
+    }
+    /**
+     * Check if a domain object is an instance of this type.
+     * @param domainObject
+     * @returns {boolean} true if the domain object is of this type
+     * @memberof module:openmct.Type#
+     * @method check
+     */
+    check(domainObject) {
+        // Depends on assignment from MCT.
+        return domainObject.type === this.key;
+    }
+    /**
+     * Get a definition for this type that can be registered using the
+     * legacy bundle format.
+     * @private
+     */
+    toLegacyDefinition() {
+        const def = {};
+        def.name = this.definition.name;
+        def.cssClass = this.definition.cssClass;
+        def.description = this.definition.description;
+        def.properties = this.definition.form;
 
-    return Type;
-});
+        if (this.definition.initialize) {
+            def.model = {};
+            this.definition.initialize(def.model);
+        }
+
+        if (this.definition.creatable) {
+            def.features = ['creation'];
+        }
+
+        return def;
+    }
+}

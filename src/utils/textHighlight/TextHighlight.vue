@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,23 +21,12 @@
  *****************************************************************************/
 
 <template>
-
-<span>
-    <span
-        v-for="segment in segments"
-        :key="segment.id"
-        :style="getStyles(segment)"
-        :class="{ [highlightClass] : segment.type === 'highlight' }"
-    >
-        {{ segment.text }}
-    </span>
-</span>
+<!-- eslint-disable-next-line vue/no-v-html -->
+<span v-html="highlightedText"></span>
 
 </template>
 
 <script>
-
-import { v4 as uuid } from 'uuid';
 
 export default {
     props: {
@@ -58,68 +47,11 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            segments: []
-        };
-    },
-    watch: {
-        highlight() {
-            this.highlightText();
-        },
-        text() {
-            this.highlightText();
-        }
-    },
-    mounted() {
-        this.highlightText();
-    },
-    methods: {
-        addHighlightSegment(segment) {
-            this.segments.push({
-                id: uuid(),
-                text: segment,
-                type: 'highlight',
-                spaceBefore: segment.startsWith(' '),
-                spaceAfter: segment.endsWith(' ')
-            });
-        },
-        addTextSegment(segment) {
-            this.segments.push({
-                id: uuid(),
-                text: segment,
-                type: 'text',
-                spaceBefore: segment.startsWith(' '),
-                spaceAfter: segment.endsWith(' ')
-            });
-        },
-        getStyles(segment) {
-            let styles = {
-                display: 'inline-block'
-            };
+    computed: {
+        highlightedText() {
+            let regex = new RegExp(`(?<!<[^>]*)(${this.highlight})`, 'gi');
 
-            if (segment.spaceBefore) {
-                styles.paddingLeft = '.33em';
-            }
-
-            if (segment.spaceAfter) {
-                styles.paddingRight = '.33em';
-            }
-
-            return styles;
-        },
-        highlightText() {
-            this.segments = [];
-            let regex = new RegExp('(' + this.highlight + ')', 'gi');
-            let textSegments = this.text.split(regex);
-
-            for (let i = 0; i < textSegments.length; i++) {
-                if (textSegments[i].toLowerCase() === this.highlight.toLowerCase()) {
-                    this.addHighlightSegment(textSegments[i]);
-                } else {
-                    this.addTextSegment(textSegments[i]);
-                }
-            }
+            return this.text.replace(regex, `<span class="${this.highlightClass}">${this.highlight}</span>`);
         }
     }
 };

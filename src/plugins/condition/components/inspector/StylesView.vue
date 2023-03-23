@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -29,9 +29,6 @@
         Your selection includes one or more items that use Conditional Styling. Applying a static style below will replace any Conditional Styling with the new choice.
     </div>
     <template v-if="!conditionSetDomainObject">
-        <div class="c-inspect-styles__header">
-            Object Style
-        </div>
         <FontStyleEditor
             v-if="canStyleFont"
             :font-style="consolidatedFontStyle"
@@ -63,9 +60,6 @@
         </div>
     </template>
     <template v-else>
-        <div class="c-inspect-styles__header">
-            Conditional Object Styles
-        </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set c-inspect-styles__elem">
             <a
                 v-if="conditionSetDomainObject"
@@ -156,7 +150,7 @@
 
 <script>
 
-import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
+import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
@@ -313,6 +307,8 @@ export default {
                     delete this.stopProvidingTelemetry;
                 }
             } else {
+                //reset the selectedConditionID so that the condition set computation can drive it.
+                this.applySelectedConditionStyle('');
                 this.subscribeToConditionSet();
             }
         },

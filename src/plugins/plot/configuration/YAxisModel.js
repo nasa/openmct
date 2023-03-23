@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -57,7 +57,14 @@ export default class YAxisModel extends Model {
         this.listenTo(this, 'change:logMode', this.onLogModeChange, this);
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
-        this.updateDisplayRange(this.get('range'));
+        const range = this.get('range');
+        this.updateDisplayRange(range);
+        //This is an edge case and should not happen
+        const invalidRange = !range || (range?.min === undefined || range?.max === undefined);
+        const invalidAutoScaleOff = (options.model.autoscale === false) && invalidRange;
+        if (invalidAutoScaleOff) {
+            this.set('autoscale', true);
+        }
     }
     /**
      * @param {import('./SeriesCollection').default} seriesCollection
@@ -250,23 +257,6 @@ export default class YAxisModel extends Model {
             }
 
             this.set('displayRange', _range);
-        } else {
-            // Otherwise use the last known displayRange as the initial
-            // values for the user-defined range, so that we don't end up
-            // with any error from an undefined user range.
-
-            const _range = this.get('displayRange');
-
-            if (!_range) {
-                return;
-            }
-
-            if (this.get('logMode')) {
-                _range.min = antisymlog(_range.min, 10);
-                _range.max = antisymlog(_range.max, 10);
-            }
-
-            this.set('range', _range);
         }
     }
 
@@ -377,11 +367,8 @@ export default class YAxisModel extends Model {
             autoscale: true,
             logMode: options.model?.logMode ?? false,
             autoscalePadding: 0.1,
-            id: options.id
-
-            // 'range' is not specified here, it is undefined at first. When the
-            // user turns off autoscale, the current 'displayRange' is used for
-            // the initial value of 'range'.
+            id: options.id,
+            range: options.model?.range
         };
     }
 }

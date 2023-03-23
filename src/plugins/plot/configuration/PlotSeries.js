@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -252,6 +252,7 @@ export default class PlotSeries extends Model {
         }
 
         const valueMetadata = this.metadata.value(newKey);
+        //TODO: Should we do this even if there is a persisted config?
         if (!this.persistedConfig || !this.persistedConfig.interpolate) {
             if (valueMetadata.format === 'enum') {
                 this.set('interpolate', 'stepAfter');

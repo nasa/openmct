@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,7 @@ export default function MissingObjectInterceptor(openmct) {
         invoke: (identifier, object) => {
             if (object === undefined) {
                 const keyString = openmct.objects.makeKeyString(identifier);
-                openmct.notifications.error(`Failed to retrieve object ${keyString}`);
+                openmct.notifications.error(`Failed to retrieve object ${keyString}`, { minimized: true });
 
                 return {
                     identifier,

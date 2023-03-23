@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -94,17 +94,33 @@ const COMPASS_POINTS = [
 
 export default {
     props: {
+        cameraAngleOfView: {
+            type: Number,
+            required: true
+        },
+        heading: {
+            type: Number,
+            required: true
+        },
+        cameraAzimuth: {
+            type: Number,
+            default: undefined
+        },
+        transformations: {
+            type: Object,
+            required: true
+        },
+        hasGimble: {
+            type: Boolean,
+            required: true
+        },
+        normalizedCameraAzimuth: {
+            type: Number,
+            required: true
+        },
         sunHeading: {
             type: Number,
             default: undefined
-        },
-        cameraAngleOfView: {
-            type: Number,
-            default: undefined
-        },
-        cameraPan: {
-            type: Number,
-            required: true
         }
     },
     computed: {
@@ -130,10 +146,13 @@ export default {
                 left: `${ percentage * 100 }%`
             };
         },
+        cameraRotation() {
+            return this.transformations?.rotation;
+        },
         visibleRange() {
             return [
-                rotate(this.cameraPan, -this.cameraAngleOfView / 2),
-                rotate(this.cameraPan, this.cameraAngleOfView / 2)
+                rotate(this.normalizedCameraAzimuth, -this.cameraAngleOfView / 2),
+                rotate(this.normalizedCameraAzimuth, this.cameraAngleOfView / 2)
             ];
         }
     }

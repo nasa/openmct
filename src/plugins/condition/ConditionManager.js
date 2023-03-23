@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -93,6 +93,11 @@ export default class ConditionManager extends EventEmitter {
         );
         this.updateConditionResults({id: id});
         this.updateCurrentCondition(latestTimestamp);
+
+        if (Object.keys(this.telemetryObjects).length === 0) {
+            // no telemetry objects
+            this.emit('noTelemetryObjects');
+        }
     }
 
     initialize() {
@@ -101,6 +106,11 @@ export default class ConditionManager extends EventEmitter {
             this.conditionSetDomainObject.configuration.conditionCollection.forEach((conditionConfiguration, index) => {
                 this.initCondition(conditionConfiguration, index);
             });
+        }
+
+        if (Object.keys(this.telemetryObjects).length === 0) {
+            // no telemetry objects
+            this.emit('noTelemetryObjects');
         }
     }
 

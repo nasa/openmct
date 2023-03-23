@@ -20,7 +20,7 @@
     z-index: 70;
 
     [class*="__icon"] {
-        filter: $colorKeyFilter;
+            filter: $colorKeyFilter;
     }
 
     [class*="__item-description"] {

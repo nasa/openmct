@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,6 +56,10 @@ class AlphanumericFormatView {
         return this.component.$refs.alphanumericFormat.getViewContext();
     }
 
+    priority() {
+        return 1;
+    }
+
     destroy() {
         this.component.$destroy();
         this.component = undefined;
@@ -79,7 +83,7 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
 
     return {
         key: 'alphanumeric-format',
-        name: 'Alphanumeric Format',
+        name: 'Format',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 1) {
                 return false;
@@ -89,9 +93,6 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
         },
         view: function (domainObject, objectPath) {
             return new AlphanumericFormatView(openmct, domainObject, objectPath);
-        },
-        priority: function () {
-            return 1;
         }
     };
 }
