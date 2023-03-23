@@ -150,4 +150,46 @@ test.describe('Flexible Layout', () => {
         // Verify that the item has been removed from the layout
         expect(await page.locator('.c-fl-container__frame').count()).toEqual(0);
     });
+    test('independent time works with flexible layouts and its children', async ({ page }) => {
+        // Create Example Imagery
+        const exampleImageryObject = await createDomainObjectWithDefaults(page, {
+            type: 'Example Imagery'
+        });
+        // Create a Flexible Layout
+        await createDomainObjectWithDefaults(page, {
+            type: 'Flexible Layout',
+        });
+        // Edit Display Layout
+        await page.locator('[title="Edit"]').click();
+
+        // Expand the 'My Items' folder in the left tree
+        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        // Add the Sine Wave Generator to the Flexible Layout and save changes
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const exampleImageryTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(exampleImageryObject.name)
+        });
+        // Add the Sine Wave Generator to the Flexible Layout and save changes
+        await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+
+        await page.locator('button[title="Save"]').click();
+        await page.locator('text=Save and Finish Editing').click();
+
+        // flip on independent time conductor
+        await page.getByTitle('Enable independent Time Conductor').first().locator('label').click();
+        await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
+        await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
+        await page.getByRole('textbox').nth(1).click();
+
+        // check image date
+        await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+        // flip it off
+        await page.getByTitle('Disable independent Time Conductor').first().locator('label').click();
+        // timestamp shouldn't be in the past anymore
+        await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+    });
 });
