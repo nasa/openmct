@@ -177,10 +177,9 @@ export default {
             if (this.$refs.TagEditor) {
                 const clickedInsideTagEditor = this.$refs.TagEditor.contains(event.target);
                 if (!clickedInsideTagEditor) {
-                    // Remove last tag when user clicks outside of TagSelection
-                    this.addedTags.pop();
                     // Hide TagSelection and show "Add Tag" button
                     this.userAddingTag = false;
+                    this.tagsChanged();
                 }
             }
         },
