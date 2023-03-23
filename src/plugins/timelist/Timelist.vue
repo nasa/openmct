@@ -53,7 +53,7 @@ const headerItems = [
         property: 'start',
         name: 'Start Time',
         format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+            return `${moment.utc(value).format(TIME_FORMAT)}Z`;
         }
     }, {
         defaultDirection: true,
@@ -61,7 +61,7 @@ const headerItems = [
         property: 'end',
         name: 'End Time',
         format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+            return `${moment.utc(value).format(TIME_FORMAT)}Z`;
         }
     }, {
         defaultDirection: false,
