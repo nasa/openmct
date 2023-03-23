@@ -61,7 +61,7 @@
             pointer-events: none;
             position: absolute;
             top: 0; right: 0; bottom: auto; left: 0;
-            z-index: 2;
+            z-index: 10;
 
             .c-object-label {
                 visibility: hidden;
@@ -99,6 +99,8 @@
                 }
             }
         }
+
+        &.c-so-view--flexible-layout,
         &.c-so-view--layout {
             // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
             > .c-so-view__header {
