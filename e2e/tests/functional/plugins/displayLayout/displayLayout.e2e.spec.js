@@ -189,6 +189,9 @@ test.describe('Display Layout', () => {
         expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
 });
+test.only('independent time works with display layouts and its children', async ({ page }) => {
+    await page.pause();
+});
 
 /**
  * Util for subscribing to a telemetry object by object identifier
