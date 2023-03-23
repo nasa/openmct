@@ -355,17 +355,18 @@ export default {
                 this.abortItemLoad(path);
             }
 
-            let pathIndex = this.openTreeItems.indexOf(path);
+            const pathIndex = this.openTreeItems.indexOf(path);
 
             if (pathIndex === -1) {
                 return;
             }
 
-            this.treeItems = this.treeItems.filter((checkItem) => {
-                if (checkItem.navigationPath !== path
-                    && checkItem.navigationPath.includes(path)) {
-                    this.destroyObserverByPath(checkItem.navigationPath);
-                    this.destroyMutableByPath(checkItem.navigationPath);
+            this.treeItems = this.treeItems.filter((item) => {
+                const otherPath = item.navigationPath;
+                if (otherPath !== path
+                    && this.isTreeItemAChildOf(otherPath, path)) {
+                    this.destroyObserverByPath(otherPath);
+                    this.destroyMutableByPath(otherPath);
 
                     return false;
                 }
@@ -959,6 +960,24 @@ export default {
         },
         isTreeItemPathOpen(path) {
             return this.openTreeItems.includes(path);
+        },
+        isTreeItemAChildOf(childNavigationPath, parentNavigationPath) {
+            const childPathKeys = childNavigationPath.split('/');
+            const parentPathKeys = parentNavigationPath.split('/');
+
+            // If child path is shorter than or same length as
+            // the parent path, then it's not a child.
+            if (childPathKeys.length <= parentPathKeys.length) {
+                return false;
+            }
+
+            for (let i = 0; i < parentPathKeys.length; i++) {
+                if (childPathKeys[i] !== parentPathKeys[i]) {
+                    return false;
+                }
+            }
+
+            return true;
         },
         getElementStyleValue(el, style) {
             if (!el) {
