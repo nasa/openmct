@@ -129,7 +129,6 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
 
-        this.updateTimestamp = _.debounce(this.updateTimestamp, 100);
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
