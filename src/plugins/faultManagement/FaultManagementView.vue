@@ -42,8 +42,6 @@ export default {
         };
     },
     mounted() {
-        this.updateFaultList();
-
         this.unsubscribe = this.openmct.faults
             .subscribe(this.domainObject, this.updateFault);
     },
