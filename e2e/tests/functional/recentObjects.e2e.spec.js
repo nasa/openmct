@@ -191,7 +191,7 @@ test.describe('Recent Objects', () => {
         expect(await clockBreadcrumbs.count()).toBe(2);
         expect(await clockBreadcrumbs.nth(0).innerText()).not.toEqual(await clockBreadcrumbs.nth(1).innerText());
     });
-    test("Enforces a limit of 20 recent objects", async ({ page }) => {
+    test("Enforces a limit of 20 recent objects and clears the recent objects", async ({ page }) => {
         // Creating 21 objects takes a while, so increase the timeout
         test.slow();
 
@@ -242,6 +242,15 @@ test.describe('Recent Objects', () => {
 
         // Assert that the Clock treeitem is no longer highlighted
         await expect(lastClockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
+
+        // Click the aria-label="Clear Recently Viewed" button
+        await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
+
+        // Click on the "OK" button in the confirmation dialog
+        await page.getByRole('button', { name: 'OK' }).click();
+
+        // Assert that the list is empty
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
     });
 
     function assertInitialRecentObjectsListState() {
