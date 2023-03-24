@@ -57,7 +57,7 @@ const headerItems = [
             if (clock && clock.formatTime) {
                 return clock.formatTime(value);
             } else {
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+                return `${moment(value).format(TIME_FORMAT)}Z`;
             }
         }
     }, {
@@ -70,7 +70,7 @@ const headerItems = [
             if (clock && clock.formatTime) {
                 return clock.formatTime(value);
             } else {
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+                return `${moment(value).format(TIME_FORMAT)}Z`;
             }
         }
     }, {
