@@ -198,7 +198,7 @@ export default {
             }
         },
         updateTimestamp(_bounds, isTick) {
-            if (isTick === true) {
+            if (isTick === true && this.openmct.time.clock() !== undefined) {
                 this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
