@@ -54,10 +54,8 @@ const headerItems = [
         name: 'Start Time',
         format: function (value, object, key, openmct) {
             const clock = openmct.time.clock();
-            if (clock) {
-                console.log(clock.formatTime(value));
-
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
             } else {
                 return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             }
@@ -69,10 +67,8 @@ const headerItems = [
         name: 'End Time',
         format: function (value, object, key, openmct) {
             const clock = openmct.time.clock();
-            if (clock) {
-                console.log(clock.formatTime(value));
-
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
             } else {
                 return `${moment.utc(value).format(TIME_FORMAT)}Z`;
             }
@@ -135,6 +131,7 @@ export default {
 
         this.updateTimestamp = _.debounce(this.updateTimestamp, 500);
         this.openmct.time.on('bounds', this.updateTimestamp);
+        this.openmct.time.on('clock', this.clearActivitiesAndUpdateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -216,7 +213,7 @@ export default {
             } else {
                 this.setSort();
                 this.setViewBounds();
-                this.listActivities();
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
         addItem(domainObject) {
