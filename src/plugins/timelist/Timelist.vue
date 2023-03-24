@@ -52,8 +52,8 @@ const headerItems = [
         isSortable: true,
         property: 'start',
         name: 'Start Time',
-        format: function (value, object) {
-            const clock = this.openmct.time.clock();
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
             if (clock) {
                 console.log(clock.formatTime(value));
 
@@ -67,8 +67,8 @@ const headerItems = [
         isSortable: true,
         property: 'end',
         name: 'End Time',
-        format: function (value, object) {
-            const clock = this.openmct.time.clock();
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
             if (clock) {
                 console.log(clock.formatTime(value));
 
