@@ -131,7 +131,6 @@ export default {
 
         this.updateTimestamp = _.debounce(this.updateTimestamp, 500);
         this.openmct.time.on('bounds', this.updateTimestamp);
-        this.openmct.time.on('clock', this.clearActivitiesAndUpdateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
