@@ -66,7 +66,11 @@ export default {
             this.openmct.faults
                 .request(this.domainObject)
                 .then(faultsData => {
-                    this.faultsList = faultsData.map(fd => fd.fault);
+                    if (faultsData?.length > 0) {
+                        this.faultsList = faultsData.map(fd => fd.fault);
+                    } else {
+                        this.faultsList = [];
+                    }
                 });
         }
     }
