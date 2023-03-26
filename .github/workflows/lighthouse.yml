@@ -1,4 +1,4 @@
-name: lighthouse
+Mccoyname: lighthouse
 on:
   workflow_dispatch:
     inputs: 
