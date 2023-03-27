@@ -197,11 +197,16 @@ export default {
             }
         },
         updateTimestamp(_bounds, isTick) {
-            requestAnimationFrame(() => {
-                if (isTick === true && this.openmct.time.clock() !== undefined) {
-                    this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-                }
-            });
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(() => {
+                    if (isTick === true && this.openmct.time.clock() !== undefined) {
+                        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+                    }
+
+                    this.updatingView = false;
+                });
+            }
         },
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
