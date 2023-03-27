@@ -26,7 +26,7 @@ describe('the url tool', function () {
         ];
         openmct = createOpenMct();
         openmct.on('start', () => {
-            openmct.router.setPath(' http://localhost:8020/foobar?testParam1=testValue1');
+            openmct.router.setPath('/browse/mine?testParam1=testValue1');
             done();
         });
         openmct.startHeadless();
@@ -65,6 +65,15 @@ describe('the url tool', function () {
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
             expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
+        });
+        it('can take params to set a custom url', () => {
+            const customParams = {
+                'tc.startBound': 1669911059,
+                'tc.endBound': 1669911082,
+                'tc.mode': 'fixed'
+            };
+            const constructedURL = objectPathToUrl(openmct, mockObjectPath, customParams);
+            expect(constructedURL).toContain('tc.startBound=1669911059&tc.endBound=1669911082&tc.mode=fixed');
         });
     });
 });

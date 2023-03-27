@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -50,7 +50,7 @@ test.describe('Clock Generator CRUD Operations', () => {
         await page.locator('.icon-arrow-down').click();
 
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeHidden();
 
         // Click timezone input to open dropdown
         await page.locator('.c-input--autocomplete__input').click();
@@ -60,7 +60,7 @@ test.describe('Clock Generator CRUD Operations', () => {
         // Verify clicking outside the autocomplete dropdown collapses it
         await page.locator('text=Timezone').click();
         // Verify clicking on the autocomplete arrow collapses the dropdown
-        await expect(page.locator(".c-input--autocomplete__options")).not.toBeVisible();
+        await expect(page.locator(".c-input--autocomplete__options")).toBeHidden();
 
     });
 });

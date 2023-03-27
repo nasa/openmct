@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the
+are only meant to run against openmct started by `npm start` within the
 `./e2e/playwright-visual.config.js` file.
 
 These should only use functional expect statements to verify assumptions about the state
@@ -67,21 +67,21 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `About (theme: '${theme}')`);
     });
 
-    test('Visual - Default Condition Set', async ({ page, theme }) => {
+    test('Visual - Default Condition Set @unstable', async ({ page, theme }) => {
 
-        await createDomainObjectWithDefaults(page, 'Condition Set');
+        await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
 
         // Take a snapshot of the newly created Condition Set object
         await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
     });
 
-    test.fixme('Visual - Default Condition Widget', async ({ page, theme }) => {
+    test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5349'
         });
 
-        await createDomainObjectWithDefaults(page, 'Condition Widget');
+        await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
 
         // Take a snapshot of the newly created Condition Widget object
         await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
@@ -137,8 +137,8 @@ test.describe('Visual - Default', () => {
         await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
     });
 
-    test('Visual - Save Successful Banner', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, 'Timer');
+    test('Visual - Save Successful Banner @unstable', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
         await page.locator('.c-message-banner__message').hover({ trial: true });
         await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
@@ -159,8 +159,8 @@ test.describe('Visual - Default', () => {
 
     });
 
-    test('Visual - Default Gauge is correct', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, 'Gauge');
+    test('Visual - Default Gauge is correct @unstable', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
 
         // Take a snapshot of the newly created Gauge object
         await percySnapshot(page, `Default Gauge (theme: '${theme}')`);

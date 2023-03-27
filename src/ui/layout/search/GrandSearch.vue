@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,6 +47,8 @@
 import search from '../../components/search.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
+const SEARCH_DEBOUNCE_TIME = 200;
+
 export default {
     name: 'GrandSearch',
     components: {
@@ -59,10 +61,14 @@ export default {
     data() {
         return {
             searchValue: '',
+            debouncedSearchTimeoutID: null,
             searchLoading: false,
             annotationSearchResults: [],
             objectSearchResults: []
         };
+    },
+    mounted() {
+        this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
     },
     destroyed() {
         document.body.removeEventListener('click', this.handleOutsideClick);
@@ -77,7 +83,6 @@ export default {
             }
 
             this.searchValue = value;
-            this.searchLoading = true;
             // clear any previous search results
             this.annotationSearchResults = [];
             this.objectSearchResults = [];
@@ -85,17 +90,41 @@ export default {
             if (this.searchValue) {
                 await this.getSearchResults();
             } else {
-                this.searchLoading = false;
-                this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+                clearTimeout(this.debouncedSearchTimeoutID);
+                const dropdownOptions = {
+                    searchLoading: this.searchLoading,
+                    searchValue: this.searchValue,
+                    annotationSearchResults: this.annotationSearchResults,
+                    objectSearchResults: this.objectSearchResults
+                };
+                this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             }
+        },
+        debounceAsyncFunction(functionToDebounce, debounceTime) {
+            return (...args) => {
+                clearTimeout(this.debouncedSearchTimeoutID);
+
+                return new Promise((resolve, reject) => {
+                    this.debouncedSearchTimeoutID = setTimeout(() => {
+                        functionToDebounce(...args)
+                            .then(resolve)
+                            .catch(reject);
+                    }, debounceTime);
+                });
+            };
         },
         getPathsForObjects(objectsNeedingPaths) {
             return Promise.all(objectsNeedingPaths.map(async (domainObject) => {
+                if (!domainObject) {
+                    // user interrupted search, return back
+                    return null;
+                }
+
                 const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
                 const originalPathObjects = await this.openmct.objects.getOriginalPath(keyStringForObject);
 
                 return {
-                    originalPath: originalPathObjects,
+                    objectPath: originalPathObjects,
                     ...domainObject
                 };
             }));
@@ -103,6 +132,8 @@ export default {
         async getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
+            this.searchLoading = true;
+            this.$refs.searchResultsDropDown.showSearchStarted();
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
             try {
@@ -110,22 +141,38 @@ export default {
                 const fullObjectSearchResults = await Promise.all(this.openmct.objects.search(this.searchValue, abortSignal));
                 const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
                 const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(aggregatedObjectSearchResults);
-                const filterAnnotations = aggregatedObjectSearchResultsWithPaths.filter(result => {
-                    return result.type !== 'annotation';
+                const filterAnnotationsAndValidPaths = aggregatedObjectSearchResultsWithPaths.filter(result => {
+                    if (this.openmct.annotation.isAnnotation(result)) {
+                        return false;
+                    }
+
+                    return this.openmct.objects.isReachable(result?.objectPath);
                 });
-                this.objectSearchResults = filterAnnotations;
+                this.objectSearchResults = filterAnnotationsAndValidPaths;
+                this.searchLoading = false;
                 this.showSearchResults();
             } catch (error) {
-                console.error(`😞 Error searching`, error);
                 this.searchLoading = false;
 
                 if (this.abortSearchController) {
                     delete this.abortSearchController;
                 }
+
+                // Is this coming from the AbortController?
+                // If so, we can swallow the error. If not, 🤮 it to console
+                if (error.name !== 'AbortError') {
+                    console.error(`😞 Error searching`, error);
+                }
             }
         },
         showSearchResults() {
-            this.$refs.searchResultsDropDown.showResults(this.annotationSearchResults, this.objectSearchResults);
+            const dropdownOptions = {
+                searchLoading: this.searchLoading,
+                searchValue: this.searchValue,
+                annotationSearchResults: this.annotationSearchResults,
+                objectSearchResults: this.objectSearchResults
+            };
+            this.$refs.searchResultsDropDown.showResults(dropdownOptions);
             document.body.addEventListener('click', this.handleOutsideClick);
         },
         handleOutsideClick(event) {

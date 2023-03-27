@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,7 +53,7 @@ test.describe('Visual - addInit', () => {
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, CUSTOM_NAME);
+        await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 
         // Take a snapshot of the newly created CUSTOM_NAME notebook
         await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,11 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TelemetryAPI from './TelemetryAPI';
 import TelemetryCollection from './TelemetryCollection';
 
-describe('Telemetry API', function () {
+describe('Telemetry API', () => {
     let openmct;
     let telemetryAPI;
 
-    beforeEach(function () {
+    beforeEach(() => {
         openmct = {
             time: jasmine.createSpyObj('timeAPI', [
                 'timeSystem',
@@ -47,11 +47,11 @@ describe('Telemetry API', function () {
 
     });
 
-    describe('telemetry providers', function () {
+    describe('telemetry providers', () => {
         let telemetryProvider;
         let domainObject;
 
-        beforeEach(function () {
+        beforeEach(() => {
             telemetryProvider = jasmine.createSpyObj('telemetryProvider', [
                 'supportsSubscribe',
                 'subscribe',
@@ -73,19 +73,16 @@ describe('Telemetry API', function () {
             };
         });
 
-        it('provides consistent results without providers', function (done) {
+        it('provides consistent results without providers', async () => {
             const unsubscribe = telemetryAPI.subscribe(domainObject);
 
             expect(unsubscribe).toEqual(jasmine.any(Function));
 
-            telemetryAPI.request(domainObject)
-                .then((data) => {
-                    expect(data).toEqual([]);
-                })
-                .finally(done);
+            const data = await telemetryAPI.request(domainObject);
+            expect(data).toEqual([]);
         });
 
-        it('skips providers that do not match', function (done) {
+        it('skips providers that do not match', async () => {
             telemetryProvider.supportsSubscribe.and.returnValue(false);
             telemetryProvider.supportsRequest.and.returnValue(false);
             telemetryProvider.request.and.returnValue(Promise.resolve([]));
@@ -98,14 +95,13 @@ describe('Telemetry API', function () {
             expect(telemetryProvider.subscribe).not.toHaveBeenCalled();
             expect(unsubscribe).toEqual(jasmine.any(Function));
 
-            telemetryAPI.request(domainObject).then((response) => {
-                expect(telemetryProvider.supportsRequest)
-                    .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
-                expect(telemetryProvider.request).not.toHaveBeenCalled();
-            }).finally(done);
+            await telemetryAPI.request(domainObject);
+            expect(telemetryProvider.supportsRequest)
+                .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
+            expect(telemetryProvider.request).not.toHaveBeenCalled();
         });
 
-        it('sends subscribe calls to matching providers', function () {
+        it('sends subscribe calls to matching providers', () => {
             const unsubFunc = jasmine.createSpy('unsubscribe');
             telemetryProvider.subscribe.and.returnValue(unsubFunc);
             telemetryProvider.supportsSubscribe.and.returnValue(true);
@@ -133,7 +129,7 @@ describe('Telemetry API', function () {
             expect(callback).not.toHaveBeenCalledWith('otherValue');
         });
 
-        it('subscribes once per object', function () {
+        it('subscribes once per object', () => {
             const unsubFunc = jasmine.createSpy('unsubscribe');
             telemetryProvider.subscribe.and.returnValue(unsubFunc);
             telemetryProvider.supportsSubscribe.and.returnValue(true);
@@ -164,7 +160,7 @@ describe('Telemetry API', function () {
             expect(callbacktwo).not.toHaveBeenCalledWith('anotherValue');
         });
 
-        it('only deletes subscription cache when there are no more subscribers', function () {
+        it('only deletes subscription cache when there are no more subscribers', () => {
             const unsubFunc = jasmine.createSpy('unsubscribe');
             telemetryProvider.subscribe.and.returnValue(unsubFunc);
             telemetryProvider.supportsSubscribe.and.returnValue(true);
@@ -187,7 +183,7 @@ describe('Telemetry API', function () {
             unsubscribeThree();
         });
 
-        it('does subscribe/unsubscribe', function () {
+        it('does subscribe/unsubscribe', () => {
             const unsubFunc = jasmine.createSpy('unsubscribe');
             telemetryProvider.subscribe.and.returnValue(unsubFunc);
             telemetryProvider.supportsSubscribe.and.returnValue(true);
@@ -203,7 +199,7 @@ describe('Telemetry API', function () {
             unsubscribe();
         });
 
-        it('subscribes for different object', function () {
+        it('subscribes for different object', () => {
             const unsubFuncs = [];
             const notifiers = [];
             telemetryProvider.supportsSubscribe.and.returnValue(true);
@@ -243,120 +239,120 @@ describe('Telemetry API', function () {
             expect(unsubFuncs[1]).toHaveBeenCalled();
         });
 
-        it('sends requests to matching providers', function (done) {
+        it('sends requests to matching providers', async () => {
             const telemPromise = Promise.resolve([]);
             telemetryProvider.supportsRequest.and.returnValue(true);
             telemetryProvider.request.and.returnValue(telemPromise);
             telemetryAPI.addProvider(telemetryProvider);
 
-            telemetryAPI.request(domainObject).then(() => {
-                expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
-                    domainObject,
-                    jasmine.any(Object)
-                );
-                expect(telemetryProvider.request).toHaveBeenCalledWith(
-                    domainObject,
-                    jasmine.any(Object)
-                );
-            }).finally(done);
+            await telemetryAPI.request(domainObject);
+            expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
+                domainObject,
+                jasmine.any(Object)
+            );
+            expect(telemetryProvider.request).toHaveBeenCalledWith(
+                domainObject,
+                jasmine.any(Object)
+            );
         });
 
-        it('generates default request options', function (done) {
+        it('generates default request options', async () => {
             telemetryProvider.supportsRequest.and.returnValue(true);
             telemetryProvider.request.and.returnValue(Promise.resolve([]));
             telemetryAPI.addProvider(telemetryProvider);
 
-            telemetryAPI.request(domainObject).then(() => {
-                const { signal } = new AbortController();
-                expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
-                    jasmine.any(Object),
-                    {
-                        signal,
-                        start: 0,
-                        end: 1,
-                        domain: 'system'
-                    }
-                );
+            await telemetryAPI.request(domainObject);
+            const { signal } = new AbortController();
+            expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    signal,
+                    start: 0,
+                    end: 1,
+                    domain: 'system',
+                    timeContext: jasmine.any(Object)
+                }
+            );
 
-                expect(telemetryProvider.request).toHaveBeenCalledWith(
-                    jasmine.any(Object),
-                    {
-                        signal,
-                        start: 0,
-                        end: 1,
-                        domain: 'system'
-                    }
-                );
+            expect(telemetryProvider.request).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    signal,
+                    start: 0,
+                    end: 1,
+                    domain: 'system',
+                    timeContext: jasmine.any(Object)
+                }
+            );
 
-                telemetryProvider.supportsRequest.calls.reset();
-                telemetryProvider.request.calls.reset();
+            telemetryProvider.supportsRequest.calls.reset();
+            telemetryProvider.request.calls.reset();
 
-                telemetryAPI.request(domainObject, {}).then(() => {
-                    expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
-                        jasmine.any(Object),
-                        {
-                            signal,
-                            start: 0,
-                            end: 1,
-                            domain: 'system'
-                        }
-                    );
+            await telemetryAPI.request(domainObject, {});
+            expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    signal,
+                    start: 0,
+                    end: 1,
+                    domain: 'system',
+                    timeContext: jasmine.any(Object)
+                }
+            );
 
-                    expect(telemetryProvider.request).toHaveBeenCalledWith(
-                        jasmine.any(Object),
-                        {
-                            signal,
-                            start: 0,
-                            end: 1,
-                            domain: 'system'
-                        }
-                    );
-                });
-            }).finally(done);
-
+            expect(telemetryProvider.request).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    signal,
+                    start: 0,
+                    end: 1,
+                    domain: 'system',
+                    timeContext: jasmine.any(Object)
+                }
+            );
         });
 
-        it('do not overwrite existing request options', function (done) {
+        it('do not overwrite existing request options', async () => {
             telemetryProvider.supportsRequest.and.returnValue(true);
             telemetryProvider.request.and.returnValue(Promise.resolve([]));
             telemetryAPI.addProvider(telemetryProvider);
 
-            telemetryAPI.request(domainObject, {
+            await telemetryAPI.request(domainObject, {
                 start: 20,
                 end: 30,
                 domain: 'someDomain'
-            }).then(() => {
-                const { signal } = new AbortController();
-                expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
-                    jasmine.any(Object),
-                    {
-                        start: 20,
-                        end: 30,
-                        domain: 'someDomain',
-                        signal
-                    }
-                );
+            });
+            const { signal } = new AbortController();
+            expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    start: 20,
+                    end: 30,
+                    domain: 'someDomain',
+                    signal,
+                    timeContext: jasmine.any(Object)
+                }
+            );
 
-                expect(telemetryProvider.request).toHaveBeenCalledWith(
-                    jasmine.any(Object),
-                    {
-                        start: 20,
-                        end: 30,
-                        domain: 'someDomain',
-                        signal
-                    }
-                );
-
-            }).finally(done);
+            expect(telemetryProvider.request).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                {
+                    start: 20,
+                    end: 30,
+                    domain: 'someDomain',
+                    signal,
+                    timeContext: jasmine.any(Object)
+                }
+            );
         });
     });
 
-    describe('metadata', function () {
+    describe('metadata', () => {
         let mockMetadata = {};
         let mockObjectType = {
             definition: {}
         };
-        beforeEach(function () {
+        beforeEach(() => {
             telemetryAPI.addProvider({
                 key: 'mockMetadataProvider',
                 supportsMetadata() {
@@ -369,7 +365,7 @@ describe('Telemetry API', function () {
             openmct.types.get.and.returnValue(mockObjectType);
         });
 
-        it('respects explicit priority', function () {
+        it('respects explicit priority', () => {
             mockMetadata.values = [
                 {
                     key: "name",
@@ -408,7 +404,7 @@ describe('Telemetry API', function () {
                 expect(value.hints.priority).toBe(index + 1);
             });
         });
-        it('if no explicit priority, defaults to order defined', function () {
+        it('if no explicit priority, defaults to order defined', () => {
             mockMetadata.values = [
                 {
                     key: "name",
@@ -435,7 +431,7 @@ describe('Telemetry API', function () {
                 expect(value.key).toBe(mockMetadata.values[index].key);
             });
         });
-        it('respects domain priority', function () {
+        it('respects domain priority', () => {
             mockMetadata.values = [
                 {
                     key: "name",
@@ -477,7 +473,7 @@ describe('Telemetry API', function () {
             expect(values[0].key).toBe('timestamp-local');
             expect(values[1].key).toBe('timestamp-utc');
         });
-        it('respects range priority', function () {
+        it('respects range priority', () => {
             mockMetadata.values = [
                 {
                     key: "name",
@@ -519,7 +515,7 @@ describe('Telemetry API', function () {
             expect(values[0].key).toBe('cos');
             expect(values[1].key).toBe('sin');
         });
-        it('respects priority and domain ordering', function () {
+        it('respects priority and domain ordering', () => {
             mockMetadata.values = [
                 {
                     key: "id",
@@ -588,7 +584,7 @@ describe('Telemetry API', function () {
             definition: {}
         };
 
-        beforeEach(function () {
+        beforeEach(() => {
             openmct.telemetry = telemetryAPI;
             telemetryAPI.addProvider({
                 key: 'mockMetadataProvider',
@@ -644,16 +640,14 @@ describe('Telemetery', () => {
         return resetApplicationState(openmct);
     });
 
-    it('should not abort request without navigation', function (done) {
+    it('should not abort request without navigation', async () => {
         telemetryAPI.addProvider(telemetryProvider);
 
-        telemetryAPI.request({}).finally(() => {
-            expect(watchedSignal.aborted).toBe(false);
-            done();
-        });
+        await telemetryAPI.request({});
+        expect(watchedSignal.aborted).toBe(false);
     });
 
-    it('should abort request on navigation', function (done) {
+    it('should abort request on navigation', (done) => {
         telemetryAPI.addProvider(telemetryProvider);
 
         telemetryAPI.request({}).finally(() => {

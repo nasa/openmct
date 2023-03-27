@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 /*
 This test suite is dedicated to testing our use of the playwright framework as it
 relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions made in our dev environment
-(app.js and ./e2e/webpack-dev-middleware.js)
+(`npm start` and ./e2e/webpack-dev-middleware.js)
 */
 
 const { test } = require('../../baseFixtures.js');

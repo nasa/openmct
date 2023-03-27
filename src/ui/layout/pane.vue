@@ -1,20 +1,12 @@
 <template>
 <div
     class="l-pane"
-    :class="{
-        'l-pane--horizontal-handle-before': type === 'horizontal' && handle === 'before',
-        'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
-        'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
-        'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-        'l-pane--collapsed': collapsed,
-        'l-pane--reacts': !handle,
-        'l-pane--resizing': resizing === true
-    }"
+    :class="paneClasses"
 >
     <div
         v-if="handle"
         class="l-pane__handle"
-        @mousedown="start"
+        @mousedown.prevent="startResizing"
     ></div>
     <div class="l-pane__header">
         <span
@@ -23,7 +15,7 @@
         >{{ label }}</span>
         <slot name="controls"></slot>
         <button
-            v-if="collapsable"
+            v-if="isCollapsable"
             class="l-pane__collapse-button c-icon-button"
             @click="toggleCollapse"
         ></button>
@@ -42,6 +34,7 @@
 
 <script>
 const COLLAPSE_THRESHOLD_PX = 40;
+const LOCAL_STORAGE_KEY__PANE_POSITIONS = 'mct-pane-positions';
 
 export default {
     inject: ['openmct'],
@@ -60,6 +53,10 @@ export default {
         hideParam: {
             type: String,
             default: ''
+        },
+        persistPosition: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -69,8 +66,26 @@ export default {
         };
     },
     computed: {
-        collapsable() {
-            return this.hideParam && this.hideParam.length;
+        isCollapsable() {
+            return this.hideParam?.length > 0;
+        },
+        localStorageKey() {
+            if (!this.label) {
+                return null;
+            }
+
+            return this.label.toLowerCase().replace(/ /g, '-');
+        },
+        paneClasses() {
+            return {
+                'l-pane--horizontal-handle-before': this.type === 'horizontal' && this.handle === 'before',
+                'l-pane--horizontal-handle-after': this.type === 'horizontal' && this.handle === 'after',
+                'l-pane--vertical-handle-before': this.type === 'vertical' && this.handle === 'before',
+                'l-pane--vertical-handle-after': this.type === 'vertical' && this.handle === 'after',
+                'l-pane--collapsed': this.collapsed,
+                'l-pane--reacts': !this.handle,
+                'l-pane--resizing': this.resizing === true
+            };
         }
     },
     beforeMount() {
@@ -78,62 +93,33 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     async mounted() {
+        if (this.persistPosition) {
+            const savedPosition = this.getSavedPosition();
+            if (savedPosition) {
+                this.$el.style[this.styleProp] = savedPosition;
+            }
+        }
+
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
-        if (this.collapsable) {
+        if (this.isCollapsable) {
             this.handleHideUrl();
         }
+
     },
     methods: {
-        toggleCollapse: function (e) {
-            if (this.collapsed) {
-                this.handleExpand();
-                this.removeHideParam(this.hideParam);
-            } else {
-                this.handleCollapse();
-                this.addHideParam(this.hideParam);
-            }
-        },
-        handleHideUrl: function () {
-            const hideParam = this.openmct.router.getSearchParam(this.hideParam);
-
-            if (hideParam === 'true') {
-                this.handleCollapse();
-            }
-        },
-        addHideParam: function (target) {
+        addHideParam(target) {
             this.openmct.router.setSearchParam(target, 'true');
         },
-        removeHideParam: function (target) {
-            this.openmct.router.deleteSearchParam(target);
+        endResizing(_event) {
+            document.body.removeEventListener('mousemove', this.updatePosition);
+            document.body.removeEventListener('mouseup', this.endResizing);
+            this.resizing = false;
+            this.$emit('end-resizing');
+            this.trackSize();
         },
-        handleCollapse: function () {
-            this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
-            this.$el.style[this.styleProp] = '';
-            this.collapsed = true;
-        },
-        handleExpand: function () {
-            this.$el.style[this.styleProp] = this.currentSize;
-            delete this.currentSize;
-            delete this.dragCollapse;
-            this.collapsed = false;
-        },
-        trackSize: function () {
-            if (!this.dragCollapse === true) {
-                if (this.type === 'vertical') {
-                    this.initial = this.$el.offsetHeight;
-                } else if (this.type === 'horizontal') {
-                    this.initial = this.$el.offsetWidth;
-                }
-            }
-        },
-        getPosition: function (event) {
-            return this.type === 'horizontal'
-                ? event.pageX
-                : event.pageY;
-        },
-        getNewSize: function (event) {
-            let delta = this.startPosition - this.getPosition(event);
+        getNewSize(event) {
+            const delta = this.startPosition - this.getPosition(event);
             if (this.handle === "before") {
                 return `${this.initial + delta}px`;
             }
@@ -142,33 +128,88 @@ export default {
                 return `${this.initial - delta}px`;
             }
         },
-        updatePosition: function (event) {
-            let size = this.getNewSize(event);
-            let intSize = parseInt(size.substr(0, size.length - 2), 10);
-            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
-                this.dragCollapse = true;
-                this.end();
-                this.toggleCollapse();
-            } else {
-                this.$el.style[this.styleProp] = size;
+        getSavedPosition() {
+            if (!this.localStorageKey) {
+                return null;
+            }
+
+            const savedPositionsString = localStorage.getItem(LOCAL_STORAGE_KEY__PANE_POSITIONS);
+            const savedPositions = savedPositionsString ? JSON.parse(savedPositionsString) : {};
+
+            return savedPositions[this.localStorageKey];
+        },
+        getPosition(event) {
+            return this.type === 'horizontal'
+                ? event.pageX
+                : event.pageY;
+        },
+        handleCollapse() {
+            this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
+            this.$el.style[this.styleProp] = '';
+            this.collapsed = true;
+        },
+        handleExpand() {
+            this.$el.style[this.styleProp] = this.currentSize;
+            delete this.currentSize;
+            delete this.dragCollapse;
+            this.collapsed = false;
+        },
+        handleHideUrl() {
+            const hideParam = this.openmct.router.getSearchParam(this.hideParam);
+
+            if (hideParam === 'true') {
+                this.handleCollapse();
             }
         },
-        start: function (event) {
-            event.preventDefault(); // stop from firing drag event
-
+        removeHideParam(target) {
+            this.openmct.router.deleteSearchParam(target);
+        },
+        setSavedPosition(panePosition) {
+            const panePositionsString = localStorage.getItem(LOCAL_STORAGE_KEY__PANE_POSITIONS);
+            const panePositions = panePositionsString ? JSON.parse(panePositionsString) : {};
+            panePositions[this.localStorageKey] = panePosition;
+            localStorage.setItem(LOCAL_STORAGE_KEY__PANE_POSITIONS, JSON.stringify(panePositions));
+        },
+        startResizing(event) {
             this.startPosition = this.getPosition(event);
             document.body.addEventListener('mousemove', this.updatePosition);
-            document.body.addEventListener('mouseup', this.end);
+            document.body.addEventListener('mouseup', this.endResizing);
             this.resizing = true;
             this.$emit('start-resizing');
             this.trackSize();
         },
-        end: function (event) {
-            document.body.removeEventListener('mousemove', this.updatePosition);
-            document.body.removeEventListener('mouseup', this.end);
-            this.resizing = false;
-            this.$emit('end-resizing');
-            this.trackSize();
+        toggleCollapse(_event) {
+            if (this.collapsed) {
+                this.handleExpand();
+                this.removeHideParam(this.hideParam);
+            } else {
+                this.handleCollapse();
+                this.addHideParam(this.hideParam);
+            }
+        },
+        trackSize() {
+            if (!this.dragCollapse) {
+                if (this.type === 'vertical') {
+                    this.initial = this.$el.offsetHeight;
+                } else if (this.type === 'horizontal') {
+                    this.initial = this.$el.offsetWidth;
+                }
+
+                if (this.persistPosition) {
+                    this.setSavedPosition(`${this.initial}px`);
+                }
+            }
+        },
+        updatePosition(event) {
+            const size = this.getNewSize(event);
+            const intSize = parseInt(size.substr(0, size.length - 2), 10);
+            if (intSize < COLLAPSE_THRESHOLD_PX && this.isCollapsable === true) {
+                this.dragCollapse = true;
+                this.endResizing();
+                this.toggleCollapse();
+            } else {
+                this.$el.style[this.styleProp] = size;
+            }
         }
     }
 };

@@ -4,7 +4,7 @@
 
     > * {
         // Label and value holders
-        flex: 1 1 auto;
+        flex: 1 1 50%;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -23,6 +23,12 @@
 
     &__label {
         margin-right: $interiorMargin;
+    }
+
+    &.is-stale {
+        .c-telemetry-view__value {
+            @include isStaleElement();
+        }
     }
 
     .c-frame & {

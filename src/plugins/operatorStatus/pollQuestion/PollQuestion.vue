@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -58,6 +58,13 @@
                         {{ entry.roleCount }}
                     </div>
                 </div>
+                <div class="c-status-poll-report__actions">
+                    <button
+                        class="c-button"
+                        title="Clear the previous poll question"
+                        @click="clearPollQuestion"
+                    >Clear Poll</button>
+                </div>
             </div>
         </template>
 
@@ -73,6 +80,41 @@
                 title="Publish a new poll question and reset previous responses"
                 @click="updatePollQuestion"
             >Update</button>
+        </div>
+        <div class="c-table c-spq__poll-table">
+            <table class="c-table__body">
+                <thead class="c-table__header">
+                    <tr>
+                        <th>
+                            Position
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Age
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="statusForRole in statusesForRolesViewModel"
+                        :key="statusForRole.key"
+                    >
+                        <td>
+                            {{ statusForRole.role }}
+                        </td>
+                        <td
+                            :style="{ background: statusForRole.status.statusBgColor, color: statusForRole.status.statusFgColor }"
+                        >
+                            {{ statusForRole.status.label }}
+                        </td>
+                        <td>
+                            {{ statusForRole.age }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -97,9 +139,11 @@ export default {
     data() {
         return {
             pollQuestionUpdated: '--',
+            pollQuestionTimestamp: undefined,
             currentPollQuestion: '--',
             newPollQuestion: undefined,
-            statusCountViewModel: []
+            statusCountViewModel: [],
+            statusesForRolesViewModel: []
         };
     },
     computed: {
@@ -135,9 +179,17 @@ export default {
             this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
         setPollQuestion(pollQuestion) {
-            this.currentPollQuestion = pollQuestion.question;
+            let pollQuestionText = pollQuestion.question;
+            if (!pollQuestionText || pollQuestionText === '') {
+                pollQuestionText = '--';
+                this.indicator.text('No Poll Question');
+            } else {
+                this.indicator.text(pollQuestionText);
+            }
+
+            this.currentPollQuestion = pollQuestionText;
+            this.pollQuestionTimestamp = pollQuestion.timestamp;
             this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
-            this.indicator.text(pollQuestion.question);
         },
         async updatePollQuestion() {
             const result = await this.openmct.user.status.setPollQuestion(this.newPollQuestion);
@@ -149,6 +201,13 @@ export default {
 
             this.newPollQuestion = undefined;
         },
+        async clearPollQuestion() {
+            this.currentPollQuestion = undefined;
+            await Promise.all([
+                this.openmct.user.status.resetAllStatuses(),
+                this.openmct.user.status.setPollQuestion()
+            ]);
+        },
         async fetchStatusSummary() {
             const allStatuses = await this.openmct.user.status.getPossibleStatuses();
             const statusCountMap = allStatuses.reduce((statusToCountMap, status) => {
@@ -158,7 +217,6 @@ export default {
             }, {});
             const allStatusRoles = await this.openmct.user.status.getAllStatusRoles();
             const statusesForRoles = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getStatusForRole(role)));
-
             statusesForRoles.forEach((status, i) => {
                 const currentCount = statusCountMap[status.key];
                 statusCountMap[status.key] = currentCount + 1;
@@ -170,6 +228,51 @@ export default {
                     roleCount: statusCountMap[status.key]
                 };
             });
+            const defaultStatuses = await Promise.all(allStatusRoles.map(role => this.openmct.user.status.getDefaultStatusForRole(role)));
+            this.statusesForRolesViewModel = [];
+            statusesForRoles.forEach((status, index) => {
+                const isDefaultStatus = defaultStatuses[index].key === status.key;
+                let statusTimestamp = status.timestamp;
+                if (isDefaultStatus) {
+                    // if the default is selected, set timestamp to undefined
+                    statusTimestamp = undefined;
+                }
+
+                this.statusesForRolesViewModel.push({
+                    status: this.applyStyling(status),
+                    role: allStatusRoles[index],
+                    age: this.formatStatusAge(statusTimestamp, this.pollQuestionTimestamp)
+                });
+            });
+        },
+        formatStatusAge(statusTimestamp, pollQuestionTimestamp) {
+            if (statusTimestamp === undefined || pollQuestionTimestamp === undefined) {
+                return '--';
+            }
+
+            const statusAgeInMs = statusTimestamp - pollQuestionTimestamp;
+            const absoluteTotalSeconds = Math.floor(Math.abs(statusAgeInMs) / 1000);
+            let hours = Math.floor(absoluteTotalSeconds / 3600);
+            let minutes = Math.floor((absoluteTotalSeconds - (hours * 3600)) / 60);
+            let secondsString = absoluteTotalSeconds - (hours * 3600) - (minutes * 60);
+
+            if (statusAgeInMs > 0 || (absoluteTotalSeconds === 0)) {
+                hours = `+ ${hours}`;
+            } else {
+                hours = `- ${hours}`;
+            }
+
+            if (minutes < 10) {
+                minutes = `0${minutes}`;
+            }
+
+            if (secondsString < 10) {
+                secondsString = `0${secondsString}`;
+            }
+
+            const statusAgeString = `${hours}:${minutes}:${secondsString}`;
+
+            return statusAgeString;
         },
         applyStyling(status) {
             const stylesForStatus = this.configuration?.statusStyles?.[status.label];

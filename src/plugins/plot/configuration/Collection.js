@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -102,8 +102,8 @@ export default class Collection extends Model {
             throw new Error('model not found in collection.');
         }
 
-        this.emit('remove', model, index);
         this.models.splice(index, 1);
+        this.emit('remove', model, index);
     }
 
     destroy(model) {

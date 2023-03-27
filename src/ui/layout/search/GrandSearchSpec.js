@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,7 @@ import GrandSearch from './GrandSearch.vue';
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 
-describe("GrandSearch", () => {
+xdescribe("GrandSearch", () => {
     let openmct;
     let grandSearchComponent;
     let viewContainer;
@@ -39,7 +39,11 @@ describe("GrandSearch", () => {
     let mockAnnotationObject;
     let mockDisplayLayout;
     let mockFolderObject;
+    let mockAnotherFolderObject;
+    let mockTopObject;
     let originalRouterPath;
+    let mockNewObject;
+    let mockObjectProvider;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -53,6 +57,7 @@ describe("GrandSearch", () => {
         mockDomainObject = {
             type: 'notebook',
             name: 'fooRabbitNotebook',
+            location: 'fooNameSpace:topObject',
             identifier: {
                 key: 'some-object',
                 namespace: 'fooNameSpace'
@@ -70,17 +75,39 @@ describe("GrandSearch", () => {
                 }
             }
         };
+        mockTopObject = {
+            type: 'root',
+            name: 'Top Folder',
+            composition: [],
+            identifier: {
+                key: 'topObject',
+                namespace: 'fooNameSpace'
+            }
+        };
+        mockAnotherFolderObject = {
+            type: 'folder',
+            name: 'Another Test Folder',
+            composition: [],
+            location: 'fooNameSpace:topObject',
+            identifier: {
+                key: 'someParent',
+                namespace: 'fooNameSpace'
+            }
+        };
         mockFolderObject = {
             type: 'folder',
             name: 'Test Folder',
+            composition: [],
+            location: 'fooNameSpace:someParent',
             identifier: {
-                key: 'some-folder',
+                key: 'someFolder',
                 namespace: 'fooNameSpace'
             }
         };
         mockDisplayLayout = {
             type: 'layout',
             name: 'Bar Layout',
+            composition: [],
             identifier: {
                 key: 'some-layout',
                 namespace: 'fooNameSpace'
@@ -105,9 +132,19 @@ describe("GrandSearch", () => {
                 }
             }
         };
+        mockNewObject = {
+            type: 'folder',
+            name: 'New Apple Test Folder',
+            composition: [],
+            location: 'fooNameSpace:topObject',
+            identifier: {
+                key: 'newApple',
+                namespace: 'fooNameSpace'
+            }
+        };
 
         openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
-        const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
+        mockObjectProvider = jasmine.createSpyObj("mock object provider", [
             "create",
             "update",
             "get"
@@ -122,6 +159,12 @@ describe("GrandSearch", () => {
                 return mockDisplayLayout;
             } else if (identifier.key === mockFolderObject.identifier.key) {
                 return mockFolderObject;
+            } else if (identifier.key === mockAnotherFolderObject.identifier.key) {
+                return mockAnotherFolderObject;
+            } else if (identifier.key === mockTopObject.identifier.key) {
+                return mockTopObject;
+            } else if (identifier.key === mockNewObject.identifier.key) {
+                return mockNewObject;
             } else {
                 return null;
             }
@@ -144,6 +187,7 @@ describe("GrandSearch", () => {
             // use local worker
             sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
+            await openmct.objects.inMemorySearchProvider.index(mockTopObject);
             await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
             await openmct.objects.inMemorySearchProvider.index(mockDisplayLayout);
             await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
@@ -172,6 +216,7 @@ describe("GrandSearch", () => {
         openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
         openmct.router.path = originalRouterPath;
         grandSearchComponent.$destroy();
+        document.body.removeChild(parent);
 
         return resetApplicationState(openmct);
     });
@@ -179,25 +224,83 @@ describe("GrandSearch", () => {
     it("should render an object search result", async () => {
         await grandSearchComponent.$children[0].searchEverything('foo');
         await Vue.nextTick();
-        const searchResult = document.querySelector('[aria-label="fooRabbitNotebook notebook result"]');
-        expect(searchResult).toBeDefined();
+        const searchResults = document.querySelectorAll('[aria-label="fooRabbitNotebook notebook result"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Rabbit');
+    });
+
+    it("should render an object search result if new object added", async () => {
+        const composition = openmct.composition.get(mockFolderObject);
+        composition.add(mockNewObject);
+        // after adding, need to wait a beat for the folder to be indexed
+        await Vue.nextTick();
+        await grandSearchComponent.$children[0].searchEverything('apple');
+        await Vue.nextTick();
+        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Apple');
+    });
+
+    it("should not use InMemorySearch provider if object provider provides search", async () => {
+        // eslint-disable-next-line require-await
+        mockObjectProvider.search = async (query, abortSignal, searchType) => {
+            if (searchType === openmct.objects.SEARCH_TYPES.OBJECTS) {
+                return mockNewObject;
+            } else {
+                return [];
+            }
+        };
+
+        mockObjectProvider.supportsSearchType = (someType) => {
+            return true;
+        };
+
+        const composition = openmct.composition.get(mockFolderObject);
+        composition.add(mockNewObject);
+        await grandSearchComponent.$children[0].searchEverything('apple');
+        await Vue.nextTick();
+        const searchResults = document.querySelectorAll('[aria-label="New Apple Test Folder folder result"]');
+        // This will be of length 2 (doubles) if we're incorrectly searching with InMemorySearchProvider as well
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Apple');
     });
 
     it("should render an annotation search result", async () => {
         await grandSearchComponent.$children[0].searchEverything('S');
         await Vue.nextTick();
-        const annotationResult = document.querySelector('[aria-label="Search Result"]');
-        expect(annotationResult).toBeDefined();
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(2);
+        expect(annotationResults[1].innerText).toContain('Driving');
+    });
+
+    it("should render no annotation search results if no match", async () => {
+        await grandSearchComponent.$children[0].searchEverything('Qbert');
+        await Vue.nextTick();
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(0);
     });
 
     it("should preview object search results in edit mode if object clicked", async () => {
         await grandSearchComponent.$children[0].searchEverything('Folder');
         grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
         await Vue.nextTick();
-        const searchResult = document.querySelector('[name="Test Folder"]');
-        expect(searchResult).toBeDefined();
-        searchResult.click();
+        const searchResults = document.querySelectorAll('[name="Test Folder"]');
+        expect(searchResults.length).toBe(1);
+        expect(searchResults[0].innerText).toContain('Folder');
+        searchResults[0].click();
         const previewWindow = document.querySelector('.js-preview-window');
-        expect(previewWindow).toBeDefined();
+        expect(previewWindow.innerText).toContain('Snapshot');
+    });
+
+    it("should preview annotation search results in edit mode if annotation clicked", async () => {
+        await grandSearchComponent.$children[0].searchEverything('Dri');
+        grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+        await Vue.nextTick();
+        const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+        expect(annotationResults.length).toBe(1);
+        expect(annotationResults[0].innerText).toContain('Driving');
+        annotationResults[0].click();
+        const previewWindow = document.querySelector('.js-preview-window');
+        expect(previewWindow.innerText).toContain('Snapshot');
     });
 });

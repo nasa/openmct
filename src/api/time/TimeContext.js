@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -361,6 +361,18 @@ class TimeContext extends EventEmitter {
 
         this.boundsVal = newBounds;
         this.emit('bounds', this.boundsVal, true);
+    }
+
+    /**
+     * Checks if this time context is in real-time mode or not.
+     * @returns {boolean} true if this context is in real-time mode, false if not
+    */
+    isRealTime() {
+        if (this.clock()) {
+            return true;
+        }
+
+        return false;
     }
 }
 

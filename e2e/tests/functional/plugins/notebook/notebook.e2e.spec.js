@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,12 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-// FIXME: Remove this eslint exception once tests are implemented
-// eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
+const path = require('path');
+
+const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
     test.fixme('Can create a Notebook Object', async ({ page }) => {
@@ -67,10 +70,31 @@ test.describe('Default Notebook', () => {
 
 test.describe('Notebook section tests', () => {
     //The following test cases are associated with Notebook Sections
-    test.fixme('New sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
-        //Create new notebook A
-        //Add section
-        //Verify new section and new page details
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
+    });
+    test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
+        // Check that the default section and page are created and the name matches the defaults
+        const defaultSectionName = await page.locator('.c-notebook__sections .c-list__item__name').textContent();
+        expect(defaultSectionName).toBe('Unnamed Section');
+        const defaultPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
+        expect(defaultPageName).toBe('Unnamed Page');
+
+        // Expand sidebar and add a section
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
+
+        // Check that new section and page within the new section match the defaults
+        const newSectionName = await page.locator('.c-notebook__sections .c-list__item__name').nth(1).textContent();
+        expect(newSectionName).toBe('Unnamed Section');
+        const newPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
+        expect(newPageName).toBe('Unnamed Page');
     });
     test.fixme('Section selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
@@ -86,10 +110,58 @@ test.describe('Notebook section tests', () => {
         //Delete 3rd section
         //1st is selected and there is no default notebook
     });
+    test.fixme('Section rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a section
+        // Rename the section but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the section name reverts to the default name
+        // Rename the section but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the section name is updated
+        // Rename the section to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the section name reverts to the default name
+        // Rename the section to something long that overflows the text box
+        // Verify that the section name is not truncated while input is active
+        // Confirm the section name edit
+        // Verify that the section name is truncated now that input is not active
+    });
 });
 
 test.describe('Notebook page tests', () => {
     //The following test cases are associated with Notebook Pages
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
+    });
+    //Test will need to be implemented after a refactor in #5713
+    // eslint-disable-next-line playwright/no-skipped-test
+    test.skip('Delete page popup is removed properly on clicking dropdown again', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5713'
+        });
+        // Expand sidebar and add a second page
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        await page.locator('text=Page Add >> button').click();
+
+        // Click on the 2nd page dropdown button and expect the Delete Page option to appear
+        await page.locator('button[title="Open context menu"]').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the same page a second time causes the same Delete Page option to recreate
+        await page.locator('button[title="Open context menu"]').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the first page causes the first delete button to detach and recreate on the first page
+        await page.locator('button[title="Open context menu"]').nth(1).click();
+        const numOfDeletePagePopups = await page.locator('li[title="Delete Page"]').count();
+        expect(numOfDeletePagePopups).toBe(1);
+    });
     test.fixme('Page selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
         //Delete existing Page
@@ -107,6 +179,23 @@ test.describe('Notebook page tests', () => {
         //Delete 3rd page
         //First is now selected and there is no default notebook
     });
+    test.fixme('Page rename operations', async ({ page }) => {
+        // Create a new notebook
+        // Add a page
+        // Rename the page but do not confirm
+        // Keyboard press 'Escape'
+        // Verify that the page name reverts to the default name
+        // Rename the page but do not confirm
+        // Keyboard press 'Enter'
+        // Verify that the page name is updated
+        // Rename the page to "" (empty string)
+        // Keyboard press 'Enter' to confirm
+        // Verify that the page name reverts to the default name
+        // Rename the page to something long that overflows the text box
+        // Verify that the page name is not truncated while input is active
+        // Confirm the page name edit
+        // Verify that the page name is truncated now that input is not active
+    });
 });
 
 test.describe('Notebook search tests', () => {
@@ -119,82 +208,173 @@ test.describe('Notebook search tests', () => {
 });
 
 test.describe('Notebook entry tests', () => {
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-    test.fixme('When a telemetry object is dropped into a notebook, a new entry is created and it should be focused', async ({ page }) => {
-        // Drag and drop any telmetry object on 'drop object'
-        // new entry gets created with telemtry object
+    // Create Notebook with URL Whitelist
+    let notebookObject;
+    test.beforeEach(async ({ page }) => {
+        // eslint-disable-next-line no-undef
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js') });
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        notebookObject = await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
     });
-    test.fixme('When a telemetry object is dropped into a notebooks existing entry, it should be focused', async ({ page }) => {
-        // Drag and drop any telemetry object onto existing entry
-        // Entry updated with object and snapshot
+    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
+        // Create Overlay Plot
+        await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot'
+        });
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+
+        const embed = page.locator('.c-ne__embed__link');
+        const embedName = await embed.textContent();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe('Dropped Overlay Plot');
+    });
+    test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
+        // Create Overlay Plot
+        await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot'
+        });
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, 'Entry to drop into');
+        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
+
+        const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
+        const embed = existingEntry.locator('.c-ne__embed__link');
+        const embedName = await embed.textContent();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe('Dropped Overlay Plot');
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-});
+    test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com';
 
-test.describe('Snapshot Menu tests', () => {
-    test.fixme('When no default notebook is selected, Snapshot Menu dropdown should only have a single option', async ({ page }) => {
-        // There should be no default notebook
-        // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
-        // refresh page
-        // Click on 'Notebook Snaphot Menu'
-        // 'save to Notebook Snapshots' should be only option there
-    });
-    test.fixme('When default notebook is updated selected, Snapshot Menu dropdown should list it as the newest option', async ({ page }) => {
-        // Create 2a notebooks
-        // Set Notebook A as Default
-        // Open Snapshot Menu and note that Notebook A is listed
-        // Close Snapshot Menu
-        // Set Default Notebook to Notebook B
-        // Open Snapshot Notebook and note that Notebook B is listed
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook B
-    });
-    test.fixme('Can add Snapshots via Snapshot Menu and details are correct', async ({ page }) => {
-        //Note this should be a visual test, too
-        // Create Telemetry object
-        // Create A notebook with many pages and sections.
-        // Set page and section defaults to be between first and last of many. i.e. 3 of 5
-        // Navigate to Telemetry object
-        // Select Default Notebook Option and verify that Snapshot is added to Notebook A
-        // Verify Snapshot Details appear correctly
-    });
-    test.fixme('Snapshots adjust time conductor', async ({ page }) => {
-        // Create Telemetry object
-        // Set Telemetry object's timeconductor to Fixed time with Start and Endtimes are recorded
-        // Embed Telemetry object into notebook
-        // Set Time Conductor to Local clock
-        // Click into embedded telemetry object and verify object appears with same fixed time from record
-    });
-});
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-test.describe('Snapshot Container tests', () => {
-    test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
-    test.fixme('5 Snapshots can be added to a container and Deleted with Delete All action', async ({ page }) => {});
-    test.fixme('A snapshot can be Deleted from Container', async ({ page }) => {});
-    test.fixme('A snapshot can be Previewed from Container', async ({ page }) => {});
-    test.fixme('A snapshot Container can be open and closed', async ({ page }) => {});
-    test.fixme('Can add object to Snapshot container and pull into notebook and create a new entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop onto droppable area for new entry
-        //New Entry created with given snapshot added
-        //Snapshot removed from container?
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
+
+        expect(await validLink.count()).toBe(1);
     });
-    test.fixme('Can add object to Snapshot container and pull into notebook and existing entry', async ({ page }) => {
-        //Create Notebook
-        //Create Telemetry Object
-        //From Telemetry Object, use 'save to Notebook Snapshots'
-        //Snapshots indicator should blink, click on it to view snapshots
-        //Navigate to Notebook
-        //Drag and Drop into exiting entry
-        //Existing Entry updated with given snapshot
-        //Snapshot removed from container?
+    test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'www.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await invalidLink.count()).toBe(0);
     });
-    test.fixme('Verify Embedded options for PNG, JPG, and Annotate work correctly', async ({ page }) => {
-        //Add snapshot to container
-        //Verify PNG, JPG, and Annotate buttons work correctly
+    test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.bing.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        expect(await invalidLink.count()).toBe(0);
+    });
+    test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const INVALID_TEST_LINK = 'http://bing.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
+        const TEST_LINK = 'https://www.google.com';
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
+
+        await validLink.click();
+        const popup = await popupPromise;
+
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
+
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({ page }) => {
+        const TEST_LINK = 'http://www.google.com?bad=';
+        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await nbUtils.enterTextEntry(page, `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`);
+
+        const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
+        const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
+
+        expect.soft(await sanitizedLink.count()).toBe(1);
+        expect(await unsanitizedLink.count()).toBe(0);
     });
 });

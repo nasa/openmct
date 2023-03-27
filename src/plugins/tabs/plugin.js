@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@ define([
 
             openmct.types.addType('tabs', {
                 name: "Tabs View",
-                description: 'Add multiple objects of any type to this view, and quickly navigate between them with tabs',
+                description: 'Quickly navigate between multiple objects of any type using tabs.',
                 creatable: true,
                 cssClass: 'icon-tabs-view',
                 initialize(domainObject) {

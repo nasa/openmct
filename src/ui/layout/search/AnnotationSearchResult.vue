@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -67,7 +67,8 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import PreviewAction from '../../preview/PreviewAction';
+import { identifierToString } from '../../../../src/tools/url';
 
 export default {
     name: 'AnnotationSearchResult',
@@ -125,16 +126,71 @@ export default {
             return this.result.fullTagModels[0].foregroundColor;
         }
     },
+    mounted() {
+        this.previewAction = new PreviewAction(this.openmct);
+        this.previewAction.on('isVisible', this.togglePreviewState);
+        this.clickedPlotAnnotation = this.clickedPlotAnnotation.bind(this);
+    },
+    destroyed() {
+        this.previewAction.off('isVisible', this.togglePreviewState);
+        this.openmct.selection.off('change', this.clickedPlotAnnotation);
+    },
     methods: {
-        clickedResult() {
+        clickedResult(event) {
             const objectPath = this.domainObject.originalPath;
-            let resultUrl = objectPathToUrl(this.openmct, objectPath);
-            // get rid of ROOT if extant
-            if (resultUrl.includes('/ROOT')) {
-                resultUrl = resultUrl.split('/ROOT').join('');
-            }
+            if (this.openmct.editor.isEditing()) {
+                event.preventDefault();
+                this.preview(objectPath);
+            } else {
+                const resultUrl = identifierToString(this.openmct, objectPath);
+                if (!this.openmct.router.isNavigatedObject(objectPath)) {
+                    // if we're not on the correct page, navigate to the object,
+                    // then wait for the selection event to fire before issuing a new selection
+                    if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL) {
+                        this.openmct.selection.on('change', this.clickedPlotAnnotation);
+                    }
 
-            this.openmct.router.navigate(resultUrl);
+                    this.openmct.router.navigate(resultUrl);
+                } else {
+                    // if this is the navigated object, then we are already on the correct page
+                    // and just need to issue the selection event
+                    this.clickedPlotAnnotation();
+                }
+            }
+        },
+        preview(objectPath) {
+            if (this.previewAction.appliesTo(objectPath)) {
+                this.previewAction.invoke(objectPath);
+            }
+        },
+        clickedPlotAnnotation() {
+            this.openmct.selection.off('change', this.clickedPlotAnnotation);
+
+            const targetDetails = {};
+            const targetDomainObjects = {};
+            Object.entries(this.result.targets).forEach(([key, value]) => {
+                targetDetails[key] = value;
+            });
+            this.result.targetModels.forEach((targetModel) => {
+                const keyString = this.openmct.objects.makeKeyString(targetModel.identifier);
+                targetDomainObjects[keyString] = targetModel;
+            });
+            const selection =
+                    [
+                        {
+                            element: this.$el,
+                            context: {
+                                item: this.result.targetModels[0],
+                                type: 'plot-annotation-search-result',
+                                targetDetails,
+                                targetDomainObjects,
+                                annotations: [this.result],
+                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                                onAnnotationChange: () => {}
+                            }
+                        }
+                    ];
+            this.openmct.selection.select(selection, true);
         },
         isSearchMatched(tag) {
             if (this.result.matchingTagKeys) {

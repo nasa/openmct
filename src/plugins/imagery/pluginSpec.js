@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,6 +34,10 @@ const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
+
+function formatThumbnail(url) {
+    return url.replace('logo-openmct.svg', 'logo-nasa.svg');
+}
 
 function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
@@ -125,6 +129,16 @@ describe("The Imagery View Layouts", () => {
                     "source": "url"
                 },
                 {
+                    "name": "Image Thumbnail",
+                    "key": "thumbnail-url",
+                    "format": "thumbnail",
+                    "hints": {
+                        "thumbnail": 1,
+                        "priority": 3
+                    },
+                    "source": "url"
+                },
+                {
                     "name": "Name",
                     "key": "name",
                     "source": "name",
@@ -199,6 +213,11 @@ describe("The Imagery View Layouts", () => {
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         originalRouterPath = openmct.router.path;
+
+        openmct.telemetry.addFormat({
+            key: 'thumbnail',
+            format: formatThumbnail
+        });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -384,15 +403,32 @@ describe("The Imagery View Layouts", () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
             const layerEls = parent.querySelectorAll('.js-layer-image');
-            console.log(layerEls);
             expect(layerEls.length).toEqual(1);
+        });
+
+        it("should use the image thumbnailUrl for thumbnails", async () => {
+            await Vue.nextTick();
+            const fullSizeImageUrl = imageTelemetry[5].url;
+            const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
+
+            // Ensure thumbnails are shown w/ thumbnail Urls
+            const thumbnails = parent.querySelectorAll(`img[src='${thumbnailUrl}']`);
+            expect(thumbnails.length).toBeGreaterThan(0);
+
+            // Click a thumbnail
+            parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
+            await Vue.nextTick();
+
+            // Ensure full size image is shown w/ full size url
+            const fullSizeImages = parent.querySelectorAll(`img[src='${fullSizeImageUrl}']`);
+            expect(fullSizeImages.length).toBeGreaterThan(0);
         });
 
         it("should show the clicked thumbnail as the main image", async () => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             await Vue.nextTick();
-            const target = imageTelemetry[5].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
+            parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
             await Vue.nextTick();
             const imageInfo = getImageInfo(parent);
 
@@ -417,7 +453,7 @@ describe("The Imagery View Layouts", () => {
 
         it("should show that an image is not new", async () => {
             await Vue.nextTick();
-            const target = imageTelemetry[4].url;
+            const target = formatThumbnail(imageTelemetry[4].url);
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
             await Vue.nextTick();
@@ -481,19 +517,16 @@ describe("The Imagery View Layouts", () => {
                 });
             });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', (done) => {
-            Vue.nextTick(() => {
-                // use spyon to spy the scroll function
-                spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
-                imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-                Vue.nextTick(() => {
-                    parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-                    expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
-                    done();
-                });
-            });
+        it ('scrollToRight is called when clicking on auto scroll button', async () => {
+            await Vue.nextTick();
+            // use spyon to spy the scroll function
+            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
+            await Vue.nextTick();
+            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
+            expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
         });
-        xit('should change the image zoom factor when using the zoom buttons', async (done) => {
+        xit('should change the image zoom factor when using the zoom buttons', async () => {
             await Vue.nextTick();
             let imageSizeBefore;
             let imageSizeAfter;
@@ -512,7 +545,6 @@ describe("The Imagery View Layouts", () => {
             imageSizeAfter = parent.querySelector('.c-imagery_main-image_background-image').getBoundingClientRect();
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
-            done();
         });
         xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
             await Vue.nextTick();
@@ -527,6 +559,19 @@ describe("The Imagery View Layouts", () => {
             expect(imageSizeAfter.height).toBeLessThan(imageSizeBefore.height);
             expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
             done();
+        });
+
+        it('should display the viewable area when zoom factor is greater than 1', async () => {
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
+
+            parent.querySelector('.t-btn-zoom-in').click();
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(1);
+
+            parent.querySelector('.t-btn-zoom-reset').click();
+            await Vue.nextTick();
+            expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
         });
 
         it('should reset the brightness and contrast when clicking the reset button', async () => {

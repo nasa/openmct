@@ -3,39 +3,52 @@
     class="c-menu"
     :class="options.menuClass"
 >
-    <ul v-if="options.actions.length && options.actions[0].length">
+    <ul
+        v-if="options.actions.length && options.actions[0].length"
+        role="menu"
+    >
         <template
             v-for="(actionGroups, index) in options.actions"
         >
-            <li
-                v-for="action in actionGroups"
-                :key="action.name"
-                :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
-                :title="action.description"
-                :data-testid="action.testId || false"
-                @click="action.onItemClicked"
-            >
-                {{ action.name }}
-            </li>
             <div
-                v-if="index !== options.actions.length - 1"
                 :key="index"
-                class="c-menu__section-separator"
+                role="group"
             >
-            </div>
-            <li
-                v-if="actionGroups.length === 0"
-                :key="index"
-            >
-                No actions defined.
-            </li>
-        </template>
+                <li
+                    v-for="action in actionGroups"
+                    :key="action.name"
+                    role="menuitem"
+                    :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
+                    :title="action.description"
+                    :data-testid="action.testId || false"
+                    @click="action.onItemClicked"
+                >
+                    {{ action.name }}
+                </li>
+                <div
+                    v-if="index !== options.actions.length - 1"
+                    :key="index"
+                    role="separator"
+                    class="c-menu__section-separator"
+                >
+                </div>
+                <li
+                    v-if="actionGroups.length === 0"
+                    :key="index"
+                >
+                    No actions defined.
+                </li>
+            </div></template>
     </ul>
 
-    <ul v-else>
+    <ul
+        v-else
+        role="menu"
+    >
         <li
             v-for="action in options.actions"
             :key="action.name"
+            role="menuitem"
             :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
             :data-testid="action.testId || false"

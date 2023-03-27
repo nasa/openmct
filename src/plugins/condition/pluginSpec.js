@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,12 +22,13 @@
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
-import stylesManager from '@/ui/inspector/styles/StylesManager';
+import stylesManager from '../inspectorViews/styles/StylesManager';
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
 import StyleRuleManager from "./StyleRuleManager";
+import { IS_OLD_KEY } from "./utils/constants";
 
 describe('the plugin', function () {
     let conditionSetDefinition;
@@ -642,7 +643,7 @@ describe('the plugin', function () {
 
     });
 
-    describe('the condition check for staleness', () => {
+    describe('the condition check if old', () => {
         let conditionSetDomainObject;
 
         beforeEach(() => {
@@ -660,13 +661,13 @@ describe('the plugin', function () {
                             "id": "39584410-cbf9-499e-96dc-76f27e69885d",
                             "configuration": {
                                 "name": "Unnamed Condition",
-                                "output": "Any stale telemetry",
+                                "output": "Any old telemetry",
                                 "trigger": "all",
                                 "criteria": [
                                     {
                                         "id": "35400132-63b0-425c-ac30-8197df7d5862",
                                         "telemetry": "any",
-                                        "operation": "isStale",
+                                        "operation": IS_OLD_KEY,
                                         "input": [
                                             "0.2"
                                         ],
@@ -674,7 +675,7 @@ describe('the plugin', function () {
                                     }
                                 ]
                             },
-                            "summary": "Match if all criteria are met: Any telemetry is stale after 5 seconds"
+                            "summary": "Match if all criteria are met: Any telemetry is old after 5 seconds"
                         },
                         {
                             "isDefault": true,
@@ -708,7 +709,7 @@ describe('the plugin', function () {
             };
         });
 
-        it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
+        it('should evaluate as old when telemetry is not received in the allotted time', (done) => {
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
             conditionMgr.telemetryObjects = {
@@ -717,7 +718,7 @@ describe('the plugin', function () {
             conditionMgr.updateConditionTelemetryObjects();
             setTimeout(() => {
                 expect(mockListener).toHaveBeenCalledWith({
-                    output: 'Any stale telemetry',
+                    output: 'Any old telemetry',
                     id: {
                         namespace: '',
                         key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
@@ -729,7 +730,7 @@ describe('the plugin', function () {
             }, 400);
         });
 
-        it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
+        it('should not evaluate as old when telemetry is received in the allotted time', (done) => {
             const date = 1;
             conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["0.4"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);

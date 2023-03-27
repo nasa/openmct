@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,12 +33,12 @@ import InMemorySearchProvider from './InMemorySearchProvider';
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef Identifier
- * @memberof module:openmct.ObjectAPI~
+ * @typedef {object} Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
  *           within that namespace
+ * @memberof module:openmct.ObjectAPI~
  */
 
 /**
@@ -50,8 +50,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * A few common properties are defined for domain objects. Beyond these,
  * individual types of domain objects may add more as they see fit.
  *
- * @typedef DomainObject
- * @property {module:openmct.ObjectAPI~Identifier} identifier a key/namespace pair which
+ * @typedef {object} DomainObject
+ * @property {Identifier} identifier a key/namespace pair which
  *           uniquely identifies this domain object
  * @property {string} type the type of domain object
  * @property {string} name the human-readable name for this domain object
@@ -59,11 +59,22 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  *           object
  * @property {number} [modified] the time, in milliseconds since the UNIX
  *           epoch, at which this domain object was last modified
- * @property {module:openmct.ObjectAPI~Identifier[]} [composition] if
+ * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
- * @memberof module:openmct
+ * @property {Object.<string, any>} [configuration] A key-value map containing configuration
+ *           settings for this domain object.
+ * @memberof module:openmct.ObjectAPI~
  */
+
+/**
+  * @readonly
+  * @enum {string} SEARCH_TYPES
+  * @property {string} OBJECTS Search for objects
+  * @property {string} ANNOTATIONS Search for annotations
+  * @property {string} TAGS Search for tags
+  */
+
 /**
  * Utilities for loading, saving, and manipulating domain objects.
  * @interface ObjectAPI
@@ -76,7 +87,6 @@ export default class ObjectAPI {
         this.SEARCH_TYPES = Object.freeze({
             OBJECTS: 'OBJECTS',
             ANNOTATIONS: 'ANNOTATIONS',
-            NOTEBOOK_ANNOTATIONS: 'NOTEBOOK_ANNOTATIONS',
             TAGS: 'TAGS'
         });
         this.eventEmitter = new EventEmitter();
@@ -88,7 +98,7 @@ export default class ObjectAPI {
         this.cache = {};
         this.interceptorRegistry = new InterceptorRegistry();
 
-        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan', 'annotation'];
+        this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
 
         this.errors = {
             Conflict: ConflictError
@@ -181,64 +191,57 @@ export default class ObjectAPI {
     /**
      * Get a domain object.
      *
-     * @method get
-     * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
-     * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
-     * @returns {Promise} a promise which will resolve when the domain object
+     * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+     *          dirty/in-transaction objects use and the provider.get method
+     * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-
-    get(identifier, abortSignal) {
+    get(identifier, abortSignal, forceRemote = false) {
         let keystring = this.makeKeyString(identifier);
 
-        if (this.cache[keystring] !== undefined) {
-            return this.cache[keystring];
-        }
+        if (!forceRemote) {
+            if (this.cache[keystring] !== undefined) {
+                return this.cache[keystring];
+            }
 
-        identifier = utils.parseKeyString(identifier);
-        let dirtyObject;
-        if (this.isTransactionActive()) {
-            dirtyObject = this.transaction.getDirtyObject(identifier);
-        }
+            identifier = utils.parseKeyString(identifier);
 
-        if (dirtyObject) {
-            return Promise.resolve(dirtyObject);
+            if (this.isTransactionActive()) {
+                let dirtyObject = this.transaction.getDirtyObject(identifier);
+
+                if (dirtyObject) {
+                    return Promise.resolve(dirtyObject);
+                }
+            }
         }
 
         const provider = this.getProvider(identifier);
 
         if (!provider) {
-            throw new Error('No Provider Matched');
+            throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
         }
 
         if (!provider.get) {
             throw new Error('Provider does not support get!');
         }
 
-        let objectPromise = provider.get(identifier, abortSignal).then(result => {
+        let objectPromise = provider.get(identifier, abortSignal).then(domainObject => {
             delete this.cache[keystring];
+            domainObject = this.applyGetInterceptors(identifier, domainObject);
 
-            result = this.applyGetInterceptors(identifier, result);
-            if (result.isMutable) {
-                result.$refresh(result);
-            } else {
-                let mutableDomainObject = this._toMutable(result);
-                mutableDomainObject.$refresh(result);
+            if (this.supportsMutation(identifier)) {
+                const mutableDomainObject = this.toMutable(domainObject);
+                mutableDomainObject.$refresh(domainObject);
+                this.destroyMutable(mutableDomainObject);
             }
 
-            return result;
-        }).catch((result) => {
-            console.warn(`Failed to retrieve ${keystring}:`, result);
-            this.openmct.notifications.error(`Failed to retrieve object ${keystring}`);
-
+            return domainObject;
+        }).catch((error) => {
+            console.warn(`Failed to retrieve ${keystring}:`, error);
             delete this.cache[keystring];
-
-            if (!result) {
-                //no result means resource either doesn't exist or is missing
-                //otherwise it's an error, and we shouldn't apply interceptors
-                result = this.applyGetInterceptors(identifier);
-            }
+            const result = this.applyGetInterceptors(identifier);
 
             return result;
         });
@@ -305,7 +308,7 @@ export default class ObjectAPI {
         }
 
         return this.get(identifier).then((object) => {
-            return this._toMutable(object);
+            return this.toMutable(object);
         });
     }
 
@@ -352,53 +355,96 @@ export default class ObjectAPI {
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    save(domainObject) {
-        let provider = this.getProvider(domainObject.identifier);
-        let savedResolve;
-        let savedReject;
+    async save(domainObject) {
+        const provider = this.getProvider(domainObject.identifier);
         let result;
+        let lastPersistedTime;
 
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
         } else if (this.#hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
-            const persistedTime = Date.now();
-            if (domainObject.persisted === undefined) {
-                result = new Promise((resolve, reject) => {
-                    savedResolve = resolve;
-                    savedReject = reject;
-                });
-                domainObject.persisted = persistedTime;
-                const newObjectPromise = provider.create(domainObject);
-                if (newObjectPromise) {
-                    newObjectPromise.then(response => {
-                        this.mutate(domainObject, 'persisted', persistedTime);
-                        savedResolve(response);
-                    }).catch((error) => {
-                        savedReject(error);
-                    });
-                } else {
-                    result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
-                }
+            const username = await this.#getCurrentUsername();
+            const isNewObject = domainObject.persisted === undefined;
+            let savedResolve;
+            let savedReject;
+            let savedObjectPromise;
+
+            result = new Promise((resolve, reject) => {
+                savedResolve = resolve;
+                savedReject = reject;
+            });
+
+            this.#mutate(domainObject, 'modifiedBy', username);
+
+            if (isNewObject) {
+                this.#mutate(domainObject, 'createdBy', username);
+
+                const createdTime = Date.now();
+                this.#mutate(domainObject, 'created', createdTime);
+
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
+
+                savedObjectPromise = provider.create(domainObject);
             } else {
-                domainObject.persisted = persistedTime;
-                this.mutate(domainObject, 'persisted', persistedTime);
-                result = provider.update(domainObject);
+                lastPersistedTime = domainObject.persisted;
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
+                savedObjectPromise = provider.update(domainObject);
+            }
+
+            if (savedObjectPromise) {
+                savedObjectPromise.then(response => {
+                    savedResolve(response);
+                }).catch((error) => {
+                    if (!isNewObject) {
+                        this.#mutate(domainObject, 'persisted', lastPersistedTime);
+                    }
+
+                    savedReject(error);
+                });
+            } else {
+                result = Promise.reject(`[ObjectAPI][save] Object provider returned ${savedObjectPromise} when ${isNewObject ? 'creating new' : 'updating'} object.`);
             }
         }
 
-        return result.catch((error) => {
+        return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
-                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                // Synchronized objects will resolve their own conflicts
+                if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    this.openmct.notifications.info(`Conflict detected while saving "${this.makeKeyString(domainObject.name)}", attempting to resolve`);
+                } else {
+                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
+                    if (this.isTransactionActive()) {
+                        this.endTransaction();
+                    }
+
+                    await this.refresh(domainObject);
+                }
             }
 
             throw error;
         });
     }
 
+    async #getCurrentUsername() {
+        const user = await this.openmct.user.getCurrentUser();
+        let username;
+
+        if (user !== undefined) {
+            username = user.getName();
+        }
+
+        return username;
+    }
+
     /**
      * After entering into edit mode, creates a new instance of Transaction to keep track of changes in Objects
+     *
+     * @returns {Transaction} a new Transaction that was just created
      */
     startTransaction() {
         if (this.isTransactionActive()) {
@@ -406,6 +452,8 @@ export default class ObjectAPI {
         }
 
         this.transaction = new Transaction(this);
+
+        return this.transaction;
     }
 
     /**
@@ -478,14 +526,16 @@ export default class ObjectAPI {
     }
 
     /**
-     * Modify a domain object.
+     * Modify a domain object. Internal to ObjectAPI, won't call save after.
+     * @private
+     *
      * @param {module:openmct.DomainObject} object the object to mutate
      * @param {string} path the property to modify
      * @param {*} value the new value for this property
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    mutate(domainObject, path, value) {
+    #mutate(domainObject, path, value) {
         if (!this.supportsMutation(domainObject.identifier)) {
             throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
         }
@@ -495,7 +545,7 @@ export default class ObjectAPI {
         } else {
             //Creating a temporary mutable domain object allows other mutable instances of the
             //object to be kept in sync.
-            let mutableDomainObject = this._toMutable(domainObject);
+            let mutableDomainObject = this.toMutable(domainObject);
 
             //Mutate original object
             MutableDomainObject.mutateObject(domainObject, path, value);
@@ -506,6 +556,18 @@ export default class ObjectAPI {
             //Destroy temporary mutable object
             this.destroyMutable(mutableDomainObject);
         }
+    }
+
+    /**
+     * Modify a domain object and save.
+     * @param {module:openmct.DomainObject} object the object to mutate
+     * @param {string} path the property to modify
+     * @param {*} value the new value for this property
+     * @method mutate
+     * @memberof module:openmct.ObjectAPI#
+     */
+    mutate(domainObject, path, value) {
+        this.#mutate(domainObject, path, value);
 
         if (this.isTransactionActive()) {
             this.transaction.add(domainObject);
@@ -515,15 +577,19 @@ export default class ObjectAPI {
     }
 
     /**
-     * @private
+     * Create a mutable domain object from an existing domain object
+     * @param {module:openmct.DomainObject} domainObject the object to make mutable
+     * @returns {MutableDomainObject} a mutable domain object that will automatically sync
+     * @method toMutable
+     * @memberof module:openmct.ObjectAPI#
      */
-    _toMutable(object) {
+    toMutable(domainObject) {
         let mutableObject;
 
-        if (object.isMutable) {
-            mutableObject = object;
+        if (domainObject.isMutable) {
+            mutableObject = domainObject;
         } else {
-            mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
+            mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
             // Check if provider supports realtime updates
             let identifier = utils.parseKeyString(mutableObject.identifier);
@@ -531,9 +597,11 @@ export default class ObjectAPI {
 
             if (provider !== undefined
                 && provider.observe !== undefined
-                && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+                && this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
                 let unobserve = provider.observe(identifier, (updatedModel) => {
-                    if (updatedModel.persisted > mutableObject.modified) {
+                    // modified can sometimes be undefined, so make it 0 in this case
+                    const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
+                    if (updatedModel.persisted > mutableObjectModification) {
                         //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                         //in rapid succession and intermediate persistence states are returned by the observe function.
                         updatedModel = this.applyGetInterceptors(identifier, updatedModel);
@@ -579,7 +647,7 @@ export default class ObjectAPI {
      * @param {module:openmct.DomainObject} object the object to observe
      * @param {string} path the property to observe
      * @param {Function} callback a callback to invoke when new values for
-     *        this property are observed
+     *        this property are observed.
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
@@ -587,7 +655,7 @@ export default class ObjectAPI {
         if (domainObject.isMutable) {
             return domainObject.$observe(path, callback);
         } else {
-            let mutable = this._toMutable(domainObject);
+            let mutable = this.toMutable(domainObject);
             mutable.$observe(path, callback);
 
             return () => mutable.$destroy();
@@ -615,25 +683,98 @@ export default class ObjectAPI {
      * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
      */
     areIdsEqual(...identifiers) {
+        const firstIdentifier = utils.parseKeyString(identifiers[0]);
+
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0]
-                    || (identifier.namespace === identifiers[0].namespace
-                        && identifier.key === identifiers[0].key);
+                return identifier === firstIdentifier
+                    || (identifier.namespace === firstIdentifier.namespace
+                        && identifier.key === firstIdentifier.key);
             });
     }
 
-    getOriginalPath(identifier, path = []) {
-        return this.get(identifier).then((domainObject) => {
-            path.push(domainObject);
-            let location = domainObject.location;
+    /**
+     * Given an original path check if the path is reachable via root
+     * @param {Array<Object>} originalPath an array of path objects to check
+     * @returns {boolean} whether the domain object is reachable
+     */
+    isReachable(originalPath) {
+        if (originalPath && originalPath.length) {
+            return (originalPath[originalPath.length - 1].type === 'root');
+        }
 
-            if (location) {
-                return this.getOriginalPath(utils.parseKeyString(location), path);
-            } else {
-                return path;
-            }
+        return false;
+    }
+
+    #pathContainsDomainObject(keyStringToCheck, path) {
+        if (!keyStringToCheck) {
+            return false;
+        }
+
+        return path.some(pathElement => {
+            const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+
+            return this.areIdsEqual(identifierToCheck, pathElement.identifier);
         });
+    }
+
+    /**
+     * Given an identifier, constructs the original path by walking up its parents
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     * @param {Array<module:openmct.DomainObject>} path an array of path objects
+     * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
+     */
+    async getOriginalPath(identifier, path = []) {
+        const domainObject = await this.get(identifier);
+        path.push(domainObject);
+        const { location } = domainObject;
+        if (location && (!this.#pathContainsDomainObject(location, path))) {
+            // if we have a location, and we don't already have this in our constructed path,
+            // then keep walking up the path
+            return this.getOriginalPath(utils.parseKeyString(location), path);
+        } else {
+            return path;
+        }
+    }
+
+    /**
+     * Parse and construct an `objectPath` from a `navigationPath`.
+     *
+     * A `navigationPath` is a string of the form `"/browse/<keyString>/<keyString>/..."` that is used
+     * by the Open MCT router to navigate to a specific object.
+     *
+     * Throws an error if the `navigationPath` is malformed.
+     *
+     * @param {string} navigationPath
+     * @returns {DomainObject[]} objectPath
+     */
+    async getRelativeObjectPath(navigationPath) {
+        if (!navigationPath.startsWith('/browse/')) {
+            throw new Error(`Malformed navigation path: "${navigationPath}"`);
+        }
+
+        navigationPath = navigationPath.replace('/browse/', '');
+
+        if (!navigationPath || navigationPath === '/') {
+            return [];
+        }
+
+        // Remove any query params and split on '/'
+        const keyStrings = navigationPath.split('?')?.[0].split('/');
+
+        if (keyStrings[0] !== 'ROOT') {
+            keyStrings.unshift('ROOT');
+        }
+
+        const objectPath = (await Promise.all(
+            keyStrings.map(
+                keyString => this.supportsMutation(keyString)
+                    ? this.getMutable(utils.parseKeyString(keyString))
+                    : this.get(utils.parseKeyString(keyString))
+            )
+        )).reverse();
+
+        return objectPath;
     }
 
     isObjectPathToALink(domainObject, objectPath) {
@@ -643,12 +784,14 @@ export default class ObjectAPI {
     }
 
     isTransactionActive() {
-        return Boolean(this.transaction && this.openmct.editor.isEditing());
+        return this.transaction !== undefined && this.transaction !== null;
     }
 
     #hasAlreadyBeenPersisted(domainObject) {
+        // modified can sometimes be undefined, so make it 0 in this case
+        const modified = domainObject.modified ?? Number.MIN_SAFE_INTEGER;
         const result = domainObject.persisted !== undefined
-            && domainObject.persisted >= domainObject.modified;
+            && domainObject.persisted >= modified;
 
         return result;
     }

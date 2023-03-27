@@ -1,7 +1,10 @@
 <template>
-<div>
-    <ul class="l-inspector-part">
-        <h2>Y Axis</h2>
+<div v-if="loaded">
+    <ul
+        class="l-inspector-part"
+        :aria-label="id > 1 ? `Y Axis ${id} Properties` : 'Y Axis Properties'"
+    >
+        <h2>Y Axis {{ id > 1 ? id : '' }}</h2>
         <li class="grid-row">
             <div
                 class="grid-cell label"
@@ -25,6 +28,7 @@
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <input
                     v-model="logMode"
+                    class="js-log-mode-input"
                     type="checkbox"
                     @change="updateForm('logMode')"
                 />
@@ -77,7 +81,7 @@
             >Minimum Value</div>
             <div class="grid-cell value">
                 <input
-                    v-model="rangeMin"
+                    v-model.lazy="rangeMin"
                     class="c-input--flex"
                     type="number"
                     @change="updateForm('range')"
@@ -90,7 +94,7 @@
                 title="Maximum Y axis value."
             >Maximum Value</div>
             <div class="grid-cell value"><input
-                v-model="rangeMax"
+                v-model.lazy="rangeMax"
                 class="c-input--flex"
                 type="number"
                 @change="updateForm('range')"
@@ -103,57 +107,80 @@
 <script>
 import { objectPath } from "./formUtil";
 import _ from "lodash";
+import eventHelpers from "../../lib/eventHelpers";
+import configStore from "../../configuration/ConfigStore";
 
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        yAxis: {
-            type: Object,
-            default() {
-                return {};
-            }
+        id: {
+            type: Number,
+            required: true
         }
     },
     data() {
         return {
+            yAxis: null,
             label: '',
             autoscale: '',
             logMode: false,
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
-            validationErrors: {}
+            validationErrors: {},
+            loaded: false
         };
     },
+    beforeDestroy() {
+        if (this.autoscale === false && this.validationErrors.range) {
+            this.autoscale = true;
+            this.updateForm('autoscale');
+        }
+    },
     mounted() {
-        this.initialize();
+        eventHelpers.extend(this);
+        this.getConfig();
+        this.loaded = true;
+        this.initFields();
         this.initFormValues();
     },
     methods: {
-        initialize: function () {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const config = configStore.get(configId);
+            if (config) {
+                const mainYAxisId = config.yAxis.id;
+                this.isAdditionalYAxis = this.id !== mainYAxisId;
+                if (this.isAdditionalYAxis) {
+                    this.additionalYAxes = config.additionalYAxes;
+                    this.yAxis = config.additionalYAxes.find(yAxis => yAxis.id === this.id);
+                } else {
+                    this.yAxis = config.yAxis;
+                }
+            }
+        },
+        initFields() {
+            const prefix = `configuration.${this.getPrefix()}`;
             this.fields = {
                 label: {
-                    objectPath: 'configuration.yAxis.label'
+                    objectPath: `${prefix}.label`
                 },
                 autoscale: {
                     coerce: Boolean,
-                    objectPath: 'configuration.yAxis.autoscale'
+                    objectPath: `${prefix}.autoscale`
                 },
                 autoscalePadding: {
                     coerce: Number,
-                    objectPath: 'configuration.yAxis.autoscalePadding'
+                    objectPath: `${prefix}.autoscalePadding`
                 },
                 logMode: {
                     coerce: Boolean,
-                    objectPath: 'configuration.yAxis.logMode'
+                    objectPath: `${prefix}.logMode`
                 },
                 range: {
-                    objectPath: 'configuration.yAxis.range',
+                    objectPath: `${prefix}.range`,
                     coerce: function coerceRange(range) {
-                        const newRange = {
-                            min: -1,
-                            max: 1
-                        };
+                        const newRange = {};
 
                         if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
@@ -198,9 +225,30 @@ export default {
             this.autoscale = this.yAxis.get('autoscale');
             this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
-            this.rangeMin = range?.min;
-            this.rangeMax = range?.max;
+            const range = this.yAxis.get('range');
+            if (range && range.min !== undefined && range.max !== undefined) {
+                this.rangeMin = range.min;
+                this.rangeMax = range.max;
+            }
+        },
+        getPrefix() {
+            let prefix = 'yAxis';
+            if (this.isAdditionalYAxis) {
+                let index = -1;
+                if (this.domainObject?.configuration?.additionalYAxes) {
+                    index = this.domainObject?.configuration?.additionalYAxes.findIndex((yAxis) => {
+                        return yAxis.id === this.id;
+                    });
+                }
+
+                if (index < 0) {
+                    index = 0;
+                }
+
+                prefix = `additionalYAxes[${index}]`;
+            }
+
+            return prefix;
         },
         updateForm(formKey) {
             let newVal;
@@ -231,18 +279,51 @@ export default {
                 this.yAxis.set(formKey, newVal);
                 // Then we mutate the domain object configuration to persist the settings
                 if (path) {
-                    if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-                        this.$emit('seriesUpdated', {
-                            identifier: this.domainObject.identifier,
-                            path: `yAxis.${formKey}`,
-                            value: newVal
-                        });
+                    if (this.isAdditionalYAxis) {
+                        if (this.domainObject.configuration && this.domainObject.configuration.series) {
+                            //update the id
+                            this.openmct.objects.mutate(
+                                this.domainObject,
+                                `configuration.${this.getPrefix()}.id`,
+                                this.id
+                            );
+                            //update the yAxes values
+                            this.openmct.objects.mutate(
+                                this.domainObject,
+                                path(this.domainObject, this.yAxis),
+                                newVal
+                            );
+                        } else {
+                            this.$emit('seriesUpdated', {
+                                identifier: this.domainObject.identifier,
+                                path: `${this.getPrefix()}.${formKey}`,
+                                id: this.id,
+                                value: newVal
+                            });
+                        }
                     } else {
-                        this.openmct.objects.mutate(
-                            this.domainObject,
-                            path(this.domainObject, this.yAxis),
-                            newVal
-                        );
+                        if (this.domainObject.configuration && this.domainObject.configuration.series) {
+                            this.openmct.objects.mutate(
+                                this.domainObject,
+                                path(this.domainObject, this.yAxis),
+                                newVal
+                            );
+                        } else {
+                            this.$emit('seriesUpdated', {
+                                identifier: this.domainObject.identifier,
+                                path: `${this.getPrefix()}.${formKey}`,
+                                value: newVal
+                            });
+                        }
+                    }
+
+                    //If autoscale is turned off, we must know what the user defined min and max ranges are
+                    if (formKey === 'autoscale' && this.autoscale === false) {
+                        const rangeFormField = this.fields.range;
+                        this.validationErrors.range = rangeFormField.validate?.({
+                            min: this.rangeMin,
+                            max: this.rangeMax
+                        }, this.yAxis);
                     }
                 }
             }

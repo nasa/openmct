@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,15 +22,16 @@
 
 <template>
 <div
-    v-if="(annotationResults && annotationResults.length) ||
-        (objectResults && objectResults.length)"
     class="c-gsearch__dropdown"
 >
     <div
         v-show="resultsShown"
         class="c-gsearch__results-wrapper"
     >
-        <div class="c-gsearch__results">
+        <div
+            class="c-gsearch__results"
+            :class="{ 'search-finished' : !searchLoading }"
+        >
             <div
                 v-if="objectResults && objectResults.length"
                 ref="objectResults"
@@ -53,30 +54,46 @@
                 <div class="c-gsearch__results-section-title">Annotation Results</div>
                 <annotation-search-result
                     v-for="(annotationResult) in annotationResults"
-                    :key="openmct.objects.makeKeyString(annotationResult.identifier)"
+                    :key="makeKeyForAnnotationResult(annotationResult)"
                     :result="annotationResult"
                     @click.native="selectedResult"
                 />
             </div>
+            <div
+                v-if="searchLoading"
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">Searching...</div>
+                <progress-bar :model="{ progressPerc: undefined }" />
+            </div>
+            <div
+                v-if="!searchLoading && (!annotationResults || !annotationResults.length) &&
+                    (!objectResults || !objectResults.length)"
+                class="c-gsearch__result-pane-msg"
+            >
+                <div class="hint">No results found</div>
+            </div>
         </div>
     </div>
-</div>
-</template>
+</div></template>
 
 <script>
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
 import ObjectSearchResult from './ObjectSearchResult.vue';
+import ProgressBar from '@/ui/components/ProgressBar.vue';
 
 export default {
     name: 'SearchResultsDropDown',
     components: {
         AnnotationSearchResult,
-        ObjectSearchResult
+        ObjectSearchResult,
+        ProgressBar
     },
     inject: ['openmct'],
     data() {
         return {
             resultsShown: false,
+            searchLoading: false,
             annotationResults: [],
             objectResults: [],
             previewVisible: false
@@ -88,15 +105,27 @@ export default {
                 this.resultsShown = false;
             }
         },
+        makeKeyForAnnotationResult(annotationResult) {
+            const annotationKeyString = this.openmct.objects.makeKeyString(annotationResult.identifier);
+            const firstTargetKeyString = Object.keys(annotationResult.targets)[0];
+
+            return `${annotationKeyString}-${firstTargetKeyString}`;
+        },
         previewChanged(changedPreviewState) {
             this.previewVisible = changedPreviewState;
         },
-        showResults(passedAnnotationResults, passedObjectResults) {
-            if ((passedAnnotationResults && passedAnnotationResults.length)
-                || (passedObjectResults && passedObjectResults.length)) {
+        showSearchStarted() {
+            this.searchLoading = true;
+            this.resultsShown = true;
+            this.annotationResults = [];
+            this.objectResults = [];
+        },
+        showResults({searchLoading, searchValue, annotationSearchResults, objectSearchResults}) {
+            this.searchLoading = searchLoading;
+            this.annotationResults = annotationSearchResults;
+            this.objectResults = objectSearchResults;
+            if (searchValue?.length) {
                 this.resultsShown = true;
-                this.annotationResults = passedAnnotationResults;
-                this.objectResults = passedObjectResults;
             } else {
                 this.resultsShown = false;
             }

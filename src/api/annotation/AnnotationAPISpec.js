@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,16 +26,28 @@ import ExampleTagsPlugin from "../../../example/exampleTags/plugin";
 describe("The Annotation API", () => {
     let openmct;
     let mockObjectProvider;
+    let mockImmutableObjectProvider;
     let mockDomainObject;
+    let mockFolderObject;
     let mockAnnotationObject;
 
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new ExampleTagsPlugin());
         const availableTags = openmct.annotation.getAvailableTags();
+        mockFolderObject = {
+            type: 'root',
+            name: 'folderFoo',
+            location: '',
+            identifier: {
+                key: 'someParent',
+                namespace: 'fooNameSpace'
+            }
+        };
         mockDomainObject = {
             type: 'notebook',
             name: 'fooRabbitNotebook',
+            location: 'fooNameSpace:someParent',
             identifier: {
                 key: 'some-object',
                 namespace: 'fooNameSpace'
@@ -68,6 +80,8 @@ describe("The Annotation API", () => {
                 return mockDomainObject;
             } else if (identifier.key === mockAnnotationObject.identifier.key) {
                 return mockAnnotationObject;
+            } else if (identifier.key === mockFolderObject.identifier.key) {
+                return mockFolderObject;
             } else {
                 return null;
             }
@@ -76,12 +90,28 @@ describe("The Annotation API", () => {
         mockObjectProvider.create.and.returnValue(Promise.resolve(true));
         mockObjectProvider.update.and.returnValue(Promise.resolve(true));
 
+        mockImmutableObjectProvider = jasmine.createSpyObj("mock immutable provider", [
+            "get"
+        ]);
+        // eslint-disable-next-line require-await
+        mockImmutableObjectProvider.get = async (identifier) => {
+            if (identifier.key === mockDomainObject.identifier.key) {
+                return mockDomainObject;
+            } else if (identifier.key === mockAnnotationObject.identifier.key) {
+                return mockAnnotationObject;
+            } else if (identifier.key === mockFolderObject.identifier.key) {
+                return mockFolderObject;
+            } else {
+                return null;
+            }
+        };
+
+        openmct.objects.addProvider('immutableProvider', mockImmutableObjectProvider);
         openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
         openmct.on('start', done);
         openmct.startHeadless();
     });
     afterEach(async () => {
-        openmct.objects.providers = {};
         await resetApplicationState(openmct);
     });
     it("is defined", () => {
@@ -96,8 +126,25 @@ describe("The Annotation API", () => {
                 annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
                 tags: ['sometag'],
                 contentText: "fooContext",
+                targetDomainObjects: [mockDomainObject],
                 targets: {'fooTarget': {}}
             };
+            const annotationObject = await openmct.annotation.create(annotationCreationArguments);
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+        });
+        it("can create annotations if domain object is immutable", async () => {
+            mockDomainObject.identifier.namespace = 'immutableProvider';
+            const annotationCreationArguments = {
+                name: 'Test Annotation',
+                domainObject: mockDomainObject,
+                annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                tags: ['sometag'],
+                contentText: "fooContext",
+                targetDomainObjects: [mockDomainObject],
+                targets: {'fooTarget': {}}
+            };
+            openmct.annotation.setNamespaceToSaveAnnotations('fooNameSpace');
             const annotationObject = await openmct.annotation.create(annotationCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
@@ -109,38 +156,87 @@ describe("The Annotation API", () => {
                 expect(error).toBeDefined();
             }
         });
+        it("fails if annotation if given an immutable namespace to save to", async () => {
+            try {
+                const annotationCreationArguments = {
+                    name: 'Test Annotation',
+                    domainObject: mockDomainObject,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    tags: ['sometag'],
+                    contentText: "fooContext",
+                    targetDomainObjects: [mockDomainObject],
+                    targets: {'fooTarget': {}}
+                };
+                openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
+                await openmct.annotation.create(annotationCreationArguments);
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
+        });
+        it("fails if annotation if given an undefined namespace to save to", async () => {
+            try {
+                const annotationCreationArguments = {
+                    name: 'Test Annotation',
+                    domainObject: mockDomainObject,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    tags: ['sometag'],
+                    contentText: "fooContext",
+                    targetDomainObjects: [mockDomainObject],
+                    targets: {'fooTarget': {}}
+                };
+                openmct.annotation.setNamespaceToSaveAnnotations('immutableProvider');
+                await openmct.annotation.create(annotationCreationArguments);
+            } catch (error) {
+                expect(error).toBeDefined();
+            }
+        });
     });
 
     describe("Tagging", () => {
+        let tagCreationArguments;
+        beforeEach(() => {
+            tagCreationArguments = {
+                name: 'Test Annotation',
+                domainObject: mockDomainObject,
+                annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                tags: ['aWonderfulTag'],
+                contentText: 'fooContext',
+                targets: {'fooNameSpace:some-object': {entryId: 'fooBarEntry'}},
+                targetDomainObjects: [mockDomainObject]
+            };
+        });
         it("can create a tag", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.create(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(annotationObject.type).toEqual('annotation');
             expect(annotationObject.tags).toContain('aWonderfulTag');
         });
         it("can delete a tag", async () => {
-            const originalAnnotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
-            const annotationObject = await openmct.annotation.addAnnotationTag(originalAnnotationObject, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'anotherTagToRemove');
+            const annotationObject = await openmct.annotation.create(tagCreationArguments);
             expect(annotationObject).toBeDefined();
-            openmct.annotation.removeAnnotationTag(annotationObject, 'anotherTagToRemove');
-            expect(annotationObject.tags).toEqual(['aWonderfulTag']);
-            openmct.annotation.removeAnnotationTag(annotationObject, 'aWonderfulTag');
-            expect(annotationObject.tags).toEqual([]);
-        });
-        it("throws an error if deleting non-existent tag", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
-            expect(annotationObject).toBeDefined();
-            expect(() => {
-                openmct.annotation.removeAnnotationTag(annotationObject, 'ThisTagShouldNotExist');
-            }).toThrow();
+            openmct.annotation.deleteAnnotations([annotationObject]);
+            expect(annotationObject._deleted).toBeTrue();
         });
         it("can remove all tags", async () => {
-            const annotationObject = await openmct.annotation.addAnnotationTag(null, mockDomainObject, {entryId: 'foo'}, openmct.annotation.ANNOTATION_TYPES.NOTEBOOK, 'aWonderfulTag');
+            const annotationObject = await openmct.annotation.create(tagCreationArguments);
             expect(annotationObject).toBeDefined();
             expect(() => {
-                openmct.annotation.removeAnnotationTags(annotationObject);
+                openmct.annotation.deleteAnnotations([annotationObject]);
             }).not.toThrow();
-            expect(annotationObject.tags).toEqual([]);
+            expect(annotationObject._deleted).toBeTrue();
+        });
+        it("can add/delete/add a tag", async () => {
+            let annotationObject = await openmct.annotation.create(tagCreationArguments);
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            openmct.annotation.deleteAnnotations([annotationObject]);
+            expect(annotationObject._deleted).toBeTrue();
+            annotationObject = await openmct.annotation.create(tagCreationArguments);
+            expect(annotationObject).toBeDefined();
+            expect(annotationObject.type).toEqual('annotation');
+            expect(annotationObject.tags).toContain('aWonderfulTag');
+            expect(annotationObject._deleted).toBeFalse();
         });
     });
 
@@ -150,6 +246,7 @@ describe("The Annotation API", () => {
             // use local worker
             sharedWorkerToRestore = openmct.objects.inMemorySearchProvider.worker;
             openmct.objects.inMemorySearchProvider.worker = null;
+            await openmct.objects.inMemorySearchProvider.index(mockFolderObject);
             await openmct.objects.inMemorySearchProvider.index(mockDomainObject);
             await openmct.objects.inMemorySearchProvider.index(mockAnnotationObject);
         });
@@ -161,16 +258,10 @@ describe("The Annotation API", () => {
             expect(results).toBeDefined();
             expect(results.length).toEqual(1);
         });
-        it("can get notebook annotations", async () => {
-            const targetKeyString = openmct.objects.makeKeyString(mockDomainObject.identifier);
-            const query = {
-                targetKeyString,
-                entryId: 'fooBarEntry'
-            };
-
-            const results = await openmct.annotation.getAnnotation(query, openmct.objects.SEARCH_TYPES.NOTEBOOK_ANNOTATIONS);
+        it("returns no tags for empty search", async () => {
+            const results = await openmct.annotation.searchForTags('q');
             expect(results).toBeDefined();
-            expect(results.tags.length).toEqual(2);
+            expect(results.length).toEqual(0);
         });
     });
 });

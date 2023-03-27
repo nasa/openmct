@@ -1,4 +1,4 @@
-@mixin overlaySizing($marginTB: 5%, $marginLR: $marginTB, $width: auto, $height: auto) {
+@mixin overlaySizing($marginTB: auto, $marginLR: auto, $width: auto, $height: auto) {
     position: absolute;
     top: $marginTB; right: $marginLR; bottom: $marginTB; left: $marginLR;
     width: $width;
@@ -81,7 +81,7 @@
     }
 
     .c-object-label__name {
-        filter: $objectLabelNameFilter;
+        color: $objectLabelNameColorFg;
     }
 }
 
@@ -98,6 +98,7 @@ body.desktop {
     // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
     .l-overlay-large,
     .l-overlay-small,
+    .l-overlay-dialog,
     .l-overlay-fit {
         .c-overlay__outer {
             border-radius: $overlayCr;
@@ -108,7 +109,7 @@ body.desktop {
     .l-overlay-fullscreen {
         // Used by About > Licenses display
         .c-overlay__outer {
-            @include overlaySizing($overlayOuterMarginFullscreen);
+            @include overlaySizing(nth($overlayOuterMarginFullscreen, 1), nth($overlayOuterMarginFullscreen, 2));
         }
     }
 
@@ -119,7 +120,7 @@ body.desktop {
         $lrPad: $pad;
         .c-overlay {
             &__outer {
-                @include overlaySizing($overlayOuterMarginLarge);
+                @include overlaySizing(nth($overlayOuterMarginLarge, 1), nth($overlayOuterMarginLarge, 2));
                 padding: $tbPad $lrPad;
             }
 
@@ -137,14 +138,20 @@ body.desktop {
 
     .l-overlay-small {
         .c-overlay__outer {
-            @include overlaySizing($overlayOuterMarginDialog);
+            @include overlaySizing(nth($overlayOuterMarginSmall, 1), nth($overlayOuterMarginSmall, 2));
+        }
+    }
+
+    .l-overlay-dialog {
+        .c-overlay__outer {
+            @include overlaySizing(nth($overlayOuterMarginDialog, 1), nth($overlayOuterMarginDialog, 2));
         }
     }
 
     .t-dialog-sm .l-overlay-small, // Legacy dialog support
     .l-overlay-fit {
         .c-overlay__outer {
-            @include overlaySizing(auto);
+            @include overlaySizing(auto, auto);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);

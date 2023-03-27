@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,27 @@
  * Module defining url handling.
  */
 
-export function paramsToArray(openmct) {
-    // parse urlParams from an object to an array.
+function getUrlParams(openmct, customUrlParams = {}) {
     let urlParams = openmct.router.getParams();
+    Object.entries(customUrlParams).forEach((urlParam) => {
+        const [key, value] = urlParam;
+        urlParams[key] = value;
+    });
+
+    if (urlParams['tc.mode'] === 'fixed') {
+        delete urlParams['tc.startDelta'];
+        delete urlParams['tc.endDelta'];
+    } else if (urlParams['tc.mode'] === 'local') {
+        delete urlParams['tc.startBound'];
+        delete urlParams['tc.endBound'];
+    }
+
+    return urlParams;
+}
+
+export function paramsToArray(openmct, customUrlParams = {}) {
+    // parse urlParams from an object to an array.
+    let urlParams = getUrlParams(openmct, customUrlParams);
     let newTabParams = [];
     for (let key in urlParams) {
         if ({}.hasOwnProperty.call(urlParams, key)) {
@@ -42,9 +60,16 @@ export function identifierToString(openmct, objectPath) {
     return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-export default function objectPathToUrl(openmct, objectPath) {
+/**
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @param {Array<import('../api/objects/ObjectAPI').DomainObject>} objectPath
+ * @param {any} customUrlParams
+ * @returns {string} url
+ */
+export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
     let url = identifierToString(openmct, objectPath);
-    let urlParams = paramsToArray(openmct);
+
+    let urlParams = paramsToArray(openmct, customUrlParams);
     if (urlParams.length) {
         url += '?' + urlParams.join('&');
     }

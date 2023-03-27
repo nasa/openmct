@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,6 +23,7 @@
 <div
     ref="plotWrapper"
     class="c-plot holder holder-plot has-control-bar"
+    :class="staleClass"
 >
     <div
         ref="plotContainer"
@@ -35,12 +36,26 @@
             :model="{progressPerc: undefined}"
         />
         <mct-plot
+            :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
             :init-grid-lines="gridLines"
             :init-cursor-guide="cursorGuide"
             :options="options"
+            :limit-line-labels="limitLineLabels"
             @loadingUpdated="loadingUpdated"
             @statusUpdated="setStatus"
-        />
+            @configLoaded="updateReady"
+            @lockHighlightPoint="lockHighlightPointUpdated"
+            @highlights="highlightsUpdated"
+        >
+            <plot-legend
+                v-if="configReady"
+                :cursor-locked="lockHighlightPoint"
+                :highlights="highlights"
+                @legendHoverChanged="legendHoverChanged"
+                @expanded="updateExpanded"
+                @position="updatePosition"
+            />
+        </mct-plot>
     </div>
 </div>
 </template>
@@ -49,12 +64,15 @@
 import eventHelpers from './lib/eventHelpers';
 import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
+import PlotLegend from "./legend/PlotLegend.vue";
 import ProgressBar from "../../ui/components/ProgressBar.vue";
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
         MctPlot,
-        ProgressBar
+        ProgressBar,
+        PlotLegend
     },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
@@ -74,21 +92,112 @@ export default {
             cursorGuide: false,
             gridLines: !this.options.compact,
             loading: false,
-            status: ''
+            status: '',
+            staleObjects: [],
+            limitLineLabels: undefined,
+            lockHighlightPoint: false,
+            highlights: [],
+            expanded: false,
+            position: undefined,
+            configReady: false
         };
+    },
+    computed: {
+        staleClass() {
+            if (this.staleObjects.length !== 0) {
+                return 'is-stale';
+            }
+
+            return '';
+        },
+        plotLegendPositionClass() {
+            return this.position ? `plot-legend-${this.position}` : '';
+        },
+        plotLegendExpandedStateClass() {
+            if (this.expanded) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
+        }
     },
     mounted() {
         eventHelpers.extend(this);
         this.imageExporter = new ImageExporter(this.openmct);
+        this.loadComposition();
+        this.stalenessSubscription = {};
     },
     beforeDestroy() {
         this.destroy();
     },
     methods: {
+        loadComposition() {
+            this.compositionCollection = this.openmct.composition.get(this.domainObject);
+
+            if (this.compositionCollection) {
+                this.compositionCollection.on('add', this.addItem);
+                this.compositionCollection.on('remove', this.removeItem);
+                this.compositionCollection.load();
+            }
+
+        },
+        addItem(object) {
+            const keystring = this.openmct.objects.makeKeyString(object.identifier);
+
+            if (!this.stalenessSubscription[keystring]) {
+                this.stalenessSubscription[keystring] = {};
+                this.stalenessSubscription[keystring].stalenessUtils = new StalenessUtils(this.openmct, object);
+            }
+
+            this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keystring, stalenessResponse);
+                }
+            });
+            const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(object, (stalenessResponse) => {
+                this.handleStaleness(keystring, stalenessResponse);
+            });
+
+            this.stalenessSubscription[keystring].unsubscribe = unsubscribeFromStaleness;
+        },
+        removeItem(object) {
+            const SKIP_CHECK = true;
+            const keystring = this.openmct.objects.makeKeyString(object);
+            this.stalenessSubscription[keystring].unsubscribe();
+            this.stalenessSubscription[keystring].stalenessUtils.destroy();
+            this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
+            delete this.stalenessSubscription[keystring];
+        },
+        handleStaleness(id, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)) {
+                const index = this.staleObjects.indexOf(id);
+                if (stalenessResponse.isStale) {
+                    if (index === -1) {
+                        this.staleObjects.push(id);
+                    }
+                } else {
+                    if (index !== -1) {
+                        this.staleObjects.splice(index, 1);
+                    }
+                }
+            }
+        },
         loadingUpdated(loading) {
             this.loading = loading;
         },
         destroy() {
+            if (this.stalenessSubscription) {
+                Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                    stalenessSubscription.unsubscribe();
+                    stalenessSubscription.stalenessUtils.destroy();
+                });
+            }
+
+            if (this.compositionCollection) {
+                this.compositionCollection.off('add', this.addItem);
+                this.compositionCollection.off('remove', this.removeItem);
+            }
+
             this.stopListening();
         },
         exportJPG() {
@@ -107,6 +216,24 @@ export default {
                 exportPNG: this.exportPNG,
                 exportJPG: this.exportJPG
             };
+        },
+        lockHighlightPointUpdated(data) {
+            this.lockHighlightPoint = data;
+        },
+        highlightsUpdated(data) {
+            this.highlights = data;
+        },
+        legendHoverChanged(data) {
+            this.limitLineLabels = data;
+        },
+        updateExpanded(expanded) {
+            this.expanded = expanded;
+        },
+        updatePosition(position) {
+            this.position = position;
+        },
+        updateReady(ready) {
+            this.configReady = ready;
         }
     }
 };

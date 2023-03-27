@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,7 @@ import EventEmitter from "EventEmitter";
 
 describe('the plugin', function () {
     let objectDef;
+    let appHolder;
     let element;
     let child;
     let openmct;
@@ -92,6 +93,10 @@ describe('the plugin', function () {
     };
 
     beforeEach((done) => {
+        appHolder = document.createElement('div');
+        appHolder.style.width = '640px';
+        appHolder.style.height = '480px';
+
         mockObjectPath = [
             {
                 name: 'mock folder',
@@ -133,7 +138,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.start(appHolder);
     });
 
     afterEach(() => {
@@ -167,7 +172,7 @@ describe('the plugin', function () {
 
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject, element);
+            let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
             return Vue.nextTick();
@@ -245,7 +250,7 @@ describe('the plugin', function () {
         beforeEach(done => {
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject, element);
+            let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
             Vue.nextTick(done);
@@ -281,7 +286,7 @@ describe('the plugin', function () {
         beforeEach((done) => {
             const applicableViews = openmct.objectViews.get(testViewObject2, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject2, element);
+            let view = timelineView.view(testViewObject2, mockObjectPath);
             view.show(child, true);
 
             Vue.nextTick(done);

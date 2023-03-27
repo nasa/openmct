@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,8 @@ This test suite is dedicated to tests which verify form functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 /**
   * Creates a notebook object and adds an entry.
@@ -36,15 +37,13 @@ async function createNotebookAndEntry(page, iterations = 1) {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    createDomainObjectWithDefaults(page, 'Notebook');
+    const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Click text=To start a new entry, click here or drag and drop any object
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
-        await page.locator(entryLocator).click();
-        await page.locator(entryLocator).fill(`Entry ${iteration}`);
+        await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
     }
+
+    return notebook;
 }
 
 /**
@@ -53,34 +52,45 @@ async function createNotebookAndEntry(page, iterations = 1) {
   * @param {number} [iterations = 1] - the number of entries (and tags) to create
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
-    await createNotebookAndEntry(page, iterations);
+    const notebook = await createNotebookAndEntry(page, iterations);
+    await selectInspectorTab(page, 'Annotations');
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Click text=To start a new entry, click here or drag and drop any object
-        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.locator(`[aria-label="Notebook Entry"] >> nth = ${iteration}`).click();
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
 
-        // Click [placeholder="Type to select tag"]
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Driving
+        // Select the "Driving" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
 
-        // Click button:has-text("Add Tag")
-        await page.locator(`button:has-text("Add Tag") >> nth = ${iteration}`).click();
-        // Click [placeholder="Type to select tag"]
+        // Hover and click "Add Tag" button
+        // Hover is needed here to "slow down" the actions while running in headless mode
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+        // Click inside the tag search input
         await page.locator('[placeholder="Type to select tag"]').click();
-        // Click text=Science
+        // Select the "Science" tag
         await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
     }
+
+    return notebook;
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
-
         await createNotebookAndEntry(page);
-        // Click text=To start a new entry, click here or drag and drop any object
+
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        await selectInspectorTab(page, 'Annotations');
+
         await page.locator('button:has-text("Add Tag")').click();
 
-        // Click [placeholder="Type to select tag"]
         await page.locator('[placeholder="Type to select tag"]').click();
 
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Science");
@@ -93,60 +103,124 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
 
-        // Click button:has-text("Add Tag")
         await page.locator('button:has-text("Add Tag")').click();
-        // Click [placeholder="Type to select tag"]
         await page.locator('[placeholder="Type to select tag"]').click();
 
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Science");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
-    test('Can search for tags', async ({ page }) => {
-        await createNotebookEntryAndTags(page);
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
+    test('Can cancel adding tags', async ({ page }) => {
+        await createNotebookAndEntry(page);
+
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        await selectInspectorTab(page, 'Annotations');
+
+        // Test canceling adding a tag after we click "Type to select tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[placeholder="Type to select tag"]').click();
+
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Test canceling adding a tag after we just click "Add Tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+    });
+    test('Can search for tags and preview works properly', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText("Driving");
+        await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
 
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
         await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText("Driving");
+        await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
 
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
-        await expect(page.locator('[aria-label="Search Result"]')).not.toBeVisible();
+        await expect(page.locator('text=No results found')).toBeVisible();
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout'
+        });
+
+        // Go back into edit mode for the display layout
+        await page.locator('button[title="Edit"]').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText("Science");
+        await page.getByText('Entry 0').click();
+        await expect(page.locator('.js-preview-window')).toBeVisible();
     });
 
     test('Can delete tags', async ({ page }) => {
         await createNotebookEntryAndTags(page);
-        await page.locator('[aria-label="Notebook Entries"]').click();
         // Delete Driving
-        await page.locator('text=Science Driving Add Tag >> button').nth(1).click();
+        await page.hover('[aria-label="Tag"]:has-text("Driving")');
+        await page.locator('[aria-label="Remove tag Driving"]').click();
 
-        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Science");
-        await expect(page.locator('[aria-label="Notebook Entry"]')).not.toContainText("Driving");
+        await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText("Science");
+        await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText("Driving");
 
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
         await expect(page.locator('[aria-label="Search Result"]')).not.toContainText("Driving");
+    });
+
+    test('Can delete entries without tags', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5823'
+        });
+
+        await createNotebookEntryAndTags(page);
+
+        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
+        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 1`;
+        await page.locator(entryLocator).click();
+        await page.locator(entryLocator).fill(`An entry without tags`);
+        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
+
+        await page.hover('[aria-label="Notebook Entry Input"] >> nth=1');
+        await page.locator('button[title="Delete this entry"]').last().click();
+        await expect(page.locator('text=This action will permanently delete this entry. Do you wish to continue?')).toBeVisible();
+        await page.locator('button:has-text("Ok")').click();
+        await expect(page.locator('text=This action will permanently delete this entry. Do you wish to continue?')).toBeHidden();
+    });
+
+    test('Can delete objects with tags and neither return in search', async ({ page }) => {
+        await createNotebookEntryAndTags(page);
+        // Delete Notebook
+        await page.locator('button[title="More options"]').click();
+        await page.locator('li[title="Remove this object from its containing object."]').click();
+        await page.locator('button:has-text("OK")').click();
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
+        await expect(page.locator('text=No results found')).toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sci');
+        await expect(page.locator('text=No results found')).toBeVisible();
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('dri');
+        await expect(page.locator('text=No results found')).toBeVisible();
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        await createDomainObjectWithDefaults(page, 'Clock');
+        const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
         const ITERATIONS = 4;
-        await createNotebookEntryAndTags(page, ITERATIONS);
+        const notebook = await createNotebookEntryAndTags(page, ITERATIONS);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
@@ -159,11 +233,18 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.goto('./#/browse/mine?hideTree=false'),
             page.click('.c-disclosure-triangle')
         ]);
-        // Click Unnamed Clock
-        await page.click('text="Unnamed Clock"');
 
-        // Click Unnamed Notebook
-        await page.click('text="Unnamed Notebook"');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        // Click Clock
+        await treePane.getByRole('treeitem', {
+            name: clock.name
+        }).click();
+        // Click Notebook
+        await page.getByRole('treeitem', {
+            name: notebook.name
+        }).click();
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
@@ -177,14 +258,36 @@ test.describe('Tagging in Notebooks @addInit', () => {
             page.waitForLoadState('networkidle')
         ]);
 
-        // Click Unnamed Notebook
-        await page.click('text="Unnamed Notebook"');
+        // Click Notebook
+        await page.click(`text="${notebook.name}"`);
 
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
             await expect(page.locator(entryLocator)).toContainText("Driving");
         }
+    });
+    test('Can cancel adding a tag', async ({ page }) => {
+        await createNotebookAndEntry(page);
 
+        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
+        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
+
+        await selectInspectorTab(page, 'Annotations');
+
+        // Click on the "Add Tag" button
+        await page.locator('button:has-text("Add Tag")').click();
+
+        // Click inside the AutoComplete field
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        // Click on the "Tags" header (simulating a click outside the autocomplete)
+        await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
+
+        // Verify there is a button with text "Add Tag"
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Verify the AutoComplete field is hidden
+        await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
     });
 });

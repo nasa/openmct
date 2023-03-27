@@ -4,13 +4,13 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
-    retries: 0, // visual tests should never retry due to snapshot comparison errors
+    retries: 0, // Visual tests should never retry due to snapshot comparison errors. Leaving as a shim
     testDir: 'tests/visual',
     testMatch: '**/*.visual.spec.js', // only run visual tests
     timeout: 60 * 1000,
-    workers: 2, //Limit to 2 for CircleCI Agent
+    workers: 1, //Lower stress on Circle CI Agent for Visual tests https://github.com/percy/cli/discussions/1067
     webServer: {
-        command: 'cross-env NODE_ENV=test npm run start',
+        command: 'npm run start:coverage',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
@@ -19,8 +19,8 @@ const config = {
         baseURL: 'http://localhost:8080/',
         headless: true, // this needs to remain headless to avoid visual changes due to GPU rendering in headed browsers
         ignoreHTTPSErrors: true,
-        screenshot: 'on',
-        trace: 'on',
+        screenshot: 'only-on-failure',
+        trace: 'on-first-retry',
         video: 'off'
     },
     projects: [
@@ -31,7 +31,7 @@ const config = {
             }
         },
         {
-            name: 'chrome-snow-theme',
+            name: 'chrome-snow-theme', //Runs the same visual tests but with snow-theme enabled
             use: {
                 browserName: 'chromium',
                 theme: 'snow'
@@ -40,7 +40,7 @@ const config = {
     ],
     reporter: [
         ['list'],
-        ['junit', { outputFile: 'test-results/results.xml' }],
+        ['junit', { outputFile: '../test-results/results.xml' }],
         ['html', {
             open: 'on-failure',
             outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840

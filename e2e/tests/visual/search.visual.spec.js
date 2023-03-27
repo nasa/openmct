@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,10 @@ test.describe('Grand Search', () => {
         // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
         // await page.locator('text=Save and Finish Editing').click();
         const folder1 = 'Folder1';
-        await createDomainObjectWithDefaults(page, 'Folder', folder1);
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            name: folder1
+        });
 
         // Click [aria-label="OpenMCT Search"] input[type="search"]
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();

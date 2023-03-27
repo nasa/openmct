@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -291,5 +291,6 @@ export default class StatusAPI extends EventEmitter {
  * The Status type
  * @typedef {Object} Status
  * @property {String} key - A unique identifier for this status
- * @property {Number} label - A human readable label for this status
+ * @property {String} label - A human readable label for this status
+ * @property {Number} timestamp - The time that the status was set.
  */

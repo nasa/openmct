@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,8 @@ const { test, expect } = require('../../../../baseFixtures');
 
 test.describe('Sine Wave Generator', () => {
     test('Create new Sine Wave Generator Object and validate create Form Logic', async ({ page, browserName }) => {
-        test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
+        // eslint-disable-next-line playwright/no-skipped-test
+        test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
 
         //Go to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -95,7 +96,7 @@ test.describe('Sine Wave Generator', () => {
         //Click text=OK
         await Promise.all([
             page.waitForNavigation(),
-            page.click('text=OK')
+            page.click('button:has-text("OK")')
         ]);
 
         // Verify that the Sine Wave Generator is displayed and correct

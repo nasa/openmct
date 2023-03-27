@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -110,7 +110,9 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = Date.now();
+        this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
+        this.openmct.time.on('clock', this.setViewFromClock);
+
         this.getPlanDataAndSetConfig(this.domainObject);
 
         this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
@@ -118,6 +120,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+        this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -128,6 +131,9 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.load();
         }
+
+        this.setViewFromClock(this.openmct.time.clock());
+
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -147,6 +153,8 @@ export default {
         }
 
         this.openmct.editor.off('isEditing', this.setEditState);
+        this.openmct.time.off('bounds', this.updateTimestamp);
+        this.openmct.time.off('clock', this.setViewFromClock);
 
         this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
         if (this.clearAutoScrollDisabledTimer) {
@@ -176,7 +184,27 @@ export default {
                 this.showAll = true;
                 this.listActivities();
             } else {
+
                 this.filterValue = configuration.filter;
+                this.setSort();
+                this.setViewBounds();
+                this.listActivities();
+            }
+        },
+        updateTimestamp(_bounds, isTick) {
+            if (isTick === true) {
+                this.timestamp = this.openmct.time.clock().currentValue();
+            }
+        },
+        setViewFromClock(newClock) {
+            this.filterValue = this.domainObject.configuration.filter;
+            const isFixedTime = newClock === undefined;
+            if (isFixedTime) {
+                this.hideAll = false;
+                this.showAll = true;
+                // clear invokes listActivities
+                this.clearPreviousActivities(this.openmct.time.bounds()?.start);
+            } else {
                 this.setSort();
                 this.setViewBounds();
                 this.listActivities();
@@ -188,7 +216,8 @@ export default {
             if (domainObject.type === 'plan') {
                 this.getPlanDataAndSetConfig({
                     ...this.domainObject,
-                    selectFile: domainObject.selectFile
+                    selectFile: domainObject.selectFile,
+                    sourceMap: domainObject.sourceMap
                 });
             }
         },
@@ -399,7 +428,7 @@ export default {
 
             this.firstCurrentActivityIndex = -1;
             this.currentActivitiesCount = 0;
-            this.$el.parentElement.scrollTo({top: 0});
+            this.$el.parentElement?.scrollTo({top: 0});
             this.autoScrolled = false;
         },
         setScrollTop() {

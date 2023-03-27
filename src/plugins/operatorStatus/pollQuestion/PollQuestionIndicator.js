@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -51,7 +51,7 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
     createIndicator() {
         const pollQuestionIndicator = this.openmct.indicators.simpleIndicator();
 
-        pollQuestionIndicator.text("Poll Question");
+        pollQuestionIndicator.text("No Poll Question");
         pollQuestionIndicator.description("Set the current poll question");
         pollQuestionIndicator.iconClass('icon-status-poll-edit');
         pollQuestionIndicator.element.classList.add("c-indicator--operator-status");

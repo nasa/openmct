@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,8 @@ import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
+
+const TEST_KEY_ID = 'some-other-key';
 
 describe("the plugin", function () {
     let element;
@@ -144,12 +146,6 @@ describe("the plugin", function () {
         element.appendChild(child);
         document.body.appendChild(element);
 
-        spyOn(window, 'ResizeObserver').and.returnValue({
-            observe() {},
-            unobserve() {},
-            disconnect() {}
-        });
-
         openmct.types.addType("test-object", {
             creatable: true
         });
@@ -166,7 +162,7 @@ describe("the plugin", function () {
     afterEach((done) => {
         openmct.time.timeSystem('utc', {
             start: 0,
-            end: 1
+            end: 2
         });
 
         configStore.deleteAll();
@@ -283,8 +279,10 @@ describe("the plugin", function () {
                     }
                 ]
             ];
-            const plotInspectorView = openmct.inspectorViews.get(selection);
-            expect(plotInspectorView.length).toEqual(1);
+            const applicableInspectorViews = openmct.inspectorViews.get(selection);
+            const plotInspectorView = applicableInspectorViews.find(view => view.name = 'Plots Configuration');
+
+            expect(plotInspectorView).toBeDefined();
         });
 
         it("provides a stacked plot view for objects with telemetry", () => {
@@ -410,6 +408,20 @@ describe("the plugin", function () {
             expect(options[1].value).toBe("Another attribute");
         });
 
+        it("Updates the Y-axis label when changed", () => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe('some-key');
+            });
+
+            yAxisElement.$emit('yKeyChanged', TEST_KEY_ID, 1);
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe(TEST_KEY_ID);
+            });
+        });
+
         it('hides the pause and play controls', () => {
             let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
             let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
@@ -506,6 +518,47 @@ describe("the plugin", function () {
                 expect(playElAfterChartClick.length).toBe(1);
 
             });
+
+            it("clicking the plot does not request historical data", async () => {
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+            });
+
+            describe('limits', () => {
+
+                it('lines are not displayed by default', () => {
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                    expect(limitEl.length).toBe(0);
+                });
+
+                it('lines are displayed when configuration is set to true', (done) => {
+                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    const config = configStore.get(configId);
+                    config.yAxis.set('displayRange', {
+                        min: 0,
+                        max: 4
+                    });
+                    config.series.models[0].set('limitLines', true);
+
+                    Vue.nextTick(() => {
+                        let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                        expect(limitEl.length).toBe(4);
+                        done();
+                    });
+                });
+            });
         });
 
         describe('controls in time strip view', () => {
@@ -525,6 +578,94 @@ describe("the plugin", function () {
                 expect(pauseEl.length).toBe(0);
             });
 
+        });
+    });
+
+    describe('resizing the plot', () => {
+        let plotContainerResizeObserver;
+        let resizePromiseResolve;
+        let testTelemetryObject;
+        let applicableViews;
+        let plotViewProvider;
+        let plotView;
+        let resizePromise;
+
+        beforeEach(() => {
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            openmct.router.path = [testTelemetryObject];
+
+            applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            plotView = plotViewProvider.view(testTelemetryObject, []);
+
+            plotView.show(child, true);
+
+            resizePromise = new Promise((resolve) => {
+                resizePromiseResolve = resolve;
+            });
+
+            const handlePlotResize = _.debounce(() => {
+                resizePromiseResolve(true);
+            }, 600);
+
+            plotContainerResizeObserver = new ResizeObserver(handlePlotResize);
+            plotContainerResizeObserver.observe(plotView.getComponent().$children[0].$children[1].$parent.$refs.plotWrapper);
+
+            return Vue.nextTick(() => {
+                plotView.getComponent().$children[0].$children[1].stopFollowingTimeContext();
+                spyOn(plotView.getComponent().$children[0].$children[1], 'loadSeriesData').and.callThrough();
+            });
+        });
+
+        afterEach(() => {
+            plotContainerResizeObserver.disconnect();
+            openmct.router.path = null;
+        });
+
+        it("requests historical data when over the threshold", (done) => {
+            element.style.width = '680px';
+            resizePromise.then(() => {
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).toHaveBeenCalledTimes(1);
+                done();
+            });
+        });
+
+        it("does not request historical data when under the threshold", (done) => {
+            element.style.width = '644px';
+            resizePromise.then(() => {
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).not.toHaveBeenCalled();
+                done();
+            });
         });
     });
 
@@ -750,25 +891,6 @@ describe("the plugin", function () {
             it('renders color palette options', () => {
                 const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
                 expect(colorSwatch).toBeDefined();
-            });
-        });
-
-        describe('limits', () => {
-
-            it('lines are not displayed by default', () => {
-                let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                expect(limitEl.length).toBe(0);
-            });
-
-            xit('lines are displayed when configuration is set to true', (done) => {
-                config.series.models[0].set('limitLines', true);
-
-                Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                    expect(limitEl.length).toBe(4);
-                    done();
-                });
-
             });
         });
     });

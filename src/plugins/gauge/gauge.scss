@@ -32,6 +32,15 @@ $meterNeedleBorderRadius: 5px;
   &__wrapper {
     @include abs();
     overflow: hidden;
+
+    &.is-stale {
+      @include isStaleHolder();
+
+      [class*=__current-value-text] {
+        fill: $colorTelemStale;
+        font-style: italic;
+      }
+    }
   }
 
   &__current-value-text-wrapper {
@@ -52,6 +61,8 @@ $meterNeedleBorderRadius: 5px;
 .c-dial {
   max-height: 100%;
   max-width: 100%;
+  display: block;
+  margin: auto; // Centers SVG in container while allowing scaling
 
   &__bg {
     fill: $colorGaugeBg;

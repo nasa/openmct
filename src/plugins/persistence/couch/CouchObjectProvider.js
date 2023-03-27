@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from "./CouchStatusIndicator";
-import { isNotebookType } from '../../notebook/notebook-constants.js';
+import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
 const ID = "_id";
@@ -71,7 +71,7 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessageError(event) {
-        console.log('Error', event);
+        console.error('Error', event);
     }
 
     isSynchronizedObject(object) {
@@ -96,8 +96,13 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
+            let isInTransaction = false;
 
-            if (observersForObject) {
+            if (this.openmct.objects.isTransactionActive()) {
+                isInTransaction = this.openmct.objects.transaction.getDirtyObject(objectIdentifier);
+            }
+
+            if (observersForObject && !isInTransaction) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
                     if (this.isSynchronizedObject(updatedObject)) {
@@ -187,6 +192,7 @@ class CouchObjectProvider {
         let fetchOptions = {
             method,
             body,
+            priority: 'high',
             signal
         };
 
@@ -218,7 +224,12 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                console.error(error.message);
+                if (body?.model && isNotebookOrAnnotationType(body.model)) {
+                    // warn since we handle conflicts for notebooks
+                    console.warn(error.message);
+                } else {
+                    console.error(error.message);
+                }
 
                 throw error;
             }
@@ -233,7 +244,8 @@ class CouchObjectProvider {
     #handleResponseCode(status, json, fetchOptions) {
         this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
-            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            const objectName = JSON.parse(fetchOptions.body)?.model?.name;
+            throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
                 throw new Error(`CouchDB Error ${status}`);
@@ -289,7 +301,7 @@ class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            if (isNotebookType(object) || object.type === 'annotation') {
+            if (isNotebookOrAnnotationType(object)) {
                 //Temporary measure until object sync is supported for all object types
                 //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
                 this.objectQueue[key].updateRevision(response[REV]);

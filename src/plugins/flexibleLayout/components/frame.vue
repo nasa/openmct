@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@
     <div
         ref="frame"
         class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
-        draggable="true"
+        :draggable="draggable"
         @dragstart="initDrag"
     >
         <object-frame
@@ -93,18 +93,20 @@ export default {
     computed: {
         hasFrame() {
             return !this.frame.noFrame;
+        },
+        draggable() {
+            return this.isEditing;
         }
     },
     mounted() {
         if (this.frame.domainObjectIdentifier) {
-            let domainObjectPromise;
             if (this.openmct.objects.supportsMutation(this.frame.domainObjectIdentifier)) {
-                domainObjectPromise = this.openmct.objects.getMutable(this.frame.domainObjectIdentifier);
+                this.domainObjectPromise = this.openmct.objects.getMutable(this.frame.domainObjectIdentifier);
             } else {
-                domainObjectPromise = this.openmct.objects.get(this.frame.domainObjectIdentifier);
+                this.domainObjectPromise = this.openmct.objects.get(this.frame.domainObjectIdentifier);
             }
 
-            domainObjectPromise.then((object) => {
+            this.domainObjectPromise.then((object) => {
                 this.setDomainObject(object);
             });
         }
@@ -112,7 +114,13 @@ export default {
         this.dragGhost = document.getElementById('js-fl-drag-ghost');
     },
     beforeDestroy() {
-        if (this.domainObject.isMutable) {
+        if (this.domainObjectPromise) {
+            this.domainObjectPromise.then(() => {
+                if (this?.domainObject?.isMutable) {
+                    this.openmct.objects.destroyMutable(this.domainObject);
+                }
+            });
+        } else if (this?.domainObject?.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
 

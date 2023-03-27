@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,8 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+import _ from 'lodash';
+
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
         super(openmct);
@@ -51,25 +53,23 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    _onSave(changes) {
+    async _onSave(changes) {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.openmct.objects.startTransaction();
+        }
+
         try {
             Object.entries(changes).forEach(([key, value]) => {
-                const properties = key.split('.');
-                let object = this.domainObject;
-                const propertiesLength = properties.length;
-                properties.forEach((property, index) => {
-                    const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                    if (isComplexProperty && object[property] !== null) {
-                        object = object[property];
-                    } else {
-                        object[property] = value;
-                    }
-                });
+                const existingValue = this.domainObject[key];
+                if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
+                    value = _.merge(existingValue, value);
+                }
 
-                object = value;
                 this.openmct.objects.mutate(this.domainObject, key, value);
-                this.openmct.notifications.info('Save successful');
             });
+            const transaction = this.openmct.objects.getActiveTransaction();
+            await transaction.commit();
+            this.openmct.objects.endTransaction();
         } catch (error) {
             this.openmct.notifications.error('Error saving objects');
             console.error(error);

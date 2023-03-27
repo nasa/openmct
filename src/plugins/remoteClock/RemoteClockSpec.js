@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -71,7 +71,10 @@ describe("the RemoteClock plugin", () => {
             parse: (datum) => datum.key
         };
 
-        beforeEach(async () => {
+        let objectPromise;
+        let requestPromise;
+
+        beforeEach(() => {
             openmct.install(openmct.plugins.RemoteClock(TIME_TELEMETRY_ID));
 
             let clocks = openmct.time.getAllClocks();
@@ -89,7 +92,9 @@ describe("the RemoteClock plugin", () => {
             spyOn(metadata, 'value').and.callThrough();
 
             let requestPromiseResolve;
-            let requestPromise = new Promise((resolve) => {
+            let objectPromiseResolve;
+
+            requestPromise = new Promise((resolve) => {
                 requestPromiseResolve = resolve;
             });
             spyOn(openmct.telemetry, 'request').and.callFake(() => {
@@ -98,8 +103,7 @@ describe("the RemoteClock plugin", () => {
                 return requestPromise;
             });
 
-            let objectPromiseResolve;
-            let objectPromise = new Promise((resolve) => {
+            objectPromise = new Promise((resolve) => {
                 objectPromiseResolve = resolve;
             });
             spyOn(openmct.objects, 'get').and.callFake(() => {
@@ -112,39 +116,48 @@ describe("the RemoteClock plugin", () => {
                 start: OFFSET_START,
                 end: OFFSET_END
             });
-
-            await Promise.all([objectPromiseResolve, requestPromise]);
         });
 
-        it('is available and sets up initial values and listeners', () => {
-            expect(remoteClock.key).toEqual(REMOTE_CLOCK_KEY);
-            expect(remoteClock.identifier).toEqual(TIME_TELEMETRY_ID);
-            expect(openmct.time.on).toHaveBeenCalledWith('timeSystem', remoteClock._timeSystemChange);
-            expect(remoteClock._timeSystemChange).toHaveBeenCalled();
+        it("Does not throw error if time system is changed before remote clock initialized", () => {
+            expect(() => openmct.time.timeSystem('utc')).not.toThrow();
         });
 
-        it('will request/store the object based on the identifier passed in', () => {
-            expect(remoteClock.timeTelemetryObject).toEqual(object);
+        describe('once resolved', () => {
+            beforeEach(async () => {
+                await Promise.all([objectPromise, requestPromise]);
+            });
+
+            it('is available and sets up initial values and listeners', () => {
+                expect(remoteClock.key).toEqual(REMOTE_CLOCK_KEY);
+                expect(remoteClock.identifier).toEqual(TIME_TELEMETRY_ID);
+                expect(openmct.time.on).toHaveBeenCalledWith('timeSystem', remoteClock._timeSystemChange);
+                expect(remoteClock._timeSystemChange).toHaveBeenCalled();
+            });
+
+            it('will request/store the object based on the identifier passed in', () => {
+                expect(remoteClock.timeTelemetryObject).toEqual(object);
+            });
+
+            it('will request metadata and set up formatters', () => {
+                expect(remoteClock.metadata).toEqual(metadata);
+                expect(metadata.value).toHaveBeenCalled();
+                expect(openmct.telemetry.getValueFormatter).toHaveBeenCalledWith(metadataValue);
+            });
+
+            it('will request the latest datum for the object it received and process the datum returned', () => {
+                expect(openmct.telemetry.request).toHaveBeenCalledWith(remoteClock.timeTelemetryObject, REQ_OPTIONS);
+                expect(boundsCallback).toHaveBeenCalledWith({
+                    start: TIME_VALUE + OFFSET_START,
+                    end: TIME_VALUE + OFFSET_END
+                }, true);
+            });
+
+            it('will set up subscriptions correctly', () => {
+                expect(remoteClock._unsubscribe).toBeDefined();
+                expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(remoteClock.timeTelemetryObject, remoteClock._processDatum);
+            });
         });
 
-        it('will request metadata and set up formatters', () => {
-            expect(remoteClock.metadata).toEqual(metadata);
-            expect(metadata.value).toHaveBeenCalled();
-            expect(openmct.telemetry.getValueFormatter).toHaveBeenCalledWith(metadataValue);
-        });
-
-        it('will request the latest datum for the object it received and process the datum returned', () => {
-            expect(openmct.telemetry.request).toHaveBeenCalledWith(remoteClock.timeTelemetryObject, REQ_OPTIONS);
-            expect(boundsCallback).toHaveBeenCalledWith({
-                start: TIME_VALUE + OFFSET_START,
-                end: TIME_VALUE + OFFSET_END
-            }, true);
-        });
-
-        it('will set up subscriptions correctly', () => {
-            expect(remoteClock._unsubscribe).toBeDefined();
-            expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(remoteClock.timeTelemetryObject, remoteClock._processDatum);
-        });
     });
 
 });

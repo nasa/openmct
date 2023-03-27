@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -126,12 +126,20 @@ exports.test = test.extend({
     // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
     theme: [theme, { option: true }],
     // eslint-disable-next-line no-shadow
-    page: async ({ page, theme }, use) => {
+    page: async ({ page, theme }, use, testInfo) => {
         // eslint-disable-next-line playwright/no-conditional-in-test
         if (theme === 'snow') {
             //inject snow theme
             await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
         }
+
+        // Attach info about the currently running test and its project.
+        // This will be used by appActions to fill in the created
+        // domain object's notes.
+        page.testNotes = [
+            `${testInfo.titlePath.join('\n')}`,
+            `${testInfo.project.name}`
+        ].join('\n');
 
         await use(page);
     },
@@ -140,22 +148,5 @@ exports.test = test.extend({
     openmctConfig: async ({ myItemsFolderName }, use) => {
         await use({ myItemsFolderName });
     }
-    // objectCreateOptions: [objectCreateOptions, {option: true}],
-    // eslint-disable-next-line no-shadow
-    // domainObject: [async ({ page, objectCreateOptions }, use) => {
-    //     // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
-    //     // eslint-disable-next-line playwright/no-conditional-in-test
-    //     if (objectCreateOptions === null) {
-    //         await use(page);
-
-    //         return;
-    //     }
-
-    //     //Go to baseURL
-    //     await page.goto('./', { waitUntil: 'networkidle' });
-
-    //     const uuid = await getOrCreateDomainObject(page, objectCreateOptions);
-    //     await use({ uuid });
-    // }, { auto: true }]
 });
 exports.expect = expect;

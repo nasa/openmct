@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -97,11 +97,11 @@ export default {
 
         },
         followTimeContext() {
-            this.timeContext.on('bounds', this.reloadTelemetry);
+            this.timeContext.on('bounds', this.reloadTelemetryOnBoundsChange);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', this.reloadTelemetry);
+                this.timeContext.off('bounds', this.reloadTelemetryOnBoundsChange);
             }
         },
         addToComposition(telemetryObject) {
@@ -112,11 +112,7 @@ export default {
             }
         },
         removeFromComposition(telemetryObject) {
-            let composition = this.domainObject.composition.filter(id =>
-                !this.openmct.objects.areIdsEqual(id, telemetryObject.identifier)
-            );
-
-            this.openmct.objects.mutate(this.domainObject, 'composition', composition);
+            this.composition.remove(telemetryObject);
         },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
@@ -180,6 +176,11 @@ export default {
             this.composition.on('add', this.addToComposition);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
+        },
+        reloadTelemetryOnBoundsChange(bounds, isTick) {
+            if (!isTick) {
+                this.reloadTelemetry();
+            }
         },
         reloadTelemetry() {
             this.valuesByTimestamp = {};

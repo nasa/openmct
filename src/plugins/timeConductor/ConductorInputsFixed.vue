@@ -78,6 +78,12 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
+            }
         }
     },
     data() {
@@ -127,7 +133,7 @@ export default {
     methods: {
         setTimeContext() {
             this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
 
             this.handleNewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.handleNewBounds);

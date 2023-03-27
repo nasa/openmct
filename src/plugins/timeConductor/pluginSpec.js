@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -94,15 +94,17 @@ describe('time conductor', () => {
         return resetApplicationState(openmct);
     });
 
-    it('shows delta inputs in fixed mode', () => {
-        const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
-        const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
-        expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
-        expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
-        expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
+    describe('in fixed time mode', () => {
+        it('shows delta inputs', () => {
+            const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
+            const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
+            expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
+            expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
+            expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
+        });
     });
 
-    describe('shows delta inputs in realtime mode', () => {
+    describe('in realtime mode', () => {
         beforeEach((done) => {
             const switcher = appHolder.querySelector('.c-mode-button');
             const clickEvent = createMouseEvent("click");
@@ -117,12 +119,29 @@ describe('time conductor', () => {
             });
         });
 
-        it('shows clock options', () => {
+        it('shows delta inputs', () => {
             const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
             const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-conductor__delta-button');
+
             expect(dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
             expect(dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
+        });
+
+        it('shows clock options', () => {
+            const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
+
             expect(realtimeModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
+        });
+
+        it('shows the current time', () => {
+            const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
+            const currentTimeEl = realtimeModeEl.querySelector('.c-input--datetime');
+            const currentTime = openmct.time.clock().currentValue();
+            const { start, end } = openmct.time.bounds();
+
+            expect(currentTime).toBeGreaterThan(start);
+            expect(currentTime).toBeLessThanOrEqual(end);
+            expect(currentTimeEl.value.length).toBeGreaterThan(0);
         });
     });
 
@@ -131,15 +150,15 @@ describe('time conductor', () => {
 describe('duration functions', () => {
     it('should transform milliseconds to DHMS', () => {
         const functionResults = [millisecondsToDHMS(0), millisecondsToDHMS(86400000),
-            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000)];
-        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s'];
+            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000), millisecondsToDHMS(213927028)];
+        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s', '+ 2d 11h 25m 27s 28ms'];
         expect(validResults).toEqual(functionResults);
     });
 
     it('should get precise duration', () => {
         const functionResults = [getPreciseDuration(0), getPreciseDuration(643680000),
-            getPreciseDuration(1605312000)];
-        const validResults = ['00:00:00:00', '07:10:48:00', '18:13:55:12'];
+            getPreciseDuration(1605312000), getPreciseDuration(213927028)];
+        const validResults = ['00:00:00:00:000', '07:10:48:00:000', '18:13:55:12:000', '02:11:25:27:028'];
         expect(validResults).toEqual(functionResults);
     });
 });

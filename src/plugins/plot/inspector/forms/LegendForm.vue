@@ -54,7 +54,7 @@
                 <option value="nearestValue">Nearest value</option>
                 <option value="min">Minimum value</option>
                 <option value="max">Maximum value</option>
-                <option value="units">Units</option>
+                <option value="unit">Unit</option>
             </select>
         </div>
     </li>
@@ -89,7 +89,7 @@
                     v-model="showUnitsWhenExpanded"
                     type="checkbox"
                     @change="updateForm('showUnitsWhenExpanded')"
-                > Units</li>
+                > Unit</li>
             </ul>
 
         </div>

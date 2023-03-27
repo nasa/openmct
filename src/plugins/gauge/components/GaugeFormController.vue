@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -100,6 +100,7 @@ export default {
     components: {
         ToggleSwitch
     },
+    inject: ["openmct"],
     props: {
         model: {
             type: Object,
@@ -107,11 +108,10 @@ export default {
         }
     },
     data() {
+        this.changes = {};
+
         return {
             isUseTelemetryLimits: this.model.value.isUseTelemetryLimits,
-            isDisplayMinMax: this.model.value.isDisplayMinMax,
-            isDisplayCurVal: this.model.value.isDisplayCurVal,
-            isDisplayUnits: this.model.value.isDisplayUnits,
             limitHigh: this.model.value.limitHigh,
             limitLow: this.model.value.limitLow,
             max: this.model.value.max,
@@ -120,24 +120,15 @@ export default {
     },
     methods: {
         onChange(event) {
-            const data = {
-                model: this.model,
-                value: {
-                    gaugeType: this.model.value.gaugeType,
-                    isDisplayMinMax: this.isDisplayMinMax,
-                    isDisplayCurVal: this.isDisplayCurVal,
-                    isDisplayUnits: this.isDisplayUnits,
-                    isUseTelemetryLimits: this.isUseTelemetryLimits,
-                    limitLow: this.limitLow,
-                    limitHigh: this.limitHigh,
-                    max: this.max,
-                    min: this.min,
-                    precision: this.model.value.precision
-                }
+            let data = {
+                model: {}
             };
 
             if (event) {
                 const target = event.target;
+                const property = target.dataset.fieldName;
+                data.model.property = Array.from(this.model.property).concat([property]);
+                data.value = this[property];
                 const targetIndicator = target.parentElement.querySelector('.req-indicator');
                 if (targetIndicator.classList.contains('req')) {
                     targetIndicator.classList.add('visited');
@@ -160,13 +151,13 @@ export default {
         },
         toggleUseTelemetryLimits() {
             this.isUseTelemetryLimits = !this.isUseTelemetryLimits;
-
-            this.onChange();
-        },
-        toggleMinMax() {
-            this.isDisplayMinMax = !this.isDisplayMinMax;
-
-            this.onChange();
+            const data = {
+                model: {
+                    property: Array.from(this.model.property).concat(['isUseTelemetryLimits'])
+                },
+                value: this.isUseTelemetryLimits
+            };
+            this.$emit('onChange', data);
         }
     }
 };

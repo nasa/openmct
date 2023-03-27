@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -104,10 +104,14 @@ export default {
             this.$set(this.plotSeries, this.plotSeries.length, series);
             this.setAxesLabels();
         },
-        removeSeries(series) {
-            const index = this.plotSeries.findIndex(plotSeries => this.openmct.objects.areIdsEqual(series.identifier, plotSeries.identifier));
-            if (index !== undefined) {
-                this.$delete(this.plotSeries, index);
+        removeSeries(seriesKey) {
+            const seriesIndex = this.plotSeries.findIndex(
+                plotSeries => this.openmct.objects.areIdsEqual(seriesKey, plotSeries.identifier)
+            );
+
+            const foundSeries = seriesIndex > -1;
+            if (foundSeries) {
+                this.$delete(this.plotSeries, seriesIndex);
                 this.setAxesLabels();
             }
         },

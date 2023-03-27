@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,8 +27,12 @@
     <ul
         v-if="!isStackedPlotObject"
         class="c-tree"
+        aria-label="Plot Series Properties"
     >
-        <h2 title="Display properties for this object">Plot Series</h2>
+        <h2
+            class="--first"
+            title="Display properties for this object"
+        >Plot Series</h2>
         <li
             v-for="series in plotSeries"
             :key="series.key"
@@ -40,8 +44,10 @@
         </li>
     </ul>
     <y-axis-form
-        v-if="plotSeries.length && !isStackedPlotObject"
-        class="grid-properties"
+        v-for="(yAxisId, index) in yAxesIds"
+        :id="yAxisId.id"
+        :key="`yAxis-${index}`"
+        class="grid-properties js-yaxis-grid-properties"
         :y-axis="config.yAxis"
         @seriesUpdated="updateSeriesConfigForObject"
     />
@@ -49,9 +55,11 @@
         v-if="isStackedPlotObject || !isStackedPlotNestedObject"
         class="l-inspector-part"
     >
-        <h2 title="Legend options">Legend</h2>
+        <h2
+            class="--first"
+            title="Legend options"
+        >Legend</h2>
         <legend-form
-            v-if="plotSeries.length"
             class="grid-properties"
             :legend="config.legend"
         />
@@ -76,22 +84,42 @@ export default {
     data() {
         return {
             config: {},
+            yAxes: [],
             plotSeries: [],
             loaded: false
         };
     },
     computed: {
         isStackedPlotNestedObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked');
         },
         isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
+            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked');
+        },
+        yAxesIds() {
+            return !this.isStackedPlotObject && this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         }
     },
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
-        this.registerListeners();
+        if (!this.isStackedPlotObject) {
+            this.yAxes = [{
+                id: this.config.yAxis.id,
+                seriesCount: 0
+            }];
+            if (this.config.additionalYAxes) {
+                this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                    return {
+                        id: yAxis.id,
+                        seriesCount: 0
+                    };
+                }));
+            }
+
+            this.registerListeners();
+        }
+
         this.loaded = true;
     },
     beforeDestroy() {
@@ -107,16 +135,74 @@ export default {
             this.config.series.forEach(this.addSeries, this);
 
             this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+            this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+        },
+
+        findYAxisForId(yAxisId) {
+            return this.yAxes.find(yAxis => yAxis.id === yAxisId);
+        },
+
+        setYAxisLabel(yAxisId) {
+            const found = this.findYAxisForId(yAxisId);
+            if (found && found.seriesCount > 0) {
+                const mainYAxisId = this.config.yAxis.id;
+                if (mainYAxisId === yAxisId) {
+                    found.label = this.config.yAxis.get('label');
+                } else {
+                    const additionalYAxis = this.config.additionalYAxes.find(axis => axis.id === yAxisId);
+                    if (additionalYAxis) {
+                        found.label = additionalYAxis.get('label');
+                    }
+                }
+            }
         },
 
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.incrementAxisUsageCount(yAxisId);
             this.$set(this.plotSeries, index, series);
+            this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            // If the series moves to a different yAxis, update the seriesCounts for both yAxes
+            // so we can display the configuration options for all used yAxes
+            this.listenTo(series, 'change:yAxisId', (newYAxisId, oldYAxisId) => {
+                this.incrementAxisUsageCount(newYAxisId);
+                this.decrementAxisUsageCount(oldYAxisId);
+            }, this);
         },
 
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
+        removeSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.decrementAxisUsageCount(yAxisId);
+            this.plotSeries.splice(index, 1);
+            this.setYAxisLabel(yAxisId);
+
+            if (this.isStackedPlotObject) {
+                return;
+            }
+
+            this.stopListening(series, 'change:yAxisId');
+        },
+
+        incrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, 1);
+        },
+
+        decrementAxisUsageCount(yAxisId) {
+            this.updateAxisUsageCount(yAxisId, -1);
+        },
+
+        updateAxisUsageCount(yAxisId, updateCount) {
+            const foundYAxis = this.findYAxisForId(yAxisId);
+            if (!foundYAxis) {
+                throw new Error(`yAxis with id ${yAxisId} not found`);
+            }
+
+            foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
         },
 
         updateSeriesConfigForObject(config) {

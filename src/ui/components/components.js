@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,8 +22,10 @@
 
 import ObjectView from './ObjectView.vue';
 import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
+import Plot from '../../plugins/plot/Plot.vue';
 
 export default {
     ObjectView,
-    StackedPlot
+    StackedPlot,
+    Plot
 };

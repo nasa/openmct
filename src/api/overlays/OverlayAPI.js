@@ -55,7 +55,7 @@ class OverlayAPI {
     dismissLastOverlay() {
         let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
         if (lastOverlay && lastOverlay.dismissable) {
-            lastOverlay.dismiss();
+            lastOverlay.notifyAndDismiss();
         }
     }
 

@@ -10,9 +10,6 @@
 # https://github.com/nasa/openmct/issues/4992
 !/example/**/*
 
-# We will remove this in https://github.com/nasa/openmct/issues/4922
-!/app.js
-
 # ...except for these files in the above folders.
 /src/**/*Spec.js
 /src/**/test/
@@ -25,3 +22,9 @@
 !index.html
 !openmct.js
 !SECURITY.md
+
+# Add e2e tests to npm package
+!/e2e/**/*
+
+# ... except our test-data folder files.
+/e2e/test-data/*.json

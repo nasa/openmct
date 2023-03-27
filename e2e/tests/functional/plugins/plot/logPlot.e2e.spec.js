@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,6 +26,8 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { selectInspectorTab } = require('../../../../appActions');
+
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
@@ -36,6 +38,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
+        await selectInspectorTab(page, 'Config');
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);
@@ -88,10 +91,10 @@ async function makeOverlayPlot(page, myItemsFolderName) {
     // create overlay plot
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Overlay Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -106,7 +109,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
     // create a sinewave generator
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     // set amplitude to 6, offset 4, period 2
 
@@ -123,7 +126,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -160,35 +163,16 @@ async function testRegularTicks(page) {
  */
 async function testLogTicks(page) {
     const yTicks = await page.locator('.gl-plot-y-tick-label');
-    expect(await yTicks.count()).toBe(28);
+    expect(await yTicks.count()).toBe(9);
     await expect(yTicks.nth(0)).toHaveText('-2.98');
-    await expect(yTicks.nth(1)).toHaveText('-2.50');
-    await expect(yTicks.nth(2)).toHaveText('-2.00');
-    await expect(yTicks.nth(3)).toHaveText('-1.51');
-    await expect(yTicks.nth(4)).toHaveText('-1.20');
-    await expect(yTicks.nth(5)).toHaveText('-1.00');
-    await expect(yTicks.nth(6)).toHaveText('-0.80');
-    await expect(yTicks.nth(7)).toHaveText('-0.58');
-    await expect(yTicks.nth(8)).toHaveText('-0.40');
-    await expect(yTicks.nth(9)).toHaveText('-0.20');
-    await expect(yTicks.nth(10)).toHaveText('-0.00');
-    await expect(yTicks.nth(11)).toHaveText('0.20');
-    await expect(yTicks.nth(12)).toHaveText('0.40');
-    await expect(yTicks.nth(13)).toHaveText('0.58');
-    await expect(yTicks.nth(14)).toHaveText('0.80');
-    await expect(yTicks.nth(15)).toHaveText('1.00');
-    await expect(yTicks.nth(16)).toHaveText('1.20');
-    await expect(yTicks.nth(17)).toHaveText('1.51');
-    await expect(yTicks.nth(18)).toHaveText('2.00');
-    await expect(yTicks.nth(19)).toHaveText('2.50');
-    await expect(yTicks.nth(20)).toHaveText('2.98');
-    await expect(yTicks.nth(21)).toHaveText('3.50');
-    await expect(yTicks.nth(22)).toHaveText('4.00');
-    await expect(yTicks.nth(23)).toHaveText('4.50');
-    await expect(yTicks.nth(24)).toHaveText('5.31');
-    await expect(yTicks.nth(25)).toHaveText('7.00');
-    await expect(yTicks.nth(26)).toHaveText('8.00');
-    await expect(yTicks.nth(27)).toHaveText('9.00');
+    await expect(yTicks.nth(1)).toHaveText('-1.51');
+    await expect(yTicks.nth(2)).toHaveText('-0.58');
+    await expect(yTicks.nth(3)).toHaveText('-0.00');
+    await expect(yTicks.nth(4)).toHaveText('0.58');
+    await expect(yTicks.nth(5)).toHaveText('1.51');
+    await expect(yTicks.nth(6)).toHaveText('2.98');
+    await expect(yTicks.nth(7)).toHaveText('5.31');
+    await expect(yTicks.nth(8)).toHaveText('9.00');
 }
 
 /**
@@ -205,7 +189,9 @@ async function enableEditMode(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
-    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).not.toBeChecked();
+    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
+    // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
 
 /**
@@ -213,7 +199,8 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
-    await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().uncheck();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).toBeChecked();
+    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
 }
 
 /**

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,3 +59,6 @@ export const ERROR = {
         errorText: 'Condition not found'
     }
 };
+
+export const IS_OLD_KEY = 'isStale';
+export const IS_STALE_KEY = 'isStale.new';

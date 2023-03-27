@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,17 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function remoteClockRequestInterceptor(openmct, remoteClockIdentifier, waitForBounds) {
+function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
     let remoteClockLoaded = false;
 
     return {
         appliesTo: () => {
             // Get the activeClock from the Global Time Context
-            const { activeClock } = openmct.time.getContextForView();
+            const { activeClock } = openmct.time;
 
-            return activeClock !== undefined
-            && activeClock.key === 'remote-clock'
-            && !remoteClockLoaded;
+            return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
         },
         invoke: async (request) => {
             const { start, end } = await waitForBounds();

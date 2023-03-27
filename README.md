@@ -1,4 +1,4 @@
-# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/openmct.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/openmct/context:javascript) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) 
+# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) 
 
 Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
@@ -6,10 +6,8 @@ Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting S
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
-## See Open MCT in Action
+![Screen Shot 2022-11-23 at 9 51 36 AM](https://user-images.githubusercontent.com/4215777/203617422-4d912bfc-766f-4074-8324-409d9bbe7c05.png)
 
-Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
-![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
 
 ## Building and Running Open MCT Locally
 
@@ -30,6 +28,8 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
+
 ## Documentation
 
 Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/).
@@ -43,11 +43,9 @@ our documentation.
 We want Open MCT to be as easy to use, install, run, and develop for as
 possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
-## Building Applications With Open MCT
+## Developing Applications With Open MCT
 
-Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
-
-See our documentation for a guide on [building Applications with Open MCT](https://github.com/nasa/openmct/blob/master/API.md#starting-an-open-mct-application).
+For more on developing with Open MCT, see our documentation for a guide on [Developing Applications with Open MCT](./API.md#starting-an-open-mct-application).
 
 ## Compatibility
 
@@ -64,7 +62,7 @@ that is intended to be added or removed as a single unit.
 As well as providing an extension mechanism, most of the core Open MCT codebase is also 
 written as plugins.
 
-For information on writing plugins, please see [our API documentation](https://github.com/nasa/openmct/blob/master/API.md#plugins).
+For information on writing plugins, please see [our API documentation](./API.md#plugins).
 
 ## Tests
 
@@ -100,7 +98,7 @@ To run the performance tests:
 The test suite is configured to all tests localed in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md)
 
 ### Security Tests
-Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/) and our overall security report is available on [LGTM](https://lgtm.com/projects/g/nasa/openmct/)
+Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/). The list of CWE coverage items is avaiable in the [CodeQL docs](https://codeql.github.com/codeql-query-help/javascript-cwe/). The CodeQL workflow is specified in the [CodeQL analysis file](./.github/workflows/codeql-analysis.yml) and the custom [CodeQL config](./.github/codeql/codeql-config.yml).
 
 ### Test Reporting and Code Coverage
 

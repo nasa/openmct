@@ -8,13 +8,27 @@ describe("The Object API", () => {
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const TEST_KEY = "test-key";
+    const USERNAME = 'Joan Q Public';
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach((done) => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
+        const userProvider = {
+            isLoggedIn() {
+                return true;
+            },
+            getCurrentUser() {
+                return Promise.resolve({
+                    getName() {
+                        return USERNAME;
+                    }
+                });
+            }
+        };
         openmct = createOpenMct();
+        openmct.user.setProvider(userProvider);
         objectAPI = openmct.objects;
 
         openmct.editor = {};
@@ -63,18 +77,62 @@ describe("The Object API", () => {
                 mockProvider.update.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
-            it("Calls 'create' on provider if object is new", () => {
-                objectAPI.save(mockDomainObject);
+            it("Adds a 'created' timestamp to new objects", async () => {
+                await objectAPI.save(mockDomainObject);
+                expect(mockDomainObject.created).not.toBeUndefined();
+            });
+            it("Calls 'create' on provider if object is new", async () => {
+                await objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
-            it("Calls 'update' on provider if object is not new", () => {
+            it("Calls 'update' on provider if object is not new", async () => {
                 mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
                 mockDomainObject.modified = Date.now();
 
-                objectAPI.save(mockDomainObject);
+                await objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).toHaveBeenCalled();
+            });
+            describe("the persisted timestamp for existing objects", () => {
+                let persistedTimestamp;
+                beforeEach(() => {
+                    persistedTimestamp = Date.now() - FIFTEEN_MINUTES;
+                    mockDomainObject.persisted = persistedTimestamp;
+                    mockDomainObject.modified = Date.now();
+                });
+
+                it("is updated", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted).toBeDefined();
+                    expect(mockDomainObject.persisted > persistedTimestamp).toBe(true);
+                });
+                it("is >= modified timestamp", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                });
+            });
+            describe("the persisted timestamp for new objects", () => {
+                it("is updated", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted).toBeDefined();
+                });
+                it("is >= modified timestamp", async () => {
+                    await objectAPI.save(mockDomainObject);
+                    expect(mockDomainObject.persisted >= mockDomainObject.modified).toBe(true);
+                });
+            });
+
+            it("Sets the current user for 'createdBy' on new objects", async () => {
+                await objectAPI.save(mockDomainObject);
+                expect(mockDomainObject.createdBy).toBe(USERNAME);
+            });
+            it("Sets the current user for 'modifedBy' on existing objects", async () => {
+                mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
+                mockDomainObject.modified = Date.now();
+
+                await objectAPI.save(mockDomainObject);
+                expect(mockDomainObject.modifiedBy).toBe(USERNAME);
             });
 
             it("Does not persist if the object is unchanged", () => {
@@ -320,7 +378,7 @@ describe("The Object API", () => {
             beforeEach(function () {
                 // Duplicate object to guarantee we are not sharing object instance, which would invalidate test
                 testObjectDuplicate = JSON.parse(JSON.stringify(testObject));
-                mutableSecondInstance = objectAPI._toMutable(testObjectDuplicate);
+                mutableSecondInstance = objectAPI.toMutable(testObjectDuplicate);
             });
 
             afterEach(() => {
@@ -341,7 +399,7 @@ describe("The Object API", () => {
                     unlisten = objectAPI.observe(mutableSecondInstance, 'otherAttribute', mutationCallback);
                     objectAPI.mutate(mutable, 'otherAttribute', 'some-new-value');
                 }).then(function () {
-                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value');
+                    expect(mutationCallback).toHaveBeenCalledWith('some-new-value', 'other-attribute-value');
                     unlisten();
                 });
             });
@@ -361,19 +419,92 @@ describe("The Object API", () => {
 
                     objectAPI.mutate(mutable, 'objectAttribute.embeddedObject.embeddedKey', 'updated-embedded-value');
                 }).then(function () {
-                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value');
+                    expect(embeddedKeyCallback).toHaveBeenCalledWith('updated-embedded-value', 'embedded-value');
                     expect(embeddedObjectCallback).toHaveBeenCalledWith({
                         embeddedKey: 'updated-embedded-value'
+                    }, {
+                        embeddedKey: 'embedded-value'
                     });
                     expect(objectAttributeCallback).toHaveBeenCalledWith({
                         embeddedObject: {
                             embeddedKey: 'updated-embedded-value'
+                        }
+                    }, {
+                        embeddedObject: {
+                            embeddedKey: 'embedded-value'
                         }
                     });
 
                     listeners.forEach(listener => listener());
                 });
             });
+        });
+    });
+
+    describe("getOriginalPath", () => {
+        let mockGrandParentObject;
+        let mockParentObject;
+        let mockChildObject;
+
+        beforeEach(() => {
+            const mockObjectProvider = jasmine.createSpyObj("mock object provider", [
+                "create",
+                "update",
+                "get"
+            ]);
+
+            mockGrandParentObject = {
+                type: 'folder',
+                name: 'Grand Parent Folder',
+                location: 'fooNameSpace:child',
+                identifier: {
+                    key: 'grandParent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockParentObject = {
+                type: 'folder',
+                name: 'Parent Folder',
+                location: 'fooNameSpace:grandParent',
+                identifier: {
+                    key: 'parent',
+                    namespace: 'fooNameSpace'
+                }
+            };
+            mockChildObject = {
+                type: 'folder',
+                name: 'Child Folder',
+                location: 'fooNameSpace:parent',
+                identifier: {
+                    key: 'child',
+                    namespace: 'fooNameSpace'
+                }
+            };
+
+            // eslint-disable-next-line require-await
+            mockObjectProvider.get = async (identifier) => {
+                if (identifier.key === mockGrandParentObject.identifier.key) {
+                    return mockGrandParentObject;
+                } else if (identifier.key === mockParentObject.identifier.key) {
+                    return mockParentObject;
+                } else if (identifier.key === mockChildObject.identifier.key) {
+                    return mockChildObject;
+                } else {
+                    return null;
+                }
+            };
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+
+            mockObjectProvider.create.and.returnValue(Promise.resolve(true));
+            mockObjectProvider.update.and.returnValue(Promise.resolve(true));
+
+            openmct.objects.addProvider('fooNameSpace', mockObjectProvider);
+        });
+
+        it('can construct paths even with cycles', async () => {
+            const objectPath = await objectAPI.getOriginalPath(mockChildObject.identifier);
+            expect(objectPath.length).toEqual(3);
         });
     });
 

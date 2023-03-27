@@ -54,9 +54,11 @@
     >
         <pane
             class="l-shell__pane-tree"
+            style="width: 300px;"
             handle="after"
             label="Browse"
             hide-param="hideTree"
+            :persist-position="true"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -74,11 +76,37 @@
                 @click="handleSyncTreeNavigation"
             >
             </button>
-            <mct-tree
-                :sync-tree-navigation="triggerSync"
-                :reset-tree-navigation="triggerReset"
-                class="l-shell__tree"
-            />
+            <multipane
+                type="vertical"
+            >
+                <pane>
+                    <mct-tree
+                        ref="mctTree"
+                        :sync-tree-navigation="triggerSync"
+                        :reset-tree-navigation="triggerReset"
+                        class="l-shell__tree"
+                    />
+                </pane>
+                <pane
+                    handle="before"
+                    label="Recently Viewed"
+                    :persist-position="true"
+                >
+                    <RecentObjectsList
+                        ref="recentObjectsList"
+                        class="l-shell__tree"
+                        @openAndScrollTo="openAndScrollTo($event)"
+                    />
+                    <button
+                        slot="controls"
+                        class="c-icon-button icon-clear-data"
+                        aria-label="Clear Recently Viewed"
+                        title="Clear Recently Viewed"
+                        @click="handleClearRecentObjects"
+                    >
+                    </button>
+                </pane>
+            </multipane>
         </pane>
         <pane class="l-shell__pane-main">
             <browse-bar
@@ -108,6 +136,7 @@
             handle="before"
             label="Inspect"
             hide-param="hideInspector"
+            :persist-position="true"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -133,6 +162,7 @@ import Toolbar from '../toolbar/Toolbar.vue';
 import AppLogo from './AppLogo.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
+import RecentObjectsList from './RecentObjectsList.vue';
 
 export default {
     components: {
@@ -147,7 +177,8 @@ export default {
         Toolbar,
         AppLogo,
         Indicators,
-        NotificationBanner
+        NotificationBanner,
+        RecentObjectsList
     },
     inject: ['openmct'],
     data: function () {
@@ -244,6 +275,10 @@ export default {
 
             this.hasToolbar = structure.length > 0;
         },
+        openAndScrollTo(navigationPath) {
+            this.$refs.mctTree.openAndScrollTo(navigationPath);
+            this.$refs.mctTree.targetedPath = navigationPath;
+        },
         setActionCollection(actionCollection) {
             this.actionCollection = actionCollection;
         },
@@ -252,6 +287,9 @@ export default {
         },
         handleTreeReset() {
             this.triggerReset = !this.triggerReset;
+        },
+        handleClearRecentObjects() {
+            this.$refs.recentObjectsList.clearRecentObjects();
         },
         onStartResizing() {
             this.isResizing = true;

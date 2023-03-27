@@ -14,7 +14,7 @@ const config = {
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
     webServer: {
-        command: 'cross-env NODE_ENV=test npm run start',
+        command: 'npm run start:coverage',
         url: 'http://localhost:8080/#',
         timeout: 200 * 1000,
         reuseExistingServer: false
@@ -73,7 +73,7 @@ const config = {
             open: 'never',
             outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
         }],
-        ['junit', { outputFile: 'test-results/results.xml' }],
+        ['junit', { outputFile: '../test-results/results.xml' }],
         ['github']
     ]
 };

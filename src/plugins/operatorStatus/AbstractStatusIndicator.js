@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ export default class AbstractStatusIndicator {
     #configuration;
 
     /**
-     * @param {*} openmct the Open MCT API (proper jsdoc to come)
+     * @param {*} openmct the Open MCT API (proper typescript doc to come)
      * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration Per-deployment status styling. See the type definition in UserAPI
      */
     constructor(openmct, configuration) {

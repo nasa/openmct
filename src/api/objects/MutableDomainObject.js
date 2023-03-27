@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,25 +75,23 @@ class MutableDomainObject {
         return eventOff;
     }
     $set(path, value) {
-        _.set(this, path, value);
-
-        if (path !== 'persisted' && path !== 'modified') {
-            _.set(this, 'modified', Date.now());
-        }
+        const oldModel = JSON.parse(JSON.stringify(this));
+        const oldValue = _.get(oldModel, path);
+        MutableDomainObject.mutateObject(this, path, value);
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
 
         //Emit a general "any object" event
-        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this);
+        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this, oldModel);
         //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value, oldModel, oldValue);
 
         //Emit events specific to properties affected
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
             let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
+            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath), _.get(oldModel, parentPropertyPath));
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
@@ -136,8 +134,11 @@ class MutableDomainObject {
     }
 
     static mutateObject(object, path, value) {
+        if (path !== 'persisted') {
+            _.set(object, 'modified', Date.now());
+        }
+
         _.set(object, path, value);
-        _.set(object, 'modified', Date.now());
     }
 }
 

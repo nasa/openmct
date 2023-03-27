@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -82,8 +82,10 @@
 </template>
 
 <script>
+
 import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
     components: {
@@ -112,15 +114,11 @@ export default {
             telemetryObjs: [],
             moveIndex: undefined,
             isDragging: false,
-            defaultOutput: undefined,
             dragCounter: 0,
             currentConditionId: ''
         };
     },
     watch: {
-        defaultOutput(newOutput, oldOutput) {
-            this.$emit('updateDefaultOutput', newOutput);
-        },
         testData: {
             handler() {
                 this.updateTestData();
@@ -139,6 +137,13 @@ export default {
         if (this.stopObservingForChanges) {
             this.stopObservingForChanges();
         }
+
+        if (this.stalenessSubscription) {
+            Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                stalenessSubscription.unsubscribe();
+                stalenessSubscription.stalenessUtils.destroy();
+            });
+        }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
@@ -149,24 +154,23 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
-        this.updateDefaultCondition();
+        this.conditionManager.on('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
+        this.stalenessSubscription = {};
     },
     methods: {
         handleConditionSetResultUpdated(data) {
             this.currentConditionId = data.conditionId;
             this.$emit('conditionSetResultUpdated', data);
         },
+        emitNoTelemetryObjectEvent(data) {
+            this.currentConditionId = '';
+            this.$emit('noTelemetryObjects');
+        },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 //this forces children to re-render
                 this.conditionCollection = newConditionCollection.map(condition => condition);
-                this.updateDefaultCondition();
             });
-        },
-        updateDefaultCondition() {
-            const defaultCondition = this.domainObject.configuration.conditionCollection
-                .find(conditionConfiguration => conditionConfiguration.isDefault);
-            this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
             this.moveIndex = index;
@@ -210,19 +214,60 @@ export default {
             return arr;
         },
         addTelemetryObject(domainObject) {
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
             this.telemetryObjs.push(domainObject);
             this.$emit('telemetryUpdated', this.telemetryObjs);
+
+            if (!this.stalenessSubscription[keyString]) {
+                this.stalenessSubscription[keyString] = {};
+            }
+
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+
+            this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
+            });
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                this.handleStaleness(keyString, stalenessResponse);
+            });
+
+            this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
         },
         removeTelemetryObject(identifier) {
-            let index = this.telemetryObjs.findIndex(obj => {
+            const keyString = this.openmct.objects.makeKeyString(identifier);
+            const index = this.telemetryObjs.findIndex(obj => {
                 let objId = this.openmct.objects.makeKeyString(obj.identifier);
-                let id = this.openmct.objects.makeKeyString(identifier);
 
-                return objId === id;
+                return objId === keyString;
             });
+
             if (index > -1) {
                 this.telemetryObjs.splice(index, 1);
             }
+
+            if (this.stalenessSubscription[keyString]) {
+                this.stalenessSubscription[keyString].unsubscribe();
+                this.stalenessSubscription[keyString].stalenessUtils.destroy();
+                this.emitStaleness({
+                    keyString,
+                    isStale: false
+                });
+                delete this.stalenessSubscription[keyString];
+            }
+        },
+        handleStaleness(keyString, stalenessResponse) {
+            if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                this.emitStaleness({
+                    keyString,
+                    isStale: stalenessResponse.isStale
+                });
+            }
+        },
+        emitStaleness(stalenessObject) {
+            this.$emit('telemetryStaleness', stalenessObject);
         },
         addCondition() {
             this.conditionManager.addCondition();

@@ -6,6 +6,7 @@
     >
         <independent-time-conductor
             :domain-object="domainObject"
+            :object-path="path"
             @stateChanged="updateIndependentTimeState"
             @updated="saveTimeOptions"
         />
@@ -13,7 +14,7 @@
     <div
         ref="objectViewWrapper"
         class="c-object-view"
-        :class="objectTypeClass"
+        :class="viewClasses"
     ></div>
 </div>
 </template>
@@ -23,6 +24,7 @@ import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 const SupportedViewTypes = [
     'plot-stacked',
@@ -35,6 +37,7 @@ export default {
     components: {
         IndependentTimeConductor
     },
+    mixins: [stalenessMixin],
     inject: ["openmct"],
     props: {
         showEditView: Boolean,
@@ -67,6 +70,9 @@ export default {
         };
     },
     computed: {
+        path() {
+            return this.domainObject && (this.currentObjectPath || this.objectPath);
+        },
         objectFontStyle() {
             return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
         },
@@ -81,8 +87,14 @@ export default {
 
             return this.domainObject && SupportedViewTypes.includes(viewKey);
         },
-        objectTypeClass() {
-            return this.domainObject && ('is-object-type-' + this.domainObject.type);
+        viewClasses() {
+            let classes;
+
+            if (this.domainObject) {
+                classes = `is-object-type-${this.domainObject.type} ${this.isStale ? 'is-stale' : ''}`;
+            }
+
+            return classes;
         }
     },
     destroyed() {
@@ -124,6 +136,7 @@ export default {
         if (this.domainObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
+            this.triggerStalenessSubscribe(this.domainObject);
         }
     },
     methods: {
@@ -157,6 +170,9 @@ export default {
                 this.composition._destroy();
             }
 
+            this.isStale = false;
+            this.triggerUnsubscribeFromStaleness();
+
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         getStyleReceiver() {
@@ -187,6 +203,11 @@ export default {
         toggleEditView(editMode) {
             this.clear();
             this.updateView(true);
+        },
+        triggerStalenessSubscribe(object) {
+            if (this.openmct.telemetry.isTelemetryObject(object)) {
+                this.subscribeToStaleness(object);
+            }
         },
         updateStyle(styleObj) {
             let elemToStyle = this.getStyleReceiver();
@@ -302,6 +323,7 @@ export default {
 
             this.updateView(immediatelySelect);
 
+            this.triggerStalenessSubscribe(this.domainObject);
             this.initObjectStyles();
         },
         initObjectStyles() {

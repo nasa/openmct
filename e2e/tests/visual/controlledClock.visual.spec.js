@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the
+are only meant to run against openmct started by `npm start` within the
 `./e2e/playwright-visual.config.js` file.
 
 */

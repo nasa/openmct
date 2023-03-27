@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,7 +53,7 @@ test.describe('Performance tests', () => {
         await page.setInputFiles('#fileElem', filePath);
 
         // Click text=OK
-        await page.locator('text=OK').click();
+        await page.locator('button:has-text("OK")').click();
 
         await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
 

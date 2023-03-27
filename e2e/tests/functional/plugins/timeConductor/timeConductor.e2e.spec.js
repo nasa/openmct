@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../baseFixtures');
+const { test, expect } = require('../../../../pluginFixtures');
+const { setFixedTimeMode, setRealTimeMode, setStartOffset, setEndOffset } = require('../../../../appActions');
 
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
@@ -146,89 +147,44 @@ test.describe('Time conductor input fields real-time mode', () => {
         expect(page.url()).toContain(`startDelta=${startDelta}`);
         expect(page.url()).toContain(`endDelta=${endDelta}`);
     });
+
+    test.fixme('time conductor history in fixed time mode will track changing start and end times', async ({ page }) => {
+        // change start time, verify it's tracked in history
+        // change end time, verify it's tracked in history
+    });
+
+    test.fixme('time conductor history in realtime mode will track changing start and end times', async ({ page }) => {
+        // change start offset, verify it's tracked in history
+        // change end offset, verify it's tracked in history
+    });
+
+    test.fixme('time conductor history allows you to set a historical timeframe', async ({ page }) => {
+        // make sure there are historical history options
+        // select an option and make sure the time conductor start and end bounds are updated correctly
+    });
+
+    test.fixme('time conductor history allows you to set a realtime offsets', async ({ page }) => {
+        // make sure there are realtime history options
+        // select an option and verify the offsets are updated correctly
+    });
 });
 
-/**
- * @typedef {Object} OffsetValues
- * @property {string | undefined} hours
- * @property {string | undefined} mins
- * @property {string | undefined} secs
- */
+test.describe('Time Conductor History', () => {
+    test("shows milliseconds on hover @unstable", async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/4386'
+        });
+        // Navigate to Open MCT in Fixed Time Mode, UTC Time System
+        // with startBound at 2022-01-01 00:00:00.000Z
+        // and endBound at 2022-01-01 00:00:00.200Z
+        await page.goto('./#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1640995200000&tc.endBound=1640995200200&tc.timeSystem=utc&hideInspector=true', { waitUntil: 'networkidle' });
+        await page.locator("[aria-label='Time Conductor History']").hover({ trial: true});
+        await page.locator("[aria-label='Time Conductor History']").click();
 
-/**
- * Set the values (hours, mins, secs) for the start time offset when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- */
-async function setStartOffset(page, offset) {
-    const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
-    await setTimeConductorOffset(page, offset, startOffsetButton);
-}
-
-/**
- * Set the values (hours, mins, secs) for the end time offset when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- */
-async function setEndOffset(page, offset) {
-    const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
-    await setTimeConductorOffset(page, offset, endOffsetButton);
-}
-
-/**
- * Set the time conductor to fixed timespan mode
- * @param {import('@playwright/test').Page} page
- */
-async function setFixedTimeMode(page) {
-    await setTimeConductorMode(page, true);
-}
-
-/**
- * Set the time conductor to realtime mode
- * @param {import('@playwright/test').Page} page
- */
-async function setRealTimeMode(page) {
-    await setTimeConductorMode(page, false);
-}
-
-/**
- * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
- * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- * @param {import('@playwright/test').Locator} offsetButton
- */
-async function setTimeConductorOffset(page, {hours, mins, secs}, offsetButton) {
-    await offsetButton.click();
-
-    if (hours) {
-        await page.fill('.pr-time-controls__hrs', hours);
-    }
-
-    if (mins) {
-        await page.fill('.pr-time-controls__mins', mins);
-    }
-
-    if (secs) {
-        await page.fill('.pr-time-controls__secs', secs);
-    }
-
-    // Click the check button
-    await page.locator('.icon-check').click();
-}
-
-/**
- * Set the time conductor mode to either fixed timespan or realtime mode.
- * @param {import('@playwright/test').Page} page
- * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
- */
-async function setTimeConductorMode(page, isFixedTimespan = true) {
-    // Click 'mode' button
-    await page.locator('.c-mode-button').click();
-
-    // Switch time conductor mode
-    if (isFixedTimespan) {
-        await page.locator('data-testid=conductor-modeOption-fixed').click();
-    } else {
-        await page.locator('data-testid=conductor-modeOption-realtime').click();
-    }
-}
+        // Validate history item format
+        const historyItem = page.locator('text="2022-01-01 00:00:00 + 200ms"');
+        await expect(historyItem).toBeEnabled();
+        await expect(historyItem).toHaveAttribute('title', '2022-01-01 00:00:00.000 - 2022-01-01 00:00:00.200');
+    });
+});

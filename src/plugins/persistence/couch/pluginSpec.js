@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -107,6 +107,12 @@ describe('the plugin', () => {
         it('gets an object', async () => {
             const result = await openmct.objects.get(mockDomainObject.identifier);
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
+        });
+
+        it('prioritizes couch requests above other requests', async () => {
+            await openmct.objects.get(mockDomainObject.identifier);
+            const fetchOptions = fetch.calls.mostRecent().args[1];
+            expect(fetchOptions.priority).toEqual('high');
         });
 
         it('creates an object and starts shared worker', async () => {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -105,6 +105,9 @@ export default class MCTChartAlarmLineSet {
 
     reset() {
         this.limits = [];
+        if (this.series.limits) {
+            this.getLimitPoints(this.series);
+        }
     }
 
     destroy() {

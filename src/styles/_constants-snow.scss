@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -86,7 +86,7 @@ $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
-$objectLabelNameFilter: brightness(0.9);
+$objectLabelNameColorFg: darken($colorBodyFg, 10%);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -135,7 +135,7 @@ $colorPausedFg: #fff;
 
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
@@ -202,6 +202,7 @@ $colorTabsHolderBg: rgba($colorBodyFg, 0.2);
 // Buttons and Controls
 $colorBtnBg: #aaa;
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
+$shdwBtnHov: inset rgba(white, 10%) 0 0 0 20px;
 $colorBtnFg: #fff;
 $colorBtnReverseFg: $colorBodyBg;
 $colorBtnReverseBg: $colorBodyFg;
@@ -289,7 +290,14 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
-// Overlay
+// Tabs
+$colorTabBg: pullForward($colorBodyBg, 15%);
+$colorTabFg: pullForward($colorTabBg, 60%);
+$colorTabCurrentBg: $colorBodyFg; //pullForward($colorTabBg, 10%);
+$colorTabCurrentFg: $colorBodyBg; //pullForward($colorTabFg, 10%);
+$colorTabsBaseline: $colorTabCurrentBg;
+
+    // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $overlayCr: $interiorMarginLg;
 
@@ -305,8 +313,8 @@ $colorIndicatorMenuFg: $colorHeadFg;
 $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
-$colorTelemFresh: pullForward($colorBodyFg, 20%);
-$colorTelemStale: pushBack($colorBodyFg, 20%);
+$colorTelemStale: #00c9c9;
+$colorTelemStaleFg: #002A2A;
 $styleTelemStale: italic;
 
 // Limits
@@ -325,6 +333,12 @@ $colorLimitPurpleIc: #c327ff;
 $colorLimitCyanBg: #4BA6B3;
 $colorLimitCyanFg: #D3FAFF;
 $colorLimitCyanIc: #1795c0;
+
+// Events
+$colorEventPurpleFg: #6433ff;
+$colorEventRedFg: #cc0000;
+$colorEventOrangeFg: orange;
+$colorEventYellowFg: #ffcc00;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -383,6 +397,7 @@ $colorCurrentBorder: #fff;
 $colorFutureBg: rgba($colorKey, 0.2);
 $colorFutureFg: $colorCurrentFg;
 $colorFutureBorder: $colorCurrentBorder;
+$colorGanttSelectedBorder: #fff;
 
 // Tree
 $colorTreeBg: transparent;
@@ -456,6 +471,8 @@ $transInTime: 50ms;
 $transOutTime: 250ms;
 $transIn: all $transInTime ease-in-out;
 $transOut: all $transOutTime ease-in-out;
+$transInTransform: transform $transInTime ease-in-out;
+$transOutTransform: transform $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 
@@ -463,6 +480,7 @@ $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg,0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
+$scrollContainer: rgba(102, 102, 102, 0.1);
 
 @mixin discreteItem() {
     background: $colorDiscreteItemBg;

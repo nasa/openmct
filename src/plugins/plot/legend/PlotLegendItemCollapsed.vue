@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,6 +23,7 @@
 <div
     class="plot-legend-item"
     :class="{
+        'is-stale': isStale,
         'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
@@ -41,7 +42,7 @@
         <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
     <div
-        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'units')"
+        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'unit')"
         class="plot-series-value hover-value-enabled"
         :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
     >
@@ -54,13 +55,14 @@
 <script>
 
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import eventHelpers from "../lib/eventHelpers";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import configStore from "../configuration/ConfigStore";
 
 export default {
+    mixins: [stalenessMixin],
+    inject: ['openmct', 'domainObject'],
     props: {
-        valueToShowWhenCollapsed: {
-            type: String,
-            required: true
-        },
         seriesObject: {
             type: Object,
             required: true,
@@ -83,10 +85,14 @@ export default {
             formattedYValue: '',
             formattedXValue: '',
             mctLimitStateClass: '',
-            formattedYValueFromStats: ''
+            formattedYValueFromStats: '',
+            loaded: false
         };
     },
     computed: {
+        valueToShowWhenCollapsed() {
+            return this.loaded ? this.legend.get('valueToShowWhenCollapsed') : [];
+        },
         valueToDisplayWhenCollapsedClass() {
             return `value-to-display-${ this.valueToShowWhenCollapsed }`;
         },
@@ -103,11 +109,31 @@ export default {
         }
     },
     mounted() {
+        eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.legend = this.config.legend;
+        this.loaded = true;
+        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
+            this.updateColor(newColor);
+        }, this);
+        this.listenTo(this.seriesObject, 'change:name', () => {
+            this.updateName();
+        }, this);
+        this.subscribeToStaleness(this.seriesObject.domainObject);
         this.initialize();
     },
+    beforeDestroy() {
+        this.stopListening();
+    },
     methods: {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return configStore.get(configId);
+        },
         initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+            const seriesObject = highlightedObject?.series || this.seriesObject;
+
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();
             this.nameWithUnit = seriesObject.nameWithUnit();
@@ -129,6 +155,12 @@ export default {
             } else {
                 this.formattedYValueFromStats = '';
             }
+        },
+        updateColor(newColor) {
+            this.colorAsHexString = newColor.asHexString();
+        },
+        updateName() {
+            this.nameWithUnit = this.seriesObject.nameWithUnit();
         },
         toggleHover(hover) {
             this.hover = hover;

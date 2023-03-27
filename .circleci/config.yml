@@ -2,10 +2,11 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.23.0-focal
+      - image: mcr.microsoft.com/playwright:v1.29.0-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
+      PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
 parameters:
   BUST_CACHE:
     description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"

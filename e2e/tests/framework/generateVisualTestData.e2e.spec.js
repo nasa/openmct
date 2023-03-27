@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,54 +31,34 @@ TODO: Provide additional validation of object properties as it grows.
 
 */
 
+const { createDomainObjectWithDefaults } = require('../../appActions.js');
 const { test, expect } = require('../../pluginFixtures.js');
 
-test('Generate Visual Test Data @localStorage', async ({ page, context, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-
+test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'networkidle' });
-
-    await page.locator('button:has-text("Create")').click();
-
-    // add overlay plot with defaults
-    await page.locator('li:has-text("Overlay Plot")').click();
-
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('text=OK').click(),
-        //Wait for Save Banner to appear1
-        page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    // save (exit edit mode)
-    await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-    await page.locator('text=Save and Finish Editing').click();
+    const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
 
     // click create button
     await page.locator('button:has-text("Create")').click();
 
     // add sine wave generator with defaults
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     //Add a 5000 ms Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click(),
-        //Wait for Save Banner to appear1
+        page.locator('button:has-text("OK")').click(),
+        //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
 
     // focus the overlay plot
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('text=Unnamed Overlay Plot').first().click()
-    ]);
+    await page.goto(overlayPlot.url);
 
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
     //Save localStorage for future test execution
     await context.storageState({ path: './e2e/test-data/VisualTestData_storage.json' });
 });

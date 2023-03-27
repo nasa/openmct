@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,8 +30,53 @@ if (document.currentScript) {
     }
 }
 
+/**
+ * @typedef {object} BuildInfo
+ * @property {string} version
+ * @property {string} buildDate
+ * @property {string} revision
+ * @property {string} branch
+ */
+
+/**
+ * @typedef {object} OpenMCT
+ * @property {BuildInfo} buildInfo
+ * @property {*} selection
+ * @property {import('./src/api/time/TimeAPI').default} time
+ * @property {import('./src/api/composition/CompositionAPI').default} composition
+ * @property {*} objectViews
+ * @property {*} inspectorViews
+ * @property {*} propertyEditors
+ * @property {*} toolbars
+ * @property {*} types
+ * @property {import('./src/api/objects/ObjectAPI').default} objects
+ * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
+ * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
+ * @property {import('./src/api/user/UserAPI').default} user
+ * @property {import('./src/api/notifications/NotificationAPI').default} notifications
+ * @property {import('./src/api/Editor').default} editor
+ * @property {import('./src/api/overlays/OverlayAPI')} overlays
+ * @property {import('./src/api/menu/MenuAPI').default} menus
+ * @property {import('./src/api/actions/ActionsAPI').default} actions
+ * @property {import('./src/api/status/StatusAPI').default} status
+ * @property {*} priority
+ * @property {import('./src/ui/router/ApplicationRouter')} router
+ * @property {import('./src/api/faultmanagement/FaultManagementAPI').default} faults
+ * @property {import('./src/api/forms/FormsAPI').default} forms
+ * @property {import('./src/api/Branding').default} branding
+ * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
+ * @property {{(plugin: OpenMCTPlugin) => void}} install
+ * @property {{() => string}} getAssetPath
+ * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
+ * @property {{() => void}} startHeadless
+ * @property {{() => void}} destroy
+ * @property {OpenMCTPlugin[]} plugins
+ * @property {OpenMCTComponent[]} components
+ */
+
 const MCT = require('./src/MCT');
 
+/** @type {OpenMCT} */
 const openmct = new MCT();
 
 module.exports = openmct;
