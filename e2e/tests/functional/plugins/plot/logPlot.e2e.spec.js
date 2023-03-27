@@ -147,7 +147,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
  * @param {import('@playwright/test').Page} page
  */
 async function testRegularTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
+    const yTicks = page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(7);
     await expect(yTicks.nth(0)).toHaveText('-2');
     await expect(yTicks.nth(1)).toHaveText('0');
@@ -162,7 +162,7 @@ async function testRegularTicks(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function testLogTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
+    const yTicks = page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(9);
     await expect(yTicks.nth(0)).toHaveText('-2.98');
     await expect(yTicks.nth(1)).toHaveText('-1.51');
@@ -181,7 +181,7 @@ async function testLogTicks(page) {
 async function enableEditMode(page) {
     // turn on edit mode
     await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-    await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+    await expect(page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
 }
 
 /**
@@ -189,8 +189,8 @@ async function enableEditMode(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
-    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).not.toBeChecked();
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
+    await expect(page.locator('.js-log-mode-input')).not.toBeChecked();
+    await page.locator('.js-log-mode-input').check();
     // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
 
@@ -199,8 +199,8 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
-    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).toBeChecked();
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
+    await expect(page.locator('.js-log-mode-input')).toBeChecked();
+    await page.locator('.js-log-mode-input').uncheck();
 }
 
 /**
