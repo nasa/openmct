@@ -42,6 +42,7 @@ import {SORT_ORDER_OPTIONS} from "./constants";
 import _ from 'lodash';
 import moment from "moment";
 import { v4 as uuid } from 'uuid';
+import raf from "../../utils/raf";
 
 const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
@@ -129,6 +130,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
 
+        this.updateTimestamp = raf(this.updateTimestamp);
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
@@ -197,11 +199,9 @@ export default {
             }
         },
         updateTimestamp(_bounds, isTick) {
-            requestAnimationFrame(() => {
-                if (isTick === true && this.openmct.time.clock() !== undefined) {
-                    this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-                }
-            });
+            if (isTick === true && this.openmct.time.clock() !== undefined) {
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+            }
         },
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
