@@ -52,16 +52,26 @@ const headerItems = [
         isSortable: true,
         property: 'start',
         name: 'Start Time',
-        format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
+            } else {
+                return `${moment(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: true,
         isSortable: true,
         property: 'end',
         name: 'End Time',
-        format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
+            } else {
+                return `${moment(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: false,
@@ -119,7 +129,6 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
 
-        this.updateTimestamp = _.debounce(this.updateTimestamp, 500);
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
@@ -188,7 +197,7 @@ export default {
             }
         },
         updateTimestamp(_bounds, isTick) {
-            if (isTick === true) {
+            if (isTick === true && this.openmct.time.clock() !== undefined) {
                 this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
@@ -202,7 +211,7 @@ export default {
             } else {
                 this.setSort();
                 this.setViewBounds();
-                this.listActivities();
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
         addItem(domainObject) {
