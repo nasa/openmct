@@ -603,19 +603,20 @@ export default {
             const mainYAxisId = this.config.yAxis.get('id');
             //There has to be at least one yAxis
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
-            // Repeat drawing for all yAxes
-            yAxisIds.forEach((id) => {
-                if (this.canDraw(id)) {
-                    this.updateViewport(id);
-                    this.drawSeries(id);
-                    this.drawRectangles(id);
-                    this.drawHighlights(id);
 
-                    // only draw these in fixed time mode or plot is paused
-                    if (this.annotationViewingAndEditingAllowed) {
-                        this.drawAnnotatedPoints(id);
-                        this.drawAnnotationSelections(id);
-                    }
+            // Repeat drawing for all yAxes
+            yAxisIds.filter(this.canDraw).forEach((id, yAxisIndex) => {
+                this.updateViewport(id);
+                this.drawSeries(id);
+                if (yAxisIndex === 0) {
+                    this.drawRectangles(id);
+                }
+
+                this.drawHighlights(id);
+                // only draw these in fixed time mode or plot is paused
+                if (this.annotationViewingAndEditingAllowed) {
+                    this.drawAnnotatedPoints(id);
+                    this.drawAnnotationSelections(id);
                 }
             });
         },
