@@ -172,7 +172,7 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
  */
 async function turnOffAutoscale(page) {
     // uncheck autoscale
-    await page.getByRole('listitem').filter({ hasText: 'Auto scale' }).getByRole('checkbox').uncheck();
+    await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 }
 
 /**

@@ -188,19 +188,16 @@ async function enableEditMode(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function enableLogMode(page) {
-    // turn on log mode
-    await expect(page.locator('.js-log-mode-input')).not.toBeChecked();
-    await page.locator('.js-log-mode-input').check();
-    // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).not.toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).check();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function disableLogMode(page) {
-    // turn off log mode
-    await expect(page.locator('.js-log-mode-input')).toBeChecked();
-    await page.locator('.js-log-mode-input').uncheck();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).uncheck();
 }
 
 /**

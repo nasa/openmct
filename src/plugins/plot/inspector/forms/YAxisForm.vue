@@ -19,6 +19,7 @@
         </li>
         <li class="grid-row">
             <div
+                id="log-mode-checkbox"
                 class="grid-cell label"
                 title="Enable log mode."
             >
@@ -29,6 +30,7 @@
                 <input
                     v-model="logMode"
                     class="js-log-mode-input"
+                    aria-labelledby="log-mode-checkbox"
                     type="checkbox"
                     @change="updateForm('logMode')"
                 />
@@ -36,12 +38,14 @@
         </li>
         <li class="grid-row">
             <div
+                id="autoscale-checkbox"
                 class="grid-cell label"
                 title="Automatically scale the Y axis to keep all values in view."
             >Auto scale</div>
             <div class="grid-cell value"><input
                 v-model="autoscale"
                 type="checkbox"
+                aria-labelledby="autoscale-checkbox"
                 @change="updateForm('autoscale')"
             ></div>
         </li>
