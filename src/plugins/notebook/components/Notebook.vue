@@ -320,7 +320,7 @@ export default {
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
     async mounted() {
-        await this.loadAnnotations();
+        this.loadAnnotations();
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 

@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import CopyToNotebookAction from './actions/CopyToNotebookAction';
+import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import NotebookViewProvider from './NotebookViewProvider';
 import NotebookType from './NotebookType';
@@ -80,6 +81,7 @@ function installBaseNotebookFunctionality(openmct) {
     };
     openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
     openmct.actions.register(new CopyToNotebookAction(openmct));
+    openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
     const notebookSnapshotIndicator = new Vue ({
         components: {
