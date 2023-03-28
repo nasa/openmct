@@ -1,10 +1,6 @@
 import {saveAs} from 'saveAs';
 import Moment from 'moment';
 
-const exportMetaData = true;
-const exportTags = true;
-// eslint-disable-next-line no-unused-vars
-const exportSnapshots = true;
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
 
@@ -21,71 +17,8 @@ export default class ExportNotebookAsTextAction {
         this.priority = 1;
     }
 
-    async invoke(objectPath, view) {
-        const availableTags = this.openmct.annotation.getAvailableTags();
-        const identifier = objectPath[0].identifier;
-        const domainObject = await this.openmct.objects.get(identifier);
-        let foundAnnotations = [];
-        // only load annotations if there are tags
-        if (availableTags.length) {
-            foundAnnotations = await this.openmct.annotation.getAnnotations(domainObject.identifier);
-        }
-
-        console.debug('🧞‍♀️ ExportNotebookAsTextAction notebook', domainObject);
-        console.debug('🧞‍♀️ ExportNotebookAsTextAction annotations', foundAnnotations);
-
-        let notebookAsText = `# ${domainObject.name}\n\n`;
-
-        if (exportMetaData) {
-            if (exportMetaData) {
-                const createdTimestamp = domainObject.created;
-                const createdBy = domainObject.createdBy ?? UNKNOWN_USER;
-                const modifiedBy = domainObject.modifiedBy ?? UNKNOWN_USER;
-                const modifiedTimestamp = domainObject.modified ?? domainObject.created;
-                notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
-                notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
-            }
-        }
-
-        const notebookSections = domainObject.configuration.sections;
-        const notebookEntries = domainObject.configuration.entries;
-
-        notebookSections.forEach(section => {
-            notebookAsText += `## ${section.name}\n\n`;
-
-            const notebookPages = section.pages;
-
-            notebookPages.forEach(page => {
-                notebookAsText += `### ${page.name}\n\n`;
-
-                const notebookPageEntries = notebookEntries[section.id]?.[page.id];
-                notebookPageEntries.forEach(entry => {
-                    if (exportMetaData) {
-                        const createdTimestamp = entry.createdOn;
-                        const createdBy = entry.createdBy ?? UNKNOWN_USER;
-                        const modifiedBy = entry.modifiedBy ?? UNKNOWN_USER;
-                        const modifiedTimestamp = entry.modified ?? entry.created;
-                        notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
-                        notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
-                    }
-
-                    if (exportTags) {
-                        const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-                        const tags = this.getTagsForEntry(entry, domainObjectKeyString, foundAnnotations);
-                        const tagNames = tags.map(tag => this.getTagName(tag, availableTags));
-                        if (tagNames) {
-                            notebookAsText += `Tags: ${tagNames.join(', ')}\n\n`;
-                        }
-                    }
-
-                    notebookAsText += `${entry.text}\n\n`;
-                });
-            });
-        });
-
-        const blob = new Blob([notebookAsText], {type: "text/markdown"});
-        const fileName = domainObject.name + '.md';
-        saveAs(blob, fileName);
+    invoke(objectPath) {
+        this.showForm(objectPath);
     }
 
     getTagName(tagId, availableTags) {
@@ -126,5 +59,101 @@ export default class ExportNotebookAsTextAction {
         const type = this.openmct.types.get(domainObject.type);
 
         return type?.definition?.name === 'Notebook';
+    }
+
+    async onSave(changes, objectPath) {
+        console.debug('🧞‍♀️ ExportNotebookAsTextAction changes', changes);
+        const availableTags = this.openmct.annotation.getAvailableTags();
+        const identifier = objectPath[0].identifier;
+        const domainObject = await this.openmct.objects.get(identifier);
+        let foundAnnotations = [];
+        // only load annotations if there are tags
+        if (availableTags.length) {
+            foundAnnotations = await this.openmct.annotation.getAnnotations(domainObject.identifier);
+        }
+
+        console.debug('🧞‍♀️ ExportNotebookAsTextAction notebook', domainObject);
+        console.debug('🧞‍♀️ ExportNotebookAsTextAction annotations', foundAnnotations);
+
+        let notebookAsText = `# ${domainObject.name}\n\n`;
+
+        if (changes.exportMetaData) {
+            const createdTimestamp = domainObject.created;
+            const createdBy = domainObject.createdBy ?? UNKNOWN_USER;
+            const modifiedBy = domainObject.modifiedBy ?? UNKNOWN_USER;
+            const modifiedTimestamp = domainObject.modified ?? domainObject.created;
+            notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
+            notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
+        }
+
+        const notebookSections = domainObject.configuration.sections;
+        const notebookEntries = domainObject.configuration.entries;
+
+        notebookSections.forEach(section => {
+            notebookAsText += `## ${section.name}\n\n`;
+
+            const notebookPages = section.pages;
+
+            notebookPages.forEach(page => {
+                notebookAsText += `### ${page.name}\n\n`;
+
+                const notebookPageEntries = notebookEntries[section.id]?.[page.id];
+                notebookPageEntries.forEach(entry => {
+                    if (changes.exportMetaData) {
+                        const createdTimestamp = entry.createdOn;
+                        const createdBy = entry.createdBy ?? UNKNOWN_USER;
+                        const modifiedBy = entry.modifiedBy ?? UNKNOWN_USER;
+                        const modifiedTimestamp = entry.modified ?? entry.created;
+                        notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
+                        notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
+                    }
+
+                    if (changes.exportTags) {
+                        const domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+                        const tags = this.getTagsForEntry(entry, domainObjectKeyString, foundAnnotations);
+                        const tagNames = tags.map(tag => this.getTagName(tag, availableTags));
+                        if (tagNames) {
+                            notebookAsText += `Tags: ${tagNames.join(', ')}\n\n`;
+                        }
+                    }
+
+                    notebookAsText += `${entry.text}\n\n`;
+                });
+            });
+        });
+
+        const blob = new Blob([notebookAsText], {type: "text/markdown"});
+        const fileName = domainObject.name + '.md';
+        saveAs(blob, fileName);
+    }
+
+    async showForm(objectPath) {
+        const formStructure = {
+            title: "Export Notebook Text",
+            sections: [
+                {
+                    rows: [
+                        {
+                            key: "exportMetaData",
+                            control: "toggleSwitch",
+                            name: "Include Metadata (created/modified, etc.)",
+                            required: true,
+                            value: false
+                        },
+                        {
+                            name: "Include Tags",
+                            control: "toggleSwitch",
+                            required: true,
+                            key: 'exportTags',
+                            value: false
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const changes = await this.openmct.forms.showForm(formStructure);
+
+        return this.onSave(changes, objectPath);
     }
 }
