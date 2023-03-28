@@ -319,7 +319,7 @@ export default {
         this.getSearchResults = debounce(this.getSearchResults, 500);
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
-    async mounted() {
+    mounted() {
         this.loadAnnotations();
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
