@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,12 +28,15 @@
     <section class="c-cs__current-output c-section">
         <div class="c-cs__content c-cs__current-output-value">
             <span class="c-cs__current-output-value__label">Current Output</span>
-            <span class="c-cs__current-output-value__value">
+            <span
+                class="c-cs__current-output-value__value"
+                aria-label="Current Output Value"
+            >
                 <template v-if="currentConditionOutput">
                     {{ currentConditionOutput }}
                 </template>
                 <template v-else>
-                    {{ defaultConditionOutput }}
+                    ---
                 </template>
             </span>
         </div>
@@ -51,7 +54,7 @@
             :is-editing="isEditing"
             :test-data="testData"
             @conditionSetResultUpdated="updateCurrentOutput"
-            @updateDefaultOutput="updateDefaultOutput"
+            @noTelemetryObjects="updateCurrentOutput('---')"
             @telemetryUpdated="updateTelemetry"
             @telemetryStaleness="handleStaleness"
         />
@@ -75,7 +78,6 @@ export default {
     data() {
         return {
             currentConditionOutput: '',
-            defaultConditionOutput: '',
             telemetryObjs: [],
             testData: {},
             staleObjects: []

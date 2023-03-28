@@ -97,7 +97,7 @@
 
         @include hover {
             background: $colorItemTreeHoverBg;
-            filter: $filterHov;
+            //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
         }
 
         &.is-navigated-object,
@@ -189,14 +189,6 @@
 
             [class*="__type-icon"]:before {
                 color: $colorItemTreeSelectedIcon;
-            }
-        }
-    }
-
-    &__item__label {
-        @include desktop {
-            &:hover {
-                filter: $filterHov;
             }
         }
     }

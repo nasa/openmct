@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -62,6 +62,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
+ * @property {Object.<string, any>} [configuration] A key-value map containing configuration
+ *           settings for this domain object.
  * @memberof module:openmct.ObjectAPI~
  */
 

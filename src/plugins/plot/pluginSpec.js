@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -279,8 +279,10 @@ describe("the plugin", function () {
                     }
                 ]
             ];
-            const plotInspectorView = openmct.inspectorViews.get(selection);
-            expect(plotInspectorView.length).toEqual(1);
+            const applicableInspectorViews = openmct.inspectorViews.get(selection);
+            const plotInspectorView = applicableInspectorViews.find(view => view.name = 'Plots Configuration');
+
+            expect(plotInspectorView).toBeDefined();
         });
 
         it("provides a stacked plot view for objects with telemetry", () => {

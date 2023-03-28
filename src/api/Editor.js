@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ export default class Editor extends EventEmitter {
     }
 
     /**
-     * @returns true if the application is in edit mode, false otherwise.
+     * @returns {boolean} true if the application is in edit mode, false otherwise.
      */
     isEditing() {
         return this.editing;

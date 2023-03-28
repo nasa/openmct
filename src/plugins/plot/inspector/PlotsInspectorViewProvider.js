@@ -5,7 +5,7 @@ import Vue from 'vue';
 export default function PlotsInspectorViewProvider(openmct) {
     return {
         key: 'plots-inspector',
-        name: 'Plots Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
@@ -44,6 +44,9 @@ export default function PlotsInspectorViewProvider(openmct) {
                         template: '<plot-options></plot-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -51,9 +54,6 @@ export default function PlotsInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

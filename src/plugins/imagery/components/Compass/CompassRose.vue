@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,7 +75,6 @@
                     :style="sunHeadingStyle"
                 />
 
-                <!-- Camera FOV -->
                 <mask
                     id="mask2"
                     class="c-cr__cam-fov-l-mask"
@@ -117,10 +116,10 @@
                         class="cr-vrover"
                         :style="camAngleAndPositionStyle"
                     >
-                        <!-- Equipment body. Rotates relative to the camera pan value for cams that gimbal. -->
+                        <!-- Equipment body. Rotates relative to the camera pan value for cameras that gimble. -->
                         <path
                             class="cr-vrover__body"
-                            :style="camGimbalAngleStyle"
+                            :style="gimbledCameraPanStyle"
                             x
                             fill-rule="evenodd"
                             clip-rule="evenodd"
@@ -128,6 +127,7 @@
                         />
                     </g>
 
+                    <!-- Camera FOV -->
                     <g
                         class="c-cr__cam-fov"
                     >
@@ -160,7 +160,7 @@
             <!-- NSEW and ticks -->
             <g
                 class="c-cr__nsew"
-                :style="compassRoseStyle"
+                :style="compassDialStyle"
             >
                 <g class="c-cr__ticks-major">
                     <path d="M50 3L43 10H57L50 3Z" />
@@ -259,23 +259,32 @@ import { throttle } from 'lodash';
 
 export default {
     props: {
+        cameraAngleOfView: {
+            type: Number,
+            required: true
+        },
         heading: {
             type: Number,
-            required: true,
-            default() {
-                return 0;
-            }
+            required: true
         },
-        sunHeading: {
-            type: Number,
-            default: undefined
-        },
-        cameraPan: {
+        cameraAzimuth: {
             type: Number,
             default: undefined
         },
         transformations: {
             type: Object,
+            required: true
+        },
+        hasGimble: {
+            type: Boolean,
+            required: true
+        },
+        normalizedCameraAzimuth: {
+            type: Number,
+            required: true
+        },
+        sunHeading: {
+            type: Number,
             default: undefined
         },
         sizedImageDimensions: {
@@ -289,18 +298,6 @@ export default {
         };
     },
     computed: {
-        cameraHeading() {
-            return this.cameraPan ?? this.heading;
-        },
-        cameraAngleOfView() {
-            const cameraAngleOfView = this.transformations?.cameraAngleOfView;
-
-            if (!cameraAngleOfView) {
-                console.warn('No Camera Angle of View provided');
-            }
-
-            return cameraAngleOfView;
-        },
         camAngleAndPositionStyle() {
             const translateX = this.transformations?.translateX;
             const translateY = this.transformations?.translateY;
@@ -309,18 +306,22 @@ export default {
 
             return { transform: `translate(${translateX}%, ${translateY}%) rotate(${rotation}deg) scale(${scale})` };
         },
-        camGimbalAngleStyle() {
-            const rotation = rotate(this.heading);
+        gimbledCameraPanStyle() {
+            if (!this.hasGimble) {
+                return;
+            }
+
+            const gimbledCameraPan = rotate(this.normalizedCameraAzimuth, -this.heading);
 
             return {
-                transform: `rotate(${ rotation }deg)`
+                transform: `rotate(${ -gimbledCameraPan }deg)`
             };
         },
-        compassRoseStyle() {
+        compassDialStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
         north() {
-            return this.lockCompass ? rotate(-this.cameraHeading) : 0;
+            return this.lockCompass ? rotate(-this.normalizedCameraAzimuth) : 0;
         },
         cardinalTextRotateN() {
             return { transform: `translateY(-27%) rotate(${ -this.north }deg)` };
@@ -348,7 +349,7 @@ export default {
             };
         },
         cameraHeadingStyle() {
-            const rotation = rotate(this.north, this.cameraHeading);
+            const rotation = rotate(this.north, this.normalizedCameraAzimuth);
 
             return {
                 transform: `rotate(${ rotation }deg)`

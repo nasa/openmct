@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,6 +30,7 @@ $mobileOverlayMargin: 20px;
 $mobileMenuIconD: 25px;
 $phoneItemH: floor(math.div($gridItemMobile, 4));
 $tabletItemH: floor(math.div($gridItemMobile, 3));
+$shellTimeConductorMobileH: 90px;
 
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobileTreeItemH: 35px;
