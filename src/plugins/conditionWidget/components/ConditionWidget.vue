@@ -25,6 +25,7 @@
     :is="urlDefined ? 'a' : 'span'"
     class="c-condition-widget u-style-receiver js-style-receiver"
     :href="url"
+    :target="url ? '_BLANK' : ''"
 >
     <div class="c-condition-widget__label">
         {{ label }}
