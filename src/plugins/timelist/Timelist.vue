@@ -339,10 +339,7 @@ export default {
                 activities = activities.concat(this.planData[key]);
             });
 
-            if (this.isRealTime) {
-                // avoid filtering activities when in fixed time
-                activities = activities.filter(this.filterActivities);
-            }
+            activities = activities.filter(this.filterActivities);
 
             activities = this.applyStyles(activities);
             this.setScrollTop();
@@ -359,21 +356,24 @@ export default {
             this.listActivities();
         },
         filterActivities(activity, index) {
-
             const hasFilterMatch = this.filterByName(activity.name);
 
             if (hasFilterMatch === false || this.hideAll === true) {
                 return false;
             }
 
-            if (this.showAll === true) {
+            if (this.isEditing && this.showAll) {
                 return true;
             }
 
             //current event or future start event or past end event
             const isCurrent = (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end);
-            const isPast = (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)));
-            const isFuture = (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
+            const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
+            const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
+
+            if (!this.isRealTime) {
+                return isCurrent || isFuture;
+            }
 
             return isCurrent || isPast || isFuture;
         },
