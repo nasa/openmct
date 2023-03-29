@@ -289,6 +289,7 @@ export default {
             this.openmct.objectViews.on('clearData', this.clearData);
 
             this.$nextTick(() => {
+                this.updateStyle(this.styleRuleManager?.currentStyle);
                 this.getActionCollection();
             });
         },

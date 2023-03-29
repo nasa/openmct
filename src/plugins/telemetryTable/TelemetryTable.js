@@ -29,7 +29,7 @@ define([
     './TelemetryTableColumn',
     './TelemetryTableUnitColumn',
     './TelemetryTableConfiguration',
-    '@/utils/staleness'
+    '../../utils/staleness'
 ], function (
     EventEmitter,
     _,
