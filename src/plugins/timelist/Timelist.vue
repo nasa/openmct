@@ -129,6 +129,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
 
+        this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
         this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
@@ -197,15 +198,8 @@ export default {
             }
         },
         updateTimestamp(_bounds, isTick) {
-            if (!this.updatingView) {
-                this.updatingView = true;
-                requestAnimationFrame(() => {
-                    if (isTick === true && this.openmct.time.clock() !== undefined) {
-                        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-                    }
-
-                    this.updatingView = false;
-                });
+            if (isTick === true && this.openmct.time.clock() !== undefined) {
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
         },
         setViewFromClock(newClock) {
