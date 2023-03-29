@@ -37,7 +37,7 @@ export default {
                 // eslint-disable-next-line you-dont-need-lodash-underscore/get
                 let value = _.get(this.item, property.key);
                 if (property.format) {
-                    value = property.format(value, this.item, property.key);
+                    value = property.format(value, this.item, property.key, this.openmct);
                 }
 
                 values.push({
