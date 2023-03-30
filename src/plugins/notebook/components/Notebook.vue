@@ -193,7 +193,7 @@ import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 
@@ -799,6 +799,14 @@ export default {
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            selectEntry({
+                element: this.$el,
+                entryId: id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                onAnnotationChange: this.timestampAndUpdate,
+                notebookAnnotations: this.notebookAnnotations[id]
+            });
             this.focusEntryId = id;
             this.selectedEntryId = id;
             this.filterAndSortEntries();
