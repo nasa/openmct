@@ -62,7 +62,6 @@ export default class ExportNotebookAsTextAction {
     }
 
     async onSave(changes, objectPath) {
-        console.debug('🧞‍♀️ ExportNotebookAsTextAction changes', changes);
         const availableTags = this.openmct.annotation.getAvailableTags();
         const identifier = objectPath[0].identifier;
         const domainObject = await this.openmct.objects.get(identifier);
@@ -71,9 +70,6 @@ export default class ExportNotebookAsTextAction {
         if (availableTags.length) {
             foundAnnotations = await this.openmct.annotation.getAnnotations(domainObject.identifier);
         }
-
-        console.debug('🧞‍♀️ ExportNotebookAsTextAction notebook', domainObject);
-        console.debug('🧞‍♀️ ExportNotebookAsTextAction annotations', foundAnnotations);
 
         let notebookAsText = `# ${domainObject.name}\n\n`;
 
