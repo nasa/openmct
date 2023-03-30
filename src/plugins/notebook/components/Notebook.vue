@@ -327,6 +327,9 @@ export default {
         this.openmct.selection.on('change', this.updateSelection);
         this.transaction = null;
 
+        console.debug(`Notebook: ${this.domainObject.name} mounted`);
+        console.debug(`🍇 configuration`, this.domainObject.configuration);
+
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
@@ -543,6 +546,7 @@ export default {
                                 this.updateEntries(entries);
                                 this.filterAndSortEntries();
                                 this.removeAnnotations(entryId);
+                                this.selectPreviousEntry(entryPos, entries);
                             } else {
                                 this.cancelTransaction();
                             }
@@ -562,6 +566,26 @@ export default {
         removeAnnotations(entryId) {
             if (this.notebookAnnotations[entryId]) {
                 this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
+            }
+        },
+        selectPreviousEntry(entryPositionDeleted, entries) {
+            let entryPositionToSelect = entryPositionDeleted - 1;
+            if (entryPositionToSelect <= 0) {
+                entryPositionToSelect = 0;
+            }
+
+            const entryToSelect = entries[entryPositionToSelect];
+            const entryId = entryToSelect.id;
+            this.selectedEntryId = entryId;
+            if (entryToSelect) {
+                selectEntry({
+                    element: this.$el,
+                    entryId,
+                    domainObject: this.domainObject,
+                    openmct: this.openmct,
+                    onAnnotationChange: this.timestampAndUpdate,
+                    notebookAnnotations: this.notebookAnnotations[entryId]
+                });
             }
         },
         checkEntryPos(entry) {

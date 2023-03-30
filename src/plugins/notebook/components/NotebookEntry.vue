@@ -479,12 +479,8 @@ export default {
         updateEntryValue($event) {
             this.editMode = false;
             const value = $event.target.innerText;
-            if (value !== this.entry.text && value.match(/\S/)) {
-                this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
-                this.timestampAndUpdate();
-            } else {
-                this.$emit('cancelEdit');
-            }
+            this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+            this.timestampAndUpdate();
         },
         selectAndEmitEntry(event, entry) {
             selectEntry({
