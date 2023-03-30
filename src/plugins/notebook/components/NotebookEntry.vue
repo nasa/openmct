@@ -491,6 +491,7 @@ export default {
                 onAnnotationChange: this.timestampAndUpdate,
                 notebookAnnotations: this.notebookAnnotations
             });
+            event.stopPropagation();
             this.$emit('entry-selection', this.entry);
         }
     }

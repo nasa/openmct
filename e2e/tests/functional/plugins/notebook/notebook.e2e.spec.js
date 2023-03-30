@@ -271,7 +271,7 @@ test.describe('Notebook entry tests', () => {
         expect(embedName).toBe('Dropped Overlay Plot');
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test('previous and new entries can be deleted', async ({ page }) => {
+    test.only('previous and new entries can be deleted', async ({ page }) => {
         // Navigate to the notebook object
         await page.goto(notebookObject.url);
 

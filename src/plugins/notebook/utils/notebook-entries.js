@@ -71,7 +71,6 @@ export function selectEntry({
             }
         ],
         false);
-    event.stopPropagation();
 }
 
 export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {

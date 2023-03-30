@@ -327,9 +327,6 @@ export default {
         this.openmct.selection.on('change', this.updateSelection);
         this.transaction = null;
 
-        console.debug(`Notebook: ${this.domainObject.name} mounted`);
-        console.debug(`🍇 configuration`, this.domainObject.configuration);
-
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
         this.filterAndSortEntries();
@@ -581,15 +578,15 @@ export default {
 
             const entryToSelect = entries[entryPositionToSelect];
             const entryId = entryToSelect.id;
-            this.selectedEntryId = entryId;
-            if (entryToSelect) {
+            const entryNotebookAnnotations = this.notebookAnnotations[entryId] ?? {};
+            if (entryId) {
+                this.selectedEntryId = entryId;
                 selectEntry({
                     element: this.$el,
                     entryId,
                     domainObject: this.domainObject,
                     openmct: this.openmct,
-                    onAnnotationChange: this.timestampAndUpdate,
-                    notebookAnnotations: this.notebookAnnotations[entryId]
+                    notebookAnnotations: entryNotebookAnnotations
                 });
             }
         },
@@ -828,17 +825,21 @@ export default {
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+            console.debug(`🍉 about to selectEntry`);
+
+            const element = this.$refs.notebookEntries.querySelector(`#${id}`);
+            const entryAnnotations = this.notebookAnnotations[id] ?? {};
             selectEntry({
-                element: this.$el,
+                element,
                 entryId: id,
                 domainObject: this.domainObject,
                 openmct: this.openmct,
-                onAnnotationChange: this.timestampAndUpdate,
-                notebookAnnotations: this.notebookAnnotations[id]
+                notebookAnnotations: entryAnnotations
             });
+            console.debug(`🍉 got to post selectEntry`, id);
+            this.filterAndSortEntries();
             this.focusEntryId = id;
             this.selectedEntryId = id;
-            this.filterAndSortEntries();
         },
         orientationChange() {
             this.formatSidebar();
