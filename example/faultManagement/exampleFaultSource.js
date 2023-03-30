@@ -33,6 +33,8 @@ export default function (staticFaults = false) {
                 return Promise.resolve(faultsData);
             },
             subscribe(domainObject, callback) {
+                callback({ type: 'global-alarm-status' });
+
                 return () => {};
             },
             supportsRequest(domainObject) {
