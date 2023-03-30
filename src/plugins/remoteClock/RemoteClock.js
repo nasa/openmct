@@ -46,6 +46,7 @@ export default class RemoteClock extends DefaultClock {
 
         this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
+        this.formatTime = undefined;
         this.metadata = undefined;
 
         this.lastTick = 0;
@@ -136,6 +137,10 @@ export default class RemoteClock extends DefaultClock {
         let timeFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
+        };
+
+        this.formatTime = (datum) => {
+            return timeFormatter.format(datum);
         };
     }
 
