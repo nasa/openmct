@@ -809,7 +809,10 @@ export default {
                 openmct: this.openmct,
                 notebookAnnotations: entryAnnotations
             });
-            event.stopPropagation();
+            if (event) {
+                event.stopPropagation();
+            }
+
             this.filterAndSortEntries();
             this.focusEntryId = id;
             this.selectedEntryId = id;
