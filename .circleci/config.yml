@@ -175,11 +175,11 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node14-lint
-          node-version: lts/fermium
+          name: node16-lint
+          node-version: lts/gallium
       - unit-test:
           name: node18-chrome
-          node-version: "18"
+          node-version: lts/hydrogen
       - e2e-test:
           name: e2e-stable
           node-version: lts/gallium
@@ -192,14 +192,11 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node14-chrome-nightly
-          node-version: lts/fermium
-      - unit-test:
           name: node16-chrome-nightly
           node-version: lts/gallium
       - unit-test:
           name: node18-chrome
-          node-version: "18"
+          node-version: lts/hydrogen
       - npm-audit:
           node-version: lts/gallium
       - e2e-test:
