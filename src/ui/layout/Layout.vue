@@ -102,6 +102,7 @@
                         class="c-icon-button icon-clear-data"
                         aria-label="Clear Recently Viewed"
                         title="Clear Recently Viewed"
+                        :disabled="disableClearButton"
                         @click="handleClearRecentObjects"
                     >
                     </button>
@@ -197,7 +198,8 @@ export default {
             triggerSync: false,
             triggerReset: false,
             headExpanded,
-            isResizing: false
+            isResizing: false,
+            disableClearButton: false
         };
     },
     computed: {
@@ -266,6 +268,7 @@ export default {
         },
         toggleHasToolbar(selection) {
             let structure = undefined;
+            this.disableClearButton = false;
 
             if (!selection || !selection[0]) {
                 structure = [];
@@ -289,6 +292,7 @@ export default {
             this.triggerReset = !this.triggerReset;
         },
         handleClearRecentObjects() {
+            this.disableClearButton = true;
             this.$refs.recentObjectsList.clearRecentObjects();
         },
         onStartResizing() {
