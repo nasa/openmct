@@ -63,7 +63,7 @@
     "typescript": "4.9.5",
     "uuid": "9.0.0",
     "vue": "2.6.14",
-    "vue-eslint-parser": "9.1.0",
+    "vue-eslint-parser": "9.1.1",
     "vue-loader": "15.9.8",
     "vue-template-compiler": "2.6.14",
     "webpack": "5.76.3",
