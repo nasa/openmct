@@ -219,7 +219,15 @@ test.describe('Notebook entry tests', () => {
             type: NOTEBOOK_NAME
         });
     });
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test('When a new entry is created, it should be focused and selected', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Click .c-notebook__drag-area
+        await page.locator('.c-notebook__drag-area').click();
+        await expect(page.locator('[aria-label="Notebook Entry Input"]')).toBeVisible();
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toHaveClass(/is-selected/);
+    });
     test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
         await createDomainObjectWithDefaults(page, {
@@ -263,7 +271,26 @@ test.describe('Notebook entry tests', () => {
         expect(embedName).toBe('Dropped Overlay Plot');
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+    test('previous and new entries can be deleted', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        await nbUtils.enterTextEntry(page, 'First Entry');
+        await page.hover('text="First Entry"');
+        await page.click('button[title="Delete this entry"]');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="First Entry"')).toBeHidden();
+        await nbUtils.enterTextEntry(page, 'Another First Entry');
+        await nbUtils.enterTextEntry(page, 'Second Entry');
+        await nbUtils.enterTextEntry(page, 'Third Entry');
+        await page.hover('[aria-label="Notebook Entry"] >> nth=2');
+        await page.click('button[title="Delete this entry"] >> nth=2');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="Third Entry"')).toBeHidden();
+        await expect(page.locator('text="Another First Entry"')).toBeVisible();
+        await expect(page.locator('text="Second Entry"')).toBeVisible();
+        await expect(page.locator('[aria-label="Notebook Entry"] >> nth=1')).toHaveClass(/is-selected/);
+    });
     test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
 

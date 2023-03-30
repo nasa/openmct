@@ -569,6 +569,11 @@ export default {
             }
         },
         selectPreviousEntry(entryPositionDeleted, entries) {
+            if (!entries.length) {
+                // nothing to select
+                return;
+            }
+
             let entryPositionToSelect = entryPositionDeleted - 1;
             if (entryPositionToSelect <= 0) {
                 entryPositionToSelect = 0;

@@ -110,6 +110,24 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
+    test('Can add tags with blank entry', async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await selectInspectorTab(page, 'Annotations');
+
+        await nbUtils.enterTextEntry(page, '');
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+
+        // Click inside the tag search input
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Select the "Driving" tag
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
+    });
     test('Can cancel adding tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
