@@ -181,7 +181,7 @@ export default {
             this.updateViewContext();
             this.markRow(event);
 
-            const contextualDomainObject = await this.row.getContextualDomainObject?.();
+            const contextualDomainObject = await this.row.getContextualDomainObject?.(this.openmct, this.row.objectKeyString);
 
             let objectPath = this.objectPath;
             if (contextualDomainObject) {
