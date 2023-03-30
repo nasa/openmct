@@ -543,7 +543,6 @@ export default {
                                 this.updateEntries(entries);
                                 this.filterAndSortEntries();
                                 this.removeAnnotations(entryId);
-                                this.selectPreviousEntry(entryPos, entries);
                             } else {
                                 this.cancelTransaction();
                             }
@@ -563,31 +562,6 @@ export default {
         removeAnnotations(entryId) {
             if (this.notebookAnnotations[entryId]) {
                 this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
-            }
-        },
-        selectPreviousEntry(entryPositionDeleted, entries) {
-            if (!entries.length) {
-                // nothing to select
-                return;
-            }
-
-            let entryPositionToSelect = entryPositionDeleted - 1;
-            if (entryPositionToSelect <= 0) {
-                entryPositionToSelect = 0;
-            }
-
-            const entryToSelect = entries[entryPositionToSelect];
-            const entryId = entryToSelect.id;
-            const entryNotebookAnnotations = this.notebookAnnotations[entryId] ?? {};
-            if (entryId) {
-                this.selectedEntryId = entryId;
-                selectEntry({
-                    element: this.$el,
-                    entryId,
-                    domainObject: this.domainObject,
-                    openmct: this.openmct,
-                    notebookAnnotations: entryNotebookAnnotations
-                });
             }
         },
         checkEntryPos(entry) {
