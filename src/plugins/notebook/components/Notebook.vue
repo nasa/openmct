@@ -125,7 +125,7 @@
                 v-if="selectedPage && !selectedPage.isLocked"
                 :class="{ 'disabled': activeTransaction }"
                 class="c-notebook__drag-area icon-plus"
-                @click="newEntry()"
+                @click="newEntry(null, $event)"
                 @dragover="dragOver"
                 @drop.capture="dropCapture"
                 @drop="dropOnEntry($event)"
@@ -819,13 +819,12 @@ export default {
 
             return section.id;
         },
-        async newEntry(embed = null) {
+        async newEntry(embed, event) {
             this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
-            console.debug(`🍉 about to selectEntry`);
 
             const element = this.$refs.notebookEntries.querySelector(`#${id}`);
             const entryAnnotations = this.notebookAnnotations[id] ?? {};
@@ -836,7 +835,7 @@ export default {
                 openmct: this.openmct,
                 notebookAnnotations: entryAnnotations
             });
-            console.debug(`🍉 got to post selectEntry`, id);
+            event.stopPropagation();
             this.filterAndSortEntries();
             this.focusEntryId = id;
             this.selectedEntryId = id;
