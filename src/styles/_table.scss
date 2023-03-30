@@ -212,7 +212,15 @@ div.c-table {
         text-overflow: ellipsis;
     }
 
+    tbody tr {
+        &:hover {
+            background: $colorItemTreeHoverBg;
+        }
+    }
+
     td {
+        user-select: none; // Table supports context-click to display Actions menu, don't allow text selection.
+
         &.is-stale {
             @include isStaleElement();
         }

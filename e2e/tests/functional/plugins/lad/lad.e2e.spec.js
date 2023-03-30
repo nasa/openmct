@@ -27,26 +27,29 @@ test.describe('Testing LAD table configuration', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Create Sine Wave Generator
-        await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
-        });
-
         // Create LAD table
-        await createDomainObjectWithDefaults(page, {
+        const ladTable = await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
             name: "Test LAD Table"
         });
+
+        // Create Sine Wave Generator
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: "Test Sine Wave Generator",
+            parent: ladTable.uuid
+        });
+
+        await page.goto(ladTable.url);
     });
     test('in edit mode, LAD Tables provide ability to hide columns', async ({ page }) => {
         // Edit LAD table
         await page.locator('[title="Edit"]').click();
 
-        // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        // Add the Sine Wave Generator to the LAD table and save changes
-        await page.dragAndDrop('role=treeitem[name=/Test Sine Wave Generator/]', '.c-lad-table-wrapper');
+        // // Expand the 'My Items' folder in the left tree
+        // await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+        // // Add the Sine Wave Generator to the LAD table and save changes
+        // await page.dragAndDrop('role=treeitem[name=/Test Sine Wave Generator/]', '.c-lad-table-wrapper');
         // select configuration tab in inspector
         await selectInspectorTab(page, 'LAD Table Configuration');
 
@@ -112,6 +115,24 @@ test.describe('Testing LAD table configuration', () => {
         await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
         await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
         await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    });
+
+    test('LAD Tables don\'t allow selection of rows but does show context click menus', async ({ page }) => {
+        const cell = await page.locator('.js-first-data');
+        const userSelectable = await cell.evaluate((el) => {
+            return window.getComputedStyle(el).getPropertyValue('user-select');
+        });
+
+        expect(userSelectable).toBe('none');
+        // Right-click on the LAD table row
+        await cell.click({
+            button: 'right'
+        });
+        const menuOptions = page.locator('.c-menu ul');
+        await expect.soft(menuOptions).toContainText('View Full Datum');
+        await expect.soft(menuOptions).toContainText('View Historical Data');
+        await expect.soft(menuOptions).toContainText('Remove');
+        // await page.locator('li[title="Remove this object from its containing object."]').click();
     });
 });
 
