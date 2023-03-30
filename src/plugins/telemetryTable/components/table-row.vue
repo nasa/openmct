@@ -175,14 +175,22 @@ export default {
         getDatum() {
             return this.row.fullDatum;
         },
-        showContextMenu: function (event) {
+        showContextMenu: async function (event) {
             event.preventDefault();
 
             this.updateViewContext();
             this.markRow(event);
 
+            const contextualDomainObject = await this.row.getContextualDomainObject?.(this.openmct, this.row.objectKeyString);
+
+            let objectPath = this.objectPath;
+            if (contextualDomainObject) {
+                objectPath = objectPath.slice();
+                objectPath.unshift(contextualDomainObject);
+            }
+
             const actions = this.row.getContextMenuActions().map(key => this.openmct.actions.getAction(key));
-            const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
+            const menuItems = this.openmct.menus.actionsToMenuItems(actions, objectPath, this.currentView);
             if (menuItems.length) {
                 this.openmct.menus.showMenu(event.x, event.y, menuItems);
             }
