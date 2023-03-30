@@ -41,7 +41,7 @@
     "karma-sourcemap-loader": "0.3.8",
     "karma-spec-reporter": "0.0.36",
     "karma-webpack": "5.0.0",
-    "kdbush": "^3.0.0",
+    "kdbush": "3.0.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
     "mini-css-extract-plugin": "2.7.5",
@@ -59,7 +59,7 @@
     "sass": "1.59.3",
     "sass-loader": "13.2.1",
     "sinon": "15.0.1",
-    "style-loader": "^3.3.1",
+    "style-loader": "3.3.2",
     "typescript": "4.9.5",
     "uuid": "9.0.0",
     "vue": "2.6.14",
@@ -107,7 +107,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=14.19.1"
+    "node": ">=16.20.0"
   },
   "browserslist": [
     "Firefox ESR",
