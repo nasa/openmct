@@ -88,7 +88,7 @@ define([], function () {
         }
 
         getContextMenuActions() {
-            return ['viewDatumAction'];
+            return ['viewDatumAction', 'viewHistoricalData'];
         }
     }
 
