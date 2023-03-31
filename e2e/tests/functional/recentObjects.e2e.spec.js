@@ -253,8 +253,6 @@ test.describe('Recent Objects', () => {
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
     });
     test("Clears the recent objects and disables the button", async ({ page }) => {
-        test.slow();
-
         // Assert that the list initially contains 3 objects (clock, folder, my items)
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
 
