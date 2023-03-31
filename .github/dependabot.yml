@@ -13,6 +13,8 @@ updates:
       - "pr:daveit"
       - "pr:platform"
     ignore:
+      #Temporarily Ignore until we address https://github.com/nasa/openmct/issues/6483
+      - dependency-name: "typescript"
       #We have to source the playwright container which is not detected by Dependabot
       - dependency-name: "@playwright/test"
       - dependency-name: "playwright-core"
