@@ -345,11 +345,11 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-            activities = activities.filter(this.filterActivities);
+            activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
             activities = this.applyStyles(activities);
             this.setScrollTop();
             // sort by start time
-            this.planActivities = activities.sort(this.sortByStartTime);
+            this.planActivities = activities;
         },
         updateTimeStampAndListActivities(time) {
             this.timestamp = time;
