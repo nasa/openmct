@@ -198,7 +198,7 @@ test.describe('Notebook page tests', () => {
     });
 });
 
-test.describle('Notebook export tests', () => {
+test.describe('Notebook export tests', () => {
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
