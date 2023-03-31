@@ -350,9 +350,7 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-
             activities = activities.filter(this.filterActivities);
-
             activities = this.applyStyles(activities);
             this.setScrollTop();
             // sort by start time
