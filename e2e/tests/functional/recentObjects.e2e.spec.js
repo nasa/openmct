@@ -256,6 +256,13 @@ test.describe('Recent Objects', () => {
         // Assert that the list initially contains 3 objects (clock, folder, my items)
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
 
+        // Assert that the button is enabled
+        expect(
+            await page
+                .getByRole("button", { name: "Clear Recently Viewed" })
+                .isEnabled()
+        ).toBe(true);
+
         // Click the aria-label="Clear Recently Viewed" button
         await page.getByRole("button", { name: "Clear Recently Viewed" }).click();
 
@@ -277,6 +284,13 @@ test.describe('Recent Objects', () => {
     test("After deactivating the button, new objects must be inserted and the button becomes active again.", async ({ page }) => {
         // Assert that the list initially contains 3 objects (clock, folder, my items)
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+
+        // Assert that the button is enabled
+        expect(
+            await page
+                .getByRole("button", { name: "Clear Recently Viewed" })
+                .isEnabled()
+        ).toBe(true);
 
         // Click the aria-label="Clear Recently Viewed" button
         await page.getByRole("button", { name: "Clear Recently Viewed" }).click();
