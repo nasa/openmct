@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { streamToString } = require('../../../../baseFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
 const nbUtils = require('../../../../helper/notebookUtils');

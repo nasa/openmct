@@ -24,8 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { streamToString } = require('../../../../baseFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 const path = require('path');
