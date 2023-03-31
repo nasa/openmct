@@ -2,7 +2,7 @@ import objectLink from '../../../ui/mixins/object-link';
 import { v4 as uuid } from 'uuid';
 
 async function getUsername(openmct) {
-    let username = '';
+    let username = null;
 
     if (openmct.user.hasProvider()) {
         const user = await openmct.user.getCurrentUser();

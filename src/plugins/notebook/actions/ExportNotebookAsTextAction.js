@@ -1,8 +1,8 @@
 import {saveAs} from 'saveAs';
 import Moment from 'moment';
-
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
+const allowedTypes = ['Notebook', 'Notebook Shift Log'];
 
 export default class ExportNotebookAsTextAction {
 
@@ -58,7 +58,7 @@ export default class ExportNotebookAsTextAction {
         const domainObject = objectPath[0];
         const type = this.openmct.types.get(domainObject.type);
 
-        return type?.definition?.name === 'Notebook';
+        return allowedTypes.includes(type?.definition?.name);
     }
 
     async onSave(changes, objectPath) {
@@ -75,8 +75,8 @@ export default class ExportNotebookAsTextAction {
 
         if (changes.exportMetaData) {
             const createdTimestamp = domainObject.created;
-            const createdBy = domainObject.createdBy ?? UNKNOWN_USER;
-            const modifiedBy = domainObject.modifiedBy ?? UNKNOWN_USER;
+            const createdBy = this.getUserName(domainObject.createdBy);
+            const modifiedBy = this.getUserName(domainObject.modifiedBy);
             const modifiedTimestamp = domainObject.modified ?? domainObject.created;
             notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
             notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
@@ -97,8 +97,8 @@ export default class ExportNotebookAsTextAction {
                 notebookPageEntries.forEach(entry => {
                     if (changes.exportMetaData) {
                         const createdTimestamp = entry.createdOn;
-                        const createdBy = entry.createdBy ?? UNKNOWN_USER;
-                        const modifiedBy = entry.modifiedBy ?? UNKNOWN_USER;
+                        const createdBy = this.getUserName(entry.createdBy);
+                        const modifiedBy = this.getUserName(entry.modifiedBy);
                         const modifiedTimestamp = entry.modified ?? entry.created;
                         notebookAsText += `Created on ${this.formatTimeStamp(createdTimestamp)} by user ${createdBy}\n\n`;
                         notebookAsText += `Updated on ${this.formatTimeStamp(modifiedTimestamp)} by user ${modifiedBy}\n\n`;
@@ -121,6 +121,14 @@ export default class ExportNotebookAsTextAction {
         const blob = new Blob([notebookAsText], {type: "text/markdown"});
         const fileName = domainObject.name + '.md';
         saveAs(blob, fileName);
+    }
+
+    getUserName(userId) {
+        if (userId && userId.length) {
+            return userId;
+        }
+
+        return UNKNOWN_USER;
     }
 
     async showForm(objectPath) {
