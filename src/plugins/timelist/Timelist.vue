@@ -30,7 +30,7 @@
         :header-items="headerItems"
         :default-sort="defaultSort"
         class="sticky"
-        @sort-changed="updateDefaultSort"
+        @sortChanged="updateDefaultSort"
     />
 </div>
 </template>
