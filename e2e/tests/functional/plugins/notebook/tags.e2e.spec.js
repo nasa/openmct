@@ -34,9 +34,6 @@ const nbUtils = require('../../../../helper/notebookUtils');
   * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
     const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
@@ -81,6 +78,10 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
@@ -110,9 +111,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
     test('Can add tags with blank entry', async ({ page }) => {
-        //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
-
         createDomainObjectWithDefaults(page, { type: 'Notebook' });
         await selectInspectorTab(page, 'Annotations');
 
