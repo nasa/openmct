@@ -176,7 +176,6 @@ test.describe('can export restricted notebook as text', () => {
     });
 
     test('basic functionality ', async ({ page }) => {
-
         await nbUtils.enterTextEntry(page, `Foo bar entry`);
         // Click on 3 Dot Menu
         await page.locator('button[title="More options"]').click();

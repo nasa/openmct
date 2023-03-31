@@ -1,8 +1,9 @@
 import {saveAs} from 'saveAs';
 import Moment from 'moment';
+import {NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE} from '../notebook-constants';
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
-const allowedTypes = ['Notebook', 'Notebook Shift Log'];
+const ALLOWED_TYPES = [NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE];
 
 export default class ExportNotebookAsTextAction {
 
@@ -56,9 +57,8 @@ export default class ExportNotebookAsTextAction {
 
     appliesTo(objectPath) {
         const domainObject = objectPath[0];
-        const type = this.openmct.types.get(domainObject.type);
 
-        return allowedTypes.includes(type?.definition?.name);
+        return ALLOWED_TYPES.includes(domainObject.type);
     }
 
     async onSave(changes, objectPath) {
