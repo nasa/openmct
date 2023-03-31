@@ -29,7 +29,7 @@ const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
-test.describe.only('Restricted Notebook', () => {
+test.describe('Restricted Notebook', () => {
     let notebook;
     test.beforeEach(async ({ page }) => {
         notebook = await startAndAddRestrictedNotebookObject(page);
