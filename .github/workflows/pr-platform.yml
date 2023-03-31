@@ -16,7 +16,6 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - 14
           - 16
           - 18
         architecture:
