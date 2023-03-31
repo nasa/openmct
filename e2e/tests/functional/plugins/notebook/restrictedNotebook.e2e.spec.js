@@ -171,6 +171,10 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
 });
 
 test.describe('can export restricted notebook as text', () => {
+    test.beforeEach(async ({ page }) => {
+        await startAndAddRestrictedNotebookObject(page);
+    });
+
     test('basic functionality ', async ({ page }) => {
 
         await nbUtils.enterTextEntry(page, `Foo bar entry`);
