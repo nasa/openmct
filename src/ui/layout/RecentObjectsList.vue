@@ -60,8 +60,6 @@ export default {
             this.compositionCollections[navigationPath].removeHandler = this.compositionRemoveHandler(navigationPath);
             this.compositionCollections[navigationPath].collection.on('remove',
                 this.compositionCollections[navigationPath].removeHandler);
-            // send event to parent for enabled button
-            this.$emit('compositionCollectionAdded', navigationPath);
         },
         /**
          * Handler for composition collection remove events.
