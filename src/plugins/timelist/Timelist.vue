@@ -197,9 +197,12 @@ export default {
                 this.listActivities();
             }
         },
-        updateTimestamp(_bounds, isTick) {
+        updateTimestamp(bounds, isTick) {
             if (isTick === true && this.openmct.time.clock() !== undefined) {
                 this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+            } else if (isTick === false && this.openmct.time.clock() === undefined) {
+                // set the start time for fixed time using the selected bounds start
+                this.updateTimeStampAndListActivities(bounds.start);
             }
         },
         setViewFromClock(newClock) {
