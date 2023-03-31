@@ -282,10 +282,7 @@ test.describe('Recent Objects', () => {
         ).toBe(false);
 
         // Create a new object
-        clock = await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            parent: folderA.uuid
-        });
+        await page.goto(clock.url);
 
         // Assert that the list contains 1 object
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(1);

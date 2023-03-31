@@ -182,7 +182,9 @@ export default {
         setSavedRecentItems() {
             localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
             // send event to parent for enabled button
-            this.$emit("handleRecentObjectsListUpdated", this.recents);
+            if (this.recents.length === 1) {
+                this.$emit("setClearButtonDisabled", false);
+            }
         },
         /**
          * Returns true if the `domainObject` supports composition and we are not already

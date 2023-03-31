@@ -96,7 +96,7 @@
                         ref="recentObjectsList"
                         class="l-shell__tree"
                         @openAndScrollTo="openAndScrollTo($event)"
-                        @handleRecentObjectsListUpdated="handleRecentObjectsListUpdated"
+                        @setClearButtonDisabled="setClearButtonDisabled"
                     />
                     <button
                         slot="controls"
@@ -301,7 +301,7 @@ export default {
         onEndResizing() {
             this.isResizing = false;
         },
-        handleRecentObjectsListUpdated() {
+        setClearButtonDisabled() {
             this.disableClearButton = false;
         }
 
