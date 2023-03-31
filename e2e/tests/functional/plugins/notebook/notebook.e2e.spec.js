@@ -25,6 +25,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { streamToString } = require('../../../../baseFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 const path = require('path');
@@ -395,13 +396,4 @@ test.describe('Notebook entry tests', () => {
     test.fixme('can export all notebook entry metdata', async ({ page }) => {});
     test.fixme('can export all notebook tags', async ({ page }) => {});
     test.fixme('can export all notebook snapshots', async ({ page }) => {});
-
-    async function streamToString(readable) {
-        let result = '';
-        for await (const chunk of readable) {
-            result += chunk;
-        }
-
-        return result;
-    }
 });
