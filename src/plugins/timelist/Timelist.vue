@@ -30,6 +30,7 @@
         :header-items="headerItems"
         :default-sort="defaultSort"
         class="sticky"
+        @sort-changed="updateDefaultSort"
     />
 </div>
 </template>
@@ -473,9 +474,15 @@ export default {
             const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
             const property = sortOrder.property;
             const direction = sortOrder.direction.toLowerCase() === 'asc';
-            this.defaultSort = {
+            this.updateDefaultSort({
                 property,
-                defaultDirection: direction
+                direction
+            });
+        },
+        updateDefaultSort(sortOption) {
+            this.defaultSort = {
+                property: sortOption.property,
+                defaultDirection: sortOption.direction
             };
         },
         sortByProperty(a, b) {

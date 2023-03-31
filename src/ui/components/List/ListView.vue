@@ -136,6 +136,11 @@ export default {
                         )
                     );
             }
+
+            this.$emit('sortChanged', {
+                property: this.sortBy,
+                defaultDirection: this.ascending
+            });
         }
     }
 };
