@@ -1,0 +1,57 @@
+.circleci/
+.github/
+.vscode/
+
+*.md
+
+# .gitignore contents below:
+
+*.scssc
+*.zip
+*.gzip
+*.tgz
+*.DS_Store
+*.swp
+
+# Compiled CSS, unless directly added
+*.sass-cache
+*COMPILE.css
+*.css
+*.css.map
+
+# Intellij project configuration files
+*.idea
+*.iml
+
+# Build output
+target
+dist
+
+# Mac OS X Finder
+.DS_Store
+
+# Node, Bower dependencies
+node_modules
+bower_components
+
+# npm-debug log
+npm-debug.log
+
+# karma reports
+report.*.json
+
+# e2e test artifacts
+test-results
+html-test-results
+
+# couchdb scripting artifacts
+src/plugins/persistence/couch/.env.local
+index.html.bak
+
+# codecov artifacts
+.nyc_output
+coverage
+codecov
+
+# :(
+package-lock.json
