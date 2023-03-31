@@ -93,6 +93,11 @@ export default class ExportNotebookAsTextAction {
                 notebookAsText += `### ${page.name}\n\n`;
 
                 const notebookPageEntries = notebookEntries[section.id]?.[page.id];
+                if (!notebookPageEntries) {
+                    // blank page
+                    return;
+                }
+
                 notebookPageEntries.forEach(entry => {
                     if (changes.exportMetaData) {
                         const createdTimestamp = entry.createdOn;
