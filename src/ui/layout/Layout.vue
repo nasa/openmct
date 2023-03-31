@@ -96,6 +96,7 @@
                         ref="recentObjectsList"
                         class="l-shell__tree"
                         @openAndScrollTo="openAndScrollTo($event)"
+                        @handleRecentObjectsListUpdated="handleRecentObjectsListUpdated"
                     />
                     <button
                         slot="controls"
@@ -151,19 +152,19 @@
 </template>
 
 <script>
-import Inspector from '../inspector/Inspector.vue';
-import MctTree from './mct-tree.vue';
 import ObjectView from '../components/ObjectView.vue';
-import CreateButton from './CreateButton.vue';
-import GrandSearch from './search/GrandSearch.vue';
-import multipane from './multipane.vue';
-import pane from './pane.vue';
-import BrowseBar from './BrowseBar.vue';
+import Inspector from '../inspector/Inspector.vue';
 import Toolbar from '../toolbar/Toolbar.vue';
 import AppLogo from './AppLogo.vue';
+import BrowseBar from './BrowseBar.vue';
+import CreateButton from './CreateButton.vue';
+import RecentObjectsList from './RecentObjectsList.vue';
+import MctTree from './mct-tree.vue';
+import multipane from './multipane.vue';
+import pane from './pane.vue';
+import GrandSearch from './search/GrandSearch.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
-import RecentObjectsList from './RecentObjectsList.vue';
 
 export default {
     components: {
@@ -268,7 +269,6 @@ export default {
         },
         toggleHasToolbar(selection) {
             let structure = undefined;
-            this.disableClearButton = false;
 
             if (!selection || !selection[0]) {
                 structure = [];
@@ -300,7 +300,11 @@ export default {
         },
         onEndResizing() {
             this.isResizing = false;
+        },
+        handleRecentObjectsListUpdated() {
+            this.disableClearButton = false;
         }
+
     }
 };
 </script>

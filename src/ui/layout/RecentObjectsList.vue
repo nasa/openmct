@@ -60,6 +60,8 @@ export default {
             this.compositionCollections[navigationPath].removeHandler = this.compositionRemoveHandler(navigationPath);
             this.compositionCollections[navigationPath].collection.on('remove',
                 this.compositionCollections[navigationPath].removeHandler);
+            // send event to parent for enabled button
+            this.$emit('compositionCollectionAdded', navigationPath);
         },
         /**
          * Handler for composition collection remove events.
@@ -181,6 +183,8 @@ export default {
          */
         setSavedRecentItems() {
             localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
+            // send event to parent for enabled button
+            this.$emit("handleRecentObjectsListUpdated", this.recents);
         },
         /**
          * Returns true if the `domainObject` supports composition and we are not already
@@ -222,7 +226,3 @@ export default {
     }
 };
 </script>
-
-<style>
-
-</style>
