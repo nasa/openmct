@@ -345,7 +345,7 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-            activities = activities.sort(this.sortByStartTime);
+            activities = activities.sort(this.sortByProperty);
             activities = activities.filter(this.filterActivities);
             activities = this.applyStyles(activities);
             this.setScrollTop();
@@ -478,11 +478,18 @@ export default {
                 defaultDirection: direction
             };
         },
-        sortByStartTime(a, b) {
-            const numA = parseInt(a.start, 10);
-            const numB = parseInt(b.start, 10);
+        sortByProperty(a, b) {
+            const property = this.defaultSort.property;
+            const defaultDirection = this.defaultSort.defaultDirection;
 
-            return numA - numB;
+            const numA = parseInt(a[property], 10);
+            const numB = parseInt(b[property], 10);
+
+            if (defaultDirection) {
+                return numA - numB;
+            } else {
+                return numB - numA;
+            }
         },
         setStatus(status) {
             this.status = status;
