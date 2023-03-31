@@ -84,7 +84,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
         await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
@@ -131,7 +130,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can cancel adding tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
         await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
@@ -288,7 +286,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
         await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
