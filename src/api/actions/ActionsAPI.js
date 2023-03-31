@@ -31,7 +31,7 @@ class ActionsAPI extends EventEmitter {
         this._actionCollections = new WeakMap();
         this._openmct = openmct;
 
-        this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
+        this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'export'];
 
         this.register = this.register.bind(this);
         this.getActionsCollection = this.getActionsCollection.bind(this);

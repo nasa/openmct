@@ -12,10 +12,9 @@ export default class ExportNotebookAsTextAction {
 
         this.cssClass = 'icon-export';
         this.description = 'Exports notebook contents as a text file';
-        this.group = "action";
+        this.group = "export";
         this.key = 'exportNotebookAsText';
         this.name = 'Export Notebook as Text';
-        this.priority = 1;
     }
 
     invoke(objectPath) {
