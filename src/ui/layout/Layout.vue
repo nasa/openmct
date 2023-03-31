@@ -301,8 +301,8 @@ export default {
         onEndResizing() {
             this.isResizing = false;
         },
-        setClearButtonDisabled() {
-            this.disableClearButton = false;
+        setClearButtonDisabled(value) {
+            this.disableClearButton = value;
         }
 
     }
