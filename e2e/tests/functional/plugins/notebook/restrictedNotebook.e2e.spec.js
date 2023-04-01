@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
 const nbUtils = require('../../../../helper/notebookUtils');
@@ -167,6 +167,33 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
         await expect(embedMenu).not.toContainText('Remove This Embed');
     });
 
+});
+
+test.describe('can export restricted notebook as text', () => {
+    test.beforeEach(async ({ page }) => {
+        await startAndAddRestrictedNotebookObject(page);
+    });
+
+    test('basic functionality ', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
+
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
+
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+
+    });
+
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
 
 /**
