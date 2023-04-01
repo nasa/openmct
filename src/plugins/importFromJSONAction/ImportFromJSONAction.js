@@ -29,7 +29,7 @@ export default class ImportAsJSONAction {
         this.key = 'import.JSON';
         this.description = '';
         this.cssClass = "icon-import";
-        this.group = "json";
+        this.group = "import";
         this.priority = 2;
 
         this.openmct = openmct;

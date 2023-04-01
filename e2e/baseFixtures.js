@@ -170,5 +170,6 @@ exports.test = base.test.extend({
         }
     }
 });
+
 exports.expect = expect;
 exports.waitForAnimations = waitForAnimations;
