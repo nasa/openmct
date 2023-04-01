@@ -150,3 +150,17 @@ exports.test = test.extend({
     }
 });
 exports.expect = expect;
+
+/**
+ * Takes a readable stream and returns a string.
+ * @param {ReadableStream} readable - the readable stream
+ * @return {Promise<String>} the stringified stream
+ */
+exports.streamToString = async function (readable) {
+    let result = '';
+    for await (const chunk of readable) {
+        result += chunk;
+    }
+
+    return result;
+};
