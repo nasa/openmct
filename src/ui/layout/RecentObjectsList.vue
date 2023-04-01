@@ -212,6 +212,7 @@ export default {
                             localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
                             this.recents = [];
                             dialog.dismiss();
+                            this.$emit("setClearButtonDisabled", true);
                         }
                     },
                     {
