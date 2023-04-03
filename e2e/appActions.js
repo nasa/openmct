@@ -273,6 +273,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
+    await page.waitForLoadState('load'); //Add some determinism
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
         let url = './#/browse/' + [...path].reverse()
