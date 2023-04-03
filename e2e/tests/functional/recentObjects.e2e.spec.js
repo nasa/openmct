@@ -58,7 +58,7 @@ test.describe('Recent Objects', () => {
     });
     test('Navigated objects show up in recents, object renames and deletions are reflected', async ({ page }) => {
         // Verify that both created objects appear in the list and are in the correct order
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
 
         // Navigate to the folder by clicking on the main object name in the recent objects list item
         await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
@@ -149,9 +149,9 @@ test.describe('Recent Objects', () => {
         await expect(clockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
     });
     test("Persists on refresh", async ({ page }) => {
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
         await page.reload();
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
     });
     test("Displays objects and aliases uniquely", async ({ page }) => {
         const mainTree = page.getByRole('tree', { name: 'Main Tree'});
@@ -281,8 +281,8 @@ test.describe('Recent Objects', () => {
                 .isEnabled()
         ).toBe(false);
 
-        // Create a new object
-        await page.goto(clock.url);
+        // Navigate to folder object
+        await page.goto(folderA.url);
 
         // Assert that the list contains 1 object
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(1);
@@ -296,11 +296,13 @@ test.describe('Recent Objects', () => {
     });
 
     function assertInitialRecentObjectsListState() {
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(1).getByText(folderA.name)).toBeTruthy();
+        return Promise.all([
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem').nth(3).getByText(folderA.name)).toBeVisible()
+        ]);
     }
 });
