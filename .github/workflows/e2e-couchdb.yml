@@ -22,7 +22,7 @@ jobs:
       - run : bash src/plugins/persistence/couch/setup-couchdb.sh
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: 'lts/gallium'
       - run: npx playwright@1.29.0 install
       - run: npm install
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh

@@ -195,7 +195,7 @@
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
         &.animate-scroll {
-            scroll-behavior: smooth; 
+            scroll-behavior: smooth;
         }
     }
 
@@ -320,7 +320,7 @@
         flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 70;
+        z-index: 10;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         align-items: center;

@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 const path = require('path');
@@ -377,4 +377,22 @@ test.describe('Notebook entry tests', () => {
         expect.soft(await sanitizedLink.count()).toBe(1);
         expect(await unsanitizedLink.count()).toBe(0);
     });
+    test('can export notebook as text', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
+
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
+
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+    });
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });

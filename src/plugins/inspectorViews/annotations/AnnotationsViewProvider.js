@@ -23,11 +23,17 @@
 import Annotations from './AnnotationsInspectorView.vue';
 import Vue from 'vue';
 
-export default function ElementsViewProvider(openmct) {
+export default function AnnotationsViewProvider(openmct) {
     return {
         key: 'annotationsView',
         name: 'Annotations',
         canView: function (selection) {
+            const availableTags = openmct.annotation.getAvailableTags();
+
+            if (availableTags.length < 1) {
+                return false;
+            }
+
             return selection.length;
         },
         view: function (selection) {

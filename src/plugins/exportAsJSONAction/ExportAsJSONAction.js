@@ -32,7 +32,7 @@ export default class ExportAsJSONAction {
         this.key = 'export.JSON';
         this.description = '';
         this.cssClass = "icon-export";
-        this.group = "json";
+        this.group = "export";
         this.priority = 1;
 
         this.externalIdentifiers = [];
