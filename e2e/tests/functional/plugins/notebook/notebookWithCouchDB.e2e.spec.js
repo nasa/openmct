@@ -26,21 +26,22 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {
     let testNotebook;
+
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create Notebook
-        testNotebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "TestNotebook"
-        });
+        testNotebook = await createDomainObjectWithDefaults(page, {type: 'Notebook' });
+        await page.goto(testNotebook.url, { waitUntil: 'networkidle'});
     });
 
-    test('Inspect Notebook Entry Network Requests', async ({ page }) => {
+    test.only('Inspect Notebook Entry Network Requests', async ({ page }) => {
+        //Ensure we're on the annotations Tab in the inspector
         await page.getByText('Annotations').click();
         // Expand sidebar
         await page.locator('.c-notebook__toggle-nav-button').click();
@@ -49,6 +50,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         let notebookElementsRequests = [];
         page.on('request', (request) => notebookElementsRequests.push(request));
 
+        //Clicking Add Page generates
         let [notebookUrlRequest, allDocsRequest] = await Promise.all([
             // Waits for the next request with the specified url
             page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
@@ -64,9 +66,44 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 1) The actual POST to create the page
         // 2) The shared worker event from 👆 request
         expect(notebookElementsRequests.length).toBe(2);
+        console.log(notebookElementsRequests);
+
+
+        // {
+        //     _id: 'c3b7b1b8-08ae-4072-96d4-d42ebe1b1703',
+        //     _rev: '2-4ceae851158579ec837d6e5f18c32c57',
+        //     metadata: {
+        //       category: 'domain object',
+        //       type: 'notebook',
+        //       owner: 'admin',
+        //     ✘  1 …ts with CouchDB @couchdb › Inspect Notebook Entry Network Requests (20s)
+        //     },
+        //     model: {
+        //       name: 'TestNotebook',
+        //       type: 'notebook',
+        //       configuration: {
+        //         defaultSort: 'oldest',
+        //         entries: {},
+        //         imageMigrationVer: 'v1',
+        //         pageTitle: 'Page',
+        //         sections: [Array],
+        //         sectionTitle: 'Section',
+        //         type: 'General'
+        //       },
+        //       notes: 'functional/plugins/notebook/notebookWithCouchDB.e2e.spec.js\n' +
+        //         'Notebook Tests with CouchDB @couchdb\n' +
+        //         'Inspect Notebook Entry Network Requests\n' +
+        //         'chrome',
+        //       modified: 1679410996819,
+        //       location: 'mine',
+        //       created: 1679410995909,
+        //       persisted: 1679410996819
+        //     }
+        //   }
 
         // Assert on request object
-        expect(notebookUrlRequest.postDataJSON().metadata.name).toBe('TestNotebook');
+        //console.log(notebookUrlRequest.postDataJSON());
+        expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);
         expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(notebookUrlRequest.postDataJSON().model.modified);
         expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
 
@@ -75,10 +112,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 1) The actual POST to create the entry
         // 2) The shared worker event from 👆 POST request
         notebookElementsRequests = [];
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
+        await nbUtils.enterTextEntry(page, 'First Entry');
         await page.waitForLoadState('networkidle');
         expect(notebookElementsRequests.length).toBeLessThanOrEqual(2);
 
@@ -116,6 +150,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 4) The shared worker event from 👆 POST request
         // This happens for 3 tags so 12 requests
         notebookElementsRequests = [];
+        //await page.locator('.c-notebook__entry').click();
         await removeTagAndAwaitNetwork(page, 'Driving');
         await removeTagAndAwaitNetwork(page, 'Drilling');
         await removeTagAndAwaitNetwork(page, 'Science');
@@ -126,20 +161,9 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.click('[aria-label="Add Page"]');
 
         // Add three entries
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
-
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').fill(`Second Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
-
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').fill(`Third Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=2').press('Enter');
+        await nbUtils.enterTextEntry(page, 'First Entry');
+        await nbUtils.enterTextEntry(page, 'Second Entry');
+        await nbUtils.enterTextEntry(page, 'Third Entry');
 
         // Add three tags
         await addTagAndAwaitNetwork(page, 'Science');
@@ -153,10 +177,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
         notebookElementsRequests = [];
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').fill(`Fourth Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=3').press('Enter');
+        await nbUtils.enterTextEntry(page, 'Fourth Entry');
         page.waitForLoadState('networkidle');
 
         expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
@@ -168,10 +189,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
         notebookElementsRequests = [];
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').fill(`Fifth Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=4').press('Enter');
+        await nbUtils.enterTextEntry(page, 'Fifth Entry');
         page.waitForLoadState('networkidle');
 
         expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
@@ -182,10 +200,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 3) Timestamp update on entry
         // 4) The shared worker event from 👆 POST request
         notebookElementsRequests = [];
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').click();
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').fill(`Sixth Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"] >> nth=5').press('Enter');
+        await nbUtils.enterTextEntry(page, 'Sixth Entry');
         page.waitForLoadState('networkidle');
 
         expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
@@ -197,10 +212,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
             description: 'https://github.com/akhenry/openmct-yamcs/issues/69'
         });
         await page.getByText('Annotations').click();
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').click();
-        await page.locator('[aria-label="Notebook Entry Input"]').fill(`First Entry`);
-        await page.locator('[aria-label="Notebook Entry Input"]').press('Enter');
+        await nbUtils.enterTextEntry(page, 'First Entry');
 
         // Add three tags
         await addTagAndAwaitNetwork(page, 'Science');
@@ -259,12 +271,9 @@ async function removeTagAndAwaitNetwork(page, tagName) {
     await page.hover(`[aria-label="Tag"]:has-text("${tagName}")`);
     await Promise.all([
         page.locator(`[aria-label="Remove tag ${tagName}"]`).click(),
-        //Ideally we'd be able to navigate the object to detect that it was set to deleted
-        //but I'm afraid to tie our current test to the current implementation.
         //With this pattern, we're awaiting the response but asserting on the request payload.
-        page.waitForResponse(resp => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201),
-        // Triggers the request
-        page.waitForSelector(`[aria-label="Tag"]:has-text("${tagName}")`, {state: 'hidden'})
+        page.waitForResponse(resp => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201)
     ]);
+    await page.waitForSelector(`[aria-label="Tag"]:has-text("${tagName}")`, {state: 'hidden'});
     await page.waitForLoadState('networkidle');
 }
