@@ -85,8 +85,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
-
         await selectInspectorTab(page, 'Annotations');
 
         await page.locator('button:has-text("Add Tag")').click();
@@ -127,8 +125,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Can cancel adding tags', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
@@ -283,8 +279,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
