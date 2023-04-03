@@ -28,12 +28,13 @@ const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
  * @param {import('@playwright/test').Page} page
  */
 async function enterTextEntry(page, text) {
-    // Click .c-notebook__drag-area
+    // Click the 'Add Notebook Entry' area
     await page.locator(NOTEBOOK_DROP_AREA).click();
 
     // enter text
     await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
     await commitEntry(page);
+    //await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 }
 
 /**
@@ -58,6 +59,7 @@ async function dragAndDropEmbed(page, notebookObject) {
  * @param {import('@playwright/test').Page} page
  */
 async function commitEntry(page) {
+    //Click the Commit Entry button
     await page.locator('.c-ne__save-button > button').click();
 }
 
