@@ -9,11 +9,13 @@ module.exports = {
     "globals": {
         "_": "readonly"
     },
+    "plugins": ["prettier"],
     "extends": [
         "eslint:recommended",
         "plugin:compat/recommended",
         "plugin:vue/recommended",
-        "plugin:you-dont-need-lodash-underscore/compatible"
+        "plugin:you-dont-need-lodash-underscore/compatible",
+        "plugin:prettier/recommended"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -26,6 +28,7 @@ module.exports = {
         }
     },
     "rules": {
+        "prettier/prettier": "error",
         "you-dont-need-lodash-underscore/omit": "off",
         "you-dont-need-lodash-underscore/throttle": "off",
         "you-dont-need-lodash-underscore/flatten": "off",
@@ -136,22 +139,6 @@ module.exports = {
         "no-implicit-coercion": "error",
         //https://eslint.org/docs/rules/no-unneeded-ternary
         "no-unneeded-ternary": "error",
-        // https://eslint.org/docs/rules/comma-spacing
-        // Also requires one line code fix
-        "comma-spacing": ["error", {
-                "after": true
-            }],
-        "vue/html-self-closing": ["error",
-            {
-                "html": {
-                    "void": "never",
-                    "normal": "never",
-                    "component": "always"
-                },
-                "svg": "always",
-                "math": "always"
-            }
-        ],
         "vue/first-attribute-linebreak": "error",
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
