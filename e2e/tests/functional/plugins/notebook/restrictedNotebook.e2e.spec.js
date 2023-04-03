@@ -104,18 +104,15 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     });
 
     test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({ page }) => {
-        // Click text=Page Add >> button
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=Page Add >> button').click()
-        ]);
-        // Click text=Unnamed Page >> nth=1
-        await page.locator('text=Unnamed Page').nth(1).click();
-        // Press a with modifiers
-        await page.locator('text=Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
+        // Add a new page to the section
+        await page.getByRole('button', { name: 'Add Page' }).click();
+        // Focus the new page by clicking it
+        await page.getByText('Unnamed Page').nth(1).click();
+        // Rename the new page
+        await page.getByText('Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
 
         // expect to be able to rename unlocked pages
-        const newPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
+        const newPageElement = page.getByText(TEST_TEXT_NAME);
         const newPageCount = await newPageElement.count();
         await newPageElement.press('Enter'); // exit contenteditable state
         expect.soft(newPageCount).toEqual(1);
@@ -124,21 +121,18 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         await nbUtils.enterTextEntry(page, TEST_TEXT);
 
         // expect new page to be lockable
-        const commitButton = page.locator('BUTTON:HAS-TEXT("COMMIT ENTRIES")');
+        const commitButton = page.getByRole('button', { name: ' Commit Entries' });
         expect.soft(await commitButton.count()).toEqual(1);
 
-        // Click text=Unnamed PageTest Page >> button
-        await page.locator('text=Unnamed PageTest Page >> button').click();
-        // Click text=Delete Page
-        await page.locator('text=Delete Page').click();
-        // Click text=Ok
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('button:has-text("OK")').click()
-        ]);
+        // Click the context menu button for the new page
+        await page.getByTitle('Open context menu').click();
+        // Delete the page
+        await page.getByRole('listitem', { name: 'Delete Page' }).click();
+        // Click OK button
+        await page.getByRole('button', { name: 'Ok' }).click();
 
         // deleted page, should no longer exist
-        const deletedPageElement = page.locator(`text=${TEST_TEXT_NAME}`);
+        const deletedPageElement = page.getByText(TEST_TEXT_NAME);
         expect(await deletedPageElement.count()).toEqual(0);
     });
 });
