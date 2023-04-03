@@ -198,6 +198,36 @@ test.describe('Notebook page tests', () => {
     });
 });
 
+test.describe('Notebook export tests', () => {
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
+    });
+    test('can export notebook as text', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
+
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
+
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+    });
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
+});
+
 test.describe('Notebook search tests', () => {
     test.fixme('Can search for a single result', async ({ page }) => {});
     test.fixme('Can search for many results', async ({ page }) => {});
@@ -219,7 +249,15 @@ test.describe('Notebook entry tests', () => {
             type: NOTEBOOK_NAME
         });
     });
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test('When a new entry is created, it should be focused and selected', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Click .c-notebook__drag-area
+        await page.locator('.c-notebook__drag-area').click();
+        await expect(page.locator('[aria-label="Notebook Entry Input"]')).toBeVisible();
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toHaveClass(/is-selected/);
+    });
     test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
         await createDomainObjectWithDefaults(page, {
@@ -263,7 +301,25 @@ test.describe('Notebook entry tests', () => {
         expect(embedName).toBe('Dropped Overlay Plot');
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+    test('previous and new entries can be deleted', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        await nbUtils.enterTextEntry(page, 'First Entry');
+        await page.hover('text="First Entry"');
+        await page.click('button[title="Delete this entry"]');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="First Entry"')).toBeHidden();
+        await nbUtils.enterTextEntry(page, 'Another First Entry');
+        await nbUtils.enterTextEntry(page, 'Second Entry');
+        await nbUtils.enterTextEntry(page, 'Third Entry');
+        await page.hover('[aria-label="Notebook Entry"] >> nth=2');
+        await page.click('button[title="Delete this entry"] >> nth=2');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="Third Entry"')).toBeHidden();
+        await expect(page.locator('text="Another First Entry"')).toBeVisible();
+        await expect(page.locator('text="Second Entry"')).toBeVisible();
+    });
     test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
 
@@ -377,22 +433,4 @@ test.describe('Notebook entry tests', () => {
         expect.soft(await sanitizedLink.count()).toBe(1);
         expect(await unsanitizedLink.count()).toBe(0);
     });
-    test('can export notebook as text', async ({ page }) => {
-        await nbUtils.enterTextEntry(page, `Foo bar entry`);
-        // Click on 3 Dot Menu
-        await page.locator('button[title="More options"]').click();
-        const downloadPromise = page.waitForEvent('download');
-
-        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
-
-        await page.getByRole('button', { name: 'Save' }).click();
-        const download = await downloadPromise;
-        const readStream = await download.createReadStream();
-        const exportedText = await streamToString(readStream);
-        expect(exportedText).toContain('Foo bar entry');
-    });
-    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
-    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
-    test.fixme('can export all notebook tags', async ({ page }) => {});
-    test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
