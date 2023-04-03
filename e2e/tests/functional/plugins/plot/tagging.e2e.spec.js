@@ -194,9 +194,6 @@ test.describe('Plot Tagging', () => {
 
         await setFixedTimeMode(page);
 
-        // changing to fixed time mode rebuilds canvas?
-        canvas = page.locator('canvas').nth(1);
-
         await basicTagsTests(page);
         await testTelemetryItem(page, alphaSineWave);
 
