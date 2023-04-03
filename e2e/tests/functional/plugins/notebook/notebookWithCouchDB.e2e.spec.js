@@ -66,40 +66,6 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 1) The actual POST to create the page
         // 2) The shared worker event from 👆 request
         expect(notebookElementsRequests.length).toBe(2);
-        console.log(notebookElementsRequests);
-
-
-        // {
-        //     _id: 'c3b7b1b8-08ae-4072-96d4-d42ebe1b1703',
-        //     _rev: '2-4ceae851158579ec837d6e5f18c32c57',
-        //     metadata: {
-        //       category: 'domain object',
-        //       type: 'notebook',
-        //       owner: 'admin',
-        //     ✘  1 …ts with CouchDB @couchdb › Inspect Notebook Entry Network Requests (20s)
-        //     },
-        //     model: {
-        //       name: 'TestNotebook',
-        //       type: 'notebook',
-        //       configuration: {
-        //         defaultSort: 'oldest',
-        //         entries: {},
-        //         imageMigrationVer: 'v1',
-        //         pageTitle: 'Page',
-        //         sections: [Array],
-        //         sectionTitle: 'Section',
-        //         type: 'General'
-        //       },
-        //       notes: 'functional/plugins/notebook/notebookWithCouchDB.e2e.spec.js\n' +
-        //         'Notebook Tests with CouchDB @couchdb\n' +
-        //         'Inspect Notebook Entry Network Requests\n' +
-        //         'chrome',
-        //       modified: 1679410996819,
-        //       location: 'mine',
-        //       created: 1679410995909,
-        //       persisted: 1679410996819
-        //     }
-        //   }
 
         // Assert on request object
         //console.log(notebookUrlRequest.postDataJSON());
