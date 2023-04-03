@@ -215,10 +215,6 @@ export default {
             } else {
                 this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
             }
-
-            this.setSort();
-            this.setViewBounds();
-            this.listActivities();
         },
         addItem(domainObject) {
             this.planObjects = [domainObject];
