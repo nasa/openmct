@@ -207,8 +207,8 @@ export default {
         },
         setViewFromClock(newClock) {
             this.filterValue = this.domainObject.configuration.filter;
-            this.isRealTime = newClock !== undefined;
-            if (!this.isRealTime) {
+            this.isFixedTime = newClock === undefined;
+            if (this.isFixedTime) {
                 this.hideAll = false;
                 this.showAll = true;
                 this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
@@ -373,7 +373,7 @@ export default {
             const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
             const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
 
-            if (!this.isRealTime) {
+            if (this.isFixedTime) {
                 return isCurrent || isFuture;
             }
 
