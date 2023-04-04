@@ -238,6 +238,6 @@ async function removeTagAndAwaitNetwork(page, tagName) {
         //With this pattern, we're awaiting the response but asserting on the request payload.
         page.waitForResponse(resp => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201)
     ]);
-    expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
+    await expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
     await page.waitForLoadState('networkidle');
 }
