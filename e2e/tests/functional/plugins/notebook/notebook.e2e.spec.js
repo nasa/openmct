@@ -32,49 +32,49 @@ const path = require('path');
 const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
-  test.fixme('Can create a Notebook Object', async ({ page }) => {
+    test.fixme('Can create a Notebook Object', async ({ page }) => {
     //Create domain object
     //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
-  });
-  test.fixme('Can update a Notebook Object', async ({ page }) => {});
-  test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
-  test.fixme('Can Delete a Notebook Object', async ({ page }) => {
+    });
+    test.fixme('Can update a Notebook Object', async ({ page }) => {});
+    test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
+    test.fixme('Can Delete a Notebook Object', async ({ page }) => {
     // Other than non-persistible objects
-  });
+    });
 });
 
 test.describe('Default Notebook', () => {
-  // General Default Notebook statements
-  // ## Useful commands:
-  // 1.  - To check default notebook:
-  //     `JSON.parse(localStorage.getItem('notebook-storage'));`
-  // 1.  - Clear default notebook:
-  //     `localStorage.setItem('notebook-storage', null);`
-  test.fixme(
-    'A newly created Notebook is automatically set as the default notebook if no other notebooks exist',
-    async ({ page }) => {
-      //Create new notebook
-      //Verify Default Notebook Characteristics
-    }
-  );
-  test.fixme(
-    'A newly created Notebook is automatically set as the default notebook if at least one other notebook exists',
-    async ({ page }) => {
-      //Create new notebook A
-      //Create second notebook B
-      //Verify Non-Default Notebook A Characteristics
-      //Verify Default Notebook B Characteristics
-    }
-  );
-  test.fixme(
-    'If a default notebook is deleted, the second most recent notebook becomes the default',
-    async ({ page }) => {
-      //Create new notebook A
-      //Create second notebook B
-      //Delete Notebook B
-      //Verify Default Notebook A Characteristics
-    }
-  );
+    // General Default Notebook statements
+    // ## Useful commands:
+    // 1.  - To check default notebook:
+    //     `JSON.parse(localStorage.getItem('notebook-storage'));`
+    // 1.  - Clear default notebook:
+    //     `localStorage.setItem('notebook-storage', null);`
+    test.fixme(
+        'A newly created Notebook is automatically set as the default notebook if no other notebooks exist',
+        async ({ page }) => {
+            //Create new notebook
+            //Verify Default Notebook Characteristics
+        }
+    );
+    test.fixme(
+        'A newly created Notebook is automatically set as the default notebook if at least one other notebook exists',
+        async ({ page }) => {
+            //Create new notebook A
+            //Create second notebook B
+            //Verify Non-Default Notebook A Characteristics
+            //Verify Default Notebook B Characteristics
+        }
+    );
+    test.fixme(
+        'If a default notebook is deleted, the second most recent notebook becomes the default',
+        async ({ page }) => {
+            //Create new notebook A
+            //Create second notebook B
+            //Delete Notebook B
+            //Verify Default Notebook A Characteristics
+        }
+    );
 });
 
 test.describe('Notebook section tests', () => {
@@ -83,40 +83,40 @@ test.describe('Notebook section tests', () => {
         //Navigate to baseURL
         await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    // Create Notebook
-    await createDomainObjectWithDefaults(page, {
-      type: NOTEBOOK_NAME
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
     });
-  });
-  test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({
-    page
-  }) => {
-    const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
-    const notebookPageNames = page.locator('.c-notebook__pages .c-list__item__name');
-    await expect(notebookSectionNames).toBeHidden();
-    await expect(notebookPageNames).toBeHidden();
-    // Expand sidebar
-    await page.locator('.c-notebook__toggle-nav-button').click();
-    // Check that the default section and page are created and the name matches the defaults
-    const defaultSectionName = await notebookSectionNames.innerText();
-    await expect(notebookSectionNames).toBeVisible();
-    expect(defaultSectionName).toBe('Unnamed Section');
-    const defaultPageName = await notebookPageNames.innerText();
-    await expect(notebookPageNames).toBeVisible();
-    expect(defaultPageName).toBe('Unnamed Page');
+    test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({
+        page
+    }) => {
+        const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
+        const notebookPageNames = page.locator('.c-notebook__pages .c-list__item__name');
+        await expect(notebookSectionNames).toBeHidden();
+        await expect(notebookPageNames).toBeHidden();
+        // Expand sidebar
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        // Check that the default section and page are created and the name matches the defaults
+        const defaultSectionName = await notebookSectionNames.innerText();
+        await expect(notebookSectionNames).toBeVisible();
+        expect(defaultSectionName).toBe('Unnamed Section');
+        const defaultPageName = await notebookPageNames.innerText();
+        await expect(notebookPageNames).toBeVisible();
+        expect(defaultPageName).toBe('Unnamed Page');
 
-    // Add a section
-    await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
+        // Add a section
+        await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
 
-    // Check that new section and page within the new section match the defaults
-    const newSectionName = await notebookSectionNames.nth(1).innerText();
-    await expect(notebookSectionNames.nth(1)).toBeVisible();
-    expect(newSectionName).toBe('Unnamed Section');
-    const newPageName = await notebookPageNames.innerText();
-    await expect(notebookPageNames).toBeVisible();
-    expect(newPageName).toBe('Unnamed Page');
-  });
-  test.fixme('Section selection operations and associated behavior', async ({ page }) => {
+        // Check that new section and page within the new section match the defaults
+        const newSectionName = await notebookSectionNames.nth(1).innerText();
+        await expect(notebookSectionNames.nth(1)).toBeVisible();
+        expect(newSectionName).toBe('Unnamed Section');
+        const newPageName = await notebookPageNames.innerText();
+        await expect(notebookPageNames).toBeVisible();
+        expect(newPageName).toBe('Unnamed Page');
+    });
+    test.fixme('Section selection operations and associated behavior', async ({ page }) => {
     //Create new notebook A
     //Add Sections until 6 total with no default section/page
     //Select 3rd section
@@ -129,8 +129,8 @@ test.describe('Notebook section tests', () => {
     //3rd section is still default
     //Delete 3rd section
     //1st is selected and there is no default notebook
-  });
-  test.fixme('Section rename operations', async ({ page }) => {
+    });
+    test.fixme('Section rename operations', async ({ page }) => {
     // Create a new notebook
     // Add a section
     // Rename the section but do not confirm
@@ -146,7 +146,7 @@ test.describe('Notebook section tests', () => {
     // Verify that the section name is not truncated while input is active
     // Confirm the section name edit
     // Verify that the section name is truncated now that input is not active
-  });
+    });
 });
 
 test.describe('Notebook page tests', () => {
@@ -155,36 +155,36 @@ test.describe('Notebook page tests', () => {
         //Navigate to baseURL
         await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    // Create Notebook
-    await createDomainObjectWithDefaults(page, {
-      type: NOTEBOOK_NAME
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
     });
-  });
-  //Test will need to be implemented after a refactor in #5713
-  // eslint-disable-next-line playwright/no-skipped-test
-  test.skip('Delete page popup is removed properly on clicking dropdown again', async ({
-    page
-  }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/5713'
-    });
-    // Expand sidebar and add a second page
-    await page.locator('.c-notebook__toggle-nav-button').click();
-    await page.locator('text=Page Add >> button').click();
+    //Test will need to be implemented after a refactor in #5713
+    // eslint-disable-next-line playwright/no-skipped-test
+    test.skip('Delete page popup is removed properly on clicking dropdown again', async ({
+        page
+    }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5713'
+        });
+        // Expand sidebar and add a second page
+        await page.locator('.c-notebook__toggle-nav-button').click();
+        await page.locator('text=Page Add >> button').click();
 
-    // Click on the 2nd page dropdown button and expect the Delete Page option to appear
-    await page.locator('button[title="Open context menu"]').nth(2).click();
-    await expect(page.locator('text=Delete Page')).toBeEnabled();
-    // Clicking on the same page a second time causes the same Delete Page option to recreate
-    await page.locator('button[title="Open context menu"]').nth(2).click();
-    await expect(page.locator('text=Delete Page')).toBeEnabled();
-    // Clicking on the first page causes the first delete button to detach and recreate on the first page
-    await page.locator('button[title="Open context menu"]').nth(1).click();
-    const numOfDeletePagePopups = await page.locator('li[title="Delete Page"]').count();
-    expect(numOfDeletePagePopups).toBe(1);
-  });
-  test.fixme('Page selection operations and associated behavior', async ({ page }) => {
+        // Click on the 2nd page dropdown button and expect the Delete Page option to appear
+        await page.locator('button[title="Open context menu"]').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the same page a second time causes the same Delete Page option to recreate
+        await page.locator('button[title="Open context menu"]').nth(2).click();
+        await expect(page.locator('text=Delete Page')).toBeEnabled();
+        // Clicking on the first page causes the first delete button to detach and recreate on the first page
+        await page.locator('button[title="Open context menu"]').nth(1).click();
+        const numOfDeletePagePopups = await page.locator('li[title="Delete Page"]').count();
+        expect(numOfDeletePagePopups).toBe(1);
+    });
+    test.fixme('Page selection operations and associated behavior', async ({ page }) => {
     //Create new notebook A
     //Delete existing Page
     //New 'Unnamed Page' automatically created
@@ -200,8 +200,8 @@ test.describe('Notebook page tests', () => {
     //Select 3rd (default) page
     //Delete 3rd page
     //First is now selected and there is no default notebook
-  });
-  test.fixme('Page rename operations', async ({ page }) => {
+    });
+    test.fixme('Page rename operations', async ({ page }) => {
     // Create a new notebook
     // Add a page
     // Rename the page but do not confirm
@@ -217,7 +217,7 @@ test.describe('Notebook page tests', () => {
     // Verify that the page name is not truncated while input is active
     // Confirm the page name edit
     // Verify that the page name is truncated now that input is not active
-  });
+    });
 });
 
 test.describe('Notebook export tests', () => {
@@ -251,222 +251,222 @@ test.describe('Notebook export tests', () => {
 });
 
 test.describe('Notebook search tests', () => {
-  test.fixme('Can search for a single result', async ({ page }) => {});
-  test.fixme('Can search for many results', async ({ page }) => {});
-  test.fixme('Can search for new and recently modified entries', async ({ page }) => {});
-  test.fixme('Can search for section text', async ({ page }) => {});
-  test.fixme('Can search for page text', async ({ page }) => {});
-  test.fixme('Can search for entry text', async ({ page }) => {});
+    test.fixme('Can search for a single result', async ({ page }) => {});
+    test.fixme('Can search for many results', async ({ page }) => {});
+    test.fixme('Can search for new and recently modified entries', async ({ page }) => {});
+    test.fixme('Can search for section text', async ({ page }) => {});
+    test.fixme('Can search for page text', async ({ page }) => {});
+    test.fixme('Can search for entry text', async ({ page }) => {});
 });
 
 test.describe('Notebook entry tests', () => {
-  // Create Notebook with URL Whitelist
-  let notebookObject;
-  test.beforeEach(async ({ page }) => {
-    await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
-    });
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    // Create Notebook with URL Whitelist
+    let notebookObject;
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript({
+            path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
+        });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    notebookObject = await createDomainObjectWithDefaults(page, {
-      type: NOTEBOOK_NAME
+        notebookObject = await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
     });
-  });
-  test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
-  test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
-    page
-  }) => {
+    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
+        page
+    }) => {
     // Create Overlay Plot
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot'
+        });
+
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
+
+        await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('.c-notebook__drag-area'));
+
+        const embed = page.locator('.c-ne__embed__link');
+        const embedName = await embed.innerText();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe(overlayPlot.name);
     });
-
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
-
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
-
-    await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('.c-notebook__drag-area'));
-
-    const embed = page.locator('.c-ne__embed__link');
-    const embedName = await embed.innerText();
-
-    await expect(embed).toHaveClass(/icon-plot-overlay/);
-    expect(embedName).toBe(overlayPlot.name);
-  });
-  test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({
-    page
-  }) => {
+    test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({
+        page
+    }) => {
     // Create Overlay Plot
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-        type: 'Overlay Plot'
-      });
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: 'Overlay Plot'
+        });
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    await nbUtils.enterTextEntry(page, 'Entry to drop into');
-    await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('text=Entry to drop into'));
+        await nbUtils.enterTextEntry(page, 'Entry to drop into');
+        await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('text=Entry to drop into'));
 
-    const existingEntry = page.locator('.c-ne__content', {
-      has: page.locator('text="Entry to drop into"')
+        const existingEntry = page.locator('.c-ne__content', {
+            has: page.locator('text="Entry to drop into"')
+        });
+        const embed = existingEntry.locator('.c-ne__embed__link');
+        const embedName = await embed.innerText();
+
+        await expect(embed).toHaveClass(/icon-plot-overlay/);
+        expect(embedName).toBe(overlayPlot.name);
     });
-    const embed = existingEntry.locator('.c-ne__embed__link');
-    const embedName = await embed.innerText();
+    test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
+    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+    test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({
+        page
+    }) => {
+        const TEST_LINK = 'http://www.google.com';
 
-    await expect(embed).toHaveClass(/icon-plot-overlay/);
-    expect(embedName).toBe(overlayPlot.name);
-  });
-  test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-  test.fixme('previous and new entries can be deleted', async ({ page }) => {});
-  test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({
-    page
-  }) => {
-    const TEST_LINK = 'http://www.google.com';
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
-    await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
 
-    // Start waiting for popup before clicking. Note no await.
-    const popupPromise = page.waitForEvent('popup');
+        await validLink.click();
+        const popup = await popupPromise;
 
-    await validLink.click();
-    const popup = await popupPromise;
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
 
-    // Wait for the popup to load.
-    await popup.waitForLoadState();
-    expect.soft(popup.url()).toContain('www.google.com');
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({
+        page
+    }) => {
+        const TEST_LINK = 'www.google.com';
 
-    expect(await validLink.count()).toBe(1);
-  });
-  test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({
-    page
-  }) => {
-    const TEST_LINK = 'www.google.com';
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
-    await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+        expect(await invalidLink.count()).toBe(0);
+    });
+    test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({
+        page
+    }) => {
+        const TEST_LINK = 'http://www.bing.com';
 
-    expect(await invalidLink.count()).toBe(0);
-  });
-  test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({
-    page
-  }) => {
-    const TEST_LINK = 'http://www.bing.com';
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
-    await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
+        const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
+        expect(await invalidLink.count()).toBe(0);
+    });
+    test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({
+        page
+    }) => {
+        const INVALID_TEST_LINK = 'http://bing.google.com';
 
-    expect(await invalidLink.count()).toBe(0);
-  });
-  test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({
-    page
-  }) => {
-    const INVALID_TEST_LINK = 'http://bing.google.com';
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
 
-    await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
+        const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
 
-    const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({
+        page
+    }) => {
+        const TEST_LINK = 'https://www.google.com';
 
-    expect(await validLink.count()).toBe(1);
-  });
-  test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({
-    page
-  }) => {
-    const TEST_LINK = 'https://www.google.com';
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
-    await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
+        const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    const validLink = page.locator(`a[href="${TEST_LINK}"]`);
+        // Start waiting for popup before clicking. Note no await.
+        const popupPromise = page.waitForEvent('popup');
 
-    // Start waiting for popup before clicking. Note no await.
-    const popupPromise = page.waitForEvent('popup');
+        await validLink.click();
+        const popup = await popupPromise;
 
-    await validLink.click();
-    const popup = await popupPromise;
+        // Wait for the popup to load.
+        await popup.waitForLoadState();
+        expect.soft(popup.url()).toContain('www.google.com');
 
-    // Wait for the popup to load.
-    await popup.waitForLoadState();
-    expect.soft(popup.url()).toContain('www.google.com');
+        expect(await validLink.count()).toBe(1);
+    });
+    test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({
+        page
+    }) => {
+        const TEST_LINK = 'http://www.google.com?bad=';
+        const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
 
-    expect(await validLink.count()).toBe(1);
-  });
-  test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({
-    page
-  }) => {
-    const TEST_LINK = 'http://www.google.com?bad=';
-    const TEST_LINK_BAD = `http://www.google.com?bad=<script>alert('gimme your cookies')</script>`;
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
 
-    // Navigate to the notebook object
-    await page.goto(notebookObject.url);
+        // Reveal the notebook in the tree
+        await page.getByTitle('Show selected item in tree').click();
 
-    // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+        await nbUtils.enterTextEntry(
+            page,
+            `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`
+        );
 
-    await nbUtils.enterTextEntry(
-      page,
-      `This should be a link, BUT not a bad link: ${TEST_LINK_BAD} is it?`
-    );
+        const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
+        const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
 
-    const sanitizedLink = page.locator(`a[href="${TEST_LINK}"]`);
-    const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
+        expect.soft(await sanitizedLink.count()).toBe(1);
+        expect(await unsanitizedLink.count()).toBe(0);
+    });
+    test('can export notebook as text', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
 
-    expect.soft(await sanitizedLink.count()).toBe(1);
-    expect(await unsanitizedLink.count()).toBe(0);
-  });
-  test('can export notebook as text', async ({ page }) => {
-    await nbUtils.enterTextEntry(page, `Foo bar entry`);
-    // Click on 3 Dot Menu
-    await page.locator('button[title="More options"]').click();
-    const downloadPromise = page.waitForEvent('download');
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
 
-    await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
-
-    await page.getByRole('button', { name: 'Save' }).click();
-    const download = await downloadPromise;
-    const readStream = await download.createReadStream();
-    const exportedText = await streamToString(readStream);
-    expect(exportedText).toContain('Foo bar entry');
-  });
-  test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
-  test.fixme('can export all notebook entry metdata', async ({ page }) => {});
-  test.fixme('can export all notebook tags', async ({ page }) => {});
-  test.fixme('can export all notebook snapshots', async ({ page }) => {});
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+    });
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });

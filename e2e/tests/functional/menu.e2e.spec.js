@@ -31,7 +31,7 @@ const path = require('path');
 test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
-            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
     test('Non-persistable objects should not show persistence related actions', async ({ page }) => {

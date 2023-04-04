@@ -48,7 +48,7 @@ test.describe('Visual - addInit', () => {
     });
 
     test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
-            await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 

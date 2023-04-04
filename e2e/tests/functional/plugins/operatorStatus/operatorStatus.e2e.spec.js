@@ -40,8 +40,8 @@ STUB (test.fixme) Rolling through each
 test.describe('Operator Status', () => {
     test.beforeEach(async ({ page }) => {
         // FIXME: determine if plugins will be added to index.html or need to be injected
-            await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')});
-            await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')});
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')});
+        await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')});
         await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 

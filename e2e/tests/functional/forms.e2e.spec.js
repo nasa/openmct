@@ -72,7 +72,7 @@ test.describe('Form Validation Behavior', () => {
 
 test.describe('Form File Input Behavior', () => {
     test.beforeEach(async ({ page }) => {
-            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
     });
 
     test('Can select a JSON file type', async ({ page }) => {
@@ -107,7 +107,7 @@ test.describe('Form File Input Behavior', () => {
 test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
-            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
     test('Persistability should be respected in the create form location field', async ({ page }) => {
