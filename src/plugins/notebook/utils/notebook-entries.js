@@ -44,6 +44,35 @@ export function addEntryIntoPage(notebookStorage, entries, entry) {
     return newEntries;
 }
 
+export function selectEntry({
+    element, entryId, domainObject, openmct,
+    onAnnotationChange, notebookAnnotations
+}) {
+    const targetDetails = {};
+    const keyString = openmct.objects.makeKeyString(domainObject.identifier);
+    targetDetails[keyString] = {
+        entryId
+    };
+    const targetDomainObjects = {};
+    targetDomainObjects[keyString] = domainObject;
+    openmct.selection.select(
+        [
+            {
+                element,
+                context: {
+                    type: 'notebook-entry-selection',
+                    item: domainObject,
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: notebookAnnotations,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    onAnnotationChange
+                }
+            }
+        ],
+        false);
+}
+
 export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
     if (historicLink.includes('tc.mode=fixed')) {
         return historicLink;
