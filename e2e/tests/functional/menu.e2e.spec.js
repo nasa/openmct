@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 This test suite is dedicated to tests which verify persistability checks
 */
@@ -31,8 +31,7 @@ const path = require('path');
 test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
     test('Non-persistable objects should not show persistence related actions', async ({ page }) => {

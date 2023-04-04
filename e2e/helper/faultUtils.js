@@ -19,14 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 const path = require('path');
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithExample(page) {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProvider.js') });
 
     await navigateToFaultItemInTree(page);
@@ -36,7 +35,6 @@ async function navigateToFaultManagementWithExample(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithStaticExample(page) {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js') });
 
     await navigateToFaultItemInTree(page);
@@ -46,7 +44,6 @@ async function navigateToFaultManagementWithStaticExample(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithoutExample(page) {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js') });
 
     await navigateToFaultItemInTree(page);

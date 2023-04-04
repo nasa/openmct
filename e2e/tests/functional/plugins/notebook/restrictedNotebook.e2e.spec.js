@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
@@ -194,7 +194,6 @@ test.describe('can export restricted notebook as text', () => {
  * @param {import('@playwright/test').Page} page
  */
 async function startAndAddRestrictedNotebookObject(page) {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitRestrictedNotebook.js') });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 

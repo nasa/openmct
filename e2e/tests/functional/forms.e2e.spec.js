@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 This test suite is dedicated to tests which verify form functionality in isolation
 */
@@ -72,8 +72,7 @@ test.describe('Form Validation Behavior', () => {
 
 test.describe('Form File Input Behavior', () => {
     test.beforeEach(async ({ page }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
+            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js') });
     });
 
     test('Can select a JSON file type', async ({ page }) => {
@@ -108,8 +107,7 @@ test.describe('Form File Input Behavior', () => {
 test.describe('Persistence operations @addInit', () => {
     // add non persistable root item
     test.beforeEach(async ({ page }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+            await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
     });
 
     test('Persistability should be respected in the create form location field', async ({ page }) => {

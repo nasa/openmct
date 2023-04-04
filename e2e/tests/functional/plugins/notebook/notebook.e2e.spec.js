@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
@@ -263,7 +263,6 @@ test.describe('Notebook entry tests', () => {
   // Create Notebook with URL Whitelist
   let notebookObject;
   test.beforeEach(async ({ page }) => {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({
       path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
     });

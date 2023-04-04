@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 Collection of Visual Tests set to run with modified init scripts to inject plugins not otherwise available in the default contexts.
 
@@ -48,8 +48,7 @@ test.describe('Visual - addInit', () => {
     });
 
     test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
+            await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
         //Go to baseURL
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
