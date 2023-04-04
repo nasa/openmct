@@ -181,6 +181,10 @@ export default {
          */
         setSavedRecentItems() {
             localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
+            // send event to parent for enabled button
+            if (this.recents.length === 1) {
+                this.$emit("setClearButtonDisabled", false);
+            }
         },
         /**
          * Returns true if the `domainObject` supports composition and we are not already
@@ -208,6 +212,7 @@ export default {
                             localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
                             this.recents = [];
                             dialog.dismiss();
+                            this.$emit("setClearButtonDisabled", true);
                         }
                     },
                     {
@@ -222,7 +227,3 @@ export default {
     }
 };
 </script>
-
-<style>
-
-</style>
