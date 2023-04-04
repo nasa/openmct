@@ -73,7 +73,7 @@
     "webpack-merge": "5.8.0"
   },
   "scripts": {
-    "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
+    "clean": "rm -rf ./dist ./node_modules ./package-lock.json ./coverage ./html-test-results ./test-results ./.nyc_output ",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
@@ -85,7 +85,6 @@
     "build:watch": "webpack --config ./.webpack/webpack.dev.js --watch",
     "info": "npx envinfo --system --browsers --npmPackages --binaries --languages --markdown",
     "test": "karma start",
-    "test:clean": "rm -rf ./coverage ./html-test-results ./test-results ./nyc_output/",
     "test:debug": "KARMA_DEBUG=true karma start",
     "test:e2e": "npx playwright test",
     "test:e2e:couchdb": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @couchdb",
