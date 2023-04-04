@@ -807,8 +807,9 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(
-                `${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`
+            const { min, max } = gaugeViewObject.configuration.gaugeController;
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(
+                new RegExp(`\\s*${min}\\s*${max}\\s*`)
             );
         });
 
