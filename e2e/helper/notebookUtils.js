@@ -34,7 +34,6 @@ async function enterTextEntry(page, text) {
     // enter text
     await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
     await commitEntry(page);
-    //await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 }
 
 /**

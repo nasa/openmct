@@ -68,7 +68,6 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         expect(notebookElementsRequests.length).toBe(2);
 
         // Assert on request object
-        //console.log(notebookUrlRequest.postDataJSON());
         expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);
         expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(notebookUrlRequest.postDataJSON().model.modified);
         expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
@@ -116,7 +115,6 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         // 4) The shared worker event from 👆 POST request
         // This happens for 3 tags so 12 requests
         notebookElementsRequests = [];
-        //await page.locator('.c-notebook__entry').click();
         await removeTagAndAwaitNetwork(page, 'Driving');
         await removeTagAndAwaitNetwork(page, 'Drilling');
         await removeTagAndAwaitNetwork(page, 'Science');
