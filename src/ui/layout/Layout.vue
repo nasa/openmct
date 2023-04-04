@@ -96,12 +96,14 @@
                         ref="recentObjectsList"
                         class="l-shell__tree"
                         @openAndScrollTo="openAndScrollTo($event)"
+                        @setClearButtonDisabled="setClearButtonDisabled"
                     />
                     <button
                         slot="controls"
                         class="c-icon-button icon-clear-data"
                         aria-label="Clear Recently Viewed"
                         title="Clear Recently Viewed"
+                        :disabled="disableClearButton"
                         @click="handleClearRecentObjects"
                     >
                     </button>
@@ -150,19 +152,19 @@
 </template>
 
 <script>
-import Inspector from '../inspector/Inspector.vue';
-import MctTree from './mct-tree.vue';
 import ObjectView from '../components/ObjectView.vue';
-import CreateButton from './CreateButton.vue';
-import GrandSearch from './search/GrandSearch.vue';
-import multipane from './multipane.vue';
-import pane from './pane.vue';
-import BrowseBar from './BrowseBar.vue';
+import Inspector from '../inspector/Inspector.vue';
 import Toolbar from '../toolbar/Toolbar.vue';
 import AppLogo from './AppLogo.vue';
+import BrowseBar from './BrowseBar.vue';
+import CreateButton from './CreateButton.vue';
+import RecentObjectsList from './RecentObjectsList.vue';
+import MctTree from './mct-tree.vue';
+import multipane from './multipane.vue';
+import pane from './pane.vue';
+import GrandSearch from './search/GrandSearch.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
-import RecentObjectsList from './RecentObjectsList.vue';
 
 export default {
     components: {
@@ -197,7 +199,8 @@ export default {
             triggerSync: false,
             triggerReset: false,
             headExpanded,
-            isResizing: false
+            isResizing: false,
+            disableClearButton: false
         };
     },
     computed: {
@@ -296,7 +299,11 @@ export default {
         },
         onEndResizing() {
             this.isResizing = false;
+        },
+        setClearButtonDisabled(isDisabled) {
+            this.disableClearButton = isDisabled;
         }
+
     }
 };
 </script>
