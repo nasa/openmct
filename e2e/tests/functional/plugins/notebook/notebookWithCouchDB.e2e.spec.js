@@ -220,7 +220,7 @@ async function addTagAndAwaitNetwork(page, tagName) {
         page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
         // Triggers the request
         page.locator(`[aria-label="Autocomplete Options"] >> text=${tagName}`).click(),
-        page.waitForSelector(`[aria-label="Tag"]:has-text('${tagName}')`)
+        expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeVisible()
     ]);
     await page.waitForLoadState('networkidle');
 }
@@ -238,6 +238,6 @@ async function removeTagAndAwaitNetwork(page, tagName) {
         //With this pattern, we're awaiting the response but asserting on the request payload.
         page.waitForResponse(resp => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201)
     ]);
-    await page.waitForSelector(`[aria-label="Tag"]:has-text("${tagName}")`, {state: 'hidden'});
+    expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
     await page.waitForLoadState('networkidle');
 }
