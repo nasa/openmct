@@ -40,7 +40,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
         await page.goto(testNotebook.url, { waitUntil: 'networkidle'});
     });
 
-    test.only('Inspect Notebook Entry Network Requests', async ({ page }) => {
+    test('Inspect Notebook Entry Network Requests', async ({ page }) => {
         //Ensure we're on the annotations Tab in the inspector
         await page.getByText('Annotations').click();
         // Expand sidebar
