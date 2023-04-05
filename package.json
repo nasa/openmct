@@ -5,6 +5,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.18.9",
     "@braintree/sanitize-url": "6.0.2",
+    "@deploysentinel/playwright": "0.3.3",
     "@percy/cli": "1.21.0",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.29.0",
@@ -72,7 +73,7 @@
     "webpack-merge": "5.8.0"
   },
   "scripts": {
-    "clean": "rm -rf ./dist ./node_modules ./package-lock.json",
+    "clean": "rm -rf ./dist ./node_modules ./package-lock.json ./coverage ./html-test-results ./test-results ./.nyc_output ",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
