@@ -46,45 +46,45 @@ class StaticModelProvider {
         throw new Error(keyString + ' not found in import models.');
     }
 
-    parseObjectLeaf(objectLeaf, idMap, namespace) {
+    parseObjectLeaf(objectLeaf, idMap, newRootNamespace, oldRootNamespace) {
         Object.keys(objectLeaf).forEach((nodeKey) => {
             if (idMap.get(nodeKey)) {
                 const newIdentifier = objectUtils.makeKeyString({
-                    namespace,
+                    namespace: newRootNamespace,
                     key: idMap.get(nodeKey)
                 });
                 objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
                 delete objectLeaf[nodeKey];
-                objectLeaf[newIdentifier] = this.parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
+                objectLeaf[newIdentifier] = this.parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, newRootNamespace, oldRootNamespace);
             } else {
-                objectLeaf[nodeKey] = this.parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
+                objectLeaf[nodeKey] = this.parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, newRootNamespace, oldRootNamespace);
             }
         });
 
         return objectLeaf;
     }
 
-    parseArrayLeaf(arrayLeaf, idMap, namespace) {
+    parseArrayLeaf(arrayLeaf, idMap, newRootNamespace, oldRootNamespace) {
         return arrayLeaf.map((leafValue, index) => this.parseTreeLeaf(
-            null, leafValue, idMap, namespace));
+            null, leafValue, idMap, newRootNamespace, oldRootNamespace));
     }
 
-    parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
+    parseBranchedLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace) {
         if (Array.isArray(branchedLeafValue)) {
-            return this.parseArrayLeaf(branchedLeafValue, idMap, namespace);
+            return this.parseArrayLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace);
         } else {
-            return this.parseObjectLeaf(branchedLeafValue, idMap, namespace);
+            return this.parseObjectLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace);
         }
     }
 
-    parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
+    parseTreeLeaf(leafKey, leafValue, idMap, newRootNamespace, oldRootNamespace) {
         if (leafValue === null || leafValue === undefined) {
             return leafValue;
         }
 
         const hasChild = typeof leafValue === 'object';
         if (hasChild) {
-            return this.parseBranchedLeaf(leafValue, idMap, namespace);
+            return this.parseBranchedLeaf(leafValue, idMap, newRootNamespace, oldRootNamespace);
         }
 
         const mappedLeafValue = idMap.get(leafValue);
@@ -92,21 +92,26 @@ class StaticModelProvider {
         if (leafKey === 'key') {
             return hasMappedValue ? mappedLeafValue : leafValue;
         } else if (leafKey === 'namespace') {
-            return leafValue || namespace;
+            // Only rewrite the namespace if it matches the old root namespace.
+            // This is to prevent rewriting namespaces of objects that are not
+            // children of the root object (e.g.: objects from a telemetry dictionary)
+            return leafValue === oldRootNamespace
+                ? newRootNamespace
+                : leafValue;
         } else if (leafKey === 'location') {
             if (!hasMappedValue) {
                 return null;
             }
 
                 const newLocationIdentifier = objectUtils.makeKeyString({
-                    namespace,
+                namespace: newRootNamespace,
                 key: mappedLeafValue
                 });
 
                 return newLocationIdentifier;
         } else if (hasMappedValue) {
             const newIdentifier = objectUtils.makeKeyString({
-                namespace,
+                namespace: newRootNamespace,
                 key: mappedLeafValue
             });
 
@@ -117,7 +122,8 @@ class StaticModelProvider {
     }
 
     rewriteObjectIdentifiers(importData, rootIdentifier) {
-        const namespace = rootIdentifier.namespace;
+        const oldRootNamespace = importData.rootId.split(':')[1] ?? '';
+        const newRootNamespace = rootIdentifier.namespace;
         const idMap = new Map();
         const objectTree = importData.openmct;
 
@@ -130,7 +136,7 @@ class StaticModelProvider {
             idMap.set(originalId, newId);
         });
 
-        const newTree = this.parseTreeLeaf(null, objectTree, idMap, namespace);
+        const newTree = this.parseTreeLeaf(null, objectTree, idMap, newRootNamespace, oldRootNamespace);
 
         return newTree;
     }
