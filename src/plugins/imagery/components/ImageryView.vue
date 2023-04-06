@@ -74,7 +74,7 @@
                 </div>
                 <img
                     ref="focusedImage"
-                    class="c-imagery__main-image__image js-imageryView-image "
+                    class="c-imagery__main-image__image js-imageryView-image"
                     :src="imageUrl"
                     :draggable="!isSelectable"
                     :style="{
@@ -96,6 +96,11 @@
                     :image="focusedImage"
                     :sized-image-dimensions="sizedImageDimensions"
                 />
+                <canvas
+                    ref="canvas"
+                    class="c-compass"
+                    style="width: 100%; height: 100%;"
+                ></canvas>
             </div>
         </div>
 
@@ -673,6 +678,7 @@ export default {
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
+        this.drawAnnotations();
     },
     beforeDestroy() {
         this.persistVisibleLayers();
@@ -712,6 +718,25 @@ export default {
                 transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${this.imageTranslateY / 2}px)`,
                 transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
             };
+        },
+        drawAnnotations() {
+            const canvas = this.$refs.canvas;
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            const iterations = Math.floor(Math.random() * 20);
+            for (let i = 0; i < iterations; i++) {
+                context.beginPath();
+                context.lineWidth = "2";
+                context.fillStyle = "rgba(199, 87, 231, 0.2)";
+                context.strokeStyle = "#c757e7";
+
+                const left = Math.floor(Math.random() * canvas.width);
+                const top = Math.floor(Math.random() * canvas.height);
+                const size = Math.floor(Math.random() * 50);
+                context.rect(left, top, size, size);
+                context.fill();
+                context.stroke();
+            }
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
