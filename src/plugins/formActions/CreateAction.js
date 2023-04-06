@@ -64,11 +64,6 @@ export default class CreateAction extends PropertiesAction {
 
         const parentDomainObject = this.openmct.objects.toMutable(parentDomainObjectPath[0]);
 
-        // TODO REMOVE FOR OMM-RELEASE-5.0
-        if (!parentDomainObject.identifier.namespace && parentDomainObject.key) {
-            console.error(`parent namespace in key: ${parentDomainObject.key}`);
-        }
-
         this.domainObject.modified = Date.now();
         this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
         this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;

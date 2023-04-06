@@ -88,7 +88,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     canProvideTelemetry(domainObject) {
-        return Boolean(this.findSubscriptionProvider(domainObject))
+        return Boolean(this.#findSubscriptionProvider(domainObject))
                 || Boolean(this.findRequestProvider(domainObject));
     }
 
@@ -123,10 +123,9 @@ export default class TelemetryAPI {
     }
 
     /**
-     * Returns a telemetry subscription provider that supports
-     * a given domain object and options.
+     * @private
      */
-    findSubscriptionProvider() {
+    #findSubscriptionProvider() {
         const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsSubscribe.apply(provider, args);
@@ -349,7 +348,7 @@ export default class TelemetryAPI {
             return () => {};
         }
 
-        const provider = this.findSubscriptionProvider(domainObject);
+        const provider = this.#findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
             this.subscribeCache = {};
