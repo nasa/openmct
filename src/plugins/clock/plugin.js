@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,7 +32,7 @@ export default function ClockPlugin(options) {
         const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
         openmct.types.addType('clock', {
             name: 'Clock',
-            description: 'A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.',
+            description: 'A digital clock that uses system time and supports a variety of display formats and timezones.',
             creatable: true,
             cssClass: 'icon-clock',
             initialize: function (domainObject) {
@@ -68,6 +68,7 @@ export default function ClockPlugin(options) {
                     ]
                 },
                 {
+                    ariaLabel: "12 or 24 hour clock",
                     control: 'select',
                     options: [
                         {
@@ -89,6 +90,7 @@ export default function ClockPlugin(options) {
                     "key": "timezone",
                     "name": "Timezone",
                     "control": "autocomplete",
+                    "cssClass": "c-clock__timezone-selection c-menu--no-icon",
                     "options": momentTimezone.tz.names(),
                     property: [
                         'configuration',

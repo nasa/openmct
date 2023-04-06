@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -159,7 +159,7 @@ function ToolbarProvider(openmct) {
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',
-                            message: 'This action will permanently delete this container from this Flexible Layout',
+                            message: 'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
                             buttons: [
                                 {
                                     label: 'OK',

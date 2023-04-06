@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,7 +90,11 @@ div.c-table {
         flex: 1 1 auto;
     }
 
-    .is-in-small-container & {
+    &.is-stale {
+        @include isStaleHolder();
+    }
+
+    .--width-less-than-600 & {
         &:not(.is-paused) {
             .c-table-control-bar {
                 display: none;
@@ -146,6 +150,15 @@ div.c-table {
         tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
             border-top: 1px solid $colorTabBorder;
         }
+        transition: $transOut;
+    }
+
+    &__selectable-row {cursor: pointer;
+        &:hover {
+            background: $colorListItemBgHov;
+            filter: $filterHov;
+            transition: $transIn;
+        }
     }
 
     &__group-header {
@@ -179,11 +192,38 @@ div.c-table {
     width: 100%;
     height: 100%;
     padding: $mainViewPad;
+
+    &.is-stale {
+        @include isStaleHolder();
+    }
 }
 
 .c-lad-table {
+    &.fixed-layout {
+        table-layout: fixed;
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
     th, td {
         width: 33%; // Needed to prevent size jumping as values dynamically update
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    tbody tr {
+        &:hover {
+            background: $colorItemTreeHoverBg;
+        }
+    }
+
+    td {
+        user-select: none; // Table supports context-click to display Actions menu, don't allow text selection.
+
+        &.is-stale {
+            @include isStaleElement();
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,9 @@
  *****************************************************************************/
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
+const IMAGE_HINT_KEY = 'image';
+const IMAGE_THUMBNAIL_HINT_KEY = 'thumbnail';
+const IMAGE_DOWNLOAD_NAME_HINT_KEY = 'imageDownloadName';
 
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
@@ -30,23 +33,32 @@ export default {
         this.timeSystemChange = this.timeSystemChange.bind(this);
         this.setDataTimeContext = this.setDataTimeContext.bind(this);
         this.setDataTimeContext();
-        this.openmct.objectViews.on('clearData', this.clearData);
+        this.openmct.objectViews.on('clearData', this.dataCleared);
 
-        // set
+        // Get metadata and formatters
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
+
+        this.imageMetadataValue = { ...this.metadata.valuesForHints([IMAGE_HINT_KEY])[0] };
+        this.imageFormatter = this.getFormatter(this.imageMetadataValue.key);
+
+        this.imageThumbnailMetadataValue = { ...this.metadata.valuesForHints([IMAGE_THUMBNAIL_HINT_KEY])[0] };
+        this.imageThumbnailFormatter = this.imageThumbnailMetadataValue.key
+            ? this.getFormatter(this.imageThumbnailMetadataValue.key)
+            : null;
+
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
+        this.imageDownloadNameMetadataValue = { ...this.metadata.valuesForHints([IMAGE_DOWNLOAD_NAME_HINT_KEY])[0]};
 
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
 
-        // kickoff
-        this.subscribe();
-        this.requestHistory();
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {});
+        this.telemetryCollection.on('add', this.dataAdded);
+        this.telemetryCollection.on('remove', this.dataRemoved);
+        this.telemetryCollection.on('clear', this.dataCleared);
+        this.telemetryCollection.load();
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -55,9 +67,39 @@ export default {
         }
 
         this.stopFollowingDataTimeContext();
-        this.openmct.objectViews.off('clearData', this.clearData);
+        this.openmct.objectViews.off('clearData', this.dataCleared);
+
+        this.telemetryCollection.off('add', this.dataAdded);
+        this.telemetryCollection.off('remove', this.dataRemoved);
+        this.telemetryCollection.off('clear', this.dataCleared);
+
+        this.telemetryCollection.destroy();
     },
     methods: {
+        dataAdded(addedItems, addedItemIndices) {
+            const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
+            let newImageHistory = this.imageHistory.slice();
+            normalizedDataToAdd.forEach(((datum, index) => {
+                newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
+            }));
+            //Assign just once so imageHistory watchers don't get called too often
+            this.imageHistory = newImageHistory;
+        },
+        dataCleared() {
+            this.imageHistory = [];
+        },
+        dataRemoved(dataToRemove) {
+            this.imageHistory = this.imageHistory.filter(existingDatum => {
+                const shouldKeep = dataToRemove.some(datumToRemove => {
+                    const existingDatumTimestamp = this.parseTime(existingDatum);
+                    const datumToRemoveTimestamp = this.parseTime(datumToRemove);
+
+                    return (existingDatumTimestamp !== datumToRemoveTimestamp);
+                });
+
+                return shouldKeep;
+            });
+        },
         setDataTimeContext() {
             this.stopFollowingDataTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -71,23 +113,6 @@ export default {
                 this.timeContext.off('timeSystem', this.timeSystemChange);
             }
         },
-        datumIsNotValid(datum) {
-            if (this.imageHistory.length === 0) {
-                return false;
-            }
-
-            const datumURL = this.formatImageUrl(datum);
-            const lastHistoryURL = this.formatImageUrl(this.imageHistory.slice(-1)[0]);
-
-            // datum is not valid if it matches the last datum in history,
-            // or it is before the last datum in the history
-            const datumTimeCheck = this.parseTime(datum);
-            const historyTimeCheck = this.parseTime(this.imageHistory.slice(-1)[0]);
-            const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
-            const isStale = datumTimeCheck < historyTimeCheck;
-
-            return matchesLast || isStale;
-        },
         formatImageUrl(datum) {
             if (!datum) {
                 return;
@@ -95,12 +120,19 @@ export default {
 
             return this.imageFormatter.format(datum);
         },
+        formatImageThumbnailUrl(datum) {
+            if (!datum || !this.imageThumbnailFormatter) {
+                return;
+            }
+
+            return this.imageThumbnailFormatter.format(datum);
+        },
         formatTime(datum) {
             if (!datum) {
                 return;
             }
 
-            let dateTimeStr = this.timeFormatter.format(datum);
+            const dateTimeStr = this.timeFormatter.format(datum);
 
             // Replace ISO "T" with a space to allow wrapping
             return dateTimeStr.replace("T", " ");
@@ -108,7 +140,7 @@ export default {
         getImageDownloadName(datum) {
             let imageDownloadName = '';
             if (datum) {
-                const key = this.imageDownloadNameHints.key;
+                const key = this.imageDownloadNameMetadataValue.key;
                 imageDownloadName = datum[key];
             }
 
@@ -126,51 +158,7 @@ export default {
                 return;
             }
 
-            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
-            delete this.imageContainerWidth;
-            delete this.imageContainerHeight;
-
-            return this.requestHistory();
-        },
-        async requestHistory() {
-            let bounds = this.timeContext.bounds();
-            this.requestCount++;
-            const requestId = this.requestCount;
-            this.imageHistory = [];
-
-            let data = await this.openmct.telemetry
-                .request(this.domainObject, bounds) || [];
-
-            if (this.requestCount === requestId) {
-                let imagery = [];
-                data.forEach((datum) => {
-                    let image = this.normalizeDatum(datum);
-                    if (image) {
-                        imagery.push(image);
-                    }
-                });
-                //this is to optimize anything that reacts to imageHistory length
-                this.imageHistory = imagery;
-            }
-        },
-        clearData(domainObjectToClear) {
-            // global clearData button is accepted therefore no truthy check on inputted param
-            const clearDataForObjectSelected = Boolean(domainObjectToClear);
-            if (clearDataForObjectSelected) {
-                const idsEqual = this.openmct.objects.areIdsEqual(
-                    domainObjectToClear.identifier,
-                    this.domainObject.identifier
-                );
-                if (!idsEqual) {
-                    return;
-                }
-            }
-
-            // splice array to encourage garbage collection
-            this.imageHistory.splice(0, this.imageHistory.length);
-
-            // requesting history effectively clears imageHistory array
-            return this.requestHistory();
+            this.bounds = bounds; // setting bounds for ImageryView watcher
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();
@@ -178,36 +166,25 @@ export default {
             this.timeFormatter = this.getFormatter(this.timeKey);
             this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         },
-        subscribe() {
-            this.unsubscribe = this.openmct.telemetry
-                .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.parseTime(datum);
-                    let bounds = this.timeContext.bounds();
-
-                    if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
-                        let image = this.normalizeDatum(datum);
-                        if (image) {
-                            this.imageHistory.push(image);
-                        }
-                    }
-                });
-        },
         normalizeDatum(datum) {
-            if (this.datumIsNotValid(datum)) {
-                return;
-            }
+            const formattedTime = this.formatTime(datum);
+            const url = this.formatImageUrl(datum);
+            const thumbnailUrl = this.formatImageThumbnailUrl(datum);
+            const time = this.parseTime(formattedTime);
+            const imageDownloadName = this.getImageDownloadName(datum);
 
-            let image = { ...datum };
-            image.formattedTime = this.formatTime(datum);
-            image.url = this.formatImageUrl(datum);
-            image.time = this.parseTime(image.formattedTime);
-            image.imageDownloadName = this.getImageDownloadName(datum);
-
-            return image;
+            return {
+                ...datum,
+                formattedTime,
+                url,
+                thumbnailUrl,
+                time,
+                imageDownloadName
+            };
         },
         getFormatter(key) {
-            let metadataValue = this.metadata.value(key) || { format: key };
-            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+            const metadataValue = this.metadata.value(key) || { format: key };
+            const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
             return valueFormatter;
         }

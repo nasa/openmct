@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -35,14 +35,13 @@
 </template>
 
 <script>
-import {getValidatedPlan} from "../plan/util";
+import {getValidatedData} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import {getPreciseDuration} from "../../utils/duration";
-import ticker from 'utils/clock/Ticker';
 import {SORT_ORDER_OPTIONS} from "./constants";
-
+import _ from 'lodash';
 import moment from "moment";
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
@@ -53,16 +52,26 @@ const headerItems = [
         isSortable: true,
         property: 'start',
         name: 'Start Time',
-        format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
+            } else {
+                return `${moment(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: true,
         isSortable: true,
         property: 'end',
         name: 'End Time',
-        format: function (value, object) {
-            return `${moment(value).format(TIME_FORMAT)}Z`;
+        format: function (value, object, key, openmct) {
+            const clock = openmct.time.clock();
+            if (clock && clock.formatTime) {
+                return clock.formatTime(value);
+            } else {
+                return `${moment(value).format(TIME_FORMAT)}Z`;
+            }
         }
     }, {
         defaultDirection: false,
@@ -96,8 +105,10 @@ export default {
     components: {
         ListView
     },
-    inject: ['openmct', 'domainObject', 'path'],
+    inject: ['openmct', 'domainObject', 'path', 'composition'],
     data() {
+        this.planObjects = [];
+
         return {
             viewBounds: undefined,
             height: 0,
@@ -108,18 +119,31 @@ export default {
     },
     mounted() {
         this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = Date.now();
+        this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
+        this.openmct.time.on('clock', this.setViewFromClock);
+
         this.getPlanDataAndSetConfig(this.domainObject);
 
-        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.getPlanDataAndSetConfig);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
         this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+
+        this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+        this.openmct.time.on('bounds', this.updateTimestamp);
         this.openmct.editor.on('isEditing', this.setEditState);
 
         this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
         this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
+
+        if (this.composition) {
+            this.composition.on('add', this.addToComposition);
+            this.composition.on('remove', this.removeItem);
+            this.composition.load();
+        }
+
+        this.setViewFromClock(this.openmct.time.clock());
+
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -130,22 +154,31 @@ export default {
             this.unlistenConfig();
         }
 
-        if (this.unlistenTicker) {
-            this.unlistenTicker();
-        }
-
         if (this.removeStatusListener) {
             this.removeStatusListener();
         }
 
         this.openmct.editor.off('isEditing', this.setEditState);
+        this.openmct.time.off('bounds', this.updateTimestamp);
+        this.openmct.time.off('clock', this.setViewFromClock);
 
         this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
         if (this.clearAutoScrollDisabledTimer) {
             clearTimeout(this.clearAutoScrollDisabledTimer);
         }
+
+        if (this.composition) {
+            this.composition.off('add', this.addToComposition);
+            this.composition.off('remove', this.removeItem);
+        }
     },
     methods: {
+        planFileUpdated(selectFile) {
+            this.getPlanData({
+                selectFile,
+                sourceMap: this.domainObject.sourceMap
+            });
+        },
         getPlanDataAndSetConfig(mutatedObject) {
             this.getPlanData(mutatedObject);
             this.setViewFromConfig(mutatedObject.configuration);
@@ -157,14 +190,86 @@ export default {
                 this.showAll = true;
                 this.listActivities();
             } else {
+
                 this.filterValue = configuration.filter;
                 this.setSort();
                 this.setViewBounds();
                 this.listActivities();
             }
         },
+        updateTimestamp(_bounds, isTick) {
+            if (isTick === true && this.openmct.time.clock() !== undefined) {
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+            }
+        },
+        setViewFromClock(newClock) {
+            this.filterValue = this.domainObject.configuration.filter;
+            const isFixedTime = newClock === undefined;
+            if (isFixedTime) {
+                this.hideAll = false;
+                this.showAll = true;
+                this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
+            } else {
+                this.setSort();
+                this.setViewBounds();
+                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+            }
+        },
+        addItem(domainObject) {
+            this.planObjects = [domainObject];
+            this.resetPlanData();
+            if (domainObject.type === 'plan') {
+                this.getPlanDataAndSetConfig({
+                    ...this.domainObject,
+                    selectFile: domainObject.selectFile,
+                    sourceMap: domainObject.sourceMap
+                });
+            }
+        },
+        addToComposition(telemetryObject) {
+            if (this.planObjects.length > 0) {
+                this.confirmReplacePlan(telemetryObject);
+            } else {
+                this.addItem(telemetryObject);
+            }
+        },
+        confirmReplacePlan(telemetryObject) {
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will replace the current plan. Do you want to continue?',
+                buttons: [
+                    {
+                        label: 'Ok',
+                        emphasis: true,
+                        callback: () => {
+                            const oldTelemetryObject = this.planObjects[0];
+                            this.removeFromComposition(oldTelemetryObject);
+                            this.addItem(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            this.removeFromComposition(telemetryObject);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        removeFromComposition(telemetryObject) {
+            this.composition.remove(telemetryObject);
+        },
+        removeItem() {
+            this.planObjects = [];
+            this.resetPlanData();
+        },
+        resetPlanData() {
+            this.planData = {};
+        },
         getPlanData(domainObject) {
-            this.planData = getValidatedPlan(domainObject);
+            this.planData = getValidatedData(domainObject);
         },
         setViewBounds() {
             const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
@@ -176,7 +281,7 @@ export default {
             const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
 
             if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-                //show all events
+                //don't show all events
                 this.showAll = false;
                 this.viewBounds = undefined;
                 this.hideAll = true;
@@ -246,12 +351,8 @@ export default {
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
         },
-        clearPreviousActivities(time) {
-            if (time instanceof Date) {
-                this.timestamp = time.getTime();
-            } else {
-                this.timestamp = time;
-            }
+        updateTimeStampAndListActivities(time) {
+            this.timestamp = time;
 
             this.listActivities();
         },
@@ -328,7 +429,7 @@ export default {
 
             this.firstCurrentActivityIndex = -1;
             this.currentActivitiesCount = 0;
-            this.$el.parentElement.scrollTo({top: 0});
+            this.$el.parentElement?.scrollTo({top: 0});
             this.autoScrolled = false;
         },
         setScrollTop() {

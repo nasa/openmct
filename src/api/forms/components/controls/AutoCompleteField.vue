@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -19,35 +19,47 @@
 * this source code distribution or the Licensing information page available
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
-
 <template>
-<div class="form-control autocomplete">
-    <span class="autocompleteInputAndArrow">
+<div
+    ref="autoCompleteForm"
+    class="form-control c-input--autocomplete js-autocomplete"
+>
+    <div
+        class="c-input--autocomplete__wrapper"
+    >
         <input
+            ref="autoCompleteInput"
             v-model="field"
-            class="autocompleteInput"
+            class="c-input--autocomplete__input js-autocomplete__input"
             type="text"
+            :placeholder="placeHolderText"
             @click="inputClicked()"
             @keydown="keyDown($event)"
         >
-        <span
-            class="icon-arrow-down"
+        <div
+            class="icon-arrow-down c-icon-button c-input--autocomplete__afford-arrow js-autocomplete__afford-arrow"
             @click="arrowClicked()"
-        ></span>
-    </span>
+        ></div>
+    </div>
     <div
-        class="autocompleteOptions"
+        v-if="!hideOptions && filteredOptions.length > 0"
+        class="c-menu c-input--autocomplete__options js-autocomplete-options"
+        aria-label="Autocomplete Options"
         @blur="hideOptions = true"
     >
-        <ul v-if="!hideOptions">
+        <ul>
             <li
                 v-for="opt in filteredOptions"
                 :key="opt.optionId"
-                :class="{'optionPreSelected': optionIndex === opt.optionId}"
+                :class="[
+                    {'optionPreSelected': optionIndex === opt.optionId},
+                    itemCssClass
+                ]"
+                :style="itemStyle(opt)"
                 @click="fillInputWithString(opt.name)"
                 @mouseover="optionMouseover(opt.optionId)"
             >
-                <span class="optionText">{{ opt.name }}</span>
+                {{ opt.name }}
             </li>
         </ul>
     </div>
@@ -65,7 +77,23 @@ export default {
     props: {
         model: {
             type: Object,
-            required: true
+            required: true,
+            default() {
+                return {};
+            }
+        },
+        placeHolderText: {
+            type: String,
+            default() {
+                return "";
+            }
+        },
+        itemCssClass: {
+            type: String,
+            required: false,
+            default() {
+                return "";
+            }
         }
     },
     data() {
@@ -78,31 +106,40 @@ export default {
     },
     computed: {
         filteredOptions() {
-            const options = this.optionNames || [];
+            const fullOptions = this.options || [];
             if (this.showFilteredOptions) {
-                return options
+                const optionsFiltered = fullOptions
                     .filter(option => {
-                        return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
+                        if (option.name && this.field) {
+                            return option.name.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
+                        }
+
+                        return false;
                     }).map((option, index) => {
                         return {
                             optionId: index,
-                            name: option
+                            name: option.name,
+                            color: option.color
                         };
                     });
+
+                return optionsFiltered;
             }
 
-            return options.map((option, index) => {
+            const optionsFiltered = fullOptions.map((option, index) => {
                 return {
                     optionId: index,
-                    name: option
+                    name: option.name,
+                    color: option.color
                 };
             });
+
+            return optionsFiltered;
         }
     },
     watch: {
         field(newValue, oldValue) {
             if (newValue !== oldValue) {
-
                 const data = {
                     model: this.model,
                     value: newValue
@@ -113,7 +150,7 @@ export default {
         },
         hideOptions(newValue) {
             if (!newValue) {
-                // adding a event listener when the hideOpntions is false (dropdown is visible)
+                // adding a event listener when the hideOptions is false (dropdown is visible)
                 // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
                 document.body.addEventListener('click', this.handleOutsideClick);
             } else {
@@ -123,17 +160,17 @@ export default {
         }
     },
     mounted() {
-        this.options = this.model.options;
-        this.autocompleteInputAndArrow = this.$el.getElementsByClassName('autocompleteInputAndArrow')[0];
-        this.autocompleteInputElement = this.$el.getElementsByClassName('autocompleteInput')[0];
-        if (this.options[0].name) {
-        // If "options" include name, value pair
-            this.optionNames = this.options.map((opt) => {
-                return opt.name;
+        this.autocompleteInputAndArrow = this.$refs.autoCompleteForm;
+        this.autocompleteInputElement = this.$refs.autoCompleteInput;
+        if (this.model.options && this.model.options.length && !this.model.options[0].name) {
+            // If options is only an array of string.
+            this.options = this.model.options.map((option) => {
+                return {
+                    name: option
+                };
             });
         } else {
-        // If options is only an array of string.
-            this.optionNames = this.options;
+            this.options = this.model.options;
         }
     },
     destroyed() {
@@ -193,10 +230,10 @@ export default {
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
 
-            if (this.hideOptions) {
-                this.showOptions();
-            } else {
+            if (!this.hideOptions && this.filteredOptions.length > 0) {
                 this.hideOptions = true;
+            } else {
+                this.showOptions();
             }
 
         },
@@ -222,6 +259,12 @@ export default {
                     });
                 }
             });
+        },
+        itemStyle(option) {
+            if (option.color) {
+
+                return { '--optionIconColor': option.color };
+            }
         }
     }
 };

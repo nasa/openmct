@@ -1,5 +1,5 @@
 <template>
-<ul class="c-list">
+<ul class="c-list c-notebook__sections">
     <li
         v-for="section in sections"
         :key="section.id"

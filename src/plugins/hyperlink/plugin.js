@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ export default function () {
         openmct.types.addType('hyperlink', {
             name: 'Hyperlink',
             key: 'hyperlink',
-            description: 'A hyperlink to redirect to a different link',
+            description: 'A text element or button that links to any URL including Open MCT views.',
             creatable: true,
             cssClass: 'icon-chain-links',
             initialize: function (domainObject) {

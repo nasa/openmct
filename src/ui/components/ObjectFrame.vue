@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,11 @@
  *****************************************************************************/
 <template>
 <div
+    ref="soView"
     class="c-so-view js-notebook-snapshot-item-wrapper"
     :class="[
         statusClass,
+        widthClass,
         'c-so-view--' + domainObject.type,
         {
             'c-so-view--no-frame': !hasFrame,
@@ -122,6 +124,7 @@ const SIMPLE_CONTENT_TYPES = [
     'hyperlink',
     'conditionWidget'
 ];
+const CSS_WIDTH_LESS_STR = '--width-less-than-';
 
 const SupportedViewTypes = [
     'plot-stacked',
@@ -169,6 +172,7 @@ export default {
 
         return {
             cssClass,
+            widthClass: '',
             complexContent,
             notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: [],
@@ -192,12 +196,21 @@ export default {
         if (provider) {
             this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
         }
+
+        if (this.$refs.soView) {
+            this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
+            this.soViewResizeObserver.observe(this.$refs.soView);
+        }
     },
     beforeDestroy() {
         this.removeStatusListener();
 
         if (this.actionCollection) {
             this.unlistenToActionCollection();
+        }
+
+        if (this.soViewResizeObserver) {
+            this.soViewResizeObserver.disconnect();
         }
     },
     methods: {
@@ -231,6 +244,19 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        resizeSoView() {
+            let cW = this.$refs.soView.offsetWidth;
+            let widths = [220, 600];
+            let wClass = '';
+
+            for (let width of widths) {
+                if (cW < width) {
+                    wClass = wClass.concat(' ', CSS_WIDTH_LESS_STR, width);
+                }
+            }
+
+            this.widthClass = wClass.trimStart();
         },
         getViewKey() {
             let viewKey = this.this.$refs.objectView.viewKey;

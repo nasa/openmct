@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -89,6 +89,10 @@ export default {
         domainObject: {
             type: Object,
             required: true
+        },
+        objectPath: {
+            type: Array,
+            required: true
         }
     },
     data() {
@@ -168,7 +172,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.timeContext.on('clock', this.setTimeOptions);
         },
         stopFollowingTimeContext() {
@@ -225,6 +229,10 @@ export default {
             if (this.isFixed) {
                 offsets = this.timeOptions.fixedOffsets;
             } else {
+                if (this.timeOptions.clockOffsets === undefined) {
+                    this.timeOptions.clockOffsets = this.openmct.time.clockOffsets();
+                }
+
                 offsets = this.timeOptions.clockOffsets;
             }
 

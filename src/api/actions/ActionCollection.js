@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -85,8 +85,6 @@ class ActionCollection extends EventEmitter {
     }
 
     destroy() {
-        super.removeAllListeners();
-
         if (!this.skipEnvironmentObservers) {
             this.objectUnsubscribes.forEach(unsubscribe => {
                 unsubscribe();
@@ -96,6 +94,7 @@ class ActionCollection extends EventEmitter {
         }
 
         this.emit('destroy', this.view);
+        this.removeAllListeners();
     }
 
     getVisibleActions() {

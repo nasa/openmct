@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,19 +26,23 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-        v-if="hasCameraFieldOfView"
-        :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
-        :camera-pan="cameraPan"
+        :heading="heading"
+        :camera-azimuth="cameraAzimuth"
+        :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
+        :sun-heading="sunHeading"
     />
     <CompassRose
-        v-if="hasCameraFieldOfView"
         :camera-angle-of-view="cameraAngleOfView"
-        :camera-pan="cameraPan"
-        :compass-rose-sizing-classes="compassRoseSizingClasses"
         :heading="heading"
-        :sized-image-dimensions="sizedImageDimensions"
+        :camera-azimuth="cameraAzimuth"
+        :transformations="transformations"
+        :has-gimble="hasGimble"
+        :normalized-camera-azimuth="normalizedCameraAzimuth"
         :sun-heading="sunHeading"
+        :sized-image-dimensions="sizedImageDimensions"
     />
 </div>
 </template>
@@ -46,8 +50,7 @@
 <script>
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
-
-const CAMERA_ANGLE_OF_VIEW = 70;
+import { rotate } from './utils';
 
 export default {
     components: {
@@ -55,10 +58,6 @@ export default {
         CompassRose
     },
     props: {
-        compassRoseSizingClasses: {
-            type: String,
-            required: true
-        },
         image: {
             type: Object,
             required: true
@@ -69,23 +68,35 @@ export default {
         }
     },
     computed: {
-        hasCameraFieldOfView() {
-            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
+        hasGimble() {
+            return this.cameraAzimuth !== undefined;
+        },
+        // compass ordinal orientation of camera
+        normalizedCameraAzimuth() {
+            return this.hasGimble
+                ? rotate(this.cameraAzimuth)
+                : rotate(this.heading, -this.transformations.rotation || 0);
         },
         // horizontal rotation from north in degrees
         heading() {
             return this.image.heading;
+        },
+        hasHeading() {
+            return this.heading !== undefined;
         },
         // horizontal rotation from north in degrees
         sunHeading() {
             return this.image.sunOrientation;
         },
         // horizontal rotation from north in degrees
-        cameraPan() {
+        cameraAzimuth() {
             return this.image.cameraPan;
         },
         cameraAngleOfView() {
-            return CAMERA_ANGLE_OF_VIEW;
+            return this.transformations.cameraAngleOfView;
+        },
+        transformations() {
+            return this.image.transformations;
         }
     },
     methods: {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,13 +45,13 @@
 
     &__nav {
         flex: 0 0 auto;
+
         * {
             overflow: hidden;
         }
     }
 
     .c-sidebar {
-        background: $sideBarBg;
         .c-sidebar__pane {
             flex-basis: 50%;
         }
@@ -75,8 +75,10 @@
         flex: 1 1 auto;
         flex-direction: column;
         width: 100%;
+
         > * {
             flex: 0 0 auto;
+
             + * {
                 margin-top: $interiorMargin;
             }
@@ -111,18 +113,23 @@
         flex: 1 1 auto;
     }
 
+
+    &__page-locked,
     &__drag-area {
-        // TODO: recast this element to use c-drop-hint element
-        background: rgba($colorKey, 0.1);
-        border: 1px dashed rgba($colorKey, 0.7);
         border-radius: $controlCr;
-        color: rgba($colorBodyFg, 0.7);
         padding: 10px;
-        cursor: pointer;
 
         &:before {
             margin-right: 7px !important;
         }
+    }
+
+    &__drag-area {
+        background: rgba($colorKey, 0.1);
+        border: 1px dashed rgba($colorKey, 0.7);
+        color: $colorKey;
+        cursor: pointer;
+        justify-content: center;
 
         [class*="__label"] {
             font-style: italic;
@@ -130,8 +137,8 @@
         }
 
         &:hover {
-            background: rgba($colorKey, 0.2);
-            color: $colorBodyFg;
+            background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
+            //color: $colorBodyFg;
         }
 
         &.drag-active,
@@ -151,6 +158,7 @@
             display: flex;
             flex-wrap: wrap; // Allows wrapping in mobile portrait and narrow placements
             line-height: 220%;
+
             > * {
                 flex: 0 0 auto;
             }
@@ -162,9 +170,11 @@
             overflow: hidden;
             white-space: nowrap;
             font-size: $headerFontSize;
+
             > * {
                 // Section
                 flex: 0 0 auto;
+
                 + * {
                     // Page
                     display: inline;
@@ -187,6 +197,13 @@
 
         [class*="__entry"] + [class*="__entry"] {
             margin-top: $interiorMarginSm;
+        }
+
+        .commit-button {
+            @include cButton();
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
         }
     }
 
@@ -218,6 +235,30 @@
             }
         }
     }
+
+    /***** RESTRICTED NOTEBOOK */
+    &__page-locked {
+        background: rgba($colorAlert, 0.2);
+        display: flex;
+        padding: 5px;
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        [class*='icon'] {
+            flex: 0 0 auto;
+        }
+
+        [class*='__message'] {
+            flex: 1 1 auto;
+        }
+    }
+
+    &__commit-entries-control {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 .is-notebook-default,
@@ -243,40 +284,77 @@
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
-    &__time,
+    &:hover {
+        background: rgba($colorBodyFg, 0.2);
+    }
+
+    &.is-selected {
+        background: rgba($colorKey, 0.3);
+    }
+
     &__text,
     &__local-controls {
         padding-top: $p;
         padding-bottom: $p;
     }
 
-    &__time,
+    &__creator,
     &__embed__time {
         opacity: 0.7;
     }
 
-    &__time-and-content {
+    &__time-and-creator-and-delete,
+    &__input {
+        padding: $p;
+    }
+
+    &__input{
+        word-break: break-word;
+    }
+    &__time-and-creator-and-delete{
         display: flex;
+        align-items: center;
+
+        > * + *{
+            float: right;
+            margin-left: auto;
+        }
+
+    }
+
+    &__creator [class*='icon'] {
+        font-size: 0.95em;
+    }
+
+    &__time-and-content {
+        display: block;
         flex: 1 1 auto;
-        flex-wrap: wrap;
+        overflow: visible;
+
+        > * + * {
+            margin-top: $interiorMarginSm;
+        }
+
+        [class*='created-'] {
+            color: pullForward($colorBodyFg, 20%);
+        }
     }
 
     &__time {
-        flex: 0 1 auto;
-        min-width: 130px;
-        margin-right: $interiorMarginLg;
-
         * {
             white-space: nowrap;
         }
     }
 
     &__content {
+        flex-direction: column;
         flex: 1 1 auto;
+        margin-right: $interiorMarginSm;
+        margin-top: $interiorMargin;
 
-       > [class*="__"] + [class*="__"] {
+        > [class*="__"] + [class*="__"] {
             margin-top: $interiorMarginSm;
-       }
+        }
     }
 
     &__text {
@@ -294,11 +372,12 @@
     &__input {
         // Appended to __text element when Notebook is not in readOnly mode
         @include inlineInput;
-        padding-left: $inputTextPLeftRight;
-        padding-right: $inputTextPLeftRight;
-
+        padding-left: $p;
+        padding-right: $p;
+        overflow: unset;
+        margin-bottom: $interiorMargin;
         @include hover {
-            &:not(:focus) {
+            &:not(:focus, .locked) {
                 background: rgba($colorBodyFg, 0.1);
             }
         }
@@ -308,6 +387,17 @@
         }
 
         white-space: pre-wrap;
+    }
+
+    &__save-button {
+        display: flex;
+        justify-content: flex-end;
+
+        .c-button {
+            $lrP: 15px;
+            padding-left: $lrP;
+            padding-right: $lrP;
+        }
     }
 
     &__section-and-page {
@@ -332,12 +422,17 @@
             opacity: 0.7;
         }
     }
+
+    &__remove{
+        float: right;
+    }
 }
+
 
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 30px;
+    $d: 40px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -355,21 +450,24 @@
     // LEGACY,
     @include snapThumb();
 }
+.c-ne__embeds-wrapper{
+    max-height: 75px;
+    padding-left: $interiorMargin;
+    padding-top: $interiorMargin;
+    display: flex;
+}
 
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
-
-    [class*="__"] + [class*="__"] {
-        margin-left: $interiorMargin;
-    }
+    border: 1px solid $colorInteriorBorder;
 
     &__info {
         display: flex;
         flex-direction: column;
-
+        margin-left: $interiorMargin;
         a {
             color: $colorKey;
         }
@@ -383,9 +481,10 @@
     }
 
     &__link {
+        flex: 1 1 auto;
         &:before {
             display: block;
-            font-size: 0.85em;
+            font-size: 1em;
             margin-right: $interiorMarginSm;
         }
     }
@@ -398,7 +497,26 @@
     &__snap-thumb {
         @include snapThumb();
     }
+    &__actions{
+        margin: $interiorMarginSm;
+    }
+    &__actions-menu {
+        width: 55vh;
+        max-width: 500px;
+        height: 130px;
+        z-index: 70;
+        [class*="__icon"] {
+            filter: $colorKeyFilter;
+            margin: 0%;
+            height: 4vh;
+        }
+        [class*="__item-description"] {
+            min-width: 200px;
+        }
+    }
+
 }
+
 /****************************** SNAPSHOTTING */
 // LEGACY: TODO: refactor these names
 .t-contents,
@@ -413,7 +531,10 @@
     color: $colorBodyFg;
     padding: $interiorMarginSm !important; // Prevents items from going right to the edge of the image
 
-    .l-sticky-headers .l-tabular-body { overflow: auto; }
+    .l-sticky-headers .l-tabular-body {
+        overflow: auto;
+    }
+
     .l-browse-bar {
         display: none; // Suppress browse-bar when snapshotting from view-large overlay
         + * {
@@ -457,6 +578,7 @@
 
     > * {
         flex: 1 1 auto;
+
         &:first-child {
             flex: 0 0 auto;
         }
@@ -494,13 +616,19 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: $m; right: 0; bottom: $m; left: 0; // LEGACY, deal with .editor border-radius clipping stuff
+    top: $m;
+    right: 0;
+    bottom: $m;
+    left: 0; // LEGACY, deal with .editor border-radius clipping stuff
 }
 
 #snap-annotation-wrapper,
 #snap-annotation-bar {
     position: relative;
-    top: auto; right: auto; bottom: auto; left: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
 }
 
 #snap-annotation-wrapper {
@@ -528,7 +656,9 @@
     > div {
         display: contents;
 
-        > * + * { margin-left: $interiorMargin !important; }
+        > * + * {
+            margin-left: $interiorMargin !important;
+        }
     }
 
     .ptro-tool-controls {
@@ -600,7 +730,7 @@
     }
 
     .ptro-color-active-control {
-        background: $colorBtnMajorBg  !important;
+        background: $colorBtnMajorBg !important;
         color: $colorBtnMajorFg !important;
     }
 
@@ -618,10 +748,14 @@
 
 /****************************** MOBILE */
 body.mobile {
-    .c-notebook__drag-area { display: none; }
+    .c-notebook__drag-area {
+        display: none;
+    }
+
     .c-notebook__entry {
         [class*="local-controls"] {
             display: none;
+            height: fit-content;
         }
     }
 
@@ -650,4 +784,33 @@ body.mobile {
 .c-indicator.has-new-snapshot {
     $c: $colorOk;
     @include pulseProp($animName: flashSnapshot, $dur: 500ms, $iter: infinite, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
+}
+
+/****************************** RESTRICTED NOTEBOOK / SHIFT LOG */
+.c-notebook--restricted {
+    .c-notebook__pages {
+        .c-list__item {
+            // Can display lock icon when a page is committed.
+            &:before {
+                $s: 0.8em;
+                color: $colorAlert;
+                display: block;
+                font-size: $s;
+                width: $s;
+                margin-right: $interiorMarginSm;
+            }
+
+            &:not([class*='lock']) {
+                &:before {
+                    content: '';
+                }
+            }
+        }
+    }
+}
+
+.c-list__item {
+    &__name:focus {
+        text-overflow: clip;
+    }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,7 +35,9 @@ export default class StyleRuleManager extends EventEmitter {
         }
 
         if (styleConfiguration) {
-            this.initialize(styleConfiguration);
+            // We don't set the selectedConditionId here because we want condition set computation to happen before we apply any selected style
+            const styleConfigurationWithNoSelection = Object.assign(styleConfiguration, {selectedConditionId: ''});
+            this.initialize(styleConfigurationWithNoSelection);
             if (styleConfiguration.conditionSetIdentifier) {
                 this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
@@ -57,14 +59,18 @@ export default class StyleRuleManager extends EventEmitter {
                 this.applySelectedConditionStyle();
             }
         } else if (this.conditionSetIdentifier) {
+            //reset the selected style and let the condition set output determine what it should be
+            this.selectedConditionId = undefined;
+            this.currentStyle = undefined;
+            this.updateDomainObjectStyle();
             this.subscribeToConditionSet();
         }
     }
 
     initialize(styleConfiguration) {
         this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
-        this.staticStyle = styleConfiguration.staticStyle;
         this.selectedConditionId = styleConfiguration.selectedConditionId;
+        this.staticStyle = styleConfiguration.staticStyle;
         this.defaultConditionId = styleConfiguration.defaultConditionId;
         this.updateConditionStylesMap(styleConfiguration.styles || []);
     }
@@ -78,11 +84,13 @@ export default class StyleRuleManager extends EventEmitter {
         this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
             this.openmct.telemetry.request(conditionSetDomainObject)
                 .then(output => {
-                    if (output && output.length) {
+                    if (output && output.length && (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier))) {
                         this.handleConditionSetResultUpdated(output[0]);
                     }
                 });
-            this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
+            if (this.conditionSetIdentifier && this.openmct.objects.areIdsEqual(conditionSetDomainObject.identifier, this.conditionSetIdentifier)) {
+                this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
+            }
         });
     }
 

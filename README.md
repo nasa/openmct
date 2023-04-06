@@ -1,4 +1,4 @@
-# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/openmct.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/openmct/context:javascript) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) 
+# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) 
 
 Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
@@ -6,26 +6,8 @@ Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting S
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
-## See Open MCT in Action
+![Screen Shot 2022-11-23 at 9 51 36 AM](https://user-images.githubusercontent.com/4215777/203617422-4d912bfc-766f-4074-8324-409d9bbe7c05.png)
 
-Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
-![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
-
-## Open MCT v2.0.0
-Support for our legacy bundle-based API, and the libraries that it was built on (like Angular 1.x), have now been removed entirely from this repository.
-
-For now if you have an Open MCT application that makes use of the legacy API, [a plugin](https://github.com/nasa/openmct-legacy-plugin) is provided that bootstraps the legacy bundling mechanism and API. This plugin will not be maintained over the long term however, and the legacy support plugin will not be tested for compatibility with future versions of Open MCT. It is provided for convenience only.
-
-### How do I know if I am using legacy API?
-You might still be using legacy API if your source code
-
-* Contains files named bundle.js, or bundle.json,
-* Makes calls to `openmct.$injector()`, or `openmct.$angular`,
-* Makes calls to `openmct.legacyRegistry`, `openmct.legacyExtension`, or `openmct.legacyBundle`.
-
-
-### What should I do if I am using legacy API?
-Please refer to [the modern Open MCT API](https://nasa.github.io/openmct/documentation/). Post any questions to the [Discussions section](https://github.com/nasa/openmct/discussions) of the Open MCT GitHub repository.
 
 ## Building and Running Open MCT Locally
 
@@ -46,6 +28,8 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
+
 ## Documentation
 
 Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/).
@@ -59,11 +43,9 @@ our documentation.
 We want Open MCT to be as easy to use, install, run, and develop for as
 possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
-## Building Applications With Open MCT
+## Developing Applications With Open MCT
 
-Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
-
-See our documentation for a guide on [building Applications with Open MCT](https://github.com/nasa/openmct/blob/master/API.md#starting-an-open-mct-application).
+For more on developing with Open MCT, see our documentation for a guide on [Developing Applications with Open MCT](./API.md#starting-an-open-mct-application).
 
 ## Compatibility
 
@@ -80,11 +62,14 @@ that is intended to be added or removed as a single unit.
 As well as providing an extension mechanism, most of the core Open MCT codebase is also 
 written as plugins.
 
-For information on writing plugins, please see [our API documentation](https://github.com/nasa/openmct/blob/master/API.md#plugins).
+For information on writing plugins, please see [our API documentation](./API.md#plugins).
 
 ## Tests
 
-Tests are written for [Jasmine 3](https://jasmine.github.io/api/3.1/global)
+Our automated test coverage comes in the form of unit, e2e, visual, performance, and security tests. 
+
+### Unit Tests
+Unit Tests are written for [Jasmine](https://jasmine.github.io/api/edge/global)
 and run by [Karma](http://karma-runner.github.io). To run:
 
 `npm test`
@@ -93,16 +78,33 @@ The test suite is configured to load any scripts ending with `Spec.js` found
 in the `src` hierarchy. Full configuration details are found in
 `karma.conf.js`. By convention, unit test scripts should be located
 alongside the units that they test; for example, `src/foo/Bar.js` would be
-tested by `src/foo/BarSpec.js`. (For legacy reasons, some existing tests may
-be located in separate `test` folders near the units they test, but the
-naming convention is otherwise the same.)
+tested by `src/foo/BarSpec.js`.
 
-### Test Reporting
+### e2e, Visual, and Performance tests
+The e2e, Visual, and Performance tests are written for playwright and run by playwright's new test runner [@playwright/test](https://playwright.dev/). 
 
-When `npm test` is run, test results will be written as HTML to
-`dist/reports/tests/`. Code coverage information is written to `dist/reports/coverage`.
+To run the e2e tests which are part of every commit:
 
-Code Coverage Reports are available from [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
+`npm run test:e2e:stable`
+
+To run the visual test suite:
+
+`npm run test:e2e:visual`
+
+To run the performance tests:
+
+`npm run test:perf`
+
+The test suite is configured to all tests localed in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md)
+
+### Security Tests
+Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/). The list of CWE coverage items is avaiable in the [CodeQL docs](https://codeql.github.com/codeql-query-help/javascript-cwe/). The CodeQL workflow is specified in the [CodeQL analysis file](./.github/workflows/codeql-analysis.yml) and the custom [CodeQL config](./.github/codeql/codeql-config.yml).
+
+### Test Reporting and Code Coverage
+
+Each test suite generates a report in CircleCI. For a complete overview of testing functionality, please see our [Circle CI Test Insights Dashboard](https://app.circleci.com/insights/github/nasa/openmct/workflows/the-nightly/overview?branch=master&reporting-window=last-30-days)
+
+Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
 
 # Glossary
 
@@ -143,3 +145,19 @@ documentation, may presume an understanding of these terms.
   user makes another such choice.)
 * _namespace_: A name used to identify a persistence store. A running open MCT 
 application could potentially use multiple persistence stores, with the 
+
+## Open MCT v2.0.0
+Support for our legacy bundle-based API, and the libraries that it was built on (like Angular 1.x), have now been removed entirely from this repository.
+
+For now if you have an Open MCT application that makes use of the legacy API, [a plugin](https://github.com/nasa/openmct-legacy-plugin) is provided that bootstraps the legacy bundling mechanism and API. This plugin will not be maintained over the long term however, and the legacy support plugin will not be tested for compatibility with future versions of Open MCT. It is provided for convenience only.
+
+### How do I know if I am using legacy API?
+You might still be using legacy API if your source code
+
+* Contains files named bundle.js, or bundle.json,
+* Makes calls to `openmct.$injector()`, or `openmct.$angular`,
+* Makes calls to `openmct.legacyRegistry`, `openmct.legacyExtension`, or `openmct.legacyBundle`.
+
+
+### What should I do if I am using legacy API?
+Please refer to [the modern Open MCT API](https://nasa.github.io/openmct/documentation/). Post any questions to the [Discussions section](https://github.com/nasa/openmct/discussions) of the Open MCT GitHub repository.

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -80,12 +80,22 @@ export default function PlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<plot :options="options"></plot>'
+                        template: '<plot ref="plotComponent" :options="options"></plot>'
                     });
+                },
+                getViewContext() {
+                    if (!component) {
+                        return {};
+                    }
+
+                    return component.$refs.plotComponent.getViewContext();
                 },
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
+                },
+                getComponent() {
+                    return component;
                 }
             };
         }

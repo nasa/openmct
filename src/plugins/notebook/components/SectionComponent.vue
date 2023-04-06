@@ -7,17 +7,24 @@
 >
     <span
         class="c-list__item__name js-list__item__name"
+        :class="[{ 'c-input-inline': isSelected && !section.isLocked }]"
         :data-id="section.id"
+        :contenteditable="isSelected && !section.isLocked"
+        @keydown.escape="updateName"
         @keydown.enter="updateName"
         @blur="updateName"
-    >{{ section.name.length ? section.name : `Unnamed ${sectionTitle}` }}</span>
-    <PopupMenu :popup-menu-items="popupMenuItems" />
+    >{{ sectionName }}</span>
+    <PopupMenu
+        v-if="!section.isLocked"
+        :popup-menu-items="popupMenuItems"
+    />
 </div>
 </template>
 
 <script>
-import PopupMenu from './PopupMenu.vue';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
 import RemoveDialog from '../utils/removeDialog';
+import PopupMenu from './PopupMenu.vue';
 
 export default {
     components: {
@@ -55,16 +62,13 @@ export default {
     computed: {
         isSelected() {
             return this.selectedSectionId === this.section.id;
-        }
-    },
-    watch: {
-        section(newSection) {
-            this.toggleContentEditable(newSection);
+        },
+        sectionName() {
+            return this.section.name.length ? this.section.name : `Unnamed ${this.sectionTitle}`;
         }
     },
     mounted() {
         this.addPopupMenuItems();
-        this.toggleContentEditable();
     },
     methods: {
         addPopupMenuItems() {
@@ -95,44 +99,39 @@ export default {
             removeDialog.show();
         },
         selectSection(event) {
-            const target = event.target;
-            const section = target.closest('.js-list__item');
-            const input = section.querySelector('.js-list__item__name');
+            const { target: { dataset: { id } } } = event;
 
-            if (section.className.indexOf('is-selected') > -1) {
-                input.contentEditable = true;
-                input.classList.add('c-input-inline');
-
-                return;
-            }
-
-            const id = target.dataset.id;
-
-            if (!id) {
+            if (this.isSelected || !id) {
                 return;
             }
 
             this.$emit('selectSection', id);
         },
-        toggleContentEditable(section = this.section) {
-            const sectionTitle = this.$el.querySelector('span');
-            sectionTitle.contentEditable = section.isSelected;
+        renameSection(target) {
+            if (!target) {
+                return;
+            }
+
+            target.textContent = target.textContent ? target.textContent.trim() : `Unnamed ${this.sectionTitle}`;
+
+            if (this.section.name === target.textContent) {
+                return;
+            }
+
+            this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
         },
         updateName(event) {
-            const target = event.target;
-            target.contentEditable = false;
-            target.classList.remove('c-input-inline');
-            const name = target.textContent.trim();
+            const { target, keyCode, type } = event;
 
-            if (this.section.name === name) {
-                return;
+            if (keyCode === KEY_ESCAPE) {
+                target.textContent = this.section.name;
+            } else if (keyCode === KEY_ENTER || type === 'blur') {
+                this.renameSection(target);
             }
 
-            if (name === '') {
-                return;
-            }
+            target.scrollLeft = '0';
 
-            this.$emit('renameSection', Object.assign(this.section, { name }));
+            target.blur();
         }
     }
 };

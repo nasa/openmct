@@ -27,7 +27,7 @@ assignees: ''
 
 #### Environment
 <!--- If encountered on local machine, execute the following:
-<!--- npx envinfo --system --browsers --npmPackages --binaries --languages --markdown -->
+<!--- npx envinfo --system --browsers --npmPackages --binaries --markdown -->
 * Open MCT Version: <!--- date of build, version, or SHA -->
 * Deployment Type: <!--- npm dev? VIPER Dev? openmct-yamcs? -->
 * OS:
@@ -41,6 +41,7 @@ assignees: ''
 - [ ] Does this impact a critical component?
 - [ ] Is this just a visual bug with no functional impact?
 - [ ] Does this block the execution of e2e tests?
+- [ ] Does this have an impact on Performance?
 
 #### Additional Information
 <!--- Include any screenshots, gifs, or logs which will expedite triage -->

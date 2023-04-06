@@ -37,6 +37,7 @@
 .c-grid-item {
     // Mobile-first
     @include button($bg: $colorItemBg, $fg: $colorItemFg);
+    @include cControlHov();
     cursor: pointer;
     display: flex;
     padding: $interiorMarginLg;
@@ -142,15 +143,10 @@
     body.desktop & {
         $transOutMs: 300ms;
         flex-flow: column nowrap;
-        transition: $transOutMs ease-in-out;
 
         &:hover {
-            filter: $filterItemHoverFg;
-            transition: $transIn;
-
             .c-grid-item__type-icon {
                 transform: scale(1.1);
-                transition: $transInBounce;
             }
         }
 
@@ -171,8 +167,6 @@
             font-size: floor(math.div($gridItemDesk, 3));
             margin: $interiorMargin 22.5% $interiorMargin * 3 22.5%;
             order: 2;
-            transform-origin: center;
-            transition: all $transOutMs ease-in-out;
         }
 
         &__details {

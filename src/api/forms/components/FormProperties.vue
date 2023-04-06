@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -21,10 +21,13 @@
 *****************************************************************************/
 
 <template>
-<div class="c-form">
+<div class="c-form js-form">
     <div class="c-overlay__top-bar c-form__top-bar">
-        <div class="c-overlay__dialog-title">{{ model.title }}</div>
-        <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+        <div class="c-overlay__dialog-title js-form-title">{{ model.title }}</div>
+        <div
+            v-if="hasRequiredFields"
+            class="c-overlay__dialog-hint hint"
+        >All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
     <form
         name="mctForm"
@@ -44,18 +47,14 @@
             >
                 {{ section.name }}
             </h2>
-            <div
+            <FormRow
                 v-for="(row, index) in section.rows"
                 :key="row.id"
-                class="u-contents"
-            >
-                <FormRow
-                    :css-class="section.cssClass"
-                    :first="index < 1"
-                    :row="row"
-                    @onChange="onChange"
-                />
-            </div>
+                :css-class="row.cssClass"
+                :first="index < 1"
+                :row="row"
+                @onChange="onChange"
+            />
         </div>
     </form>
 
@@ -64,14 +63,17 @@
             tabindex="0"
             :disabled="isInvalid"
             class="c-button c-button--major"
+            aria-label="Save"
             @click="onSave"
         >
             {{ submitLabel }}
         </button>
         <button
+            v-if="!shouldHideCancelButton"
             tabindex="0"
-            class="c-button"
-            @click="onDismiss"
+            class="c-button js-cancel-button"
+            aria-label="Cancel"
+            @click="onCancel"
         >
             {{ cancelLabel }}
         </button>
@@ -81,7 +83,7 @@
 
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default {
     components: {
@@ -107,6 +109,10 @@ export default {
         };
     },
     computed: {
+        hasRequiredFields() {
+            return this.model.sections.some(section =>
+                section.rows.some(row => row.required));
+        },
         isInvalid() {
             return Object.entries(this.invalidProperties)
                 .some(([key, value]) => {
@@ -134,6 +140,9 @@ export default {
             }
 
             return 'Cancel';
+        },
+        shouldHideCancelButton() {
+            return this.model.buttons?.cancel?.hide === true;
         }
     },
     mounted() {
@@ -155,8 +164,8 @@ export default {
 
             this.$emit('onChange', data);
         },
-        onDismiss() {
-            this.$emit('onDismiss');
+        onCancel() {
+            this.$emit('onCancel');
         },
         onSave() {
             this.$emit('onSave');

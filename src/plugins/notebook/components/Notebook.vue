@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 <template>
-<div class="c-notebook">
+<div
+    class="c-notebook"
+    :class="[{'c-notebook--restricted' : isRestricted }]"
+>
     <div class="c-notebook__head">
         <Search
             class="c-notebook__search"
@@ -47,7 +50,7 @@
         <Sidebar
             ref="sidebar"
             class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
-            :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
+            :class="sidebarClasses"
             :default-page-id="defaultPageId"
             :selected-page-id="getSelectedPageId()"
             :default-section-id="defaultSectionId"
@@ -119,8 +122,10 @@
                 </div>
             </div>
             <div
+                v-if="selectedPage && !selectedPage.isLocked"
+                :class="{ 'disabled': activeTransaction }"
                 class="c-notebook__drag-area icon-plus"
-                @click="newEntry()"
+                @click="newEntry(null, $event)"
                 @dragover="dragOver"
                 @drop.capture="dropCapture"
                 @drop="dropOnEntry($event)"
@@ -129,25 +134,53 @@
                     To start a new entry, click here or drag and drop any object
                 </span>
             </div>
+            <progress-bar
+                v-if="savingTransaction"
+                class="c-telemetry-table__progress-bar"
+                :model="{ progressPerc: undefined }"
+            />
+            <div
+                v-if="selectedPage && selectedPage.isLocked"
+                class="c-notebook__page-locked"
+            >
+                <div class="icon-lock"></div>
+                <div class="c-notebook__page-locked__message">This page has been committed and cannot be modified or removed</div>
+            </div>
             <div
                 v-if="selectedSection && selectedPage"
                 ref="notebookEntries"
                 class="c-notebook__entries"
+                aria-label="Notebook Entries"
             >
                 <NotebookEntry
                     v-for="entry in filteredAndSortedEntries"
                     :key="entry.id"
                     :entry="entry"
                     :domain-object="domainObject"
+                    :notebook-annotations="notebookAnnotations[entry.id]"
                     :selected-page="selectedPage"
                     :selected-section="selectedSection"
                     :read-only="false"
+                    :is-locked="selectedPage.isLocked"
+                    :selected-entry-id="selectedEntryId"
                     @cancelEdit="cancelTransaction"
                     @editingEntry="startTransaction"
                     @deleteEntry="deleteEntry"
                     @updateEntry="updateEntry"
+                    @entry-selection="entrySelection(entry)"
                 />
             </div>
+            <div
+                v-if="showLockButton"
+                class="c-notebook__commit-entries-control"
+            >
+                <button
+                    class="c-button c-button--major commit-button icon-lock"
+                    title="Commit entries and lock this page from further changes"
+                    @click="lockPage()"
+                >
+                    <span class="c-button__label">Commit Entries</span>
+                </button></div>
         </div>
     </div>
 </div>
@@ -158,10 +191,11 @@ import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
-import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -175,9 +209,10 @@ export default {
         NotebookEntry,
         Search,
         SearchResults,
-        Sidebar
+        Sidebar,
+        ProgressBar
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['agent', 'openmct', 'snapshotContainer'],
     props: {
         domainObject: {
             type: Object,
@@ -192,27 +227,21 @@ export default {
             selectedPageId: this.getSelectedPageId(),
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
+            isRestricted: this.domainObject.type === RESTRICTED_NOTEBOOK_TYPE,
             search: '',
             searchResults: [],
+            lastLocalAnnotationCreation: 0,
             showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
-            sidebarCoversEntries: false
+            sidebarCoversEntries: false,
+            filteredAndSortedEntries: [],
+            notebookAnnotations: {},
+            selectedEntryId: undefined,
+            activeTransaction: false,
+            savingTransaction: false
         };
     },
     computed: {
-        filteredAndSortedEntries() {
-            const filterTime = Date.now();
-            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
-
-            const hours = parseInt(this.showTime, 10);
-            const filteredPageEntriesByTime = hours
-                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
-                : pageEntries;
-
-            return this.defaultSort === 'oldest'
-                ? filteredPageEntriesByTime
-                : [...filteredPageEntriesByTime].reverse();
-        },
         pages() {
             return this.getPages() || [];
         },
@@ -253,6 +282,25 @@ export default {
             }
 
             return this.sections[0];
+        },
+        sidebarClasses() {
+            let sidebarClasses = [];
+            if (this.showNav) {
+                sidebarClasses.push('is-expanded');
+            }
+
+            if (this.sidebarCoversEntries) {
+                sidebarClasses.push('c-drawer--overlays');
+            } else {
+                sidebarClasses.push('c-drawer--push');
+            }
+
+            return sidebarClasses;
+        },
+        showLockButton() {
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+
+            return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
         }
     },
     watch: {
@@ -261,6 +309,7 @@ export default {
         },
         defaultSort() {
             mutateObject(this.openmct, this.domainObject, 'configuration.defaultSort', this.defaultSort);
+            this.filterAndSortEntries();
         },
         showTime() {
             mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
@@ -270,20 +319,38 @@ export default {
         this.getSearchResults = debounce(this.getSearchResults, 500);
         this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
     },
-    mounted() {
+    async mounted() {
+        await this.loadAnnotations();
         this.formatSidebar();
         this.setSectionAndPageFromUrl();
 
+        this.openmct.selection.on('change', this.updateSelection);
+        this.transaction = null;
+
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.filterAndSortEntries();
+        this.unobserveEntries = this.openmct.objects.observe(this.domainObject, '*', this.filterAndSortEntries);
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
         }
 
+        if (this.unobserveEntries) {
+            this.unobserveEntries();
+        }
+
+        Object.keys(this.notebookAnnotations).forEach(entryID => {
+            const notebookAnnotationsForEntry = this.notebookAnnotations[entryID];
+            notebookAnnotationsForEntry.forEach(notebookAnnotation => {
+                this.openmct.objects.destroyMutable(notebookAnnotation);
+            });
+        });
+
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener('hashchange', this.setSectionAndPageFromUrl);
+        this.openmct.selection.off('change', this.updateSelection);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -292,7 +359,7 @@ export default {
     },
     methods: {
         changeSectionPage(newParams, oldParams, changedParams) {
-            if (newParams.view !== NOTEBOOK_VIEW_TYPE) {
+            if (isNotebookViewType(newParams.view)) {
                 return;
             }
 
@@ -312,6 +379,56 @@ export default {
                     });
                 }
             });
+        },
+        updateSelection(selection) {
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            if (selection?.[0]?.[0]?.context?.targetDetails?.[keyString]?.entryId === undefined) {
+                this.selectedEntryId = undefined;
+            }
+        },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
+
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
+
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
+            foundAnnotations.forEach((foundAnnotation) => {
+                const targetId = Object.keys(foundAnnotation.targets)[0];
+                const entryId = foundAnnotation.targets[targetId].entryId;
+                if (!this.notebookAnnotations[entryId]) {
+                    this.$set(this.notebookAnnotations, entryId, []);
+                }
+
+                const annotationExtant = this.notebookAnnotations[entryId].some((existingAnnotation) => {
+                    return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, foundAnnotation.identifier);
+                });
+                if (!annotationExtant) {
+                    const annotationArray = this.notebookAnnotations[entryId];
+                    const mutableAnnotation = this.openmct.objects.toMutable(foundAnnotation);
+                    annotationArray.push(mutableAnnotation);
+                }
+            });
+        },
+        filterAndSortEntries() {
+            const filterTime = Date.now();
+            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
+
+            const hours = parseInt(this.showTime, 10);
+            const filteredPageEntriesByTime = hours
+                ? pageEntries.filter(entry => (filterTime - entry.createdOn) <= hours * 60 * 60 * 1000)
+                : pageEntries;
+
+            this.filteredAndSortedEntries = this.defaultSort === 'oldest'
+                ? filteredPageEntriesByTime
+                : [...filteredPageEntriesByTime].reverse();
+
+            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+                this.loadAnnotations();
+            }
         },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
@@ -345,6 +462,43 @@ export default {
             this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
         },
+        lockPage() {
+            let prompt = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: "This action will lock this page and disallow any new entries, or editing of existing entries. Do you want to continue?",
+                buttons: [
+                    {
+                        label: 'Lock Page',
+                        callback: () => {
+                            let sections = this.getSections();
+                            this.selectedPage.isLocked = true;
+
+                            // cant be default if it's locked
+                            if (this.selectedPage.id === this.defaultPageId) {
+                                this.cleanupDefaultNotebook();
+                            }
+
+                            if (!this.selectedSection.isLocked) {
+                                this.selectedSection.isLocked = true;
+                            }
+
+                            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+
+                            if (!this.domainObject.locked) {
+                                mutateObject(this.openmct, this.domainObject, 'locked', true);
+                            }
+
+                            prompt.dismiss();
+                        }
+                    }, {
+                        label: 'Cancel',
+                        callback: () => {
+                            prompt.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
         setSectionAndPageFromUrl() {
             let sectionId = this.getSectionIdFromUrl() || this.getDefaultSectionId() || this.getSelectedSectionId();
             let pageId = this.getPageIdFromUrl() || this.getDefaultPageId() || this.getSelectedPageId();
@@ -370,6 +524,8 @@ export default {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
 
+                this.cancelTransaction();
+
                 return;
             }
 
@@ -382,17 +538,42 @@ export default {
                         emphasis: true,
                         callback: () => {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                            entries.splice(entryPos, 1);
-                            this.updateEntries(entries);
+                            if (entries) {
+                                entries.splice(entryPos, 1);
+                                this.updateEntries(entries);
+                                this.filterAndSortEntries();
+                                this.removeAnnotations(entryId);
+                            } else {
+                                this.cancelTransaction();
+                            }
+
                             dialog.dismiss();
                         }
                     },
                     {
                         label: "Cancel",
-                        callback: () => dialog.dismiss()
+                        callback: () => {
+                            dialog.dismiss();
+                        }
                     }
                 ]
             });
+        },
+        removeAnnotations(entryId) {
+            if (this.notebookAnnotations[entryId]) {
+                this.openmct.annotation.deleteAnnotations(this.notebookAnnotations[entryId]);
+            }
+        },
+        checkEntryPos(entry) {
+            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
+            if (entryPos === -1) {
+                this.openmct.notifications.alert('Warning: unable to tag entry');
+                console.error(`unable to tag entry ${entry} from section ${this.selectedSection}, page ${this.selectedPage}`);
+
+                return false;
+            }
+
+            return true;
         },
         dragOver(event) {
             event.preventDefault();
@@ -404,7 +585,7 @@ export default {
                 this.openmct.editor.cancel();
             }
         },
-        dropOnEntry(event) {
+        async dropOnEntry(event) {
             event.preventDefault();
             event.stopImmediatePropagation();
 
@@ -430,7 +611,8 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            const embed = createNewEmbed(snapshotMeta);
+            const embed = await createNewEmbed(snapshotMeta);
+
             this.newEntry(embed);
         },
         focusOnEntryId() {
@@ -455,12 +637,9 @@ export default {
                 - tablet portrait
                 - in a layout frame (within .c-so-view)
             */
-            const classList = document.querySelector('body').classList;
-            const isPhone = Array.from(classList).includes('phone');
-            const isTablet = Array.from(classList).includes('tablet');
-            // address in https://github.com/nasa/openmct/issues/4875
-            // eslint-disable-next-line compat/compat
-            const isPortrait = window.screen.orientation.type.includes('portrait');
+            const isPhone = this.agent.isPhone();
+            const isTablet = this.agent.isTablet();
+            const isPortrait = this.agent.isPortrait();
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
@@ -614,13 +793,29 @@ export default {
 
             return section.id;
         },
-        newEntry(embed = null) {
+        async newEntry(embed, event) {
+            this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed).then(id => {
-                this.focusEntryId = id;
+            const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+
+            const element = this.$refs.notebookEntries.querySelector(`#${id}`);
+            const entryAnnotations = this.notebookAnnotations[id] ?? {};
+            selectEntry({
+                element,
+                entryId: id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                notebookAnnotations: entryAnnotations
             });
+            if (event) {
+                event.stopPropagation();
+            }
+
+            this.filterAndSortEntries();
+            this.focusEntryId = id;
+            this.selectedEntryId = id;
         },
         orientationChange() {
             this.formatSidebar();
@@ -740,6 +935,7 @@ export default {
 
             this.selectedPageId = pageId;
             this.syncUrlWithPageAndSection();
+            this.filterAndSortEntries();
         },
         selectSection(sectionId) {
             if (!sectionId) {
@@ -752,39 +948,41 @@ export default {
             this.selectPage(pageId);
 
             this.syncUrlWithPageAndSection();
-        },
-        activeTransaction() {
-            return this.openmct.objects.getActiveTransaction();
+            this.filterAndSortEntries();
         },
         startTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                this.openmct.objects.startTransaction();
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.activeTransaction = true;
+                this.transaction = this.openmct.objects.startTransaction();
             }
         },
-        saveTransaction() {
-            const transaction = this.activeTransaction();
-
-            if (!transaction || this.openmct.editor.isEditing()) {
-                return;
+        async saveTransaction() {
+            if (this.transaction !== null) {
+                this.savingTransaction = true;
+                try {
+                    await this.transaction.commit();
+                } finally {
+                    this.endTransaction();
+                }
             }
-
-            return transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
         },
-        cancelTransaction() {
-            if (!this.openmct.editor.isEditing()) {
-                const transaction = this.activeTransaction();
-                transaction.cancel()
-                    .catch(error => {
-                        throw error;
-                    }).finally(() => {
-                        this.openmct.objects.endTransaction();
-                    });
+        async cancelTransaction() {
+            if (this.transaction !== null) {
+                try {
+                    await this.transaction.cancel();
+                } finally {
+                    this.endTransaction();
+                }
             }
+        },
+        entrySelection(entry) {
+            this.selectedEntryId = entry.id;
+        },
+        endTransaction() {
+            this.openmct.objects.endTransaction();
+            this.transaction = null;
+            this.savingTransaction = false;
+            this.activeTransaction = false;
         }
     }
 };

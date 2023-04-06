@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,18 +31,16 @@ define([
     function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
         return {
             key: 'filters-inspector',
-            name: 'Filters Inspector View',
+            name: 'Filters',
             canView: function (selection) {
-                if (selection.length === 0 || selection[0].length === 0) {
-                    return false;
-                }
+                const domainObject = selection?.[0]?.[0]?.context?.item;
 
-                let object = selection[0][0].context.item;
-
-                return object && supportedObjectTypesArray.some(type => object.type === type);
+                return domainObject && supportedObjectTypesArray.some(type => domainObject.type === type);
             },
             view: function (selection) {
                 let component;
+
+                const domainObject = selection?.[0]?.[0]?.context?.item;
 
                 return {
                     show: function (element) {
@@ -57,6 +55,15 @@ define([
                             template: '<filters-view></filters-view>'
                         });
                     },
+                    showTab: function (isEditing) {
+                        const hasPersistedFilters = Boolean(domainObject?.configuration?.filters);
+                        const hasGlobalFilters = Boolean(domainObject?.configuration?.globalFilters);
+
+                        return hasPersistedFilters || hasGlobalFilters;
+                    },
+                    priority: function () {
+                        return openmct.priority.DEFAULT;
+                    },
                     destroy: function () {
                         if (component) {
                             component.$destroy();
@@ -64,9 +71,6 @@ define([
                         }
                     }
                 };
-            },
-            priority: function () {
-                return 1;
             }
         };
     }

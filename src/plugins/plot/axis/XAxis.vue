@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -135,20 +135,24 @@ export default {
         },
         setUpXAxisOptions() {
             const xAxisKey = this.xAxis.get('key');
+            this.xKeyOptions = [];
 
-            this.xKeyOptions = this.seriesModel.metadata
-                .valuesForHints(['domain'])
-                .map(function (o) {
-                    return {
-                        name: o.name,
-                        key: o.key
-                    };
-                });
+            if (this.seriesModel.metadata) {
+                this.xKeyOptions = this.seriesModel.metadata
+                    .valuesForHints(['domain'])
+                    .map(function (o) {
+                        return {
+                            name: o.name,
+                            key: o.key
+                        };
+                    });
+            }
+
             this.xAxisLabel = this.xAxis.get('label');
-            this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
+            this.selectedXKeyOptionKey = this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
         },
         onTickWidthChange(width) {
-            this.$emit('tickWidthChanged', width);
+            this.$emit('plotXTickWidth', width);
         }
     }
 };

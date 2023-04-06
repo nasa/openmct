@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,7 +44,8 @@ describe("The Move Action plugin", () => {
                     identifier: {
                         namespace: "",
                         key: "child-folder-object"
-                    }
+                    },
+                    location: "parent-folder-object"
                 }
             }
         }).folder;
@@ -90,7 +91,33 @@ describe("The Move Action plugin", () => {
         expect(moveAction).toBeDefined();
     });
 
+    describe("when determining the object is applicable", () => {
+
+        beforeEach(() => {
+            spyOn(moveAction, 'appliesTo').and.callThrough();
+        });
+
+        it("should be true when the parent is creatable and has composition", () => {
+            let applies = moveAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
+        });
+
+        it("should be true when the child is locked and not an alias", () => {
+            childObject.locked = true;
+            let applies = moveAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
+        });
+
+        it("should still be true when the child is locked and is an alias", () => {
+            childObject.locked = true;
+            childObject.location = 'another-parent-folder-object';
+            let applies = moveAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
+        });
+    });
+
     describe("when moving an object to a new parent and removing from the old parent", () => {
+        let unObserve;
         beforeEach((done) => {
             openmct.router.path = [];
 
@@ -104,13 +131,17 @@ describe("The Move Action plugin", () => {
                 });
             });
 
-            openmct.objects.observe(parentObject, '*', (newObject) => {
+            unObserve = openmct.objects.observe(parentObject, '*', (newObject) => {
                 done();
             });
 
             moveAction.inNavigationPath = () => false;
 
             moveAction.invoke([childObject, parentObject]);
+        });
+
+        afterEach(() => {
+            unObserve();
         });
 
         it("the child object's identifier should be in the new parent's composition", () => {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -29,10 +29,10 @@
         v-for="timeSystemItem in timeSystems"
         :key="timeSystemItem.timeSystem.key"
     >
-        <template slot="label">
+        <template #label>
             {{ timeSystemItem.timeSystem.name }}
         </template>
-        <template slot="object">
+        <template #object>
             <timeline-axis
                 :bounds="timeSystemItem.bounds"
                 :time-system="timeSystemItem.timeSystem"
@@ -50,7 +50,7 @@
         <timeline-object-view
             v-for="item in items"
             :key="item.keyString"
-            class="c-timeline__content"
+            class="c-timeline__content js-timeline__content"
             :item="item"
         />
     </div>
@@ -61,7 +61,7 @@
 import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedPlan } from "../plan/util";
+import { getValidatedData } from "../plan/util";
 
 const unknownObjectType = {
     definition: {
@@ -93,15 +93,15 @@ export default {
         this.stopFollowingTimeContext();
     },
     mounted() {
+        this.items = [];
+        this.setTimeContext();
+
         if (this.composition) {
             this.composition.on('add', this.addItem);
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.reorder);
             this.composition.load();
         }
-
-        this.setTimeContext();
-        this.getTimeSystems();
     },
     methods: {
         addItem(domainObject) {
@@ -110,7 +110,9 @@ export default {
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
             if (domainObject.type === 'plan') {
-                rowCount = Object.keys(getValidatedPlan(domainObject)).length;
+                rowCount = Object.keys(getValidatedData(domainObject)).length;
+            } else if (domainObject.type === 'gantt-chart') {
+                rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
@@ -124,12 +126,10 @@ export default {
             };
 
             this.items.push(item);
-            this.updateContentHeight();
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
             this.items.splice(index, 1);
-            this.updateContentHeight();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
@@ -138,7 +138,23 @@ export default {
             });
         },
         updateContentHeight() {
-            this.height = Math.round(this.$refs.contentHolder.getBoundingClientRect().height);
+            const clientHeight = this.getClientHeight();
+            if (this.height !== clientHeight) {
+                this.height = clientHeight;
+            }
+        },
+        getClientHeight() {
+            let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
+
+            if (!clientHeight) {
+            //this is a hack - need a better way to find the parent of this component
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientHeight = parent.getBoundingClientRect().height;
+                }
+            }
+
+            return clientHeight;
         },
         getTimeSystems() {
             const timeSystems = this.openmct.time.getAllTimeSystems();
@@ -155,7 +171,9 @@ export default {
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
         },
-        updateViewBounds(bounds) {
+        updateViewBounds() {
+            const bounds = this.timeContext.bounds();
+            this.updateContentHeight();
             let currentTimeSystem = this.timeSystems.find(item => item.timeSystem.key === this.openmct.time.timeSystem().key);
             if (currentTimeSystem) {
                 currentTimeSystem.bounds = bounds;
@@ -165,12 +183,15 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            this.updateViewBounds(this.timeContext.bounds());
+            this.getTimeSystems();
+            this.updateViewBounds();
             this.timeContext.on('bounds', this.updateViewBounds);
+            this.timeContext.on('clock', this.updateViewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.updateViewBounds);
+                this.timeContext.off('clock', this.updateViewBounds);
             }
         }
     }

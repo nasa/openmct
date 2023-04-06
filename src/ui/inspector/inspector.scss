@@ -25,10 +25,6 @@
     }
 
     &__selected {
-        .c-object-label__name {
-            filter: $objectLabelNameFilter;
-        }
-
         .c-object-label__type-icon {
             opacity: $objectLabelTypeIconOpacity;
         }
@@ -42,6 +38,41 @@
         flex: 0 0 auto;
         font-size: 0.8em;
         text-transform: uppercase;
+
+        &.c-tabs {
+            flex-wrap: nowrap;
+        }
+
+        .c-tab {
+            background: $colorTabBg;
+            color: $colorTabFg;
+            padding: $interiorMargin;
+
+            &:not(.is-current) {
+                overflow: hidden;
+
+                &:after {
+                    background-image: linear-gradient(90deg, transparent 0%, rgba($colorTabBg, 1) 70%);
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    right: 0;
+                    height: 100%;
+                    width: 15px;
+                    z-index: 1;
+                }
+            }
+
+            &.is-current {
+                background: $colorTabCurrentBg;
+                color: $colorTabCurrentFg;
+                padding-right: $interiorMargin + 3;
+            }
+
+            &__name {
+                overflow: hidden;
+            }
+        }
     }
 
     &__content {
@@ -93,6 +124,11 @@
         @include propertiesHeader();
         font-size: 0.65rem;
         grid-column: 1 / 3;
+        margin: $interiorMargin 0;
+
+        &.--first {
+            margin-top: 0;
+        }
     }
 
     .c-tree .grid-properties {
@@ -103,6 +139,15 @@
         .l-pane {
             min-height: 50px;
         }
+    }
+}
+
+.c-inspect-properties,
+.c-inspect-tags {
+    [class*="header"] {
+        @include propertiesHeader();
+        flex: 0 0 auto;
+        font-size: .85em;
     }
 }
 
@@ -173,13 +218,24 @@
             grid-column: 1 / 3;
         }
     }
+}
 
-    .is-editing & {
-        .c-inspect-properties {
-            &__value, &__label {
-                line-height: 160%; // Prevent buttons/selects from overlapping when wrapping
-            }
+.is-editing {
+    .c-inspect-properties {
+        &__value, &__label {
+            line-height: 160%; // Prevent buttons/selects from overlapping when wrapping
         }
+    }
+    .grid-row--pad-label-for-button {
+        // Add extra space at the top of the label grid cell because there's a button to the right
+        [class*='label'] {
+            line-height: 1.8em;
+        }
+    }
+
+    .c-location {
+        // Always make the location element span columns
+        grid-column: 1 / 3;
     }
 }
 
@@ -197,17 +253,17 @@
         }
     }
 
-    li.grid-row + li.grid-row {
+    .grid-row + .grid-row {
         > * {
             border-top: 1px solid $colorInspectorSectionHeaderBg;
         }
     }
 
-    li.grid-row .label {
+    .grid-row .label {
         color: $colorInspectorPropName;
     }
 
-    li.grid-row .value {
+    .grid-row .value {
         color: $colorInspectorPropVal;
         word-break: break-all;
         &:first-child {

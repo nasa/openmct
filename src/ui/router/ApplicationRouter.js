@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -50,6 +50,10 @@ class ApplicationRouter extends EventEmitter {
         this.started = false;
 
         this.setHash = _.debounce(this.setHash.bind(this), 300);
+
+        openmct.once('destroy', () => {
+            this.destroy();
+        });
     }
 
     // Public Methods
@@ -126,11 +130,10 @@ class ApplicationRouter extends EventEmitter {
     }
 
     /**
-     * Navigate to given hash and update current location object and notify listeners about location change
+     * Navigate to given hash, update current location object, and notify listeners about location change
      *
-     * @param {string} paramName name of searchParam to get from current url searchParams
-     *
-     * @returns {string} value of paramName from current url searchParams
+     * @param {string} hash The URL hash to navigate to in the form of "#/browse/mine/{keyString}/{keyString}".
+     * Should not include any params.
      */
     navigate(hash) {
         this.handleLocationChange(hash.substring(1));
@@ -223,7 +226,7 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.hashChaged(p));
+        this.locationBar.onChange(p => this.hashChanged(p));
         this.locationBar.start({
             root: location.pathname
         });
@@ -386,7 +389,7 @@ class ApplicationRouter extends EventEmitter {
      *
      * @param {string} hash new hash for url
      */
-    hashChaged(hash) {
+    hashChanged(hash) {
         this.emit('change:hash', hash);
         this.handleLocationChange(hash);
     }

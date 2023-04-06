@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,7 +39,7 @@ export default class SeriesCollection extends Collection {
         this.modelClass = PlotSeries;
         this.plot = options.plot;
         this.openmct = options.openmct;
-        this.palette = new ColorPalette();
+        this.palette = options.palette || new ColorPalette();
         this.listenTo(this, 'add', this.onSeriesAdd, this);
         this.listenTo(this, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
@@ -56,10 +56,21 @@ export default class SeriesCollection extends Collection {
             const series = this.byIdentifier(seriesConfig.identifier);
             if (series) {
                 series.persistedConfig = seriesConfig;
+                if (!series.persistedConfig.yAxisId) {
+                    return;
+                }
+
+                if (series.get('yAxisId') !== series.persistedConfig.yAxisId) {
+                    series.set('yAxisId', series.persistedConfig.yAxisId);
+                }
             }
         }, this);
     }
     watchTelemetryContainer(domainObject) {
+        if (domainObject.type === 'telemetry.plot.stacked') {
+            return;
+        }
+
         const composition = this.openmct.composition.get(domainObject);
         this.listenTo(composition, 'add', this.addTelemetryObject, this);
         this.listenTo(composition, 'remove', this.removeTelemetryObject, this);

@@ -94,16 +94,15 @@ export default {
             if (this.openmct.time.clock() === undefined) {
                 let nowMarker = document.querySelector('.nowMarker');
                 if (nowMarker) {
-                    nowMarker.parentNode.removeChild(nowMarker);
+                    nowMarker.classList.add('hidden');
                 }
             } else {
                 let nowMarker = document.querySelector('.nowMarker');
                 if (nowMarker) {
-                    const svgEl = d3Selection.select(this.svgElement).node();
-                    let height = svgEl.style('height').replace('px', '');
-                    height = Number(height) + this.contentHeight;
-                    nowMarker.style.height = height + 'px';
-                    const now = this.xScale(Date.now());
+                    nowMarker.classList.remove('hidden');
+                    nowMarker.style.height = this.contentHeight + 'px';
+                    const nowTimeStamp = this.openmct.time.clock().currentValue();
+                    const now = this.xScale(nowTimeStamp);
                     nowMarker.style.left = now + this.offset + 'px';
                 }
             }

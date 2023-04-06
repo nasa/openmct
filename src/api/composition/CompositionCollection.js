@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,75 +20,98 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
+/**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {import('./CompositionAPI').default} CompositionAPI
+ */
+
+/**
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ */
+
+/**
+ * @typedef {object} ListenerMap
+ * @property {Array.<any>} add
+ * @property {Array.<any>} remove
+ * @property {Array.<any>} load
+ * @property {Array.<any>} reorder
+ */
+
+/**
+ * A CompositionCollection represents the list of domain objects contained
+ * by another domain object. It provides methods for loading this
+ * list asynchronously, modifying this list, and listening for changes to
+ * this list.
+ *
+ * Usage:
+ * ```javascript
+ *  var myViewComposition = MCT.composition.get(myViewObject);
+ *  myViewComposition.on('add', addObjectToView);
+ *  myViewComposition.on('remove', removeObjectFromView);
+ *  myViewComposition.load(); // will trigger `add` for all loaded objects.
+ *  ```
+ */
+export default class CompositionCollection {
+    domainObject;
+    #provider;
+    #publicAPI;
+    #listeners;
+    #mutables;
     /**
-     * A CompositionCollection represents the list of domain objects contained
-     * by another domain object. It provides methods for loading this
-     * list asynchronously, modifying this list, and listening for changes to
-     * this list.
-     *
-     * Usage:
-     * ```javascript
-     *  var myViewComposition = MCT.composition.get(myViewObject);
-     *  myViewComposition.on('add', addObjectToView);
-     *  myViewComposition.on('remove', removeObjectFromView);
-     *  myViewComposition.load(); // will trigger `add` for all loaded objects.
-     *  ```
-     *
-     * @interface CompositionCollection
-     * @param {module:openmct.DomainObject} domainObject the domain object
+     * @constructor
+     * @param {DomainObject} domainObject the domain object
      *        whose composition will be contained
-     * @param {module:openmct.CompositionProvider} provider the provider
+     * @param {import('./CompositionProvider').default} provider the provider
      *        to use to retrieve other domain objects
-     * @param {module:openmct.CompositionAPI} api the composition API, for
+     * @param {OpenMCT} publicAPI the composition API, for
      *        policy checks
-     * @memberof module:openmct
      */
-    function CompositionCollection(domainObject, provider, publicAPI) {
+    constructor(domainObject, provider, publicAPI) {
         this.domainObject = domainObject;
-        this.provider = provider;
-        this.publicAPI = publicAPI;
-        this.listeners = {
+        /** @type {import('./CompositionProvider').default} */
+        this.#provider = provider;
+        /** @type {OpenMCT} */
+        this.#publicAPI = publicAPI;
+        /** @type {ListenerMap} */
+        this.#listeners = {
             add: [],
             remove: [],
             load: [],
             reorder: []
         };
-        this.onProviderAdd = this.onProviderAdd.bind(this);
-        this.onProviderRemove = this.onProviderRemove.bind(this);
-        this.mutables = {};
+        this.onProviderAdd = this.#onProviderAdd.bind(this);
+        this.onProviderRemove = this.#onProviderRemove.bind(this);
+        this.#mutables = {};
 
         if (this.domainObject.isMutable) {
             this.returnMutables = true;
             let unobserve = this.domainObject.$on('$_destroy', () => {
-                Object.values(this.mutables).forEach(mutable => {
-                    this.publicAPI.objects.destroyMutable(mutable);
+                Object.values(this.#mutables).forEach(mutable => {
+                    this.#publicAPI.objects.destroyMutable(mutable);
                 });
                 unobserve();
             });
         }
     }
-
     /**
      * Listen for changes to this composition.  Supports 'add', 'remove', and
      * 'load' events.
      *
-     * @param event event to listen for, either 'add', 'remove' or 'load'.
-     * @param callback to trigger when event occurs.
-     * @param [context] context to use when invoking callback, optional.
+     * @param {string} event event to listen for, either 'add', 'remove' or 'load'.
+     * @param {(...args: any[]) => void} callback to trigger when event occurs.
+     * @param {any} [context] to use when invoking callback, optional.
      */
-    CompositionCollection.prototype.on = function (event, callback, context) {
-        if (!this.listeners[event]) {
+    on(event, callback, context) {
+        if (!this.#listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        if (this.provider.on && this.provider.off) {
+        if (this.#provider.on && this.#provider.off) {
             if (event === 'add') {
-                this.provider.on(
+                this.#provider.on(
                     this.domainObject,
                     'add',
                     this.onProviderAdd,
@@ -97,7 +120,7 @@ define([
             }
 
             if (event === 'remove') {
-                this.provider.on(
+                this.#provider.on(
                     this.domainObject,
                     'remove',
                     this.onProviderRemove,
@@ -106,36 +129,34 @@ define([
             }
 
             if (event === 'reorder') {
-                this.provider.on(
+                this.#provider.on(
                     this.domainObject,
                     'reorder',
-                    this.onProviderReorder,
+                    this.#onProviderReorder,
                     this
                 );
             }
         }
 
-        this.listeners[event].push({
+        this.#listeners[event].push({
             callback: callback,
             context: context
         });
-    };
-
+    }
     /**
      * Remove a listener.  Must be called with same exact parameters as
      * `off`.
      *
-     * @param event
-     * @param callback
-     * @param [context]
+     * @param {string} event
+     * @param {(...args: any[]) => void} callback
+     * @param {any} [context]
      */
-
-    CompositionCollection.prototype.off = function (event, callback, context) {
-        if (!this.listeners[event]) {
+    off(event, callback, context) {
+        if (!this.#listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        const index = this.listeners[event].findIndex(l => {
+        const index = this.#listeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
         });
 
@@ -143,125 +164,116 @@ define([
             throw new Error('Tried to remove a listener that does not exist');
         }
 
-        this.listeners[event].splice(index, 1);
-        if (this.listeners[event].length === 0) {
+        this.#listeners[event].splice(index, 1);
+        if (this.#listeners[event].length === 0) {
             this._destroy();
 
             // Remove provider listener if this is the last callback to
             // be removed.
-            if (this.provider.off && this.provider.on) {
+            if (this.#provider.off && this.#provider.on) {
                 if (event === 'add') {
-                    this.provider.off(
+                    this.#provider.off(
                         this.domainObject,
                         'add',
                         this.onProviderAdd,
                         this
                     );
                 } else if (event === 'remove') {
-                    this.provider.off(
+                    this.#provider.off(
                         this.domainObject,
                         'remove',
                         this.onProviderRemove,
                         this
                     );
                 } else if (event === 'reorder') {
-                    this.provider.off(
+                    this.#provider.off(
                         this.domainObject,
                         'reorder',
-                        this.onProviderReorder,
+                        this.#onProviderReorder,
                         this
                     );
                 }
             }
         }
-    };
-
+    }
     /**
      * Add a domain object to this composition.
      *
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
-     * @param {module:openmct.DomainObject} child the domain object to add
-     * @param {boolean} skipMutate true if the underlying provider should
-     *        not be updated
-     * @memberof module:openmct.CompositionCollection#
-     * @name add
+     * **TODO:** Remove `skipMutate` parameter.
+     *
+     * @param {DomainObject} child the domain object to add
+     * @param {boolean} skipMutate
+     * **Intended for internal use ONLY.**
+     * true if the underlying provider should not be updated.
      */
-    CompositionCollection.prototype.add = function (child, skipMutate) {
+    add(child, skipMutate) {
         if (!skipMutate) {
-            if (!this.publicAPI.composition.checkPolicy(this.domainObject, child)) {
+            if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
                 throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
             }
 
-            this.provider.add(this.domainObject, child.identifier);
+            this.#provider.add(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables && this.publicAPI.objects.supportsMutation(child.identifier)) {
-                let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
+            if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
+                let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
 
-                child = this.publicAPI.objects._toMutable(child);
-                this.mutables[keyString] = child;
+                child = this.#publicAPI.objects.toMutable(child);
+                this.#mutables[keyString] = child;
             }
 
-            this.emit('add', child);
+            this.#emit('add', child);
         }
-    };
-
+    }
     /**
      * Load the domain objects in this composition.
      *
-     * @returns {Promise.<Array.<module:openmct.DomainObject>>} a promise for
+     * @param {AbortSignal} abortSignal
+     * @returns {Promise.<Array.<DomainObject>>} a promise for
      *          the domain objects in this composition
      * @memberof {module:openmct.CompositionCollection#}
      * @name load
      */
-    CompositionCollection.prototype.load = function (abortSignal) {
-        this.cleanUpMutables();
+    async load(abortSignal) {
+        this.#cleanUpMutables();
+        const children = await this.#provider.load(this.domainObject);
+        const childObjects = await Promise.all(children.map((c) => this.#publicAPI.objects.get(c, abortSignal)));
+        childObjects.forEach(c => this.add(c, true));
+        this.#emit('load');
 
-        return this.provider.load(this.domainObject)
-            .then(function (children) {
-                return Promise.all(children.map((c) => this.publicAPI.objects.get(c, abortSignal)));
-            }.bind(this))
-            .then(function (childObjects) {
-                childObjects.forEach(c => this.add(c, true));
-
-                return childObjects;
-            }.bind(this))
-            .then(function (children) {
-                this.emit('load');
-
-                return children;
-            }.bind(this));
-    };
-
+        return childObjects;
+    }
     /**
      * Remove a domain object from this composition.
      *
      * A call to [load]{@link module:openmct.CompositionCollection#load}
      * must have resolved before using this method.
      *
-     * @param {module:openmct.DomainObject} child the domain object to remove
-     * @param {boolean} skipMutate true if the underlying provider should
-     *        not be updated
-     * @memberof module:openmct.CompositionCollection#
+     * **TODO:** Remove `skipMutate` parameter.
+     *
+     * @param {DomainObject} child the domain object to remove
+     * @param {boolean} skipMutate
+     * **Intended for internal use ONLY.**
+     * true if the underlying provider should not be updated.
      * @name remove
      */
-    CompositionCollection.prototype.remove = function (child, skipMutate) {
+    remove(child, skipMutate) {
         if (!skipMutate) {
-            this.provider.remove(this.domainObject, child.identifier);
+            this.#provider.remove(this.domainObject, child.identifier);
         } else {
             if (this.returnMutables) {
-                let keyString = this.publicAPI.objects.makeKeyString(child);
-                if (this.mutables[keyString] !== undefined && this.mutables[keyString].isMutable) {
-                    this.publicAPI.objects.destroyMutable(this.mutables[keyString]);
-                    delete this.mutables[keyString];
+                let keyString = this.#publicAPI.objects.makeKeyString(child);
+                if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
+                    this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
+                    delete this.#mutables[keyString];
                 }
             }
 
-            this.emit('remove', child);
+            this.#emit('remove', child);
         }
-    };
-
+    }
     /**
      * Reorder the domain objects in this composition.
      *
@@ -270,67 +282,75 @@ define([
      *
      * @param {number} oldIndex
      * @param {number} newIndex
-     * @memberof module:openmct.CompositionCollection#
      * @name remove
      */
-    CompositionCollection.prototype.reorder = function (oldIndex, newIndex, skipMutate) {
-        this.provider.reorder(this.domainObject, oldIndex, newIndex);
-    };
-
+    reorder(oldIndex, newIndex, _skipMutate) {
+        this.#provider.reorder(this.domainObject, oldIndex, newIndex);
+    }
     /**
-     * Handle reorder from provider.
-     * @private
+     * Destroy mutationListener
      */
-    CompositionCollection.prototype.onProviderReorder = function (reorderMap) {
-        this.emit('reorder', reorderMap);
-    };
-
-    /**
-     * Handle adds from provider.
-     * @private
-     */
-    CompositionCollection.prototype.onProviderAdd = function (childId) {
-        return this.publicAPI.objects.get(childId).then(function (child) {
-            this.add(child, true);
-
-            return child;
-        }.bind(this));
-    };
-
-    /**
-     * Handle removal from provider.
-     * @private
-     */
-    CompositionCollection.prototype.onProviderRemove = function (child) {
-        this.remove(child, true);
-    };
-
-    CompositionCollection.prototype._destroy = function () {
+    _destroy() {
         if (this.mutationListener) {
             this.mutationListener();
             delete this.mutationListener;
         }
-    };
+    }
+    /**
+     * Handle reorder from provider.
+     * @private
+     * @param {object} reorderMap
+     */
+    #onProviderReorder(reorderMap) {
+        this.#emit('reorder', reorderMap);
+    }
+
+    /**
+     * Handle adds from provider.
+     * @private
+     * @param {import('../objects/ObjectAPI').Identifier} childId
+     * @returns {DomainObject}
+     */
+    #onProviderAdd(childId) {
+        return this.#publicAPI.objects.get(childId).then(function (child) {
+            this.add(child, true);
+
+            return child;
+        }.bind(this));
+    }
+
+    /**
+     * Handle removal from provider.
+     * @param {DomainObject} child
+     */
+    #onProviderRemove(child) {
+        this.remove(child, true);
+    }
 
     /**
      * Emit events.
+     *
      * @private
+     * @param {string} event
+     * @param {...args.<any>} payload
      */
-    CompositionCollection.prototype.emit = function (event, ...payload) {
-        this.listeners[event].forEach(function (l) {
+    #emit(event, ...payload) {
+        this.#listeners[event].forEach(function (l) {
             if (l.context) {
                 l.callback.apply(l.context, payload);
             } else {
                 l.callback(...payload);
             }
         });
-    };
+    }
 
-    CompositionCollection.prototype.cleanUpMutables = function () {
-        Object.values(this.mutables).forEach(mutable => {
-            this.publicAPI.objects.destroyMutable(mutable);
+    /**
+     * Destroy all mutables.
+     * @private
+     */
+    #cleanUpMutables() {
+        Object.values(this.#mutables).forEach(mutable => {
+            this.#publicAPI.objects.destroyMutable(mutable);
         });
-    };
-
-    return CompositionCollection;
-});
+    }
+}

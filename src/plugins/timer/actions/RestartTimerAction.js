@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,14 +44,19 @@ export default class RestartTimerAction {
 
         this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
     }
-    appliesTo(objectPath) {
+    appliesTo(objectPath, view = {}) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
             return;
         }
 
+        // Use object configuration timerState for viewless context menus,
+        // otherwise manually show/hide based on the view's timerState
+        const viewKey = view.key;
         const { timerState } = domainObject.configuration;
 
-        return domainObject.type === 'timer' && timerState !== 'stopped';
+        return viewKey
+            ? domainObject.type === 'timer'
+            : domainObject.type === 'timer' && timerState !== 'stopped';
     }
 }

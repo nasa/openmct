@@ -69,7 +69,8 @@
         }
 
         &.selected {
-            background: #1ac6ff; // this should be a variable... CHARLESSSSSS
+            background: $colorKey;
+            color: $colorKeyFg;
         }
     }
 

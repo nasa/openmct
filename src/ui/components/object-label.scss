@@ -3,7 +3,7 @@
     // Used mostly in trees and lists
     @include ellipsize();
     display: flex;
-    align-items: baseline; // Provides better vertical alignment than center
+    align-items: center;
     flex: 0 1 auto;
 
     > * + * { margin-left: $interiorMargin; }
@@ -21,7 +21,9 @@
 
     &__name {
         @include ellipsize();
+        color: $objectLabelNameColorFg;
         display: inline;
+        padding: 1px 0;
     }
 
     &__type-icon {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,7 @@ define([
     './actions/ActionsAPI',
     './composition/CompositionAPI',
     './Editor',
+    './faultmanagement/FaultManagementAPI',
     './forms/FormsAPI',
     './indicators/IndicatorAPI',
     './menu/MenuAPI',
@@ -34,11 +35,15 @@ define([
     './telemetry/TelemetryAPI',
     './time/TimeAPI',
     './types/TypeRegistry',
-    './user/UserAPI'
-], function (
+    './user/UserAPI',
+    './annotation/AnnotationAPI'
+],
+
+function (
     ActionsAPI,
     CompositionAPI,
     EditorAPI,
+    FaultManagementAPI,
     FormsAPI,
     IndicatorAPI,
     MenuAPI,
@@ -49,14 +54,16 @@ define([
     TelemetryAPI,
     TimeAPI,
     TypeRegistry,
-    UserAPI
+    UserAPI,
+    AnnotationAPI
 ) {
     return {
         ActionsAPI: ActionsAPI.default,
         CompositionAPI: CompositionAPI,
         EditorAPI: EditorAPI,
+        FaultManagementAPI: FaultManagementAPI,
         FormsAPI: FormsAPI,
-        IndicatorAPI: IndicatorAPI,
+        IndicatorAPI: IndicatorAPI.default,
         MenuAPI: MenuAPI.default,
         NotificationAPI: NotificationAPI.default,
         ObjectAPI: ObjectAPI,
@@ -64,7 +71,8 @@ define([
         StatusAPI: StatusAPI.default,
         TelemetryAPI: TelemetryAPI,
         TimeAPI: TimeAPI.default,
-        TypeRegistry: TypeRegistry,
-        UserAPI: UserAPI.default
+        TypeRegistry: TypeRegistry.default,
+        UserAPI: UserAPI.default,
+        AnnotationAPI: AnnotationAPI.default
     };
 });

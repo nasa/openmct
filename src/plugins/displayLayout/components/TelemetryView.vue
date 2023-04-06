@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view u-style-receiver"
-        :class="[statusClass]"
+        :class="[itemClasses]"
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
@@ -73,6 +73,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
@@ -91,7 +92,7 @@ export default {
             width: DEFAULT_TELEMETRY_DIMENSIONS[0],
             height: DEFAULT_TELEMETRY_DIMENSIONS[1],
             displayMode: 'all',
-            value: metadata.getDefaultDisplayValue(),
+            value: metadata.getDefaultDisplayValue()?.key,
             stroke: "",
             fill: "",
             color: "",
@@ -102,7 +103,7 @@ export default {
     components: {
         LayoutFrame
     },
-    mixins: [conditionalStylesMixin],
+    mixins: [conditionalStylesMixin, stalenessMixin],
     inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
@@ -137,8 +138,18 @@ export default {
         };
     },
     computed: {
-        statusClass() {
-            return (this.status) ? `is-status--${this.status}` : '';
+        itemClasses() {
+            let classes = [];
+
+            if (this.status) {
+                classes.push(`is-status--${this.status}`);
+            }
+
+            if (this.isStale) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         },
         showLabel() {
             let displayMode = this.item.displayMode;
@@ -152,7 +163,7 @@ export default {
         },
         unit() {
             let value = this.item.value;
-            let unit = this.metadata.value(value).unit;
+            let unit = this.metadata ? this.metadata.value(value).unit : '';
 
             return unit;
         },
@@ -182,7 +193,7 @@ export default {
         },
         telemetryValue() {
             if (!this.datum) {
-                return;
+                return '---';
             }
 
             return this.formatter && this.formatter.format(this.datum);
@@ -232,16 +243,18 @@ export default {
             this.removeSelectable();
         }
 
-        this.telemetryCollection.off('add', this.setLatestValues);
-        this.telemetryCollection.off('clear', this.refreshData);
+        if (this.telemetryCollection) {
+            this.telemetryCollection.off('add', this.setLatestValues);
+            this.telemetryCollection.off('clear', this.refreshData);
 
-        this.telemetryCollection.destroy();
+            this.telemetryCollection.destroy();
+        }
 
         if (this.mutablePromise) {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else if (this.domainObject.isMutable) {
+        } else if (this?.domainObject?.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -280,12 +293,15 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            const valueMetadata = this.metadata.value(this.item.value);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+
+            const valueMetadata = this.metadata ? this.metadata.value(this.item.value) : {};
             this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
 
             this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
                 size: 1,
-                strategy: 'latest'
+                strategy: 'latest',
+                timeContext: this.timeContext
             });
             this.telemetryCollection.on('add', this.setLatestValues);
             this.telemetryCollection.on('clear', this.refreshData);
@@ -305,6 +321,7 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
+            this.subscribeToStaleness(this.domainObject);
         },
         updateTelemetryFormat(format) {
             this.customStringformatter.setFormat(format);

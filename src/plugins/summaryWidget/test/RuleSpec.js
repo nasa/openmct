@@ -1,4 +1,4 @@
-define(['../src/Rule', 'zepto'], function (Rule, $) {
+define(['../src/Rule'], function (Rule) {
     describe('A Summary Widget Rule', function () {
         let mockRuleConfig;
         let mockDomainObject;
@@ -78,7 +78,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
                 'dragStart'
             ]);
 
-            mockContainer = $(document.createElement('div'));
+            mockContainer = document.createElement('div');
 
             removeSpy = jasmine.createSpy('removeCallback');
             duplicateSpy = jasmine.createSpy('duplicateCallback');
@@ -99,7 +99,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
 
         it('gets its DOM element', function () {
             mockContainer.append(testRule.getDOM());
-            expect($('.l-widget-rule', mockContainer).get().length).toBeGreaterThan(0);
+            expect(mockContainer.querySelectorAll('.l-widget-rule').length).toBeGreaterThan(0);
         });
 
         it('gets its configuration properties', function () {
@@ -185,7 +185,7 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
 
         it('builds condition view from condition configuration', function () {
             mockContainer.append(testRule.getDOM());
-            expect($('.t-condition', mockContainer).get().length).toEqual(2);
+            expect(mockContainer.querySelectorAll('.t-condition').length).toEqual(2);
         });
 
         it('responds to input of style properties, and updates the preview', function () {
@@ -196,9 +196,9 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
             testRule.colorInputs.color.set('#999999');
             expect(mockRuleConfig.style.color).toEqual('#999999');
 
-            expect(testRule.thumbnail.css('background-color')).toEqual('rgb(67, 67, 67)');
-            expect(testRule.thumbnail.css('border-color')).toEqual('rgb(102, 102, 102)');
-            expect(testRule.thumbnail.css('color')).toEqual('rgb(153, 153, 153)');
+            expect(testRule.thumbnail.style['background-color']).toEqual('rgb(67, 67, 67)');
+            expect(testRule.thumbnail.style['border-color']).toEqual('rgb(102, 102, 102)');
+            expect(testRule.thumbnail.style.color).toEqual('rgb(153, 153, 153)');
 
             expect(changeSpy).toHaveBeenCalled();
         });
@@ -228,8 +228,12 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         // });
 
         it('allows input for when the rule triggers', function () {
-            testRule.trigger.prop('value', 'all');
-            testRule.trigger.trigger('change');
+            testRule.trigger.value = 'all';
+            const event = new Event('change', {
+                bubbles: true,
+                cancelable: true
+            });
+            testRule.trigger.dispatchEvent(event);
             expect(testRule.config.trigger).toEqual('all');
             expect(conditionChangeSpy).toHaveBeenCalled();
         });
@@ -247,7 +251,12 @@ define(['../src/Rule', 'zepto'], function (Rule, $) {
         });
 
         it('initiates a drag event when its grippy is clicked', function () {
-            testRule.grippy.trigger('mousedown');
+            const event = new Event('mousedown', {
+                bubbles: true,
+                cancelable: true
+            });
+            testRule.grippy.dispatchEvent(event);
+
             expect(mockWidgetDnD.setDragImage).toHaveBeenCalled();
             expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');
         });

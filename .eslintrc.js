@@ -29,6 +29,7 @@ module.exports = {
         "you-dont-need-lodash-underscore/omit": "off",
         "you-dont-need-lodash-underscore/throttle": "off",
         "you-dont-need-lodash-underscore/flatten": "off",
+        "you-dont-need-lodash-underscore/get": "off",
         "no-bitwise": "error",
         "curly": "error",
         "eqeqeq": "error",

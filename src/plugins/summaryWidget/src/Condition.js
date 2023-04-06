@@ -4,16 +4,16 @@ define([
     './input/KeySelect',
     './input/OperationSelect',
     './eventHelpers',
-    'EventEmitter',
-    'zepto'
+    '../../../utils/template/templateHelpers',
+    'EventEmitter'
 ], function (
     conditionTemplate,
     ObjectSelect,
     KeySelect,
     OperationSelect,
     eventHelpers,
-    EventEmitter,
-    $
+    templateHelpers,
+    EventEmitter
 ) {
     /**
      * Represents an individual condition for a summary widget rule. Manages the
@@ -31,12 +31,13 @@ define([
         this.index = index;
         this.conditionManager = conditionManager;
 
-        this.domElement = $(conditionTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(conditionTemplate)[0];
+
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change'];
 
-        this.deleteButton = $('.t-delete', this.domElement);
-        this.duplicateButton = $('.t-duplicate', this.domElement);
+        this.deleteButton = this.domElement.querySelector('.t-delete');
+        this.duplicateButton = this.domElement.querySelector('.t-duplicate');
 
         this.selects = {};
         this.valueInputs = [];
@@ -105,9 +106,10 @@ define([
         });
 
         Object.values(this.selects).forEach(function (select) {
-            $('.t-configuration', self.domElement).append(select.getDOM());
+            self.domElement.querySelector('.t-configuration').append(select.getDOM());
         });
-        this.listenTo($('.t-value-inputs', this.domElement), 'input', onValueInput);
+
+        this.listenTo(this.domElement.querySelector('.t-value-inputs'), 'input', onValueInput);
     }
 
     Condition.prototype.getDOM = function (container) {
@@ -132,7 +134,7 @@ define([
      * Hide the appropriate inputs when this is the only condition
      */
     Condition.prototype.hideButtons = function () {
-        this.deleteButton.hide();
+        this.deleteButton.style.display = 'none';
     };
 
     /**
@@ -172,14 +174,14 @@ define([
      */
     Condition.prototype.generateValueInputs = function (operation) {
         const evaluator = this.conditionManager.getEvaluator();
-        const inputArea = $('.t-value-inputs', this.domElement);
+        const inputArea = this.domElement.querySelector('.t-value-inputs');
         let inputCount;
         let inputType;
         let newInput;
         let index = 0;
         let emitChange = false;
 
-        inputArea.html('');
+        inputArea.innerHTML = '';
         this.valueInputs = [];
         this.config.values = this.config.values || [];
 
@@ -189,17 +191,24 @@ define([
 
             while (index < inputCount) {
                 if (inputType === 'select') {
-                    newInput = $('<select>' + this.generateSelectOptions() + '</select>');
+                    const options = this.generateSelectOptions();
+
+                    newInput = document.createElement("select");
+                    newInput.innerHTML = options;
+
                     emitChange = true;
                 } else {
                     const defaultValue = inputType === 'number' ? 0 : '';
                     const value = this.config.values[index] || defaultValue;
                     this.config.values[index] = value;
-                    newInput = $('<input type = "' + inputType + '" value = "' + value + '"></input>');
+
+                    newInput = document.createElement("input");
+                    newInput.type = `${inputType}`;
+                    newInput.value = `${value}`;
                 }
 
-                this.valueInputs.push(newInput.get(0));
-                inputArea.append(newInput);
+                this.valueInputs.push(newInput);
+                inputArea.appendChild(newInput);
                 index += 1;
             }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,6 +34,12 @@ export default class Model extends EventEmitter {
      */
     constructor(options) {
         super();
+        Object.defineProperty(this, '_events', {
+            value: this._events,
+            enumerable: false,
+            configurable: false,
+            writable: true
+        });
 
         //need to do this as we're already extending EventEmitter
         eventHelpers.extend(this);

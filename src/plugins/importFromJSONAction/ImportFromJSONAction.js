@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import objectUtils from 'objectUtils';
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 
 export default class ImportAsJSONAction {
     constructor(openmct) {
@@ -29,7 +29,7 @@ export default class ImportAsJSONAction {
         this.key = 'import.JSON';
         this.description = '';
         this.cssClass = "icon-import";
-        this.group = "json";
+        this.group = "import";
         this.priority = 2;
 
         this.openmct = openmct;
@@ -82,12 +82,14 @@ export default class ImportAsJSONAction {
      * @param {object} seen
      */
     _deepInstantiate(parent, tree, seen) {
-        if (this.openmct.composition.get(parent)) {
+        let objectIdentifiers = this._getObjectReferenceIds(parent);
+
+        if (objectIdentifiers.length) {
             let newObj;
 
             seen.push(parent.id);
 
-            parent.composition.forEach(async (childId) => {
+            objectIdentifiers.forEach(async (childId) => {
                 const keystring = this.openmct.objects.makeKeyString(childId);
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
@@ -100,6 +102,27 @@ export default class ImportAsJSONAction {
                 this._deepInstantiate(newObj, tree, seen);
             }, this);
         }
+    }
+    /**
+     * @private
+     * @param {object} parent
+     * @returns [identifiers]
+     */
+    _getObjectReferenceIds(parent) {
+        let objectIdentifiers = [];
+
+        let parentComposition = this.openmct.composition.get(parent);
+        if (parentComposition) {
+            objectIdentifiers = Array.from(parentComposition.domainObject.composition);
+        }
+
+        //conditional object styles are not saved on the composition, so we need to check for them
+        let parentObjectReference = parent.configuration?.objectStyles?.conditionSetIdentifier;
+        if (parentObjectReference) {
+            objectIdentifiers.push(parentObjectReference);
+        }
+
+        return objectIdentifiers;
     }
     /**
      * @private

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,8 +45,7 @@ export default function CouchDocument(id, model, rev, markDeleted) {
             "category": "domain object",
             "type": model.type,
             "owner": "admin",
-            "name": model.name,
-            "created": Date.now()
+            "name": model.name
         },
         "model": model
     };

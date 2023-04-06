@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within the
+are only meant to run against openmct started by `npm start` within the
 `./e2e/playwright-visual.config.js` file.
 
 These should only use functional expect statements to verify assumptions about the state
@@ -32,142 +32,137 @@ to "fail" on assertions. Instead, they should be used to detect changes between 
 Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const path = require('path');
-const sinon = require('sinon');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
-
-// Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
-// Will replace with cy.clock() equivalent
-test.beforeEach(async ({ context }) => {
-    await context.addInitScript({
-        // eslint-disable-next-line no-undef
-        path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
+test.describe('Visual - Default', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL and Hide Tree
+        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
-    await context.addInitScript(() => {
-        window.__clock = sinon.useFakeTimers(); //Set browser clock to UNIX Epoch
+    test.use({
+        clockOptions: {
+            now: 0, //Set browser clock to UNIX Epoch
+            shouldAdvanceTime: false //Don't advance the clock
+        }
     });
-});
 
-test('Visual - Root and About', async ({ page }) => {
-    // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Root and About', async ({ page, theme }) => {
+        // Verify that Create button is actionable
+        await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
-    // Verify that Create button is actionable
-    const createButtonLocator = page.locator('button:has-text("Create")');
-    await expect(createButtonLocator).toBeEnabled();
+        // Take a snapshot of the Dashboard
+        await percySnapshot(page, `Root (theme: '${theme}')`);
 
-    // Take a snapshot of the Dashboard
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Root');
+        // Click About button
+        await page.click('.l-shell__app-logo');
 
-    // Click About button
-    await page.click('.l-shell__app-logo');
+        // Modify the Build information in 'about' to be consistent run-over-run
+        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
+        await expect(versionInformationLocator).toBeEnabled();
+        await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
 
-    // Modify the Build information in 'about' to be consistent run-over-run
-    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
-    await expect(versionInformationLocator).toBeEnabled();
-    await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
+        // Take a snapshot of the About modal
+        await percySnapshot(page, `About (theme: '${theme}')`);
+    });
 
-    // Take a snapshot of the About modal
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'About');
-});
+    test('Visual - Default Condition Set @unstable', async ({ page, theme }) => {
 
-test('Visual - Default Condition Set', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+        await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
 
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+        // Take a snapshot of the newly created Condition Set object
+        await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
+    });
 
-    // Click text=Condition Set
-    await page.click('text=Condition Set');
+    test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/5349'
+        });
 
-    // Click text=OK
-    await page.click('text=OK');
+        await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
 
-    // Take a snapshot of the newly created Condition Set object
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Condition Set');
-});
+        // Take a snapshot of the newly created Condition Widget object
+        await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
+    });
 
-test('Visual - Default Condition Widget', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
+        const year = new Date().getFullYear();
 
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+        let startDate = 'xxxx-01-01 01:00:00.000Z';
+        startDate = year + startDate.substring(4);
 
-    // Click text=Condition Widget
-    await page.click('text=Condition Widget');
+        let endDate = 'xxxx-01-01 02:00:00.000Z';
+        endDate = year + endDate.substring(4);
 
-    // Click text=OK
-    await page.click('text=OK');
+        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
 
-    // Take a snapshot of the newly created Condition Widget object
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Condition Widget');
-});
+        //  verify no error msg
+        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
 
-test('Visual - Time Conductor start time is less than end time', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
-    const year = new Date().getFullYear();
+        startDate = (year + 1) + startDate.substring(4);
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
+        await page.locator('input[type="text"]').nth(1).click();
 
-    let startDate = 'xxxx-01-01 01:00:00.000Z';
-    startDate = year + startDate.substring(4);
+        //  verify error msg for start time (unable to capture snapshot of popup)
+        await percySnapshot(page, `Start time error (theme: '${theme}')`);
 
-    let endDate = 'xxxx-01-01 02:00:00.000Z';
-    endDate = year + endDate.substring(4);
+        startDate = (year - 1) + startDate.substring(4);
+        await page.locator('input[type="text"]').first().fill(startDate.toString());
 
-    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
-    await page.locator('input[type="text"]').first().fill(startDate.toString());
+        endDate = (year - 2) + endDate.substring(4);
+        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
 
-    //  verify no error msg
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Time conductor');
+        await page.locator('input[type="text"]').first().click();
 
-    startDate = (year + 1) + startDate.substring(4);
-    await page.locator('input[type="text"]').first().fill(startDate.toString());
-    await page.locator('input[type="text"]').nth(1).click();
+        //  verify error msg for end time (unable to capture snapshot of popup)
+        await percySnapshot(page, `End time error (theme: '${theme}')`);
+    });
 
-    //  verify error msg for start time (unable to capture snapshot of popup)
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Start time error');
+    test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
+        //Click the Create button
+        await page.click('button:has-text("Create")');
 
-    startDate = (year - 1) + startDate.substring(4);
-    await page.locator('input[type="text"]').first().fill(startDate.toString());
+        // Click text=Sine Wave Generator
+        await page.click('text=Sine Wave Generator');
 
-    endDate = (year - 2) + endDate.substring(4);
-    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+        await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
 
-    await page.locator('input[type="text"]').first().click();
+        await page.locator('.field.control.l-input-sm input').first().click();
+        await page.locator('.field.control.l-input-sm input').first().fill('');
 
-    //  verify error msg for end time (unable to capture snapshot of popup)
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'End time error');
-});
+        // Validate red x mark
+        await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
+    });
 
-test('Visual - Sine Wave Generator Form', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
+    test('Visual - Save Successful Banner @unstable', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+        await page.locator('.c-message-banner__message').hover({ trial: true });
+        await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
 
-    // Click text=Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
+        //Wait until Save Banner is gone
+        await page.locator('.c-message-banner__close-button').click();
+        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
+        await percySnapshot(page, `Banner message gone (theme: '${theme}')`);
+    });
 
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Default Sine Wave Generator Form');
+    test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
+        //Click the Create button
+        await page.click('button:has-text("Create")');
 
-    await page.locator('.field.control.l-input-sm input').first().click();
-    await page.locator('.field.control.l-input-sm input').first().fill('');
+        //Hover on Display Layout option.
+        await page.locator('text=Display Layout').hover();
+        await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
 
-    // Validate red x mark
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'removed amplitude property value');
+    });
+
+    test('Visual - Default Gauge is correct @unstable', async ({ page, theme }) => {
+        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+
+        // Take a snapshot of the newly created Gauge object
+        await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+    });
 });

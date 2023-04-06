@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export const DEFAULT_SIZE = {
     width: 30,

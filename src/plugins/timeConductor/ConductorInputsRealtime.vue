@@ -50,6 +50,12 @@ export default {
                 return undefined;
             }
         },
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         inputBounds: {
             type: Object,
             default() {
@@ -75,6 +81,7 @@ export default {
         let timeFormatter = this.getFormatter(timeSystem.timeFormat);
         let bounds = this.bounds || this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
+        let currentValue = this.openmct.time.clock()?.currentValue();
 
         return {
             showTCInputStart: false,
@@ -93,6 +100,8 @@ export default {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
             },
+            currentValue,
+            formattedCurrentValue: timeFormatter.format(currentValue),
             isUTCBased: timeSystem.isUTCBased
         };
     },
@@ -134,12 +143,13 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTime();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
             this.followTime();
         },
         handleNewBounds(bounds) {
             this.setBounds(bounds);
             this.setViewFromBounds(bounds);
+            this.updateCurrentValue();
         },
         clearAllValidation() {
             [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
@@ -160,6 +170,17 @@ export default {
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+        },
+        updateCurrentValue() {
+            const currentValue = this.openmct.time.clock()?.currentValue();
+
+            if (currentValue !== undefined) {
+                this.setCurrentValue(currentValue);
+            }
+        },
+        setCurrentValue(value) {
+            this.currentValue = value;
+            this.formattedCurrentValue = this.timeFormatter.format(value);
         },
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem;

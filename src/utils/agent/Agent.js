@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -89,7 +89,21 @@ export default class Agent {
      * @returns {boolean} true in portrait mode
      */
     isPortrait() {
-        return this.window.innerWidth < this.window.innerHeight;
+        const { screen } = this.window;
+        const hasScreenOrientation = screen && Object.prototype.hasOwnProperty.call(screen, 'orientation');
+        const hasWindowOrientation = Object.prototype.hasOwnProperty.call(this.window, 'orientation');
+
+        if (hasScreenOrientation) {
+            return screen.orientation.type.includes('portrait');
+        } else if (hasWindowOrientation) {
+            // Use window.orientation API if available (e.g. Safari mobile)
+            // which returns [-90, 0, 90, 180] based on device orientation.
+            const { orientation } = this.window;
+
+            return Math.abs(orientation / 90) % 2 === 0;
+        } else {
+            return this.window.innerWidth < this.window.innerHeight;
+        }
     }
     /**
      * Check if the user's device is in a landscape-style

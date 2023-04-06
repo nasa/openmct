@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -91,6 +91,10 @@ define([
      * @returns keyString
      */
     function makeKeyString(identifier) {
+        if (!identifier) {
+            throw new Error("Cannot make key string from null identifier");
+        }
+
         if (isKeyString(identifier)) {
             return identifier;
         }

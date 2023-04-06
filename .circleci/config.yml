@@ -2,9 +2,11 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.21.1-focal
+      - image: mcr.microsoft.com/playwright:v1.29.0-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
+      PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
+      PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
 parameters:
   BUST_CACHE:
     description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
@@ -12,7 +14,7 @@ parameters:
     type: boolean
 commands:
   build_and_install:
-    description: "All steps used to build and install. Will not work on node10"
+    description: "All steps used to build and install. Will use cache if found"
     parameters:
       node-version:
         type: string
@@ -23,7 +25,7 @@ commands:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
-      - run: npm install
+      - run: npm install --prefer-offline --no-audit --progress=false
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
@@ -31,7 +33,7 @@ commands:
         type: string
     steps:
       - when:
-          condition: 
+          condition:
             equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
             - restore_cache:
@@ -41,7 +43,7 @@ commands:
     parameters:
       node-version:
         type: string
-    steps:    
+    steps:
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
@@ -58,10 +60,14 @@ commands:
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
-  upload_code_covio:
-    description: "Command to upload code coverage reports to codecov.io"
-    steps:
-        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
+  generate_e2e_code_cov_report:
+   description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
+   parameters:
+      suite:
+        type: string
+   steps:
+    - run: npm run cov:e2e:report || true
+    - run: npm run cov:e2e:<<parameters.suite>>:publish
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -90,53 +96,80 @@ jobs:
     parameters:
       node-version:
         type: string
-      browser:
-        type: string
     executor: pw-focal-development
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - when:
-          condition:
-            equal: [ "FirefoxESR", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox:
-                version: "91.7.1esr" #https://archive.mozilla.org/pub/firefox/releases/          
-      - when:
-          condition:
-            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox
-      - when:
-          condition:
-            equal: [ "ChromeHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-chrome:
-                replace-existing: false
-      - run: npm run test -- --browsers=<<parameters.browser>>
+      - browser-tools/install-chrome:
+          replace-existing: false
+      - run: npm run test
+      - run: npm run cov:unit:publish
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
-          path: dist/reports/
+          path: coverage
       - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
       node-version:
         type: string
-      suite:
+      suite: #stable or full
+        type: string
+    executor: pw-focal-development
+    parallelism: 4
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - when: #Only install chrome-beta when running the 'full' suite to save $$$
+          condition:
+            equal: [ "full", <<parameters.suite>> ]
+          steps:
+            - run: npx playwright install chrome-beta
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+      - generate_e2e_code_cov_report:
+         suite: <<parameters.suite>>          
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - generate_and_store_version_and_filesystem_artifacts
+  perf-test:
+    parameters:
+      node-version:
         type: string
     executor: pw-focal-development
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright install
-      - run: npm run test:e2e:<<parameters.suite>>
+      - run: npm run test:perf
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - generate_and_store_version_and_filesystem_artifacts
+  visual-test:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm run test:e2e:visual
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
       - generate_and_store_version_and_filesystem_artifacts
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
@@ -144,52 +177,36 @@ workflows:
       - lint:
           name: node16-lint
           node-version: lts/gallium
-      - unit-test: 
-          name: node14-chrome
-          node-version: lts/fermium
-          browser: ChromeHeadless
-          post-steps:
-            - upload_code_covio
-      - unit-test:
-          name: node16-chrome
-          node-version: lts/gallium
-          browser: ChromeHeadless
       - unit-test:
           name: node18-chrome
-          node-version: "18"
-          browser: ChromeHeadless
+          node-version: lts/hydrogen
       - e2e-test:
-          name: e2e-ci
+          name: e2e-stable
           node-version: lts/gallium
-          suite: ci
+          suite: stable
+      - perf-test:
+          node-version: lts/gallium
+      - visual-test:
+          node-version: lts/gallium
+        
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-firefoxESR-nightly
-          node-version: lts/gallium
-          browser: FirefoxESR
-      - unit-test:
-          name: node14-firefox-nightly
-          node-version: lts/fermium
-          browser: FirefoxHeadless
-      - unit-test:
-          name: node14-chrome-nightly
-          node-version: lts/fermium
-          browser: ChromeHeadless
-      - unit-test:
           name: node16-chrome-nightly
           node-version: lts/gallium
-          browser: ChromeHeadless
       - unit-test:
           name: node18-chrome
-          node-version: "18"
-          browser: ChromeHeadless
+          node-version: lts/hydrogen
       - npm-audit:
           node-version: lts/gallium
       - e2e-test:
           name: e2e-full-nightly
           node-version: lts/gallium
           suite: full
+      - perf-test:
+          node-version: lts/gallium
+      - visual-test:
+          node-version: lts/gallium
     triggers:
       - schedule:
           cron: "0 0 * * *"

@@ -3,7 +3,7 @@
     {
       "name": "descriptionRegexp",
       "config": {
-        "regexp": "x] Testing instructions",
+        "regexp": "[x|X]] Testing instructions",
         "errorMessage": ":police_officer: PR Description does not confirm that associated issue(s) contain Testing instructions"
       }
     },

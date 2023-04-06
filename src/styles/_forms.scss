@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,26 +44,33 @@
     }
 
     &__contents {
+        display: flex;
+        flex-direction: column;
         flex: 1 1 auto;
         overflow: auto;
         padding-right: $interiorMargin;
     }
 
     &__section {
-        display: inherit;
-        flex-direction: column;
+        display: contents;
     }
 
     &__row {
         display: flex;
         padding: $formTBPad 0;
         &:not(.first) { border-top: 1px solid $colorFormLines; }
+        flex: 0 0 auto;
+
+        &.grows {
+            flex: 1 1 auto;
+        }
     }
 
     &__section-header {
         border-radius: $basicCr;
         background: $colorFormSectionHeaderBg;
         color: $colorFormSectionHeaderFg;
+        flex: 0 0 auto;
         font-size: inherit;
         font-weight: normal;
         margin: $interiorMargin 0;
@@ -140,14 +147,16 @@
     }
 
     &--datetime {
-        $size: min-content;
+        $size: max-content;
         display: grid;
-        grid-template-columns: repeat(5, min-content);
-        grid-template-rows: auto;
+        grid-template-columns: repeat(5, $size);
+        grid-template-rows: $size;
         grid-row-gap: 3px;
         grid-column-gap: $interiorMargin;
+        align-items: stretch;
 
         .hint {
+            align-self: center;
             opacity: 0.7;
         }
     }
@@ -318,39 +327,6 @@
     &.l-checkbox {
         .composite-control-label {
             line-height: 18px;
-        }
-    }
-}
-
-.autocomplete {
-    input {
-        width: 226px;
-        padding: 5px 0px 5px 7px;
-    }
-    .icon-arrow-down {
-        position: absolute;
-        top: 8px;
-        left: 210px;
-        font-size: 10px;
-        cursor: pointer;
-    }
-    .autocompleteOptions {
-        border: 1px solid $colorFormLines;
-        border-radius: 5px;
-        width: 224px;
-        max-height: 170px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        li {
-            border: 1px solid $colorFormLines;
-            padding: 8px 0px 8px 5px;
-            .optionText {
-                cursor: pointer;
-            }
-        }
-        .optionPreSelected {
-            background-color: $colorInspectorSectionHeaderBg;
-            color: $colorInspectorSectionHeaderFg;
         }
     }
 }

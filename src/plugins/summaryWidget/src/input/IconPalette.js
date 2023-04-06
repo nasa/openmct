@@ -1,9 +1,7 @@
 define([
-    './Palette',
-    'zepto'
+    './Palette'
 ], function (
-    Palette,
-    $
+    Palette
 ) {
     //The icons that will be used to instantiate this palette if none are provided
     const DEFAULT_ICONS = [
@@ -45,20 +43,19 @@ define([
         this.icons = icons || DEFAULT_ICONS;
         this.palette = new Palette(cssClass, container, this.icons);
 
-        this.palette.setNullOption(' ');
-        this.oldIcon = this.palette.current || ' ';
+        this.palette.setNullOption('');
+        this.oldIcon = this.palette.current || '';
 
-        const domElement = $(this.palette.getDOM());
+        const domElement = this.palette.getDOM();
         const self = this;
 
-        $('.c-button--menu', domElement).addClass('c-button--swatched');
-        $('.t-swatch', domElement).addClass('icon-swatch');
-        $('.c-palette', domElement).addClass('c-palette--icon');
+        domElement.querySelector('.c-button--menu').classList.add('c-button--swatched');
+        domElement.querySelector('.t-swatch').classList.add('icon-swatch');
+        domElement.querySelector('.c-palette').classList.add('c-palette--icon');
 
-        $('.c-palette-item', domElement).each(function () {
+        domElement.querySelectorAll('.c-palette-item').forEach(item => {
             // eslint-disable-next-line no-invalid-this
-            const elem = this;
-            $(elem).addClass(elem.dataset.item);
+            item.classList.add(item.dataset.item);
         });
 
         /**
@@ -67,8 +64,11 @@ define([
          * @private
          */
         function updateSwatch() {
-            $('.icon-swatch', domElement).removeClass(self.oldIcon)
-                .addClass(self.palette.getCurrent());
+            if (self.oldIcon) {
+                domElement.querySelector('.icon-swatch').classList.remove(self.oldIcon);
+            }
+
+            domElement.querySelector('.icon-swatch').classList.add(self.palette.getCurrent());
             self.oldIcon = self.palette.getCurrent();
         }
 

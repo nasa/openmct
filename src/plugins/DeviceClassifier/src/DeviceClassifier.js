@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,7 +52,6 @@ export default (agent, document) => {
     if (agent.isMobile()) {
         const mediaQuery = window.matchMedia("(orientation: landscape)");
         function eventHandler(event) {
-            console.log("changed");
             if (event.matches) {
                 body.classList.remove("portrait");
                 body.classList.add("landscape");

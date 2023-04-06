@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@
         <button
             class="c-button--menu c-button--compact c-history-button icon-history"
             :class="buttonCssClass"
+            aria-label="Time Conductor History"
             @click.prevent.stop="showHistoryMenu"
         >
             <span class="c-button__label">History</span>
@@ -40,7 +41,7 @@
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
-const DEFAULT_RECORDS = 10;
+const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from "utils/duration";
 import UTCTimeFormat from "../utcTimeSystem/UTCTimeFormat.js";
@@ -87,15 +88,13 @@ export default {
              * @timespans {start, end} number representing timestamp
              */
             fixedHistory: {},
-            presets: []
+            presets: [],
+            isFixed: this.openmct.time.clock() === undefined
         };
     },
     computed: {
         currentHistory() {
             return this.mode + 'History';
-        },
-        isFixed() {
-            return this.openmct.time.clock() === undefined;
         },
         historyForCurrentTimeSystem() {
             const history = this[this.currentHistory][this.timeSystem.key];
@@ -104,7 +103,7 @@ export default {
         },
         storageKey() {
             let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
-            if (this.mode !== 'fixed') {
+            if (!this.isFixed) {
                 key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
             }
 
@@ -116,6 +115,7 @@ export default {
             handler() {
                 // only for fixed time since we track offsets for realtime
                 if (this.isFixed) {
+                    this.updateMode();
                     this.addTimespan();
                 }
             },
@@ -123,33 +123,41 @@ export default {
         },
         offsets: {
             handler() {
+                this.updateMode();
                 this.addTimespan();
             },
             deep: true
         },
         timeSystem: {
             handler(ts) {
+                this.updateMode();
                 this.loadConfiguration();
                 this.addTimespan();
             },
             deep: true
         },
         mode: function () {
-            this.getHistoryFromLocalStorage();
-            this.initializeHistoryIfNoHistory();
+            this.updateMode();
             this.loadConfiguration();
         }
     },
     mounted() {
+        this.updateMode();
         this.getHistoryFromLocalStorage();
         this.initializeHistoryIfNoHistory();
     },
     methods: {
+        updateMode() {
+            this.isFixed = this.openmct.time.clock() === undefined;
+            this.getHistoryFromLocalStorage();
+            this.initializeHistoryIfNoHistory();
+        },
         getHistoryMenuItems() {
+            const descriptionDateFormat = 'YYYY-MM-DD HH:mm:ss.SSS';
             const history = this.historyForCurrentTimeSystem.map(timespan => {
                 let name;
-                let startTime = this.formatTime(timespan.start);
-                let description = `${startTime} - ${this.formatTime(timespan.end)}`;
+                const startTime = this.formatTime(timespan.start);
+                const description = `${this.formatTime(timespan.start, descriptionDateFormat)} - ${this.formatTime(timespan.end, descriptionDateFormat)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
                     name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`;
@@ -211,8 +219,8 @@ export default {
             currentHistory = currentHistory.filter(ts => !(ts.start === timespan.start && ts.end === timespan.end));
             currentHistory.unshift(timespan); // add to front
 
-            if (currentHistory.length > this.records) {
-                currentHistory.length = this.records;
+            if (currentHistory.length > this.MAX_RECORDS_LENGTH) {
+                currentHistory.length = this.MAX_RECORDS_LENGTH;
             }
 
             this.$set(this[this.currentHistory], key, currentHistory);
@@ -239,7 +247,7 @@ export default {
                 .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
-            this.records = this.loadRecords(configurations);
+            this.MAX_RECORDS_LENGTH = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
             const configuration = configurations.find(option => {
@@ -251,11 +259,11 @@ export default {
         },
         loadRecords(configurations) {
             const configuration = configurations.find(option => option.records);
-            const records = configuration ? configuration.records : DEFAULT_RECORDS;
+            const maxRecordsLength = configuration ? configuration.records : DEFAULT_RECORDS_LENGTH;
 
-            return records;
+            return maxRecordsLength;
         },
-        formatTime(time) {
+        formatTime(time, utcDateFormat) {
             let format = this.timeSystem.timeFormat;
             let isNegativeOffset = false;
 
@@ -276,7 +284,8 @@ export default {
             let formattedDate;
 
             if (formatter instanceof UTCTimeFormat) {
-                formattedDate = formatter.format(time, formatter.DATE_FORMATS.PRECISION_SECONDS);
+                const formatString = formatter.isValidFormatString(utcDateFormat) ? utcDateFormat : formatter.DATE_FORMATS.PRECISION_SECONDS;
+                formattedDate = formatter.format(time, formatString);
             } else {
                 formattedDate = formatter.format(time);
             }

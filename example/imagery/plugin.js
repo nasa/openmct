@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,7 +59,8 @@ export default function () {
                 object.configuration = {
                     imageLocation: '',
                     imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
-                    imageSamples: []
+                    imageSamples: [],
+                    layers: []
                 };
 
                 object.telemetry = {
@@ -90,7 +91,30 @@ export default function () {
                             format: 'image',
                             hints: {
                                 image: 1
-                            }
+                            },
+                            layers: [
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-16x9.png',
+                                    name: '16:9'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-safe.png',
+                                    name: 'Safe'
+                                },
+                                {
+                                    source: 'dist/imagery/example-imagery-layer-scale.png',
+                                    name: 'Scale'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Image Thumbnail',
+                            key: 'thumbnail-url',
+                            format: 'thumbnail',
+                            hints: {
+                                thumbnail: 1
+                            },
+                            source: 'url'
                         },
                         {
                             name: 'Image Download Name',
@@ -128,6 +152,16 @@ export default function () {
             ]
         });
 
+        const formatThumbnail = {
+            format: function (url) {
+                return `${url}?w=100&h=100`;
+            }
+        };
+
+        openmct.telemetry.addFormat({
+            key: 'thumbnail',
+            ...formatThumbnail
+        });
         openmct.telemetry.addProvider(getRealtimeProvider());
         openmct.telemetry.addProvider(getHistoricalProvider());
         openmct.telemetry.addProvider(getLadProvider());
@@ -153,7 +187,7 @@ function getImageUrlListFromConfig(configuration) {
 }
 
 function getImageLoadDelay(domainObject) {
-    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    const imageLoadDelay = Math.trunc(Number(domainObject.configuration.imageLoadDelayInMilliSeconds));
     if (!imageLoadDelay) {
         openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
 
@@ -175,7 +209,9 @@ function getRealtimeProvider() {
         subscribe: (domainObject, callback) => {
             const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
-                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
+                const imageSamples = getImageSamples(domainObject.configuration);
+                const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+                callback(datum);
             }, delay);
 
             return () => {
@@ -214,8 +250,9 @@ function getLadProvider() {
         },
         request: (domainObject, options) => {
             const delay = getImageLoadDelay(domainObject);
+            const datum = pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay);
 
-            return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
+            return Promise.resolve([datum]);
         }
     };
 }
@@ -224,6 +261,13 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
     const urlItems = url.split('/');
     const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
+    const navCamTransformations = {
+        "translateX": 0,
+        "translateY": 18,
+        "rotation": 0,
+        "scale": 0.3,
+        "cameraAngleOfView": 70
+    };
 
     return {
         name,
@@ -231,8 +275,9 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
         local: Math.floor(timestamp / delay) * delay,
         url,
         sunOrientation: getCompassValues(0, 360),
-        cameraPan: getCompassValues(0, 360),
+        cameraAzimuth: getCompassValues(0, 360),
         heading: getCompassValues(0, 360),
+        transformations: navCamTransformations,
         imageDownloadName
     };
 }

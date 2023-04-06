@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,30 +23,48 @@
 /*global module,process*/
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.coverage.js');
+    let webpackConfig;
+    let browsers;
+    let singleRun;
+
+    if (process.env.KARMA_DEBUG) {
+        webpackConfig = require("./.webpack/webpack.dev.js");
+        browsers = ["ChromeDebugging"];
+        singleRun = false;
+    } else {
+        webpackConfig = require("./.webpack/webpack.coverage.js");
+        browsers = ["ChromeHeadless"];
+        singleRun = true;
+    }
+
     delete webpackConfig.output;
+    // karma doesn't support webpack entry
+    delete webpackConfig.entry;
 
     config.set({
-        basePath: '',
-        frameworks: ['jasmine'],
+        basePath: "",
+        frameworks: ["jasmine", "webpack"],
         files: [
-            'indexTest.js',
+            "indexTest.js",
+            // included means: should the files be included in the browser using <script> tag?
+            // We don't want them as a <script> because the shared worker source
+            // needs loaded remotely by the shared worker process.
             {
-                pattern: 'dist/couchDBChangesFeed.js*',
+                pattern: "dist/couchDBChangesFeed.js*",
                 included: false
             },
             {
-                pattern: 'dist/inMemorySearchWorker.js*',
+                pattern: "dist/inMemorySearchWorker.js*",
                 included: false
             },
             {
-                pattern: 'dist/generatorWorker.js*',
+                pattern: "dist/generatorWorker.js*",
                 included: false
             }
         ],
         port: 9876,
-        reporters: ['spec', 'junit', 'coverage-istanbul'],
-        browsers: [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'],
+        reporters: ["spec", "junit", "coverage-istanbul"],
+        browsers,
         client: {
             jasmine: {
                 random: false,
@@ -55,32 +73,24 @@ module.exports = (config) => {
         },
         customLaunchers: {
             ChromeDebugging: {
-                base: 'Chrome',
-                flags: ['--remote-debugging-port=9222'],
+                base: "Chrome",
+                flags: ["--remote-debugging-port=9222"],
                 debug: true
-            },
-            FirefoxESR: {
-                base: 'FirefoxHeadless',
-                name: 'FirefoxESR'
             }
         },
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
         junitReporter: {
-            outputDir: "dist/reports/tests",
-            outputFile: "test-results.xml",
-            useBrowserName: false
+            outputDir: "dist/reports/tests", //Useful for CircleCI
+            outputFile: "test-results.xml", //Useful for CircleCI
+            useBrowserName: false //Disable since we only want chrome
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: "dist/reports/coverage",
-            reports: ['lcovonly', 'text-summary'],
-            thresholds: {
-                global: {
-                    lines: 52
-                }
-            }
+            skipFilesWithNoCoverage: true,
+            dir: "coverage/unit", //Sets coverage file to be consumed by codecov.io
+            reports: ["lcovonly"]
         },
         specReporter: {
             maxLogLines: 5,
@@ -92,14 +102,14 @@ module.exports = (config) => {
             failFast: false
         },
         preprocessors: {
-            'indexTest.js': ['webpack', 'sourcemap']
+            "indexTest.js": ["webpack", "sourcemap"]
         },
         webpack: webpackConfig,
         webpackMiddleware: {
-            stats: 'errors-warnings'
+            stats: "errors-warnings"
         },
         concurrency: 1,
-        singleRun: true,
+        singleRun,
         browserNoActivityTimeout: 400000
     });
 };

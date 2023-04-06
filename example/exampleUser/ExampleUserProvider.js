@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,19 +21,56 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import createExampleUser from './exampleUserCreator';
 
+const STATUSES = [{
+    key: "NO_STATUS",
+    label: "Not set",
+    iconClass: "icon-question-mark",
+    iconClassPoll: "icon-status-poll-question-mark"
+}, {
+    key: "GO",
+    label: "Go",
+    iconClass: "icon-check",
+    iconClassPoll: "icon-status-poll-question-mark",
+    statusClass: "s-status-ok",
+    statusBgColor: "#33cc33",
+    statusFgColor: "#000"
+}, {
+    key: "MAYBE",
+    label: "Maybe",
+    iconClass: "icon-alert-triangle",
+    iconClassPoll: "icon-status-poll-question-mark",
+    statusClass: "s-status-warning",
+    statusBgColor: "#ffb66c",
+    statusFgColor: "#000"
+}, {
+    key: "NO_GO",
+    label: "No go",
+    iconClass: "icon-circle-slash",
+    iconClassPoll: "icon-status-poll-question-mark",
+    statusClass: "s-status-error",
+    statusBgColor: "#9900cc",
+    statusFgColor: "#fff"
+}];
+/**
+ * @implements {StatusUserProvider}
+ */
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct) {
+    constructor(openmct, {defaultStatusRole} = {defaultStatusRole: undefined}) {
         super();
 
         this.openmct = openmct;
         this.user = undefined;
         this.loggedIn = false;
         this.autoLoginUser = undefined;
+        this.status = STATUSES[0];
+        this.pollQuestion = undefined;
+        this.defaultStatusRole = defaultStatusRole;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
+        this.loginPromise = undefined;
     }
 
     isLoggedIn() {
@@ -45,11 +82,19 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getCurrentUser() {
-        if (this.loggedIn) {
-            return Promise.resolve(this.user);
+        if (!this.loginPromise) {
+            this.loginPromise = this._login().then(() => this.user);
         }
 
-        return this._login().then(() => this.user);
+        return this.loginPromise;
+    }
+
+    canProvideStatusForRole() {
+        return Promise.resolve(true);
+    }
+
+    canSetPollQuestion() {
+        return Promise.resolve(true);
     }
 
     hasRole(roleId) {
@@ -58,6 +103,65 @@ export default class ExampleUserProvider extends EventEmitter {
         }
 
         return Promise.resolve(this.user.getRoles().includes(roleId));
+    }
+
+    getStatusRoleForCurrentUser() {
+        return Promise.resolve(this.defaultStatusRole);
+    }
+
+    getAllStatusRoles() {
+        return Promise.resolve([this.defaultStatusRole]);
+    }
+
+    getStatusForRole(role) {
+        return Promise.resolve(this.status);
+    }
+
+    async getDefaultStatusForRole(role) {
+        const allRoles = await this.getPossibleStatuses();
+
+        return allRoles?.[0];
+    }
+
+    setStatusForRole(role, status) {
+        status.timestamp = Date.now();
+        this.status = status;
+        this.emit('statusChange', {
+            role,
+            status
+        });
+
+        return true;
+    }
+
+    // eslint-disable-next-line require-await
+    async getPollQuestion() {
+        if (this.pollQuestion) {
+            return this.pollQuestion;
+        } else {
+            return undefined;
+        }
+    }
+
+    setPollQuestion(pollQuestion) {
+        if (!pollQuestion) {
+            // If the poll question is undefined, set it to a blank string.
+            // This behavior better reflects how other telemetry systems
+            // deal with undefined poll questions.
+            pollQuestion = '';
+        }
+
+        this.pollQuestion = {
+            question: pollQuestion,
+            timestamp: Date.now()
+        };
+        this.emit("pollQuestionChange", this.pollQuestion);
+
+        return true;
+    }
+
+    getPossibleStatuses() {
+        return Promise.resolve(STATUSES);
     }
 
     _login() {
@@ -108,3 +212,6 @@ export default class ExampleUserProvider extends EventEmitter {
         );
     }
 }
+/**
+ * @typedef {import('@/api/user/StatusUserProvider').default} StatusUserProvider
+ */

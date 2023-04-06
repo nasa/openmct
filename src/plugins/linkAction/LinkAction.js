@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,6 +30,7 @@ export default class LinkAction {
         this.priority = 7;
 
         this.openmct = openmct;
+        this.transaction = null;
     }
 
     appliesTo(objectPath) {
@@ -48,7 +49,9 @@ export default class LinkAction {
     }
 
     onSave(changes) {
-        let inNavigationPath = this.inNavigationPath();
+        this.startTransaction();
+
+        const inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
@@ -57,6 +60,8 @@ export default class LinkAction {
         const parent = parentDomainObjectpath[0];
 
         this.linkInNewParent(this.object, parent);
+
+        return this.saveTransaction();
     }
 
     linkInNewParent(child, newParent) {
@@ -83,7 +88,6 @@ export default class LinkAction {
                 }
             ]
         };
-
         this.openmct.forms.showForm(formStructure)
             .then(this.onSave.bind(this));
     }
@@ -91,8 +95,8 @@ export default class LinkAction {
     validate(currentParent) {
         return (data) => {
 
-            // default current parent to ROOT, if it's undefined, then it's a root level item
-            if (currentParent === undefined) {
+            // default current parent to ROOT, if it's null, then it's a root level item
+            if (!currentParent) {
                 currentParent = {
                     identifier: {
                         key: 'ROOT',
@@ -101,24 +105,23 @@ export default class LinkAction {
                 };
             }
 
-            const parentCandidate = data.value[0];
-            const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            const parentCandidatePath = data.value;
+            const parentCandidate = parentCandidatePath[0];
             const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
 
             if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
                 return false;
             }
 
-            if (!parentCandidateKeystring || !currentParentKeystring) {
+            // check if moving to same place
+            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
                 return false;
             }
 
-            if (parentCandidateKeystring === currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === objectKeystring) {
+            // check if moving to a child
+            if (parentCandidatePath.some(candidatePath => {
+                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
+            })) {
                 return false;
             }
 
@@ -129,5 +132,20 @@ export default class LinkAction {
 
             return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
+    }
+    startTransaction() {
+        if (!this.openmct.objects.isTransactionActive()) {
+            this.transaction = this.openmct.objects.startTransaction();
+        }
+    }
+
+    async saveTransaction() {
+        if (!this.transaction) {
+            return;
+        }
+
+        await this.transaction.commit();
+        this.openmct.objects.endTransaction();
+        this.transaction = null;
     }
 }

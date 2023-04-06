@@ -1,5 +1,5 @@
 <template>
-<ul class="c-list">
+<ul class="c-list c-notebook__pages">
     <li
         v-for="page in pages"
         :key="page.id"

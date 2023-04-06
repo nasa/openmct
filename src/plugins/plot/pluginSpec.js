@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,12 @@
 import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
-import StackedPlot from "./stackedPlot/StackedPlot.vue";
 import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
+
+const TEST_KEY_ID = 'some-other-key';
 
 describe("the plugin", function () {
     let element;
@@ -145,12 +146,6 @@ describe("the plugin", function () {
         element.appendChild(child);
         document.body.appendChild(element);
 
-        spyOn(window, 'ResizeObserver').and.returnValue({
-            observe() {},
-            unobserve() {},
-            disconnect() {}
-        });
-
         openmct.types.addType("test-object", {
             creatable: true
         });
@@ -167,7 +162,7 @@ describe("the plugin", function () {
     afterEach((done) => {
         openmct.time.timeSystem('utc', {
             start: 0,
-            end: 1
+            end: 2
         });
 
         configStore.deleteAll();
@@ -284,8 +279,10 @@ describe("the plugin", function () {
                     }
                 ]
             ];
-            const plotInspectorView = openmct.inspectorViews.get(selection);
-            expect(plotInspectorView.length).toEqual(1);
+            const applicableInspectorViews = openmct.inspectorViews.get(selection);
+            const plotInspectorView = applicableInspectorViews.find(view => view.name = 'Plots Configuration');
+
+            expect(plotInspectorView).toBeDefined();
         });
 
         it("provides a stacked plot view for objects with telemetry", () => {
@@ -348,12 +345,18 @@ describe("the plugin", function () {
                 }
             };
 
+            openmct.router.path = [testTelemetryObject];
+
             applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
-            plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
+            plotView = plotViewProvider.view(testTelemetryObject, []);
             plotView.show(child, true);
 
             return Vue.nextTick();
+        });
+
+        afterEach(() => {
+            openmct.router.path = null;
         });
 
         it("Makes only one request for telemetry on load", () => {
@@ -403,6 +406,20 @@ describe("the plugin", function () {
             expect(options.length).toBe(2);
             expect(options[0].value).toBe("Some attribute");
             expect(options[1].value).toBe("Another attribute");
+        });
+
+        it("Updates the Y-axis label when changed", () => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe('some-key');
+            });
+
+            yAxisElement.$emit('yKeyChanged', TEST_KEY_ID, 1);
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe(TEST_KEY_ID);
+            });
         });
 
         it('hides the pause and play controls', () => {
@@ -501,6 +518,47 @@ describe("the plugin", function () {
                 expect(playElAfterChartClick.length).toBe(1);
 
             });
+
+            it("clicking the plot does not request historical data", async () => {
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
+
+            });
+
+            describe('limits', () => {
+
+                it('lines are not displayed by default', () => {
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                    expect(limitEl.length).toBe(0);
+                });
+
+                it('lines are displayed when configuration is set to true', (done) => {
+                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    const config = configStore.get(configId);
+                    config.yAxis.set('displayRange', {
+                        min: 0,
+                        max: 4
+                    });
+                    config.series.models[0].set('limitLines', true);
+
+                    Vue.nextTick(() => {
+                        let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                        expect(limitEl.length).toBe(4);
+                        done();
+                    });
+                });
+            });
         });
 
         describe('controls in time strip view', () => {
@@ -523,26 +581,16 @@ describe("the plugin", function () {
         });
     });
 
-    describe("The stacked plot view", () => {
+    describe('resizing the plot', () => {
+        let plotContainerResizeObserver;
+        let resizePromiseResolve;
         let testTelemetryObject;
-        let testTelemetryObject2;
-        let config;
-        let stackedPlotObject;
-        let component;
-        let mockComposition;
-        let plotViewComponentObject;
+        let applicableViews;
+        let plotViewProvider;
+        let plotView;
+        let resizePromise;
 
         beforeEach(() => {
-
-            stackedPlotObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-plot"
-                },
-                type: "telemetry.plot.stacked",
-                name: "Test Stacked Plot"
-            };
-
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
@@ -571,308 +619,52 @@ describe("the plugin", function () {
                             range: 2
                         }
                     }]
-                },
-                configuration: {
-                    objectStyles: {
-                        staticStyle: {
-                            style: {
-                                backgroundColor: 'rgb(0, 200, 0)',
-                                color: '',
-                                border: ''
-                            }
-                        },
-                        conditionSetIdentifier: {
-                            namespace: '',
-                            key: 'testConditionSetId'
-                        },
-                        selectedConditionId: 'conditionId1',
-                        defaultConditionId: 'conditionId1',
-                        styles: [
-                            {
-                                conditionId: 'conditionId1',
-                                style: {
-                                    backgroundColor: 'rgb(0, 155, 0)',
-                                    color: '',
-                                    output: '',
-                                    border: ''
-                                }
-                            }
-                        ]
-                    }
                 }
             };
 
-            testTelemetryObject2 = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object2"
-                },
-                type: "test-object",
-                name: "Test Object2",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key2",
-                        name: "Some attribute2",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key2",
-                        name: "Another attribute2",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
+            openmct.router.path = [testTelemetryObject];
 
-            mockComposition = new EventEmitter();
-            mockComposition.load = () => {
-                mockComposition.emit('add', testTelemetryObject);
+            applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+            plotView = plotViewProvider.view(testTelemetryObject, []);
 
-                return [testTelemetryObject];
-            };
+            plotView.show(child, true);
 
-            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-            let viewContainer = document.createElement("div");
-            child.append(viewContainer);
-            component = new Vue({
-                el: viewContainer,
-                components: {
-                    StackedPlot
-                },
-                provide: {
-                    openmct: openmct,
-                    domainObject: stackedPlotObject,
-                    composition: openmct.composition.get(stackedPlotObject),
-                    path: [stackedPlotObject]
-                },
-                template: "<stacked-plot></stacked-plot>"
+            resizePromise = new Promise((resolve) => {
+                resizePromiseResolve = resolve;
             });
 
-            return telemetryPromise
-                .then(Vue.nextTick())
-                .then(() => {
-                    plotViewComponentObject = component.$root.$children[0];
-                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
-                    config = configStore.get(configId);
-                });
-        });
+            const handlePlotResize = _.debounce(() => {
+                resizePromiseResolve(true);
+            }, 600);
 
-        it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-            expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual("Test Object");
-        });
+            plotContainerResizeObserver = new ResizeObserver(handlePlotResize);
+            plotContainerResizeObserver.observe(plotView.getComponent().$children[0].$children[1].$parent.$refs.plotWrapper);
 
-        it("Renders an expanded legend for every telemetry", () => {
-            let legendControl = element.querySelector(".c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle");
-            const clickEvent = createMouseEvent("click");
-
-            legendControl.dispatchEvent(clickEvent);
-
-            let legend = element.querySelectorAll(".plot-wrapper-expanded-legend .plot-legend-item td");
-            expect(legend.length).toBe(6);
-        });
-
-        it("Renders X-axis ticks for the telemetry object", (done) => {
-            let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
-            expect(xAxisElement.length).toBe(1);
-
-            config.xAxis.set('displayRange', {
-                min: 0,
-                max: 4
+            return Vue.nextTick(() => {
+                plotView.getComponent().$children[0].$children[1].stopFollowingTimeContext();
+                spyOn(plotView.getComponent().$children[0].$children[1], 'loadSeriesData').and.callThrough();
             });
+        });
 
-            Vue.nextTick(() => {
-                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(9);
+        afterEach(() => {
+            plotContainerResizeObserver.disconnect();
+            openmct.router.path = null;
+        });
 
+        it("requests historical data when over the threshold", (done) => {
+            element.style.width = '680px';
+            resizePromise.then(() => {
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).toHaveBeenCalledTimes(1);
                 done();
             });
         });
 
-        it("Renders Y-axis ticks for the telemetry object", (done) => {
-            config.yAxis.set('displayRange', {
-                min: 10,
-                max: 20
-            });
-            Vue.nextTick(() => {
-                let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
-                expect(yAxisElement.length).toBe(1);
-                let ticks = yAxisElement[0].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(6);
+        it("does not request historical data when under the threshold", (done) => {
+            element.style.width = '644px';
+            resizePromise.then(() => {
+                expect(plotView.getComponent().$children[0].$children[1].loadSeriesData).not.toHaveBeenCalled();
                 done();
-            });
-        });
-
-        it("Renders Y-axis options for the telemetry object", () => {
-            let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
-            expect(yAxisElement.length).toBe(1);
-            let options = yAxisElement[0].querySelectorAll("option");
-            expect(options.length).toBe(2);
-            expect(options[0].value).toBe("Some attribute");
-            expect(options[1].value).toBe("Another attribute");
-        });
-
-        it("turns on cursor Guides all telemetry objects", (done) => {
-            expect(plotViewComponentObject.cursorGuide).toBeFalse();
-            plotViewComponentObject.toggleCursorGuide();
-            Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].cursorGuide).toBeTrue();
-                done();
-            });
-        });
-
-        it("shows grid lines for all telemetry objects", () => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
-            let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
-            let visible = 0;
-            gridLinesContainer.forEach(el => {
-                if (el.style.display !== "none") {
-                    visible++;
-                }
-            });
-            expect(visible).toBe(2);
-        });
-
-        it("hides grid lines for all telemetry objects", (done) => {
-            expect(plotViewComponentObject.gridLines).toBeTrue();
-            plotViewComponentObject.toggleGridLines();
-            Vue.nextTick(() => {
-                expect(plotViewComponentObject.gridLines).toBeFalse();
-                let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
-                let visible = 0;
-                gridLinesContainer.forEach(el => {
-                    if (el.style.display !== "none") {
-                        visible++;
-                    }
-                });
-                expect(visible).toBe(0);
-                done();
-            });
-        });
-
-        it('plots a new series when a new telemetry object is added', (done) => {
-            mockComposition.emit('add', testTelemetryObject2);
-            Vue.nextTick(() => {
-                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-                expect(legend.length).toBe(2);
-                expect(legend[1].innerHTML).toEqual("Test Object2");
-                done();
-            });
-        });
-
-        it('removes plots from series when a telemetry object is removed', (done) => {
-            mockComposition.emit('remove', testTelemetryObject.identifier);
-            Vue.nextTick(() => {
-                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-                expect(legend.length).toBe(0);
-                done();
-            });
-        });
-
-        it("Changes the label of the y axis when the option changes", (done) => {
-            let selectEl = element.querySelector('.gl-plot-y-label__select');
-            selectEl.value = 'Another attribute';
-            selectEl.dispatchEvent(new Event("change"));
-
-            Vue.nextTick(() => {
-                expect(config.yAxis.get('label')).toEqual('Another attribute');
-                done();
-            });
-        });
-
-        it("Renders a new series when added to one of the plots", (done) => {
-            mockComposition.emit('add', testTelemetryObject2);
-            Vue.nextTick(() => {
-                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-                expect(legend.length).toBe(2);
-                expect(legend[1].innerHTML).toEqual("Test Object2");
-                done();
-            });
-        });
-
-        it("Adds a new point to the plot", (done) => {
-            let originalLength = config.series.models[0].getSeriesData().length;
-            config.series.models[0].add({
-                utc: 2,
-                'some-key': 1,
-                'some-other-key': 2
-            });
-            Vue.nextTick(() => {
-                const seriesData = config.series.models[0].getSeriesData();
-                expect(seriesData.length).toEqual(originalLength + 1);
-                done();
-            });
-        });
-
-        it("updates the xscale", (done) => {
-            config.xAxis.set('displayRange', {
-                min: 0,
-                max: 10
-            });
-            Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].xScale.domain()).toEqual({
-                    min: 0,
-                    max: 10
-                });
-                done();
-            });
-        });
-
-        it("updates the yscale", (done) => {
-            config.yAxis.set('displayRange', {
-                min: 10,
-                max: 20
-            });
-            Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].yScale.domain()).toEqual({
-                    min: 10,
-                    max: 20
-                });
-                done();
-            });
-        });
-
-        it("shows styles for telemetry objects if available", (done) => {
-            Vue.nextTick(() => {
-                let conditionalStylesContainer = element.querySelectorAll(".c-plot--stacked-container .js-style-receiver");
-                let hasStyles = 0;
-                conditionalStylesContainer.forEach(el => {
-                    if (el.style.backgroundColor !== '') {
-                        hasStyles++;
-                    }
-                });
-                expect(hasStyles).toBe(1);
-                done();
-            });
-        });
-
-        describe('limits', () => {
-
-            it('lines are not displayed by default', () => {
-                let limitEl = element.querySelectorAll(".js-limit-area hr");
-                expect(limitEl.length).toBe(0);
-            });
-
-            it('lines are displayed when configuration is set to true', (done) => {
-                config.series.models[0].set('limitLines', true);
-
-                Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                    expect(limitEl.length).toBe(4);
-                    done();
-                });
-
             });
         });
     });
@@ -955,6 +747,7 @@ describe("the plugin", function () {
                 ]
             ];
 
+            openmct.router.path = [testTelemetryObject];
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
                 mockComposition.emit('add', testTelemetryObject);
@@ -991,6 +784,10 @@ describe("the plugin", function () {
                 viewComponentObject = component.$root.$children[0];
                 done();
             });
+        });
+
+        afterEach(() => {
+            openmct.router.path = null;
         });
 
         describe('in view only mode', () => {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -19,25 +19,27 @@
 * this source code distribution or the Licensing information page available
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
+
 <template>
 <swim-lane
     :icon-class="item.type.definition.cssClass"
     :status="status"
     :min-height="item.height"
-    :show-ucontents="item.domainObject.type === 'plan'"
+    :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
 >
-    <template slot="label">
+    <template #label>
         {{ item.domainObject.name }}
     </template>
-    <object-view
-        ref="objectView"
-        slot="object"
-        class="u-contents"
-        :default-object="item.domainObject"
-        :object-path="item.objectPath"
-        @change-action-collection="setActionCollection"
-    />
+    <template #object>
+        <object-view
+            ref="objectView"
+            class="u-contents"
+            :default-object="item.domainObject"
+            :object-path="item.objectPath"
+            @change-action-collection="setActionCollection"
+        />
+    </template>
 </swim-lane>
 </template>
 
@@ -91,7 +93,7 @@ export default {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else if (this.domainObject.isMutable) {
+        } else if (this?.domainObject?.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -127,6 +129,9 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        isPlanLikeObject(domainObject) {
+            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
         }
     }
 };

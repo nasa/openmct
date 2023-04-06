@@ -298,28 +298,45 @@ export default {
 
             this.series.set('color', color);
 
-            const getPath = this.dynamicPathForKey('color');
-            const seriesColorPath = getPath(this.domainObject, this.series);
+            if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
+                this.$emit('seriesUpdated', {
+                    identifier: this.domainObject.identifier,
+                    path: `series.color`,
+                    value: color.asHexString()
+                });
+            } else {
+                const getPath = this.dynamicPathForKey('color');
+                const seriesColorPath = getPath(this.domainObject, this.series);
 
-            this.openmct.objects.mutate(
-                this.domainObject,
-                seriesColorPath,
-                color.asHexString()
-            );
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    seriesColorPath,
+                    color.asHexString()
+                );
+            }
 
             if (otherSeriesWithColor) {
                 otherSeriesWithColor.set('color', oldColor);
 
-                const otherSeriesColorPath = getPath(
-                    this.domainObject,
-                    otherSeriesWithColor
-                );
+                if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
+                    this.$emit('seriesUpdated', {
+                        identifier: this.domainObject.identifier,
+                        path: `series.color`,
+                        value: oldColor.asHexString()
+                    });
+                } else {
+                    const getPath = this.dynamicPathForKey('color');
+                    const otherSeriesColorPath = getPath(
+                        this.domainObject,
+                        otherSeriesWithColor
+                    );
 
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    otherSeriesColorPath,
-                    oldColor.asHexString()
-                );
+                    this.openmct.objects.mutate(
+                        this.domainObject,
+                        otherSeriesColorPath,
+                        oldColor.asHexString()
+                    );
+                }
             }
         },
         toggleExpanded() {
@@ -343,11 +360,19 @@ export default {
             if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
                 this.series.set(formKey, coerce(newVal, formField.coerce));
                 if (path) {
-                    this.openmct.objects.mutate(
-                        this.domainObject,
-                        path(this.domainObject, this.series),
-                        coerce(newVal, formField.coerce)
-                    );
+                    if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
+                        this.$emit('seriesUpdated', {
+                            identifier: this.domainObject.identifier,
+                            path: `series.${formKey}`,
+                            value: coerce(newVal, formField.coerce)
+                        });
+                    } else {
+                        this.openmct.objects.mutate(
+                            this.domainObject,
+                            path(this.domainObject, this.series),
+                            coerce(newVal, formField.coerce)
+                        );
+                    }
                 }
             }
         },

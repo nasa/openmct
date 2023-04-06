@@ -13,17 +13,16 @@ coverage:
   round: down
   range: "66...100"
 
-ignore:
-
-parsers:
-  gcov:
-    branch_detection:
-      conditional: true
-      loop: true
-      method: false
-      macro: false
+flags:
+  unit:
+    carryforward: true 
+  e2e-ci:
+    carryforward: true
+  e2e-full:
+    carryforward: true    
 
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: false
+  show_carryforward_flags: true

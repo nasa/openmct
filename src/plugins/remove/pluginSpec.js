@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,6 +52,10 @@ describe("The Remove Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
+                    identifier: {
+                        namespace: "",
+                        key: "parent-folder-object"
+                    },
                     name: "Parent Folder",
                     composition: [childObject.identifier]
                 }
@@ -78,6 +82,8 @@ describe("The Remove Action plugin", () => {
             spyOn(removeAction, 'removeFromComposition').and.callThrough();
             spyOn(removeAction, 'inNavigationPath').and.returnValue(false);
             spyOn(openmct.objects, 'mutate').and.callThrough();
+            spyOn(openmct.objects, 'startTransaction').and.callThrough();
+            spyOn(openmct.objects, 'endTransaction').and.callThrough();
             removeAction.removeFromComposition(parentObject, childObject);
         });
 
@@ -89,6 +95,17 @@ describe("The Remove Action plugin", () => {
         it("it should mutate the parent object", () => {
             expect(openmct.objects.mutate).toHaveBeenCalled();
             expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(parentObject);
+        });
+
+        it("it should start a transaction", () => {
+            expect(openmct.objects.startTransaction).toHaveBeenCalled();
+        });
+
+        it("it should end the transaction", (done) => {
+            setTimeout(() => {
+                expect(openmct.objects.endTransaction).toHaveBeenCalled();
+                done();
+            }, 100);
         });
     });
 
@@ -103,10 +120,18 @@ describe("The Remove Action plugin", () => {
             expect(applies).toBe(true);
         });
 
-        it("should be false when the child is locked", () => {
+        it("should be false when the child is locked and not an alias", () => {
             childObject.locked = true;
+            childObject.location = 'parent-folder-object';
             let applies = removeAction.appliesTo([childObject, parentObject]);
             expect(applies).toBe(false);
+        });
+
+        it("should be true when the child is locked and IS an alias", () => {
+            childObject.locked = true;
+            childObject.location = 'other-folder-object';
+            let applies = removeAction.appliesTo([childObject, parentObject]);
+            expect(applies).toBe(true);
         });
     });
 });

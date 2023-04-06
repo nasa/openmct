@@ -1,176 +1,146 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2023, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 import CopyToNotebookAction from './actions/CopyToNotebookAction';
-import Notebook from './components/Notebook.vue';
+import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
+import NotebookViewProvider from './NotebookViewProvider';
+import NotebookType from './NotebookType';
 import SnapshotContainer from './snapshot-container';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 
-import { notebookImageMigration, IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration';
-import { NOTEBOOK_TYPE } from './notebook-constants';
+import { notebookImageMigration } from '../notebook/utils/notebook-migration';
+import {
+    NOTEBOOK_TYPE,
+    RESTRICTED_NOTEBOOK_TYPE,
+    NOTEBOOK_VIEW_TYPE,
+    RESTRICTED_NOTEBOOK_VIEW_TYPE,
+    NOTEBOOK_BASE_INSTALLED
+} from './notebook-constants';
 
 import Vue from 'vue';
 
-export default function NotebookPlugin() {
-    return function install(openmct) {
-        if (openmct._NOTEBOOK_PLUGIN_INSTALLED) {
-            return;
-        } else {
-            openmct._NOTEBOOK_PLUGIN_INSTALLED = true;
+let notebookSnapshotContainer;
+function getSnapshotContainer(openmct) {
+    if (!notebookSnapshotContainer) {
+        notebookSnapshotContainer = new SnapshotContainer(openmct);
+    }
+
+    return notebookSnapshotContainer;
+}
+
+function addLegacyNotebookGetInterceptor(openmct) {
+    openmct.objects.addGetInterceptor({
+        appliesTo: (identifier, domainObject) => {
+            return domainObject && domainObject.type === NOTEBOOK_TYPE;
+        },
+        invoke: (identifier, domainObject) => {
+            notebookImageMigration(openmct, domainObject);
+
+            return domainObject;
         }
+    });
+}
 
-        openmct.actions.register(new CopyToNotebookAction(openmct));
+function installBaseNotebookFunctionality(openmct) {
+    // only need to do this once
+    if (openmct[NOTEBOOK_BASE_INSTALLED]) {
+        return;
+    }
 
-        const notebookType = {
-            name: 'Notebook',
-            description: 'Create and save timestamped notes with embedded object snapshots.',
-            creatable: true,
-            cssClass: 'icon-notebook',
-            initialize: domainObject => {
-                domainObject.configuration = {
-                    defaultSort: 'oldest',
-                    entries: {},
-                    imageMigrationVer: IMAGE_MIGRATION_VER,
-                    pageTitle: 'Page',
-                    sections: [],
-                    sectionTitle: 'Section',
-                    type: 'General'
-                };
-            },
-            form: [
-                {
-                    key: 'defaultSort',
-                    name: 'Entry Sorting',
-                    control: 'select',
-                    options: [
-                        {
-                            name: 'Newest First',
-                            value: "newest"
-                        },
-                        {
-                            name: 'Oldest First',
-                            value: "oldest"
-                        }
-                    ],
-                    cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "defaultSort"
-                    ]
-                },
-                {
-                    key: 'type',
-                    name: 'Note book Type',
-                    control: 'textfield',
-                    cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "type"
-                    ]
-                },
-                {
-                    key: 'sectionTitle',
-                    name: 'Section Title',
-                    control: 'textfield',
-                    cssClass: 'l-inline',
-                    required: true,
-                    property: [
-                        "configuration",
-                        "sectionTitle"
-                    ]
-                },
-                {
-                    key: 'pageTitle',
-                    name: 'Page Title',
-                    control: 'textfield',
-                    cssClass: 'l-inline',
-                    required: true,
-                    property: [
-                        "configuration",
-                        "pageTitle"
-                    ]
-                }
-            ]
-        };
+    const snapshotContainer = getSnapshotContainer(openmct);
+    const notebookSnapshotImageType = {
+        name: 'Notebook Snapshot Image Storage',
+        description: 'Notebook Snapshot Image Storage object',
+        creatable: false,
+        initialize: domainObject => {
+            domainObject.configuration = {
+                fullSizeImageURL: undefined,
+                thumbnailImageURL: undefined
+            };
+        }
+    };
+    openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
+    openmct.actions.register(new CopyToNotebookAction(openmct));
+    openmct.actions.register(new ExportNotebookAsTextAction(openmct));
+
+    const notebookSnapshotIndicator = new Vue ({
+        components: {
+            NotebookSnapshotIndicator
+        },
+        provide: {
+            openmct,
+            snapshotContainer
+        },
+        template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
+    });
+    const indicator = {
+        element: notebookSnapshotIndicator.$mount().$el,
+        key: 'notebook-snapshot-indicator',
+        priority: openmct.priority.DEFAULT
+    };
+
+    openmct.indicators.add(indicator);
+
+    monkeyPatchObjectAPIForNotebooks(openmct);
+
+    openmct[NOTEBOOK_BASE_INSTALLED] = true;
+}
+
+function NotebookPlugin(name = 'Notebook', entryUrlWhitelist = []) {
+    return function install(openmct) {
+        const icon = 'icon-notebook';
+        const description = 'Create and save timestamped notes with embedded object snapshots.';
+        const snapshotContainer = getSnapshotContainer(openmct);
+
+        addLegacyNotebookGetInterceptor(openmct);
+
+        const notebookType = new NotebookType(name, description, icon);
         openmct.types.addType(NOTEBOOK_TYPE, notebookType);
 
-        const notebookSnapshotImageType = {
-            name: 'Notebook Snapshot Image Storage',
-            description: 'Notebook Snapshot Image Storage object',
-            creatable: false,
-            initialize: domainObject => {
-                domainObject.configuration = {
-                    fullSizeImageURL: undefined,
-                    thumbnailImageURL: undefined
-                };
-            }
-        };
-        openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
+        const notebookView = new NotebookViewProvider(openmct, name, NOTEBOOK_VIEW_TYPE, NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
 
-        const snapshotContainer = new SnapshotContainer(openmct);
-        const notebookSnapshotIndicator = new Vue ({
-            components: {
-                NotebookSnapshotIndicator
-            },
-            provide: {
-                openmct,
-                snapshotContainer
-            },
-            template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-        });
-        const indicator = {
-            element: notebookSnapshotIndicator.$mount().$el,
-            key: 'notebook-snapshot-indicator',
-            priority: openmct.priority.DEFAULT
-        };
-
-        openmct.indicators.add(indicator);
-
-        openmct.objectViews.addProvider({
-            key: 'notebook-vue',
-            name: 'Notebook View',
-            cssClass: 'icon-notebook',
-            canView: function (domainObject) {
-                return domainObject.type === 'notebook';
-            },
-            view: function (domainObject) {
-                let component;
-
-                return {
-                    show(container) {
-                        component = new Vue({
-                            el: container,
-                            components: {
-                                Notebook
-                            },
-                            provide: {
-                                openmct,
-                                snapshotContainer
-                            },
-                            data() {
-                                return {
-                                    domainObject
-                                };
-                            },
-                            template: '<Notebook :domain-object="domainObject"></Notebook>'
-                        });
-                    },
-                    destroy() {
-                        component.$destroy();
-                    }
-                };
-            }
-        });
-
-        openmct.objects.addGetInterceptor({
-            appliesTo: (identifier, domainObject) => {
-                return domainObject && domainObject.type === 'notebook';
-            },
-            invoke: (identifier, domainObject) => {
-                notebookImageMigration(openmct, domainObject);
-
-                return domainObject;
-            }
-        });
-
-        monkeyPatchObjectAPIForNotebooks(openmct);
+        installBaseNotebookFunctionality(openmct);
     };
 }
+
+function RestrictedNotebookPlugin(name = 'Notebook Shift Log', entryUrlWhitelist = []) {
+    return function install(openmct) {
+        const icon = 'icon-notebook-shift-log';
+        const description = 'Create and save timestamped notes with embedded object snapshots with the ability to commit and lock pages.';
+        const snapshotContainer = getSnapshotContainer(openmct);
+
+        const notebookType = new NotebookType(name, description, icon);
+        openmct.types.addType(RESTRICTED_NOTEBOOK_TYPE, notebookType);
+
+        const notebookView = new NotebookViewProvider(openmct, name, RESTRICTED_NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_TYPE, icon, snapshotContainer, entryUrlWhitelist);
+        openmct.objectViews.addProvider(notebookView, entryUrlWhitelist);
+
+        installBaseNotebookFunctionality(openmct);
+    };
+}
+
+export {
+    NotebookPlugin,
+    RestrictedNotebookPlugin
+};

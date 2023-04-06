@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,7 @@
 
 import TimelineViewProvider from './TimelineViewProvider';
 import timelineInterceptor from "./timelineInterceptor";
+import TimelineCompositionPolicy from "./TimelineCompositionPolicy";
 
 export default function () {
     return function install(openmct) {
@@ -39,6 +40,8 @@ export default function () {
             }
         });
         timelineInterceptor(openmct);
+        openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
+
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }

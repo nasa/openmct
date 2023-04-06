@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const DEFAULT_INTERCEPTOR_PRIORITY = 0;
 export default class InterceptorRegistry {
     /**
      * A InterceptorRegistry maintains the definitions for different interceptors that may be invoked on domain objects.
@@ -45,7 +46,6 @@ export default class InterceptorRegistry {
      * @memberof module:openmct.InterceptorRegistry#
      */
     addInterceptor(interceptorDef) {
-        //TODO: sort by priority
         this.interceptors.push(interceptorDef);
     }
 
@@ -56,10 +56,18 @@ export default class InterceptorRegistry {
      * @memberof module:openmct.InterceptorRegistry#
      */
     getInterceptors(identifier, object) {
+
+        function byPriority(interceptorA, interceptorB) {
+            let priorityA = interceptorA.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+            let priorityB = interceptorB.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+
+            return priorityB - priorityA;
+        }
+
         return this.interceptors.filter(interceptor => {
             return typeof interceptor.appliesTo === 'function'
                 && interceptor.appliesTo(identifier, object);
-        });
+        }).sort(byPriority);
     }
 
 }

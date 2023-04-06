@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,8 +36,8 @@ import {
 } from './InspectorStylesSpecMocks';
 import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
-import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
-import stylesManager from '@/ui/inspector/styles/StylesManager';
+import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
+import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
 
 describe("the inspector", () => {
     let openmct;

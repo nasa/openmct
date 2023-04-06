@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,18 +20,83 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import { createOpenMct, resetApplicationState } from "@/utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
+import EventEmitter from "EventEmitter";
 
 describe('the plugin', function () {
     let objectDef;
+    let appHolder;
     let element;
     let child;
     let openmct;
     let mockObjectPath;
+    let mockCompositionForTimelist;
+    let planObject = {
+        identifier: {
+            key: 'test-plan-object',
+            namespace: ''
+        },
+        type: 'plan',
+        id: "test-plan-object",
+        selectFile: {
+            body: JSON.stringify({
+                "TEST-GROUP": [
+                    {
+                        "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                        "start": 1597170002854,
+                        "end": 1597171032854,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    },
+                    {
+                        "name": "Sed ut perspiciatis",
+                        "start": 1597171132854,
+                        "end": 1597171232854,
+                        "type": "TEST-GROUP",
+                        "color": "fuchsia",
+                        "textColor": "black"
+                    }
+                ]
+            })
+        }
+    };
+    let timelineObject = {
+        "composition": [],
+        configuration: {
+            useIndependentTime: false,
+            timeOptions: {
+                mode: {
+                    key: 'fixed'
+                },
+                fixedOffsets: {
+                    start: 10,
+                    end: 11
+                },
+                clockOffsets: {
+                    start: -(30 * 60 * 1000),
+                    end: (30 * 60 * 1000)
+                }
+            }
+        },
+        "name": "Some timestrip",
+        "type": "time-strip",
+        "location": "mine",
+        "modified": 1631005183584,
+        "persisted": 1631005183502,
+        "identifier": {
+            "namespace": "",
+            "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+        }
+    };
 
     beforeEach((done) => {
+        appHolder = document.createElement('div');
+        appHolder.style.width = '640px';
+        appHolder.style.height = '480px';
+
         mockObjectPath = [
             {
                 name: 'mock folder',
@@ -73,7 +138,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.start(appHolder);
     });
 
     afterEach(() => {
@@ -102,17 +167,12 @@ describe('the plugin', function () {
 
         beforeEach(() => {
             testViewObject = {
-                id: "test-object",
-                identifier: {
-                    key: "test-object",
-                    namespace: ''
-                },
-                type: "time-strip"
+                ...timelineObject
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject, element);
+            let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
             return Vue.nextTick();
@@ -133,37 +193,64 @@ describe('the plugin', function () {
         });
     });
 
+    describe('the timeline composition', () => {
+        let timelineDomainObject;
+        let timelineView;
+
+        beforeEach(() => {
+            timelineDomainObject = {
+                ...timelineObject,
+                composition: [
+                    {
+                        identifier: {
+                            key: 'test-plan-object',
+                            namespace: ''
+                        }
+                    }
+                ]
+            };
+
+            mockCompositionForTimelist = new EventEmitter();
+            mockCompositionForTimelist.load = () => {
+                mockCompositionForTimelist.emit('add', planObject);
+
+                return [planObject];
+            };
+
+            spyOn(openmct.composition, 'get').withArgs(timelineDomainObject).and.returnValue(mockCompositionForTimelist);
+
+            openmct.router.path = [timelineDomainObject];
+
+            const applicableViews = openmct.objectViews.get(timelineDomainObject, [timelineDomainObject]);
+            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            let view = timelineView.view(timelineDomainObject, [timelineDomainObject]);
+            view.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it('loads the plan from composition', () => {
+            return Vue.nextTick(() => {
+                const items = element.querySelectorAll('.js-timeline__content');
+                expect(items.length).toEqual(1);
+            });
+        });
+    });
+
     describe('the independent time conductor', () => {
         let timelineView;
         let testViewObject = {
-            id: "test-object",
-            identifier: {
-                key: "test-object",
-                namespace: ''
-            },
-            type: "time-strip",
+            ...timelineObject,
             configuration: {
-                useIndependentTime: true,
-                timeOptions: {
-                    mode: {
-                        key: 'local'
-                    },
-                    fixedOffsets: {
-                        start: 10,
-                        end: 11
-                    },
-                    clockOffsets: {
-                        start: -(30 * 60 * 1000),
-                        end: (30 * 60 * 1000)
-                    }
-                }
+                ...timelineObject.configuration,
+                useIndependentTime: true
             }
         };
 
         beforeEach(done => {
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject, element);
+            let view = timelineView.view(testViewObject, mockObjectPath);
             view.show(child, true);
 
             Vue.nextTick(done);
@@ -181,37 +268,25 @@ describe('the plugin', function () {
         });
     });
 
-    describe('the independent time conductor', () => {
+    describe('the independent time conductor - fixed', () => {
         let timelineView;
         let testViewObject2 = {
+            ...timelineObject,
             id: "test-object2",
             identifier: {
                 key: "test-object2",
                 namespace: ''
             },
-            type: "time-strip",
             configuration: {
-                useIndependentTime: true,
-                timeOptions: {
-                    mode: {
-                        key: 'fixed'
-                    },
-                    fixedOffsets: {
-                        start: 10,
-                        end: 11
-                    },
-                    clockOffsets: {
-                        start: -(30 * 60 * 1000),
-                        end: (30 * 60 * 1000)
-                    }
-                }
+                ...timelineObject.configuration,
+                useIndependentTime: true
             }
         };
 
         beforeEach((done) => {
             const applicableViews = openmct.objectViews.get(testViewObject2, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
-            let view = timelineView.view(testViewObject2, element);
+            let view = timelineView.view(testViewObject2, mockObjectPath);
             view.show(child, true);
 
             Vue.nextTick(done);
@@ -228,4 +303,68 @@ describe('the plugin', function () {
         });
     });
 
+    describe("The timestrip composition policy", () => {
+        let testObject;
+        beforeEach(() => {
+            testObject = {
+                ...timelineObject,
+                composition: []
+            };
+        });
+
+        it("allows composition for plots", () => {
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).not.toThrow();
+            expect(testObject.composition.length).toBe(1);
+        });
+
+        it("allows composition for plans", () => {
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(planObject);
+            }).not.toThrow();
+            expect(testObject.composition.length).toBe(1);
+        });
+
+        it("disallows composition for non time-based plots", () => {
+            const barGraphObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "telemetry.plot.bar-graph",
+                name: "Test Object"
+            };
+            const composition = openmct.composition.get(testObject);
+            expect(() => {
+                composition.add(barGraphObject);
+            }).toThrow();
+            expect(testObject.composition.length).toBe(0);
+        });
+    });
 });

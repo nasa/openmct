@@ -10,7 +10,7 @@ accept changes from external contributors.
 
 The short version:
 
-1. Write your contribution or describe your idea in the form of an [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions)
+1. Write your contribution or describe your idea in the form of a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [start a GitHub discussion](https://github.com/nasa/openmct/discussions).
 2. Make sure your contribution meets code, test, and commit message
    standards as described below.
 3. Submit a pull request from a topic branch back to `master`. Include a check
@@ -173,7 +173,7 @@ The following guidelines are provided for anyone contributing source code to the
 1. Avoid deep nesting (especially of functions), except where necessary
    (e.g. due to closure scope).
 1. End with a single new-line character.
-1. Always use ES6 `Class`es and inheritence rather than the pre-ES6 prototypal 
+1. Always use ES6 `Class`es and inheritance rather than the pre-ES6 prototypal 
    pattern.
 1. Within a given function's scope, do not mix declarations and imperative
    code, and  present these in the following order:

@@ -42,6 +42,13 @@ export default {
         navigateToPath: {
             type: String,
             default: undefined
+        },
+        readOnly: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
         }
     },
     data() {

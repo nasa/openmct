@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,9 +43,23 @@ define([
         };
 
         this.valueMetadata = valueMetadata;
-        this.formatter = formatMap.get(valueMetadata.format) || numberFormatter;
 
-        if (valueMetadata.format === 'enum') {
+        function getNonArrayValue(value) {
+            //metadata format could have array formats ex. string[]/number[]
+            const arrayRegex = /\[\]$/g;
+            if (value && value.match(arrayRegex)) {
+                return value.replace(arrayRegex, '');
+            }
+
+            return value;
+        }
+
+        let valueMetadataFormat = getNonArrayValue(valueMetadata.format);
+
+        //Is there an existing formatter for the format specified? If not, default to number format
+        this.formatter = formatMap.get(valueMetadataFormat) || numberFormatter;
+
+        if (valueMetadataFormat === 'enum') {
             this.formatter = {};
             this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
                 vm.byValue[e.value] = e.string;
@@ -77,13 +91,13 @@ define([
         // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
             const baseFormat = this.formatter.format;
-            const formatString = valueMetadata.formatString;
+            const formatString = getNonArrayValue(valueMetadata.formatString);
             this.formatter.format = function (value) {
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };
         }
 
-        if (valueMetadata.format === 'string') {
+        if (valueMetadataFormat === 'string') {
             this.formatter.parse = function (value) {
                 if (value === undefined) {
                     return '';
@@ -107,16 +121,32 @@ define([
     }
 
     TelemetryValueFormatter.prototype.parse = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            return this.formatter.parse(datum[this.valueMetadata.source]);
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
+            if (Array.isArray(objectDatum)) {
+                return objectDatum.map((item) => {
+                    return this.formatter.parse(item);
+                });
+            } else {
+                return this.formatter.parse(objectDatum);
+            }
         }
 
         return this.formatter.parse(datum);
     };
 
     TelemetryValueFormatter.prototype.format = function (datum) {
+        const isDatumArray = Array.isArray(datum);
         if (_.isObject(datum)) {
-            return this.formatter.format(datum[this.valueMetadata.source]);
+            const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
+            if (Array.isArray(objectDatum)) {
+                return objectDatum.map((item) => {
+                    return this.formatter.format(item);
+                });
+            } else {
+                return this.formatter.format(objectDatum);
+            }
         }
 
         return this.formatter.format(datum);

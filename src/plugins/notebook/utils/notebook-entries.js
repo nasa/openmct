@@ -1,7 +1,8 @@
 import objectLink from '../../../ui/mixins/object-link';
+import { v4 as uuid } from 'uuid';
 
 async function getUsername(openmct) {
-    let username = '';
+    let username = null;
 
     if (openmct.user.hasProvider()) {
         const user = await openmct.user.getCurrentUser();
@@ -41,6 +42,35 @@ export function addEntryIntoPage(notebookStorage, entries, entry) {
     newEntries[defaultSectionId][defaultPageId].push(entry);
 
     return newEntries;
+}
+
+export function selectEntry({
+    element, entryId, domainObject, openmct,
+    onAnnotationChange, notebookAnnotations
+}) {
+    const targetDetails = {};
+    const keyString = openmct.objects.makeKeyString(domainObject.identifier);
+    targetDetails[keyString] = {
+        entryId
+    };
+    const targetDomainObjects = {};
+    targetDomainObjects[keyString] = domainObject;
+    openmct.selection.select(
+        [
+            {
+                element,
+                context: {
+                    type: 'notebook-entry-selection',
+                    item: domainObject,
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: notebookAnnotations,
+                    annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
+                    onAnnotationChange
+                }
+            }
+        ],
+        false);
 }
 
 export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
@@ -123,8 +153,8 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
         ? [embed]
         : [];
 
+    const id = `entry-${uuid()}`;
     const createdBy = await getUsername(openmct);
-    const id = `entry-${date}`;
     const entry = {
         id,
         createdOn: date,
@@ -142,7 +172,7 @@ export async function addNotebookEntry(openmct, domainObject, notebookStorage, e
 }
 
 export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
-    if (!domainObject || !selectedSection || !selectedPage) {
+    if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
         return;
     }
 
@@ -159,7 +189,9 @@ export function getNotebookEntries(domainObject, selectedSection, selectedPage) 
         return;
     }
 
-    return entries[selectedSection.id][selectedPage.id];
+    const specificEntries = entries[selectedSection.id][selectedPage.id];
+
+    return specificEntries;
 }
 
 export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DefaultClock from '../../utils/clock/DefaultClock';
+import remoteClockRequestInterceptor from './requestInterceptor';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -45,16 +46,25 @@ export default class RemoteClock extends DefaultClock {
 
         this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
+        this.formatTime = undefined;
         this.metadata = undefined;
 
         this.lastTick = 0;
+
+        this.openmct.telemetry.addRequestInterceptor(
+            remoteClockRequestInterceptor(
+                this.openmct,
+                this.identifier,
+                this.#waitForReady.bind(this)
+            )
+        );
 
         this._processDatum = this._processDatum.bind(this);
     }
 
     start() {
-        this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
+            this.openmct.time.on('timeSystem', this._timeSystemChange);
             this.timeTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
@@ -128,5 +138,30 @@ export default class RemoteClock extends DefaultClock {
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
         };
+
+        this.formatTime = (datum) => {
+            return timeFormatter.format(datum);
+        };
+    }
+
+    /**
+     * Waits for the clock to have a non-default tick value.
+     *
+     * @private
+     */
+    #waitForReady() {
+        const waitForInitialTick = (resolve) => {
+            if (this.lastTick > 0) {
+                const offsets = this.openmct.time.clockOffsets();
+                resolve({
+                    start: this.lastTick + offsets.start,
+                    end: this.lastTick + offsets.end
+                });
+            } else {
+                setTimeout(() => waitForInitialTick(resolve), 100);
+            }
+        };
+
+        return new Promise(waitForInitialTick);
     }
 }

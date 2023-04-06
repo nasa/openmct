@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -32,53 +32,49 @@
         prevent
         class="u-contents"
     >
-        <div class="field control date">
-            <input
-                v-model="date"
-                :pattern="/\d{4}-\d{2}-\d{2}/"
-                :placeholder="format"
-                type="date"
-                name="date"
-                @change="onChange"
-            >
-        </div>
-        <div class="field control hour sm">
-            <input
-                v-model="hour"
-                :pattern="/\d+/"
-                type="number"
-                name="hour"
-                maxlength="10"
-                min="0"
-                max="23"
-                @change="onChange"
-            >
-        </div>
-        <div class="field control min sm">
-            <input
-                v-model="min"
-                :pattern="/\d+/"
-                type="number"
-                name="min"
-                maxlength="2"
-                min="0"
-                max="59"
-                @change="onChange"
-            >
-        </div>
-        <div class="field control sec sm">
-            <input
-                v-model="sec"
-                :pattern="/\d+/"
-                type="number"
-                name="sec"
-                maxlength="2"
-                min="0"
-                max="59"
-                @change="onChange"
-            >
-        </div>
-        <div class="field control timezone">
+        <input
+            v-model="date"
+            class="field control date"
+            :pattern="/\d{4}-\d{2}-\d{2}/"
+            :placeholder="format"
+            type="date"
+            name="date"
+            @change="onChange"
+        >
+        <input
+            v-model="hour"
+            class="field control hour c-input--sm"
+            :pattern="/\d+/"
+            type="number"
+            name="hour"
+            maxlength="10"
+            min="0"
+            max="23"
+            @change="onChange"
+        >
+        <input
+            v-model="min"
+            class="field control min c-input--sm"
+            :pattern="/\d+/"
+            type="number"
+            name="min"
+            maxlength="2"
+            min="0"
+            max="59"
+            @change="onChange"
+        >
+        <input
+            v-model="sec"
+            class="field control sec c-input--sm"
+            :pattern="/\d+/"
+            type="number"
+            name="sec"
+            maxlength="2"
+            min="0"
+            max="59"
+            @change="onChange"
+        >
+        <div class="field control hint timezone">
             UTC
         </div>
     </form>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,21 +21,34 @@
  *****************************************************************************/
 
 .c-plan {
-  svg {
-    text-rendering: geometricPrecision;
+    svg {
+        text-rendering: geometricPrecision;
 
-    text {
-      stroke: none;
+        text {
+            stroke: none;
+        }
     }
 
-      .activity-label {
-          &--outside-rect {
-              fill: $colorBodyFg !important;
-          }
-      }
-  }
+    &__activity {
+        cursor: pointer;
 
-  canvas {
-    display: none;
-  }
+        &[s-selected] {
+            rect, use {
+                outline-style: dotted;
+                outline-width: 2px;
+                stroke: $colorGanttSelectedBorder;
+                stroke-width: 2px;
+            }
+        }
+    }
+
+    &__activity-label {
+        &--outside-rect {
+            fill: $colorBodyFg !important;
+        }
+    }
+
+    canvas {
+        display: none;
+    }
 }

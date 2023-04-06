@@ -141,6 +141,10 @@
                 }
             }
         }
+
+        [s-selected].c-fl-frame__drag-wrapper {
+            border: $editFrameSelectedBorder;
+        }
     }
 
     /****** THEIR FRAMES */
@@ -240,11 +244,10 @@
         display: flex;
         flex-direction: column;
         flex: 0 0 ($margin * 2) + $size;
-        transition: $transOut;
 
         &:before {
             // The visible resize line
-            background: $editUIColor;
+            background-color: $editUIColor;
             content: '';
             display: block;
             flex: 1 1 auto;
@@ -266,10 +269,9 @@
         }
 
         &:hover {
-            transition: $transOut;
             &:before {
                 // The visible resize line
-                background: $editUIColorHov;
+                background-color: $editUIColorHov;
             }
         }
     }

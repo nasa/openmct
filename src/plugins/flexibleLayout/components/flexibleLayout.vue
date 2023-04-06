@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -185,10 +185,24 @@ export default {
         this.composition.off('add', this.addFrame);
     },
     methods: {
+        containsObject(identifier) {
+            if ('composition' in this.domainObject) {
+                return this.domainObject.composition
+                    .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            }
+
+            return false;
+        },
         buildIdentifierMap() {
             this.containers.forEach(container => {
                 container.frames.forEach(frame => {
-                    let keystring = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    if (!this.containsObject(frame.domainObjectIdentifier)) {
+                        this.removeChildObject(frame.domainObjectIdentifier);
+
+                        return;
+                    }
+
+                    const keystring = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
                     this.identifierMap[keystring] = true;
                 });
             });
@@ -281,6 +295,10 @@ export default {
                 return false;
             }
 
+            if (!this.isEditing) {
+                return false;
+            }
+
             let containerId = event.dataTransfer.getData('containerid');
             let container = this.containers.filter((c) => c.id === containerId)[0];
             let containerPos = this.containers.indexOf(container);
@@ -292,11 +310,14 @@ export default {
             }
         },
         persist(index) {
+            this.startTransaction();
             if (index) {
                 this.openmct.objects.mutate(this.domainObject, `configuration.containers[${index}]`, this.containers[index]);
             } else {
                 this.openmct.objects.mutate(this.domainObject, 'configuration.containers', this.containers);
             }
+
+            return this.endTransaction();
         },
         startContainerResizing(index) {
             let beforeContainer = this.containers[index];
@@ -362,6 +383,20 @@ export default {
             });
 
             this.persist();
+        },
+        startTransaction() {
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.transaction = this.openmct.objects.startTransaction();
+            }
+        },
+        async endTransaction() {
+            if (!this.transaction) {
+                return;
+            }
+
+            await this.transaction.commit();
+            this.openmct.objects.endTransaction();
+            this.transaction = null;
         }
     }
 };

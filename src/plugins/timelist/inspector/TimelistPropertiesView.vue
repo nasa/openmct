@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -32,7 +32,7 @@
                 <div
                     v-if="canEdit"
                     class="c-inspect-properties__hint span-all"
-                >These settings are not previewed and will be applied after editing is completed.</div>
+                >These settings don't affect the view while editing, but will be applied after editing is finished.</div>
                 <div
                     class="c-inspect-properties__label"
                     title="Sort order of the timelist."

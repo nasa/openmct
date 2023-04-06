@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,54 +21,40 @@
 -->
 
 <template>
-<div class="c-plot c-plot--stacked holder holder-plot has-control-bar">
+<div
+    v-if="loaded"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+>
+    <plot-legend
+        v-if="compositionObjectsConfigLoaded"
+        :cursor-locked="!!lockHighlightPoint"
+        :highlights="highlights"
+        @legendHoverChanged="legendHoverChanged"
+        @expanded="updateExpanded"
+        @position="updatePosition"
+    />
     <div
-        v-show="!hideExportButtons && !options.compact"
-        class="c-control-bar"
+        class="l-view-section"
     >
-        <span class="c-button-set c-button-set--strip-h">
-            <button
-                class="c-button icon-download"
-                title="Export This View's Data as PNG"
-                @click="exportPNG()"
-            >
-                <span class="c-button__label">PNG</span>
-            </button>
-            <button
-                class="c-button"
-                title="Export This View's Data as JPG"
-                @click="exportJPG()"
-            >
-                <span class="c-button__label">JPG</span>
-            </button>
-        </span>
-        <button
-            class="c-button icon-crosshair"
-            :class="{ 'is-active': cursorGuide }"
-            title="Toggle cursor guides"
-            @click="toggleCursorGuide"
-        >
-        </button>
-        <button
-            class="c-button"
-            :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
-            title="Toggle grid lines"
-            @click="toggleGridLines"
-        >
-        </button>
-    </div>
-    <div class="l-view-section">
         <stacked-plot-item
-            v-for="object in compositionObjects"
-            :key="object.id"
+            v-for="objectWrapper in compositionObjects"
+            :key="objectWrapper.keyString"
             class="c-plot--stacked-container"
-            :object="object"
+            :child-object="objectWrapper.object"
             :options="options"
             :grid-lines="gridLines"
+            :color-palette="colorPalette"
             :cursor-guide="cursorGuide"
-            :plot-tick-width="maxTickWidth"
-            @plotTickWidth="onTickWidthChange"
+            :show-limit-line-labels="showLimitLineLabels"
+            :parent-y-tick-width="maxTickWidth"
+            @plotYTickWidth="onYTickWidthChange"
             @loadingUpdated="loadingUpdated"
+            @cursorGuide="onCursorGuideChange"
+            @gridLines="onGridLinesChange"
+            @lockHighlightPoint="lockHighlightPointUpdated"
+            @highlights="highlightsUpdated"
+            @configLoaded="configLoadedForObject(objectWrapper.keyString)"
         />
     </div>
 </div>
@@ -76,14 +62,20 @@
 
 <script>
 
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore';
+import ColorPalette from "@/ui/color/ColorPalette";
+
+import PlotLegend from "../legend/PlotLegend.vue";
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
 
 export default {
     components: {
-        StackedPlotItem
+        StackedPlotItem,
+        PlotLegend
     },
-    inject: ['openmct', 'domainObject', 'composition', 'path'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -97,30 +89,95 @@ export default {
             hideExportButtons: false,
             cursorGuide: false,
             gridLines: true,
-            loading: false,
+            configLoaded: {},
             compositionObjects: [],
-            tickWidthMap: {}
+            tickWidthMap: {},
+            loaded: false,
+            lockHighlightPoint: false,
+            highlights: [],
+            showLimitLineLabels: undefined,
+            colorPalette: new ColorPalette(),
+            compositionObjectsConfigLoaded: false,
+            position: 'top',
+            expanded: false
         };
     },
     computed: {
+        plotLegendPositionClass() {
+            return `plot-legend-${this.position}`;
+        },
+        plotLegendExpandedStateClass() {
+            if (this.expanded) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
+        },
+        /**
+       * Returns the maximum width of the left and right y axes ticks of this stacked plots children
+       * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
+       */
         maxTickWidth() {
-            return Math.max(...Object.values(this.tickWidthMap));
+            const tickWidthValues = Object.values(this.tickWidthMap);
+            const maxLeftTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.leftTickWidth));
+            const maxRightTickWidth = Math.max(...tickWidthValues.map(tickWidthItem => tickWidthItem.rightTickWidth));
+            const hasMultipleLeftAxes = tickWidthValues.some(tickWidthItem => tickWidthItem.hasMultipleLeftAxes === true);
+
+            return {
+                leftTickWidth: maxLeftTickWidth,
+                rightTickWidth: maxRightTickWidth,
+                hasMultipleLeftAxes
+            };
         }
     },
     beforeDestroy() {
         this.destroy();
     },
     mounted() {
+        //We only need to initialize the stacked plot config for legend properties
+        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.config = this.getConfig(configId);
+
+        this.loaded = true;
         this.imageExporter = new ImageExporter(this.openmct);
 
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
         this.composition.on('reorder', this.compositionReorder);
         this.composition.load();
     },
     methods: {
+        getConfig(configId) {
+            let config = configStore.get(configId);
+            if (!config) {
+                config = new PlotConfigurationModel({
+                    id: configId,
+                    domainObject: this.domainObject,
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
+                });
+                configStore.add(configId, config);
+            }
+
+            return config;
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
+        },
+        configLoadedForObject(childObjIdentifier) {
+            const childObjId = this.openmct.objects.makeKeyString(childObjIdentifier);
+            this.configLoaded[childObjId] = true;
+            this.setConfigLoadedForComposition();
+        },
+        setConfigLoadedForComposition() {
+            this.compositionObjectsConfigLoaded = this.compositionObjects.length && this.compositionObjects.every(childObject => {
+                const id = childObject.keyString;
+
+                return this.configLoaded[id] === true;
+            });
         },
         destroy() {
             this.composition.off('add', this.addChild);
@@ -131,8 +188,16 @@ export default {
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
-            this.$set(this.tickWidthMap, id, 0);
-            this.compositionObjects.push(child);
+            this.$set(this.tickWidthMap, id, {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            });
+
+            this.compositionObjects.push({
+                object: child,
+                keyString: id
+            });
+            this.setConfigLoadedForComposition();
         },
 
         removeChild(childIdentifier) {
@@ -141,27 +206,51 @@ export default {
             this.$delete(this.tickWidthMap, id);
 
             const childObj = this.compositionObjects.filter((c) => {
-                const identifier = this.openmct.objects.makeKeyString(c.identifier);
+                const identifier = c.keyString;
 
                 return identifier === id;
             })[0];
+
             if (childObj) {
-                const index = this.compositionObjects.indexOf(childObj);
-                this.compositionObjects.splice(index, 1);
+                if (childObj.object.type !== 'telemetry.plot.overlay') {
+                    const config = this.getConfig(childObj.keyString);
+                    if (config) {
+                        config.series.remove(config.series.at(0));
+                    }
+                }
             }
+
+            this.compositionObjects = this.compositionObjects.filter((c) => {
+                const identifier = c.keyString;
+
+                return identifier !== id;
+            });
+
+            const configIndex = this.domainObject.configuration.series.findIndex((seriesConfig) => {
+                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, childIdentifier);
+            });
+            if (configIndex > -1) {
+                const cSeries = this.domainObject.configuration.series.slice();
+                this.openmct.objects.mutate(this.domainObject, 'configuration.series', cSeries);
+            }
+
+            this.setConfigLoadedForComposition();
         },
 
         compositionReorder(reorderPlan) {
             let oldComposition = this.compositionObjects.slice();
 
             reorderPlan.forEach((reorder) => {
-                this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
+                this.$set(this.compositionObjects, reorder.newIndex, oldComposition[reorder.oldIndex]);
             });
         },
 
         resetTelemetryAndTicks(domainObject) {
             this.compositionObjects = [];
-            this.tickWidthMap = {};
+            this.tickWidthMap = {
+                leftTickWidth: 0,
+                rightTickWidth: 0
+            };
         },
 
         exportJPG() {
@@ -184,20 +273,48 @@ export default {
                     this.hideExportButtons = false;
                 }.bind(this));
         },
-
-        toggleCursorGuide() {
-            this.cursorGuide = !this.cursorGuide;
-        },
-
-        toggleGridLines() {
-            this.gridLines = !this.gridLines;
-        },
-        onTickWidthChange(width, plotId) {
+        /**
+         * @typedef {Object} PlotYTickData
+         * @property {Number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
+         * @property {Number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
+         * @property {Boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
+         */
+        onYTickWidthChange(data, plotId) {
             if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
                 return;
             }
 
-            this.$set(this.tickWidthMap, plotId, width);
+            this.$set(this.tickWidthMap, plotId, data);
+        },
+        legendHoverChanged(data) {
+            this.showLimitLineLabels = data;
+        },
+        lockHighlightPointUpdated(data) {
+            this.lockHighlightPoint = data;
+        },
+        updateExpanded(expanded) {
+            this.expanded = expanded;
+        },
+        updatePosition(position) {
+            this.position = position;
+        },
+        updateReady(ready) {
+            this.configReady = ready;
+        },
+        highlightsUpdated(data) {
+            this.highlights = data;
+        },
+        onCursorGuideChange(cursorGuide) {
+            this.cursorGuide = cursorGuide === true;
+        },
+        onGridLinesChange(gridLines) {
+            this.gridLines = gridLines === true;
+        },
+        getViewContext() {
+            return {
+                exportPNG: this.exportPNG,
+                exportJPG: this.exportJPG
+            };
         }
     }
 };

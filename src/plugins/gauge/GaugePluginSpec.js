@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,30 +63,30 @@ describe('Gauge plugin', () => {
     });
 
     it('Plugin installed by default', () => {
-        const gaugueType = openmct.types.get('gauge');
+        const GaugeType = openmct.types.get('gauge');
 
-        expect(gaugueType).not.toBeNull();
-        expect(gaugueType.definition.name).toEqual('Gauge');
+        expect(GaugeType).not.toBeNull();
+        expect(GaugeType.definition.name).toEqual('Gauge');
     });
 
-    it('Gaugue plugin is creatable', () => {
-        const gaugueType = openmct.types.get('gauge');
+    it('Gauge plugin is creatable', () => {
+        const GaugeType = openmct.types.get('gauge');
 
-        expect(gaugueType.definition.creatable).toBeTrue();
+        expect(GaugeType.definition.creatable).toBeTrue();
     });
 
-    it('Gaugue plugin is creatable', () => {
-        const gaugueType = openmct.types.get('gauge');
+    it('Gauge plugin is creatable', () => {
+        const GaugeType = openmct.types.get('gauge');
 
-        expect(gaugueType.definition.creatable).toBeTrue();
+        expect(GaugeType.definition.creatable).toBeTrue();
     });
 
-    it('Gaugue form controller', () => {
+    it('Gauge form controller', () => {
         const gaugeController = openmct.forms.getFormControl('gauge-controller');
         expect(gaugeController).toBeDefined();
     });
 
-    describe('Gaugue with Filled Dial', () => {
+    describe('Gauge with Filled Dial', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -105,6 +105,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'dial-filled',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: false,
                         limitLow: -0.9,
                         limitHigh: 0.9,
@@ -222,7 +223,7 @@ describe('Gauge plugin', () => {
         });
     });
 
-    describe('Gaugue with Needle Dial', () => {
+    describe('Gauge with Needle Dial', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -240,6 +241,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'dial-needle',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: false,
                         limitLow: -0.9,
                         limitHigh: 0.9,
@@ -357,7 +359,7 @@ describe('Gauge plugin', () => {
         });
     });
 
-    describe('Gaugue with Vertical Meter', () => {
+    describe('Gauge with Vertical Meter', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -375,6 +377,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'meter-vertical',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: false,
                         limitLow: -0.9,
                         limitHigh: 0.9,
@@ -469,7 +472,7 @@ describe('Gauge plugin', () => {
         it('renders major elements', () => {
             const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
+            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
@@ -482,7 +485,7 @@ describe('Gauge plugin', () => {
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
-                const textElement = gaugeHolder.querySelector('.js-meter-current-value');
+                const textElement = gaugeHolder.querySelector('.js-gauge-current-value');
                 expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
@@ -492,7 +495,7 @@ describe('Gauge plugin', () => {
         });
     });
 
-    describe('Gaugue with Vertical Meter Inverted', () => {
+    describe('Gauge with Vertical Meter Inverted', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -506,6 +509,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'meter-vertical',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: false,
                         limitLow: -0.9,
                         limitHigh: 0.9,
@@ -566,7 +570,7 @@ describe('Gauge plugin', () => {
         it('renders major elements', () => {
             const wrapperElement = gaugeHolder.querySelector('.js-gauge-wrapper');
             const rangeElement = gaugeHolder.querySelector('.js-gauge-meter-range');
-            const valueElement = gaugeHolder.querySelector('.js-meter-current-value');
+            const valueElement = gaugeHolder.querySelector('.js-gauge-current-value');
 
             const hasMajorElements = Boolean(wrapperElement && rangeElement && valueElement);
 
@@ -574,7 +578,7 @@ describe('Gauge plugin', () => {
         });
     });
 
-    describe('Gaugue with Horizontal Meter', () => {
+    describe('Gauge with Horizontal Meter', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -588,6 +592,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'meter-vertical',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: false,
                         limitLow: -0.9,
                         limitHigh: 0.9,
@@ -656,7 +661,7 @@ describe('Gauge plugin', () => {
         });
     });
 
-    describe('Gaugue with Filled Dial with Use Telemetry Limits', () => {
+    describe('Gauge with Filled Dial with Use Telemetry Limits', () => {
         let gaugeViewProvider;
         let gaugeView;
         let gaugeViewObject;
@@ -673,6 +678,7 @@ describe('Gauge plugin', () => {
                         gaugeType: 'dial-filled',
                         isDisplayMinMax: true,
                         isDisplayCurVal: true,
+                        isDisplayUnits: true,
                         isUseTelemetryLimits: true,
                         limitLow: 10,
                         limitHigh: 90,

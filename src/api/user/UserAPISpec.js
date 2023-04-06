@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,11 +40,13 @@ describe("The User API", () => {
     });
 
     afterEach(() => {
+        const activeOverlays = openmct.overlays.activeOverlays;
+        activeOverlays.forEach(overlay => overlay.dismiss());
+
         return resetApplicationState(openmct);
     });
 
     describe('with regard to user providers', () => {
-
         it('allows you to specify a user provider', () => {
             openmct.user.on('providerAdded', (provider) => {
                 expect(provider).toBeInstanceOf(ExampleUserProvider);

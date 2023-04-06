@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -51,26 +51,26 @@ export function getLatestTimestamp(
     return latest;
 }
 
-export function subscribeForStaleness(callback, timeout) {
-    let stalenessTimer = setTimeout(() => {
-        clearTimeout(stalenessTimer);
+export function checkIfOld(callback, timeout) {
+    let oldCheckTimer = setTimeout(() => {
+        clearTimeout(oldCheckTimer);
         callback();
     }, timeout);
 
     return {
         update: (data) => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
+            if (oldCheckTimer) {
+                clearTimeout(oldCheckTimer);
             }
 
-            stalenessTimer = setTimeout(() => {
-                clearTimeout(stalenessTimer);
+            oldCheckTimer = setTimeout(() => {
+                clearTimeout(oldCheckTimer);
                 callback(data);
             }, timeout);
         },
         clear: () => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
+            if (oldCheckTimer) {
+                clearTimeout(oldCheckTimer);
             }
         }
     };

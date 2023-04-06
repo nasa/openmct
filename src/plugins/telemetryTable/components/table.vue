@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 <template>
 <div
     class="c-table-wrapper"
-    :class="{ 'is-paused': paused }"
+    :class="tableClasses"
 >
     <div
         v-if="enableLegacyToolbar"
@@ -144,7 +144,7 @@
         <progress-bar
             v-if="loading"
             class="c-telemetry-table__progress-bar"
-            :model="progressLoad"
+            :model="{progressPerc: undefined}"
         />
 
         <!-- Headers table -->
@@ -381,15 +381,11 @@ export default {
             enableRegexSearch: {},
             hideHeaders: configuration.hideHeaders,
             totalNumberOfRows: 0,
-            rowContext: {}
+            rowContext: {},
+            staleObjects: []
         };
     },
     computed: {
-        progressLoad() {
-            return {
-                progressPerc: undefined
-            };
-        },
         dropTargetStyle() {
             return {
                 top: this.$refs.headersTable.offsetTop + 'px',
@@ -421,6 +417,19 @@ export default {
             }
 
             return style;
+        },
+        tableClasses() {
+            let classes = [];
+
+            if (this.paused) {
+                classes.push('is-paused');
+            }
+
+            if (this.staleObjects.length !== 0) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         }
     },
     watch: {
@@ -493,11 +502,14 @@ export default {
         this.table.on('refresh', this.clearRowsAndRerender);
         this.table.on('historical-rows-processed', this.checkForMarkedRows);
         this.table.on('outstanding-requests', this.outstandingRequests);
+        this.table.on('telemetry-staleness', this.handleStaleness);
 
         this.table.tableRows.on('add', this.rowsAdded);
         this.table.tableRows.on('remove', this.rowsRemoved);
         this.table.tableRows.on('sort', this.updateVisibleRows);
         this.table.tableRows.on('filter', this.updateVisibleRows);
+
+        this.openmct.time.on('bounds', this.boundsChanged);
 
         //Default sort
         this.sortOptions = this.table.tableRows.sortBy();
@@ -513,12 +525,13 @@ export default {
 
         this.table.initialize();
     },
-    destroyed() {
+    beforeDestroy() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('historical-rows-processed', this.checkForMarkedRows);
         this.table.off('refresh', this.clearRowsAndRerender);
         this.table.off('outstanding-requests', this.outstandingRequests);
+        this.table.off('telemetry-staleness', this.handleStaleness);
 
         this.table.tableRows.off('add', this.rowsAdded);
         this.table.tableRows.off('remove', this.rowsRemoved);
@@ -526,6 +539,8 @@ export default {
         this.table.tableRows.off('filter', this.updateVisibleRows);
 
         this.table.configuration.off('change', this.updateConfiguration);
+
+        this.openmct.time.off('bounds', this.boundsChanged);
 
         clearInterval(this.resizePollHandle);
 
@@ -613,7 +628,6 @@ export default {
             this.calculateScrollbarWidth();
         },
         sortBy(columnKey) {
-            performance.mark('table:sort');
             // If sorting by the same column, flip the sort direction.
             if (this.sortOptions.key === columnKey) {
                 if (this.sortOptions.direction === 'asc') {
@@ -670,7 +684,6 @@ export default {
             this.setHeight();
         },
         rowsAdded(rows) {
-            performance.mark('row:added');
             this.setHeight();
 
             let sizingRow;
@@ -692,7 +705,6 @@ export default {
             this.updateVisibleRows();
         },
         rowsRemoved(rows) {
-            performance.mark('row:removed');
             this.setHeight();
             this.updateVisibleRows();
         },
@@ -729,6 +741,18 @@ export default {
         },
         outstandingRequests(loading) {
             this.loading = loading;
+        },
+        handleStaleness({ keyString, isStale }) {
+            const index = this.staleObjects.indexOf(keyString);
+            if (isStale) {
+                if (index === -1) {
+                    this.staleObjects.push(keyString);
+                }
+            } else {
+                if (index !== -1) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         },
         calculateTableSize() {
             this.$nextTick().then(this.calculateColumnWidths);
@@ -823,16 +847,16 @@ export default {
             this.visibleRows = [];
             this.$nextTick().then(this.updateVisibleRows);
         },
-        pause(pausedByButton) {
-            if (pausedByButton) {
+        pause(byButton) {
+            if (byButton) {
                 this.pausedByButton = true;
             }
 
             this.paused = true;
             this.table.pause();
         },
-        unpause(unpausedByButton) {
-            if (unpausedByButton) {
+        unpause(byButtonOrUserBoundsChange) {
+            if (byButtonOrUserBoundsChange) {
                 this.undoMarkedRows();
                 this.table.unpause();
                 this.paused = false;
@@ -847,6 +871,16 @@ export default {
 
             this.isShowingMarkedRowsOnly = false;
         },
+        boundsChanged(_bounds, isTick) {
+            if (isTick) {
+                return;
+            }
+
+            // User bounds change.
+            if (this.paused) {
+                this.unpause(true);
+            }
+        },
         togglePauseByButton() {
             if (this.paused) {
                 this.unpause(true);
@@ -854,7 +888,7 @@ export default {
                 this.pause(true);
             }
         },
-        undoMarkedRows(unpause) {
+        undoMarkedRows() {
             this.markedRows.forEach(r => r.marked = false);
             this.markedRows = [];
         },

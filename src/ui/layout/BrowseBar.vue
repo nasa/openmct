@@ -367,6 +367,7 @@ export default {
                 dialog.dismiss();
                 this.openmct.notifications.error('Error saving objects');
                 console.error(error);
+                this.openmct.editor.cancel();
             });
         },
         saveAndContinueEditing() {

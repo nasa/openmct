@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -261,7 +261,7 @@ body.desktop .has-local-controls {
 }
 
 ::placeholder {
-    opacity: 0.5;
+    opacity: 0.7;
     font-style: italic;
 }
 
@@ -354,3 +354,22 @@ body.desktop .has-local-controls {
     pointer-events: none !important;
     cursor: default !important;
 }
+
+/******************************************************** RESPONSIVE CONTAINERS */
+@mixin responsiveContainerWidths($dimension) {
+    // 3/21/22: `--width-less-than*` classes set in ObjectView.vue
+    .--show-if-less-than-#{$dimension} {
+        // Hide anything that displays within a given width by default.
+        // `display` property must be set within a more specific class
+        // for the particular item to be displayed.
+        display: none !important
+    }
+
+    .--width-less-than-#{$dimension} {
+        .--hide-if-less-than-#{$dimension} { display: none; }
+    }
+}
+
+//.--hide-by-default { display: none !important; }
+@include responsiveContainerWidths('220');
+@include responsiveContainerWidths('600');

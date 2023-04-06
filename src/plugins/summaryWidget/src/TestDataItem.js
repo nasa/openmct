@@ -3,15 +3,15 @@ define([
     './input/ObjectSelect',
     './input/KeySelect',
     './eventHelpers',
-    'EventEmitter',
-    'zepto'
+    '../../../utils/template/templateHelpers',
+    'EventEmitter'
 ], function (
     itemTemplate,
     ObjectSelect,
     KeySelect,
     eventHelpers,
-    EventEmitter,
-    $
+    templateHelpers,
+    EventEmitter
 ) {
 
     /**
@@ -31,12 +31,12 @@ define([
         this.index = index;
         this.conditionManager = conditionManager;
 
-        this.domElement = $(itemTemplate);
+        this.domElement = templateHelpers.convertTemplateToHTML(itemTemplate)[0];
         this.eventEmitter = new EventEmitter();
         this.supportedCallbacks = ['remove', 'duplicate', 'change'];
 
-        this.deleteButton = $('.t-delete', this.domElement);
-        this.duplicateButton = $('.t-duplicate', this.domElement);
+        this.deleteButton = this.domElement.querySelector('.t-delete');
+        this.duplicateButton = this.domElement.querySelector('.t-duplicate');
 
         this.selects = {};
         this.valueInputs = [];
@@ -101,7 +101,7 @@ define([
         });
 
         Object.values(this.selects).forEach(function (select) {
-            $('.t-configuration', self.domElement).append(select.getDOM());
+            self.domElement.querySelector('.t-configuration').append(select.getDOM());
         });
         this.listenTo(this.domElement, 'input', onValueInput);
     }
@@ -139,7 +139,7 @@ define([
      * Hide the appropriate inputs when this is the only item
      */
     TestDataItem.prototype.hideButtons = function () {
-        this.deleteButton.hide();
+        this.deleteButton.style.display = 'none';
     };
 
     /**
@@ -177,17 +177,21 @@ define([
      */
     TestDataItem.prototype.generateValueInput = function (key) {
         const evaluator = this.conditionManager.getEvaluator();
-        const inputArea = $('.t-value-inputs', this.domElement);
+        const inputArea = this.domElement.querySelector('.t-value-inputs');
         const dataType = this.conditionManager.getTelemetryPropertyType(this.config.object, key);
         const inputType = evaluator.getInputTypeById(dataType);
 
-        inputArea.html('');
+        inputArea.innerHTML = '';
         if (inputType) {
             if (!this.config.value) {
                 this.config.value = (inputType === 'number' ? 0 : '');
             }
 
-            this.valueInput = $('<input class="sm" type = "' + inputType + '" value = "' + this.config.value + '"> </input>').get(0);
+            const newInput = document.createElement("input");
+            newInput.type = `${inputType}`;
+            newInput.value = `${this.config.value}`;
+
+            this.valueInput = newInput;
             inputArea.append(this.valueInput);
         }
     };

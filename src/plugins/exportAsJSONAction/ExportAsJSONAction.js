@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 import JSONExporter from '/src/exporters/JSONExporter.js';
 
 import _ from 'lodash';
-import uuid from "uuid";
+import { v4 as uuid } from 'uuid';
 
 export default class ExportAsJSONAction {
     constructor(openmct) {
@@ -32,7 +32,7 @@ export default class ExportAsJSONAction {
         this.key = 'export.JSON';
         this.description = '';
         this.cssClass = "icon-export";
-        this.group = "json";
+        this.group = "export";
         this.priority = 1;
 
         this.externalIdentifiers = [];
@@ -128,15 +128,63 @@ export default class ExportAsJSONAction {
 
         return copyOfChild;
     }
+
+    /**
+     * @private
+     * @param {object} child
+     * @param {object} parent
+     * @returns {object}
+     */
+    _rewriteLinkForReference(child, parent) {
+        const childId = this._getId(child);
+        this.externalIdentifiers.push(childId);
+        const copyOfChild = JSON.parse(JSON.stringify(child));
+
+        copyOfChild.identifier.key = uuid();
+        const newIdString = this._getId(copyOfChild);
+        const parentId = this._getId(parent);
+
+        this.idMap[childId] = newIdString;
+        copyOfChild.location = null;
+        parent.configuration.objectStyles.conditionSetIdentifier = copyOfChild.identifier;
+        this.tree[newIdString] = copyOfChild;
+        this.tree[parentId].configuration.objectStyles.conditionSetIdentifier = copyOfChild.identifier;
+
+        return copyOfChild;
+    }
     /**
      * @private
      */
     _rewriteReferences() {
+        const oldKeyStrings = Object.keys(this.idMap);
         let treeString = JSON.stringify(this.tree);
-        Object.keys(this.idMap).forEach(function (oldId) {
-            const newId = this.idMap[oldId];
-            treeString = treeString.split(oldId).join(newId);
-        }.bind(this));
+
+        oldKeyStrings.forEach((oldKeyString) => {
+            // this will cover keyStrings, identifiers and identifiers created
+            // by hand that may be structured differently from those created with 'makeKeyString'
+            const newKeyString = this.idMap[oldKeyString];
+            const newIdentifier = JSON.stringify(this.openmct.objects.parseKeyString(newKeyString));
+            const oldIdentifier = this.openmct.objects.parseKeyString(oldKeyString);
+            const oldIdentifierNamespaceFirst = JSON.stringify(oldIdentifier);
+            const oldIdentifierKeyFirst = JSON.stringify({
+                key: oldIdentifier.key,
+                namespace: oldIdentifier.namespace
+            });
+
+            // replace keyStrings
+            treeString = treeString.split(oldKeyString).join(newKeyString);
+
+            // check for namespace first identifiers, replace if necessary
+            if (treeString.includes(oldIdentifierNamespaceFirst)) {
+                treeString = treeString.split(oldIdentifierNamespaceFirst).join(newIdentifier);
+            }
+
+            // check for key first identifiers, replace if necessary
+            if (treeString.includes(oldIdentifierKeyFirst)) {
+                treeString = treeString.split(oldIdentifierKeyFirst).join(newIdentifier);
+            }
+
+        });
         this.tree = JSON.parse(treeString);
     }
     /**
@@ -159,23 +207,27 @@ export default class ExportAsJSONAction {
             "rootId": this._getId(this.root)
         };
     }
+
     /**
      * @private
      * @param {object} parent
      */
     _write(parent) {
         this.calls++;
+        //conditional object styles are not saved on the composition, so we need to check for them
+        let childObjectReferenceId = parent.configuration?.objectStyles?.conditionSetIdentifier;
+
         const composition = this.openmct.composition.get(parent);
         if (composition !== undefined) {
             composition.load()
                 .then((children) => {
                     children.forEach((child, index) => {
-                        // Only export if object is creatable
+                    // Only export if object is creatable
                         if (this._isCreatableAndPersistable(child)) {
-                            // Prevents infinite export of self-contained objs
+                        // Prevents infinite export of self-contained objs
                             if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
-                                // If object is a link to something absent from
-                                // tree, generate new id and treat as new object
+                            // If object is a link to something absent from
+                            // tree, generate new id and treat as new object
                                 if (this._isLinkedObject(child, parent)) {
                                     child = this._rewriteLink(child, parent);
                                 } else {
@@ -186,18 +238,41 @@ export default class ExportAsJSONAction {
                             }
                         }
                     });
-                    this.calls--;
-                    if (this.calls === 0) {
-                        this._rewriteReferences();
-                        this._saveAs(this._wrapTree());
-                    }
+                    this._decrementCallsAndSave();
                 });
-        } else {
-            this.calls--;
-            if (this.calls === 0) {
-                this._rewriteReferences();
-                this._saveAs(this._wrapTree());
-            }
+        } else if (!childObjectReferenceId) {
+            this._decrementCallsAndSave();
+        }
+
+        if (childObjectReferenceId) {
+            this.openmct.objects.get(childObjectReferenceId)
+                .then((child) => {
+                    // Only export if object is creatable
+                    if (this._isCreatableAndPersistable(child)) {
+                        // Prevents infinite export of self-contained objs
+                        if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
+                            // If object is a link to something absent from
+                            // tree, generate new id and treat as new object
+                            if (this._isLinkedObject(child, parent)) {
+                                child = this._rewriteLinkForReference(child, parent);
+                            } else {
+                                this.tree[this._getId(child)] = child;
+                            }
+
+                            this._write(child);
+                        }
+                    }
+
+                    this._decrementCallsAndSave();
+                });
+        }
+    }
+
+    _decrementCallsAndSave() {
+        this.calls--;
+        if (this.calls === 0) {
+            this._rewriteReferences();
+            this._saveAs(this._wrapTree());
         }
     }
 }

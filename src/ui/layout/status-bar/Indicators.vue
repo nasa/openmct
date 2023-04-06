@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -24,10 +24,19 @@
 export default {
     inject: ['openmct'],
 
+    beforeDestroy() {
+        this.openmct.indicators.off('addIndicator', this.addIndicator);
+    },
     mounted() {
-        this.openmct.indicators.getIndicatorObjectsByPriority().forEach((indicator) => {
+        this.openmct.indicators.getIndicatorObjectsByPriority().forEach(this.addIndicator);
+
+        this.openmct.indicators.on('addIndicator', this.addIndicator);
+    },
+    methods: {
+        addIndicator(indicator) {
             this.$el.appendChild(indicator.element);
-        });
+        }
     }
+
 };
 </script>

@@ -1,14 +1,20 @@
 <template>
 <div
-    v-if="notifications.length > 0"
+    v-if="notifications.length === 0 ? showNotificationsOverlay : notifications.length > 0"
     class="c-indicator c-indicator--clickable icon-bell"
     :class="[severityClass]"
 >
     <span class="c-indicator__label">
-        <button @click="toggleNotificationsList(true)">
+        <button
+            :aria-label="'Review ' + notificationsCountMessage(notifications.length)"
+            @click="toggleNotificationsList(true)"
+        >
             {{ notificationsCountMessage(notifications.length) }}
         </button>
-        <button @click="dismissAllNotifications()">
+        <button
+            aria-label="Clear all notifications"
+            @click="dismissAllNotifications()"
+        >
             Clear All
         </button>
     </span>

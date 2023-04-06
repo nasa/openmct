@@ -74,7 +74,6 @@
                 &:hover,
                 &:active {
                     cursor: col-resize;
-                    filter: $timeConductorAxisHoverFilter;
                 }
             }
         }
@@ -257,6 +256,29 @@
                 opacity: 1 !important;
             }
         }
+    }
+}
+
+//TODO: Do we need this?
+[class^='pr-tc-input-menu'] {
+    // Uses ^= here to target both start and end menus
+    background: $colorBodyBg;
+    border-radius: $controlCr;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-column-gap: 3px;
+    grid-row-gap: 4px;
+    align-items: start;
+    box-shadow: $shdwMenu;
+    padding: $interiorMargin;
+    position: absolute;
+    left: 8px;
+    bottom: 24px;
+    z-index: 99;
+
+    &[class*='--bottom'] {
+        bottom: auto;
+        top: 24px;
     }
 }
 

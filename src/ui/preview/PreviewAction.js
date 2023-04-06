@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,11 @@
  *****************************************************************************/
 import Preview from './Preview.vue';
 import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
-export default class PreviewAction {
+export default class PreviewAction extends EventEmitter {
     constructor(openmct) {
+        super();
         /**
          * Metadata
          */
@@ -75,10 +77,12 @@ export default class PreviewAction {
             onDestroy: () => {
                 PreviewAction.isVisible = false;
                 preview.$destroy();
+                this.emit('isVisible', false);
             }
         });
 
         PreviewAction.isVisible = true;
+        this.emit('isVisible', true);
     }
 
     appliesTo(objectPath, view = {}) {
