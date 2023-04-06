@@ -156,11 +156,35 @@ export default class ExportAsJSONAction {
      * @private
      */
     _rewriteReferences() {
+        const oldKeyStrings = Object.keys(this.idMap);
         let treeString = JSON.stringify(this.tree);
-        Object.keys(this.idMap).forEach(function (oldId) {
-            const newId = this.idMap[oldId];
-            treeString = treeString.split(oldId).join(newId);
-        }.bind(this));
+
+        oldKeyStrings.forEach((oldKeyString) => {
+            // this will cover keyStrings, identifiers and identifiers created
+            // by hand that may be structured differently from those created with 'makeKeyString'
+            const newKeyString = this.idMap[oldKeyString];
+            const newIdentifier = JSON.stringify(this.openmct.objects.parseKeyString(newKeyString));
+            const oldIdentifier = this.openmct.objects.parseKeyString(oldKeyString);
+            const oldIdentifierNamespaceFirst = JSON.stringify(oldIdentifier);
+            const oldIdentifierKeyFirst = JSON.stringify({
+                key: oldIdentifier.key,
+                namespace: oldIdentifier.namespace
+            });
+
+            // replace keyStrings
+            treeString = treeString.split(oldKeyString).join(newKeyString);
+
+            // check for namespace first identifiers, replace if necessary
+            if (treeString.includes(oldIdentifierNamespaceFirst)) {
+                treeString = treeString.split(oldIdentifierNamespaceFirst).join(newIdentifier);
+            }
+
+            // check for key first identifiers, replace if necessary
+            if (treeString.includes(oldIdentifierKeyFirst)) {
+                treeString = treeString.split(oldIdentifierKeyFirst).join(newIdentifier);
+            }
+
+        });
         this.tree = JSON.parse(treeString);
     }
     /**
