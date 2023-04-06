@@ -531,7 +531,7 @@
     }
 
     &[class*='--compact'] {
-        padding: floor($pad / 1.5) $pad;
+        padding: floor(math.div($pad, 1.5)) $pad;
     }
 }
 
