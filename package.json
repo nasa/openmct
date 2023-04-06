@@ -115,8 +115,8 @@
     "not IE 11",
     "last 2 Chrome versions",
     "unreleased Chrome versions",
-    "ios_saf > 15",
-    "Safari > 15"
+    "ios_saf >= 16",
+    "Safari >= 16"
   ],
   "author": "",
   "license": "Apache-2.0"
