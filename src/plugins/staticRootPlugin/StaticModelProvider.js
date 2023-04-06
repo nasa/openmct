@@ -87,25 +87,27 @@ class StaticModelProvider {
             return this.parseBranchedLeaf(leafValue, idMap, namespace);
         }
 
+        const mappedLeafValue = idMap.get(leafValue);
+        const hasMappedValue = mappedLeafValue !== undefined;
         if (leafKey === 'key') {
-            return idMap.get(leafValue);
+            return hasMappedValue ? mappedLeafValue : leafValue;
         } else if (leafKey === 'namespace') {
-            return namespace;
+            return leafValue || namespace;
         } else if (leafKey === 'location') {
-            if (idMap.get(leafValue)) {
+            if (!hasMappedValue) {
+                return null;
+            }
+
                 const newLocationIdentifier = objectUtils.makeKeyString({
                     namespace,
-                    key: idMap.get(leafValue)
+                key: mappedLeafValue
                 });
 
                 return newLocationIdentifier;
-            }
-
-            return null;
-        } else if (idMap.get(leafValue)) {
+        } else if (hasMappedValue) {
             const newIdentifier = objectUtils.makeKeyString({
                 namespace,
-                key: idMap.get(leafValue)
+                key: mappedLeafValue
             });
 
             return newIdentifier;
