@@ -122,8 +122,8 @@ class StaticModelProvider {
     }
 
     rewriteObjectIdentifiers(importData, rootIdentifier) {
-        const oldRootNamespace = importData.rootId.split(':')[1] ?? '';
-        const newRootNamespace = rootIdentifier.namespace;
+        const { namespace: oldRootNamespace } = objectUtils.parseKeyString(importData.rootId);
+        const { namespace: newRootNamespace } = rootIdentifier;
         const idMap = new Map();
         const objectTree = importData.openmct;
 
