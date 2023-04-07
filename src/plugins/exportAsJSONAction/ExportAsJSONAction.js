@@ -238,7 +238,9 @@ export default class ExportAsJSONAction {
                             }
                         }
                     });
-                    this._decrementCallsAndSave();
+                    if (!childObjectReferenceId) {
+                        this._decrementCallsAndSave();
+                    }
                 });
         } else if (!childObjectReferenceId) {
             this._decrementCallsAndSave();
