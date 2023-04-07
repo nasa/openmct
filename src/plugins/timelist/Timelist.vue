@@ -210,7 +210,6 @@ export default {
             this.isFixedTime = newClock === undefined;
             if (this.isFixedTime) {
                 this.hideAll = false;
-                this.showAll = true;
                 this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
             } else {
                 this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
@@ -358,24 +357,19 @@ export default {
             this.listActivities();
         },
         filterActivities(activity, index) {
-            const hasFilterMatch = this.filterByName(activity.name);
-
-            if (hasFilterMatch === false || this.hideAll === true) {
-                return false;
+            if (this.isEditing) {
+                return true;
             }
 
-            if (this.isEditing && this.showAll) {
-                return true;
+            const hasFilterMatch = this.filterByName(activity.name);
+            if (hasFilterMatch === false || this.hideAll === true) {
+                return false;
             }
 
             //current event or future start event or past end event
             const isCurrent = (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end);
             const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
             const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
-
-            if (this.isFixedTime) {
-                return isCurrent || isFuture;
-            }
 
             return isCurrent || isPast || isFuture;
         },
