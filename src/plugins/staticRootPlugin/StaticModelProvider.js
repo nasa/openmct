@@ -27,6 +27,7 @@
  * exist in the same namespace as the rootIdentifier.
  */
 import objectUtils from 'objectUtils';
+import { v4 as uuid } from 'uuid';
 
 class StaticModelProvider {
     constructor(importData, rootIdentifier) {
@@ -77,46 +78,55 @@ class StaticModelProvider {
         }
     }
 
+    parseIdentifierLeaf(identifier, idMap, oldRootNamespace, newRootNamespace) {
+        const keyString = objectUtils.makeKeyString(identifier);
+        const mappedKey = idMap.get(keyString);
+        const hasMappedKey = mappedKey !== undefined;
+        // Only rewrite the key/namespace if it matches the old root namespace.
+        // This is to prevent rewriting identifiers of objects that are not
+        // children of the root object (e.g.: objects from a telemetry dictionary)
+        if (hasMappedKey && identifier.namespace === oldRootNamespace) {
+            return objectUtils.makeKeyString({
+                namespace: newRootNamespace,
+                key: mappedKey
+            });
+        } else {
+            return objectUtils.makeKeyString(identifier);
+        }
+    }
+
     parseTreeLeaf(leafKey, leafValue, idMap, newRootNamespace, oldRootNamespace) {
         if (leafValue === null || leafValue === undefined) {
             return leafValue;
         }
 
-        const hasChild = typeof leafValue === 'object';
-        if (hasChild) {
-            return this.parseBranchedLeaf(leafValue, idMap, newRootNamespace, oldRootNamespace);
+        const isObject = typeof leafValue === 'object';
+        if (isObject) {
+            if (objectUtils.isIdentifier(leafValue)) {
+                return this.parseIdentifierLeaf(leafValue, idMap, oldRootNamespace, newRootNamespace);
+            } else {
+                return this.parseBranchedLeaf(leafValue, idMap, newRootNamespace, oldRootNamespace);
+            }
         }
 
         const mappedLeafValue = idMap.get(leafValue);
         const hasMappedValue = mappedLeafValue !== undefined;
-        if (leafKey === 'key') {
-            return hasMappedValue ? mappedLeafValue : leafValue;
-        } else if (leafKey === 'namespace') {
-            // Only rewrite the namespace if it matches the old root namespace.
-            // This is to prevent rewriting namespaces of objects that are not
-            // children of the root object (e.g.: objects from a telemetry dictionary)
-            return leafValue === oldRootNamespace
-                ? newRootNamespace
-                : leafValue;
-        } else if (leafKey === 'location') {
-            if (!hasMappedValue) {
+
+        if (hasMappedValue) {
+            const identifier = objectUtils.parseKeyString(mappedLeafValue);
+            if (identifier.namespace === oldRootNamespace) {
+                return objectUtils.makeKeyString({
+                    namespace: newRootNamespace,
+                    key: identifier.key
+                });
+            } else {
+                return mappedLeafValue;
+            }
+        } else {
+            if (leafKey === 'location') {
                 return null;
             }
 
-                const newLocationIdentifier = objectUtils.makeKeyString({
-                namespace: newRootNamespace,
-                key: mappedLeafValue
-                });
-
-                return newLocationIdentifier;
-        } else if (hasMappedValue) {
-            const newIdentifier = objectUtils.makeKeyString({
-                namespace: newRootNamespace,
-                key: mappedLeafValue
-            });
-
-            return newIdentifier;
-        } else {
             return leafValue;
         }
     }
@@ -127,8 +137,8 @@ class StaticModelProvider {
         const idMap = new Map();
         const objectTree = importData.openmct;
 
-        Object.keys(objectTree).forEach((originalId, index) => {
-            let newId = index.toString();
+        Object.keys(objectTree).forEach((originalId) => {
+            let newId = uuid();
             if (originalId === importData.rootId) {
                 newId = rootIdentifier.key;
             }
