@@ -7,7 +7,7 @@ on:
       - opened
 jobs:
   e2e-couchdb:
-    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }}
+    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }} || ${{ github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,16 +22,15 @@ jobs:
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
-      - name: Replace LocalStorage Plugin with CouchDB Plugin and Config
-        run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
-      - run: npm run test:e2e:couchdb
-      - run: npm run cov:e2e:report || true
-      - name: Run CouchDB Tests and publish to deploysentinel and Codecov.io
-        env: 
+          bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+      - name: Run CouchDB Tests and publish to deploysentinel
+        env:
           DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }} 
+        run: npm run test:e2e:couchdb
+      - name: Publish Results to Codecov.io
+        env: 
           SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          npm run cov:e2e:full:publish
+        run: npm run cov:e2e:full:publish
       - name: Archive test results
         if: success() || failure()
         uses: actions/upload-artifact@v3
