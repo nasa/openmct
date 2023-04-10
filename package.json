@@ -45,6 +45,7 @@
     "kdbush": "3.0.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
+    "memlab": "1.1.38",
     "mini-css-extract-plugin": "2.7.5",
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
