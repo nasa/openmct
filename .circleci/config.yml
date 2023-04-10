@@ -118,7 +118,7 @@ jobs:
       suite: #stable or full
         type: string
     executor: pw-focal-development
-    parallelism: 5
+    parallelism: 6
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
