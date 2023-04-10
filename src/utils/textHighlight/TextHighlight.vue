@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,9 +49,19 @@ export default {
     },
     computed: {
         highlightedText() {
-            let regex = new RegExp(`(?<!<[^>]*)(${this.highlight})`, 'gi');
+            const highlight = this.highlight;
 
-            return this.text.replace(regex, `<span class="${this.highlightClass}">${this.highlight}</span>`);
+            const normalCharsRegex = /^[^A-Za-z0-9]+$/g;
+
+            const newHighLight = normalCharsRegex.test(highlight)
+                ? `\\${highlight}`
+                : highlight;
+
+            const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
+
+            const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
+
+            return this.text.replace(highlightRegex, replacement);
         }
     }
 };

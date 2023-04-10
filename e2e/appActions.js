@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -139,6 +139,7 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
+ * Expand an item in the tree by a given object name.
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
@@ -158,24 +159,26 @@ async function expandTreePaneItemByName(page, name) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    if (!name) {
+        name = `Plan:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
 
-    //Click the Create button
+    // Click the Create button
     await page.click('button:has-text("Create")');
 
     // Click 'Plan' menu option
     await page.click(`li:text("Plan")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
 
     // Upload buffer from memory
     await page.locator('input#fileElem').setInputFiles({
@@ -193,7 +196,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     ]);
 
     // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
+    await page.waitForURL(`**/${parent}/*`);
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
 
@@ -269,6 +272,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
+    await page.waitForLoadState('load'); //Add some determinism
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
         let url = './#/browse/' + [...path].reverse()
@@ -382,6 +386,25 @@ async function setEndOffset(page, offset) {
     await setTimeConductorOffset(page, offset, endOffsetButton);
 }
 
+/**
+ * Selects an inspector tab based on the provided tab name
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {String} name the name of the tab
+ */
+async function selectInspectorTab(page, name) {
+    const inspectorTabs = page.getByRole('tablist');
+    const inspectorTab = inspectorTabs.getByTitle(name);
+    const inspectorTabClass = await inspectorTab.getAttribute('class');
+    const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
+
+    // do not click a tab that is already selected or it will timeout your test
+    // do to a { pointer-events: none; } on selected tabs
+    if (!isSelectedInspectorTab) {
+        await inspectorTab.click();
+    }
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
@@ -395,5 +418,6 @@ module.exports = {
     setFixedTimeMode,
     setRealTimeMode,
     setStartOffset,
-    setEndOffset
+    setEndOffset,
+    selectInspectorTab
 };

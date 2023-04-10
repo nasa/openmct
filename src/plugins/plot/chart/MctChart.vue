@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -151,12 +151,12 @@ export default {
             this.scheduleDraw();
         },
         showLimitLineLabels() {
-            this.drawLimitLines();
+            this.updateLimitLines();
         },
         hiddenYAxisIds() {
             this.hiddenYAxisIds.forEach(id => {
                 this.resetYOffsetAndSeriesDataForYAxis(id);
-                this.drawLimitLines();
+                this.updateLimitLines();
             });
             this.scheduleDraw();
         }
@@ -222,11 +222,11 @@ export default {
 
             return config;
         },
-        reDraw(mode, o, series) {
-            this.changeInterpolate(mode, o, series);
-            this.changeMarkers(mode, o, series);
-            this.changeAlarmMarkers(mode, o, series);
-            this.changeLimitLines(mode, o, series);
+        reDraw(newXKey, oldXKey, series) {
+            this.changeInterpolate(newXKey, oldXKey, series);
+            this.changeMarkers(newXKey, oldXKey, series);
+            this.changeAlarmMarkers(newXKey, oldXKey, series);
+            this.changeLimitLines(newXKey, oldXKey, series);
         },
         onSeriesAdd(series) {
             this.listenTo(series, `change:${HANDLED_ATTRIBUTES.xKey}`, this.reDraw, this);
@@ -241,6 +241,11 @@ export default {
             this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
+        },
+        onSeriesRemove(series) {
+            this.stopListening(series);
+            this.removeChartElement(series);
+            this.scheduleDraw();
         },
         onAddPoint(point, insertIndex, series) {
             const mainYAxisId = this.config.yAxis.get('id');
@@ -317,13 +322,14 @@ export default {
                 this.pointSets.push(pointSet);
             }
         },
-        changeLimitLines(mode, o, series) {
-            if (mode === o) {
+        changeLimitLines(showLimitLines, oldShowLimitLines, series) {
+            if (showLimitLines === oldShowLimitLines) {
                 return;
             }
 
             this.makeLimitLines(series);
-            this.updateLimitsAndDraw();
+            this.updateLimitLines();
+            this.scheduleDraw();
         },
         resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
             if (!oldYAxisId) {
@@ -337,12 +343,7 @@ export default {
             //Make the chart elements again for the new y-axis and offset
             this.makeChartElement(series);
             this.makeLimitLines(series);
-
-            this.scheduleDraw();
-        },
-        onSeriesRemove(series) {
-            this.stopListening(series);
-            this.removeChartElement(series);
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         destroy() {
@@ -583,10 +584,7 @@ export default {
                 return;
             }
 
-            this.updateLimitsAndDraw();
-        },
-        updateLimitsAndDraw() {
-            this.drawLimitLines();
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         scheduleDraw() {
@@ -605,19 +603,20 @@ export default {
             const mainYAxisId = this.config.yAxis.get('id');
             //There has to be at least one yAxis
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
-            // Repeat drawing for all yAxes
-            yAxisIds.forEach((id) => {
-                if (this.canDraw(id)) {
-                    this.updateViewport(id);
-                    this.drawSeries(id);
-                    this.drawRectangles(id);
-                    this.drawHighlights(id);
 
-                    // only draw these in fixed time mode or plot is paused
-                    if (this.annotationViewingAndEditingAllowed) {
-                        this.drawAnnotatedPoints(id);
-                        this.drawAnnotationSelections(id);
-                    }
+            // Repeat drawing for all yAxes
+            yAxisIds.filter(this.canDraw).forEach((id, yAxisIndex) => {
+                this.updateViewport(id);
+                this.drawSeries(id);
+                if (yAxisIndex === 0) {
+                    this.drawRectangles(id);
+                }
+
+                this.drawHighlights(id);
+                // only draw these in fixed time mode or plot is paused
+                if (this.annotationViewingAndEditingAllowed) {
+                    this.drawAnnotatedPoints(id);
+                    this.drawAnnotationSelections(id);
                 }
             });
         },
@@ -680,17 +679,17 @@ export default {
             const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
             alarmSets.forEach(this.drawAlarmPoints, this);
         },
-        drawLimitLines() {
+        updateLimitLines() {
             Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
             this.config.series.models.forEach(series => {
                 const yAxisId = series.get('yAxisId');
 
                 if (this.hiddenYAxisIds.indexOf(yAxisId) < 0) {
-                    this.drawLimitLinesForSeries(yAxisId, series);
+                    this.updateLimitLinesForSeries(yAxisId, series);
                 }
             });
         },
-        drawLimitLinesForSeries(yAxisId, series) {
+        updateLimitLinesForSeries(yAxisId, series) {
             if (!this.canDraw(yAxisId)) {
                 return;
             }

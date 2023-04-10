@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -103,6 +103,24 @@ describe('The Notifiation API', () => {
         it('does not auto dismiss the notification', (done) => {
             window.setTimeout(() => {
                 expect(notificationAPIInstance.notifications.length).toEqual(1);
+                done();
+            }, defaultTimeout);
+        });
+    });
+
+    describe('the error method notificiation', () => {
+        let message = 'Minimized error message';
+
+        afterAll(() => {
+            notificationAPIInstance.dismissAllNotifications();
+        });
+
+        it('is not shown if configured to show minimized', (done) => {
+            notificationAPIInstance.activeNotification = undefined;
+            notificationAPIInstance.error(message, { minimized: true });
+            window.setTimeout(() => {
+                expect(notificationAPIInstance.notifications.length).toEqual(1);
+                expect(notificationAPIInstance.activeNotification).toEqual(undefined);
                 done();
             }, defaultTimeout);
         });

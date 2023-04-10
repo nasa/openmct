@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,11 +25,14 @@
 <div
     class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked, 'is-selected': isSelectedEntry }"
+    :class="{ 'locked': isLocked,
+              'is-selected': isSelectedEntry,
+              'is-editing' : editMode
+    }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
-    @click="selectEntry($event, entry)"
+    @click="selectAndEmitEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator-and-delete">
@@ -51,7 +54,7 @@
                     class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
                     title="Delete this entry"
                     tabindex="-1"
-                    @click="deleteEntry"
+                    @click.stop.prevent="deleteEntry"
                 >
                 </button>
             </span>
@@ -80,11 +83,16 @@
                     v-bind.prop="formattedText"
                     @mouseover="checkEditability($event)"
                     @mouseleave="canEdit = true"
+                    @mousedown="preventFocusIfNotSelected($event)"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
-                    @keydown.enter.exact.prevent
-                    @keyup.enter.exact.prevent="forceBlur($event)"
                 >
+                </div>
+                <div
+                    v-if="editMode"
+                    class="c-ne__save-button"
+                >
+                    <button class="c-button c-button--major icon-check"></button>
                 </div>
             </template>
 
@@ -156,7 +164,7 @@
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed } from '../utils/notebook-entries';
+import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import sanitizeHtml from 'sanitize-html';
@@ -454,6 +462,16 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        preventFocusIfNotSelected($event) {
+            if (!this.isSelectedEntry) {
+                $event.preventDefault();
+                // blur the previous focused entry if clicking on non selected entry input
+                const focusedElementId = document.activeElement?.id;
+                if (focusedElementId !== this.entry.id) {
+                    document.activeElement.blur();
+                }
+            }
+        },
         editingEntry() {
             this.editMode = true;
             this.$emit('editingEntry');
@@ -461,37 +479,18 @@ export default {
         updateEntryValue($event) {
             this.editMode = false;
             const value = $event.target.innerText;
-            if (value !== this.entry.text && value.match(/\S/)) {
-                this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
-                this.timestampAndUpdate();
-            } else {
-                this.$emit('cancelEdit');
-            }
+            this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+            this.timestampAndUpdate();
         },
-        selectEntry(event, entry) {
-            const targetDetails = {};
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            targetDetails[keyString] = {
-                entryId: entry.id
-            };
-            const targetDomainObjects = {};
-            targetDomainObjects[keyString] = this.domainObject;
-            this.openmct.selection.select(
-                [
-                    {
-                        element: event.currentTarget,
-                        context: {
-                            type: 'notebook-entry-selection',
-                            item: this.domainObject,
-                            targetDetails,
-                            targetDomainObjects,
-                            annotations: this.notebookAnnotations,
-                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
-                            onAnnotationChange: this.timestampAndUpdate
-                        }
-                    }
-                ],
-                false);
+        selectAndEmitEntry(event, entry) {
+            selectEntry({
+                element: event.currentTarget,
+                entryId: entry.id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                onAnnotationChange: this.timestampAndUpdate,
+                notebookAnnotations: this.notebookAnnotations
+            });
             event.stopPropagation();
             this.$emit('entry-selection', this.entry);
         }

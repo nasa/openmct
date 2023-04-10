@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,7 +44,7 @@
             v-if="singleSelectNonObject"
             class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
         >
-            <span class="c-object-label__name">Layout Object</span>
+            <span class="c-object-label__name">{{ heading }}</span>
         </div>
     </div>
     <div
@@ -73,6 +73,13 @@ export default {
     computed: {
         item() {
             return this.domainObject || {};
+        },
+        heading() {
+            if (this.activity) {
+                return this.activity.name;
+            }
+
+            return 'Layout Item';
         },
         type() {
             return this.openmct.types.get(this.item.type);

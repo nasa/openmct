@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,6 +26,8 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { selectInspectorTab } = require('../../../../appActions');
+
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
@@ -36,6 +38,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
+        await selectInspectorTab(page, 'Config');
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);
@@ -186,6 +189,7 @@ async function enableEditMode(page) {
  */
 async function enableLogMode(page) {
     // turn on log mode
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).not.toBeChecked();
     await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
     // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
 }
@@ -195,6 +199,7 @@ async function enableLogMode(page) {
  */
 async function disableLogMode(page) {
     // turn off log mode
+    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).toBeChecked();
     await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
 }
 

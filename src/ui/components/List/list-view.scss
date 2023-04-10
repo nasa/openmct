@@ -2,7 +2,6 @@
 .c-list-view {
     tbody tr {
         background: $colorListItemBg;
-        transition: $transOut;
     }
 
     td {
@@ -22,8 +21,6 @@
 
                 &:hover {
                     background: $colorListItemBgHov;
-                    filter: $filterHov;
-                    transition: $transIn;
                 }
             }
         }

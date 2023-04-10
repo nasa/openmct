@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,7 @@
 
 const { test, expect } = require('../../../../pluginFixtures');
 const utils = require('../../../../helper/faultUtils');
+const { selectInspectorTab } = require('../../../../appActions');
 
 test.describe('The Fault Management Plugin using example faults', () => {
     test.beforeEach(async ({ page }) => {
@@ -38,6 +39,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector @unstable', async ({ page }) => {
         await utils.selectFaultItem(page, 1);
 
+        await selectInspectorTab(page, 'Fault Management Configuration');
         const selectedFaultName = await page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname').textContent();
         const inspectorFaultNameCount = await page.locator(`.c-inspector__properties >> :text("${selectedFaultName}")`).count();
 
@@ -52,6 +54,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
         const selectedRows = page.locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname');
         expect.soft(await selectedRows.count()).toEqual(2);
 
+        await selectInspectorTab(page, 'Fault Management Configuration');
         const firstSelectedFaultName = await selectedRows.nth(0).textContent();
         const secondSelectedFaultName = await selectedRows.nth(1).textContent();
         const firstNameInInspectorCount = await page.locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`).count();

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -138,6 +138,7 @@ test.describe('Performance tests', () => {
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 
         //Clear Search
+        await page.locator('.c-search.c-notebook__search .c-search__input').hover();
         await page.locator('.c-search.c-notebook__search .c-search__clear-input').click();
         await page.evaluate(() => window.performance.mark("notebook-search-processed"));
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -166,12 +166,13 @@ test.describe('Persistence operations @couchdb', () => {
             timeout: 1000
         }).toEqual(1);
     });
-    test('Can create an object after a conflict error @couchdb @2p', async ({ page }) => {
+    test('Can create an object after a conflict error @couchdb @2p', async ({ page, openmctConfig }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5982'
         });
-
+        const { myItemsFolderName } = openmctConfig;
+        // Instantiate a second page/tab
         const page2 = await page.context().newPage();
 
         // Both pages: Go to baseURL
@@ -179,6 +180,10 @@ test.describe('Persistence operations @couchdb', () => {
             page.goto('./', { waitUntil: 'networkidle' }),
             page2.goto('./', { waitUntil: 'networkidle' })
         ]);
+
+        //Slow down the test a bit
+        await expect(page.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
+        await expect(page2.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
 
         // Both pages: Click the Create button
         await Promise.all([

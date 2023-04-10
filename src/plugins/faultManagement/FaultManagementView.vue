@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,8 +42,6 @@ export default {
         };
     },
     mounted() {
-        this.updateFaultList();
-
         this.unsubscribe = this.openmct.faults
             .subscribe(this.domainObject, this.updateFault);
     },
@@ -68,7 +66,11 @@ export default {
             this.openmct.faults
                 .request(this.domainObject)
                 .then(faultsData => {
-                    this.faultsList = faultsData.map(fd => fd.fault);
+                    if (faultsData?.length > 0) {
+                        this.faultsList = faultsData.map(fd => fd.fault);
+                    } else {
+                        this.faultsList = [];
+                    }
                 });
         }
     }

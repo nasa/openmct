@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,12 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify form functionality.
+This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const nbUtils = require('../../../../helper/notebookUtils');
 
 /**
   * Creates a notebook object and adds an entry.
@@ -33,18 +34,10 @@ const { createDomainObjectWithDefaults } = require('../../../../appActions');
   * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
     const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        // Create an entry
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = ${iteration}`;
-        await page.locator(entryLocator).click();
-        await page.locator(entryLocator).fill(`Entry ${iteration}`);
-        await page.locator(entryLocator).press('Enter');
+        await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
     }
 
     return notebook;
@@ -57,7 +50,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
   */
 async function createNotebookEntryAndTags(page, iterations = 1) {
     const notebook = await createNotebookAndEntry(page, iterations);
-    await page.locator('text=Annotations').click();
+    await selectInspectorTab(page, 'Annotations');
 
     for (let iteration = 0; iteration < iterations; iteration++) {
         // Hover and click "Add Tag" button
@@ -85,10 +78,14 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        await page.locator('text=Annotations').click();
+        await selectInspectorTab(page, 'Annotations');
 
         await page.locator('button:has-text("Add Tag")').click();
 
@@ -110,6 +107,42 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Science");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
+    });
+    test('Can add tags with blank entry', async ({ page }) => {
+        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await selectInspectorTab(page, 'Annotations');
+
+        await nbUtils.enterTextEntry(page, '');
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+
+        // Click inside the tag search input
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Select the "Driving" tag
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
+    });
+    test('Can cancel adding tags', async ({ page }) => {
+        await createNotebookAndEntry(page);
+
+        await selectInspectorTab(page, 'Annotations');
+
+        // Test canceling adding a tag after we click "Type to select tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[placeholder="Type to select tag"]').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
+
+        // Test canceling adding a tag after we just click "Add Tag"
+        await page.locator('button:has-text("Add Tag")').click();
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+
+        await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
     });
     test('Can search for tags and preview works properly', async ({ page }) => {
         await createNotebookEntryAndTags(page);
@@ -145,7 +178,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createNotebookEntryAndTags(page);
         // Delete Driving
         await page.hover('[aria-label="Tag"]:has-text("Driving")');
-        await page.locator('[aria-label="Tag"]:has-text("Driving") ~ .c-completed-tag-deletion').click();
+        await page.locator('[aria-label="Remove tag Driving"]').click();
 
         await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText("Science");
         await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText("Driving");
@@ -247,8 +280,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
 
-        // Click on Annotations tab
-        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
+        await selectInspectorTab(page, 'Annotations');
 
         // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();

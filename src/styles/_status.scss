@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -192,3 +192,12 @@ tr {
         @include isStatus($glyph: $glyph-icon-alert-rect, $color: $colorWarningLo);
     }
 }
+
+.is-event {
+    &--purple { color: $colorEventPurpleFg !important; }
+    &--red { color: $colorEventRedFg !important; }
+    &--orange { color: $colorEventOrangeFg !important; }
+    &--yellow { color: $colorEventYellowFg !important; }
+    &--no-style { color: inherit; }
+}
+

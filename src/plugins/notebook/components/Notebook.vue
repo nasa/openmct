@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -125,7 +125,7 @@
                 v-if="selectedPage && !selectedPage.isLocked"
                 :class="{ 'disabled': activeTransaction }"
                 class="c-notebook__drag-area icon-plus"
-                @click="newEntry()"
+                @click="newEntry(null, $event)"
                 @dragover="dragOver"
                 @drop.capture="dropCapture"
                 @drop="dropOnEntry($event)"
@@ -193,7 +193,7 @@ import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSectionId, setDefaultNotebookPageId } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 
@@ -236,7 +236,7 @@ export default {
             sidebarCoversEntries: false,
             filteredAndSortedEntries: [],
             notebookAnnotations: {},
-            selectedEntryId: '',
+            selectedEntryId: undefined,
             activeTransaction: false,
             savingTransaction: false
         };
@@ -381,8 +381,10 @@ export default {
             });
         },
         updateSelection(selection) {
-            if (selection?.[0]?.[0]?.context?.targetDetails?.entryId === undefined) {
-                this.selectedEntryId = '';
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            if (selection?.[0]?.[0]?.context?.targetDetails?.[keyString]?.entryId === undefined) {
+                this.selectedEntryId = undefined;
             }
         },
         async loadAnnotations() {
@@ -522,6 +524,8 @@ export default {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
 
+                this.cancelTransaction();
+
                 return;
             }
 
@@ -534,10 +538,15 @@ export default {
                         emphasis: true,
                         callback: () => {
                             const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                            entries.splice(entryPos, 1);
-                            this.updateEntries(entries);
-                            this.filterAndSortEntries();
-                            this.removeAnnotations(entryId);
+                            if (entries) {
+                                entries.splice(entryPos, 1);
+                                this.updateEntries(entries);
+                                this.filterAndSortEntries();
+                                this.removeAnnotations(entryId);
+                            } else {
+                                this.cancelTransaction();
+                            }
+
                             dialog.dismiss();
                         }
                     },
@@ -784,14 +793,29 @@ export default {
 
             return section.id;
         },
-        async newEntry(embed = null) {
+        async newEntry(embed, event) {
             this.startTransaction();
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
-            this.focusEntryId = id;
+
+            const element = this.$refs.notebookEntries.querySelector(`#${id}`);
+            const entryAnnotations = this.notebookAnnotations[id] ?? {};
+            selectEntry({
+                element,
+                entryId: id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                notebookAnnotations: entryAnnotations
+            });
+            if (event) {
+                event.stopPropagation();
+            }
+
             this.filterAndSortEntries();
+            this.focusEntryId = id;
+            this.selectedEntryId = id;
         },
         orientationChange() {
             this.formatSidebar();
