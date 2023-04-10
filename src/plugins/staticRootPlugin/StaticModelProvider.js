@@ -27,7 +27,6 @@
  * exist in the same namespace as the rootIdentifier.
  */
 import objectUtils from 'objectUtils';
-import { v4 as uuid } from 'uuid';
 
 class StaticModelProvider {
     constructor(importData, rootIdentifier) {
@@ -114,14 +113,11 @@ class StaticModelProvider {
 
         if (hasMappedValue) {
             const identifier = objectUtils.parseKeyString(mappedLeafValue);
-            if (identifier.namespace === oldRootNamespace) {
-                return objectUtils.makeKeyString({
-                    namespace: newRootNamespace,
-                    key: identifier.key
-                });
-            } else {
-                return mappedLeafValue;
-            }
+
+            return objectUtils.makeKeyString({
+                namespace: newRootNamespace,
+                key: identifier.key
+            });
         } else {
             if (leafKey === 'location') {
                 return null;
@@ -137,8 +133,8 @@ class StaticModelProvider {
         const idMap = new Map();
         const objectTree = importData.openmct;
 
-        Object.keys(objectTree).forEach((originalId) => {
-            let newId = uuid();
+        Object.keys(objectTree).forEach((originalId, index) => {
+            let newId = index.toString();
             if (originalId === importData.rootId) {
                 newId = rootIdentifier.key;
             }
