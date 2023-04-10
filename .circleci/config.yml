@@ -139,6 +139,32 @@ jobs:
       - store_artifacts:
           path: html-test-results
       - generate_and_store_version_and_filesystem_artifacts
+  e2e-couchdb:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: |
+          export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          sleep 3
+          bash src/plugins/persistence/couch/setup-couchdb.sh
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB Plugin and Config
+      - run: npm run test:e2e:couchdb
+      - generate_e2e_code_cov_report:
+         suite: full        
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - generate_and_store_version_and_filesystem_artifacts
   perf-test:
     parameters:
       node-version:
@@ -206,6 +232,8 @@ workflows:
       - perf-test:
           node-version: lts/gallium
       - visual-test:
+          node-version: lts/gallium
+      - e2e-couchdb:
           node-version: lts/gallium
     triggers:
       - schedule:
