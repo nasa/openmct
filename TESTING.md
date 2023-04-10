@@ -5,7 +5,7 @@ Open MCT Testing is iterating and improving at a rapid pace. This document serve
 Documentation located [here](./docs/src/process/testing/plan.md)
 
 ## Unit Testing
-Unit testing is essential part of our test strategy and compliments our e2e testing strategy.
+Unit testing is essential part of our test strategy and complements our e2e testing strategy.
 
 #### Unit Test Guidelines
 * Unit Test specs should reside alongside the source code they test, not in a separate directory.
@@ -47,4 +47,4 @@ This e2e coverage is combined with our unit test report to give a comprehensive 
 
 Our code coverage implementation has two known limitations:
 - [Variability and accuracy](https://github.com/nasa/openmct/issues/5811)
-- []
+- [Vue instrumentation](https://github.com/nasa/openmct/issues/4973)
