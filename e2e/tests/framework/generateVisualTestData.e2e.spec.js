@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,14 +43,14 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     await page.locator('button:has-text("Create")').click();
 
     // add sine wave generator with defaults
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     //Add a 5000 ms Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
     await Promise.all([
         page.waitForNavigation(),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -58,7 +58,7 @@ test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     // focus the overlay plot
     await page.goto(overlayPlot.url);
 
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
     //Save localStorage for future test execution
     await context.storageState({ path: './e2e/test-data/VisualTestData_storage.json' });
 });

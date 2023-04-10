@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,9 @@
  *****************************************************************************/
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
+const IMAGE_HINT_KEY = 'image';
+const IMAGE_THUMBNAIL_HINT_KEY = 'thumbnail';
+const IMAGE_DOWNLOAD_NAME_HINT_KEY = 'imageDownloadName';
 
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
@@ -32,13 +35,20 @@ export default {
         this.setDataTimeContext();
         this.openmct.objectViews.on('clearData', this.dataCleared);
 
-        // set
+        // Get metadata and formatters
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
+
+        this.imageMetadataValue = { ...this.metadata.valuesForHints([IMAGE_HINT_KEY])[0] };
+        this.imageFormatter = this.getFormatter(this.imageMetadataValue.key);
+
+        this.imageThumbnailMetadataValue = { ...this.metadata.valuesForHints([IMAGE_THUMBNAIL_HINT_KEY])[0] };
+        this.imageThumbnailFormatter = this.imageThumbnailMetadataValue.key
+            ? this.getFormatter(this.imageThumbnailMetadataValue.key)
+            : null;
+
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
+        this.imageDownloadNameMetadataValue = { ...this.metadata.valuesForHints([IMAGE_DOWNLOAD_NAME_HINT_KEY])[0]};
 
         // initialize
         this.timeKey = this.timeSystem.key;
@@ -66,9 +76,14 @@ export default {
         this.telemetryCollection.destroy();
     },
     methods: {
-        dataAdded(dataToAdd) {
-            const normalizedDataToAdd = dataToAdd.map(datum => this.normalizeDatum(datum));
-            this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
+        dataAdded(addedItems, addedItemIndices) {
+            const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
+            let newImageHistory = this.imageHistory.slice();
+            normalizedDataToAdd.forEach(((datum, index) => {
+                newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
+            }));
+            //Assign just once so imageHistory watchers don't get called too often
+            this.imageHistory = newImageHistory;
         },
         dataCleared() {
             this.imageHistory = [];
@@ -105,12 +120,19 @@ export default {
 
             return this.imageFormatter.format(datum);
         },
+        formatImageThumbnailUrl(datum) {
+            if (!datum || !this.imageThumbnailFormatter) {
+                return;
+            }
+
+            return this.imageThumbnailFormatter.format(datum);
+        },
         formatTime(datum) {
             if (!datum) {
                 return;
             }
 
-            let dateTimeStr = this.timeFormatter.format(datum);
+            const dateTimeStr = this.timeFormatter.format(datum);
 
             // Replace ISO "T" with a space to allow wrapping
             return dateTimeStr.replace("T", " ");
@@ -118,7 +140,7 @@ export default {
         getImageDownloadName(datum) {
             let imageDownloadName = '';
             if (datum) {
-                const key = this.imageDownloadNameHints.key;
+                const key = this.imageDownloadNameMetadataValue.key;
                 imageDownloadName = datum[key];
             }
 
@@ -136,9 +158,6 @@ export default {
                 return;
             }
 
-            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
-            delete this.imageContainerWidth;
-            delete this.imageContainerHeight;
             this.bounds = bounds; // setting bounds for ImageryView watcher
         },
         timeSystemChange() {
@@ -150,6 +169,7 @@ export default {
         normalizeDatum(datum) {
             const formattedTime = this.formatTime(datum);
             const url = this.formatImageUrl(datum);
+            const thumbnailUrl = this.formatImageThumbnailUrl(datum);
             const time = this.parseTime(formattedTime);
             const imageDownloadName = this.getImageDownloadName(datum);
 
@@ -157,13 +177,14 @@ export default {
                 ...datum,
                 formattedTime,
                 url,
+                thumbnailUrl,
                 time,
                 imageDownloadName
             };
         },
         getFormatter(key) {
-            let metadataValue = this.metadata.value(key) || { format: key };
-            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+            const metadataValue = this.metadata.value(key) || { format: key };
+            const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
             return valueFormatter;
         }

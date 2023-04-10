@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -42,8 +42,8 @@
         ></div>
     </div>
     <div
-        v-if="!hideOptions"
-        class="c-menu c-input--autocomplete__options"
+        v-if="!hideOptions && filteredOptions.length > 0"
+        class="c-menu c-input--autocomplete__options js-autocomplete-options"
         aria-label="Autocomplete Options"
         @blur="hideOptions = true"
     >
@@ -150,7 +150,7 @@ export default {
         },
         hideOptions(newValue) {
             if (!newValue) {
-                // adding a event listener when the hideOpntions is false (dropdown is visible)
+                // adding a event listener when the hideOptions is false (dropdown is visible)
                 // handleoutsideclick can collapse the dropdown when clicked outside autocomplete
                 document.body.addEventListener('click', this.handleOutsideClick);
             } else {
@@ -230,10 +230,10 @@ export default {
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
 
-            if (this.hideOptions) {
-                this.showOptions();
-            } else {
+            if (!this.hideOptions && this.filteredOptions.length > 0) {
                 this.hideOptions = true;
+            } else {
+                this.showOptions();
             }
 
         },

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,42 +20,46 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { createDomainObjectWithDefaults } = require('../appActions');
+
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function enterTextEntry(page, text) {
-    // Click .c-notebook__drag-area
+    // Click the 'Add Notebook Entry' area
     await page.locator(NOTEBOOK_DROP_AREA).click();
 
     // enter text
-    await page.locator('div.c-ne__text').click();
-    await page.locator('div.c-ne__text').fill(text);
-    await page.locator('div.c-ne__text').press('Enter');
+    await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
+    await commitEntry(page);
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function dragAndDropEmbed(page, myItemsFolderName) {
-    // Click button:has-text("Create")
-    await page.locator('button:has-text("Create")').click();
-    // Click li:has-text("Sine Wave Generator")
-    await page.locator('li:has-text("Sine Wave Generator")').click();
-    // Click form[name="mctForm"] >> text=My Items
-    await page.locator(`form[name="mctForm"] >> text=${myItemsFolderName}`).click();
-    // Click text=OK
-    await page.locator('text=OK').click();
-    // Click text=Open MCT My Items >> span >> nth=3
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    // Click text=Unnamed CUSTOM_NAME
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('text=Unnamed CUSTOM_NAME').click()
-    ]);
+async function dragAndDropEmbed(page, notebookObject) {
+    // Create example telemetry object
+    const swg = await createDomainObjectWithDefaults(page, {
+        type: "Sine Wave Generator"
+    });
+    // Navigate to notebook
+    await page.goto(notebookObject.url);
+    // Expand the tree to reveal the notebook
+    await page.click('button[title="Show selected item in tree"]');
+    // Drag and drop the SWG into the notebook
+    await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+    await commitEntry(page);
+}
 
-    await page.dragAndDrop('text=UNNAMED SINE WAVE GENERATOR', NOTEBOOK_DROP_AREA);
+/**
+ * @private
+ * @param {import('@playwright/test').Page} page
+ */
+async function commitEntry(page) {
+    //Click the Commit Entry button
+    await page.locator('.c-ne__save-button > button').click();
 }
 
 // eslint-disable-next-line no-undef

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,7 +45,16 @@
  * @property {string} url the relative url to the object (for use with `page.goto()`)
  */
 
+/**
+ * Defines parameters to be used in the creation of a notification.
+ * @typedef {Object} CreateNotificationOptions
+ * @property {string} message the message
+ * @property {'info' | 'alert' | 'error'} severity the severity
+ * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
+ */
+
 const Buffer = require('buffer').Buffer;
+const genUuid = require('uuid').v4;
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -56,6 +65,10 @@ const Buffer = require('buffer').Buffer;
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+    if (!name) {
+        name = `${type}:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
@@ -67,13 +80,18 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     await page.click('button:has-text("Create")');
 
     // Click the object specified by 'type'
-    await page.click(`li:text("${type}")`);
+    await page.click(`li[role='menuitem']:text("${type}")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
+
+    if (page.testNotes) {
+        // Fill the "Notes" section with information about the
+        // currently running test and its project.
+        const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+        await notesInput.fill(page.testNotes);
     }
 
     // Click OK button and wait for Navigate event
@@ -96,18 +114,40 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     }
 
     return {
-        name: name || `Unnamed ${type}`,
-        uuid: uuid,
+        name,
+        uuid,
         url: objectUrl
     };
 }
 
 /**
+ * Generate a notification with the given options.
+ * @param {import('@playwright/test').Page} page
+ * @param {CreateNotificationOptions} createNotificationOptions
+ */
+async function createNotification(page, createNotificationOptions) {
+    await page.evaluate((_createNotificationOptions) => {
+        const { message, severity, options } = _createNotificationOptions;
+        const notificationApi = window.openmct.notifications;
+        if (severity === 'info') {
+            notificationApi.info(message, options);
+        } else if (severity === 'alert') {
+            notificationApi.alert(message, options);
+        } else {
+            notificationApi.error(message, options);
+        }
+    }, createNotificationOptions);
+}
+
+/**
+ * Expand an item in the tree by a given object name.
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
+    const treePane = page.getByRole('tree', {
+        name: 'Main Tree'
+    });
     const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
     const expandTriangle = treeItem.locator('.c-disclosure-triangle');
     await expandTriangle.click();
@@ -120,24 +160,26 @@ async function expandTreePaneItemByName(page, name) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    if (!name) {
+        name = `Plan:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
 
-    //Click the Create button
+    // Click the Create button
     await page.click('button:has-text("Create")');
 
     // Click 'Plan' menu option
     await page.click(`li:text("Plan")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
 
     // Upload buffer from memory
     await page.locator('input#fileElem').setInputFiles({
@@ -155,7 +197,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     ]);
 
     // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
+    await page.waitForURL(`**/${parent}/*`);
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
 
@@ -179,6 +221,30 @@ async function openObjectTreeContextMenu(page, url) {
     await page.locator('.is-navigated-object').click({
         button: 'right'
     });
+}
+
+/**
+ * Expands the entire object tree (every expandable tree item).
+ * @param {import('@playwright/test').Page} page
+ * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
+ */
+async function expandEntireTree(page, treeName = "Main Tree") {
+    const treeLocator = page.getByRole('tree', {
+        name: treeName
+    });
+    const collapsedTreeItems = treeLocator.getByRole('treeitem', {
+        expanded: false
+    }).locator('span.c-disclosure-triangle.is-enabled');
+
+    while (await collapsedTreeItems.count() > 0) {
+        await collapsedTreeItems.nth(0).click();
+
+        // FIXME: Replace hard wait with something event-driven.
+        // Without the wait, this fails periodically due to a race condition
+        // with Vue rendering (loop exits prematurely).
+        // eslint-disable-next-line playwright/no-wait-for-timeout
+        await page.waitForTimeout(200);
+    }
 }
 
 /**
@@ -207,6 +273,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
+    await page.waitForLoadState('load'); //Add some determinism
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
         let url = './#/browse/' + [...path].reverse()
@@ -320,10 +387,31 @@ async function setEndOffset(page, offset) {
     await setTimeConductorOffset(page, offset, endOffsetButton);
 }
 
+/**
+ * Selects an inspector tab based on the provided tab name
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {String} name the name of the tab
+ */
+async function selectInspectorTab(page, name) {
+    const inspectorTabs = page.getByRole('tablist');
+    const inspectorTab = inspectorTabs.getByTitle(name);
+    const inspectorTabClass = await inspectorTab.getAttribute('class');
+    const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
+
+    // do not click a tab that is already selected or it will timeout your test
+    // do to a { pointer-events: none; } on selected tabs
+    if (!isSelectedInspectorTab) {
+        await inspectorTab.click();
+    }
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
+    createNotification,
     expandTreePaneItemByName,
+    expandEntireTree,
     createPlanFromJSON,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
@@ -331,5 +419,6 @@ module.exports = {
     setFixedTimeMode,
     setRealTimeMode,
     setStartOffset,
-    setEndOffset
+    setEndOffset,
+    selectInspectorTab
 };

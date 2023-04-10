@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,11 +33,13 @@ define([
         dataRateInHz: 1,
         randomness: 0,
         phase: 0,
-        loadDelay: 0
+        loadDelay: 0,
+        infinityValues: false
     };
 
-    function GeneratorProvider(openmct) {
-        this.workerInterface = new WorkerInterface(openmct);
+    function GeneratorProvider(openmct, StalenessProvider) {
+        this.openmct = openmct;
+        this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
     }
 
     GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
@@ -56,7 +58,8 @@ define([
             'dataRateInHz',
             'randomness',
             'phase',
-            'loadDelay'
+            'loadDelay',
+            'infinityValues'
         ];
 
         request = request || {};
@@ -79,6 +82,7 @@ define([
             workerRequest[prop] = Number(workerRequest[prop]);
         });
 
+        workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
         workerRequest.name = domainObject.name;
 
         return workerRequest;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -579,7 +579,7 @@ describe("the plugin", function () {
             child.append(viewContainer);
 
             const applicableViews = openmct.inspectorViews.get(selection);
-            plotInspectorView = applicableViews[0];
+            plotInspectorView = applicableViews.filter(view => view.name === 'Bar Graph Configuration')[0];
             plotInspectorView.show(viewContainer);
 
             await Vue.nextTick();

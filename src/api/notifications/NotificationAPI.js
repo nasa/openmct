@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,32 @@
  * @namespace platform/api/notifications
  */
 import moment from 'moment';
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
+
+/**
+ * @typedef {object} NotificationProperties
+ * @property {function} dismiss Dismiss the notification
+ * @property {NotificationModel} model The Notification model
+ * @property {(progressPerc: number, progressText: string) => void} [progress] Update the progress of the notification
+ */
+
+/**
+ * @typedef {EventEmitter & NotificationProperties} Notification
+ */
+
+/**
+ * @typedef {object} NotificationLink
+ * @property {function} onClick The function to be called when the link is clicked
+ * @property {string} cssClass A CSS class name to style the link
+ * @property {string} text The text to be displayed for the link
+ */
+
+/**
+ * @typedef {object} NotificationOptions
+ * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
+ * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
+ * @property {NotificationLink} [link] A link for the notification
+ */
 
 /**
  * A representation of a banner notification. Banner notifications
@@ -40,13 +65,17 @@ import EventEmitter from 'EventEmitter';
  * dialogs so that the same information can be provided in a dialog
  * and then minimized to a banner notification if needed, or vice-versa.
  *
+ * @see DialogModel
  * @typedef {object} NotificationModel
  * @property {string} message The message to be displayed by the notification
  * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or
  * with the string literal 'unknown'.
  * @property {string} [progressText] A message conveying progress of some ongoing task.
-
- * @see DialogModel
+ * @property {string} [severity] The severity of the notification. Should be one of 'info', 'alert', or 'error'.
+ * @property {string} [timestamp] The time at which the notification was created. Should be a string in ISO 8601 format.
+ * @property {boolean} [minimized] Whether or not the notification has been minimized
+ * @property {boolean} [autoDismiss] Whether the notification should be automatically dismissed after a short period of time.
+ * @property {NotificationOptions} options The notification options
  */
 
 const DEFAULT_AUTO_DISMISS_TIMEOUT = 3000;
@@ -55,18 +84,19 @@ const MINIMIZE_ANIMATION_TIMEOUT = 300;
 /**
  * The notification service is responsible for informing the user of
  * events via the use of banner notifications.
- * @memberof ui/notification
- * @constructor */
-
+*/
 export default class NotificationAPI extends EventEmitter {
     constructor() {
         super();
+        /** @type {Notification[]} */
         this.notifications = [];
+        /** @type {{severity: "info" | "alert" | "error"}} */
         this.highest = { severity: "info" };
 
-        /*
+        /**
         * A context in which to hold the active notification and a
         * handle to its timeout.
+        * @type {Notification | undefined}
         */
         this.activeNotification = undefined;
     }
@@ -75,16 +105,12 @@ export default class NotificationAPI extends EventEmitter {
      * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
      * period of time.
      * @param {string} message The message to display to the user
-     * @param {Object} [options] object with following properties
-     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
-     *      link: {Object} Add a link to notifications for navigation
-     *              onClick: callback function
-     *              cssClass: css class name to add style on link
-     *              text: text to display for link
-     * @returns {InfoNotification}
+     * @param {NotificationOptions} [options] The notification options
+     * @returns {Notification}
      */
     info(message, options = {}) {
-        let notificationModel = {
+        /** @type {NotificationModel} */
+        const notificationModel = {
             message: message,
             autoDismiss: true,
             severity: "info",
@@ -97,7 +123,7 @@ export default class NotificationAPI extends EventEmitter {
     /**
      * Present an alert to the user.
      * @param {string} message The message to display to the user.
-     * @param {Object} [options] object with following properties
+     * @param {NotificationOptions} [options] object with following properties
      *      autoDismissTimeout: {number} in milliseconds to automatically dismisses notification
      *      link: {Object} Add a link to notifications for navigation
      *              onClick: callback function
@@ -106,7 +132,7 @@ export default class NotificationAPI extends EventEmitter {
      * @returns {Notification}
      */
     alert(message, options = {}) {
-        let notificationModel = {
+        const notificationModel = {
             message: message,
             severity: "alert",
             options
@@ -147,7 +173,8 @@ export default class NotificationAPI extends EventEmitter {
             message: message,
             progressPerc: progressPerc,
             progressText: progressText,
-            severity: "info"
+            severity: "info",
+            options: {}
         };
 
         return this._notify(notificationModel);
@@ -165,8 +192,13 @@ export default class NotificationAPI extends EventEmitter {
      * dismissed.
      *
      * @private
+     * @param {Notification | undefined} notification
      */
     _minimize(notification) {
+        if (!notification) {
+            return;
+        }
+
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
@@ -204,8 +236,13 @@ export default class NotificationAPI extends EventEmitter {
      * dismiss
      *
      * @private
+     * @param {Notification | undefined} notification
      */
     _dismiss(notification) {
+        if (!notification) {
+            return;
+        }
+
         //Check this is a known notification
         let index = this.notifications.indexOf(notification);
 
@@ -236,10 +273,11 @@ export default class NotificationAPI extends EventEmitter {
      * dismiss or minimize where appropriate.
      *
      * @private
+     * @param {Notification | undefined} notification
      */
     _dismissOrMinimize(notification) {
-        let model = notification.model;
-        if (model.severity === "info") {
+        let model = notification?.model;
+        if (model?.severity === "info") {
             this._dismiss(notification);
         } else {
             this._minimize(notification);
@@ -251,10 +289,11 @@ export default class NotificationAPI extends EventEmitter {
      */
     _setHighestSeverity() {
         let severity = {
-            "info": 1,
-            "alert": 2,
-            "error": 3
+            info: 1,
+            alert: 2,
+            error: 3
         };
+
         this.highest.severity = this.notifications.reduce((previous, notification) => {
             if (severity[notification.model.severity] > severity[previous]) {
                 return notification.model.severity;
@@ -289,7 +328,7 @@ export default class NotificationAPI extends EventEmitter {
         /*
         Check if there is already an active (ie. visible) notification
             */
-        if (!this.activeNotification) {
+        if (!this.activeNotification && !notification?.model?.options?.minimized) {
             this._setActiveNotification(notification);
         } else if (!this.activeTimeout) {
             /*
@@ -312,8 +351,11 @@ export default class NotificationAPI extends EventEmitter {
 
     /**
      * @private
+     * @param {NotificationModel} notificationModel
+     * @returns {Notification}
      */
     _createNotification(notificationModel) {
+        /** @type {Notification} */
         let notification = new EventEmitter();
         notification.model = notificationModel;
         notification.dismiss = () => {
@@ -333,6 +375,7 @@ export default class NotificationAPI extends EventEmitter {
 
     /**
      * @private
+     * @param {Notification | undefined} notification
      */
     _setActiveNotification(notification) {
         this.activeNotification = notification;
@@ -372,7 +415,10 @@ export default class NotificationAPI extends EventEmitter {
         for (; i < this.notifications.length; i++) {
             notification = this.notifications[i];
 
-            if (!notification.model.minimized
+            const isNotificationMinimized = notification.model.minimized
+                || notification?.model?.options?.minimized;
+
+            if (!isNotificationMinimized
                 && notification !== this.activeNotification) {
                 return notification;
             }

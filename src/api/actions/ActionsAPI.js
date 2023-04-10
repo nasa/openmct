@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@ class ActionsAPI extends EventEmitter {
         this._actionCollections = new WeakMap();
         this._openmct = openmct;
 
-        this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
+        this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'export', 'import'];
 
         this.register = this.register.bind(this);
         this.getActionsCollection = this.getActionsCollection.bind(this);

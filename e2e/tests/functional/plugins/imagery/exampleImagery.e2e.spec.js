@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,13 +25,13 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-const { v4: uuid } = require('uuid');
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
-const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
+const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
+const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -40,10 +40,10 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'networkidle' });
 
         // Create a default 'Example Imagery' object
-        await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+        const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
         // Verify that the created object is focused
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
         await page.locator(backgroundImageSelector).hover({trial: true});
     });
 
@@ -188,7 +188,7 @@ test.describe('Example Imagery in Display Layout', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -197,7 +197,7 @@ test.describe('Example Imagery in Display Layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -205,6 +205,58 @@ test.describe('Example Imagery in Display Layout', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
 
         await page.goto(displayLayout.url);
+    });
+
+    test('View Large action pauses imagery when in realtime and returns to realtime', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3647'
+        });
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // set realtime mode
+        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+
+        // pause/play button
+        const pausePlayButton = await page.locator('.c-button.pause-play');
+
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+
+        // Open context menu and click view large menu item
+        await page.locator('button[title="View menu items"]').click();
+        await page.locator('li[title="View Large"]').click();
+        await expect(pausePlayButton).toHaveClass(/is-paused/);
+
+        await page.locator('[aria-label="Close"]').click();
+        await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
+    });
+
+    test('View Large action leaves keeps realtime mode paused', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3647'
+        });
+
+        // Click time conductor mode button
+        await page.locator('.c-mode-button').click();
+
+        // set realtime mode
+        await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+
+        // pause/play button
+        const pausePlayButton = await page.locator('.c-button.pause-play');
+        await pausePlayButton.click();
+        await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
+
+        // Open context menu and click view large menu item
+        await page.locator('button[title="View menu items"]').click();
+        await page.locator('li[title="View Large"]').click();
+        await expect(pausePlayButton).toHaveClass(/is-paused/);
+
+        await page.locator('[aria-label="Close"]').click();
+        await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
     });
 
     test('Imagery View operations @unstable', async ({ page }) => {
@@ -275,7 +327,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -284,7 +336,7 @@ test.describe('Example Imagery in Flexible layout', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -317,7 +369,7 @@ test.describe('Example Imagery in Tabs View', () => {
         await page.click('button:has-text("Create")');
 
         // Click text=Example Imagery
-        await page.click('text=Example Imagery');
+        await page.click('li[role="menuitem"]:has-text("Example Imagery")');
 
         // Clear and set Image load delay to minimum value
         await page.locator('input[type="number"]').fill('');
@@ -326,7 +378,7 @@ test.describe('Example Imagery in Tabs View', () => {
         // Click text=OK
         await Promise.all([
             page.waitForNavigation({waitUntil: 'networkidle'}),
-            page.click('text=OK'),
+            page.click('button:has-text("OK")'),
             //Wait for Save Banner to appear
             page.waitForSelector('.c-message-banner__message')
         ]);
@@ -345,13 +397,11 @@ test.describe('Example Imagery in Time Strip', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
         timeStripObject = await createDomainObjectWithDefaults(page, {
-            type: 'Time Strip',
-            name: 'Time Strip'.concat(' ', uuid())
+            type: 'Time Strip'
         });
 
         await createDomainObjectWithDefaults(page, {
             type: 'Example Imagery',
-            name: 'Example Imagery'.concat(' ', uuid()),
             parent: timeStripObject.uuid
         });
         // Navigate to timestrip
@@ -362,17 +412,28 @@ test.describe('Example Imagery in Time Strip', () => {
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5632'
         });
+
+        // Hover over the timestrip to reveal a thumbnail image
         await page.locator('.c-imagery-tsv-container').hover();
-        // get url of the hovered image
-        const hoveredImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
-        const hoveredImgSrc = await hoveredImg.getAttribute('src');
-        expect(hoveredImgSrc).toBeTruthy();
+
+        // Get the img src of the hovered image thumbnail
+        const hoveredThumbnailImg = page.locator('.c-imagery-tsv div.c-imagery-tsv__image-wrapper:hover img');
+        const hoveredThumbnailImgSrc = await hoveredThumbnailImg.getAttribute('src');
+
+        // Verify that imagery timestrip view uses the thumbnailUrl as img src for thumbnails
+        expect(hoveredThumbnailImgSrc).toBeTruthy();
+        expect(hoveredThumbnailImgSrc).toMatch(thumbnailUrlParamsRegexp);
+
+        // Click on the hovered thumbnail to open "View Large" view
         await page.locator('.c-imagery-tsv-container').click();
-        // get image of view large container
+
+        // Get the img src of the large view image
         const viewLargeImg = page.locator('img.c-imagery__main-image__image');
         const viewLargeImgSrc = await viewLargeImg.getAttribute('src');
         expect(viewLargeImgSrc).toBeTruthy();
-        expect(viewLargeImgSrc).toEqual(hoveredImgSrc);
+
+        // Verify that the image in the large view is the same as the hovered thumbnail
+        expect(viewLargeImgSrc).toEqual(hoveredThumbnailImgSrc.split('?')[0]);
     });
 });
 
@@ -389,6 +450,12 @@ test.describe('Example Imagery in Time Strip', () => {
  * @param {import('@playwright/test').Page} page
  */
 async function performImageryViewOperationsAndAssert(page) {
+    // Verify that imagery thumbnails use a thumbnail url
+    const thumbnailImages = page.locator('.c-thumb__image');
+    const mainImage = page.locator('.c-imagery__main-image__image');
+    await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
+    await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+
     // Click previous image button
     const previousImageButton = page.locator('.c-nav--prev');
     await previousImageButton.click();

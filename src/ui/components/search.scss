@@ -1,7 +1,7 @@
 @mixin visibleRegexButton {
     opacity: 1;
     padding: 1px 3px;
-    width: 24px;
+    min-width: 24px;
 }
 
 .c-search {
@@ -31,7 +31,7 @@
         overflow: hidden;
         padding: 1px 0;
         transform-origin: left;
-        transition: $transOut;
+        @include transition($prop: min-width, $dur: $transOutTime);
         width: 0;
 
         &.is-active {
@@ -54,8 +54,19 @@
             margin-left: 0;
         }
 
-        .c-search__clear-input {
-            display: block;
+        &:before {
+            width: 0;
+        }
+
+        input[type='text'],
+        input[type='search'] {
+            margin-left: 0;
+        }
+
+        @include hover {
+            .c-search__clear-input {
+                display: block;
+            }
         }
     }
 
@@ -66,10 +77,9 @@
         text-align: left;
     }
 
-    &:hover {
+    @include hover {
         .c-search__use-regex {
             @include visibleRegexButton();
-            transition: $transIn;
         }
     }
 }

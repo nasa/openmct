@@ -5,19 +5,17 @@ import Vue from 'vue';
 export default function StackedPlotsInspectorViewProvider(openmct) {
     return {
         key: 'stacked-plots-inspector',
-        name: 'Stacked Plots Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
             }
 
             const object = selection[0][0].context.item;
-            const parent = selection[0].length > 1 && selection[0][1].context.item;
 
-            const isOverlayPlotObject = object && object.type === 'telemetry.plot.overlay';
-            const isParentStackedPlotObject = parent && parent.type === 'telemetry.plot.stacked';
+            const isStackedPlotObject = object && object.type === 'telemetry.plot.stacked';
 
-            return !isOverlayPlotObject && isParentStackedPlotObject;
+            return isStackedPlotObject;
         },
         view: function (selection) {
             let component;
@@ -44,6 +42,9 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
                         template: '<plot-options></plot-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -51,9 +52,6 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

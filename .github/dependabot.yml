@@ -13,13 +13,19 @@ updates:
       - "pr:daveit"
       - "pr:platform"
     ignore:
-      - dependency-name: "@playwright/test" #We have to source the playwright container which is not detected by Dependabot
-      - dependency-name: "playwright-core" #We have to source the playwright container which is not detected by Dependabot
-      - dependency-name: "@babel/eslint-parser" #Lots of noise in these type patch releases.
+      #We have to source the playwright container which is not detected by Dependabot
+      - dependency-name: "@playwright/test"
+      - dependency-name: "playwright-core"
+      #Lots of noise in these type patch releases.
+      - dependency-name: "@babel/eslint-parser"
         update-types: ["version-update:semver-patch"] 
-      - dependency-name: "eslint-plugin-vue" #Lots of noise in these type patch releases.  
+      - dependency-name: "eslint-plugin-vue"
         update-types: ["version-update:semver-patch"]
       - dependency-name: "babel-loader"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "sinon"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "moment-timezone"
         update-types: ["version-update:semver-patch"]
   - package-ecosystem: "github-actions"
     directory: "/"

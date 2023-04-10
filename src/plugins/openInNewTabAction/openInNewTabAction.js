@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,8 +31,8 @@ export default class OpenInNewTab {
 
         this._openmct = openmct;
     }
-    invoke(objectPath) {
-        let url = objectPathToUrl(this._openmct, objectPath);
+    invoke(objectPath, urlParams = undefined) {
+        let url = objectPathToUrl(this._openmct, objectPath, urlParams);
         window.open(url);
     }
 }

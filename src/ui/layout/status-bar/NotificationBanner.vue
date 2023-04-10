@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -20,6 +20,8 @@
 <div
     v-if="activeModel.message"
     class="c-message-banner"
+    role="alert"
+    :aria-live="activeModel.severity === 'error' ? 'assertive' : 'polite'"
     :class="[
         activeModel.severity,
         {
@@ -42,6 +44,7 @@
     />
     <button
         class="c-message-banner__close-button c-click-icon icon-x-in-circle"
+        aria-label="Dismiss"
         @click.stop="dismiss()"
     ></button>
 </div>

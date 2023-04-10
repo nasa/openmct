@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding the example event generator.
 */
 
-const { test, expect } = require('../../../baseFixtures');
+const { test, expect } = require('../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../appActions');
 
 test.describe('Example Event Generator CRUD Operations', () => {

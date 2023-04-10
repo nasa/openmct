@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
 const nbUtils = require('../../../../helper/notebookUtils');
@@ -36,27 +36,27 @@ test.describe('Restricted Notebook', () => {
     });
 
     test('Can be renamed @addInit', async ({ page }) => {
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`Unnamed ${CUSTOM_NAME}`);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(`${notebook.name}`);
     });
 
-    test('Can be deleted if there are no locked pages @addInit', async ({ page, openmctConfig }) => {
+    test('Can be deleted if there are no locked pages @addInit', async ({ page }) => {
         await openObjectTreeContextMenu(page, notebook.url);
 
         const menuOptions = page.locator('.c-menu ul');
         await expect.soft(menuOptions).toContainText('Remove');
 
-        const restrictedNotebookTreeObject = page.locator(`a:has-text("Unnamed ${CUSTOM_NAME}")`);
+        const restrictedNotebookTreeObject = page.locator(`a:has-text("${notebook.name}")`);
 
         // notebook tree object exists
         expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
 
         // Click Remove Text
-        await page.locator('text=Remove').click();
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
         // Click 'OK' on confirmation window and wait for save banner to appear
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=OK').click(),
+            page.locator('button:has-text("OK")').click(),
             page.waitForSelector('.c-message-banner__message')
         ]);
 
@@ -134,7 +134,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         // Click text=Ok
         await Promise.all([
             page.waitForNavigation(),
-            page.locator('text=Ok').click()
+            page.locator('button:has-text("OK")').click()
         ]);
 
         // deleted page, should no longer exist
@@ -145,15 +145,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
 test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
 
-    test.beforeEach(async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-        await startAndAddRestrictedNotebookObject(page);
-        await nbUtils.dragAndDropEmbed(page, myItemsFolderName);
+    test.beforeEach(async ({ page }) => {
+        const notebook = await startAndAddRestrictedNotebookObject(page);
+        await nbUtils.dragAndDropEmbed(page, notebook);
     });
 
     test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
         // Click .c-ne__embed__name .c-popup-menu-button
-        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+        await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
         await expect(embedMenu).toContainText('Remove This Embed');
@@ -162,12 +161,39 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
     test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
         await lockPage(page);
         // Click .c-ne__embed__name .c-popup-menu-button
-        await page.locator('.c-ne__embed__name .c-popup-menu-button').click(); // embed popup menu
+        await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
 
         const embedMenu = page.locator('body >> .c-menu');
         await expect(embedMenu).not.toContainText('Remove This Embed');
     });
 
+});
+
+test.describe('can export restricted notebook as text', () => {
+    test.beforeEach(async ({ page }) => {
+        await startAndAddRestrictedNotebookObject(page);
+    });
+
+    test('basic functionality ', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
+
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
+
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+
+    });
+
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
 
 /**

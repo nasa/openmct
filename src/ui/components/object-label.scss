@@ -22,7 +22,9 @@
 
     &__name {
         @include ellipsize();
+        color: $objectLabelNameColorFg;
         display: inline;
+        padding: 1px 0;
     }
 
     &__type-icon {

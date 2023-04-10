@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ function copyRelatedMetadata(metadata) {
     return copiedMetadata;
 }
 
+import IndependentTimeContext from "@/api/time/IndependentTimeContext";
 export default class RelatedTelemetry {
 
     constructor(openmct, domainObject, telemetryKeys) {
@@ -88,9 +89,31 @@ export default class RelatedTelemetry {
             this[key].historicalDomainObject = await this._openmct.objects.get(this[key].historical.telemetryObjectId);
 
             this[key].requestLatestFor = async (datum) => {
-                const options = {
+                // We need to create a throwaway time context and pass it along
+                // as a request option. We do this to "trick" the Time API
+                // into thinking we are in fixed time mode in order to bypass this logic:
+                // https://github.com/akhenry/openmct-yamcs/blob/1060d42ebe43bf346dac0f6a8068cb288ade4ba4/src/providers/historical-telemetry-provider.js#L59
+                // Context: https://github.com/akhenry/openmct-yamcs/pull/217
+                const ephemeralContext = new IndependentTimeContext(
+                    this._openmct,
+                    this._openmct.time,
+                    [this[key].historicalDomainObject]
+                );
+
+                // Stop following the global context, stop the clock,
+                // and set bounds.
+                ephemeralContext.resetContext();
+                const newBounds = {
                     start: this._openmct.time.bounds().start,
-                    end: this._parseTime(datum),
+                    end: this._parseTime(datum)
+                };
+                ephemeralContext.stopClock();
+                ephemeralContext.bounds(newBounds);
+
+                const options = {
+                    start: newBounds.start,
+                    end: newBounds.end,
+                    timeContext: ephemeralContext,
                     strategy: 'latest'
                 };
                 let results = await this._openmct.telemetry

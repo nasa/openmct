@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,6 +46,7 @@ export default class RemoteClock extends DefaultClock {
 
         this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
+        this.formatTime = undefined;
         this.metadata = undefined;
 
         this.lastTick = 0;
@@ -62,8 +63,8 @@ export default class RemoteClock extends DefaultClock {
     }
 
     start() {
-        this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
+            this.openmct.time.on('timeSystem', this._timeSystemChange);
             this.timeTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
@@ -136,6 +137,10 @@ export default class RemoteClock extends DefaultClock {
         let timeFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
         this.parseTime = (datum) => {
             return timeFormatter.parse(datum);
+        };
+
+        this.formatTime = (datum) => {
+            return timeFormatter.format(datum);
         };
     }
 

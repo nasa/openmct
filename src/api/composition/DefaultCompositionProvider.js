@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -99,8 +99,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
             objectListeners = this.listeningTo[keyString] = {
                 add: [],
                 remove: [],
-                reorder: [],
-                composition: [].slice.apply(domainObject.composition)
+                reorder: []
             };
         }
 
@@ -172,8 +171,9 @@ export default class DefaultCompositionProvider extends CompositionProvider {
      */
     add(parent, childId) {
         if (!this.includes(parent, childId)) {
-            parent.composition.push(childId);
-            this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
+            const composition = structuredClone(parent.composition);
+            composition.push(childId);
+            this.publicAPI.objects.mutate(parent, 'composition', composition);
         }
     }
 

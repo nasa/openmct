@@ -41,6 +41,7 @@
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
         role="tree"
+        :aria-label="getAriaLabel"
         aria-expanded="true"
     >
 
@@ -76,7 +77,7 @@
             <div :style="childrenHeightStyles">
                 <tree-item
                     v-for="(treeItem, index) in visibleItems"
-                    :key="treeItem.navigationPath"
+                    :key="`${treeItem.navigationPath}-${index}`"
                     :node="treeItem"
                     :is-selector-tree="isSelectorTree"
                     :selected-item="selectedItem"
@@ -88,10 +89,12 @@
                     :item-height="itemHeight"
                     :open-items="openTreeItems"
                     :loading-items="treeItemLoading"
+                    :targeted-path="targetedPath"
                     @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @tree-item-action="treeItemAction(treeItem, $event)"
                     @tree-item-selection="treeItemSelection(treeItem)"
+                    @targeted-path-animation-end="targetedPathAnimationEnd()"
                 />
                 <!-- main loading -->
                 <div
@@ -175,30 +178,29 @@ export default {
             activeSearch: false,
             mainTreeTopMargin: undefined,
             selectedItem: {},
-            observers: {}
+            targetedPath: ''
         };
     },
     computed: {
         childrenHeight() {
-            let childrenCount = this.focusedItems.length || 1;
+            const childrenCount = this.focusedItems.length || 1;
 
             return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         },
         childrenHeightStyles() {
-            let height = this.childrenHeight + 'px';
-
-            return { height };
+            return { height: `${this.childrenHeight}px` };
         },
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.treeItems;
+        },
+        getAriaLabel() {
+            return this.isSelectorTree ? "Create Modal Tree" : "Main Tree";
         },
         pageThreshold() {
             return Math.ceil(this.mainTreeHeight / this.itemHeight) + ITEM_BUFFER;
         },
         scrollableStyles() {
-            let height = this.mainTreeHeight + 'px';
-
-            return { height };
+            return { height: `${this.mainTreeHeight}px` };
         },
         showNoItems() {
             return this.visibleItems.length === 0 && !this.activeSearch && this.searchValue === '' && !this.isLoading;
@@ -210,7 +212,7 @@ export default {
             if (!this.isSelectorTree) {
                 return {};
             } else {
-                return { 'min-height': this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+                return { minHeight: `${this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT}px`};
             }
         }
     },
@@ -277,10 +279,13 @@ export default {
             this.treeResizeObserver.disconnect();
         }
 
-        this.destroyObservers(this.observers);
+        this.destroyObservers();
+        this.destroyMutables();
     },
     methods: {
         async initialize() {
+            this.observers = {};
+            this.mutables = {};
             this.isLoading = true;
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
@@ -299,8 +304,7 @@ export default {
             }
 
             // will need to listen for root composition changes as well
-
-            this.treeItems = await this.loadAndBuildTreeItemsFor(root, []);
+            this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
         },
         treeItemAction(parentItem, type) {
             if (type === 'close') {
@@ -309,17 +313,20 @@ export default {
                 this.openTreeItem(parentItem);
             }
         },
+        targetedPathAnimationEnd() {
+            this.targetedPath = null;
+        },
         treeItemSelection(item) {
             this.selectedItem = item;
             this.$emit('tree-item-selection', item);
         },
         async openTreeItem(parentItem) {
-            let parentPath = parentItem.navigationPath;
+            const parentPath = parentItem.navigationPath;
 
             this.startItemLoad(parentPath);
             // pass in abort signal when functional
-            let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-            let parentIndex = this.treeItems.indexOf(parentItem);
+            const childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object.identifier, parentItem.objectPath);
+            const parentIndex = this.treeItems.indexOf(parentItem);
 
             // if it's not loading, it was aborted
             if (!this.isItemLoading(parentPath) || parentIndex === -1) {
@@ -348,15 +355,23 @@ export default {
                 this.abortItemLoad(path);
             }
 
-            let pathIndex = this.openTreeItems.indexOf(path);
+            const pathIndex = this.openTreeItems.indexOf(path);
 
             if (pathIndex === -1) {
                 return;
             }
 
-            this.treeItems = this.treeItems.filter((checkItem) => {
-                return checkItem.navigationPath === path
-                    || !checkItem.navigationPath.includes(path);
+            this.treeItems = this.treeItems.filter((item) => {
+                const otherPath = item.navigationPath;
+                if (otherPath !== path
+                    && this.isTreeItemAChildOf(otherPath, path)) {
+                    this.destroyObserverByPath(otherPath);
+                    this.destroyMutableByPath(otherPath);
+
+                    return false;
+                }
+
+                return true;
             });
             this.openTreeItems.splice(pathIndex, 1);
             this.removeCompositionListenerFor(path);
@@ -436,8 +451,22 @@ export default {
 
             }, Promise.resolve()).then(() => {
                 if (this.isSelectorTree) {
-                    this.treeItemSelection(this.getTreeItemByPath(navigationPath));
+                    let item = this.getTreeItemByPath(navigationPath);
+                    // If item is missing due to error in object creation,
+                    // walk up the navigationPath until we find an item
+                    while (!item && navigationPath !== '') {
+                        const startIndex = 0;
+                        const endIndex = navigationPath.lastIndexOf('/');
+                        navigationPath = navigationPath.substring(startIndex, endIndex);
+
+                        item = this.getTreeItemByPath(navigationPath);
+                    }
+
+                    this.treeItemSelection(item);
                 }
+
+                this.scrollToCheck(navigationPath);
+                this.scrollToPath = null;
             });
         },
         scrollToCheck(navigationPath) {
@@ -461,9 +490,9 @@ export default {
                     behavior: 'smooth'
                 });
             } else if (this.scrollToPath) {
-                this.scrollToPath = undefined;
-                delete this.scrollToPath;
+                this.scrollToPath = null;
             }
+
         },
         scrollEndEvent() {
             if (!this.$refs.scrollable) {
@@ -475,11 +504,13 @@ export default {
                     if (!this.isItemInView(this.scrollToPath)) {
                         this.scrollTo(this.scrollToPath);
                     } else {
-                        this.scrollToPath = undefined;
-                        delete this.scrollToPath;
+                        this.scrollToPath = null;
                     }
                 }
             });
+        },
+        setTargetedItem(navigationPath) {
+            this.targetedItem = navigationPath;
         },
         isItemInView(navigationPath) {
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
@@ -528,8 +559,10 @@ export default {
             // determine if any part of the parent's path includes a key value of mine; aka My Items
             return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
         },
-        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
-            let collection = this.openmct.composition.get(domainObject);
+        async loadAndBuildTreeItemsFor(identifier, parentObjectPath, abortSignal) {
+            const domainObject = await this.openmct.objects.get(identifier);
+
+            const collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
 
             if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
@@ -537,7 +570,7 @@ export default {
                 composition = sortedComposition;
             }
 
-            if (parentObjectPath.length) {
+            if (parentObjectPath.length && !this.isSelectorTree) {
                 let navigationPath = this.buildNavigationPath(parentObjectPath);
 
                 if (this.compositionCollections[navigationPath]) {
@@ -556,7 +589,15 @@ export default {
             }
 
             return composition.map((object) => {
-                this.addTreeItemObserver(object, parentObjectPath);
+                // Only add observers and mutables if this is NOT a selector tree
+                if (!this.isSelectorTree) {
+                    if (this.openmct.objects.supportsMutation(object.identifier)) {
+                        object = this.openmct.objects.toMutable(object);
+                        this.addMutable(object, parentObjectPath);
+                    }
+
+                    this.addTreeItemObserver(object, parentObjectPath);
+                }
 
                 return this.buildTreeItem(object, parentObjectPath);
             });
@@ -574,6 +615,15 @@ export default {
                 navigationPath
             };
         },
+        addMutable(mutableDomainObject, parentObjectPath) {
+            const objectPath = [mutableDomainObject].concat(parentObjectPath);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            // If the mutable already exists, destroy it.
+            this.destroyMutableByPath(navigationPath);
+
+            this.mutables[navigationPath] = () => this.openmct.objects.destroyMutable(mutableDomainObject);
+        },
         addTreeItemObserver(domainObject, parentObjectPath) {
             const objectPath = [domainObject].concat(parentObjectPath);
             const navigationPath = this.buildNavigationPath(objectPath);
@@ -587,30 +637,6 @@ export default {
                 'name',
                 this.sortTreeItems.bind(this, parentObjectPath)
             );
-        },
-        async updateTreeItems(parentObjectPath) {
-            let children;
-
-            if (parentObjectPath.length) {
-                const parentItem = this.treeItems.find(item => item.objectPath === parentObjectPath);
-                const descendants = this.getChildrenInTreeFor(parentItem, true);
-                const parentIndex = this.treeItems.map(e => e.object).indexOf(parentObjectPath[0]);
-
-                children = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-
-                this.treeItems.splice(parentIndex + 1, descendants.length, ...children);
-            } else {
-                const root = await this.openmct.objects.get('ROOT');
-                children = await this.loadAndBuildTreeItemsFor(root, []);
-
-                this.treeItems = [...children];
-            }
-
-            for (let item of children) {
-                if (this.isTreeItemOpen(item)) {
-                    this.openTreeItem(item);
-                }
-            }
         },
         sortTreeItems(parentObjectPath) {
             const navigationPath = this.buildNavigationPath(parentObjectPath);
@@ -662,6 +688,10 @@ export default {
                 const descendants = this.getChildrenInTreeFor(parentItem, true);
                 const directDescendants = this.getChildrenInTreeFor(parentItem);
 
+                if (domainObject.isMutable) {
+                    this.addMutable(domainObject, parentItem.objectPath);
+                }
+
                 this.addTreeItemObserver(domainObject, parentItem.objectPath);
 
                 if (directDescendants.length === 0) {
@@ -692,13 +722,15 @@ export default {
         },
         compositionRemoveHandler(navigationPath) {
             return (identifier) => {
-                let removeKeyString = this.openmct.objects.makeKeyString(identifier);
-                let parentItem = this.getTreeItemByPath(navigationPath);
-                let directDescendants = this.getChildrenInTreeFor(parentItem);
-                let removeItem = directDescendants.find(item => item.id === removeKeyString);
+                const removeKeyString = this.openmct.objects.makeKeyString(identifier);
+                const parentItem = this.getTreeItemByPath(navigationPath);
+                const directDescendants = this.getChildrenInTreeFor(parentItem);
+                const removeItem = directDescendants.find(item => item.id === removeKeyString);
 
+                // Remove the item from the tree, unobserve it, and clean up any mutables
                 this.removeItemFromTree(removeItem);
-                this.removeItemFromObservers(removeItem);
+                this.destroyObserverByPath(removeItem.navigationPath);
+                this.destroyMutableByPath(removeItem.navigationPath);
             };
         },
         removeCompositionListenerFor(navigationPath) {
@@ -719,13 +751,6 @@ export default {
 
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
-        },
-        removeItemFromObservers(item) {
-            if (this.observers[item.id]) {
-                this.observers[item.id]();
-
-                delete this.observers[item.id];
-            }
         },
         addItemToTreeBefore(addItem, beforeItem) {
             const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
@@ -792,12 +817,17 @@ export default {
 
             for (const result of results) {
                 if (!abortSignal.aborted) {
+                    // Don't show deleted objects in search results
+                    if (result.location === null) {
+                        continue;
+                    }
+
                     resultPromises.push(this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
                         // removing the item itself, as the path we pass to buildTreeItem is a parent path
                         objectPath.shift();
 
                         // if root, remove, we're not using in object path for tree
-                        let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                        const lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
                         if (lastObject && lastObject.type === 'root') {
                             objectPath.pop();
                         }
@@ -931,6 +961,24 @@ export default {
         isTreeItemPathOpen(path) {
             return this.openTreeItems.includes(path);
         },
+        isTreeItemAChildOf(childNavigationPath, parentNavigationPath) {
+            const childPathKeys = childNavigationPath.split('/');
+            const parentPathKeys = parentNavigationPath.split('/');
+
+            // If child path is shorter than or same length as
+            // the parent path, then it's not a child.
+            if (childPathKeys.length <= parentPathKeys.length) {
+                return false;
+            }
+
+            for (let i = 0; i < parentPathKeys.length; i++) {
+                if (childPathKeys[i] !== parentPathKeys[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
         getElementStyleValue(el, style) {
             if (!el) {
                 return;
@@ -959,13 +1007,46 @@ export default {
         handleTreeResize() {
             this.calculateHeights();
         },
-        destroyObservers(observers) {
-            Object.entries(observers).forEach(([keyString, unobserve]) => {
-                if (typeof unobserve === 'function') {
+        /**
+         * Destroy an observer for the given navigationPath.
+         */
+        destroyObserverByPath(navigationPath) {
+            if (this.observers[navigationPath]) {
+                this.observers[navigationPath]();
+                delete this.observers[navigationPath];
+            }
+        },
+        /**
+         * Destroy all observers.
+         */
+        destroyObservers() {
+            Object.entries(this.observers).forEach(([key, unobserve]) => {
+                if (unobserve) {
                     unobserve();
                 }
 
-                delete observers[keyString];
+                delete this.observers[key];
+            });
+        },
+        /**
+         * Destroy a mutable for the given navigationPath.
+         */
+        destroyMutableByPath(navigationPath) {
+            if (this.mutables[navigationPath]) {
+                this.mutables[navigationPath]();
+                delete this.mutables[navigationPath];
+            }
+        },
+        /**
+         * Destroy all mutables.
+         */
+        destroyMutables() {
+            Object.entries(this.mutables).forEach(([key, destroyMutable]) => {
+                if (destroyMutable) {
+                    destroyMutable();
+                }
+
+                delete this.mutables[key];
             });
         }
     }

@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/no-v-html -->
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,23 +23,40 @@
 
 <template>
 <div
-    class="c-notebook__entry c-ne has-local-controls has-tag-applier"
+    class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
-    :class="{ 'locked': isLocked }"
+    :class="{ 'locked': isLocked,
+              'is-selected': isSelectedEntry,
+              'is-editing' : editMode
+    }"
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
+    @click="selectAndEmitEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
-        <div class="c-ne__time-and-creator">
-            <span class="c-ne__created-date">{{ createdOnDate }}</span>
-            <span class="c-ne__created-time">{{ createdOnTime }}</span>
-
+        <div class="c-ne__time-and-creator-and-delete">
+            <div class="c-ne__time-and-creator">
+                <span class="c-ne__created-date">{{ createdOnDate }}</span>
+                <span class="c-ne__created-time">{{ createdOnTime }}</span>
+                <span
+                    v-if="entry.createdBy"
+                    class="c-ne__creator"
+                >
+                    <span class="icon-person"></span> {{ entry.createdBy }}
+                </span>
+            </div>
             <span
-                v-if="entry.createdBy"
-                class="c-ne__creator"
+                v-if="!readOnly && !isLocked"
+                class="c-ne__local-controls--hidden"
             >
-                <span class="icon-person"></span> {{ entry.createdBy }}
+                <button
+                    class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
+                    title="Delete this entry"
+                    tabindex="-1"
+                    @click.stop.prevent="deleteEntry"
+                >
+                </button>
             </span>
         </div>
         <div class="c-ne__content">
@@ -49,7 +67,7 @@
                     tabindex="0"
                 >
                     <TextHighlight
-                        :text="entryText"
+                        :text="formatValidUrls(entry.text)"
                         :highlight="highlightText"
                         :highlight-class="'search-highlight'"
                     />
@@ -60,14 +78,21 @@
                     :id="entry.id"
                     class="c-ne__text c-ne__input"
                     aria-label="Notebook Entry Input"
-                    tabindex="0"
-                    contenteditable="true"
+                    tabindex="-1"
+                    :contenteditable="canEdit"
+                    v-bind.prop="formattedText"
+                    @mouseover="checkEditability($event)"
+                    @mouseleave="canEdit = true"
+                    @mousedown="preventFocusIfNotSelected($event)"
                     @focus="editingEntry()"
                     @blur="updateEntryValue($event)"
-                    @keydown.enter.exact.prevent
-                    @keyup.enter.exact.prevent="forceBlur($event)"
-                    v-text="entry.text"
                 >
+                </div>
+                <div
+                    v-if="editMode"
+                    class="c-ne__save-button"
+                >
+                    <button class="c-button c-button--major icon-check"></button>
                 </div>
             </template>
 
@@ -77,42 +102,41 @@
                     class="c-ne__text"
                     contenteditable="false"
                     tabindex="0"
-                    v-text="entry.text"
+                    v-bind.prop="formattedText"
                 >
                 </div>
             </template>
 
-            <TagEditor
-                :domain-object="domainObject"
-                :annotations="notebookAnnotations"
-                :annotation-type="openmct.annotation.ANNOTATION_TYPES.NOTEBOOK"
-                :target-specific-details="{entryId: entry.id}"
-                @tags-updated="timestampAndUpdate"
-            />
+            <div class="c-ne__tags c-tag-holder">
+                <div
+                    v-for="(tag, index) in entryTags"
+                    :key="index"
+                    class="c-tag"
+                    :style="{ backgroundColor: tag.backgroundColor, color: tag.foregroundColor }"
+                >
+                    {{ tag.label }}
+                </div>
+            </div>
 
-            <div class="c-snapshots c-ne__embeds">
-                <NotebookEmbed
-                    v-for="embed in entry.embeds"
-                    :key="embed.id"
-                    :embed="embed"
-                    :is-locked="isLocked"
-                    @removeEmbed="removeEmbed"
-                    @updateEmbed="updateEmbed"
-                />
+            <div
+                :class="{'c-scrollcontainer': enableEmbedsWrapperScroll }"
+            >
+                <div
+                    ref="embedsWrapper"
+                    class="c-snapshots c-ne__embeds-wrapper"
+                >
+                    <NotebookEmbed
+                        v-for="embed in entry.embeds"
+                        ref="embeds"
+                        :key="embed.id"
+                        :embed="embed"
+                        :is-locked="isLocked"
+                        @removeEmbed="removeEmbed"
+                        @updateEmbed="updateEmbed"
+                    />
+                </div>
             </div>
         </div>
-    </div>
-    <div
-        v-if="!readOnly && !isLocked"
-        class="c-ne__local-controls--hidden"
-    >
-        <button
-            class="c-icon-button c-icon-button--major icon-trash"
-            title="Delete this entry"
-            tabindex="-1"
-            @click="deleteEntry"
-        >
-        </button>
     </div>
     <div
         v-if="readOnly"
@@ -139,22 +163,28 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import TagEditor from '../../../ui/components/tags/TagEditor.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed } from '../utils/notebook-entries';
+import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
+
+import sanitizeHtml from 'sanitize-html';
+import _ from 'lodash';
 
 import Moment from 'moment';
 
+const SANITIZATION_SCHEMA = {
+    allowedTags: [],
+    allowedAttributes: {}
+};
+const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 const UNKNOWN_USER = 'Unknown';
 
 export default {
     components: {
         NotebookEmbed,
-        TextHighlight,
-        TagEditor
+        TextHighlight
     },
-    inject: ['openmct', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer', 'entryUrlWhitelist'],
     props: {
         domainObject: {
             type: Object,
@@ -203,7 +233,21 @@ export default {
             default() {
                 return false;
             }
+        },
+        selectedEntryId: {
+            type: String,
+            default() {
+                return '';
+            }
         }
+    },
+    data() {
+        return {
+            editMode: false,
+            canEdit: true,
+            enableEmbedsWrapperScroll: false,
+            urlWhitelist: []
+        };
     },
     computed: {
         createdOnDate() {
@@ -211,6 +255,26 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        formattedText() {
+            // remove ANY tags
+            const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+
+            if (this.editMode || this.urlWhitelist.length === 0) {
+                return { innerText: text };
+            }
+
+            const html = this.formatValidUrls(text);
+
+            return { innerHTML: html };
+        },
+        isSelectedEntry() {
+            return this.selectedEntryId === this.entry.id;
+        },
+        entryTags() {
+            const tagsFromAnnotations = this.openmct.annotation.getTagsFromAnnotations(this.notebookAnnotations);
+
+            return tagsFromAnnotations;
         },
         entryText() {
             let text = this.entry.text;
@@ -232,7 +296,23 @@ export default {
         }
     },
     mounted() {
+        this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
+
+        if (this.$refs.embedsWrapper) {
+            this.embedsWrapperResizeObserver = new ResizeObserver(this.manageEmbedLayout);
+            this.embedsWrapperResizeObserver.observe(this.$refs.embedsWrapper);
+        }
+
+        this.manageEmbedLayout();
         this.dropOnEntry = this.dropOnEntry.bind(this);
+        if (this.entryUrlWhitelist?.length > 0) {
+            this.urlWhitelist = this.entryUrlWhitelist;
+        }
+    },
+    beforeDestroy() {
+        if (this.embedsWrapperResizeObserver) {
+            this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+        }
     },
     methods: {
         async addNewEmbed(objectPath) {
@@ -245,6 +325,8 @@ export default {
             };
             const newEmbed = await createNewEmbed(snapshotMeta);
             this.entry.embeds.push(newEmbed);
+
+            this.manageEmbedLayout();
         },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
@@ -262,8 +344,40 @@ export default {
                 event.dataTransfer.effectAllowed = 'none';
             }
         },
+        checkEditability($event) {
+            if ($event.target.nodeName === 'A') {
+                this.canEdit = false;
+            }
+        },
         deleteEntry() {
             this.$emit('deleteEntry', this.entry.id);
+        },
+        formatValidUrls(text) {
+            return text.replace(URL_REGEX, (match) => {
+                const url = new URL(match);
+                const domain = url.hostname;
+                let result = match;
+                let isMatch = this.urlWhitelist.find((partialDomain) => {
+                    return domain.endsWith(partialDomain);
+                });
+
+                if (isMatch) {
+                    result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
+                }
+
+                return result;
+            });
+        },
+        manageEmbedLayout() {
+            if (this.$refs.embeds) {
+                const embedsWrapperLength = this.$refs.embedsWrapper.clientWidth;
+                const embedsTotalWidth = this.$refs.embeds.reduce((total, embed) => {
+                    return embed.$el.clientWidth + total;
+                }, 0);
+
+                this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
+            }
+
         },
         async dropOnEntry($event) {
             $event.stopImmediatePropagation();
@@ -322,6 +436,8 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
 
             this.timestampAndUpdate();
+
+            this.manageEmbedLayout();
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -346,17 +462,37 @@ export default {
 
             this.$emit('updateEntry', this.entry);
         },
+        preventFocusIfNotSelected($event) {
+            if (!this.isSelectedEntry) {
+                $event.preventDefault();
+                // blur the previous focused entry if clicking on non selected entry input
+                const focusedElementId = document.activeElement?.id;
+                if (focusedElementId !== this.entry.id) {
+                    document.activeElement.blur();
+                }
+            }
+        },
         editingEntry() {
+            this.editMode = true;
             this.$emit('editingEntry');
         },
         updateEntryValue($event) {
+            this.editMode = false;
             const value = $event.target.innerText;
-            if (value !== this.entry.text && value.match(/\S/)) {
-                this.entry.text = value;
-                this.timestampAndUpdate();
-            } else {
-                this.$emit('cancelEdit');
-            }
+            this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+            this.timestampAndUpdate();
+        },
+        selectAndEmitEntry(event, entry) {
+            selectEntry({
+                element: event.currentTarget,
+                entryId: entry.id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                onAnnotationChange: this.timestampAndUpdate,
+                notebookAnnotations: this.notebookAnnotations
+            });
+            event.stopPropagation();
+            this.$emit('entry-selection', this.entry);
         }
     }
 };

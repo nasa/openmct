@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -88,11 +88,11 @@ async function makeStackedPlot(page, myItemsFolderName) {
 
     // create stacked plot
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Stacked Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -146,11 +146,11 @@ async function saveStackedPlot(page) {
 async function createSineWaveGenerator(page) {
     //Create sine wave generator
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);

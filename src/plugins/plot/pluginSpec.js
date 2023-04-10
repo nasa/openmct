@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,8 @@ import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
+
+const TEST_KEY_ID = 'some-other-key';
 
 describe("the plugin", function () {
     let element;
@@ -277,8 +279,10 @@ describe("the plugin", function () {
                     }
                 ]
             ];
-            const plotInspectorView = openmct.inspectorViews.get(selection);
-            expect(plotInspectorView.length).toEqual(1);
+            const applicableInspectorViews = openmct.inspectorViews.get(selection);
+            const plotInspectorView = applicableInspectorViews.find(view => view.name = 'Plots Configuration');
+
+            expect(plotInspectorView).toBeDefined();
         });
 
         it("provides a stacked plot view for objects with telemetry", () => {
@@ -404,6 +408,20 @@ describe("the plugin", function () {
             expect(options[1].value).toBe("Another attribute");
         });
 
+        it("Updates the Y-axis label when changed", () => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            const yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y")[0].__vue__;
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe('some-key');
+            });
+
+            yAxisElement.$emit('yKeyChanged', TEST_KEY_ID, 1);
+            config.yAxis.seriesCollection.models.forEach((plotSeries) => {
+                expect(plotSeries.model.yKey).toBe(TEST_KEY_ID);
+            });
+        });
+
         it('hides the pause and play controls', () => {
             let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
             let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
@@ -516,6 +534,30 @@ describe("the plugin", function () {
 
                 expect(openmct.telemetry.request).toHaveBeenCalledTimes(2);
 
+            });
+
+            describe('limits', () => {
+
+                it('lines are not displayed by default', () => {
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                    expect(limitEl.length).toBe(0);
+                });
+
+                it('lines are displayed when configuration is set to true', (done) => {
+                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    const config = configStore.get(configId);
+                    config.yAxis.set('displayRange', {
+                        min: 0,
+                        max: 4
+                    });
+                    config.series.models[0].set('limitLines', true);
+
+                    Vue.nextTick(() => {
+                        let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
+                        expect(limitEl.length).toBe(4);
+                        done();
+                    });
+                });
             });
         });
 
@@ -849,25 +891,6 @@ describe("the plugin", function () {
             it('renders color palette options', () => {
                 const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
                 expect(colorSwatch).toBeDefined();
-            });
-        });
-
-        describe('limits', () => {
-
-            it('lines are not displayed by default', () => {
-                let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                expect(limitEl.length).toBe(0);
-            });
-
-            xit('lines are displayed when configuration is set to true', (done) => {
-                config.series.models[0].set('limitLines', true);
-
-                Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
-                    expect(limitEl.length).toBe(4);
-                    done();
-                });
-
             });
         });
     });

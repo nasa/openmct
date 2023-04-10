@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -96,8 +96,13 @@ class CouchObjectProvider {
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
+            let isInTransaction = false;
 
-            if (observersForObject) {
+            if (this.openmct.objects.isTransactionActive()) {
+                isInTransaction = this.openmct.objects.transaction.getDirtyObject(objectIdentifier);
+            }
+
+            if (observersForObject && !isInTransaction) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectIdentifier);
                     if (this.isSynchronizedObject(updatedObject)) {
@@ -219,7 +224,12 @@ class CouchObjectProvider {
                 console.error(error.message);
                 throw new Error(`CouchDB Error - No response"`);
             } else {
-                console.error(error.message);
+                if (body?.model && isNotebookOrAnnotationType(body.model)) {
+                    // warn since we handle conflicts for notebooks
+                    console.warn(error.message);
+                } else {
+                    console.error(error.message);
+                }
 
                 throw error;
             }
@@ -234,7 +244,8 @@ class CouchObjectProvider {
     #handleResponseCode(status, json, fetchOptions) {
         this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
         if (status === CouchObjectProvider.HTTP_CONFLICT) {
-            throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+            const objectName = JSON.parse(fetchOptions.body)?.model?.name;
+            throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
         } else if (status >= CouchObjectProvider.HTTP_BAD_REQUEST) {
             if (!json.error || !json.reason) {
                 throw new Error(`CouchDB Error ${status}`);

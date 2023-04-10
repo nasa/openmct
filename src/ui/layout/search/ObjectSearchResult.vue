@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,7 +58,7 @@
 
 <script>
 import ObjectPath from '../../components/ObjectPath.vue';
-import objectPathToUrl from '../../../tools/url';
+import identifierToString from '../../../tools/url';
 import PreviewAction from '../../preview/PreviewAction';
 
 export default {
@@ -96,13 +96,14 @@ export default {
     },
     methods: {
         clickedResult(event) {
+            const { objectPath } = this.result;
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
-                this.preview();
+                this.preview(objectPath);
             } else {
-                const objectPath = this.result.originalPath;
-                let resultUrl = objectPathToUrl(this.openmct, objectPath);
-                // get rid of ROOT if extant
+                let resultUrl = identifierToString(this.openmct, objectPath);
+
+                // Remove the vestigial 'ROOT' identifier from url if it exists
                 if (resultUrl.includes('/ROOT')) {
                     resultUrl = resultUrl.split('/ROOT').join('');
                 }
@@ -113,15 +114,14 @@ export default {
         togglePreviewState(previewState) {
             this.$emit('preview-changed', previewState);
         },
-        preview() {
-            const objectPath = this.result.originalPath;
+        preview(objectPath) {
             if (this.previewAction.appliesTo(objectPath)) {
                 this.previewAction.invoke(objectPath);
             }
         },
         dragStart(event) {
             const navigatedObject = this.openmct.router.path[0];
-            const objectPath = this.result.originalPath;
+            const { objectPath } = this.result;
             const serializedPath = JSON.stringify(objectPath);
             const keyString = this.openmct.objects.makeKeyString(this.result.identifier);
             if (this.openmct.composition.checkPolicy(navigatedObject, this.result)) {

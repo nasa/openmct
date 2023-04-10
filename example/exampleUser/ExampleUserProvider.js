@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -65,7 +65,7 @@ export default class ExampleUserProvider extends EventEmitter {
         this.user = undefined;
         this.loggedIn = false;
         this.autoLoginUser = undefined;
-        this.status = STATUSES[1];
+        this.status = STATUSES[0];
         this.pollQuestion = undefined;
         this.defaultStatusRole = defaultStatusRole;
 
@@ -124,6 +124,7 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     setStatusForRole(role, status) {
+        status.timestamp = Date.now();
         this.status = status;
         this.emit('statusChange', {
             role,
@@ -133,14 +134,23 @@ export default class ExampleUserProvider extends EventEmitter {
         return true;
     }
 
-    getPollQuestion() {
-        return Promise.resolve({
-            question: 'Set "GO" if your position is ready for a boarding action on the Klingon cruiser',
-            timestamp: Date.now()
-        });
+    // eslint-disable-next-line require-await
+    async getPollQuestion() {
+        if (this.pollQuestion) {
+            return this.pollQuestion;
+        } else {
+            return undefined;
+        }
     }
 
     setPollQuestion(pollQuestion) {
+        if (!pollQuestion) {
+            // If the poll question is undefined, set it to a blank string.
+            // This behavior better reflects how other telemetry systems
+            // deal with undefined poll questions.
+            pollQuestion = '';
+        }
+
         this.pollQuestion = {
             question: pollQuestion,
             timestamp: Date.now()

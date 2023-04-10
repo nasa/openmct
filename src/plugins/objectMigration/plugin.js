@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,8 +36,8 @@ export default function () {
         }
 
         let wrappedFunction = openmct.objects.get;
-        openmct.objects.get = function migrate(identifier) {
-            return wrappedFunction.apply(openmct.objects, [identifier])
+        openmct.objects.get = function migrate() {
+            return wrappedFunction.apply(openmct.objects, [...arguments])
                 .then(function (object) {
                     if (needsMigration(object)) {
                         migrateObject(object)

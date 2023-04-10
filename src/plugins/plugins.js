@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -82,7 +82,8 @@ define([
     './gauge/GaugePlugin',
     './timelist/plugin',
     './faultManagement/FaultManagementPlugin',
-    '../../example/exampleTags/plugin'
+    '../../example/exampleTags/plugin',
+    './inspectorViews/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -145,7 +146,8 @@ define([
     GaugePlugin,
     TimeList,
     FaultManagementPlugin,
-    ExampleTags
+    ExampleTags,
+    InspectorViews
 ) {
     const plugins = {};
 
@@ -155,7 +157,7 @@ define([
     plugins.example.ExampleFaultSource = ExampleFaultSource.default;
     plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.ExampleTags = ExampleTags.default;
-    plugins.example.Generator = () => GeneratorPlugin;
+    plugins.example.Generator = () => GeneratorPlugin.default;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
@@ -229,6 +231,7 @@ define([
     plugins.OperatorStatus = OperatorStatus.default;
     plugins.Gauge = GaugePlugin.default;
     plugins.Timelist = TimeList.default;
+    plugins.InspectorViews = InspectorViews.default;
 
     return plugins;
 });

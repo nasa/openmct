@@ -8,7 +8,7 @@ This document is designed to capture on the What, Why, and How's of writing and 
 
 1. [Getting Started](#getting-started)
 2. [Types of Testing](#types-of-e2e-testing)
-3. [Architecture](#architecture)
+3. [Architecture](#test-architecture-and-ci)
 
 ## Getting Started
 
@@ -89,17 +89,37 @@ Read more about [Playwright Snapshots](https://playwright.dev/docs/test-snapshot
 #### Open MCT's implementation
 
 - Our Snapshot tests receive a `@snapshot` tag.
-- Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally.
+- Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally. To do a valid comparison locally:
 
 ```sh
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot
 ```
 
-### (WIP) Updating Snapshots
+### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to see if the failure is an acceptable change or
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+
+To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
+
+MacOS
+
+```
+npm run test:e2e:updatesnapshots
+```
+
+Linux/CI
+
+```sh
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
+npm install
+npm run test:e2e:updatesnapshots
+```
 
 ## Performance Testing
 
@@ -276,13 +296,35 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
   - Leverage `await page.goto('./', { waitUntil: 'networkidle' });`
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
-### How to write a great test (TODO)
+### How to write a great test (WIP)
+
+- Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
+- If you create an object outside of using the `createDomainObjectWithDefaults` App Action, make sure to fill in the 'Notes' section of your object with `page.testNotes`:
+
+  ```js
+  // Fill the "Notes" section with information about the
+  // currently running test and its project.
+  const { testNotes } = page;
+  const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+  await notesInput.fill(testNotes);
+  ```
 
 #### How to write a great visual test (TODO)
+
+#### How to write a great network test
+
+- Where possible, it is best to mock out third-party network activity to ensure we are testing application behavior of Open MCT.
+- It is best to be as specific as possible about the expected network request/response structures in creating your mocks.
+- Make sure to only mock requests which are relevant to the specific behavior being tested.
+- Where possible, network requests and responses should be treated in an order-agnostic manner, as the order in which certain requests/responses happen is dynamic and subject to change.
+
+Some examples of mocking network responses in regards to CouchDB can be found in our [couchdb.e2e.spec.js](./tests/functional/couchdb.e2e.spec.js) test file.
 
 ### Best Practices
 
 For now, our best practices exist as self-tested, living documentation in our [exampleTemplate.e2e.spec.js](./tests/framework/exampleTemplate.e2e.spec.js) file.
+
+For best practices with regards to mocking network responses, see our [couchdb.e2e.spec.js](./tests/functional/couchdb.e2e.spec.js) file.
 
 ### Tips & Tricks (TODO)
 
@@ -378,3 +420,23 @@ A single e2e test in Open MCT is extended to run:
 - Tests won't start because 'Error: <http://localhost:8080/># is already used...'
 This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
 ```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```
+
+### Upgrading Playwright
+
+In order to upgrade from one version of Playwright to another, the version should be updated in several places in both `openmct` and `openmct-yamcs` repos. An easy way to identify these locations is to search for the current version in all files and find/replace.
+
+For reference, all of the locations where the version should be updated are listed below:
+
+#### **In `openmct`:**
+
+- `package.json`
+  - Both packages `@playwright/test` and `playwright-core` should be updated to the same target version.
+- `.circleci/config.yml`
+- `.github/workflows/e2e-couchdb.yml`
+- `.github/workflows/e2e-pr.yml`
+
+#### **In `openmct-yamcs`:**
+
+- `package.json`
+  - `@playwright/test` should be updated to the target version.
+- `.github/workflows/yamcs-quickstart-e2e.yml`

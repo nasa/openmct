@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,6 +25,7 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Legend color in sync with plot color', () => {
@@ -33,6 +34,8 @@ test.describe('Legend color in sync with plot color', () => {
 
         // navigate to plot series color palette
         await page.click('.l-browse-bar__actions__edit');
+        await selectInspectorTab(page, 'Config');
+
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
@@ -68,10 +71,10 @@ async function makeOverlayPlot(page) {
     // create overlay plot
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Overlay Plot")').click();
+    await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);
@@ -86,13 +89,13 @@ async function makeOverlayPlot(page) {
     // create a sinewave generator
 
     await page.locator('button.c-create-button').click();
-    await page.locator('li:has-text("Sine Wave Generator")').click();
+    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
     // Click OK to make generator
 
     await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle'}),
-        page.locator('text=OK').click(),
+        page.locator('button:has-text("OK")').click(),
         //Wait for Save Banner to appear
         page.waitForSelector('.c-message-banner__message')
     ]);

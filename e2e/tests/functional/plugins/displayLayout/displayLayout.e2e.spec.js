@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,8 @@
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
 
-test.describe('Testing Display Layout @unstable', () => {
+test.describe('Display Layout', () => {
+    /** @type {import('../../../../appActions').CreatedObjectInfo} */
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'networkidle' });
@@ -31,8 +32,7 @@ test.describe('Testing Display Layout @unstable', () => {
 
         // Create Sine Wave Generator
         sineWaveObject = await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
+            type: 'Sine Wave Generator'
         });
     });
     test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
@@ -47,7 +47,14 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -55,12 +62,12 @@ test.describe('Testing Display Layout @unstable', () => {
         // On getting data, check if the value found in the  Display Layout is the most recent value
         // from the Sine Wave Generator
         const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-        const formattedTelemetryValue = await getTelemValuePromise;
+        const formattedTelemetryValue = getTelemValuePromise;
         const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
         const displayLayoutValue = await displayLayoutValuePromise.textContent();
         const trimmedDisplayValue = displayLayoutValue.trim();
 
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+        expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
     test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
         // Create a Display Layout
@@ -74,7 +81,14 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -86,12 +100,12 @@ test.describe('Testing Display Layout @unstable', () => {
 
         // On getting data, check if the value found in the Display Layout is the most recent value
         // from the Sine Wave Generator
-        const formattedTelemetryValue = await getTelemValuePromise;
+        const formattedTelemetryValue = getTelemValuePromise;
         const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
         const displayLayoutValue = await displayLayoutValuePromise.textContent();
         const trimmedDisplayValue = displayLayoutValue.trim();
 
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+        expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
     });
     test('items in a display layout can be removed with object tree context menu when viewing the display layout', async ({ page }) => {
         // Create a Display Layout
@@ -105,7 +119,14 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -115,19 +136,22 @@ test.describe('Testing Display Layout @unstable', () => {
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
         // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').first().click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        await sineWaveGeneratorTreeItem.nth(1).click({ button: 'right' });
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('button:has-text("OK")').click();
 
         // delete
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
     test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/3117'
+        });
         // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
+        const displayLayout = await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout'
         });
         // Edit Display Layout
         await page.locator('[title="Edit"]').click();
@@ -135,7 +159,14 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the 'My Items' folder in the left tree
         await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
         // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
+        const treePane = page.getByRole('tree', {
+            name: 'Main Tree'
+        });
+        const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+            name: new RegExp(sineWaveObject.name)
+        });
+        const layoutGridHolder = page.locator('.l-layout__grid-holder');
+        await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
         await page.locator('button[title="Save"]').click();
         await page.locator('text=Save and Finish Editing').click();
 
@@ -144,18 +175,18 @@ test.describe('Testing Display Layout @unstable', () => {
         // Expand the Display Layout so we can remove the sine wave generator
         await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
 
-        // Click the original Sine Wave Generator to navigate away from the Display Layout
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').click();
+        // Go to the original Sine Wave Generator to navigate away from the Display Layout
+        await page.goto(sineWaveObject.url);
 
         // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
+        await sineWaveGeneratorTreeItem.first().click({ button: 'right' });
+        await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+        await page.locator('button:has-text("OK")').click();
 
         // navigate back to the display layout to confirm it has been removed
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Display Layout")').click();
+        await page.goto(displayLayout.url);
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+        expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
     });
 });
 

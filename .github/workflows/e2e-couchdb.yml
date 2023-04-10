@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
-      - run: npx playwright@1.25.2 install
+          node-version: 'lts/gallium'
+      - run: npx playwright@1.29.0 install
       - run: npm install
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run : |
@@ -26,8 +26,9 @@ jobs:
         run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
       - run: npm run test:e2e:couchdb
       - run: npm run cov:e2e:report || true
-      - shell: bash
-        env:
+      - name: Run CouchDB Tests and publish to deploysentinel and Codecov.io
+        env: 
+          DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }} 
           SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
         run: |
           npm run cov:e2e:full:publish

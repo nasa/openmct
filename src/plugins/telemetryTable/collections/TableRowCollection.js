@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -61,28 +61,37 @@ define(
                 this.emit('remove', removed);
             }
 
-            addRows(rows, type = 'add') {
-                if (this.sortOptions === undefined) {
-                    throw 'Please specify sort options';
-                }
-
-                let isFilterTriggeredReset = type === 'filter';
-                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-                let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
-
-                // if type is filter, then it's a reset of all rows,
-                // need to wipe current rows
-                if (isFilterTriggeredReset) {
-                    this.rows = [];
-                }
+            addRows(rows) {
+                let rowsToAdd = this.filterRows(rows);
 
                 this.sortAndMergeRows(rowsToAdd);
 
                 // we emit filter no matter what to trigger
                 // an update of visible rows
-                if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
-                    this.emit(type, rowsToAdd);
+                if (rowsToAdd.length > 0) {
+                    this.emit('add', rowsToAdd);
                 }
+            }
+
+            clearRowsFromTableAndFilter(rows) {
+
+                let rowsToAdd = this.filterRows(rows);
+                // Reset of all rows, need to wipe current rows
+                this.rows = [];
+
+                this.sortAndMergeRows(rowsToAdd);
+
+                // We emit filter and update of visible rows
+                this.emit('filter', rowsToAdd);
+            }
+
+            filterRows(rows) {
+
+                if (Object.keys(this.columnFilters).length > 0) {
+                    return rows.filter(this.matchesFilters, this);
+                }
+
+                return rows;
             }
 
             sortAndMergeRows(rows) {

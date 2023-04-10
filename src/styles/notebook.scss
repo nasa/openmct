@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -137,7 +137,7 @@
         }
 
         &:hover {
-            background: rgba($colorKey, 0.2);
+            background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
             //color: $colorBodyFg;
         }
 
@@ -284,6 +284,14 @@
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
+    &:hover {
+        background: rgba($colorBodyFg, 0.2);
+    }
+
+    &.is-selected {
+        background: rgba($colorKey, 0.3);
+    }
+
     &__text,
     &__local-controls {
         padding-top: $p;
@@ -295,9 +303,23 @@
         opacity: 0.7;
     }
 
-    &__time-and-creator,
+    &__time-and-creator-and-delete,
     &__input {
         padding: $p;
+    }
+
+    &__input{
+        word-break: break-word;
+    }
+    &__time-and-creator-and-delete{
+        display: flex;
+        align-items: center;
+
+        > * + *{
+            float: right;
+            margin-left: auto;
+        }
+
     }
 
     &__creator [class*='icon'] {
@@ -307,6 +329,7 @@
     &__time-and-content {
         display: block;
         flex: 1 1 auto;
+        overflow: visible;
 
         > * + * {
             margin-top: $interiorMarginSm;
@@ -324,9 +347,10 @@
     }
 
     &__content {
-        display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+        margin-right: $interiorMarginSm;
+        margin-top: $interiorMargin;
 
         > [class*="__"] + [class*="__"] {
             margin-top: $interiorMarginSm;
@@ -350,7 +374,8 @@
         @include inlineInput;
         padding-left: $p;
         padding-right: $p;
-
+        overflow: unset;
+        margin-bottom: $interiorMargin;
         @include hover {
             &:not(:focus, .locked) {
                 background: rgba($colorBodyFg, 0.1);
@@ -362,6 +387,17 @@
         }
 
         white-space: pre-wrap;
+    }
+
+    &__save-button {
+        display: flex;
+        justify-content: flex-end;
+
+        .c-button {
+            $lrP: 15px;
+            padding-left: $lrP;
+            padding-right: $lrP;
+        }
     }
 
     &__section-and-page {
@@ -386,12 +422,17 @@
             opacity: 0.7;
         }
     }
+
+    &__remove{
+        float: right;
+    }
 }
+
 
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 30px;
+    $d: 40px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -409,21 +450,24 @@
     // LEGACY,
     @include snapThumb();
 }
+.c-ne__embeds-wrapper{
+    max-height: 75px;
+    padding-left: $interiorMargin;
+    padding-top: $interiorMargin;
+    display: flex;
+}
 
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
-
-    [class*="__"] + [class*="__"] {
-        margin-left: $interiorMargin;
-    }
+    border: 1px solid $colorInteriorBorder;
 
     &__info {
         display: flex;
         flex-direction: column;
-
+        margin-left: $interiorMargin;
         a {
             color: $colorKey;
         }
@@ -437,9 +481,10 @@
     }
 
     &__link {
+        flex: 1 1 auto;
         &:before {
             display: block;
-            font-size: 0.85em;
+            font-size: 1em;
             margin-right: $interiorMarginSm;
         }
     }
@@ -452,6 +497,24 @@
     &__snap-thumb {
         @include snapThumb();
     }
+    &__actions{
+        margin: $interiorMarginSm;
+    }
+    &__actions-menu {
+        width: 55vh;
+        max-width: 500px;
+        height: 130px;
+        z-index: 70;
+        [class*="__icon"] {
+            filter: $colorKeyFilter;
+            margin: 0%;
+            height: 4vh;
+        }
+        [class*="__item-description"] {
+            min-width: 200px;
+        }
+    }
+
 }
 
 /****************************** SNAPSHOTTING */
@@ -692,6 +755,7 @@ body.mobile {
     .c-notebook__entry {
         [class*="local-controls"] {
             display: none;
+            height: fit-content;
         }
     }
 

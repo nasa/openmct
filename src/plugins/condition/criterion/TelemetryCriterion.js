@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,8 +21,10 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+import StalenessUtils from '@/utils/staleness';
+import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
 import { OPERATIONS, getOperatorText } from '../utils/operations';
-import { subscribeForStaleness } from "../utils/time";
+import { checkIfOld } from "../utils/time";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -44,7 +46,8 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.result = undefined;
-        this.stalenessSubscription = undefined;
+        this.ageCheck = undefined;
+        this.unsubscribeFromStaleness = undefined;
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
@@ -57,8 +60,13 @@ export default class TelemetryCriterion extends EventEmitter {
         }
 
         this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData();
+
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData();
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness();
         }
     }
 
@@ -66,25 +74,52 @@ export default class TelemetryCriterion extends EventEmitter {
         return this.telemetryObjectIdAsString && (this.telemetryObjectIdAsString === id);
     }
 
-    subscribeForStaleData() {
-        if (this.stalenessSubscription) {
-            this.stalenessSubscription.clear();
+    checkForOldData() {
+        if (this.ageCheck) {
+            this.ageCheck.clear();
         }
 
-        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0] * 1000);
+        this.ageCheck = checkIfOld(this.handleOldTelemetry.bind(this), this.input[0] * 1000);
     }
 
-    handleStaleTelemetry(data) {
+    handleOldTelemetry(data) {
         this.result = true;
-        this.emitEvent('telemetryIsStale', data);
+        this.emitEvent('telemetryIsOld', data);
+    }
+
+    subscribeToStaleness() {
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
+        }
+
+        if (!this.stalenessUtils) {
+            this.stalenessUtils = new StalenessUtils(this.openmct, this.telemetryObject);
+        }
+
+        this.openmct.telemetry.isStale(this.telemetryObject).then(this.handleStaleTelemetry.bind(this));
+        this.unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(
+            this.telemetryObject,
+            this.handleStaleTelemetry.bind(this)
+        );
+    }
+
+    handleStaleTelemetry(stalenessResponse) {
+        if (stalenessResponse !== undefined && this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+            this.result = stalenessResponse.isStale;
+            this.emitEvent('telemetryStaleness');
+        }
     }
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
+    isOldCheck() {
+        return this.metadata && this.metadata === 'dataReceived' && this.operation === IS_OLD_KEY;
+    }
+
     isStalenessCheck() {
-        return this.metadata && this.metadata === 'dataReceived';
+        return this.metadata && this.metadata === 'dataReceived' && this.operation === IS_STALE_KEY;
     }
 
     isValidInput() {
@@ -93,8 +128,13 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
-        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
-            this.subscribeForStaleData();
+
+        if (this.isValid() && this.isOldCheck() && this.isValidInput()) {
+            this.checkForOldData();
+        }
+
+        if (this.isValid() && this.isStalenessCheck()) {
+            this.subscribeToStaleness();
         }
     }
 
@@ -130,14 +170,17 @@ export default class TelemetryCriterion extends EventEmitter {
 
     updateResult(data) {
         const validatedData = this.isValid() ? data : {};
-        if (this.isStalenessCheck()) {
-            if (this.stalenessSubscription) {
-                this.stalenessSubscription.update(validatedData);
-            }
 
-            this.result = false;
-        } else {
-            this.result = this.computeResult(validatedData);
+        if (!this.isStalenessCheck()) {
+            if (this.isOldCheck()) {
+                if (this.ageCheck) {
+                    this.ageCheck.update(validatedData);
+                }
+
+                this.result = false;
+            } else {
+                this.result = this.computeResult(validatedData);
+            }
         }
     }
 
@@ -268,8 +311,17 @@ export default class TelemetryCriterion extends EventEmitter {
     destroy() {
         delete this.telemetryObject;
         delete this.telemetryObjectIdAsString;
-        if (this.stalenessSubscription) {
-            delete this.stalenessSubscription;
+
+        if (this.ageCheck) {
+            delete this.ageCheck;
+        }
+
+        if (this.stalenessUtils) {
+            this.stalenessUtils.destroy();
+        }
+
+        if (this.unsubscribeFromStaleness) {
+            this.unsubscribeFromStaleness();
         }
     }
 }

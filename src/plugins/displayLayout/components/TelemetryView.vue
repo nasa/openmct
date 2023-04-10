@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view u-style-receiver"
-        :class="[statusClass]"
+        :class="[itemClasses]"
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
@@ -73,6 +73,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
@@ -102,7 +103,7 @@ export default {
     components: {
         LayoutFrame
     },
-    mixins: [conditionalStylesMixin],
+    mixins: [conditionalStylesMixin, stalenessMixin],
     inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
@@ -137,8 +138,18 @@ export default {
         };
     },
     computed: {
-        statusClass() {
-            return (this.status) ? `is-status--${this.status}` : '';
+        itemClasses() {
+            let classes = [];
+
+            if (this.status) {
+                classes.push(`is-status--${this.status}`);
+            }
+
+            if (this.isStale) {
+                classes.push('is-stale');
+            }
+
+            return classes;
         },
         showLabel() {
             let displayMode = this.item.displayMode;
@@ -182,7 +193,7 @@ export default {
         },
         telemetryValue() {
             if (!this.datum) {
-                return;
+                return '---';
             }
 
             return this.formatter && this.formatter.format(this.datum);
@@ -310,6 +321,7 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
+            this.subscribeToStaleness(this.domainObject);
         },
         updateTelemetryFormat(format) {
             this.customStringformatter.setFormat(format);

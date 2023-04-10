@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,7 @@
 
 import PropertiesAction from './PropertiesAction';
 import CreateWizard from './CreateWizard';
+import _ from 'lodash';
 
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
@@ -52,7 +53,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    _onSave(changes) {
+    async _onSave(changes) {
         if (!this.openmct.objects.isTransactionActive()) {
             this.openmct.objects.startTransaction();
         }
@@ -61,23 +62,14 @@ export default class EditPropertiesAction extends PropertiesAction {
             Object.entries(changes).forEach(([key, value]) => {
                 const existingValue = this.domainObject[key];
                 if (!(Array.isArray(existingValue)) && (typeof existingValue === 'object')) {
-                    value = {
-                        ...existingValue,
-                        ...value
-                    };
+                    value = _.merge(existingValue, value);
                 }
 
                 this.openmct.objects.mutate(this.domainObject, key, value);
             });
             const transaction = this.openmct.objects.getActiveTransaction();
-
-            return transaction.commit()
-                .catch(error => {
-                    throw error;
-                }).finally(() => {
-                    this.openmct.objects.endTransaction();
-                });
-
+            await transaction.commit();
+            this.openmct.objects.endTransaction();
         } catch (error) {
             this.openmct.notifications.error('Error saving objects');
             console.error(error);

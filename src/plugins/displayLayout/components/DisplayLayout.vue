@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -245,6 +245,9 @@ export default {
             });
             this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
         },
+        clearSelection() {
+            this.$el.click();
+        },
         watchDisplayResize() {
             const resizeObserver = new ResizeObserver(() => this.updateGrid());
 
@@ -478,7 +481,7 @@ export default {
             });
             _.pullAt(this.layoutItems, indices);
             this.mutate("configuration.items", this.layoutItems);
-            this.$el.click();
+            this.clearSelection();
         },
         untrackItem(item) {
             if (!item.identifier) {
@@ -504,15 +507,11 @@ export default {
             }
 
             if (!telemetryViewCount && !objectViewCount) {
-                this.removeFromComposition(keyString);
+                this.removeFromComposition(item);
             }
         },
-        removeFromComposition(keyString) {
-            let composition = this.domainObject.composition ? this.domainObject.composition : [];
-            composition = composition.filter(identifier => {
-                return this.openmct.objects.makeKeyString(identifier) !== keyString;
-            });
-            this.mutate("composition", composition);
+        removeFromComposition(item) {
+            this.composition.remove(item);
         },
         initializeItems() {
             this.telemetryViewMap = {};
@@ -529,7 +528,10 @@ export default {
                 }
             });
 
+            this.startTransaction();
             removedItems.forEach(this.removeFromConfiguration);
+
+            return this.endTransaction();
         },
         isItemAlreadyTracked(child) {
             let found = false;
@@ -590,7 +592,7 @@ export default {
                 }
             });
             this.mutate("configuration.items", layoutItems);
-            this.$el.click();
+            this.clearSelection();
         },
         orderItem(position, selectedItems) {
             let delta = ORDERS[position];
@@ -773,7 +775,7 @@ export default {
             this.$nextTick(() => {
                 this.openmct.objects.mutate(this.domainObject, "configuration.items", this.layoutItems);
                 this.openmct.objects.mutate(this.domainObject, "configuration.objectStyles", objectStyles);
-                this.$el.click(); //clear selection;
+                this.clearSelection();
 
                 newDomainObjectsArray.forEach(domainObject => {
                     this.composition.add(domainObject);
@@ -866,6 +868,20 @@ export default {
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        startTransaction() {
+            if (!this.openmct.objects.isTransactionActive()) {
+                this.transaction = this.openmct.objects.startTransaction();
+            }
+        },
+        async endTransaction() {
+            if (!this.transaction) {
+                return;
+            }
+
+            await this.transaction.commit();
+            this.openmct.objects.endTransaction();
+            this.transaction = null;
         },
         toggleGrid() {
             this.showGrid = !this.showGrid;

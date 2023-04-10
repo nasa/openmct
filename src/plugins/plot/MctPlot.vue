@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,35 +22,34 @@
 <template>
 <div
     v-if="loaded"
+    ref="plot"
     class="gl-plot"
-    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    :class="{ 'js-series-data-loaded' : seriesDataLoaded }"
 >
-    <plot-legend
-        v-if="!isNestedWithinAStackedPlot"
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis
-            v-if="seriesModels.length > 0"
-            :tick-width="tickWidth"
-            :single-series="seriesModels.length === 1"
-            :has-same-range-value="hasSameRangeValue"
-            :series-model="seriesModels[0]"
-            :style="{
-                left: (plotWidth - tickWidth) + 'px'
-            }"
-            @yKeyChanged="setYAxisKey"
-            @tickWidthChanged="onTickWidthChange"
-        />
+        <div
+            v-if="seriesModels.length"
+            class="u-contents"
+        >
+            <y-axis
+                v-for="(yAxis, index) in yAxesIds"
+                :id="yAxis.id"
+                :key="`yAxis-${yAxis.id}-${index}`"
+                :has-multiple-left-axes="hasMultipleLeftAxes"
+                :position="yAxis.id > 2 ? 'right' : 'left'"
+                :class="{'plot-yaxis-right': yAxis.id > 2}"
+                :tick-width="yAxis.tickWidth"
+                :used-tick-width="plotFirstLeftTickWidth"
+                :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
+                @yKeyChanged="setYAxisKey"
+                @plotYTickWidth="onYTickWidthChange"
+                @toggleAxisVisibility="toggleSeriesForYAxis"
+            />
+        </div>
         <div
             class="gl-plot-wrapper-display-area-and-x-axis"
-            :style="{
-                left: (plotWidth + 20) + 'px'
-            }"
+            :style="xAxisStyle"
         >
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
@@ -65,14 +64,16 @@
                     v-show="gridLines && !options.compact"
                     :axis-type="'xAxis'"
                     :position="'right'"
-                    @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks
+                    v-for="(yAxis, index) in yAxesIds"
                     v-show="gridLines"
+                    :key="`yAxis-gridlines-${index}`"
                     :axis-type="'yAxis'"
                     :position="'bottom'"
-                    @plotTickWidth="onTickWidthChange"
+                    :axis-id="yAxis.id"
+                    @plotTickWidth="onYTickWidthChange"
                 />
 
                 <div
@@ -85,7 +86,10 @@
                     <mct-chart
                         :rectangles="rectangles"
                         :highlights="highlights"
-                        :show-limit-line-labels="showLimitLineLabels"
+                        :annotated-points="annotatedPoints"
+                        :annotation-selections="annotationSelections"
+                        :hidden-y-axis-ids="hiddenYAxisIds"
+                        :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
                         @chartLoaded="initialize"
                     />
@@ -206,20 +210,20 @@ import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
+import KDBush from 'kdbush';
 import _ from "lodash";
 
 const OFFSET_THRESHOLD = 10;
+const AXES_PADDING = 20;
 
 export default {
     components: {
         XAxis,
         YAxis,
-        PlotLegend,
         MctTicks,
         MctChart
     },
@@ -245,10 +249,14 @@ export default {
                 return false;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         },
         limitLineLabels: {
@@ -268,8 +276,9 @@ export default {
         return {
             altPressed: false,
             highlights: [],
+            annotatedPoints: [],
+            annotationSelections: [],
             lockHighlightPoint: false,
-            tickWidth: 0,
             yKeyOptions: [],
             yAxisLabel: '',
             rectangles: [],
@@ -282,14 +291,35 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
-            hasSameRangeValue: true,
             cursorGuide: this.initCursorGuide,
-            gridLines: this.initGridLines
+            gridLines: this.initGridLines,
+            yAxes: [],
+            hiddenYAxisIds: [],
+            yAxisListWithRange: []
         };
     },
     computed: {
+        xAxisStyle() {
+            const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
+            const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            let style = {
+                left: `${this.plotLeftTickWidth + leftOffset}px`
+            };
+            const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
+
+            if (parentRightAxisWidth || rightAxis) {
+                style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
+            }
+
+            return style;
+        },
+        yAxesIds() {
+            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
+        },
+        hasMultipleLeftAxes() {
+            return this.parentYTickWidth.hasMultipleLeftAxes || this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
+        },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
 
@@ -298,31 +328,33 @@ export default {
         isFrozen() {
             return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
-        plotLegendPositionClass() {
-            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
+        annotationViewingAndEditingAllowed() {
+            // only allow annotations viewing/editing if plot is paused or in fixed time mode
+            return this.isFrozen || !this.isRealTime;
         },
-        plotLegendExpandedStateClass() {
-            if (this.isNestedWithinAStackedPlot) {
-                return '';
-            }
+        plotFirstLeftTickWidth() {
+            const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
 
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
+            return firstYAxis ? firstYAxis.tickWidth : 0;
         },
-        plotWidth() {
-            return this.plotTickWidth || this.tickWidth;
+        plotLeftTickWidth() {
+            let leftTickWidth = 0;
+            this.yAxes.forEach((yAxis) => {
+                if (yAxis.id > 2) {
+                    return;
+                }
+
+                leftTickWidth = leftTickWidth + yAxis.tickWidth;
+            });
+            const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
+
+            return parentLeftTickWidth || leftTickWidth;
+        },
+        seriesDataLoaded() {
+            return ((this.pending === 0) && this.loaded);
         }
     },
     watch: {
-        limitLineLabels: {
-            handler(limitLineLabels) {
-                this.legendHoverChanged(limitLineLabels);
-            },
-            deep: true
-        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -331,6 +363,7 @@ export default {
         }
     },
     mounted() {
+        this.yAxisIdVisibility = {};
         this.offsetWidth = 0;
 
         document.addEventListener('keydown', this.handleKeyDown);
@@ -342,11 +375,22 @@ export default {
 
         this.config = this.getConfig();
         this.legend = this.config.legend;
-
-        if (this.isNestedWithinAStackedPlot) {
-            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.$emit('configLoaded', configId);
+        this.yAxes = [{
+            id: this.config.yAxis.id,
+            seriesCount: 0,
+            tickWidth: 0
+        }];
+        if (this.config.additionalYAxes) {
+            this.yAxes = this.yAxes.concat(this.config.additionalYAxes.map(yAxis => {
+                return {
+                    id: yAxis.id,
+                    seriesCount: 0,
+                    tickWidth: 0
+                };
+            }));
         }
+
+        this.$emit('configLoaded', true);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -361,16 +405,120 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
+        this.$on('loadingComplete', this.loadAnnotations);
+        this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
+
+        this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
         this.loaded = true;
     },
     beforeDestroy() {
+        this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.body.removeEventListener('click', this.cancelSelection);
         this.destroy();
     },
     methods: {
+        async updateSelection(selection) {
+            const selectionContext = selection?.[0]?.[0]?.context?.item;
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
+
+            if (!validSelectionTypes.includes(selectionType)) {
+                // wrong type of selection
+                return;
+            }
+
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
+                return;
+            }
+
+            await this.waitForAxesToLoad();
+            const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                this.showAnnotationsFromSearchResults(selectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        cancelSelection(event) {
+            if (this.$refs?.plot) {
+                const clickedInsidePlot = this.$refs.plot.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+                    this.rectangles = [];
+                    this.annotationSelections = [];
+                    this.selectPlot();
+                    document.body.removeEventListener('click', this.cancelSelection);
+                }
+            }
+        },
+        waitForAxesToLoad() {
+            return new Promise(resolve => {
+                // When there is no plot data, the ranges can be undefined
+                // in which case we should not perform selection.
+                const currentXaxis = this.config.xAxis.get('displayRange');
+                const currentYaxis = this.config.yAxis.get('displayRange');
+                if (!currentXaxis || !currentYaxis) {
+                    this.$once('loadingComplete', () => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        },
+        showAnnotationsFromSearchResults(selectedAnnotations) {
+            if (selectedAnnotations?.length) {
+                // pause the plot if we haven't already so we can actually display
+                // the annotations
+                this.freeze();
+                // just use first annotation
+                const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+                let minX = Number.MAX_SAFE_INTEGER;
+                let minY = Number.MAX_SAFE_INTEGER;
+                let maxX = Number.MIN_SAFE_INTEGER;
+                let maxY = Number.MIN_SAFE_INTEGER;
+                boundingBoxes.forEach(boundingBox => {
+                    if (boundingBox.minX < minX) {
+                        minX = boundingBox.minX;
+                    }
+
+                    if (boundingBox.maxX > maxX) {
+                        maxX = boundingBox.maxX;
+                    }
+
+                    if (boundingBox.maxY > maxY) {
+                        maxY = boundingBox.maxY;
+                    }
+
+                    if (boundingBox.minY < minY) {
+                        minY = boundingBox.minY;
+                    }
+                });
+
+                this.config.xAxis.set('displayRange', {
+                    min: minX,
+                    max: maxX
+                });
+                this.config.yAxis.set('displayRange', {
+                    min: minY,
+                    max: maxY
+                });
+                //Zoom out just a touch so that the highlighted section for annotations doesn't take over the whole view - which is not a nice look.
+                this.zoom('out', 0.2);
+            }
+        },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
                 this.altPressed = true;
@@ -419,35 +567,65 @@ export default {
             return config;
         },
         addSeries(series, index) {
+            const yAxisId = series.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, 1);
             this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
             this.listenTo(series, 'change:yKey', () => {
-                this.checkSameRangeValue();
                 this.loadSeriesData(series);
             }, this);
 
             this.listenTo(series, 'change:interpolate', () => {
                 this.loadSeriesData(series);
             }, this);
+            this.listenTo(series, 'change:yAxisId', this.updateTicksAndSeriesForYAxis, this);
 
-            this.checkSameRangeValue();
             this.loadSeriesData(series);
         },
 
-        checkSameRangeValue() {
-            this.hasSameRangeValue = this.seriesModels.every((model) => {
-                return model.get('yKey') === this.seriesModels[0].get('yKey');
-            });
-        },
-
         removeSeries(plotSeries, index) {
+            const yAxisId = plotSeries.get('yAxisId');
+            this.updateAxisUsageCount(yAxisId, -1);
             this.seriesModels.splice(index, 1);
-            this.checkSameRangeValue();
             this.stopListening(plotSeries);
         },
 
+        updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
+            this.updateAxisUsageCount(oldAxisId, -1);
+            this.updateAxisUsageCount(newAxisId, 1);
+
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === oldAxisId);
+            if (foundYAxis.seriesCount === 0) {
+                this.onYTickWidthChange({
+                    width: foundYAxis.tickWidth,
+                    yAxisId: foundYAxis.id
+                });
+            }
+        },
+
+        updateAxisUsageCount(yAxisId, updateCountBy) {
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === yAxisId);
+            if (foundYAxis) {
+                foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
+            }
+        },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
+
+            const rawAnnotationsForPlot = [];
+            await Promise.all(this.seriesModels.map(async (seriesModel) => {
+                const seriesAnnotations = await this.openmct.annotation.getAnnotations(seriesModel.model.identifier);
+                rawAnnotationsForPlot.push(...seriesAnnotations);
+            }));
+            if (rawAnnotationsForPlot) {
+                this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
+            }
+        },
         loadSeriesData(series) {
             //this check ensures that duplicate requests don't happen on load
             if (!this.timeContext) {
@@ -471,8 +649,7 @@ export default {
                 end: bounds.end
             };
 
-            series.load(options)
-                .then(this.stopLoading.bind(this));
+            series.load(options).then(this.stopLoading.bind(this));
         },
 
         loadMoreData(range, purge) {
@@ -522,6 +699,9 @@ export default {
         stopLoading() {
             this.pending -= 1;
             this.updateLoading();
+            if (this.pending === 0) {
+                this.$emit('loadingComplete');
+            }
         },
 
         updateLoading() {
@@ -539,9 +719,15 @@ export default {
                 series.reset();
             });
         },
+        shareCommonParent(domainObjectToFind) {
+            return false;
+        },
+        compositionPathContainsId(domainObjectToFind) {
+            if (!domainObjectToFind.composition) {
+                return false;
+            }
 
-        compositionPathContainsId(domainObjectToClear) {
-            return domainObjectToClear.composition.some((compositionIdentifier) => {
+            return domainObjectToFind.composition.some((compositionIdentifier) => {
                 return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
             });
         },
@@ -664,10 +850,91 @@ export default {
                 this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
                 this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
                 this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'click', this.selectNearbyAnnotations, this);
                 this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
             }
         },
 
+        marqueeAnnotations(annotationsToSelect) {
+            annotationsToSelect.forEach(annotationToSelect => {
+                Object.keys(annotationToSelect.targets).forEach(targetKeyString => {
+                    const target = annotationToSelect.targets[targetKeyString];
+                    const series = this.seriesModels.find(seriesModel => seriesModel.keyString === targetKeyString);
+                    if (!series) {
+                        return;
+                    }
+
+                    const yAxisId = series.get('yAxisId');
+                    const rectangle = {
+                        start: {
+                            x: target.minX,
+                            y: [target.minY],
+                            yAxisIds: [yAxisId]
+                        },
+                        end: {
+                            x: target.maxX,
+                            y: [target.maxY],
+                            yAxisIds: [yAxisId]
+                        },
+                        color: [1, 1, 1, 0.10]
+                    };
+                    this.rectangles.push(rectangle);
+                });
+            });
+        },
+        gatherNearbyAnnotations() {
+            const nearbyAnnotations = [];
+            this.config.series.models.forEach(series => {
+                if (series?.closest?.annotationsById) {
+                    Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
+                        const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
+                            return _.isEqual(annotation.targets, closeAnnotation.targets)
+                            && _.isEqual(annotation.tags, closeAnnotation.tags);
+                        });
+                        if (!addedAnnotationAlready) {
+                            nearbyAnnotations.push(closeAnnotation);
+                        }
+                    });
+                }
+            });
+
+            return nearbyAnnotations;
+        },
+
+        prepareExistingAnnotationSelection(annotations) {
+            const targetDomainObjects = {};
+            this.config.series.models.forEach(series => {
+                targetDomainObjects[series.keyString] = series.domainObject;
+            });
+
+            const targetDetails = {};
+            const uniqueBoundsAnnotations = [];
+            annotations.forEach(annotation => {
+                Object.entries(annotation.targets).forEach(([key, value]) => {
+                    targetDetails[key] = value;
+                });
+
+                const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some(existingAnnotation => {
+                    const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
+                    const newBoundingBox = Object.values(annotation.targets)[0];
+
+                    return (existingBoundingBox.minX === newBoundingBox.minX
+                        && existingBoundingBox.minY === newBoundingBox.minY
+                        && existingBoundingBox.maxX === newBoundingBox.maxX
+                        && existingBoundingBox.maxY === newBoundingBox.maxY);
+
+                });
+                if (!boundingBoxAlreadyAdded) {
+                    uniqueBoundsAnnotations.push(annotation);
+                }
+            });
+            this.marqueeAnnotations(uniqueBoundsAnnotations);
+
+            return {
+                targetDomainObjects,
+                targetDetails
+            };
+        },
         initialize() {
             this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
@@ -675,7 +942,13 @@ export default {
 
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
-            this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
+            this.yScale = [];
+            this.yAxisListWithRange.forEach((yAxis) => {
+                this.yScale.push({
+                    id: yAxis.id,
+                    scale: new LinearScale(yAxis.get('displayRange'))
+                });
+            });
 
             this.pan = undefined;
             this.marquee = undefined;
@@ -691,7 +964,9 @@ export default {
             this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
             this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
-            this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange.bind(this, yAxis.id), this);
+            });
         },
 
         onXAxisChange(displayBounds) {
@@ -700,26 +975,60 @@ export default {
             }
         },
 
-        onYAxisChange(displayBounds) {
+        onYAxisChange(yAxisId, displayBounds) {
             if (displayBounds) {
-                this.yScale.domain(displayBounds);
+                this.yScale.filter((yAxis) => yAxis.id === yAxisId).forEach((yAxis) => {
+                    yAxis.scale.domain(displayBounds);
+                });
             }
         },
 
-        onTickWidthChange(width, fromDifferentObject) {
-            if (fromDifferentObject) {
+        /**
+       * Aggregate widths of all left and right y axes and send them up to any parent plots
+       * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+       * @param fromDifferentObject
+       */
+        onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
+            const {width, yAxisId} = tickWidthWithYAxisId;
+            if (yAxisId) {
+                const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
+                if (fromDifferentObject) {
                 // Always accept tick width if it comes from a different object.
-                this.tickWidth = width;
-            } else {
+                    this.yAxes[index].tickWidth = width;
+                } else {
                 // Otherwise, only accept tick with if it's larger.
-                const newWidth = Math.max(width, this.tickWidth);
-                if (newWidth !== this.tickWidth) {
-                    this.tickWidth = newWidth;
+                    const newWidth = Math.max(width, this.yAxes[index].tickWidth);
+                    if (width !== this.yAxes[index].tickWidth) {
+                        this.yAxes[index].tickWidth = newWidth;
+                    }
                 }
+
+                const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                const leftTickWidth = this.yAxes.filter(yAxis => yAxis.id < 3).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                const rightTickWidth = this.yAxes.filter(yAxis => yAxis.id > 2).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                this.$emit('plotYTickWidth', {
+                    hasMultipleLeftAxes: this.hasMultipleLeftAxes,
+                    leftTickWidth,
+                    rightTickWidth
+                }, id);
+            }
+        },
+
+        toggleSeriesForYAxis({ id, visible}) {
+            //if toggling to visible, re-fetch the data for the series that are part of this y Axis
+            if (visible === true) {
+                this.config.series.models.filter(model => model.get('yAxisId') === id)
+                    .forEach(this.loadSeriesData, this);
             }
 
-            const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.$emit('plotTickWidth', this.tickWidth, id);
+            this.yAxisIdVisibility[id] = visible;
+            this.hiddenYAxisIds = Object.keys(this.yAxisIdVisibility).map(Number).filter(key => {
+                return this.yAxisIdVisibility[key] === false;
+            });
         },
 
         trackMousePosition(event) {
@@ -728,9 +1037,11 @@ export default {
                 min: 0,
                 max: this.chartElementBounds.width
             });
-            this.yScale.range({
-                min: 0,
-                max: this.chartElementBounds.height
+            this.yScale.forEach((yAxis) => {
+                yAxis.scale.range({
+                    min: 0,
+                    max: this.chartElementBounds.height
+                });
             });
 
             this.positionOverElement = {
@@ -739,9 +1050,13 @@ export default {
                     - (event.clientY - this.chartElementBounds.top)
             };
 
+            const yLocationForPositionOverPlot = this.yScale.map((yAxis) => yAxis.scale.invert(this.positionOverElement.y));
+            const yAxisIds = this.yScale.map((yAxis) => yAxis.id);
+            // Also store the order of yAxisIds so that we can associate the y location to the yAxis
             this.positionOverPlot = {
                 x: this.xScale.invert(this.positionOverElement.x),
-                y: this.yScale.invert(this.positionOverElement.y)
+                y: yLocationForPositionOverPlot,
+                yAxisIds
             };
 
             if (this.cursorGuide) {
@@ -752,6 +1067,12 @@ export default {
             this.updateMarquee();
             this.updatePan();
             event.preventDefault();
+        },
+
+        getYPositionForYAxis(object, yAxis) {
+            const index = object.yAxisIds.findIndex(yAxisId => yAxisId === yAxis.get('id'));
+
+            return object.y[index];
         },
 
         updateCrosshairs(event) {
@@ -775,8 +1096,6 @@ export default {
 
         highlightValues(point) {
             this.highlightPoint = point;
-            // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -807,7 +1126,7 @@ export default {
         },
 
         onMouseDown(event) {
-        // do not monitor drag events on browser context click
+            // do not monitor drag events on browser context click
             if (event.ctrlKey) {
                 return;
             }
@@ -819,10 +1138,14 @@ export default {
             const isFrozen = this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
             this.isFrozenOnMouseDown = isFrozen;
 
-            if (event.altKey) {
+            if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
+            } else if (event.altKey && event.shiftKey) {
+                this.freeze();
+
+                return this.startMarquee(event, true);
             } else {
-                return this.startMarquee(event);
+                return this.startMarquee(event, false);
             }
         },
 
@@ -830,7 +1153,7 @@ export default {
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
-            if (this.isMouseClick()) {
+            if (this.isMouseClick() && event.shiftKey) {
                 this.lockHighlightPoint = !this.lockHighlightPoint;
                 this.$emit('lockHighlightPoint', this.lockHighlightPoint);
             }
@@ -858,8 +1181,9 @@ export default {
             }
 
             const { start, end } = this.marquee;
+            const someYPositionOverPlot = start.y.some(y => y);
 
-            return start.x === end.x && start.y === end.y;
+            return start.x === end.x && someYPositionOverPlot;
         },
 
         updateMarquee() {
@@ -871,7 +1195,9 @@ export default {
             this.marquee.endPixels = this.positionOverElement;
         },
 
-        startMarquee(event) {
+        startMarquee(event, annotationEvent) {
+            this.rectangles = [];
+            this.annotationSelections = [];
             this.canvas.classList.remove('plot-drag');
             this.canvas.classList.add('plot-marquee');
 
@@ -883,14 +1209,224 @@ export default {
                     endPixels: this.positionOverElement,
                     start: this.positionOverPlot,
                     end: this.positionOverPlot,
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.25]
                 };
+                if (annotationEvent) {
+                    this.marquee.annotationEvent = true;
+                }
+
                 this.rectangles.push(this.marquee);
                 this.trackHistory();
             }
         },
+        selectNearbyAnnotations(event) {
+            // need to stop propagation right away to prevent selecting the plot itself
+            event.stopPropagation();
 
-        endMarquee() {
+            const nearbyAnnotations = this.gatherNearbyAnnotations();
+
+            if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+                //no annotations were found, but we are adding some now
+                return;
+            }
+
+            if (this.annotationViewingAndEditingAllowed && nearbyAnnotations.length) {
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectPlotAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
+
+                return;
+            }
+
+            //Fall through to here if either there is no new selection add tags or no existing annotations were retrieved
+            this.selectPlot();
+        },
+        selectPlot() {
+            // should show plot itself if we didn't find any annotations
+            const selection = this.createPathSelection();
+            this.openmct.selection.select(selection, true);
+        },
+        createPathSelection() {
+            let selection = [];
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject
+                }
+            });
+            this.path.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
+                    }
+                });
+            });
+
+            return selection;
+        },
+        selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
+            const annotationContext = {
+                type: 'clicked-on-plot-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
+            };
+            const selection = this.createPathSelection();
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
+                    ...annotationContext
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
+            this.openmct.selection.select(selection, true);
+
+            document.body.addEventListener('click', this.cancelSelection);
+        },
+        selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
+            let targetDomainObjects = {};
+            let targetDetails = {};
+            let annotations = [];
+            pointsInBox.forEach(pointInBox => {
+                if (pointInBox.length) {
+                    const seriesID = pointInBox[0].series.keyString;
+                    const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === pointInBox[0].series.get('yAxisId'));
+                    targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+
+                    targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
+                }
+            });
+            this.selectPlotAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations
+            });
+        },
+        findAnnotationPoints(rawAnnotations) {
+            const annotationsByPoints = [];
+            rawAnnotations.forEach(rawAnnotation => {
+                if (rawAnnotation.targets) {
+                    const targetValues = Object.values(rawAnnotation.targets);
+                    const targetKeys = Object.keys(rawAnnotation.targets);
+                    if (targetValues && targetValues.length) {
+                        let boundingBoxPerYAxis = [];
+                        targetValues.forEach((boundingBox, index) => {
+                            const seriesId = targetKeys[index];
+                            const series = this.seriesModels.find(seriesModel => seriesModel.keyString === seriesId);
+                            if (!series) {
+                                return;
+                            }
+
+                            boundingBoxPerYAxis.push({
+                                id: series.get('yAxisId'),
+                                boundingBox
+                            });
+                        });
+
+                        const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis, rawAnnotation);
+                        if (pointsInBox && pointsInBox.length) {
+                            annotationsByPoints.push(pointsInBox.flat());
+                        }
+                    }
+                }
+            });
+
+            return annotationsByPoints.flat();
+        },
+        getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
+            // load series models in KD-Trees
+            const seriesKDTrees = [];
+            this.seriesModels.forEach(seriesModel => {
+                const boundingBoxWithId = boundingBoxPerYAxis.find(box => box.id === seriesModel.get('yAxisId'));
+                const boundingBox = boundingBoxWithId?.boundingBox;
+                //Series was probably added after the last annotations were saved
+                if (!boundingBox) {
+                    return;
+                }
+
+                const seriesData = seriesModel.getSeriesData();
+                if (seriesData && seriesData.length) {
+                    const kdTree = new KDBush(seriesData,
+                        (point) => {
+                            return seriesModel.getXVal(point);
+                        },
+                        (point) => {
+                            return seriesModel.getYVal(point);
+                        }
+                    );
+                    const searchResults = [];
+                    const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
+                    rangeResults.forEach(id => {
+                        const seriesDatum = seriesData[id];
+                        if (seriesDatum) {
+                            const result = {
+                                series: seriesModel,
+                                point: seriesDatum
+                            };
+                            searchResults.push(result);
+                        }
+
+                        if (rawAnnotation) {
+                            if (!seriesDatum.annotationsById) {
+                                seriesDatum.annotationsById = {};
+                            }
+
+                            const annotationKeyString = this.openmct.objects.makeKeyString(rawAnnotation.identifier);
+                            seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
+                        }
+
+                    });
+                    if (searchResults.length) {
+                        seriesKDTrees.push(searchResults);
+                    }
+                }
+            });
+
+            return seriesKDTrees;
+        },
+        endAnnotationMarquee(event) {
+            const boundingBoxPerYAxis = [];
+            this.yAxisListWithRange.forEach((yAxis, yIndex) => {
+                const minX = Math.min(this.marquee.start.x, this.marquee.end.x);
+                const minY = Math.min(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const maxX = Math.max(this.marquee.start.x, this.marquee.end.x);
+                const maxY = Math.max(this.marquee.start.y[yIndex], this.marquee.end.y[yIndex]);
+                const boundingBox = {
+                    minX,
+                    minY,
+                    maxX,
+                    maxY
+                };
+                boundingBoxPerYAxis.push({
+                    id: yAxis.get('id'),
+                    boundingBox
+                });
+            });
+
+            const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis);
+            if (!pointsInBox) {
+                return;
+            }
+
+            this.annotationSelections = pointsInBox.flat();
+            this.selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event);
+        },
+        endZoomMarquee() {
             const startPixels = this.marquee.startPixels;
             const endPixels = this.marquee.endPixels;
             const marqueeDistance = Math.sqrt(
@@ -903,9 +1439,13 @@ export default {
                     min: Math.min(this.marquee.start.x, this.marquee.end.x),
                     max: Math.max(this.marquee.start.x, this.marquee.end.x)
                 });
-                this.config.yAxis.set('displayRange', {
-                    min: Math.min(this.marquee.start.y, this.marquee.end.y),
-                    max: Math.max(this.marquee.start.y, this.marquee.end.y)
+                this.yAxisListWithRange.forEach((yAxis) => {
+                    const yStartPosition = this.getYPositionForYAxis(this.marquee.start, yAxis);
+                    const yEndPosition = this.getYPositionForYAxis(this.marquee.end, yAxis);
+                    yAxis.set('displayRange', {
+                        min: Math.min(yStartPosition, yEndPosition),
+                        max: Math.max(yStartPosition, yEndPosition)
+                    });
                 });
                 this.userViewportChangeEnd();
             } else {
@@ -913,18 +1453,40 @@ export default {
                 // if marquee zoom doesn't occur.
                 this.plotHistory.pop();
             }
+        },
+        endMarquee(event) {
+            if (this.marquee.annotationEvent) {
+                this.endAnnotationMarquee(event);
+            } else {
+                this.endZoomMarquee();
+                this.rectangles = [];
+            }
 
-            this.rectangles = [];
-            this.marquee = undefined;
+            this.marquee = null;
+        },
+
+        onAnnotationChange(annotations) {
+            if (this.marquee) {
+                this.marquee.annotationEvent = false;
+                this.endMarquee();
+            }
+
+            this.loadAnnotations();
         },
 
         zoom(zoomDirection, zoomFactor) {
             const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
+
+            let doesYAxisHaveRange = false;
+            this.yAxisListWithRange.forEach((yAxisModel) => {
+                if (yAxisModel.get('displayRange')) {
+                    doesYAxisHaveRange = true;
+                }
+            });
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!currentXaxis || !currentYaxis) {
+            if (!currentXaxis || !doesYAxisHaveRange) {
                 return;
             }
 
@@ -932,7 +1494,6 @@ export default {
             this.trackHistory();
 
             const xAxisDist = (currentXaxis.max - currentXaxis.min) * zoomFactor;
-            const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
             if (zoomDirection === 'in') {
                 this.config.xAxis.set('displayRange', {
@@ -940,9 +1501,17 @@ export default {
                     max: currentXaxis.max - xAxisDist
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: currentYaxis.min + yAxisDist,
-                    max: currentYaxis.max - yAxisDist
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const currentYaxis = yAxisModel.get('displayRange');
+                    if (!currentYaxis) {
+                        return;
+                    }
+
+                    const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
+                    yAxisModel.set('displayRange', {
+                        min: currentYaxis.min + yAxisDist,
+                        max: currentYaxis.max - yAxisDist
+                    });
                 });
             } else if (zoomDirection === 'out') {
                 this.config.xAxis.set('displayRange', {
@@ -950,9 +1519,17 @@ export default {
                     max: currentXaxis.max + xAxisDist
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: currentYaxis.min - yAxisDist,
-                    max: currentYaxis.max + yAxisDist
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const currentYaxis = yAxisModel.get('displayRange');
+                    if (!currentYaxis) {
+                        return;
+                    }
+
+                    const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
+                    yAxisModel.set('displayRange', {
+                        min: currentYaxis.min - yAxisDist,
+                        max: currentYaxis.max + yAxisDist
+                    });
                 });
             }
 
@@ -969,11 +1546,17 @@ export default {
             }
 
             let xDisplayRange = this.config.xAxis.get('displayRange');
-            let yDisplayRange = this.config.yAxis.get('displayRange');
+
+            let doesYAxisHaveRange = false;
+            this.yAxisListWithRange.forEach((yAxisModel) => {
+                if (yAxisModel.get('displayRange')) {
+                    doesYAxisHaveRange = true;
+                }
+            });
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
-            if (!xDisplayRange || !yDisplayRange) {
+            if (!xDisplayRange || !doesYAxisHaveRange) {
                 return;
             }
 
@@ -981,22 +1564,19 @@ export default {
             window.clearTimeout(this.stillZooming);
 
             let xAxisDist = (xDisplayRange.max - xDisplayRange.min);
-            let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
             let xDistMouseToMax = xDisplayRange.max - this.positionOverPlot.x;
             let xDistMouseToMin = this.positionOverPlot.x - xDisplayRange.min;
-            let yDistMouseToMax = yDisplayRange.max - this.positionOverPlot.y;
-            let yDistMouseToMin = this.positionOverPlot.y - yDisplayRange.min;
             let xAxisMaxDist = xDistMouseToMax / xAxisDist;
             let xAxisMinDist = xDistMouseToMin / xAxisDist;
-            let yAxisMaxDist = yDistMouseToMax / yAxisDist;
-            let yAxisMinDist = yDistMouseToMin / yAxisDist;
 
             let plotHistoryStep;
 
             if (!plotHistoryStep) {
+                const yRangeList = [];
+                this.yAxisListWithRange.map((yAxis) => yRangeList.push(yAxis.get('displayRange')));
                 plotHistoryStep = {
-                    x: xDisplayRange,
-                    y: yDisplayRange
+                    x: this.config.xAxis.get('displayRange'),
+                    y: yRangeList
                 };
             }
 
@@ -1007,20 +1587,47 @@ export default {
                     max: xDisplayRange.max - ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
-                    max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const yDisplayRange = yAxisModel.get('displayRange');
+                    if (!yDisplayRange) {
+                        return;
+                    }
+
+                    const yPosition = this.getYPositionForYAxis(this.positionOverPlot, yAxisModel);
+                    let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
+                    let yDistMouseToMax = yDisplayRange.max - yPosition;
+                    let yDistMouseToMin = yPosition - yDisplayRange.min;
+                    let yAxisMaxDist = yDistMouseToMax / yAxisDist;
+                    let yAxisMinDist = yDistMouseToMin / yAxisDist;
+
+                    yAxisModel.set('displayRange', {
+                        min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                        max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                    });
                 });
             } else if (event.wheelDelta >= 0) {
-
                 this.config.xAxis.set('displayRange', {
                     min: xDisplayRange.min - ((xAxisDist * ZOOM_AMT) * xAxisMinDist),
                     max: xDisplayRange.max + ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.config.yAxis.set('displayRange', {
-                    min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
-                    max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                this.yAxisListWithRange.forEach((yAxisModel) => {
+                    const yDisplayRange = yAxisModel.get('displayRange');
+                    if (!yDisplayRange) {
+                        return;
+                    }
+
+                    const yPosition = this.getYPositionForYAxis(this.positionOverPlot, yAxisModel);
+                    let yAxisDist = (yDisplayRange.max - yDisplayRange.min);
+                    let yDistMouseToMax = yDisplayRange.max - yPosition;
+                    let yDistMouseToMin = yPosition - yDisplayRange.min;
+                    let yAxisMaxDist = yDistMouseToMax / yAxisDist;
+                    let yAxisMinDist = yDistMouseToMin / yAxisDist;
+
+                    yAxisModel.set('displayRange', {
+                        min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
+                        max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
+                    });
                 });
             }
 
@@ -1053,24 +1660,48 @@ export default {
             }
 
             const dX = this.pan.start.x - this.positionOverPlot.x;
-            const dY = this.pan.start.y - this.positionOverPlot.y;
             const xRange = this.config.xAxis.get('displayRange');
-            const yRange = this.config.yAxis.get('displayRange');
 
             this.config.xAxis.set('displayRange', {
                 min: xRange.min + dX,
                 max: xRange.max + dX
             });
-            this.config.yAxis.set('displayRange', {
-                min: yRange.min + dY,
-                max: yRange.max + dY
+
+            const dY = [];
+            this.positionOverPlot.y.forEach((yAxisPosition, index) => {
+                const yAxisId = this.positionOverPlot.yAxisIds[index];
+                dY.push({
+                    yAxisId: yAxisId,
+                    y: this.pan.start.y[index] - yAxisPosition
+                });
+            });
+
+            this.yAxisListWithRange.forEach((yAxis) => {
+                const yRange = yAxis.get('displayRange');
+                if (!yRange) {
+                    return;
+                }
+
+                const yIndex = dY.findIndex(y => y.yAxisId === yAxis.get('id'));
+
+                yAxis.set('displayRange', {
+                    min: yRange.min + dY[yIndex].y,
+                    max: yRange.max + dY[yIndex].y
+                });
             });
         },
 
         trackHistory() {
+            const yRangeList = [];
+            const yAxisIds = [];
+            this.yAxisListWithRange.forEach((yAxis) => {
+                yRangeList.push(yAxis.get('displayRange'));
+                yAxisIds.push(yAxis.get('id'));
+            });
             this.plotHistory.push({
                 x: this.config.xAxis.get('displayRange'),
-                y: this.config.yAxis.get('displayRange')
+                y: yRangeList,
+                yAxisIds
             });
         },
 
@@ -1080,18 +1711,25 @@ export default {
         },
 
         freeze() {
-            this.config.yAxis.set('frozen', true);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                yAxis.set('frozen', true);
+            });
             this.config.xAxis.set('frozen', true);
             this.setStatus();
         },
 
         resumeRealtimeData() {
+            // remove annotation selections
+            this.rectangles = [];
+
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
 
         clearPanZoomHistory() {
-            this.config.yAxis.set('frozen', false);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                yAxis.set('frozen', false);
+            });
             this.config.xAxis.set('frozen', false);
             this.setStatus();
             this.plotHistory = [];
@@ -1106,12 +1744,17 @@ export default {
             }
 
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
-            this.config.yAxis.set('displayRange', previousAxisRanges.y);
+            this.yAxisListWithRange.forEach((yAxis) => {
+                const yPosition = this.getYPositionForYAxis(previousAxisRanges, yAxis);
+                yAxis.set('displayRange', yPosition);
+            });
+
             this.userViewportChangeEnd();
         },
 
-        setYAxisKey(yKey) {
-            this.config.series.models[0].set('yKey', yKey);
+        setYAxisKey(yKey, yAxisId) {
+            const seriesForYAxis = this.config.series.models.filter((model => model.get('yAxisId') === yAxisId));
+            seriesForYAxis.forEach(model => model.set('yKey', yKey));
         },
 
         pause() {
@@ -1164,7 +1807,9 @@ export default {
         },
 
         destroy() {
-            configStore.deleteStore(this.config.id);
+            if (this.config) {
+                configStore.deleteStore(this.config.id);
+            }
 
             this.stopListening();
 
@@ -1192,17 +1837,18 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            const newOffsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            const { plotWrapper } = this.$parent.$refs;
+            if (!plotWrapper) {
+                return;
+            }
+
+            const newOffsetWidth = plotWrapper.offsetWidth;
             //we ignore when width gets smaller
             const offsetChange = newOffsetWidth - this.offsetWidth;
-            if (this.$parent.$refs.plotWrapper
-                && offsetChange > OFFSET_THRESHOLD) {
+            if (offsetChange > OFFSET_THRESHOLD) {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
-        },
-        legendHoverChanged(data) {
-            this.showLimitLineLabels = data;
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;

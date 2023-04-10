@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -86,6 +86,8 @@ import eventHelpers from "./lib/eventHelpers";
 import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
+const SECONDARY_TICK_NUMBER = 2;
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -101,6 +103,12 @@ export default {
             type: Number,
             default() {
                 return 6;
+            }
+        },
+        axisId: {
+            type: Number,
+            default() {
+                return null;
             }
         },
         position: {
@@ -145,7 +153,15 @@ export default {
                 throw new Error('config is missing');
             }
 
-            return config[this.axisType];
+            if (this.axisType === 'yAxis') {
+                if (this.axisId && this.axisId !== config.yAxis.id) {
+                    return config.additionalYAxes.find(axis => axis.id === this.axisId);
+                } else {
+                    return config.yAxis;
+                }
+            } else {
+                return config[this.axisType];
+            }
         },
         /**
        * Determine whether ticks should be regenerated for a given range.
@@ -191,7 +207,7 @@ export default {
             }
 
             if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
-                return getLogTicks(range.min, range.max, number, 4);
+                return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
             } else {
                 return ticks(range.min, range.max, number);
             }
@@ -258,7 +274,10 @@ export default {
                     }, 0));
 
                     this.tickWidth = tickWidth;
-                    this.$emit('plotTickWidth', tickWidth);
+                    this.$emit('plotTickWidth', {
+                        width: tickWidth,
+                        yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
+                    });
                     this.shouldCheckWidth = false;
                 }
             }

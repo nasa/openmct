@@ -97,7 +97,7 @@
 
         @include hover {
             background: $colorItemTreeHoverBg;
-            filter: $filterHov;
+            //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
         }
 
         &.is-navigated-object,
@@ -107,6 +107,10 @@
             [class*="__name"] {
                 color: $colorItemTreeSelectedFg;
             }
+        }
+        &.is-targeted-item {
+           $c: $colorBodyFg;
+           @include pulseProp($animName: flashTarget, $dur: 500ms, $iter: 8, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
         }
 
         &.is-new {
@@ -185,14 +189,6 @@
 
             [class*="__type-icon"]:before {
                 color: $colorItemTreeSelectedIcon;
-            }
-        }
-    }
-
-    &__item__label {
-        @include desktop {
-            &:hover {
-                filter: $filterHov;
             }
         }
     }

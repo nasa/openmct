@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ test.describe('Timer', () => {
         timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
     });
 
-    test('Can perform actions on the Timer', async ({ page, openmctConfig }) => {
+    test('Can perform actions on the Timer', async ({ page }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4313'

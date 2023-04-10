@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,7 +45,7 @@
 */
 
 // Structure: Some standard Imports. Please update the required pathing.
-const { test, expect } = require('../../baseFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 /**
@@ -144,5 +144,5 @@ async function renameTimerFrom3DotMenu(page, timerUrl, newNameForTimer) {
     await page.locator('text=Properties Title Notes >> input[type="text"]').fill(newNameForTimer);
 
     // Click Ok button to Save
-    await page.locator('text=OK').click();
+    await page.locator('button:has-text("OK")').click();
 }

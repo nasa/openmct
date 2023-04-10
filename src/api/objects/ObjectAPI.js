@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -62,6 +62,8 @@ import InMemorySearchProvider from './InMemorySearchProvider';
  * @property {Identifier[]} [composition] if
  *           present, this will be used by the default composition provider
  *           to load domain objects
+ * @property {Object.<string, any>} [configuration] A key-value map containing configuration
+ *           settings for this domain object.
  * @memberof module:openmct.ObjectAPI~
  */
 
@@ -189,58 +191,57 @@ export default class ObjectAPI {
     /**
      * Get a domain object.
      *
-     * @method get
-     * @memberof module:openmct.ObjectProvider#
      * @param {string} key the key for the domain object to load
-     * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
-     * @returns {Promise} a promise which will resolve when the domain object
+     * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+     * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+     *          dirty/in-transaction objects use and the provider.get method
+     * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-    get(identifier, abortSignal) {
+    get(identifier, abortSignal, forceRemote = false) {
         let keystring = this.makeKeyString(identifier);
 
-        if (this.cache[keystring] !== undefined) {
-            return this.cache[keystring];
-        }
+        if (!forceRemote) {
+            if (this.cache[keystring] !== undefined) {
+                return this.cache[keystring];
+            }
 
-        identifier = utils.parseKeyString(identifier);
+            identifier = utils.parseKeyString(identifier);
 
-        if (this.isTransactionActive()) {
-            let dirtyObject = this.transaction.getDirtyObject(identifier);
+            if (this.isTransactionActive()) {
+                let dirtyObject = this.transaction.getDirtyObject(identifier);
 
-            if (dirtyObject) {
-                return Promise.resolve(dirtyObject);
+                if (dirtyObject) {
+                    return Promise.resolve(dirtyObject);
+                }
             }
         }
 
         const provider = this.getProvider(identifier);
 
         if (!provider) {
-            throw new Error('No Provider Matched');
+            throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
         }
 
         if (!provider.get) {
             throw new Error('Provider does not support get!');
         }
 
-        let objectPromise = provider.get(identifier, abortSignal).then(result => {
+        let objectPromise = provider.get(identifier, abortSignal).then(domainObject => {
             delete this.cache[keystring];
+            domainObject = this.applyGetInterceptors(identifier, domainObject);
 
-            result = this.applyGetInterceptors(identifier, result);
-            if (result.isMutable) {
-                result.$refresh(result);
-            } else {
-                let mutableDomainObject = this.toMutable(result);
-                mutableDomainObject.$refresh(result);
+            if (this.supportsMutation(identifier)) {
+                const mutableDomainObject = this.toMutable(domainObject);
+                mutableDomainObject.$refresh(domainObject);
+                this.destroyMutable(mutableDomainObject);
             }
 
-            return result;
-        }).catch((result) => {
-            console.warn(`Failed to retrieve ${keystring}:`, result);
-
+            return domainObject;
+        }).catch((error) => {
+            console.warn(`Failed to retrieve ${keystring}:`, error);
             delete this.cache[keystring];
-
-            result = this.applyGetInterceptors(identifier);
+            const result = this.applyGetInterceptors(identifier);
 
             return result;
         });
@@ -357,6 +358,7 @@ export default class ObjectAPI {
     async save(domainObject) {
         const provider = this.getProvider(domainObject.identifier);
         let result;
+        let lastPersistedTime;
 
         if (!this.isPersistable(domainObject.identifier)) {
             result = Promise.reject('Object provider does not support saving');
@@ -377,17 +379,19 @@ export default class ObjectAPI {
             this.#mutate(domainObject, 'modifiedBy', username);
 
             if (isNewObject) {
-                const persistedTime = Date.now();
-
-                this.#mutate(domainObject, 'persisted', persistedTime);
-                this.#mutate(domainObject, 'created', persistedTime);
                 this.#mutate(domainObject, 'createdBy', username);
+
+                const createdTime = Date.now();
+                this.#mutate(domainObject, 'created', createdTime);
+
+                const persistedTime = Date.now();
+                this.#mutate(domainObject, 'persisted', persistedTime);
 
                 savedObjectPromise = provider.create(domainObject);
             } else {
+                lastPersistedTime = domainObject.persisted;
                 const persistedTime = Date.now();
                 this.#mutate(domainObject, 'persisted', persistedTime);
-
                 savedObjectPromise = provider.update(domainObject);
             }
 
@@ -395,6 +399,10 @@ export default class ObjectAPI {
                 savedObjectPromise.then(response => {
                     savedResolve(response);
                 }).catch((error) => {
+                    if (!isNewObject) {
+                        this.#mutate(domainObject, 'persisted', lastPersistedTime);
+                    }
+
                     savedReject(error);
                 });
             } else {
@@ -402,9 +410,20 @@ export default class ObjectAPI {
             }
         }
 
-        return result.catch((error) => {
+        return result.catch(async (error) => {
             if (error instanceof this.errors.Conflict) {
-                this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+                // Synchronized objects will resolve their own conflicts
+                if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
+                    this.openmct.notifications.info(`Conflict detected while saving "${this.makeKeyString(domainObject.name)}", attempting to resolve`);
+                } else {
+                    this.openmct.notifications.error(`Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`);
+
+                    if (this.isTransactionActive()) {
+                        this.endTransaction();
+                    }
+
+                    await this.refresh(domainObject);
+                }
             }
 
             throw error;
@@ -628,7 +647,7 @@ export default class ObjectAPI {
      * @param {module:openmct.DomainObject} object the object to observe
      * @param {string} path the property to observe
      * @param {Function} callback a callback to invoke when new values for
-     *        this property are observed
+     *        this property are observed.
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
@@ -716,6 +735,46 @@ export default class ObjectAPI {
         } else {
             return path;
         }
+    }
+
+    /**
+     * Parse and construct an `objectPath` from a `navigationPath`.
+     *
+     * A `navigationPath` is a string of the form `"/browse/<keyString>/<keyString>/..."` that is used
+     * by the Open MCT router to navigate to a specific object.
+     *
+     * Throws an error if the `navigationPath` is malformed.
+     *
+     * @param {string} navigationPath
+     * @returns {DomainObject[]} objectPath
+     */
+    async getRelativeObjectPath(navigationPath) {
+        if (!navigationPath.startsWith('/browse/')) {
+            throw new Error(`Malformed navigation path: "${navigationPath}"`);
+        }
+
+        navigationPath = navigationPath.replace('/browse/', '');
+
+        if (!navigationPath || navigationPath === '/') {
+            return [];
+        }
+
+        // Remove any query params and split on '/'
+        const keyStrings = navigationPath.split('?')?.[0].split('/');
+
+        if (keyStrings[0] !== 'ROOT') {
+            keyStrings.unshift('ROOT');
+        }
+
+        const objectPath = (await Promise.all(
+            keyStrings.map(
+                keyString => this.supportsMutation(keyString)
+                    ? this.getMutable(utils.parseKeyString(keyString))
+                    : this.get(utils.parseKeyString(keyString))
+            )
+        )).reverse();
+
+        return objectPath;
     }
 
     isObjectPathToALink(domainObject, objectPath) {
