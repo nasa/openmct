@@ -953,14 +953,15 @@ export default {
             });
         },
         async scrollToRight() {
-
             const scrollWidth = this.$refs?.thumbsWrapper?.scrollWidth ?? 0;
             if (!scrollWidth) {
                 return;
             }
 
             await Vue.nextTick();
-            this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            if (this.$refs.thumbsWrapper) {
+                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            }
         },
         scrollHandler() {
             if (this.isPaused) {

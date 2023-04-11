@@ -519,3 +519,11 @@
         align-self: flex-end;
     }
 }
+
+.c-image-canvas {
+    pointer-events: auto; // This allows the image element to receive a browser-level context click
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+}
