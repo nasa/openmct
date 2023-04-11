@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import testStaticData from './static-provider-test.json';
-import testStaticData2 from './static-provider-test2.json';
+import testStaticDataEmptyNamespace from './test-data/static-provider-test-empty-namespace.json';
+import testStaticDataFooNamespace from './test-data/static-provider-test-foo-namespace.json';
 import StaticModelProvider from './StaticModelProvider';
 
 describe('StaticModelProvider', function () {
@@ -30,7 +30,7 @@ describe('StaticModelProvider', function () {
         let staticProvider;
 
         beforeEach(function () {
-            const staticData = JSON.parse(JSON.stringify(testStaticData));
+            const staticData = JSON.parse(JSON.stringify(testStaticDataEmptyNamespace));
             staticProvider = new StaticModelProvider(staticData, {
                 namespace: 'my-import',
                 key: 'root'
@@ -51,14 +51,14 @@ describe('StaticModelProvider', function () {
                 expect(rootModel.location).toBe('ROOT');
             });
 
-            it('has new-format identifier', function () {
+            it('has remapped identifier', function () {
                 expect(rootModel.identifier).toEqual({
                     namespace: 'my-import',
                     key: 'root'
                 });
             });
 
-            it('has new-format composition', function () {
+            it('has remapped identifiers in composition', function () {
                 expect(rootModel.composition).toContain({
                     namespace: 'my-import',
                     key: '1'
@@ -98,7 +98,7 @@ describe('StaticModelProvider', function () {
                 expect(fixed.type).toBe('telemetry.fixed');
             });
 
-            it('have new-style identifiers', function () {
+            it('have remapped identifiers', function () {
                 expect(swg.identifier).toEqual({
                     namespace: 'my-import',
                     key: '1'
@@ -113,7 +113,7 @@ describe('StaticModelProvider', function () {
                 });
             });
 
-            it('have new-style composition', function () {
+            it('have remapped composition', function () {
                 expect(layout.composition).toContain({
                     namespace: 'my-import',
                     key: '1'
@@ -149,12 +149,12 @@ describe('StaticModelProvider', function () {
 
         });
     });
-    describe('with non-empty namespace', function () {
+    describe('with namespace "foo"', function () {
 
         let staticProvider;
 
         beforeEach(function () {
-            const staticData = JSON.parse(JSON.stringify(testStaticData2));
+            const staticData = JSON.parse(JSON.stringify(testStaticDataFooNamespace));
             staticProvider = new StaticModelProvider(staticData, {
                 namespace: 'my-import',
                 key: 'root'
@@ -175,14 +175,14 @@ describe('StaticModelProvider', function () {
                 expect(rootModel.location).toBe('ROOT');
             });
 
-            it('has new-format identifier', function () {
+            it('has remapped identifier', function () {
                 expect(rootModel.identifier).toEqual({
                     namespace: 'my-import',
                     key: 'root'
                 });
             });
 
-            it('has new-format composition', function () {
+            it('has remapped composition', function () {
                 expect(rootModel.composition).toContain({
                     namespace: 'my-import',
                     key: '1'
@@ -198,8 +198,13 @@ describe('StaticModelProvider', function () {
             let clock;
             let layout;
             let swg;
+            let folder;
 
             beforeEach(function () {
+                folder = staticProvider.get({
+                    namespace: 'my-import',
+                    key: 'root'
+                });
                 layout = staticProvider.get({
                     namespace: 'my-import',
                     key: '1'
@@ -217,23 +222,32 @@ describe('StaticModelProvider', function () {
             it('match expected ordering', function () {
                 // this is a sanity check to make sure the identifiers map in
                 // the correct order.
+                expect(folder.type).toBe('folder');
                 expect(swg.type).toBe('generator');
                 expect(layout.type).toBe('layout');
                 expect(clock.type).toBe('clock');
             });
 
-            it('have new-style identifiers', function () {
-                expect(swg.identifier).toEqual({
+            it('have remapped identifiers', function () {
+                expect(folder.identifier).toEqual({
                     namespace: 'my-import',
-                    key: '2'
+                    key: 'root'
                 });
                 expect(layout.identifier).toEqual({
                     namespace: 'my-import',
                     key: '1'
                 });
+                expect(swg.identifier).toEqual({
+                    namespace: 'my-import',
+                    key: '2'
+                });
+                expect(clock.identifier).toEqual({
+                    namespace: 'my-import',
+                    key: '3'
+                });
             });
 
-            it('have new-style composition', function () {
+            it('have remapped identifiers in composition', function () {
                 expect(layout.composition).toContain({
                     namespace: 'my-import',
                     key: '2'
@@ -244,7 +258,16 @@ describe('StaticModelProvider', function () {
                 });
             });
 
+            it('layout has remapped identifiers in configuration', function () {
+                const identifiers = layout.configuration.items
+                    .map(item => item.identifier)
+                    .filter(identifier => identifier !== undefined);
+                expect(identifiers).toContain('my-import:2');
+                expect(identifiers).toContain('my-import:3');
+            });
+
             it('rewrites locations', function () {
+                expect(folder.location).toBe('ROOT');
                 expect(swg.location).toBe('my-import:root');
                 expect(layout.location).toBe('my-import:root');
                 expect(clock.location).toBe('my-import:root');
