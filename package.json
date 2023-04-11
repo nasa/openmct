@@ -57,7 +57,7 @@
     "printj": "1.3.1",
     "resolve-url-loader": "5.0.0",
     "sanitize-html": "2.10.0",
-    "sass": "1.59.3",
+    "sass": "1.61.0",
     "sass-loader": "13.2.2",
     "sinon": "15.0.1",
     "style-loader": "3.3.2",
