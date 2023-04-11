@@ -187,7 +187,6 @@ export default {
             if (this.isEditing) {
                 this.filterValue = configuration.filter;
                 this.hideAll = false;
-                this.showAll = true;
                 this.listActivities();
             } else {
 
@@ -281,8 +280,6 @@ export default {
             const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
 
             if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-                //don't show all events
-                this.showAll = false;
                 this.viewBounds = undefined;
                 this.hideAll = true;
 
@@ -292,14 +289,10 @@ export default {
             this.hideAll = false;
 
             if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
-                //show all events
-                this.showAll = true;
                 this.viewBounds = undefined;
 
                 return;
             }
-
-            this.showAll = false;
 
             this.viewBounds = {};
 
