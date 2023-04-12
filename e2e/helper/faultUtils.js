@@ -58,10 +58,9 @@ async function navigateToFaultManagementWithoutExample(page) {
 async function navigateToFaultItemInTree(page) {
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    const mainTree = page.getByRole('tree', {
+    const faultManagementTreeItem = page.getByRole('tree', {
         name: "Main Tree"
-    });
-    const faultManagementTreeItem = mainTree.getByRole('treeitem', {
+    }).getByRole('treeitem', {
         name: "Fault Management"
     });
 
