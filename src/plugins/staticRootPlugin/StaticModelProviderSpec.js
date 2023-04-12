@@ -262,8 +262,14 @@ describe('StaticModelProvider', function () {
                 const identifiers = layout.configuration.items
                     .map(item => item.identifier)
                     .filter(identifier => identifier !== undefined);
-                expect(identifiers).toContain('my-import:2');
-                expect(identifiers).toContain('my-import:3');
+                expect(identifiers).toContain({
+                    namespace: 'my-import',
+                    key: '2'
+                });
+                expect(identifiers).toContain({
+                    namespace: 'my-import',
+                    key: '3'
+                });
             });
 
             it('rewrites locations', function () {
