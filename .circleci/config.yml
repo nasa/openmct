@@ -147,6 +147,14 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
+      - run:
+          name: Install Docker Compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
+          command: |
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
@@ -214,6 +222,8 @@ workflows:
           node-version: lts/gallium
       - visual-test:
           node-version: lts/gallium
+      - e2e-couchdb: ##TEMP
+          node-version: lts/gallium ##TEMP
         
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
