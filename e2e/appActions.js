@@ -140,6 +140,7 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
+ * Expand an item in the tree by a given object name.
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
@@ -272,6 +273,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
+    await page.waitForLoadState('load'); //Add some determinism
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
         let url = './#/browse/' + [...path].reverse()

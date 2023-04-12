@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify form functionality.
+This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
@@ -34,9 +34,6 @@ const nbUtils = require('../../../../helper/notebookUtils');
   * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
     const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
@@ -81,11 +78,12 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+    });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
@@ -110,11 +108,23 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
+    test('Can add tags with blank entry', async ({ page }) => {
+        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await selectInspectorTab(page, 'Annotations');
+
+        await nbUtils.enterTextEntry(page, '');
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+
+        // Click inside the tag search input
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Select the "Driving" tag
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
+    });
     test('Can cancel adding tags', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
@@ -269,9 +279,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
