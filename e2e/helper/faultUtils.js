@@ -58,8 +58,15 @@ async function navigateToFaultManagementWithoutExample(page) {
 async function navigateToFaultItemInTree(page) {
     await page.goto('./', { waitUntil: 'networkidle' });
 
-    // Click text=Fault Management
-    await page.click('text=Fault Management'); // this verifies the plugin has been added
+    const mainTree = page.getByRole('tree', {
+        name: "Main Tree"
+    });
+    const faultManagementTreeItem = mainTree.getByRole('treeitem', {
+        name: "Fault Management"
+    });
+
+    // Navigate to "Fault Management" from the tree
+    await faultManagementTreeItem.click();
 }
 
 /**
@@ -141,8 +148,7 @@ async function clearSearch(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function selectFaultItem(page, rowNumber) {
-    // eslint-disable-next-line playwright/no-force-option
-    await page.check(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`, { force: true }); // this will not work without force true, saw this may be a pw bug
+    await page.locator(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`).check();
 }
 
 /**
