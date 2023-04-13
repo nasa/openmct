@@ -149,6 +149,13 @@ jobs:
           node-version: <<parameters.node-version>>
       - setup_remote_docker:
           version: 20.10.14
+      - run:
+          name: Download and install docker compose
+          command: |
+            apk update && apk upgrade && apk add curl  
+            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
+            chmod +x ~/docker-compose  
+            mv ~/docker-compose /usr/local/bin/docker-compose
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
