@@ -148,12 +148,10 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run:
-          name: Install Docker Compose
-          environment:
-            COMPOSE_VERSION: '1.29.2'
+          name: Download and install docker compose
           command: |
-            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-            chmod +x ~/docker-compose
+            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
+            chmod +x ~/docker-compose  
             mv ~/docker-compose /usr/local/bin/docker-compose
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
