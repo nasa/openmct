@@ -152,7 +152,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Install Docker client
-          command: apk add docker-cli
+          command: apt-get install docker-cli
       # - run:
       #     name: Download and install docker compose
       #     command: |
