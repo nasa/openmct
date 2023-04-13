@@ -164,7 +164,6 @@ jobs:
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
-          bash 
           cat src/plugins/persistence/couch/setup-couchdb.sh | docker exec -i couch-couchdb-1 bash
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB Plugin and Config
       - run: npm run test:e2e:couchdb
