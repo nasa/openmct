@@ -37,9 +37,12 @@
 
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
+import modeMixin from './mode-mixin';
+
+const TEST_IDS = true;
 
 export default {
-    mixins: [toggleMixin],
+    mixins: [toggleMixin, modeMixin],
     inject: ['openmct', 'configuration'],
     data: function () {
         let activeClock = this.openmct.time.clock();
@@ -49,19 +52,16 @@ export default {
         }
 
         return {
-            selectedMode: this.getModeOptionForClock(activeClock),
+            selectedMode: this.getModeOptionForClock(activeClock, TEST_IDS),
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
             hoveredMode: {}
         };
     },
     mounted: function () {
-        this.loadClocksFromConfiguration();
+        this.loadClocks(this.configuration.menuOptions);
 
-        this.openmct.time.on('clock', this.setViewFromClock);
-    },
-    destroyed: function () {
-        this.openmct.time.off('clock', this.setViewFromClock);
+        this.followTimeConductor();
     },
     methods: {
         showModesMenu() {
@@ -76,59 +76,6 @@ export default {
 
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
-
-        loadClocksFromConfiguration() {
-            let clocks = this.configuration.menuOptions
-                .map(menuOption => menuOption.clock)
-                .filter(isDefinedAndUnique)
-                .map(this.getClock);
-
-            /*
-             * Populate the modes menu with metadata from the available clocks
-             * "Fixed Mode" is always first, and has no defined clock
-             */
-            this.modes = [undefined]
-                .concat(clocks)
-                .map(this.getModeOptionForClock);
-
-            function isDefinedAndUnique(key, index, array) {
-                return key !== undefined && array.indexOf(key) === index;
-            }
-        },
-
-        getModeOptionForClock(clock) {
-            if (clock === undefined) {
-                const key = 'fixed';
-
-                return {
-                    key,
-                    name: 'Fixed Timespan',
-                    description: 'Query and explore data that falls between two fixed datetimes.',
-                    cssClass: 'icon-tabular',
-                    testId: 'conductor-modeOption-fixed',
-                    onItemClicked: () => this.setOption(key)
-                };
-            } else {
-                const key = clock.key;
-
-                return {
-                    key,
-                    name: clock.name,
-                    description: "Monitor streaming data in real-time. The Time "
-                    + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
-                    cssClass: clock.cssClass || 'icon-clock',
-                    testId: 'conductor-modeOption-realtime',
-                    onItemClicked: () => this.setOption(key)
-                };
-            }
-        },
-
-        getClock(key) {
-            return this.openmct.time.getAllClocks().filter(function (clock) {
-                return clock.key === key;
-            })[0];
-        },
-
         setOption(clockKey) {
             if (clockKey === 'fixed') {
                 clockKey = undefined;
@@ -154,7 +101,6 @@ export default {
                 this.openmct.time.clock(clockKey, offsets);
             }
         },
-
         getMatchingConfig(options) {
             const matchers = {
                 clock(config) {
@@ -173,9 +119,8 @@ export default {
 
             return this.configuration.menuOptions.filter(configMatches)[0];
         },
-
         setViewFromClock(clock) {
-            this.selectedMode = this.getModeOptionForClock(clock);
+            this.selectedMode = this.getModeOptionForClock(clock, TEST_IDS);
         }
     }
 };
