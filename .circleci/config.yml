@@ -158,6 +158,7 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
             chmod +x ~/docker-compose  
             mv ~/docker-compose /usr/local/bin/docker-compose
+            apt-get -y update
             apt-get install docker-ce-cli
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
