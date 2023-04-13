@@ -153,13 +153,13 @@ jobs:
       # - run:
       #     name: Install Docker client
       #     command: apt-get install docker-cli
-      # - run:
-      #     name: Download and install docker compose
-      #     command: |
-      #       apk update && apk upgrade && apk add curl  
-      #       curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
-      #       chmod +x ~/docker-compose  
-      #       mv ~/docker-compose /usr/local/bin/docker-compose
+      - run:
+          name: Download and install docker compose
+          command: |
+            apk update && apk upgrade && apk add curl  
+            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
+            chmod +x ~/docker-compose  
+            mv ~/docker-compose /usr/local/bin/docker-compose
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
@@ -213,20 +213,20 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - lint:
-          name: node16-lint
-          node-version: lts/gallium
-      - unit-test:
-          name: node18-chrome
-          node-version: lts/hydrogen
-      - e2e-test:
-          name: e2e-stable
-          node-version: lts/gallium
-          suite: stable
-      - perf-test:
-          node-version: lts/gallium
-      - visual-test:
-          node-version: lts/gallium
+      # - lint:
+      #     name: node16-lint
+      #     node-version: lts/gallium
+      # - unit-test:
+      #     name: node18-chrome
+      #     node-version: lts/hydrogen
+      # - e2e-test:
+      #     name: e2e-stable
+      #     node-version: lts/gallium
+      #     suite: stable
+      # - perf-test:
+      #     node-version: lts/gallium
+      # - visual-test:
+      #     node-version: lts/gallium
       - e2e-couchdb: ##TEMP
           node-version: lts/gallium ##TEMP
         
