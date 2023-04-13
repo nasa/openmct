@@ -149,8 +149,6 @@ jobs:
           node-version: <<parameters.node-version>>
       - setup_remote_docker:
           docker_layer_caching: true
-      - run: apt-get install -y sudo # https://discuss.circleci.com/t/sudo-command-not-found/14208/4
-      - run: ls -al /bin/sh && sudo rm /bin/sh && sudo ln -s /bin/bash /bin/sh && ls -al /bin/sh
       # - run:
       #     name: Install Docker client
       #     command: apt-get install docker-cli
@@ -160,6 +158,7 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
             chmod +x ~/docker-compose  
             mv ~/docker-compose /usr/local/bin/docker-compose
+            apt-get install docker-ce-cli
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
