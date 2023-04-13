@@ -149,6 +149,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - setup_remote_docker:
           version: 20.10.14
+          docker_layer_caching: true
       - run:
           name: Download and install docker compose
           command: |
