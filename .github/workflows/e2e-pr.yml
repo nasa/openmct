@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.32.1 install
+      - run: npx playwright@1.32.3 install
       - run: npx playwright install chrome-beta
       - run: npm install
       - run: npm run test:e2e:full -- --maxFailures=40
