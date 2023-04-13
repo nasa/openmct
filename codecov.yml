@@ -1,5 +1,6 @@
 codecov:
   require_ci_to_pass: false #This setting will update the bot regardless of whether or not tests pass
+  token: 917c953d-0fd5-47e8-a602-e96345d91e09
 
 coverage:
   status:
