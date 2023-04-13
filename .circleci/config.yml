@@ -148,7 +148,6 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - setup_remote_docker:
-          version: 20.10.14
           docker_layer_caching: true
       # - run:
       #     name: Install Docker client
@@ -156,7 +155,7 @@ jobs:
       - run:
           name: Download and install docker compose
           command: |
-            apk update && apk upgrade && apk add curl  
+            apk update && apk upgrade && apk add curl  && apk add docker-cli
             curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
             chmod +x ~/docker-compose  
             mv ~/docker-compose /usr/local/bin/docker-compose
@@ -164,6 +163,7 @@ jobs:
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
+          bash 
           cat src/plugins/persistence/couch/setup-couchdb.sh | docker exec -i couch-couchdb-1 bash
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB Plugin and Config
       - run: npm run test:e2e:couchdb
