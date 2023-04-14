@@ -167,6 +167,8 @@ jobs:
           sleep 3
           cat src/plugins/persistence/couch/setup-couchdb.sh | docker exec --env-file src/plugins/persistence/couch/.env.ci -i couch-couchdb-1 bash
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB Plugin and Config
+      #docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
+      - run: docker network ls
       - run: docker exec --network couch-couchdb-1 npm run test:e2e:couchdb
       - generate_e2e_code_cov_report:
          suite: full        
