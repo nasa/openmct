@@ -27,12 +27,11 @@
     style="width: 100%; height: 100%;"
     @mousedown="mouseDown"
     @mouseup="mouseUp"
+    @mousemove="mouseMove"
 ></canvas>
 </template>
 
 <script>
-
-const HANDLE_RADIUS = 10;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -40,96 +39,69 @@ export default {
     },
     data() {
         return {
-            h_th_left: null,
-            h_th_top: null,
-            h_th_right: null,
-            h_th_bottom: null,
-            dragTL: false,
-            dragBL: false,
-            dragTR: false,
-            dragBR: false,
-            dragWholeRect: false,
-            mouseX: null,
-            mouseY: null,
-            rect: {}
+            dragging: false,
+            rectangle: {}
         };
     },
     mounted() {
         console.debug(`🔮 AnnotationsCanvas mounted`);
-        this.h_th_left = document.getElementById('thb_left');
-        this.h_th_top = document.getElementById('thb_top');
-        this.h_th_right = document.getElementById('thb_right');
-        this.h_th_bottom = document.getElementById('thb_bottom');
-
         this.drawAnnotations();
     },
     beforeDestroy() {
     },
     methods: {
-        getMousePos(canvas, evt) {
-            let clx; let cly;
-            if (evt.type === "touchstart" || evt.type === "touchmove") {
-                clx = evt.touches[0].clientX;
-                cly = evt.touches[0].clientY;
-            } else {
-                clx = evt.clientX;
-                cly = evt.clientY;
-            }
-
-            const boundingRect = canvas.getBoundingClientRect();
-
-            return {
-                x: clx - boundingRect.left,
-                y: cly - boundingRect.top
-            };
-        },
-        checkInRect(x, y, r) {
-            return (x > r.left && x < (r.width + r.left)) && (y > r.top && y < (r.top + r.height));
-        },
-        checkCloseEnough(p1, p2) {
-            return Math.abs(p1 - p2) < HANDLE_RADIUS;
-        },
         drawRectInCanvas() {
+            console.debug(`🪟 Drawing rectangle, `, this.rect);
             const canvas = this.$refs.canvas;
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.lineWidth = "6";
-            ctx.fillStyle = "rgba(199, 87, 231, 0.2)";
-            ctx.strokeStyle = "#c757e7";
-            ctx.rect(this.rect.left, this.rect.top, this.rect.width, this.rect.height);
-            ctx.fill();
-            ctx.stroke();
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.beginPath();
+            context.lineWidth = "1";
+            context.fillStyle = "rgba(199, 87, 231, 0.2)";
+            context.strokeStyle = "#c757e7";
+            context.rect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
+            context.fill();
+            context.stroke();
+        },
+        mouseMove(event) {
+            if (this.dragging) {
+                console.debug(`🐭 mouseMove: ${event.type}`);
+                const canvas = this.$refs.canvas;
+
+                const boundingRect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / boundingRect.width;
+                const scaleY = canvas.height / boundingRect.height;
+                this.rectangle = {
+                    x: this.rectangle.x,
+                    y: this.rectangle.y,
+                    width: (event.clientX - boundingRect.left) * scaleX,
+                    height: (event.clientY - boundingRect.top) * scaleY
+                };
+                this.drawRectInCanvas();
+            }
         },
         mouseUp(event) {
             console.debug(`🐭 mouseUp`);
-            this.dragTL = this.dragTR = this.dragBL = this.dragBR = false;
-            this.dragWholeRect = false;
+            this.dragging = false;
         },
         mouseDown(event) {
             console.debug(`🐭 mouseDown: ${event.type}`);
-            const canvas = this.$refs.canvas;
-            let pos = this.getMousePos(canvas, event);
-            this.mouseX = pos.x;
-            this.mouseY = pos.y;
-            // 0. inside movable rectangle
-            if (this.checkInRect(this.mouseX, this.mouseY, this.rect)) {
-                this.dragWholeRect = true;
-                this.startX = this.mouseX;
-                this.startY = this.mouseY;
-            } else if (this.checkCloseEnough(this.mouseX, this.rect.left) && this.checkCloseEnough(this.mouseY, this.rect.top)) {
-                this.dragTL = true;
-            } else if (this.checkCloseEnough(this.mouseX, this.rect.left + this.rect.width) && this.checkCloseEnough(this.mouseY, this.rect.top)) {
-                this.dragTR = true;
-            } else if (this.checkCloseEnough(this.mouseX, this.rect.left) && this.checkCloseEnough(this.mouseY, this.rect.top + this.rect.height)) {
-                this.dragBL = true;
-            } else if (this.checkCloseEnough(this.mouseX, this.rect.left + this.rect.width) && this.checkCloseEnough(this.mouseY, this.rect.top + this.rect.height)) {
-                this.dragBR = true;
-            } else {
-                // handle not resizing
+            if (!this.dragging) {
+                const canvas = this.$refs.canvas;
+
+                const boundingRect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / boundingRect.width;
+                const scaleY = canvas.height / boundingRect.height;
+                this.rectangle = {
+                    x: (event.clientX - boundingRect.left) * scaleX,
+                    y: (event.clientY - boundingRect.top) * scaleY,
+                    width: scaleX,
+                    height: scaleY
+                };
+                this.drawRectInCanvas();
+                this.dragging = true;
             }
 
-            this.drawRectInCanvas();
         },
         drawAnnotations() {
         }
