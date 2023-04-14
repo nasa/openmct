@@ -128,8 +128,12 @@ jobs:
           steps:
             - run: npx playwright install chrome-beta
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
-      - generate_e2e_code_cov_report:
-         suite: <<parameters.suite>>          
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+          - generate_e2e_code_cov_report:
+              suite: <<parameters.suite>>          
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
