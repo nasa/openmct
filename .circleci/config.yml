@@ -165,17 +165,12 @@ jobs:
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
-          bash src/plugins/persistence/couch/setup-couchdb.sh
+          cat src/plugins/persistence/couch/setup-couchdb.sh | docker exec --env-file src/plugins/persistence/couch/.env.ci -i couch-couchdb-1 bash
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB 
       - run: |
           docker network ls
           docker ps
-      # - run: |
-      #       container_id=$(docker ps --format '{{.ID}}\t{{.Image}}' | grep "mcr.microsoft.com/playwright" | cut -f1)
-      #       echo "container_id is $container_id"
-      #       network_name=$(docker inspect $container_id -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}')
-      #       docker network connect $container_id couch_default
-      #       echo "Connected couch_couchdb1 to the network of the container with ID $container_id"
+      - run: bash .circleci/quick-bash.sh
       - run: npm run test:e2e:couchdb
       - generate_e2e_code_cov_report:
          suite: full        
