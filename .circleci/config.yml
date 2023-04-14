@@ -149,12 +149,12 @@ jobs:
           node-version: <<parameters.node-version>>
       - setup_remote_docker:
           docker_layer_caching: true
-      # - run:
-      #     name: Install Docker client
-      #     command: apt-get install docker-cli
       - run:
           name: Download and install docker compose
           command: |
+            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
+            chmod +x ~/docker-compose  
+            mv ~/docker-compose /usr/local/bin/docker-compose
             curl -fsSL https://get.docker.com -o get-docker.sh
             sh get-docker.sh
       - run: |
