@@ -161,6 +161,7 @@ jobs:
             mv ~/docker-compose /usr/local/bin/docker-compose
             curl -fsSL https://get.docker.com -o get-docker.sh
             sh get-docker.sh
+            dockerd-rootless-setuptool.sh install
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
