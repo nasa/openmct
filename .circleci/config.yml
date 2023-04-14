@@ -151,8 +151,8 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - setup_remote_docker:
-          docker_layer_caching: true
+      # - setup_remote_docker:
+      #     docker_layer_caching: true
       - run:
           name: Download and install docker compose
           command: |
@@ -170,7 +170,7 @@ jobs:
       - run: |
           docker network ls
           docker ps
-      - run: bash .circleci/quick-bash.sh
+      #- run: bash .circleci/quick-bash.sh
       - run: npm run test:e2e:couchdb
       - generate_e2e_code_cov_report:
          suite: full        
