@@ -170,12 +170,12 @@ jobs:
       #docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
       - run: docker network ls
       - run: docker ps
-      - run: |
-            container_id=$(docker ps --format '{{.ID}}\t{{.Image}}' | grep "mcr.microsoft.com/playwright" | cut -f1)
-            echo "container_id is $container_id"
-            network_name=$(docker inspect $container_id -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}')
-            docker network connect $container_id couch_default
-            echo "Connected couch_couchdb1 to the network of the container with ID $container_id"
+      # - run: |
+      #       container_id=$(docker ps --format '{{.ID}}\t{{.Image}}' | grep "mcr.microsoft.com/playwright" | cut -f1)
+      #       echo "container_id is $container_id"
+      #       network_name=$(docker inspect $container_id -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}')
+      #       docker network connect $container_id couch_default
+      #       echo "Connected couch_couchdb1 to the network of the container with ID $container_id"
       - run: npm run test:e2e:couchdb
       - generate_e2e_code_cov_report:
          suite: full        
