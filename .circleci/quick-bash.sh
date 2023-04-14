@@ -14,11 +14,11 @@ docker inspect $playwright_container_id
 # Get the network associated with the found container
 network_name=$(docker inspect $playwright_container_id -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}')
 
-if [ -z "$network_name" ]; then
-  echo "No network found associated with the container"
-  exit 1
-fi
+# if [ -z "$network_name" ]; then
+#   echo "No network found associated with the container"
+#   exit 1
+# fi
 
 # Connect the couch_couchdb1 network to the found network
-docker network connect couch_couchdb1 $network_name
+docker network connect couchdb_default $playwright_container_id 
 echo "Connected couch_couchdb1 to the network of the container with ID $playwright_container_id"
