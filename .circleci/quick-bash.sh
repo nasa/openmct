@@ -10,7 +10,7 @@ if [ -z "$playwright_container_id" ]; then
   exit 1
 fi
 
-echo "docker inspect $playwright_container_id"
+docker inspect $playwright_container_id
 # Get the network associated with the found container
 network_name=$(docker inspect $playwright_container_id -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}')
 
