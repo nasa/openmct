@@ -4,13 +4,13 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"  
+      interval: "weekly"  
     open-pull-requests-limit: 10
     labels:
+      - "pr:daveit"
       - "pr:e2e"
       - "type:maintenance"
       - "dependencies"
-      - "pr:daveit"
       - "pr:platform"
     ignore:
       #We have to source the playwright container which is not detected by Dependabot
@@ -32,6 +32,6 @@ updates:
     schedule:
       interval: "daily"    
     labels:
+      - "pr:daveit"
       - "type:maintenance"
       - "dependencies"
-      - "pr:daveit"
