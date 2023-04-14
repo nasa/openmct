@@ -151,8 +151,8 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      # - setup_remote_docker:
-      #     docker_layer_caching: true
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Download and install docker compose
           command: |
@@ -161,16 +161,15 @@ jobs:
             mv ~/docker-compose /usr/local/bin/docker-compose
             curl -fsSL https://get.docker.com -o get-docker.sh
             sh get-docker.sh
-            dockerd-rootless-setuptool.sh install
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
-      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB Plugin and Config
-      #docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
-      - run: docker network ls
-      - run: docker ps
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB 
+      - run: |
+          docker network ls
+          docker ps
       # - run: |
       #       container_id=$(docker ps --format '{{.ID}}\t{{.Image}}' | grep "mcr.microsoft.com/playwright" | cut -f1)
       #       echo "container_id is $container_id"

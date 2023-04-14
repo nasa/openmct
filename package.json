@@ -76,7 +76,7 @@
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json ./coverage ./html-test-results ./test-results ./.nyc_output ",
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
-    "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
+    "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js --host 0.0.0.0",
     "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.js",
