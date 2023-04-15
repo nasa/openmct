@@ -154,6 +154,7 @@ jobs:
     executor: ubuntu
     steps:
       - checkout
+      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
       - run: nvm ls-remote; nvm install lts/gallium
       - run: npm install
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
