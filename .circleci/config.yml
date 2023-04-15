@@ -9,7 +9,7 @@ executors:
       PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
   ubuntu:
     machine:
-      image: ubuntu-2204:2023.02.1
+      image: ubuntu-2204:current
       docker_layer_caching: true
 parameters:
   BUST_CACHE:
@@ -40,7 +40,7 @@ commands:
             equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
             - restore_cache:
-                key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+                key: deps--<< executor >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
     description: "Custom command for saving cache."
     parameters:
@@ -48,7 +48,7 @@ commands:
         type: string
     steps:
       - save_cache:
-          key: deps--{{ arch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps--<< executor >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.npm
             - node_modules
@@ -56,7 +56,8 @@ commands:
     description: "Track important packages and files"
     steps:
       - run: |
-          sudo mkdir /tmp/artifacts
+          sudo mkdir /tmp/artifacts && sudo chmod 777 /tmp/artifacts || true
+          mkdir /tmp/artifacts
           printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
           npm -v >> /tmp/artifacts/npm-version.txt
           node -v >> /tmp/artifacts/node-version.txt
