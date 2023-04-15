@@ -56,13 +56,13 @@ commands:
     description: "Track important packages and files"
     steps:
       - run: |
-          mkdir ./artifacts
-          printenv NODE_ENV >> ./artifacts/NODE_ENV.txt
-          npm -v >> ./artifacts/npm-version.txt
-          node -v >> ./artifacts/node-version.txt
-          ls -latR >> ./artifacts/dir.txt
+          sudo mkdir /tmp/artifacts
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+          npm -v >> /tmp/artifacts/npm-version.txt
+          node -v >> /tmp/artifacts/node-version.txt
+          ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
-          path: ./artifacts/
+          path: /tmp/artifacts/
   generate_e2e_code_cov_report:
    description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
    parameters:
