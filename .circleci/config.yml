@@ -153,10 +153,9 @@ jobs:
         type: string
     executor: ubuntu
     steps:
-      - checkout
       - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-      - run: nvm ls-remote; nvm install lts/gallium
-      - run: npm install
+      - build_and_install:
+          node-version: <<parameters.node-version>>
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
