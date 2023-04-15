@@ -154,7 +154,7 @@ jobs:
     executor: ubuntu
     steps:
       - checkout
-      - run: nvm use <<parameters.node-version>>
+      - run: nvm use 18
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
