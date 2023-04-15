@@ -56,8 +56,7 @@ commands:
     description: "Track important packages and files"
     steps:
       - run: |
-          sudo mkdir /tmp/artifacts && sudo chmod 777 /tmp/artifacts || true
-          mkdir -p /tmp/artifacts
+          [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
           printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
           npm -v >> /tmp/artifacts/npm-version.txt
           node -v >> /tmp/artifacts/node-version.txt
