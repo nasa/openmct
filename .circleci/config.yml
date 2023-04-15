@@ -154,7 +154,7 @@ jobs:
     executor: ubuntu
     steps:
       - checkout
-      - run: nvm ls-remote;nvm use <<parameters.node-version>>
+      - run: nvm ls-remote --lts; nvm install --lts
       - run: npm install
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
       - run: |
