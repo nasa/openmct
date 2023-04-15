@@ -153,7 +153,7 @@ jobs:
         type: string
     executor: ubuntu
     steps:
-      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash #The extant install is just old enough to fail in mysterious ways
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
@@ -228,7 +228,7 @@ workflows:
       # - visual-test:
       #     node-version: lts/gallium
       - e2e-couchdb: ##TEMP
-          node-version: lts/gallium ##TEMP
+          node-version: lts/hydrogen ##TEMP
         
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
