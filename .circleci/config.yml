@@ -27,7 +27,6 @@ commands:
       - restore_cache_cmd:
           node-version: << parameters.node-version >>
       - node/install:
-          install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install --no-audit --progress=false
   restore_cache_cmd:
