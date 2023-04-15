@@ -116,7 +116,7 @@ jobs:
           path: coverage
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
@@ -152,7 +152,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-couchdb:
@@ -188,7 +188,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   perf-test:
@@ -228,7 +228,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
 workflows:
