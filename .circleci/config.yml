@@ -29,8 +29,7 @@ commands:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
-      # - run: npm install --prefer-offline --no-audit --progress=false
-      - run: npm install
+      - run: npm install --prefer-offline --no-audit --progress=false
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
@@ -115,7 +114,11 @@ jobs:
           path: dist/reports/tests/
       - store_artifacts:
           path: coverage
-      - generate_and_store_version_and_filesystem_artifacts
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
       node-version:
@@ -147,7 +150,11 @@ jobs:
           path: coverage
       - store_artifacts:
           path: html-test-results
-      - generate_and_store_version_and_filesystem_artifacts
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
   e2e-couchdb:
     parameters:
       node-version:
@@ -168,8 +175,12 @@ jobs:
           docker network ls
           docker ps
       - run: npm run test:e2e:couchdb
-      - generate_e2e_code_cov_report:
-         suite: full        
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+          - generate_e2e_code_cov_report:
+              suite: full    
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -178,7 +189,11 @@ jobs:
           path: coverage
       - store_artifacts:
           path: html-test-results
-      - generate_and_store_version_and_filesystem_artifacts
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
   perf-test:
     parameters:
       node-version:
@@ -194,7 +209,11 @@ jobs:
           path: test-results
       - store_artifacts:
           path: html-test-results
-      - generate_and_store_version_and_filesystem_artifacts
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
   visual-test:
     parameters:
       node-version:
@@ -210,24 +229,28 @@ jobs:
           path: test-results
       - store_artifacts:
           path: html-test-results
-      - generate_and_store_version_and_filesystem_artifacts
+      - when:
+          condition:
+            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      # - lint:
-      #     name: node16-lint
-      #     node-version: lts/gallium
-      # - unit-test:
-      #     name: node18-chrome
-      #     node-version: lts/hydrogen
-      # - e2e-test:
-      #     name: e2e-stable
-      #     node-version: lts/gallium
-      #     suite: stable
-      # - perf-test:
-      #     node-version: lts/gallium
-      # - visual-test:
-      #     node-version: lts/gallium
+      - lint:
+          name: node16-lint
+          node-version: lts/gallium
+      - unit-test:
+          name: node18-chrome
+          node-version: lts/hydrogen
+      - e2e-test:
+          name: e2e-stable
+          node-version: lts/gallium
+          suite: stable
+      - perf-test:
+          node-version: lts/gallium
+      - visual-test:
+          node-version: lts/gallium
       - e2e-couchdb: ##TEMP
           node-version: lts/hydrogen ##TEMP
         
@@ -250,7 +273,7 @@ workflows:
       - visual-test:
           node-version: lts/gallium
       - e2e-couchdb:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
     triggers:
       - schedule:
           cron: "0 0 * * *"
