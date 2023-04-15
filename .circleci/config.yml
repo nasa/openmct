@@ -27,6 +27,7 @@ commands:
       - restore_cache_cmd:
           node-version: << parameters.node-version >>
       - node/install:
+          install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install --prefer-offline --no-audit --progress=false
   restore_cache_cmd:
@@ -152,8 +153,8 @@ jobs:
         type: string
     executor: ubuntu
     steps:
-      - build_and_install:
-          node-version: <<parameters.node-version>>
+      - checkout
+      - run: nvm use <<parameters.node-version>>
       - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
