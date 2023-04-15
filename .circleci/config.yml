@@ -29,7 +29,7 @@ commands:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
-      - run: npm install --prefer-offline --no-audit --progress=false
+      - run: npm install --no-audit --progress=false
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
@@ -171,16 +171,13 @@ jobs:
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB 
-      - run: |
-          docker network ls
-          docker ps
       - run: npm run test:e2e:couchdb
       - when:
           condition:
             equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
           - generate_e2e_code_cov_report:
-              suite: full    
+              suite: full #add to full suite
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
