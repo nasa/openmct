@@ -57,7 +57,7 @@ commands:
     steps:
       - run: |
           [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
-          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt || true
           npm -v >> /tmp/artifacts/npm-version.txt
           node -v >> /tmp/artifacts/node-version.txt
           ls -latR >> /tmp/artifacts/dir.txt
