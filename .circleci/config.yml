@@ -7,6 +7,10 @@ executors:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
       PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+  ubuntu:
+    machine:
+      image: ubuntu-2004:202010-01
+      docker_layer_caching: true
 parameters:
   BUST_CACHE:
     description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
@@ -147,30 +151,20 @@ jobs:
     parameters:
       node-version:
         type: string
-    executor: pw-focal-development
+    executor: ubuntu
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Download and install docker compose
-          command: |
-            curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64" -o ~/docker-compose  
-            chmod +x ~/docker-compose  
-            mv ~/docker-compose /usr/local/bin/docker-compose
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sh get-docker.sh
+      - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
-          cat src/plugins/persistence/couch/setup-couchdb.sh | docker exec --env-file src/plugins/persistence/couch/.env.ci -i couch-couchdb-1 bash
+          bash src/plugins/persistence/couch/setup-couchdb.sh
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB 
       - run: |
           docker network ls
           docker ps
-      - run: bash .circleci/quick-bash.sh
       - run: npm run test:e2e:couchdb
       - generate_e2e_code_cov_report:
          suite: full        
