@@ -57,7 +57,7 @@ commands:
     steps:
       - run: |
           sudo mkdir /tmp/artifacts && sudo chmod 777 /tmp/artifacts || true
-          mkdir /tmp/artifacts || true
+          mkdir -p /tmp/artifacts
           printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
           npm -v >> /tmp/artifacts/npm-version.txt
           node -v >> /tmp/artifacts/node-version.txt
