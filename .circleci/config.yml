@@ -40,7 +40,7 @@ commands:
             equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
             - restore_cache:
-                key: deps--<< executor >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+                key: deps--<< executors >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
     description: "Custom command for saving cache."
     parameters:
@@ -48,7 +48,7 @@ commands:
         type: string
     steps:
       - save_cache:
-          key: deps--<< executor >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps--<< executors >>--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.npm
             - node_modules
