@@ -20,38 +20,33 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<form
-    ref="fixedDeltaInput"
+<time-popup-fixed
+    v-if="readOnly === false"
+    :type="'start'"
+    :offset="formattedBounds.start"
+    :mode="'fixed'"
+    @focus.native="$event.target.select()"
+    @update="setBoundsFromView"
+    @dismiss="dismiss"
+/>
+<div
+    v-else
     class="c-compact-tc__bounds"
-    @click.prevent.stop="showTimePopupStart"
 >
-    <time-popup-fixed
-        v-if="showTCInputStart"
-        class="c-tc-input-popup--fixed-mode"
-        :bottom="keyString !== undefined"
-        :type="'start'"
-        :offset="formattedBounds.start"
-        :mode="'fixed'"
-        @focus.native="$event.target.select()"
-        @hide="hideAllTimePopups"
-        @update="setBoundsFromView"
-    />
     <div class="c-compact-tc__bounds__value">{{ formattedBounds.start }}</div>
     <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
     <div class="c-compact-tc__bounds__value">{{ formattedBounds.end }}</div>
-</form>
+</div>
 </template>
 
 <script>
 import TimePopupFixed from "./timePopupFixed.vue";
-import DatePicker from "./DatePicker.vue";
 import _ from "lodash";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     components: {
-        DatePicker,
         TimePopupFixed
     },
     inject: ['openmct'],
@@ -88,8 +83,6 @@ export default {
         let bounds = this.bounds || this.openmct.time.bounds();
 
         return {
-            showTCInputStart: false,
-            showTCInputEnd: false,
             durationFormatter,
             timeFormatter,
             bounds: {
@@ -121,7 +114,6 @@ export default {
         this.setTimeContext();
     },
     beforeDestroy() {
-        this.clearAllValidation();
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.stopFollowingTimeContext();
     },
@@ -132,7 +124,6 @@ export default {
 
             this.handleNewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.handleNewBounds);
-            this.timeContext.on('clock', this.clearAllValidation);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
@@ -143,13 +134,6 @@ export default {
         handleNewBounds(bounds) {
             this.setBounds(bounds);
             this.setViewFromBounds(bounds);
-        },
-        clearAllValidation() {
-            [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
-        },
-        clearValidationForInput(input) {
-            // input.setCustomValidity(''); CH TEMP
-            // input.title = ''; CH TEMP
         },
         setBounds(bounds) {
             this.bounds = bounds;
@@ -170,124 +154,14 @@ export default {
                 format: key
             }).formatter;
         },
-        setBoundsFromView($event) {
-            if (this.$refs.fixedDeltaInput.checkValidity()) {
-                let start = this.timeFormatter.parse(this.formattedBounds.start);
-                let end = this.timeFormatter.parse(this.formattedBounds.end);
-
-                this.$emit('updated', {
-                    start: start,
-                    end: end
-                });
-            }
-
-            if ($event) {
-                $event.preventDefault();
-
-                return false;
-            }
-        },
-        submitForm() {
-        // Allow Vue model to catch up to user input.
-        // Submitting form will cause validation messages to display (but only if triggered by button click)
-            this.$nextTick(() => this.setBoundsFromView());
-        },
-        validateAllBounds(ref) {
-            if (!this.areBoundsFormatsValid()) {
-                return false;
-            }
-
-            let validationResult = {
-                valid: true
-            };
-            const currentInput = this.$refs[ref];
-
-            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                let boundsValues = {
-                    start: this.timeFormatter.parse(this.formattedBounds.start),
-                    end: this.timeFormatter.parse(this.formattedBounds.end)
-                };
-                //TODO: Do we need limits here? We have conductor limits disabled right now
-                // const limit = this.getBoundsLimit();
-                const limit = false;
-
-                if (this.timeSystem.isUTCBased && limit
-                    && boundsValues.end - boundsValues.start > limit) {
-                    if (input === currentInput) {
-                        validationResult = {
-                            valid: false,
-                            message: "Start and end difference exceeds allowable limit"
-                        };
-                    }
-                } else {
-                    if (input === currentInput) {
-                        validationResult = this.openmct.time.validateBounds(boundsValues);
-                    }
-                }
-
-                return this.handleValidationResults(input, validationResult);
+        setBoundsFromView(bounds) {
+            this.$emit('updated', {
+                start: bounds.start,
+                end: bounds.end
             });
         },
-        areBoundsFormatsValid() {
-            let validationResult = {
-                valid: true
-            };
-
-            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                const formattedDate = input === this.$refs.startDate
-                    ? this.formattedBounds.start
-                    : this.formattedBounds.end
-          ;
-
-                if (!this.timeFormatter.validate(formattedDate)) {
-                    validationResult = {
-                        valid: false,
-                        message: 'Invalid date'
-                    };
-                }
-
-                return this.handleValidationResults(input, validationResult);
-            });
-        },
-        getBoundsLimit() {
-            const configuration = this.configuration.menuOptions
-                .filter(option => option.timeSystem === this.timeSystem.key)
-                .find(option => option.limit);
-
-            const limit = configuration ? configuration.limit : undefined;
-
-            return limit;
-        },
-        handleValidationResults(input, validationResult) {
-            if (validationResult.valid !== true) {
-                input.setCustomValidity(validationResult.message);
-                input.title = validationResult.message;
-            } else {
-                input.setCustomValidity('');
-                input.title = '';
-            }
-
-            this.$refs.fixedDeltaInput.reportValidity();
-
-            return validationResult.valid;
-        },
-        startDateSelected(date) {
-            this.formattedBounds.start = this.timeFormatter.format(date);
-            this.validateAllBounds('startDate');
-            this.submitForm();
-        },
-        endDateSelected(date) {
-            this.formattedBounds.end = this.timeFormatter.format(date);
-            this.validateAllBounds('endDate');
-            this.submitForm();
-        },
-        hideAllTimePopups() {
-            this.showTCInputStart = false;
-            this.showTCInputEnd = false;
-        },
-        showTimePopupStart() {
-            this.hideAllTimePopups();
-            this.showTCInputStart = !this.showTCInputStart;
+        dismiss() {
+            this.$emit('dismiss');
         }
     }
 };

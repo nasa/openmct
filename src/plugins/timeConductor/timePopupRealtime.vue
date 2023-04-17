@@ -1,171 +1,144 @@
 <template>
-<div
-    class="c-tc-input-popup"
-    :class="{'c-tc-input-popup--bottom' : bottom === true}"
-    @keydown.enter.prevent
-    @keyup.enter.prevent="submit"
-    @keydown.esc.prevent
-    @keyup.esc.prevent="hide"
-    @click.stop
+<form
+    ref="deltaInput"
+    class="c-tc-input-popup__input-grid"
 >
-    <div class="c-tc-input-popup__options c-tc-input-popup__options--real-time">
-        <button class="c-button c-button--menu icon-clock">
-            <span class="c-button__label">Local Clock</span>
-        </button>
+    <div class="pr-time-label icon-minus">Hrs</div>
+    <div class="pr-time-label">Mins</div>
+    <div class="pr-time-label">Secs</div>
+    <div class="pr-time-label"></div>
+    <div class="pr-time-label icon-plus">Hrs</div>
+    <div class="pr-time-label">Mins</div>
+    <div class="pr-time-label">Secs</div>
+    <div class="pr-time-label"></div>
 
-        <button class="c-button c-button--menu">
-            <span class="c-button__label">UTC</span>
-        </button>
-
-        <button class="c-button c-button--menu icon-history">
-            <span class="c-button__label">History</span>
-        </button>
+    <div class="pr-time-input">
+        <input
+            ref="inputHrs"
+            v-model="inputHrs"
+            class="pr-time-input__hrs"
+            step="1"
+            type="number"
+            min="0"
+            max="23"
+            title="Enter 0 - 23"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputHrs')"
+            @wheel="increment($event, 'inputHrs')"
+        >
+        <b>:</b>
+    </div>
+    <div class="pr-time-input">
+        <input
+            ref="inputMins"
+            v-model="inputMins"
+            type="number"
+            class="pr-time-input__mins"
+            min="0"
+            max="59"
+            title="Enter 0 - 59"
+            step="1"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputMins')"
+            @wheel="increment($event, 'inputMins')"
+        >
+        <b>:</b>
+    </div>
+    <div class="pr-time-input">
+        <input
+            ref="inputSecs"
+            v-model="inputSecs"
+            type="number"
+            class="pr-time-input__secs"
+            min="0"
+            max="59"
+            title="Enter 0 - 59"
+            step="1"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputSecs')"
+            @wheel="increment($event, 'inputSecs')"
+        >
     </div>
 
-    <div class="c-tc-input-popup__input-grid">
-        <div class="pr-time-label icon-minus">Hrs</div>
-        <div class="pr-time-label">Mins</div>
-        <div class="pr-time-label">Secs</div>
-        <div class="pr-time-label"></div>
-        <div class="pr-time-label icon-plus">Hrs</div>
-        <div class="pr-time-label">Mins</div>
-        <div class="pr-time-label">Secs</div>
-        <div class="pr-time-label"></div>
+    <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-        <div class="pr-time-input">
-            <input
-                ref="inputHrs"
-                v-model="inputHrs"
-                class="pr-time-input__hrs"
-                step="1"
-                type="number"
-                min="0"
-                max="23"
-                title="Enter 0 - 23"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputHrs')"
-                @wheel="increment($event, 'inputHrs')"
-            >
-            <b>:</b>
-        </div>
-        <div class="pr-time-input">
-            <input
-                ref="inputMins"
-                v-model="inputMins"
-                type="number"
-                class="pr-time-input__mins"
-                min="0"
-                max="59"
-                title="Enter 0 - 59"
-                step="1"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputMins')"
-                @wheel="increment($event, 'inputMins')"
-            >
-            <b>:</b>
-        </div>
-        <div class="pr-time-input">
-            <input
-                ref="inputSecs"
-                v-model="inputSecs"
-                type="number"
-                class="pr-time-input__secs"
-                min="0"
-                max="59"
-                title="Enter 0 - 59"
-                step="1"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputSecs')"
-                @wheel="increment($event, 'inputSecs')"
-            >
-        </div>
-
-        <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
-
-        <div class="pr-time-input">
-            <input
-                ref="inputHrs"
-                v-model="inputHrs"
-                class="pr-time-input__hrs"
-                step="1"
-                type="number"
-                min="0"
-                max="23"
-                title="Enter 0 - 23"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputHrs')"
-                @wheel="increment($event, 'inputHrs')"
-            >
-            <b>:</b>
-        </div>
-        <div class="pr-time-input">
-            <input
-                ref="inputMins"
-                v-model="inputMins"
-                type="number"
-                class="pr-time-input__mins"
-                min="0"
-                max="59"
-                title="Enter 0 - 59"
-                step="1"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputMins')"
-                @wheel="increment($event, 'inputMins')"
-            >
-            <b>:</b>
-        </div>
-        <div class="pr-time-input">
-            <input
-                ref="inputSecs"
-                v-model="inputSecs"
-                type="number"
-                class="pr-time-input__secs"
-                min="0"
-                max="59"
-                title="Enter 0 - 59"
-                step="1"
-                @change="validate()"
-                @keyup="validate()"
-                @focusin="selectAll($event)"
-                @focusout="format('inputSecs')"
-                @wheel="increment($event, 'inputSecs')"
-            >
-        </div>
-
-        <div class="pr-time-input pr-time-input--buttons">
-            <button
-                class="c-button c-button--major icon-check"
-                :disabled="isDisabled"
-                @click.prevent="submit"
-            ></button>
-            <button
-                class="c-button icon-x"
-                @click.prevent="hide"
-            ></button>
-        </div>
+    <div class="pr-time-input">
+        <input
+            ref="inputHrs"
+            v-model="inputHrs"
+            class="pr-time-input__hrs"
+            step="1"
+            type="number"
+            min="0"
+            max="23"
+            title="Enter 0 - 23"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputHrs')"
+            @wheel="increment($event, 'inputHrs')"
+        >
+        <b>:</b>
     </div>
-</div>
+    <div class="pr-time-input">
+        <input
+            ref="inputMins"
+            v-model="inputMins"
+            type="number"
+            class="pr-time-input__mins"
+            min="0"
+            max="59"
+            title="Enter 0 - 59"
+            step="1"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputMins')"
+            @wheel="increment($event, 'inputMins')"
+        >
+        <b>:</b>
+    </div>
+    <div class="pr-time-input">
+        <input
+            ref="inputSecs"
+            v-model="inputSecs"
+            type="number"
+            class="pr-time-input__secs"
+            min="0"
+            max="59"
+            title="Enter 0 - 59"
+            step="1"
+            @change="validate()"
+            @keyup="validate()"
+            @focusin="selectAll($event)"
+            @focusout="format('inputSecs')"
+            @wheel="increment($event, 'inputSecs')"
+        >
+    </div>
+
+    <div class="pr-time-input pr-time-input--buttons">
+        <button
+            class="c-button c-button--major icon-check"
+            :disabled="isDisabled"
+            @click.prevent="submit"
+        ></button>
+        <button
+            class="c-button icon-x"
+            @click.prevent="hide"
+        ></button>
+    </div>
+</form>
 </template>
 
 <script>
 export default {
     props: {
-        bottom: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        },
         type: {
             type: String,
             required: true
@@ -229,8 +202,10 @@ export default {
                 seconds: this.inputSecs
             });
         },
-        hide() {
-            this.$emit('hide');
+        hide($event) {
+            if ($event.target.className.indexOf('c-button icon-x') > -1) {
+                this.$emit('dismiss');
+            }
         },
         increment($ev, ref) {
             $ev.preventDefault();
