@@ -40,7 +40,7 @@ test.describe('Autoscale', () => {
         //This is necessary due to the size of the test suite.
         test.slow();
 
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await setTimeRange(page);
 

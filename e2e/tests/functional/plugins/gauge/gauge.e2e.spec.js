@@ -31,7 +31,7 @@ const uuid = require('uuid').v4;
 test.describe('Gauge', () => {
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Can add and remove telemetry sources @unstable', async ({ page }) => {

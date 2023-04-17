@@ -36,7 +36,7 @@ const { test, expect } = require('../../pluginFixtures.js');
 
 test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
 
     // click create button

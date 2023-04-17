@@ -33,7 +33,7 @@ test.describe('Plot Integrity Testing @unstable', () => {
 
     test.beforeEach(async ({ page }) => {
         //Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
     });
 

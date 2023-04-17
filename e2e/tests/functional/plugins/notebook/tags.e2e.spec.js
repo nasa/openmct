@@ -80,7 +80,7 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 test.describe('Tagging in Notebooks @addInit', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
@@ -214,7 +214,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('button[title="More options"]').click();
         await page.locator('li[title="Remove this object from its containing object."]').click();
         await page.locator('button:has-text("OK")').click();
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
         await expect(page.locator('text=No results found')).toBeVisible();
@@ -225,7 +225,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
 

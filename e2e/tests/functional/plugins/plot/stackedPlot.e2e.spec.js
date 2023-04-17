@@ -36,7 +36,7 @@ test.describe('Stacked Plot', () => {
 
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         stackedPlot = await createDomainObjectWithDefaults(page, {
             type: "Stacked Plot"
