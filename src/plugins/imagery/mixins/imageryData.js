@@ -54,7 +54,7 @@ export default {
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
 
-        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {}, this.timeContext);
+        this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {timeContext: this.timeContext});
         this.telemetryCollection.on('add', this.dataAdded);
         this.telemetryCollection.on('remove', this.dataRemoved);
         this.telemetryCollection.on('clear', this.dataCleared);

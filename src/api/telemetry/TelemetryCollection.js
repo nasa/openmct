@@ -45,14 +45,12 @@ export default class TelemetryCollection extends EventEmitter {
      * @param  {OpenMCT} openmct - Open MCT
      * @param  {DomainObject} domainObject - Domain Object to use for telemetry collection
      * @param  {Object} options - Any options passed in for request/subscribe
-     * @param  {TimeContext} timeContext - TimeContext to use for telemetry collection
      */
-    constructor(openmct, domainObject, options, timeContext) {
+    constructor(openmct, domainObject, options) {
         super();
 
         this.loaded = false;
         this.openmct = openmct;
-        this.timeContext = timeContext ?? this.openmct.time;
         this.domainObject = domainObject;
         this.boundedTelemetry = [];
         this.futureBuffer = [];
@@ -60,7 +58,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.unsubscribe = undefined;
         this.options = options ?? {};
-        this.options.timeContext = this.options.timeContext ?? this.timeContext;
+        this.openmct.telemetry.standardizeRequestOptions(options);
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
@@ -77,8 +75,8 @@ export default class TelemetryCollection extends EventEmitter {
             this._error(LOADED_ERROR);
         }
 
-        this._setTimeSystem(this.timeContext.timeSystem());
-        this.lastBounds = this.timeContext.bounds();
+        this._setTimeSystem(this.options.timeContext.timeSystem());
+        this.lastBounds = this.options.timeContext.bounds();
 
         this._watchBounds();
         this._watchTimeSystem();
@@ -125,11 +123,10 @@ export default class TelemetryCollection extends EventEmitter {
 
         // TODO: When https://github.com/nasa/openmct/issues/6493 is resolved,
         // this should be removed.
-        const bounds = this.timeContext.bounds();
+        const bounds = this.options.timeContext.bounds();
         options.start = bounds.start;
         options.end = bounds.end;
 
-        this.openmct.telemetry.standardizeRequestOptions(options);
         historicalProvider = this.openmct.telemetry.
             findRequestProvider(this.domainObject, options);
 
@@ -466,7 +463,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _watchBounds() {
-        this.timeContext.on('bounds', this._bounds, this);
+        this.options.timeContext.on('bounds', this._bounds, this);
     }
 
     /**
@@ -474,7 +471,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _unwatchBounds() {
-        this.timeContext.off('bounds', this._bounds, this);
+        this.options.timeContext.off('bounds', this._bounds, this);
     }
 
     /**
@@ -482,7 +479,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _watchTimeSystem() {
-        this.timeContext.on('timeSystem', this._setTimeSystemAndFetchData, this);
+        this.options.timeContext.on('timeSystem', this._setTimeSystemAndFetchData, this);
     }
 
     /**
@@ -490,7 +487,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @private
      */
     _unwatchTimeSystem() {
-        this.timeContext.off('timeSystem', this._setTimeSystemAndFetchData, this);
+        this.options.timeContext.off('timeSystem', this._setTimeSystemAndFetchData, this);
     }
 
     /**

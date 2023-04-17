@@ -267,14 +267,13 @@ export default class TelemetryAPI {
      *        options for this telemetry collection request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
-    requestCollection(domainObject, options, timeContext) {
+    requestCollection(domainObject, options) {
         options = options ?? {};
 
         return new TelemetryCollection(
             this.openmct,
             domainObject,
-            options,
-            timeContext
+            options
         );
     }
 
