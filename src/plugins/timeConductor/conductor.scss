@@ -491,8 +491,7 @@
     padding: $interiorMarginLg;
     position: absolute;
     width: min-content;
-    left: 8px;
-    bottom: 24px;
+    bottom: 35px;
 
     > * + * {
         margin-top: $interiorMarginLg;
@@ -500,7 +499,7 @@
 
     &[class*='--bottom'] {
         bottom: auto;
-        top: 24px;
+        top: 35px;
     }
 
     &__options {

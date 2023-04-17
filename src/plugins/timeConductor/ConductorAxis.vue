@@ -98,7 +98,10 @@ export default {
 
         //Respond to changes in conductor
         this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
-        setInterval(this.resize, RESIZE_POLL_INTERVAL);
+        this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    },
+    beforeDestroy() {
+        clearInterval(this.resizeTimer);
     },
     methods: {
         setAxisDimensions() {

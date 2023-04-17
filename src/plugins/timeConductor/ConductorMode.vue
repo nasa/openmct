@@ -22,7 +22,7 @@
 <template>
 <div
     ref="modeButton"
-    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+    class="c-tc-input-popup__options"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
         <button

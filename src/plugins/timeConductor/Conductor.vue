@@ -21,6 +21,7 @@
  *****************************************************************************/
 <template>
 <div
+    ref="timeConductorOptionsHolder"
     class="c-compact-tc is-expanded"
     :class="[
         { 'is-zooming': isZooming },
@@ -30,38 +31,16 @@
     ]"
 >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-
-    <ConductorMode
-        class="c-conductor__mode-select"
-        :button-css-class="'c-icon-button'"
-        title="TEMP - MOVE TO POPUP"
-    />
-    <ConductorTimeSystem
-        v-if="false"
-        class="c-conductor__time-system-select"
-        :button-css-class="'c-icon-button'"
-        title="TEMP - MOVE TO POPUP"
-    />
-    <ConductorHistory
-        v-if="false"
-        class="c-conductor__history-select"
-        :button-css-class="'c-icon-button'"
-        :offsets="openmct.time.clockOffsets()"
-        :bounds="bounds"
-        :time-system="timeSystem"
-        :mode="timeMode"
-        title="TEMP - MOVE TO POPUP"
-    />
-
+    <!-- TODO - NEED TO ADD MODE, CLOCK AND TIMESYSTEM VIEW ONLY INFORMATION HERE -->
     <conductor-inputs-fixed
         v-if="isFixed"
         :input-bounds="viewBounds"
-        @updated="saveFixedOffsets"
+        :read-only="true"
     />
     <conductor-inputs-realtime
         v-else
         :input-bounds="viewBounds"
-        @updated="saveClockOffsets"
+        :read-only="true"
     />
     <conductor-axis
         v-if="isFixed"
@@ -84,13 +63,11 @@
 
 <script>
 import _ from 'lodash';
-import ConductorMode from './ConductorMode.vue';
-import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
-import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "./ConductorInputsRealtime.vue";
+import conductorPopUpManager from "./conductorPopUpManager";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -98,12 +75,10 @@ export default {
     components: {
         ConductorInputsRealtime,
         ConductorInputsFixed,
-        ConductorMode,
-        ConductorTimeSystem,
         ConductorAxis,
-        ConductorModeIcon,
-        ConductorHistory
+        ConductorModeIcon
     },
+    mixins: [conductorPopUpManager],
     inject: ['openmct', 'configuration'],
     data() {
         let bounds = this.openmct.time.bounds();
@@ -137,15 +112,8 @@ export default {
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
-            isZooming: false,
-            showTCInputStart: false,
-            showTCInputEnd: false
+            isZooming: false
         };
-    },
-    computed: {
-        timeMode() {
-            return this.isFixed ? 'fixed' : 'realtime';
-        }
     },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
@@ -212,7 +180,6 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setViewFromClock(clock) {
-            // this.clearAllValidation();
             this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds) {
@@ -225,12 +192,6 @@ export default {
             return this.openmct.telemetry.getValueFormatter({
                 format: key
             }).formatter;
-        },
-        saveClockOffsets(offsets) {
-            this.openmct.time.clockOffsets(offsets);
-        },
-        saveFixedOffsets(bounds) {
-            this.openmct.time.bounds(bounds);
         }
     }
 };
