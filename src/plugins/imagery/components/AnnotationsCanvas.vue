@@ -51,7 +51,7 @@ export default {
     },
     methods: {
         drawRectInCanvas() {
-            console.debug(`🪟 Drawing rectangle, `, this.rect);
+            console.debug(`🪟 Drawing rectangle, ${this.rectangle.x} ${this.rectangle.y} ${this.rectangle.width} ${this.rectangle.height}`, this.rectangle);
             const canvas = this.$refs.canvas;
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -74,33 +74,31 @@ export default {
                 this.rectangle = {
                     x: this.rectangle.x,
                     y: this.rectangle.y,
-                    width: (event.clientX - boundingRect.left) * scaleX,
-                    height: (event.clientY - boundingRect.top) * scaleY
+                    width: ((event.clientX - boundingRect.left) * scaleX) - this.rectangle.x,
+                    height: ((event.clientY - boundingRect.top) * scaleY) - this.rectangle.y
                 };
                 this.drawRectInCanvas();
             }
         },
         mouseUp(event) {
-            console.debug(`🐭 mouseUp`);
+            console.debug(`🐭 mouseUp, dragging disabled`);
             this.dragging = false;
         },
         mouseDown(event) {
-            console.debug(`🐭 mouseDown: ${event.type}`);
-            if (!this.dragging) {
-                const canvas = this.$refs.canvas;
+            console.debug(`🐭 mouseDown`);
+            const canvas = this.$refs.canvas;
 
-                const boundingRect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / boundingRect.width;
-                const scaleY = canvas.height / boundingRect.height;
-                this.rectangle = {
-                    x: (event.clientX - boundingRect.left) * scaleX,
-                    y: (event.clientY - boundingRect.top) * scaleY,
-                    width: scaleX,
-                    height: scaleY
-                };
-                this.drawRectInCanvas();
-                this.dragging = true;
-            }
+            const boundingRect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / boundingRect.width;
+            const scaleY = canvas.height / boundingRect.height;
+            this.rectangle = {
+                x: (event.clientX - boundingRect.left) * scaleX,
+                y: (event.clientY - boundingRect.top) * scaleY,
+                width: scaleX,
+                height: scaleY
+            };
+            this.drawRectInCanvas();
+            this.dragging = true;
 
         },
         drawAnnotations() {
