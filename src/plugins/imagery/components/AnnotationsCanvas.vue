@@ -26,15 +26,15 @@
     class="c-image-canvas"
     style="width: 100%; height: 100%;"
     @mousedown="mouseDown"
-    @mouseup="mouseUp"
     @mousemove="mouseMove"
+    @click="mouseClick"
 ></canvas>
 </template>
 
 <script>
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'objectPath'],
     props: {
     },
     data() {
@@ -80,9 +80,67 @@ export default {
                 this.drawRectInCanvas();
             }
         },
-        mouseUp(event) {
+        mouseClick(event) {
+            event.stopPropagation();
             console.debug(`🐭 mouseUp, dragging disabled`);
             this.dragging = false;
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const targetDetails = {};
+            targetDetails[keyString] = {
+                x: this.rectangle.x,
+                y: this.rectangle.y,
+                width: this.rectangle.width,
+                height: this.rectangle.height
+            };
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
+            const annotationContext = {
+                type: 'clicked-on-image-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations: [],
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PIXEL_SPATIAL,
+                onAnnotationChange: null
+            };
+
+            const selection = this.createPathSelection();
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
+                    ...annotationContext
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
+            console.debug(`🍊 firing selection event`, selection);
+            this.openmct.selection.select(selection, true);
+            // would add cancel selection here
+        },
+        createPathSelection() {
+            let selection = [];
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject
+                }
+            });
+            this.objectPath.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
+                    }
+                });
+            });
+
+            return selection;
         },
         mouseDown(event) {
             console.debug(`🐭 mouseDown`);

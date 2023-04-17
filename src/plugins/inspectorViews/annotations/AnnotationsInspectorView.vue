@@ -175,6 +175,7 @@ export default {
             }
         },
         updateSelection(selection) {
+            console.debug(`🥾 selection changed`, selection);
             const unobserveEntryFunctions = Object.values(this.unobserveEntries);
             unobserveEntryFunctions.forEach(unobserveEntry => {
                 unobserveEntry();
