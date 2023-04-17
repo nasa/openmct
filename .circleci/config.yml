@@ -248,6 +248,10 @@ workflows:
           node-version: lts/hydrogen
       - e2e-couchdb: ##TEMP
           node-version: lts/hydrogen ##TEMP
+      - e2e-test: ##TEMP
+          name: e2e-full-nightly ##TEMP
+          node-version: lts/hydrogen ##TEMP
+          suite: full ##TEMP
         
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
