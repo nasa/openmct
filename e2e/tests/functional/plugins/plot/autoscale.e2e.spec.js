@@ -73,6 +73,7 @@ test.describe('Autoscale', () => {
         const canvas = page.locator('canvas').nth(1);
 
         await canvas.hover({trial: true});
+        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
 
         expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
 
@@ -182,14 +183,9 @@ async function turnOffAutoscale(page) {
  */
 async function setUserDefinedMinAndMax(page, min, max) {
     // set minimum value
-    const minRangeInput = page.getByRole('listitem').filter({ hasText: 'Minimum Value' }).locator('input[type="number"]');
-    await minRangeInput.click();
-    await minRangeInput.fill(min);
-
+    await page.getByRole('spinbutton').first().fill(min);
     // set maximum value
-    const maxRangeInput = page.getByRole('listitem').filter({ hasText: 'Maximum Value' }).locator('input[type="number"]');
-    await maxRangeInput.click();
-    await maxRangeInput.fill(max);
+    await page.getByRole('spinbutton').nth(1).fill(max);
 }
 
 /**
