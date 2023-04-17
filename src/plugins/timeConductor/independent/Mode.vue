@@ -59,22 +59,17 @@ export default {
         }
     },
     data: function () {
-        let clock;
-        if (this.mode && this.mode.key === 'fixed') {
-            clock = undefined;
-        } else {
-        //We want the clock from the global time context here
-            clock = this.openmct.time.clock();
-        }
-
-        if (clock !== undefined) {
-        //Create copy of active clock so the time API does not get reactified.
-            clock = Object.create(clock);
+        const clock = this.getActiveClock();
+        let mode = 'fixed';
+        if (this.mode?.key !== 'fixed') {
+            mode = 'real-time';
         }
 
         return {
-            selectedMode: this.getModeOptionForClock(clock),
-            modes: []
+            selectedMode: this.getModeMetadata(mode),
+            selectedClock: clock ? this.getClockMetadata(clock) : undefined,
+            modes: [],
+            clocks: []
         };
     },
     watch: {
@@ -111,13 +106,23 @@ export default {
             };
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
+        showClocksMenu() {
+            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
+            const menuOptions = {
+                menuClass: 'c-conductor__clock-menu',
+                placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
+            };
+            this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
+        },
         getMenuOptions() {
-            let clocks = [{
+            let menuOptions = [{
                 name: 'Fixed Timespan',
                 timeSystem: 'utc'
             }];
-            let currentGlobalClock = this.openmct.time.clock();
+            let currentGlobalClock = this.getActiveClock();
             if (currentGlobalClock !== undefined) {
             //Create copy of active clock so the time API does not get reactified.
                 currentGlobalClock = Object.assign({}, {
@@ -126,40 +131,37 @@ export default {
                     timeSystem: this.openmct.time.timeSystem().key
                 });
 
-                clocks.push(currentGlobalClock);
+                menuOptions.push(currentGlobalClock);
             }
 
-            return clocks;
+            return menuOptions;
         },
-        setOption(clockKey) {
-            let key = clockKey;
-            if (clockKey === 'fixed') {
-                key = undefined;
-            }
+        setMode(modeKey) {
+            let key = modeKey;
 
             const matchingOptions = this.getMenuOptions().filter(option => option.clock === key);
             const clock = matchingOptions.length && matchingOptions[0].clock ? Object.assign({}, matchingOptions[0], { key: matchingOptions[0].clock }) : undefined;
-            this.selectedMode = this.getModeOptionForClock(clock);
+            this.selectedMode = this.getModeMetadata(clock);
 
             if (this.mode) {
-                this.$emit('modeChanged', { key: clockKey });
+                this.$emit('modeChanged', { key: modeKey });
             }
         },
         setViewFromClock(clock) {
             const menuOptions = this.getMenuOptions();
-            this.loadClocks(menuOptions);
+            this.loadModesAndClocks(menuOptions);
             //retain the mode chosen by the user
             if (this.mode) {
                 let found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
                 if (!found) {
                     found = this.modes.find(mode => mode.key === clock && clock.key);
-                    this.setOption(found ? this.getModeOptionForClock(clock).key : this.getModeOptionForClock().key);
+                    this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
                 } else if (this.mode.key !== this.selectedMode.key) {
-                    this.setOption(this.selectedMode.key);
+                    this.setMode(this.selectedMode.key);
                 }
             } else {
-                this.setOption(this.getModeOptionForClock(clock).key);
+                this.setMode(this.getModeMetadata(clock).key);
             }
         }
     }

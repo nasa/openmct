@@ -45,21 +45,18 @@ export default {
     mixins: [toggleMixin, modeMixin],
     inject: ['openmct', 'configuration'],
     data: function () {
-        let activeClock = this.openmct.time.clock();
-        if (activeClock !== undefined) {
-            //Create copy of active clock so the time API does not get reactified.
-            activeClock = Object.create(activeClock);
-        }
+        let activeClock = this.getActiveClock();
 
         return {
-            selectedMode: this.getModeOptionForClock(activeClock, TEST_IDS),
+            selectedMode: this.getModeMetadata(activeClock, TEST_IDS),
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
+            clocks: [],
             hoveredMode: {}
         };
     },
     mounted: function () {
-        this.loadClocks(this.configuration.menuOptions);
+        this.loadModesAndClocks(this.configuration.menuOptions);
 
         this.followTimeConductor();
     },
@@ -76,11 +73,19 @@ export default {
 
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
-        setOption(clockKey) {
-            if (clockKey === 'fixed') {
-                clockKey = undefined;
-            }
+        showClocksMenu() {
+            const elementBoundingClientRect = this.$refs.clockButton.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y;
 
+            const menuOptions = {
+                menuClass: 'c-conductor__clock-menu',
+                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+            };
+
+            this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
+        },
+        setClock(clockKey) {
             let configuration = this.getMatchingConfig({
                 clock: clockKey,
                 timeSystem: this.openmct.time.timeSystem().key
@@ -94,11 +99,12 @@ export default {
                 this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
             }
 
-            if (clockKey === undefined) {
+            const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
+            this.openmct.time.clock(clockKey, offsets);
+        },
+        setMode(modeKey) {
+            if (!modeKey || modeKey === 'fixed') {
                 this.openmct.time.stopClock();
-            } else {
-                const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
-                this.openmct.time.clock(clockKey, offsets);
             }
         },
         getMatchingConfig(options) {
@@ -120,7 +126,7 @@ export default {
             return this.configuration.menuOptions.filter(configMatches)[0];
         },
         setViewFromClock(clock) {
-            this.selectedMode = this.getModeOptionForClock(clock, TEST_IDS);
+            this.selectedMode = this.getModeMetadata(clock, TEST_IDS);
         }
     }
 };
