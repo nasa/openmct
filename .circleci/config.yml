@@ -240,12 +240,12 @@ workflows:
           node-version: lts/hydrogen
       - e2e-test:
           name: e2e-stable
-          node-version: lts/gallium
+          node-version: lts/hydrogen
           suite: stable
       - perf-test:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
       - visual-test:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
       - e2e-couchdb: ##TEMP
           node-version: lts/hydrogen ##TEMP
         
@@ -258,15 +258,15 @@ workflows:
           name: node18-chrome
           node-version: lts/hydrogen
       - npm-audit:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
       - e2e-test:
           name: e2e-full-nightly
-          node-version: lts/gallium
+          node-version: lts/hydrogen
           suite: full
       - perf-test:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
       - visual-test:
-          node-version: lts/gallium
+          node-version: lts/hydrogen
       - e2e-couchdb:
           node-version: lts/hydrogen
     triggers:
