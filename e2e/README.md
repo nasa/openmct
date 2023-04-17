@@ -200,6 +200,7 @@ CircleCI
 Github Actions / Workflow
 
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
+- CouchDB Tests. Triggered on PR Create and again with Github Label Event 'pr:e2e:couchdb'
 - Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
