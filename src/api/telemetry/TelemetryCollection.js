@@ -33,6 +33,10 @@ import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } fro
  */
 
 /**
+ * @typedef {import('./TelemetryAPI').TelemetryRequestOptions} TelemetryRequestOptions
+ */
+
+/**
  * @typedef {import('../../../openmct').OpenMCT} OpenMCT
  */
 
@@ -44,7 +48,7 @@ export default class TelemetryCollection extends EventEmitter {
      *
      * @param  {OpenMCT} openmct - Open MCT
      * @param  {DomainObject} domainObject - Domain Object to use for telemetry collection
-     * @param  {Object} options - Any options passed in for request/subscribe
+     * @param  {TelemetryRequestOptions} options - Any options passed in for request/subscribe
      */
     constructor(openmct, domainObject, options = {}) {
         super();
