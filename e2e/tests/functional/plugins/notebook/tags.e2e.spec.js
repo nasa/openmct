@@ -109,7 +109,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
     test('Can add tags with blank entry', async ({ page }) => {
-        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await createDomainObjectWithDefaults(page, { type: 'Notebook' });
         await selectInspectorTab(page, 'Annotations');
 
         await nbUtils.enterTextEntry(page, '');
