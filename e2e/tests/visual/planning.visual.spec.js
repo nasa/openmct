@@ -24,7 +24,9 @@ const { test } = require('../../pluginFixtures');
 const { setBoundsToSpanAllActivities } = require('../../helper/planningUtils');
 const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
-const examplePlanLarge = require('../../test-data/examplePlans/ExamplePlan_Large.json');
+const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
+
+const snapshotScope = '.c-object-view';
 
 test.describe('Visual - Planning', () => {
     test.beforeEach(async ({ page }) => {
@@ -32,21 +34,25 @@ test.describe('Visual - Planning', () => {
     });
     test('Plan View', async ({ page, theme }) => {
         const plan = await createPlanFromJSON(page, {
-            json: examplePlanLarge
+            json: examplePlanSmall
         });
 
-        await setBoundsToSpanAllActivities(page, examplePlanLarge, plan.url);
-        await percySnapshot(page, `Plan View (theme: ${theme})`);
+        await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
+        await percySnapshot(page, `Plan View (theme: ${theme})`, {
+            scope: snapshotScope
+        });
     });
     test('Gantt Chart View', async ({ page, theme }) => {
         const ganttChart = await createDomainObjectWithDefaults(page, {
             type: 'Gantt Chart'
         });
         await createPlanFromJSON(page, {
-            json: examplePlanLarge,
+            json: examplePlanSmall,
             parent: ganttChart.uuid
         });
-        await setBoundsToSpanAllActivities(page, examplePlanLarge, ganttChart.url);
-        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`);
+        await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
+        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`, {
+            scope: snapshotScope
+        });
     });
 });
