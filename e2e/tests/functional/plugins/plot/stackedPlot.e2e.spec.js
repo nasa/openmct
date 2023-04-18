@@ -138,7 +138,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgA
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: "Y Axis" })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgA.name);
 
         // Click on the 2nd plot
