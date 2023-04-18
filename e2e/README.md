@@ -200,6 +200,7 @@ CircleCI
 Github Actions / Workflow
 
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
+- CouchDB Tests. Triggered on PR Create and again with Github Label Event 'pr:e2e:couchdb'
 - Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
@@ -351,6 +352,10 @@ When looking at the reports run in CI, you'll leverage this same HTML Report whi
 
 ### e2e Code Coverage
 
+Our e2e code coverage is captured and combined with our unit test coverage. For more information, please see our [code coverage documentation](../TESTING.md)
+
+#### Generating e2e code coverage
+
 Code coverage is collected during test execution using our custom [baseFixture](./baseFixtures.js). The raw coverage files are stored in a `.nyc_report` directory to be converted into a lcov file with the following [nyc](https://github.com/istanbuljs/nyc) command:
 
 ```npm run cov:e2e:report```
@@ -360,10 +365,6 @@ At this point, the nyc linecov report can be published to [codecov.io](https://a
 ```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu.
 or
 ```npm run cov:e2e:full:publish``` for the full suite running against all available platforms.
-
-Codecov.io will combine each of the above commands with [Codecov.io Flags](https://docs.codecov.com/docs/flags). Effectively, this allows us to combine multiple reports which are run at various stages of our CI Pipeline or run as part of a parallel process.
-
-This e2e coverage is combined with our unit test report to give a comprehensive (if flawed) view of line coverage.
 
 ## Other
 
