@@ -127,14 +127,14 @@ export default class ExportAsJSONAction {
             let newKey = uuid();
 
             this.externalIdentifiers.push(originalKeyString);
-            copy = JSON.parse(JSON.stringify(child));
+            copy = JSON.parse(JSON.stringify(child))
             copy.identifier.key = newKey;
             copy.location = parentKeyString;
             newKeyString = this._getId(copy);
             this.idMap[originalKeyString] = newKeyString;
             this.tree[newKeyString] = copy;
         } else {
-            copy = this.idMap[originalKeyString];
+            copy = this.tree[this.idMap[originalKeyString]];
         }
 
         // if duplicate aliases, parents need to be updated for all
