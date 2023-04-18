@@ -36,20 +36,20 @@ import objectUtils from 'objectUtils';
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequestOptions
- * @property {String} sort the key of the property to sort by. This may
+ * @property {String} [sort] the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
  *           ascending order will be used.
- * @property {Number} start the lower bound for values of the sorting property
- * @property {Number} end the upper bound for values of the sorting property
- * @property {String} strategy symbolic identifier for strategies
+ * @property {Number} [start] the lower bound for values of the sorting property
+ * @property {Number} [end] the upper bound for values of the sorting property
+ * @property {String} [strategy] symbolic identifier for strategies
  *           (such as `latest` or `minmax`) which may be recognized by providers;
  *           these will be tried in order until an appropriate provider
  *           is found
- * @property {AbortController} signal an AbortController which can be used
+ * @property {AbortController} [signal] an AbortController which can be used
  *           to cancel a telemetry request
- * @property {String} domain the domain key of the request
- * @property {TimeContext} timeContext the maximum number of values to return
+ * @property {String} [domain] the domain key of the request
+ * @property {TimeContext} [timeContext] the maximum number of values to return
  * @memberof module:openmct.TelemetryAPI~
  */
 
