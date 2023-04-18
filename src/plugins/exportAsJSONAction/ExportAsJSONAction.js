@@ -59,7 +59,11 @@ export default class ExportAsJSONAction {
      * @param {object} objectpath
      */
     invoke(objectpath) {
+        this.externalIdentifiers = [];
         this.tree = {};
+        this.calls = 0;
+        this.idMap = {};
+
         const root = objectpath[0];
         this.root = JSON.parse(JSON.stringify(root));
         const rootId = this._getId(this.root);
@@ -110,23 +114,34 @@ export default class ExportAsJSONAction {
      * @returns {object}
      */
     _rewriteLink(child, parent) {
-        this.externalIdentifiers.push(this._getId(child));
-        const index = parent.composition.findIndex(id => {
-            return _.isEqual(child.identifier, id);
+        const originalKeyString = this._getId(child);
+        const parentKeyString = this._getId(parent);
+        const existingMappedKeyString = this.idMap[originalKeyString];
+        const index = parent.composition.findIndex(identifier => {
+            return this.openmct.objects.areIdsEqual(child.identifier, identifier);
         });
-        const copyOfChild = JSON.parse(JSON.stringify(child));
+        let copy;
 
-        copyOfChild.identifier.key = uuid();
-        const newIdString = this._getId(copyOfChild);
-        const parentId = this._getId(parent);
+        if (!existingMappedKeyString) {
+            let newKeyString;
+            let newKey = uuid();
 
-        this.idMap[this._getId(child)] = newIdString;
-        copyOfChild.location = parentId;
-        parent.composition[index] = copyOfChild.identifier;
-        this.tree[newIdString] = copyOfChild;
-        this.tree[parentId].composition[index] = copyOfChild.identifier;
+            this.externalIdentifiers.push(originalKeyString);
+            copy = JSON.parse(JSON.stringify(child));
+            copy.identifier.key = newKey;
+            copy.location = parentKeyString;
+            newKeyString = this._getId(copy);
+            this.idMap[originalKeyString] = newKeyString;
+            this.tree[newKeyString] = copy;
+        } else {
+            copy = this.idMap[originalKeyString];
+        }
 
-        return copyOfChild;
+        // if duplicate aliases, parents need to be updated for all
+        parent.composition[index] = copy.identifier;
+        this.tree[parentKeyString].composition[index] = copy.identifier;
+
+        return copy;
     }
 
     /**
