@@ -32,7 +32,7 @@ test.describe('Recent Objects', () => {
     /** @type {import('@playwright/test').Locator} */
     let folderA;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Set Recent Objects List locator for subsequent tests
         recentObjectsList = page.getByRole('list', {

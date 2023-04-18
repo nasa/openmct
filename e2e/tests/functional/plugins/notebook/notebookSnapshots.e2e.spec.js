@@ -66,7 +66,7 @@ test.describe('Snapshot Menu tests', () => {
 test.describe('Snapshot Container tests', () => {
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         // const notebook = await createDomainObjectWithDefaults(page, {

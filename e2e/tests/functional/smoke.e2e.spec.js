@@ -38,7 +38,7 @@ const { test, expect } = require('../../pluginFixtures');
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');

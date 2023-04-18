@@ -35,7 +35,7 @@ test.describe('Notifications List', () => {
         });
 
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create an error notification with the message "Error message"
         await createNotification(page, {
@@ -80,7 +80,7 @@ test.describe('Notification Overlay', () => {
         });
 
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a new Display Layout object
         await createDomainObjectWithDefaults(page, { type: 'Display Layout' });

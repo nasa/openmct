@@ -72,7 +72,7 @@ test.describe('Notebook section tests', () => {
     //The following test cases are associated with Notebook Sections
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
@@ -133,7 +133,7 @@ test.describe('Notebook page tests', () => {
     //The following test cases are associated with Notebook Pages
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
@@ -201,7 +201,7 @@ test.describe('Notebook page tests', () => {
 test.describe('Notebook export tests', () => {
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
@@ -243,7 +243,7 @@ test.describe('Notebook entry tests', () => {
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js') });
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         notebookObject = await createDomainObjectWithDefaults(page, {
             type: NOTEBOOK_NAME
