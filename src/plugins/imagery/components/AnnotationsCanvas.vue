@@ -25,9 +25,9 @@
     ref="canvas"
     class="c-image-canvas"
     style="width: 100%; height: 100%;"
-    @mousedown="mouseDown"
-    @mousemove="mouseMove"
-    @click="mouseClick"
+    @mousedown="startAnnotationDrag"
+    @mousemove="trackAnnotationDrag"
+    @click="createAnnotationSelection"
 ></canvas>
 </template>
 
@@ -36,11 +36,15 @@
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
     props: {
+        image: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {
             dragging: false,
-            rectangle: {}
+            newAnnotationRectangle: {}
         };
     },
     mounted() {
@@ -50,8 +54,8 @@ export default {
     beforeDestroy() {
     },
     methods: {
-        drawRectInCanvas() {
-            console.debug(`🪟 Drawing rectangle, ${this.rectangle.x} ${this.rectangle.y} ${this.rectangle.width} ${this.rectangle.height}`, this.rectangle);
+        drawRectInCanvas(rectangle) {
+            console.debug(`🪟 Drawing rectangle, ${rectangle.x} ${rectangle.y} ${rectangle.width} ${rectangle.height}`, rectangle);
             const canvas = this.$refs.canvas;
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -59,11 +63,11 @@ export default {
             context.lineWidth = "1";
             context.fillStyle = "rgba(199, 87, 231, 0.2)";
             context.strokeStyle = "#c757e7";
-            context.rect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
+            context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             context.fill();
             context.stroke();
         },
-        mouseMove(event) {
+        trackAnnotationDrag(event) {
             if (this.dragging) {
                 console.debug(`🐭 mouseMove: ${event.type}`);
                 const canvas = this.$refs.canvas;
@@ -71,26 +75,50 @@ export default {
                 const boundingRect = canvas.getBoundingClientRect();
                 const scaleX = canvas.width / boundingRect.width;
                 const scaleY = canvas.height / boundingRect.height;
-                this.rectangle = {
-                    x: this.rectangle.x,
-                    y: this.rectangle.y,
-                    width: ((event.clientX - boundingRect.left) * scaleX) - this.rectangle.x,
-                    height: ((event.clientY - boundingRect.top) * scaleY) - this.rectangle.y
+                this.newAnnotationRectangle = {
+                    x: this.newAnnotationRectangle.x,
+                    y: this.newAnnotationRectangle.y,
+                    width: ((event.clientX - boundingRect.left) * scaleX) - this.newAnnotationRectangle.x,
+                    height: ((event.clientY - boundingRect.top) * scaleY) - this.newAnnotationRectangle.y
                 };
-                this.drawRectInCanvas();
+                this.drawRectInCanvas(this.newAnnotationRectangle);
             }
         },
-        mouseClick(event) {
+        clearNewRectangleSelection() {
+            this.newAnnotationRectangle = {};
+            const canvas = this.$refs.canvas;
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        },
+        selectImageView() {
+            // should show ImageView itself if we have no annotations to display
+            const selection = this.createPathSelection();
+            this.openmct.selection.select(selection, true);
+        },
+        createAnnotationSelection(event) {
             event.stopPropagation();
-            console.debug(`🐭 mouseUp, dragging disabled`);
+            console.debug(`🐭 mouseClick, dragging disabled`);
             this.dragging = false;
+            // check to see if we have a rectangle
+            if (!this.newAnnotationRectangle.width && !this.newAnnotationRectangle.height) {
+                console.debug(`🍊 no rectangle, clearing selection`);
+                this.selectImageView();
+
+                return;
+            }
+
+            console.debug(`🌃 focused image: `, this.image);
+
             const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const targetDetails = {};
             targetDetails[keyString] = {
-                x: this.rectangle.x,
-                y: this.rectangle.y,
-                width: this.rectangle.width,
-                height: this.rectangle.height
+                rectangle: {
+                    x: this.newAnnotationRectangle.x,
+                    y: this.newAnnotationRectangle.y,
+                    width: this.newAnnotationRectangle.width,
+                    height: this.newAnnotationRectangle.height
+                },
+                time: this.image.time
             };
             const targetDomainObjects = {};
             targetDomainObjects[keyString] = this.domainObject;
@@ -142,24 +170,33 @@ export default {
 
             return selection;
         },
-        mouseDown(event) {
+        startAnnotationDrag(event) {
             console.debug(`🐭 mouseDown`);
+            this.clearNewRectangleSelection();
             const canvas = this.$refs.canvas;
 
             const boundingRect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / boundingRect.width;
             const scaleY = canvas.height / boundingRect.height;
-            this.rectangle = {
+            this.newAnnotationRectangle = {
                 x: (event.clientX - boundingRect.left) * scaleX,
-                y: (event.clientY - boundingRect.top) * scaleY,
-                width: scaleX,
-                height: scaleY
+                y: (event.clientY - boundingRect.top) * scaleY
             };
-            this.drawRectInCanvas();
             this.dragging = true;
 
         },
-        drawAnnotations() {
+        async drawAnnotations() {
+            // find annotations for this image time
+            const annotationsForThisObject = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const annotationsForThisImage = annotationsForThisObject.filter((foundAnnotation) => {
+                const annotationTime = foundAnnotation.targets[keyString].time;
+
+                return annotationTime === this.image.time;
+            });
+            annotationsForThisImage.forEach((annotation) => {
+                this.drawRectInCanvas(annotation.targets[keyString].rectangle);
+            });
         }
     }
 };

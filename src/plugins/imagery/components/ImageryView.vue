@@ -98,6 +98,7 @@
                 />
                 <AnnotationsCanvas
                     v-if="shouldDisplayCompass"
+                    :image="focusedImage"
                 />
             </div>
         </div>
