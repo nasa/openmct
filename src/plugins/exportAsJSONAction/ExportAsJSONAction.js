@@ -208,7 +208,7 @@ export default class ExportAsJSONAction {
      * @private
      * @param {object} parent
      */
-    _write(parent) {
+    async _write(parent) {
         this.calls++;
 
         //conditional object styles are not saved on the composition, so we need to check for them
@@ -216,28 +216,24 @@ export default class ExportAsJSONAction {
         const composition = this.openmct.composition.get(parent);
 
         if (composition !== undefined) {
-            setTimeout(async () => {
-                const children = await composition.load();
+            const children = await composition.load();
 
-                children.forEach((child) => {
-                    this._exportObject(child, parent, childObjectReferenceId);
-                });
+            children.forEach((child) => {
+                this._exportObject(child, parent, childObjectReferenceId);
+            });
 
-                if (!childObjectReferenceId) {
-                    this._decrementCallsAndSave();
-                }
-            }, 0);
+            if (!childObjectReferenceId) {
+                this._decrementCallsAndSave();
+            }
         } else if (!childObjectReferenceId) {
             this._decrementCallsAndSave();
         }
 
         if (childObjectReferenceId) {
-            setTimeout(async () => {
-                const child = await this.openmct.objects.get(childObjectReferenceId);
+            const child = await this.openmct.objects.get(childObjectReferenceId);
 
-                this._exportObject(child, parent, childObjectReferenceId);
-                this._decrementCallsAndSave();
-            }, 0);
+            this._exportObject(child, parent, childObjectReferenceId);
+            this._decrementCallsAndSave();
         }
     }
 
