@@ -180,7 +180,7 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
     // turn on edit mode
-    await page.getByTitle('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit' }).click();
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 }
 
