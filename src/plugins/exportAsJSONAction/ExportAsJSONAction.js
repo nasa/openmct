@@ -130,7 +130,7 @@ export default class ExportAsJSONAction {
             this.idMap[originalKeyString] = newKeyString;
             this.tree[newKeyString] = copy;
         } else {
-            copy = this.tree[this.idMap[originalKeyString]];
+            copy = this.tree[existingMappedKeyString];
         }
 
         if (isReference) {
