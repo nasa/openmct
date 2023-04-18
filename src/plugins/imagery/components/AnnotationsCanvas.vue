@@ -33,6 +33,9 @@
 
 <script>
 
+const EXISTING_ANNOTATION_COLOR = "#D79078";
+const NEW_ANNOTATION_COLOR = "#BD8ECC";
+
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
     props: {
@@ -54,15 +57,14 @@ export default {
     beforeDestroy() {
     },
     methods: {
-        drawRectInCanvas(rectangle) {
+        drawRectInCanvas(rectangle, color) {
             console.debug(`🪟 Drawing rectangle, ${rectangle.x} ${rectangle.y} ${rectangle.width} ${rectangle.height}`, rectangle);
             const canvas = this.$refs.canvas;
             const context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
             context.beginPath();
             context.lineWidth = "1";
             context.fillStyle = "rgba(199, 87, 231, 0.2)";
-            context.strokeStyle = "#c757e7";
+            context.strokeStyle = color;
             context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             context.fill();
             context.stroke();
@@ -81,11 +83,12 @@ export default {
                     width: ((event.clientX - boundingRect.left) * scaleX) - this.newAnnotationRectangle.x,
                     height: ((event.clientY - boundingRect.top) * scaleY) - this.newAnnotationRectangle.y
                 };
-                this.drawRectInCanvas(this.newAnnotationRectangle);
+                this.clearCanvas();
+                this.drawAnnotations();
+                this.drawRectInCanvas(this.newAnnotationRectangle, NEW_ANNOTATION_COLOR);
             }
         },
-        clearNewRectangleSelection() {
-            this.newAnnotationRectangle = {};
+        clearCanvas() {
             const canvas = this.$refs.canvas;
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -172,7 +175,7 @@ export default {
         },
         startAnnotationDrag(event) {
             console.debug(`🐭 mouseDown`);
-            this.clearNewRectangleSelection();
+            this.newAnnotationRectangle = {};
             const canvas = this.$refs.canvas;
 
             const boundingRect = canvas.getBoundingClientRect();
@@ -195,7 +198,7 @@ export default {
                 return annotationTime === this.image.time;
             });
             annotationsForThisImage.forEach((annotation) => {
-                this.drawRectInCanvas(annotation.targets[keyString].rectangle);
+                this.drawRectInCanvas(annotation.targets[keyString].rectangle, EXISTING_ANNOTATION_COLOR);
             });
         }
     }
