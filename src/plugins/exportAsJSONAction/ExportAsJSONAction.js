@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import JSONExporter from '/src/exporters/JSONExporter.js';
-
-import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 export default class ExportAsJSONAction {
