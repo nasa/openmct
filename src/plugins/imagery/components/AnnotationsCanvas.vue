@@ -47,36 +47,49 @@ export default {
     data() {
         return {
             dragging: false,
-            newAnnotationRectangle: {}
+            newAnnotationRectangle: {},
+            annotationsForThisImage: [],
+            keyString: null,
+            context: null,
+            canvas: null
         };
     },
     mounted() {
-        console.debug(`🔮 AnnotationsCanvas mounted`);
-        this.drawAnnotations();
+        this.canvas = this.$refs.canvas;
+        this.context = this.canvas.getContext("2d");
+        console.debug(`🔮 AnnotationsCanvas mounted`, this.context);
+        this.loadAnnotations();
     },
     beforeDestroy() {
     },
     methods: {
+        async loadAnnotations() {
+            // find annotations for this image time
+            const annotationsForThisObject = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.annotationsForThisImage = annotationsForThisObject.filter((foundAnnotation) => {
+                const annotationTime = foundAnnotation.targets[this.keyString].time;
+
+                return annotationTime === this.image.time;
+            });
+            this.drawAnnotations();
+        },
         drawRectInCanvas(rectangle, color) {
             console.debug(`🪟 Drawing rectangle, ${rectangle.x} ${rectangle.y} ${rectangle.width} ${rectangle.height}`, rectangle);
-            const canvas = this.$refs.canvas;
-            const context = canvas.getContext("2d");
-            context.beginPath();
-            context.lineWidth = "1";
-            context.fillStyle = "rgba(199, 87, 231, 0.2)";
-            context.strokeStyle = color;
-            context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-            context.fill();
-            context.stroke();
+            this.context.beginPath();
+            this.context.lineWidth = "1";
+            this.context.fillStyle = "rgba(199, 87, 231, 0.2)";
+            this.context.strokeStyle = color;
+            this.context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            this.context.fill();
+            this.context.stroke();
         },
         trackAnnotationDrag(event) {
             if (this.dragging) {
                 console.debug(`🐭 mouseMove: ${event.type}`);
-                const canvas = this.$refs.canvas;
-
-                const boundingRect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / boundingRect.width;
-                const scaleY = canvas.height / boundingRect.height;
+                const boundingRect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / boundingRect.width;
+                const scaleY = this.canvas.height / boundingRect.height;
                 this.newAnnotationRectangle = {
                     x: this.newAnnotationRectangle.x,
                     y: this.newAnnotationRectangle.y,
@@ -89,9 +102,7 @@ export default {
             }
         },
         clearCanvas() {
-            const canvas = this.$refs.canvas;
-            const context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         },
         selectImageView() {
             // should show ImageView itself if we have no annotations to display
@@ -176,11 +187,9 @@ export default {
         startAnnotationDrag(event) {
             console.debug(`🐭 mouseDown`);
             this.newAnnotationRectangle = {};
-            const canvas = this.$refs.canvas;
-
-            const boundingRect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / boundingRect.width;
-            const scaleY = canvas.height / boundingRect.height;
+            const boundingRect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / boundingRect.width;
+            const scaleY = this.canvas.height / boundingRect.height;
             this.newAnnotationRectangle = {
                 x: (event.clientX - boundingRect.left) * scaleX,
                 y: (event.clientY - boundingRect.top) * scaleY
@@ -188,17 +197,9 @@ export default {
             this.dragging = true;
 
         },
-        async drawAnnotations() {
-            // find annotations for this image time
-            const annotationsForThisObject = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const annotationsForThisImage = annotationsForThisObject.filter((foundAnnotation) => {
-                const annotationTime = foundAnnotation.targets[keyString].time;
-
-                return annotationTime === this.image.time;
-            });
-            annotationsForThisImage.forEach((annotation) => {
-                this.drawRectInCanvas(annotation.targets[keyString].rectangle, EXISTING_ANNOTATION_COLOR);
+        drawAnnotations() {
+            this.annotationsForThisImage.forEach((annotation) => {
+                this.drawRectInCanvas(annotation.targets[this.keyString].rectangle, EXISTING_ANNOTATION_COLOR);
             });
         }
     }
