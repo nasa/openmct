@@ -260,7 +260,7 @@ test.describe('Notebook entry tests', () => {
     });
     test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
-        await createDomainObjectWithDefaults(page, {
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: 'Overlay Plot'
         });
 
@@ -270,17 +270,17 @@ test.describe('Notebook entry tests', () => {
         // Reveal the notebook in the tree
         await page.getByTitle('Show selected item in tree').click();
 
-        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, '.c-notebook__drag-area');
 
         const embed = page.locator('.c-ne__embed__link');
         const embedName = await embed.textContent();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
-        expect(embedName).toBe('Dropped Overlay Plot');
+        expect(embedName).toBe(overlayPlot.name);
     });
     test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
-        await createDomainObjectWithDefaults(page, {
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: 'Overlay Plot'
         });
 
@@ -291,14 +291,14 @@ test.describe('Notebook entry tests', () => {
         await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
-        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
+        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, 'text=Entry to drop into');
 
         const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
         const embed = existingEntry.locator('.c-ne__embed__link');
         const embedName = await embed.textContent();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
-        expect(embedName).toBe('Dropped Overlay Plot');
+        expect(embedName).toBe(overlayPlot.name);
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
     test('previous and new entries can be deleted', async ({ page }) => {
