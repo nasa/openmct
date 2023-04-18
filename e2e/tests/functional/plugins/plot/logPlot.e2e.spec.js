@@ -180,8 +180,8 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
     // turn on edit mode
-    await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-    await expect(page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+    await page.getByTitle('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 }
 
 /**
