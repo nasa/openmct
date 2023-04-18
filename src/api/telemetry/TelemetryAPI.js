@@ -167,25 +167,47 @@ export default class TelemetryAPI {
     }
 
     /**
-     * @private
-     * Though used in TelemetryCollection as well
+     * Describes and bounds requests for telemetry data.
+     *
+     * @typedef TelemetryRequestOptions
+     * @property {String} sort the key of the property to sort by. This may
+     *           be prefixed with a "+" or a "-" sign to sort in ascending
+     *           or descending order respectively. If no prefix is present,
+     *           ascending order will be used.
+     * @property {Number} start the lower bound for values of the sorting property
+     * @property {Number} end the upper bound for values of the sorting property
+     * @property {String} strategy symbolic identifier for strategies
+     *           (such as `latest` or `minmax`) which may be recognized by providers;
+     *           these will be tried in order until an appropriate provider
+     *           is found
+     * @property {AbortController} signal an AbortController which can be used 
+     *           to cancel a telemetry request
+     * @property {String} domain the domain key of the request
+     * @property {Object} timeContext the maximum number of values to return
      */
-    standardizeRequestOptions(options) {
-        if (!Object.prototype.hasOwnProperty.call(options, 'start')) {
+
+    /**
+     * @param {TelemetryRequestOptions} options options for the telemetry request
+     * @returns {TelemetryRequestOptions} the options, with defaults filled in
+     */
+    standardizeRequestOptions(options = {}) {
+        if (!Object.hasOwn(options, 'start')) {
             options.start = this.openmct.time.bounds().start;
         }
 
-        if (!Object.prototype.hasOwnProperty.call(options, 'end')) {
+        if (!Object.hasOwn(options, 'end')) {
             options.end = this.openmct.time.bounds().end;
         }
 
-        if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
+        if (!Object.hasOwn(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
 
-        if (!Object.prototype.hasOwnProperty.call(options, 'timeContext')) {
+        if (!Object.hasOwn(options, 'timeContext')) {
             options.timeContext = this.openmct.time;
         }
+
+        return options;
     }
 
     /**
@@ -263,13 +285,11 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     * @param {TelemetryRequestOptions} options
      *        options for this telemetry collection request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
-    requestCollection(domainObject, options) {
-        options = options ?? {};
-
+    requestCollection(domainObject, options = {}) {
         return new TelemetryCollection(
             this.openmct,
             domainObject,
@@ -287,7 +307,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     * @param {TelemetryRequestOptions} options
      *        options for this historical request
      * @returns {Promise.<object[]>} a promise for an array of
      *          telemetry data
@@ -341,6 +361,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
+     * @param {TelemetryRequestOptions} options options for subscription
      * @param {Function} callback the callback to invoke with new data, as
      *        it becomes available
      * @returns {Function} a function which may be called to terminate

@@ -46,7 +46,7 @@ export default class TelemetryCollection extends EventEmitter {
      * @param  {DomainObject} domainObject - Domain Object to use for telemetry collection
      * @param  {Object} options - Any options passed in for request/subscribe
      */
-    constructor(openmct, domainObject, options) {
+    constructor(openmct, domainObject, options = {}) {
         super();
 
         this.loaded = false;
@@ -57,8 +57,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.parseTime = undefined;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.unsubscribe = undefined;
-        this.options = options ?? {};
-        this.openmct.telemetry.standardizeRequestOptions(options);
+        this.options = this.openmct.telemetry.standardizeRequestOptions(options);
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
