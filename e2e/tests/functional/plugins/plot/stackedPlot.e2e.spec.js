@@ -36,7 +36,7 @@ test.describe('Stacked Plot', () => {
 
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         stackedPlot = await createDomainObjectWithDefaults(page, {
             type: "Stacked Plot"
@@ -138,7 +138,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgA
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: "Y Axis" })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgA.name);
 
         // Click on the 2nd plot
@@ -146,7 +146,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgB
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgB.name);
 
         // Click on the 3rd plot
@@ -154,7 +154,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgC
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgC.name);
 
         // Go into edit mode
@@ -167,7 +167,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgA
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgA.name);
 
         //Click on canvas for the 2nd plot
@@ -175,7 +175,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgB
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgB.name);
 
         //Click on canvas for the 3rd plot
@@ -183,7 +183,7 @@ test.describe('Stacked Plot', () => {
 
         // Assert that the inspector shows the Y Axis properties for swgC
         await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText("Plot Series");
-        await expect(page.getByRole('list', { name: "Y Axis Properties" }).locator("h2")).toContainText("Y Axis");
+        await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
         await expect(page.locator('[aria-label="Plot Series Properties"] .c-object-label')).toContainText(swgC.name);
     });
 });

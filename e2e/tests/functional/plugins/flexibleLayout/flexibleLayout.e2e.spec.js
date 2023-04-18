@@ -27,7 +27,7 @@ test.describe('Flexible Layout', () => {
     let sineWaveObject;
     let clockObject;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Sine Wave Generator
         sineWaveObject = await createDomainObjectWithDefaults(page, {

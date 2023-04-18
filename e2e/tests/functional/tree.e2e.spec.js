@@ -28,7 +28,7 @@ const {
 
 test.describe('Main Tree', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({ page }) => {

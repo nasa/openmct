@@ -202,7 +202,7 @@ test.describe('can export restricted notebook as text', () => {
 async function startAndAddRestrictedNotebookObject(page) {
     // eslint-disable-next-line no-undef
     await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitRestrictedNotebook.js') });
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     return createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 }

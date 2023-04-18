@@ -157,7 +157,7 @@ test.describe('Plot Tagging', () => {
     }
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Tags work with Overlay Plots', async ({ page }) => {

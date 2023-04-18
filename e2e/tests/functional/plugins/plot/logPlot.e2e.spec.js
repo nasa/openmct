@@ -76,7 +76,7 @@ test.describe('Log plot tests', () => {
  */
 async function makeOverlayPlot(page, myItemsFolderName) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Set a specific time range for consistency, otherwise it will change
     // on every test to a range based on the current time.
@@ -147,7 +147,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
  * @param {import('@playwright/test').Page} page
  */
 async function testRegularTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
+    const yTicks = page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(7);
     await expect(yTicks.nth(0)).toHaveText('-2');
     await expect(yTicks.nth(1)).toHaveText('0');
@@ -162,7 +162,7 @@ async function testRegularTicks(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function testLogTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
+    const yTicks = page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(9);
     await expect(yTicks.nth(0)).toHaveText('-2.98');
     await expect(yTicks.nth(1)).toHaveText('-1.51');
@@ -180,27 +180,24 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
     // turn on edit mode
-    await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-    await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function enableLogMode(page) {
-    // turn on log mode
-    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).not.toBeChecked();
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
-    // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).not.toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).check();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function disableLogMode(page) {
-    // turn off log mode
-    await expect(page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox')).toBeChecked();
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).uncheck();
 }
 
 /**

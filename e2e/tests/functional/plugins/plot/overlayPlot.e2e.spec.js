@@ -30,7 +30,7 @@ const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../..
 
 test.describe('Overlay Plot', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Plot legend color is in sync with plot series color', async ({ page }) => {
