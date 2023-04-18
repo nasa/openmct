@@ -74,7 +74,6 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // Navigate to the parent object. This is necessary to create the object
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
-    await page.waitForLoadState('networkidle');
 
     //Click the Create button
     await page.click('button:has-text("Create")');

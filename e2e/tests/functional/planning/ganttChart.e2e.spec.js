@@ -29,7 +29,7 @@ const { getPreciseDuration } = require('../../../../src/utils/duration');
 test.describe("Gantt Chart", () => {
     let ganttChart;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         ganttChart = await createDomainObjectWithDefaults(page, {
             type: 'Gantt Chart'
         });

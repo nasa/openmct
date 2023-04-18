@@ -30,7 +30,7 @@ const { createDomainObjectWithDefaults } = require('../../../appActions');
 test.describe('Example Event Generator CRUD Operations', () => {
     test('Can create a Test Event Generator and it results in the table View', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Create a name for the object
         const newObjectName = 'Test Event Generator';
