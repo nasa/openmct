@@ -22,9 +22,8 @@
 <template>
 <time-popup-fixed
     v-if="readOnly === false"
-    :type="'start'"
-    :offset="formattedBounds.start"
-    :mode="'fixed'"
+    :input-bounds="bounds"
+    :input-time-system="timeSystem"
     @focus.native="$event.target.select()"
     @update="setBoundsFromView"
     @dismiss="dismiss"
@@ -43,7 +42,7 @@
 import TimePopupFixed from "./timePopupFixed.vue";
 import _ from "lodash";
 
-const DEFAULT_DURATION_FORMATTER = 'duration';
+// const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     components: {
@@ -78,12 +77,13 @@ export default {
     },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
-        let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        // let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         let timeFormatter = this.getFormatter(timeSystem.timeFormat);
         let bounds = this.bounds || this.openmct.time.bounds();
 
         return {
-            durationFormatter,
+            timeSystem: timeSystem,
+            // durationFormatter,
             timeFormatter,
             bounds: {
                 start: bounds.start,
@@ -144,8 +144,8 @@ export default {
         setTimeSystem(timeSystem) {
             this.timeSystem = timeSystem;
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-            this.durationFormatter = this.getFormatter(
-                timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+            // this.durationFormatter = this.getFormatter(
+            //     timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
             this.isUTCBased = timeSystem.isUTCBased;
         },
         getFormatter(key) {
