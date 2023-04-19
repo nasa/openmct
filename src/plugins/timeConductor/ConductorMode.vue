@@ -147,6 +147,10 @@ export default {
                 clockKey = undefined;
             }
 
+            let option = {
+                clockKey
+            };
+
             let configuration = this.getMatchingConfig({
                 clock: clockKey,
                 timeSystem: this.openmct.time.timeSystem().key
@@ -156,16 +160,19 @@ export default {
                 configuration = this.getMatchingConfig({
                     clock: clockKey
                 });
-
-                this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
+                option.timeSystem = configuration.timeSystem;
+                option.bounds = configuration.bounds;
             }
 
             if (clockKey === undefined) {
-                this.openmct.time.stopClock();
+                // this.openmct.time.stopClock();
             } else {
                 const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
-                this.openmct.time.clock(clockKey, offsets);
+                option.offsets = offsets;
+                // this.openmct.time.clock(clockKey, offsets);
             }
+
+            this.$emit('updated', option);
         },
 
         getMatchingConfig(options) {

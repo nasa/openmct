@@ -15,6 +15,7 @@
         <ConductorMode
             class="c-conductor__mode-select"
             :button-css-class="'c-icon-button'"
+            @updated="saveMode"
         />
         <ConductorTimeSystem
             class="c-conductor__time-system-select"
@@ -31,13 +32,13 @@
     </div>
     <conductor-inputs-fixed
         v-if="isFixed"
-        :input-bounds="viewBounds"
+        :input-bounds="bounds"
         @updated="saveFixedBounds"
         @dismiss="dismiss"
     />
     <conductor-inputs-realtime
         v-else
-        :input-bounds="viewBounds"
+        :input-bounds="bounds"
         @updated="saveClockOffsets"
         @dismiss="dismiss"
     />
@@ -87,10 +88,6 @@ export default {
                 start: bounds.start,
                 end: bounds.end
             },
-            viewBounds: {
-                start: bounds.start,
-                end: bounds.end
-            },
             isFixed: this.openmct.time.clock() === undefined
         };
     },
@@ -133,7 +130,10 @@ export default {
             this.$emit('fixedBoundsUpdated', bounds);
         },
         saveClockOffsets(offsets) {
-            this.$emit('fixedOffsetsUpdated', offsets);
+            this.$emit('clockOffsetsUpdated', offsets);
+        },
+        saveMode(option) {
+            this.$emit('modeUpdated', option);
         },
         dismiss() {
             this.$emit('dismiss');

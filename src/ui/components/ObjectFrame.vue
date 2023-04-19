@@ -67,6 +67,7 @@
             >
                 <independent-time-conductor
                     :domain-object="domainObject"
+                    :object-path="[domainObject]"
                     @stateChanged="updateIndependentTimeState"
                     @updated="saveTimeOptions"
                 />

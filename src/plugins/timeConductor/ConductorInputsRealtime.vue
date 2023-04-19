@@ -22,9 +22,7 @@
 <template>
 <time-popup-realtime
     v-if="readOnly === false"
-    :type="'start'"
-    :offset="offsets.start"
-    :mode="'realtime'"
+    :offsets="offsets"
     @focus.native="$event.target.select()"
     @update="timePopUpdate"
     @dismiss="dismiss"
@@ -202,8 +200,9 @@ export default {
                 format: key
             }).formatter;
         },
-        timePopUpdate({ type, hours, minutes, seconds }) {
-            this.offsets[type] = [hours, minutes, seconds].join(':');
+        timePopUpdate({ start, end }) {
+            this.offsets.start = [start.hours, start.minutes, start.seconds].join(':');
+            this.offsets.end = [end.hours, end.minutes, end.seconds].join(':');
             this.setOffsetsFromView();
         },
         setOffsetsFromView() {
