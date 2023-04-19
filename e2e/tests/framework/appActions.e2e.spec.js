@@ -25,7 +25,7 @@ const { createDomainObjectWithDefaults, createNotification, expandEntireTree } =
 
 test.describe('AppActions', () => {
     test('createDomainObjectsWithDefaults', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const e2eFolder = await createDomainObjectWithDefaults(page, {
             type: 'Folder',
@@ -86,7 +86,7 @@ test.describe('AppActions', () => {
         });
     });
     test("createNotification", async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         await createNotification(page, {
             message: 'Test info notification',
             severity: 'info'
@@ -110,7 +110,7 @@ test.describe('AppActions', () => {
         await page.locator('[aria-label="Dismiss"]').click();
     });
     test('expandEntireTree', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const rootFolder = await createDomainObjectWithDefaults(page, {
             type: 'Folder'
