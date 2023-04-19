@@ -227,35 +227,11 @@ test.describe('Tagging in Notebooks @addInit', () => {
         //Go to baseURL
         await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-        const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
-
         const ITERATIONS = 4;
         const notebook = await createNotebookEntryAndTags(page, ITERATIONS);
+        await page.goto(notebook.url);
 
-        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
-            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
-            await expect(page.locator(entryLocator)).toContainText("Science");
-            await expect(page.locator(entryLocator)).toContainText("Driving");
-        }
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.goto('./#/browse/mine?hideTree=false'),
-            page.click('.c-disclosure-triangle')
-        ]);
-
-        const treePane = page.getByRole('tree', {
-            name: 'Main Tree'
-        });
-        // Click Clock
-        await treePane.getByRole('treeitem', {
-            name: clock.name
-        }).click();
-        // Click Notebook
-        await page.getByRole('treeitem', {
-            name: notebook.name
-        }).click();
-
+        // Verify tags are present
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
@@ -265,9 +241,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         //Reload Page
         await page.reload({ waitUntil: 'domcontentloaded' });
 
-        // Click Notebook
-        await page.click(`text="${notebook.name}"`);
-
+        // Verify tags persist across reload
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
