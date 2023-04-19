@@ -214,11 +214,16 @@ test.describe('Overlay Plot', () => {
         });
 
         await page.goto(overlayPlot.url);
+        // Wait for plot series data to load and be drawn
+        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
         await page.click('button[title="Edit"]');
 
         await selectInspectorTab(page, 'Elements');
 
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+
+        // Wait for "View Large" plot series data to load and be drawn
+        await expect(page.locator('.c-overlay .js-series-data-loaded')).toBeVisible();
 
         const plotPixelSize = await getCanvasPixelsWithData(page);
         expect(plotPixelSize).toBeGreaterThan(0);
