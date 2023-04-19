@@ -263,10 +263,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         }
 
         //Reload Page
-        await Promise.all([
-            page.reload(),
-            page.waitForLoadState('networkidle')
-        ]);
+        await page.reload({ waitUntil: 'domcontentloaded' });
 
         // Click Notebook
         await page.click(`text="${notebook.name}"`);
