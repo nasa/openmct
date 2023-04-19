@@ -14,8 +14,8 @@
 
     <div class="pr-time-input">
         <input
-            ref="inputHrs"
-            v-model="inputHrs"
+            ref="startInputHrs"
+            v-model="startInputHrs"
             class="pr-time-input__hrs"
             step="1"
             type="number"
@@ -25,15 +25,15 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputHrs')"
-            @wheel="increment($event, 'inputHrs')"
+            @focusout="format('startInputHrs')"
+            @wheel="increment($event, 'startInputHrs')"
         >
         <b>:</b>
     </div>
     <div class="pr-time-input">
         <input
-            ref="inputMins"
-            v-model="inputMins"
+            ref="startInputMins"
+            v-model="startInputMins"
             type="number"
             class="pr-time-input__mins"
             min="0"
@@ -43,15 +43,15 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputMins')"
-            @wheel="increment($event, 'inputMins')"
+            @focusout="format('startInputMins')"
+            @wheel="increment($event, 'startInputMins')"
         >
         <b>:</b>
     </div>
     <div class="pr-time-input">
         <input
-            ref="inputSecs"
-            v-model="inputSecs"
+            ref="startInputSecs"
+            v-model="startInputSecs"
             type="number"
             class="pr-time-input__secs"
             min="0"
@@ -61,8 +61,8 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputSecs')"
-            @wheel="increment($event, 'inputSecs')"
+            @focusout="format('startInputSecs')"
+            @wheel="increment($event, 'startInputSecs')"
         >
     </div>
 
@@ -70,8 +70,8 @@
 
     <div class="pr-time-input">
         <input
-            ref="inputHrs"
-            v-model="inputHrs"
+            ref="endInputHrs"
+            v-model="endInputHrs"
             class="pr-time-input__hrs"
             step="1"
             type="number"
@@ -81,15 +81,15 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputHrs')"
-            @wheel="increment($event, 'inputHrs')"
+            @focusout="format('endInputHrs')"
+            @wheel="increment($event, 'endInputHrs')"
         >
         <b>:</b>
     </div>
     <div class="pr-time-input">
         <input
-            ref="inputMins"
-            v-model="inputMins"
+            ref="endInputMins"
+            v-model="endInputMins"
             type="number"
             class="pr-time-input__mins"
             min="0"
@@ -99,15 +99,15 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputMins')"
-            @wheel="increment($event, 'inputMins')"
+            @focusout="format('endInputMins')"
+            @wheel="increment($event, 'endInputMins')"
         >
         <b>:</b>
     </div>
     <div class="pr-time-input">
         <input
-            ref="inputSecs"
-            v-model="inputSecs"
+            ref="endInputSecs"
+            v-model="endInputSecs"
             type="number"
             class="pr-time-input__secs"
             min="0"
@@ -117,8 +117,8 @@
             @change="validate()"
             @keyup="validate()"
             @focusin="selectAll($event)"
-            @focusout="format('inputSecs')"
-            @wheel="increment($event, 'inputSecs')"
+            @focusout="format('endInputSecs')"
+            @wheel="increment($event, 'endInputSecs')"
         >
     </div>
 
@@ -139,34 +139,32 @@
 <script>
 export default {
     props: {
-        type: {
-            type: String,
-            required: true
-        },
-        offset: {
-            type: String,
-            required: true
-        },
-        mode: {
-            type: String,
+        offsets: {
+            type: Object,
             required: true
         }
     },
     data() {
         return {
-            inputHrs: '00',
-            inputMins: '00',
-            inputSecs: '00',
+            startInputHrs: '00',
+            startInputMins: '00',
+            startInputSecs: '00',
+            endInputHrs: '00',
+            endInputMins: '00',
+            endInputSecs: '00',
             isDisabled: false
         };
     },
-    computed: {
-        isRealtime() {
-            return this.mode.indexOf('realtime') !== -1;
+    watch: {
+        offsets: {
+            handler() {
+                this.setOffsets();
+            },
+            deep: true
         }
     },
     mounted() {
-        this.setOffset();
+        this.setOffsets();
         document.addEventListener('click', this.hide);
     },
     beforeDestroy() {
@@ -179,7 +177,7 @@ export default {
         },
         validate() {
             let disabled = false;
-            let refs = ['inputHrs', 'inputMins', 'inputSecs'];
+            let refs = ['startInputHrs', 'startInputMins', 'startInputSecs', 'endInputHrs', 'endInputMins', 'endInputSecs'];
 
             for (let ref of refs) {
                 let min = Number(this.$refs[ref].min);
@@ -196,10 +194,16 @@ export default {
         },
         submit() {
             this.$emit('update', {
-                type: this.type,
-                hours: this.inputHrs,
-                minutes: this.inputMins,
-                seconds: this.inputSecs
+                start: {
+                    hours: this.startInputHrs,
+                    minutes: this.startInputMins,
+                    seconds: this.startInputSecs
+                },
+                end: {
+                    hours: this.endInputHrs,
+                    minutes: this.endInputMins,
+                    seconds: this.endInputSecs
+                }
             });
         },
         hide($event) {
@@ -209,16 +213,17 @@ export default {
         },
         increment($ev, ref) {
             $ev.preventDefault();
-            const step = (ref === 'inputHrs') ? 1 : 5;
-            const maxVal = (ref === 'inputHrs') ? 23 : 59;
+            const step = (ref === 'startInputHrs' || ref === 'endInputHrs') ? 1 : 5;
+            const maxVal = (ref === 'startInputHrs' || ref === 'endInputHrs') ? 23 : 59;
             let cv = Math.round(parseInt(this[ref], 10) / step) * step;
             cv = Math.min(maxVal, Math.max(0, ($ev.deltaY < 0) ? cv + step : cv - step));
             this[ref] = cv.toString().padStart(2, '0');
             this.validate();
         },
-        setOffset() {
-            [this.inputHrs, this.inputMins, this.inputSecs] = this.offset.split(':');
-            this.numberSelect('inputHrs');
+        setOffsets() {
+            [this.startInputHrs, this.startInputMins, this.startInputSecs] = this.offsets.start.split(':');
+            [this.endInputHrs, this.endInputMins, this.endInputSecs] = this.offsets.end.split(':');
+            this.numberSelect('startInputHrs');
         },
         numberSelect(input) {
             this.$refs[input].focus();

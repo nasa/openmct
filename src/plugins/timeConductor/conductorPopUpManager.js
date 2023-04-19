@@ -91,6 +91,7 @@ export default {
         createPopupComponent() {
             const saveFixedBounds = this.saveFixedBounds;
             const saveClockOffsets = this.saveClockOffsets;
+            const saveMode = this.saveMode;
             const removePopup = this.removePopup;
 
             const popupElement = new Vue({
@@ -107,10 +108,11 @@ export default {
                         positionY: 0,
                         saveClockOffsets,
                         saveFixedBounds,
+                        saveMode,
                         removePopup
                     };
                 },
-                template: '<conductor-pop-up @dismiss="removePopup" @fixedBoundsUpdated="saveFixedBounds" @clockOffsetsUpdated="saveClockOffsets" :bottom="false" :positionX="positionX" :positionY="positionY" />'
+                template: '<conductor-pop-up @dismiss="removePopup" @modeUpdated="saveMode" @fixedBoundsUpdated="saveFixedBounds" @clockOffsetsUpdated="saveClockOffsets" :bottom="false" :positionX="positionX" :positionY="positionY" />'
             }).$mount();
 
             return popupElement;
@@ -125,6 +127,17 @@ export default {
         },
         saveClockOffsets(offsets) {
             this.openmct.time.clockOffsets(offsets);
+        },
+        saveMode(option) {
+            if (option.timeSystem) {
+                this.openmct.time.timeSystem(option.timeSystem, option.bounds);
+            }
+
+            if (option.clockKey === undefined) {
+                this.openmct.time.stopClock();
+            } else {
+                this.openmct.time.clock(option.clockKey, option.offsets);
+            }
         }
     }
 };

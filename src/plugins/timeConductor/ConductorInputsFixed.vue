@@ -113,7 +113,6 @@ export default {
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.handleNewBounds);
-                this.timeContext.off('clock', this.clearAllValidation);
             }
         },
         handleNewBounds(bounds) {
