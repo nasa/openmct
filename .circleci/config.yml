@@ -162,7 +162,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright@1.29.0 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.32.3 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
