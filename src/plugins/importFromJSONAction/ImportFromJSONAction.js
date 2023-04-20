@@ -110,19 +110,32 @@ export default class ImportAsJSONAction {
      */
     _getObjectReferenceIds(parent) {
         let objectIdentifiers = [];
+        let itemObjectReferences = [];
+        const objectStyles = parent.configuration?.objectStyles;
+        const parentComposition = this.openmct.composition.get(parent);
 
-        let parentComposition = this.openmct.composition.get(parent);
         if (parentComposition) {
             objectIdentifiers = Array.from(parentComposition.domainObject.composition);
         }
 
         //conditional object styles are not saved on the composition, so we need to check for them
-        let parentObjectReference = parent.configuration?.objectStyles?.conditionSetIdentifier;
-        if (parentObjectReference) {
-            objectIdentifiers.push(parentObjectReference);
+        if (objectStyles) {
+            const parentObjectReference = objectStyles.conditionSetIdentifier;
+
+            if (parentObjectReference) {
+                objectIdentifiers.push(parentObjectReference);
+            }
+
+            function hasConditionSetIdentifier(item) {
+                return Boolean(item.conditionSetIdentifier);
+            }
+
+            itemObjectReferences = Object.values(objectStyles)
+                .filter(hasConditionSetIdentifier)
+                .map(item => item.conditionSetIdentifier);
         }
 
-        return objectIdentifiers;
+        return Array.from(new Set([...objectIdentifiers, ...itemObjectReferences]));
     }
     /**
      * @private
@@ -163,9 +176,9 @@ export default class ImportAsJSONAction {
             this._deepInstantiate(rootObj, tree.openmct, []);
 
             const compositionCollection = this.openmct.composition.get(domainObject);
+            compositionCollection.add(rootObj);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
-            compositionCollection.add(rootObj);
         } else {
             const dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
