@@ -165,15 +165,18 @@ export default class ExportAsJSONAction {
         }
 
         if (conditionSetIdentifier || hasItemConditionSetIdentifiers) {
-            const directObjectStylesIdentifier = this.openmct.objects.areIdsEqual(
-                parent.configuration.objectStyles.conditionSetIdentifier,
-                child.identifier
-            );
 
             // update objectStyle object
-            if (conditionSetIdentifier && directObjectStylesIdentifier) {
-                parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
-                this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+            if (conditionSetIdentifier) {
+                const directObjectStylesIdentifier = this.openmct.objects.areIdsEqual(
+                    parent.configuration.objectStyles.conditionSetIdentifier,
+                    child.identifier
+                );
+
+                if (directObjectStylesIdentifier) {
+                    parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+                    this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+                }
             }
 
             // update per item id on objectStyle object
