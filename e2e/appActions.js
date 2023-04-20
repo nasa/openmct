@@ -409,6 +409,12 @@ async function selectInspectorTab(page, name) {
 /**
 * Waits and asserts that all plot series data on the page
 * is loaded and drawn.
+*
+* In lieu of a better way to detect when a plot is done rendering,
+* we [attach a class to the '.gl-plot' element](https://github.com/nasa/openmct/blob/5924d7ea95a0c2d4141c602a3c7d0665cb91095f/src/plugins/plot/MctPlot.vue#L27)
+* once all pending series data has been loaded. The following appAction retrieves
+* all plots on the page and waits up to the default timeout for the class to be
+* attached to each plot.
 * @param {import('@playwright/test').Page} page
 */
 async function waitForPlotsToRender(page) {
