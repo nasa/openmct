@@ -55,6 +55,7 @@
 
 const Buffer = require('buffer').Buffer;
 const genUuid = require('uuid').v4;
+const { expect } = require('@playwright/test');
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -405,19 +406,82 @@ async function selectInspectorTab(page, name) {
     }
 }
 
+/**
+* Waits and asserts that all plot series data on the page
+* is loaded and drawn.
+* @param {import('@playwright/test').Page} page
+*/
+async function waitForPlotsToRender(page) {
+    const plotLocator = page.locator('.gl-plot');
+    for (const plot of await plotLocator.all()) {
+        await expect(plot).toHaveClass(/js-series-data-loaded/);
+    }
+}
+
+/**
+ * @typedef {Object} PlotPixel
+ * @property {number} startIndex The index of the first value in the pixel
+ * @property {number} endIndex The index of the last value in the pixel
+ * @property {string} value The rgba string value of the pixel
+ */
+
+/**
+ * Wait for all plots to render and then retrieve and return an array
+ * of canvas plot pixel data (RGBA values).
+ * @param {import('@playwright/test').Page} page
+ * @param {string} canvasSelector The selector for the canvas element
+ * @return {Promise<PlotPixel[]>}
+ */
+async function getCanvasPixels(page, canvasSelector) {
+    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
+    const canvasHandle = await page.evaluateHandle((canvas) => document.querySelector(canvas), canvasSelector);
+    const canvasContextHandle = await page.evaluateHandle(canvas => canvas.getContext('2d'), canvasHandle);
+
+    await waitForPlotsToRender(page);
+    await page.evaluate(([canvas, ctx]) => {
+        // The document canvas is where the plot points and lines are drawn.
+        // The only way to access the canvas is using document (using page.evaluate)
+        /** @type {ImageData} */
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        /** @type {number[]} */
+        const imageDataValues = Object.values(data);
+        /** @type {PlotPixel[]} */
+        const plotPixels = [];
+        // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
+        // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
+        for (let i = 0; i < imageDataValues.length;) {
+            if (imageDataValues[i] > 0) {
+                plotPixels.push({
+                    startIndex: i,
+                    endIndex: i + 3,
+                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
+                });
+            }
+
+            i = i + 4;
+        }
+
+        window.getCanvasValue(plotPixels);
+    }, [canvasHandle, canvasContextHandle]);
+
+    return getTelemValuePromise;
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
     createNotification,
-    expandTreePaneItemByName,
-    expandEntireTree,
     createPlanFromJSON,
-    openObjectTreeContextMenu,
+    expandEntireTree,
+    expandTreePaneItemByName,
+    getCanvasPixels,
     getHashUrlToDomainObject,
     getFocusedObjectUuid,
+    openObjectTreeContextMenu,
     setFixedTimeMode,
     setRealTimeMode,
     setStartOffset,
     setEndOffset,
-    selectInspectorTab
+    selectInspectorTab,
+    waitForPlotsToRender
 };
