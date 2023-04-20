@@ -25,16 +25,20 @@
     ref="canvas"
     class="c-image-canvas"
     style="width: 100%; height: 100%;"
-    @mousedown="startAnnotationDrag"
+    @mousedown="mouseDown = true"
     @mousemove="trackAnnotationDrag"
-    @click="createAnnotationSelection"
+    @click="selectOrCreateAnnotation"
 ></canvas>
 </template>
 
 <script>
 
-const EXISTING_ANNOTATION_COLOR = "#D79078";
-const NEW_ANNOTATION_COLOR = "#BD8ECC";
+import e from 'cors';
+import Flatbush from 'flatbush';
+const EXISTING_ANNOTATION_STROKE_STYLE = "#D79078";
+const EXISTING_ANNOTATION_FILL_STYLE = "rgba(202, 202, 142, 0.2)";
+const SELECTED_ANNOTATION_STROKE_COLOR = "#BD8ECC";
+const SELECTED_ANNOTATION_FILL_STYLE = "rgba(199, 87, 231, 0.2)";
 
 export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
@@ -47,11 +51,14 @@ export default {
     data() {
         return {
             dragging: false,
+            mouseDown: false,
             newAnnotationRectangle: {},
             annotationsForThisImage: [],
             keyString: null,
             context: null,
-            canvas: null
+            canvas: null,
+            annotationsIndex: null,
+            indexToAnnotationMap: {}
         };
     },
     mounted() {
@@ -72,21 +79,33 @@ export default {
 
                 return annotationTime === this.image.time;
             });
+
+            // create a flatbush index for the annotations
+            this.annotationsIndex = new Flatbush(this.annotationsForThisImage.length);
+            this.annotationsForThisImage.forEach((annotation) => {
+                const annotationRectangle = annotation.targets[this.keyString].rectangle;
+                const indexNumber = this.annotationsIndex.add(annotationRectangle.x, annotationRectangle.y, annotationRectangle.x + annotationRectangle.width, annotationRectangle.y + annotationRectangle.height);
+                this.indexToAnnotationMap[indexNumber] = annotation;
+            });
+            this.annotationsIndex.finish();
+
             this.drawAnnotations();
         },
-        drawRectInCanvas(rectangle, color) {
+        drawRectInCanvas(rectangle, fillStyle, strokeStyle) {
             console.debug(`🪟 Drawing rectangle, ${rectangle.x} ${rectangle.y} ${rectangle.width} ${rectangle.height}`, rectangle);
             this.context.beginPath();
             this.context.lineWidth = "1";
-            this.context.fillStyle = "rgba(199, 87, 231, 0.2)";
-            this.context.strokeStyle = color;
+            this.context.fillStyle = fillStyle;
+            this.context.strokeStyle = strokeStyle;
             this.context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             this.context.fill();
             this.context.stroke();
         },
         trackAnnotationDrag(event) {
-            if (this.dragging) {
-                console.debug(`🐭 mouseMove: ${event.type}`);
+            if (this.mouseDown && !this.dragging) {
+                this.startAnnotationDrag(event);
+            } else if (this.dragging) {
+                console.debug(`🐭 mouseMove with existing drag: ${event.type}`);
                 const boundingRect = this.canvas.getBoundingClientRect();
                 const scaleX = this.canvas.width / boundingRect.width;
                 const scaleY = this.canvas.height / boundingRect.height;
@@ -98,7 +117,7 @@ export default {
                 };
                 this.clearCanvas();
                 this.drawAnnotations();
-                this.drawRectInCanvas(this.newAnnotationRectangle, NEW_ANNOTATION_COLOR);
+                this.drawRectInCanvas(this.newAnnotationRectangle, SELECTED_ANNOTATION_FILL_STYLE, SELECTED_ANNOTATION_STROKE_COLOR);
             }
         },
         clearCanvas() {
@@ -109,9 +128,7 @@ export default {
             const selection = this.createPathSelection();
             this.openmct.selection.select(selection, true);
         },
-        createAnnotationSelection(event) {
-            event.stopPropagation();
-            console.debug(`🐭 mouseClick, dragging disabled`);
+        createNewAnnotation() {
             this.dragging = false;
             // check to see if we have a rectangle
             if (!this.newAnnotationRectangle.width && !this.newAnnotationRectangle.height) {
@@ -165,6 +182,33 @@ export default {
             this.openmct.selection.select(selection, true);
             // would add cancel selection here
         },
+        attemptToSelectExistingAnnotation(event) {
+            // use flatbush to find annotations that are close to the click
+            const boundingRect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / boundingRect.width;
+            const scaleY = this.canvas.height / boundingRect.height;
+            const x = (event.clientX - boundingRect.left) * scaleX;
+            const y = (event.clientY - boundingRect.top) * scaleY;
+            const resultIndicies = this.annotationsIndex.search(x, y, x, y);
+            resultIndicies.forEach((resultIndex) => {
+                const foundAnnotation = this.indexToAnnotationMap[resultIndex];
+                console.debug(`🐭 found annotations at ${x} ${y}`, foundAnnotation);
+            });
+        },
+        selectOrCreateAnnotation(event) {
+            event.stopPropagation();
+            this.mouseDown = false;
+            console.debug(`🐭 mouseClick`);
+            if (!this.dragging) {
+                console.debug(`🐭 checking for existing annotations`);
+                this.newAnnotationRectangle = {};
+                this.attemptToSelectExistingAnnotation(event);
+            } else {
+                console.debug(`🐭 creating new annotation`);
+                this.createNewAnnotation();
+            }
+
+        },
         createPathSelection() {
             let selection = [];
             selection.unshift({
@@ -185,7 +229,7 @@ export default {
             return selection;
         },
         startAnnotationDrag(event) {
-            console.debug(`🐭 mouseDown`);
+            console.debug(`🐭 mouseMoving for new drag`);
             this.newAnnotationRectangle = {};
             const boundingRect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / boundingRect.width;
@@ -195,11 +239,10 @@ export default {
                 y: (event.clientY - boundingRect.top) * scaleY
             };
             this.dragging = true;
-
         },
         drawAnnotations() {
             this.annotationsForThisImage.forEach((annotation) => {
-                this.drawRectInCanvas(annotation.targets[this.keyString].rectangle, EXISTING_ANNOTATION_COLOR);
+                this.drawRectInCanvas(annotation.targets[this.keyString].rectangle, EXISTING_ANNOTATION_FILL_STYLE, EXISTING_ANNOTATION_STROKE_STYLE);
             });
         }
     }
