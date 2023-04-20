@@ -37,6 +37,7 @@
             type="text"
             autocorrect="off"
             spellcheck="false"
+            @change="validateAllBounds('startDate'); submitForm()"
         >
     </div>
 
@@ -69,13 +70,14 @@
             type="text"
             autocorrect="off"
             spellcheck="false"
+            @change="validateAllBounds('endDate'); submitForm()"
         >
     </div>
 
     <div class="pr-time-input pr-time-input--buttons">
         <button
             class="c-button c-button--major icon-check"
-            :disabled="false"
+            :disabled="isDisabled"
             @click.prevent="submit"
         ></button>
         <button
@@ -126,7 +128,8 @@ export default {
                 startTime: durationFormatter.format(Math.abs(bounds.start)),
                 endTime: durationFormatter.format(Math.abs(bounds.end))
             },
-            isUTCBased: timeSystem.isUTCBased
+            isUTCBased: timeSystem.isUTCBased,
+            isDisabled: false
         };
     },
     watch: {
@@ -183,7 +186,7 @@ export default {
                 format: key
             }).formatter;
         },
-        setBoundsFromView($event) {
+        setBoundsFromView(dismiss) {
             if (this.$refs.fixedDeltaInput.checkValidity()) {
                 let start = this.timeFormatter.parse(`${this.formattedBounds.start} ${this.formattedBounds.startTime}`);
                 let end = this.timeFormatter.parse(`${this.formattedBounds.end} ${this.formattedBounds.endTime}`);
@@ -194,8 +197,8 @@ export default {
                 });
             }
 
-            if ($event) {
-                $event.preventDefault();
+            if (dismiss) {
+                this.$emit('dismiss');
 
                 return false;
             }
@@ -203,12 +206,12 @@ export default {
         submit() {
             this.validateAllBounds('startDate');
             this.validateAllBounds('endDate');
-            this.submitForm();
+            this.submitForm(!this.isDisabled);
         },
-        submitForm() {
+        submitForm(dismiss) {
             // Allow Vue model to catch up to user input.
             // Submitting form will cause validation messages to display (but only if triggered by button click)
-            this.$nextTick(() => this.setBoundsFromView());
+            this.$nextTick(() => this.setBoundsFromView(dismiss));
         },
         validateAllBounds(ref) {
             if (!this.areBoundsFormatsValid()) {
@@ -280,9 +283,11 @@ export default {
             if (validationResult.valid !== true) {
                 input.setCustomValidity(validationResult.message);
                 input.title = validationResult.message;
+                this.isDisabled = true;
             } else {
                 input.setCustomValidity('');
                 input.title = '';
+                this.isDisabled = false;
             }
 
             this.$refs.fixedDeltaInput.reportValidity();

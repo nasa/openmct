@@ -114,8 +114,8 @@ export default {
         bounds: {
             handler() {
                 // only for fixed time since we track offsets for realtime
+                this.updateMode();
                 if (this.isFixed) {
-                    this.updateMode();
                     this.addTimespan();
                 }
             },
@@ -124,7 +124,9 @@ export default {
         offsets: {
             handler() {
                 this.updateMode();
-                this.addTimespan();
+                if (!this.isFixed) {
+                    this.addTimespan();
+                }
             },
             deep: true
         },

@@ -99,7 +99,7 @@ export default {
             };
         },
         timeOffsets() {
-            return this.openmct.time.clockOffsets();
+            return this.isFixed ? undefined : this.openmct.time.clockOffsets();
         },
         timeMode() {
             return this.isFixed ? 'fixed' : 'realtime';
