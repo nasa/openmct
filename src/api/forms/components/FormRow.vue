@@ -131,7 +131,12 @@ export default {
                     && data.value !== '';
             }
 
-            if (this.row.required && !valid) {
+            if (this.row.required && !valid
+                    || data.min < 0
+                    || data.max < data.min
+                    || data.limitLow < data.min
+                    || data.limitHigh > data.max
+                    || data.limitLow > data.limitHigh) {
                 return false;
             }
 

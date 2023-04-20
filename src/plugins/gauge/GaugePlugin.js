@@ -132,7 +132,7 @@ export default function () {
                         "configuration",
                         "gaugeController"
                     ],
-                    validate: ({ value }, callback) => {
+                    validate: (value, callback) => {
                         if (value.isUseTelemetryLimits) {
                             return true;
                         }
@@ -145,11 +145,11 @@ export default function () {
                             limitHigh: true
                         };
 
-                        if (min === '') {
+                        if (min === '' || min < 0) {
                             valid.min = false;
                         }
 
-                        if (max === '') {
+                        if (max === '' || limitHigh > max) {
                             valid.max = false;
                         }
 
@@ -159,7 +159,8 @@ export default function () {
                         }
 
                         if (limitLow !== '') {
-                            valid.limitLow = min <= limitLow && limitLow < max;
+                            valid.limitLow = min <= limitLow || limitLow >= limitHigh;
+
                         }
 
                         if (limitHigh !== '') {
