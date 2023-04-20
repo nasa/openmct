@@ -36,7 +36,6 @@ export default class ExportAsJSONAction {
         this.tree = null;
         this.calls = null;
         this.idMap = null;
-        this.itemIdMap = null;
 
         this.JSONExportService = new JSONExporter();
     }
@@ -60,7 +59,6 @@ export default class ExportAsJSONAction {
         this.tree = {};
         this.calls = 0;
         this.idMap = {};
-        this.itemIdMap = null;
 
         const root = objectpath[0];
         this.root = this._copy(root);

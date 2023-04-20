@@ -176,9 +176,9 @@ export default class ImportAsJSONAction {
             this._deepInstantiate(rootObj, tree.openmct, []);
 
             const compositionCollection = this.openmct.composition.get(domainObject);
-            compositionCollection.add(rootObj);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
+            compositionCollection.add(rootObj);
         } else {
             const dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
