@@ -420,9 +420,11 @@ async function waitForPlotsToRender(page) {
 
 /**
  * @typedef {Object} PlotPixel
- * @property {number} startIndex The index of the first value in the pixel
- * @property {number} endIndex The index of the last value in the pixel
- * @property {string} value The rgba string value of the pixel
+ * @property {number} r The value of the red channel (0-255)
+ * @property {number} g The value of the green channel (0-255)
+ * @property {number} b The value of the blue channel (0-255)
+ * @property {number} a The value of the alpha channel (0-255)
+ * @property {string} strValue The rgba string value of the pixel
  */
 
 /**
@@ -452,9 +454,11 @@ async function getCanvasPixels(page, canvasSelector) {
         for (let i = 0; i < imageDataValues.length;) {
             if (imageDataValues[i] > 0) {
                 plotPixels.push({
-                    startIndex: i,
-                    endIndex: i + 3,
-                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
+                    r: imageDataValues[i],
+                    g: imageDataValues[i + 1],
+                    b: imageDataValues[i + 2],
+                    a: imageDataValues[i + 3],
+                    strValue: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
                 });
             }
 
