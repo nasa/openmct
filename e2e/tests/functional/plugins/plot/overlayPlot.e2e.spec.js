@@ -52,14 +52,9 @@ test.describe('Overlay Plot', () => {
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
-
         // gets color for swatch located in legend
-        const element = await page.waitForSelector('.plot-series-color-swatch');
-        const color = await element.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-color');
-        });
-
-        expect(color).toBe('rgb(255, 166, 61)');
+        const seriesColorSwatch = page.locator('.gl-plot-label > .plot-series-color-swatch');
+        await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
     });
 
     test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({ page }) => {
