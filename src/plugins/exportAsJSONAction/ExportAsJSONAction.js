@@ -182,7 +182,7 @@ export default class ExportAsJSONAction {
             // update per item id on objectStyle object
             if (hasItemConditionSetIdentifiers) {
                 for (const itemId in parent.configuration.objectStyles) {
-                    if (parent.configuration.object[itemId]) {
+                    if (parent.configuration.objectStyles[itemId]) {
                         const itemConditionSetIdentifier = parent.configuration.objectStyles[itemId].conditionSetIdentifier;
 
                         if (
