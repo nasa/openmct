@@ -26,7 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, getCanvasPixels, selectInspectorTab, waitForPlotsToRender } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
     test.beforeEach(async ({ page }) => {
@@ -52,14 +52,9 @@ test.describe('Overlay Plot', () => {
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
-
         // gets color for swatch located in legend
-        const element = await page.waitForSelector('.plot-series-color-swatch');
-        const color = await element.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-color');
-        });
-
-        expect(color).toBe('rgb(255, 166, 61)');
+        const seriesColorSwatch = page.locator('.gl-plot-label > .plot-series-color-swatch');
+        await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
     });
 
     test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({ page }) => {
@@ -214,62 +209,27 @@ test.describe('Overlay Plot', () => {
         });
 
         await page.goto(overlayPlot.url);
+        // Wait for plot series data to load and be drawn
+        await waitForPlotsToRender(page);
         await page.click('button[title="Edit"]');
 
         await selectInspectorTab(page, 'Elements');
 
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
 
-        const plotPixelSize = await getCanvasPixelsWithData(page);
+        const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+        const plotPixelSize = plotPixels.length;
         expect(plotPixelSize).toBeGreaterThan(0);
     });
 });
 
 /**
- * @param {import('@playwright/test').Page} page
- */
-async function getCanvasPixelsWithData(page) {
-    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
-
-    await page.evaluate(() => {
-        // The document canvas is where the plot points and lines are drawn.
-        // The only way to access the canvas is using document (using page.evaluate)
-        let data;
-        let canvas;
-        let ctx;
-        canvas = document.querySelector('.js-overlay canvas');
-        ctx = canvas.getContext('2d');
-        data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const imageDataValues = Object.values(data);
-        let plotPixels = [];
-        // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
-        // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
-        for (let i = 0; i < imageDataValues.length;) {
-            if (imageDataValues[i] > 0) {
-                plotPixels.push({
-                    startIndex: i,
-                    endIndex: i + 3,
-                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
-                });
-            }
-
-            i = i + 4;
-
-        }
-
-        window.getCanvasValue(plotPixels.length);
-    });
-
-    return getTelemValuePromise;
-}
-
-/**
- *
+ * Asserts that limit lines exist and are visible
  * @param {import('@playwright/test').Page} page
  */
 async function assertLimitLinesExistAndAreVisible(page) {
     // Wait for plot series data to load
-    await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+    await waitForPlotsToRender(page);
     // Wait for limit lines to be created
     await page.waitForSelector('.js-limit-area', { state: 'attached' });
     const limitLineCount = await page.locator('.c-plot-limit-line').count();
