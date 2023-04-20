@@ -36,6 +36,7 @@ export default class ExportAsJSONAction {
         this.tree = null;
         this.calls = null;
         this.idMap = null;
+        this.itemIdMap = null;
 
         this.JSONExportService = new JSONExporter();
     }
@@ -59,6 +60,7 @@ export default class ExportAsJSONAction {
         this.tree = {};
         this.calls = 0;
         this.idMap = {};
+        this.itemIdMap = null;
 
         const root = objectpath[0];
         this.root = this._copy(root);
@@ -78,6 +80,7 @@ export default class ExportAsJSONAction {
 
         //conditional object styles are not saved on the composition, so we need to check for them
         const conditionSetIdentifier = this._getConditionSetIdentifier(parent);
+        const hasItemConditionSetIdentifiers = this._hasItemConditionSetIdentifiers(parent);
         const composition = this.openmct.composition.get(parent);
 
         if (composition) {
@@ -88,12 +91,29 @@ export default class ExportAsJSONAction {
             });
         }
 
-        if (!conditionSetIdentifier) {
+        if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
             this._decrementCallsAndSave();
         } else {
-            const conditionSetObject = await this.openmct.objects.get(conditionSetIdentifier);
+            const conditionSetObjects = [];
 
-            this._exportObject(conditionSetObject, parent);
+            // conditionSetIdentifiers directly in objectStyles object
+            if (conditionSetIdentifier) {
+                conditionSetObjects.push(await this.openmct.objects.get(conditionSetIdentifier));
+            }
+
+            // conditionSetIdentifiers stored on item ids in the objectStyles object
+            if (hasItemConditionSetIdentifiers) {
+                const itemConditionSetIdentifiers = this._getItemConditionSetIdentifiers(parent);
+
+                for (const itemConditionSetIdentifier of itemConditionSetIdentifiers) {
+                    conditionSetObjects.push(await this.openmct.objects.get(itemConditionSetIdentifier));
+                }
+            }
+
+            for (const conditionSetObject of conditionSetObjects) {
+                this._exportObject(conditionSetObject, parent);
+            }
+
             this._decrementCallsAndSave();
         }
     }
@@ -125,6 +145,7 @@ export default class ExportAsJSONAction {
         const originalKeyString = this._getKeystring(child);
         const parentKeyString = this._getKeystring(parent);
         const conditionSetIdentifier = this._getConditionSetIdentifier(parent);
+        const hasItemConditionSetIdentifiers = this._hasItemConditionSetIdentifiers(parent);
         const existingMappedKeyString = this.idMap[originalKeyString];
         let copy;
 
@@ -132,7 +153,7 @@ export default class ExportAsJSONAction {
             copy = this._copy(child);
             copy.identifier.key = uuid();
 
-            if (!conditionSetIdentifier) {
+            if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
                 copy.location = parentKeyString;
             }
 
@@ -143,10 +164,36 @@ export default class ExportAsJSONAction {
             copy = this.tree[existingMappedKeyString];
         }
 
-        if (conditionSetIdentifier) {
-            parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
-            this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+        if (conditionSetIdentifier || hasItemConditionSetIdentifiers) {
+            const directObjectStylesIdentifier = this.openmct.objects.areIdsEqual(
+                parent.configuration.objectStyles.conditionSetIdentifier,
+                child.identifier
+            );
+
+            // update objectStyle object
+            if (conditionSetIdentifier && directObjectStylesIdentifier) {
+                parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+                this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+            }
+
+            // update per item id on objectStyle object
+            if (hasItemConditionSetIdentifiers) {
+                for (const itemId in parent.configuration.objectStyles) {
+                    if (parent.configuration.object[itemId]) {
+                        const itemConditionSetIdentifier = parent.configuration.objectStyles[itemId].conditionSetIdentifier;
+
+                        if (
+                            itemConditionSetIdentifier
+                            && this.openmct.objects.areIdsEqual(itemConditionSetIdentifier, child.identifier)
+                        ) {
+                            parent.configuration.objectStyles[itemId].conditionSetIdentifier = copy.identifier;
+                            this.tree[parentKeyString].configuration.objectStyles[itemId].conditionSetIdentifier = copy.identifier;
+                        }
+                    }
+                }
+            }
         } else {
+            // just update parent
             const index = parent.composition.findIndex(identifier => {
                 return this.openmct.objects.areIdsEqual(child.identifier, identifier);
             });
@@ -198,6 +245,33 @@ export default class ExportAsJSONAction {
 
     _getConditionSetIdentifier(object) {
         return object.configuration?.objectStyles?.conditionSetIdentifier;
+    }
+
+    _hasItemConditionSetIdentifiers(parent) {
+        const objectStyles = parent.configuration?.objectStyles;
+
+        for (const itemId in objectStyles) {
+            if (Object.prototype.hasOwnProperty.call(objectStyles[itemId], 'conditionSetIdentifier')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    _getItemConditionSetIdentifiers(parent) {
+        const objectStyles = parent.configuration?.objectStyles;
+        let identifiers = new Set();
+
+        if (objectStyles) {
+            Object.keys(objectStyles).forEach(itemId => {
+                if (objectStyles[itemId].conditionSetIdentifier) {
+                    identifiers.add(objectStyles[itemId].conditionSetIdentifier);
+                }
+            });
+        }
+
+        return Array.from(identifiers);
     }
 
     /**
