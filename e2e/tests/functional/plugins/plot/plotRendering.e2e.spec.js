@@ -70,14 +70,12 @@ test.describe('Plot Rendering', () => {
  */
 async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
     await page.goto(sineWaveGeneratorObject.url);
-    // Edit SWG properties
+    // Edit SWG properties to include infinity values
     await page.locator('[title="More options"]').click();
     await page.locator('[title="Edit properties of this object."]').click();
-    // Modify the infinity option to true
-    const infinityInput = page.getByRole('switch', {
+    await page.getByRole('switch', {
         name: "Include Infinity Values"
-    });
-    await infinityInput.check();
+    }).check();
 
     await page.getByRole('button', {
         name: 'Save'
