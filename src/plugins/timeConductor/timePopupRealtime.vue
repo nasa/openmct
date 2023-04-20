@@ -205,6 +205,7 @@ export default {
                     seconds: this.endInputSecs
                 }
             });
+            this.$emit('dismiss');
         },
         hide($event) {
             if ($event.target.className.indexOf('c-button icon-x') > -1) {
