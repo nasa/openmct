@@ -300,7 +300,7 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
 ### How to write a great test (WIP)
 
 - Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
-  - Use `waitForPlotsToLoad()` before asserting against anything that is dependent upon plot series data being loaded and drawn.
+  - Use `waitForPlotsToRender()` before asserting against anything that is dependent upon plot series data being loaded and drawn.
 - If you create an object outside of using the `createDomainObjectWithDefaults` App Action, make sure to fill in the 'Notes' section of your object with `page.testNotes`:
 
   ```js
