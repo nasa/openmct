@@ -33,7 +33,6 @@
 
 <script>
 
-import e from 'cors';
 import Flatbush from 'flatbush';
 const EXISTING_ANNOTATION_STROKE_STYLE = "#D79078";
 const EXISTING_ANNOTATION_FILL_STYLE = "rgba(202, 202, 142, 0.2)";

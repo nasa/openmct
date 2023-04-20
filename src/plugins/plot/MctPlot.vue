@@ -215,6 +215,7 @@ import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 import KDBush from 'kdbush';
+import Flatbush from 'flatbush';
 import _ from "lodash";
 
 const OFFSET_THRESHOLD = 10;
@@ -1348,6 +1349,32 @@ export default {
 
             return annotationsByPoints.flat();
         },
+        searchWithKDTree(seriesData, seriesModel, boundingBox) {
+            const kdTree = new KDBush(seriesData,
+                (point) => {
+                    return seriesModel.getXVal(point);
+                },
+                (point) => {
+                    return seriesModel.getYVal(point);
+                }
+            );
+            const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
+
+            return rangeResults;
+        },
+        searchWithFlatbush(seriesData, seriesModel, boundingBox) {
+            const flatbush = new Flatbush(seriesData.length);
+            seriesData.forEach(point => {
+                const x = seriesModel.getXVal(point);
+                const y = seriesModel.getYVal(point);
+                flatbush.add(x, y, x, y);
+            });
+            flatbush.finish();
+
+            const rangeResults = flatbush.search(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
+
+            return rangeResults;
+        },
         getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
             // load series models in KD-Trees
             const seriesKDTrees = [];
@@ -1361,16 +1388,15 @@ export default {
 
                 const seriesData = seriesModel.getSeriesData();
                 if (seriesData && seriesData.length) {
-                    const kdTree = new KDBush(seriesData,
-                        (point) => {
-                            return seriesModel.getXVal(point);
-                        },
-                        (point) => {
-                            return seriesModel.getYVal(point);
-                        }
-                    );
                     const searchResults = [];
-                    const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
+                    let startTime = Date.now();
+                    let rangeResults = this.searchWithKDTree(seriesData, seriesModel, boundingBox);
+                    let endTime = Date.now();
+                    console.debug(`KD Tree Annotation search took ${endTime - startTime} ms for ${seriesData.length} points`);
+                    startTime = Date.now();
+                    rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
+                    endTime = Date.now();
+                    console.debug(`Flatbush Tree Annotation search took ${endTime - startTime} ms for ${seriesData.length} points`);
                     rangeResults.forEach(id => {
                         const seriesDatum = seriesData[id];
                         if (seriesDatum) {
