@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { cond } from 'lodash';
 import JSONExporter from '/src/exporters/JSONExporter.js';
 import { v4 as uuid } from 'uuid';
 
@@ -62,7 +61,7 @@ export default class ExportAsJSONAction {
         this.idMap = {};
 
         const root = objectpath[0];
-        this.root = this.#copy(root);
+        this.root = this._copy(root);
 
         const rootId = this._getKeystring(this.root);
         this.tree[rootId] = this.root;
@@ -130,7 +129,7 @@ export default class ExportAsJSONAction {
         let copy;
 
         if (!existingMappedKeyString) {
-            copy = this.#copy(child);
+            copy = this._copy(child);
             copy.identifier.key = uuid();
 
             if (!conditionSetIdentifier) {
@@ -265,7 +264,7 @@ export default class ExportAsJSONAction {
         }
     }
 
-    #copy(object) {
+    _copy(object) {
         return JSON.parse(JSON.stringify(object));
     }
 }
