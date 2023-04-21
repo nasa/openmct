@@ -81,7 +81,7 @@ export default class ImportAsJSONAction {
      * @param {object} tree
      * @param {object} seen
      */
-    _deepInstantiate(parent, tree, seen) {
+    async _deepInstantiate(parent, tree, seen) {
         let objectIdentifiers = this._getObjectReferenceIds(parent);
 
         if (objectIdentifiers.length) {
@@ -89,7 +89,7 @@ export default class ImportAsJSONAction {
 
             seen.push(parent.id);
 
-            objectIdentifiers.forEach(async (childId) => {
+            for (const childId of objectIdentifiers) {
                 const keystring = this.openmct.objects.makeKeyString(childId);
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
@@ -100,7 +100,7 @@ export default class ImportAsJSONAction {
 
                 newObj = await this._instantiate(newModel);
                 this._deepInstantiate(newObj, tree, seen);
-            }, this);
+            }
         }
     }
     /**
