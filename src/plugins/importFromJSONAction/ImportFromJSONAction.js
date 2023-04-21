@@ -99,7 +99,7 @@ export default class ImportAsJSONAction {
                 delete newModel.persisted;
 
                 newObj = await this._instantiate(newModel);
-                await this._deepInstantiate(newObj, tree, seen);
+                this._deepInstantiate(newObj, tree, seen);
             }
         }
     }
@@ -197,16 +197,23 @@ export default class ImportAsJSONAction {
     }
     /**
      * @private
-     * @param {object} rootModel
+     * @param {object} model
      * @returns {object}
      */
-    async _instantiate(rootModel) {
-        const success = await this.openmct.objects.save(rootModel);
-        if (success) {
-            return rootModel;
-        }
+    _instantiate(model) {
+        return new Promise((resolve) => {
+            setTimeout(async () => {
+                try {
+                    const newModel = await this.openmct.objects.save(model);
 
-        this.openmct.notifications.error('Error saving objects');
+                    resolve(newModel);
+                } catch (error) {
+                    this.openmct.notifications.error('Error saving objects');
+
+                    resolve();
+                }
+            }, 0);
+        });
     }
     /**
      * @private
