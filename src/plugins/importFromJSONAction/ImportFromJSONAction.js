@@ -86,8 +86,6 @@ export default class ImportAsJSONAction {
         let objectIdentifiers = this._getObjectReferenceIds(parent);
 
         if (objectIdentifiers.length) {
-            let newObj;
-
             seen.push(parent.id);
 
             for (const childId of objectIdentifiers) {
@@ -99,13 +97,11 @@ export default class ImportAsJSONAction {
                 const newModel = tree[keystring];
                 delete newModel.persisted;
 
-                // newObj = await this._instantiate(newModel);
-                newObj = newModel;
-                this.newObjects.push(newObj);
+                this.newObjects.push(newModel);
 
                 // make sure there weren't any errors saving
-                if (newObj) {
-                    this._deepInstantiate(newObj, tree, seen);
+                if (newModel) {
+                    this._deepInstantiate(newModel, tree, seen);
                 }
             }
         }
@@ -175,21 +171,14 @@ export default class ImportAsJSONAction {
         const tree = this._generateNewIdentifiers(objTree, namespace);
         const rootId = tree.rootId;
 
-        const rootModel = tree.openmct[rootId];
-        delete rootModel.persisted;
-
-        // const rootObj = await this._instantiate(rootModel);
-        const rootObj = rootModel;
+        const rootObj = tree.openmct[rootId];
+        delete rootObj.persisted;
         this.newObjects.push(rootObj);
+
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-            // await this._deepInstantiate(rootObj, tree.openmct, []);
             this._deepInstantiate(rootObj, tree.openmct, []);
 
-            await Promise.all(
-                this.newObjects.map((object) => {
-                    return this._instantiate(object);
-                })
-            );
+            await Promise.all(this.newObjects.map(this._instantiate));
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -222,7 +211,7 @@ export default class ImportAsJSONAction {
                 try {
                     await this.openmct.objects.save(model);
 
-                    resolve(model);
+                    resolve();
                 } catch (error) {
                     this.openmct.notifications.error('Error saving objects');
 
