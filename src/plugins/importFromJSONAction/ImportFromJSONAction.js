@@ -177,7 +177,7 @@ export default class ImportAsJSONAction {
 
         const rootObj = await this._instantiate(rootModel);
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-            this._deepInstantiate(rootObj, tree.openmct, []);
+            await this._deepInstantiate(rootObj, tree.openmct, []);
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -208,9 +208,9 @@ export default class ImportAsJSONAction {
         return new Promise((resolve) => {
             setTimeout(async () => {
                 try {
-                    const newModel = await this.openmct.objects.save(model);
+                    await this.openmct.objects.save(model);
 
-                    resolve(newModel);
+                    resolve(model);
                 } catch (error) {
                     this.openmct.notifications.error('Error saving objects');
 
