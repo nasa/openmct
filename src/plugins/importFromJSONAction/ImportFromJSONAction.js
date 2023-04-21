@@ -178,7 +178,7 @@ export default class ImportAsJSONAction {
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
             this._deepInstantiate(rootObj, tree.openmct, []);
 
-            await Promise.all(this.newObjects.map(this._instantiate));
+            await Promise.all(this.newObjects.map(this._instantiate, this));
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
