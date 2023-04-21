@@ -99,7 +99,11 @@ export default class ImportAsJSONAction {
                 delete newModel.persisted;
 
                 newObj = await this._instantiate(newModel);
-                this._deepInstantiate(newObj, tree, seen);
+
+                // make sure there weren't any errors saving
+                if (newObj) {
+                    this._deepInstantiate(newObj, tree, seen);
+                }
             }
         }
     }
@@ -210,7 +214,7 @@ export default class ImportAsJSONAction {
                 } catch (error) {
                     this.openmct.notifications.error('Error saving objects');
 
-                    resolve();
+                    throw error;
                 }
             }, 0);
         });
