@@ -99,7 +99,7 @@ export default class ImportAsJSONAction {
                 delete newModel.persisted;
 
                 newObj = await this._instantiate(newModel);
-                this._deepInstantiate(newObj, tree, seen);
+                await this._deepInstantiate(newObj, tree, seen);
             }
         }
     }
@@ -111,7 +111,7 @@ export default class ImportAsJSONAction {
     _getObjectReferenceIds(parent) {
         let objectIdentifiers = [];
         let itemObjectReferences = [];
-        const objectStyles = parent.configuration?.objectStyles;
+        const objectStyles = parent?.configuration?.objectStyles;
         const parentComposition = this.openmct.composition.get(parent);
 
         if (parentComposition) {
@@ -173,7 +173,7 @@ export default class ImportAsJSONAction {
 
         const rootObj = await this._instantiate(rootModel);
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-            this._deepInstantiate(rootObj, tree.openmct, []);
+            await this._deepInstantiate(rootObj, tree.openmct, []);
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
