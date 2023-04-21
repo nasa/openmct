@@ -31,6 +31,7 @@ export default class ImportAsJSONAction {
         this.cssClass = "icon-import";
         this.group = "import";
         this.priority = 2;
+        this.newObjects = [];
 
         this.openmct = openmct;
     }
@@ -81,7 +82,7 @@ export default class ImportAsJSONAction {
      * @param {object} tree
      * @param {object} seen
      */
-    async _deepInstantiate(parent, tree, seen) {
+    _deepInstantiate(parent, tree, seen) {
         let objectIdentifiers = this._getObjectReferenceIds(parent);
 
         if (objectIdentifiers.length) {
@@ -98,7 +99,9 @@ export default class ImportAsJSONAction {
                 const newModel = tree[keystring];
                 delete newModel.persisted;
 
-                newObj = await this._instantiate(newModel);
+                // newObj = await this._instantiate(newModel);
+                newObj = newModel;
+                this.newObjects.push(newObj);
 
                 // make sure there weren't any errors saving
                 if (newObj) {
@@ -175,9 +178,18 @@ export default class ImportAsJSONAction {
         const rootModel = tree.openmct[rootId];
         delete rootModel.persisted;
 
-        const rootObj = await this._instantiate(rootModel);
+        // const rootObj = await this._instantiate(rootModel);
+        const rootObj = rootModel;
+        this.newObjects.push(rootObj);
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-            await this._deepInstantiate(rootObj, tree.openmct, []);
+            // await this._deepInstantiate(rootObj, tree.openmct, []);
+            this._deepInstantiate(rootObj, tree.openmct, []);
+
+            await Promise.all(
+                this.newObjects.map((object) => {
+                    return this._instantiate(object);
+                })
+            );
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
