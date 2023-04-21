@@ -173,7 +173,7 @@ export default class ImportAsJSONAction {
 
         const rootObj = await this._instantiate(rootModel);
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-            await this._deepInstantiate(rootObj, tree.openmct, []);
+            this._deepInstantiate(rootObj, tree.openmct, []);
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
