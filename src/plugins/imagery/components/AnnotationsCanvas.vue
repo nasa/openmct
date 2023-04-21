@@ -143,7 +143,7 @@ export default {
             this.dragging = false;
             this.selectedAnnotations = [];
 
-            console.debug(`🖼️ Creating new image annotation`);
+            console.debug(`🖼️ Creating new image annotation of size ${this.newAnnotationRectangle.width}x${this.newAnnotationRectangle.height} at ${this.newAnnotationRectangle.x},${this.newAnnotationRectangle.y}`);
 
             const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const targetDetails = {};
@@ -188,6 +188,7 @@ export default {
             // would add cancel selection here
         },
         attemptToSelectExistingAnnotation(event) {
+            this.dragging = false;
             // use flatbush to find annotations that are close to the click
             const boundingRect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / boundingRect.width;
@@ -209,7 +210,7 @@ export default {
             event.stopPropagation();
             this.mouseDown = false;
             console.debug(`🐭 mouseClick`);
-            if ((!this.dragging) || (this.newAnnotationRectangle.width && !this.newAnnotationRectangle.height)) {
+            if ((!this.dragging) || (!this.newAnnotationRectangle.width && !this.newAnnotationRectangle.height)) {
                 console.debug(`🐭 checking for existing annotations`);
                 this.newAnnotationRectangle = {};
                 this.attemptToSelectExistingAnnotation(event);
