@@ -287,6 +287,8 @@ export default {
 
             this.$nextTick(() => {
                 this.updateStyle(this.styleRuleManager?.currentStyle);
+                this.setFontSize(this.fontSize);
+                this.setFont(this.font);
                 this.getActionCollection();
             });
         },
@@ -342,9 +344,6 @@ export default {
                 //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
-
-            this.setFontSize(this.fontSize);
-            this.setFont(this.font);
 
             this.stopListeningFontStyles = this.openmct.objects.observe(this.domainObject, 'configuration.fontStyle', (newFontStyle) => {
                 this.setFontSize(newFontStyle.fontSize);
