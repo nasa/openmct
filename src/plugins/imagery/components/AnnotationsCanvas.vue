@@ -138,33 +138,12 @@ export default {
             targetDomainObjects[keyString] = this.domainObject;
 
             const targetDetails = {};
-            const uniqueBoundsAnnotations = [];
             annotations.forEach(annotation => {
                 Object.entries(annotation.targets).forEach(([key, value]) => {
                     targetDetails[key] = value;
                 });
-
-                const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some(existingAnnotation => {
-                    const existingTime = Object.values(existingAnnotation.targets)[0].time;
-                    const newTime = Object.values(annotation.targets)[0].time;
-                    if (existingTime !== newTime) {
-                        return false;
-                    }
-
-                    const existingBoundingBox = Object.values(existingAnnotation.targets)[0].rectangle;
-                    const newBoundingBox = Object.values(annotation.targets)[0].rectangle;
-
-                    return (existingBoundingBox.x === newBoundingBox.x
-                        && existingBoundingBox.y === newBoundingBox.y
-                        && existingBoundingBox.height === newBoundingBox.height
-                        && existingBoundingBox.width === newBoundingBox.width);
-
-                });
-                if (!boundingBoxAlreadyAdded) {
-                    uniqueBoundsAnnotations.push(annotation);
-                }
             });
-            this.selectedAnnotations = uniqueBoundsAnnotations;
+            this.selectedAnnotations = annotations;
             this.drawAnnotations();
 
             return {
