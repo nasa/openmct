@@ -32,7 +32,7 @@ test.describe('Recent Objects', () => {
     /** @type {import('@playwright/test').Locator} */
     let folderA;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Set Recent Objects List locator for subsequent tests
         recentObjectsList = page.getByRole('list', {
@@ -58,7 +58,7 @@ test.describe('Recent Objects', () => {
     });
     test('Navigated objects show up in recents, object renames and deletions are reflected', async ({ page }) => {
         // Verify that both created objects appear in the list and are in the correct order
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
 
         // Navigate to the folder by clicking on the main object name in the recent objects list item
         await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
@@ -149,9 +149,9 @@ test.describe('Recent Objects', () => {
         await expect(clockTreeItem.locator('.c-tree__item')).not.toHaveClass(/is-targeted-item/);
     });
     test("Persists on refresh", async ({ page }) => {
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
         await page.reload();
-        assertInitialRecentObjectsListState();
+        await assertInitialRecentObjectsListState();
     });
     test("Displays objects and aliases uniquely", async ({ page }) => {
         const mainTree = page.getByRole('tree', { name: 'Main Tree'});
@@ -252,13 +252,57 @@ test.describe('Recent Objects', () => {
         // Assert that the list is empty
         expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
     });
+    test("Ensure clear recent objects button is active or inactive", async ({ page }) => {
+        // Assert that the list initially contains 3 objects (clock, folder, my items)
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+
+        // Assert that the button is enabled
+        expect(
+            await page
+                .getByRole("button", { name: "Clear Recently Viewed" })
+                .isEnabled()
+        ).toBe(true);
+
+        // Click the aria-label="Clear Recently Viewed" button
+        await page.getByRole("button", { name: "Clear Recently Viewed" }).click();
+
+        // Click on the "OK" button in the confirmation dialog
+        await page.getByRole("button", { name: "OK" }).click();
+
+        // Assert that the list is empty
+        expect(
+            await recentObjectsList.locator(".c-recentobjects-listitem").count()
+        ).toBe(0);
+
+        // Assert that the button is disabled
+        expect(
+            await page
+                .getByRole("button", { name: "Clear Recently Viewed" })
+                .isEnabled()
+        ).toBe(false);
+
+        // Navigate to folder object
+        await page.goto(folderA.url);
+
+        // Assert that the list contains 1 object
+        expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(1);
+
+        // Assert that the button is enabled
+        expect(
+            await page
+                .getByRole("button", { name: "Clear Recently Viewed" })
+                .isEnabled()
+        ).toBe(true);
+    });
 
     function assertInitialRecentObjectsListState() {
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeTruthy();
-        expect(recentObjectsList.getByRole('listitem').nth(1).getByText(folderA.name)).toBeTruthy();
+        return Promise.all([
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem').nth(0).getByText(clock.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem', { name: clock.name }).locator('a').getByText(folderA.name)).toBeVisible(),
+            expect(recentObjectsList.getByRole('listitem').nth(3).getByText(folderA.name)).toBeVisible()
+        ]);
     }
 });

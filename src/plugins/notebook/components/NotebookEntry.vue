@@ -32,7 +32,7 @@
     @dragover="changeCursor"
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
-    @click="selectEntry($event, entry)"
+    @click="selectAndEmitEntry($event, entry)"
 >
     <div class="c-ne__time-and-content">
         <div class="c-ne__time-and-creator-and-delete">
@@ -164,7 +164,7 @@
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed } from '../utils/notebook-entries';
+import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 
 import sanitizeHtml from 'sanitize-html';
@@ -479,37 +479,18 @@ export default {
         updateEntryValue($event) {
             this.editMode = false;
             const value = $event.target.innerText;
-            if (value !== this.entry.text && value.match(/\S/)) {
-                this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
-                this.timestampAndUpdate();
-            } else {
-                this.$emit('cancelEdit');
-            }
+            this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+            this.timestampAndUpdate();
         },
-        selectEntry(event, entry) {
-            const targetDetails = {};
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            targetDetails[keyString] = {
-                entryId: entry.id
-            };
-            const targetDomainObjects = {};
-            targetDomainObjects[keyString] = this.domainObject;
-            this.openmct.selection.select(
-                [
-                    {
-                        element: event.currentTarget,
-                        context: {
-                            type: 'notebook-entry-selection',
-                            item: this.domainObject,
-                            targetDetails,
-                            targetDomainObjects,
-                            annotations: this.notebookAnnotations,
-                            annotationType: this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
-                            onAnnotationChange: this.timestampAndUpdate
-                        }
-                    }
-                ],
-                false);
+        selectAndEmitEntry(event, entry) {
+            selectEntry({
+                element: event.currentTarget,
+                entryId: entry.id,
+                domainObject: this.domainObject,
+                openmct: this.openmct,
+                onAnnotationChange: this.timestampAndUpdate,
+                notebookAnnotations: this.notebookAnnotations
+            });
             event.stopPropagation();
             this.$emit('entry-selection', this.entry);
         }

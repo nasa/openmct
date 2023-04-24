@@ -27,7 +27,7 @@ test.describe('Display Layout', () => {
     /** @type {import('../../../../appActions').CreatedObjectInfo} */
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         await setRealTimeMode(page);
 
         // Create Sine Wave Generator

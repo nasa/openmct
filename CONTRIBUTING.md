@@ -191,7 +191,7 @@ The following guidelines are provided for anyone contributing source code to the
    if (responseCode === 401)
    ```
 1. Use the ternary operator only for simple cases such as variable assignment. Nested ternaries should be avoided in all cases.
-1. Test specs should reside alongside the source code they test, not in a separate directory.
+1. Unit Test specs should reside alongside the source code they test, not in a separate directory.
 1. Organize code by feature, not by type.
    eg.
    ```
@@ -221,44 +221,6 @@ The following guidelines are provided for anyone contributing source code to the
    ```
 Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
-
-### Test Standards
-
-Automated testing shall occur whenever changes are merged into the main
-development branch and must be confirmed alongside any pull request.
-
-Automated tests are tests which exercise plugins, API, and utility classes. 
-Tests are subject to code review along with the actual implementation, to 
-ensure that tests are applicable and useful.
-
-Examples of useful tests:
-* Tests which replicate bugs (or their root causes) to verify their
-  resolution.
-* Tests which reflect details from software specifications.
-* Tests which exercise edge or corner cases among inputs.
-* Tests which verify expected interactions with other components in the
-  system.
-
-#### Guidelines
-* 100% statement coverage is achievable and desirable.
-* Do blackbox testing. Test external behaviors, not internal details. Write tests that describe what your plugin is supposed to do. How it does this doesn't matter, so don't test it.
-* Unit test specs for plugins should be defined at the plugin level. Start with one test spec per plugin named pluginSpec.js, and as this test spec grows too big, break it up into multiple test specs that logically group related tests.
-* Unit tests for API or for utility functions and classes may be defined at a per-source file level.
-* Wherever possible only use and mock public API, builtin functions, and UI in your test specs. Do not directly invoke any private functions. ie. only call or mock functions and objects exposed by openmct.* (eg. openmct.telemetry, openmct.objectView, etc.), and builtin browser functions (fetch, requestAnimationFrame, setTimeout, etc.).
-* Where builtin functions have been mocked, be sure to clear them between tests.
-* Test at an appropriate level of isolation. Eg. 
-    * If you’re testing a view, you do not need to test the whole application UI, you can just fetch the view provider using the public API and render the view into an element that you have created. 
-    * You do not need to test that the view switcher works, there should be separate tests for that. 
-    * You do not need to test that telemetry providers work, you can mock openmct.telemetry.request() to feed test data to the view.
-    * Use your best judgement when deciding on appropriate scope.
-* Automated tests for plugins should start by actually installing the plugin being tested, and then test that installing the plugin adds the desired features and behavior to Open MCT, observing the above rules.
-* All variables used in a test spec, including any instances of the Open MCT API should be declared inside of an appropriate block scope (not at the root level of the source file), and should be initialized in the relevant beforeEach block. `beforeEach` is preferable to `beforeAll` to avoid leaking of state between tests.
-* A `afterEach` or `afterAll` should be used to do any clean up necessary to prevent leakage of state between test specs. This can happen when functions on `window` are wrapped, or when the URL is changed. [A convenience function](https://github.com/nasa/openmct/blob/master/src/utils/testing.js#L59) is provided for resetting the URL and clearing builtin spies between tests.
-* If writing unit tests for legacy Angular code be sure to follow [best practices in order to avoid memory leaks](https://www.thecodecampus.de/blog/avoid-memory-leaks-angularjs-unit-tests/).
-
-#### Examples
-* [Example of an automated test spec for an object view plugin](https://github.com/nasa/openmct/blob/master/src/plugins/telemetryTable/pluginSpec.js)
-* [Example of an automated test spec for API](https://github.com/nasa/openmct/blob/master/src/api/time/TimeAPISpec.js)
 
 ### Commit Message Standards
 
@@ -301,7 +263,7 @@ Issue severity is categorized as follows (in ascending order):
 
 * _Trivial_: Minimal impact on the usefulness and functionality of the software; a "nice-to-have." Visual impact without functional impact,
 * _Medium_: Some impairment of use, but simple workarounds exist
-* _Critical_: Significant loss of functionality or impairment of use. Display of telemetry data is not affected though.
+* _Critical_: Significant loss of functionality or impairment of use. Display of telemetry data is not affected though. Complex workarounds exist.
 * _Blocker_: Major functionality is impaired or lost, threatening mission success. Display of telemetry data is impaired or blocked by the bug, which could lead to loss of situational awareness.
 
 ## Check Lists
@@ -310,22 +272,4 @@ The following check lists should be completed and attached to pull requests
 when they are filed (author checklist) and when they are merged (reviewer
 checklist).
 
-### Author Checklist
-
 [Within PR Template](.github/PULL_REQUEST_TEMPLATE.md)
-
-### Reviewer Checklist
-
-* [ ] Changes appear to address issue?
-* [ ] Changes appear not to be breaking changes?
-* [ ] Appropriate unit tests included?
-* [ ] Code style and in-line documentation are appropriate?
-* [ ] Commit messages meet standards?
-* [ ] Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
-* [ ] Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
-* [ ] List of Acceptance Tests Performed.
-
-Write out a small list of tests performed with just enough detail for another developer on the team 
-to execute. 
-
-i.e. ```When Clicking on Add button, new `object` appears in dropdown.```

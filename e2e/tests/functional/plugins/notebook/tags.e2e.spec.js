@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify form functionality.
+This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
@@ -34,9 +34,6 @@ const nbUtils = require('../../../../helper/notebookUtils');
   * @param {number} [iterations = 1] - the number of entries to create
   */
 async function createNotebookAndEntry(page, iterations = 1) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
     const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
 
     for (let iteration = 0; iteration < iterations; iteration++) {
@@ -81,11 +78,12 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 }
 
 test.describe('Tagging in Notebooks @addInit', () => {
+    test.beforeEach(async ({ page }) => {
+        //Go to baseURL
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+    });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
@@ -110,11 +108,23 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).not.toContainText("Driving");
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
+    test('Can add tags with blank entry', async ({ page }) => {
+        await createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await selectInspectorTab(page, 'Annotations');
+
+        await nbUtils.enterTextEntry(page, '');
+        await page.hover(`button:has-text("Add Tag")`);
+        await page.locator(`button:has-text("Add Tag")`).click();
+
+        // Click inside the tag search input
+        await page.locator('[placeholder="Type to select tag"]').click();
+        // Select the "Driving" tag
+        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
+
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toContainText("Driving");
+    });
     test('Can cancel adding tags', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
@@ -204,7 +214,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('button[title="More options"]').click();
         await page.locator('li[title="Remove this object from its containing object."]').click();
         await page.locator('button:has-text("OK")').click();
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
         await expect(page.locator('text=No results found')).toBeVisible();
@@ -215,37 +225,13 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
-
-        const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const ITERATIONS = 4;
         const notebook = await createNotebookEntryAndTags(page, ITERATIONS);
+        await page.goto(notebook.url);
 
-        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
-            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
-            await expect(page.locator(entryLocator)).toContainText("Science");
-            await expect(page.locator(entryLocator)).toContainText("Driving");
-        }
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.goto('./#/browse/mine?hideTree=false'),
-            page.click('.c-disclosure-triangle')
-        ]);
-
-        const treePane = page.getByRole('tree', {
-            name: 'Main Tree'
-        });
-        // Click Clock
-        await treePane.getByRole('treeitem', {
-            name: clock.name
-        }).click();
-        // Click Notebook
-        await page.getByRole('treeitem', {
-            name: notebook.name
-        }).click();
-
+        // Verify tags are present
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
@@ -253,14 +239,9 @@ test.describe('Tagging in Notebooks @addInit', () => {
         }
 
         //Reload Page
-        await Promise.all([
-            page.reload(),
-            page.waitForLoadState('networkidle')
-        ]);
+        await page.reload({ waitUntil: 'domcontentloaded' });
 
-        // Click Notebook
-        await page.click(`text="${notebook.name}"`);
-
+        // Verify tags persist across reload
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
@@ -269,9 +250,6 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Can cancel adding a tag', async ({ page }) => {
         await createNotebookAndEntry(page);
-
-        // TODO can be removed with fix for https://github.com/nasa/openmct/issues/6411
-        await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').click();
 
         await selectInspectorTab(page, 'Annotations');
 
