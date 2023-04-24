@@ -59,12 +59,6 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        keyString: {
-            type: String,
-            default() {
-                return undefined;
-            }
-        },
         objectPath: {
             type: Array,
             default() {
@@ -121,8 +115,11 @@ export default {
         };
     },
     watch: {
-        keyString() {
-            this.setTimeContext();
+        objectPath: {
+            handler() {
+                this.setTimeContext();
+            },
+            deep: true
         },
         inputBounds: {
             handler(newBounds) {
@@ -156,7 +153,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTime();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? this.objectPath : []);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.followTime();
         },
         handleNewBounds(bounds) {

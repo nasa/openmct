@@ -192,6 +192,23 @@ export default {
             return this.openmct.telemetry.getValueFormatter({
                 format: key
             }).formatter;
+        },
+        saveFixedBounds(bounds) {
+            this.openmct.time.bounds(bounds);
+        },
+        saveClockOffsets(offsets) {
+            this.openmct.time.clockOffsets(offsets);
+        },
+        saveMode(option) {
+            if (option.timeSystem) {
+                this.openmct.time.timeSystem(option.timeSystem, option.bounds);
+            }
+
+            if (option.clockKey === undefined) {
+                this.openmct.time.stopClock();
+            } else {
+                this.openmct.time.clock(option.clockKey, option.offsets);
+            }
         }
     }
 };

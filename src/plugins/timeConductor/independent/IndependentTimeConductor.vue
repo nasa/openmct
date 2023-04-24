@@ -21,6 +21,7 @@
 -->
 <template>
 <div
+    ref="timeConductorOptionsHolder"
     class="c-compact-tc"
     :class="[
         isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
@@ -35,35 +36,22 @@
         @change="toggleIndependentTC"
     />
 
-    <ConductorModeIcon />
-
-    <Mode
-        v-if="mode"
-        class="c-button--compact c-conductor__mode-select"
-        :key-string="domainObject.identifier.key"
-        :mode="timeOptions.mode"
-        :button-css-class="'c-button--compact'"
-        :enabled="independentTCEnabled"
-        title="TEMP - MOVE TO POPUP"
-        @modeChanged="saveMode"
-    />
+    <ConductorModeIcon v-if="independentTCEnabled" />
 
     <conductor-inputs-fixed
-        v-if="isFixed"
+        v-if="isFixed && independentTCEnabled"
         class="c-compact-tc__bounds--fixed"
-        :key-string="domainObject.identifier.key"
+        :object-path="objectPath"
         :read-only="true"
         :compact="true"
-        @updated="saveFixedOffsets"
     />
 
     <conductor-inputs-realtime
-        v-else
+        v-if="!isFixed && independentTCEnabled"
         class="c-compact-tc__bounds--real-time"
-        :key-string="domainObject.identifier.key"
+        :object-path="objectPath"
         :read-only="true"
         :compact="true"
-        @updated="saveClockOffsets"
     />
     <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 </div>
@@ -74,16 +62,16 @@ import ConductorInputsFixed from "../ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "../ConductorInputsRealtime.vue";
 import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
-import Mode from "./Mode.vue";
+import independentTimeConductorPopUpManager from "./independentTimeConductorPopUpManager";
 
 export default {
     components: {
-        Mode,
         ConductorModeIcon,
         ConductorInputsRealtime,
         ConductorInputsFixed,
         ToggleSwitch
     },
+    mixins: [independentTimeConductorPopUpManager],
     inject: ['openmct'],
     props: {
         domainObject: {
@@ -96,13 +84,19 @@ export default {
         }
     },
     data() {
+        const bounds = this.openmct.time.bounds();
+
         return {
             timeOptions: this.domainObject.configuration.timeOptions || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
             mode: undefined,
-            independentTCEnabled: this.domainObject.configuration.useIndependentTime === true
+            independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
+            viewBounds: {
+                start: bounds.start,
+                end: bounds.end
+            }
         };
     },
     computed: {
@@ -130,6 +124,13 @@ export default {
 
                     this.initialize();
                 }
+            },
+            deep: true
+        },
+        objectPath: {
+            handler() {
+                //domain object or view has probably changed
+                this.setTimeContext();
             },
             deep: true
         }
@@ -165,6 +166,7 @@ export default {
             if (this.independentTCEnabled) {
                 this.registerIndependentTimeOffsets();
             } else {
+                this.removePopup();
                 this.destroyIndependentTime();
             }
 
@@ -189,11 +191,10 @@ export default {
                 this.registerIndependentTimeOffsets();
             }
         },
-        saveFixedOffsets(offsets) {
+        saveFixedBounds(bounds) {
             const newOptions = Object.assign({}, this.timeOptions, {
-                fixedOffsets: offsets
+                fixedOffsets: bounds
             });
-
             this.updateTimeOptions(newOptions);
         },
         saveClockOffsets(offsets) {
