@@ -2,7 +2,8 @@
     max-height: 80vh;
     max-width: 500px;
     min-height: 50px;
-    z-index: 70;
+    //We don't need the z-index now that we're using the popup
+    //z-index: 70;
 
     [class*="__icon"] {
         filter: $colorKeyFilter;

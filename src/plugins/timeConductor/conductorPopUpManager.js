@@ -39,7 +39,7 @@ export default {
             const popupElement = this.popupComponent;
 
             document.body.appendChild(popupElement.$el);
-            //Use capture so we don't trigger immediately on the same iteration of the event loop
+            //Use capture, so we don't trigger immediately on the same iteration of the event loop
             document.addEventListener('click', this.clearPopup, {
                 capture: true
             });
@@ -67,17 +67,18 @@ export default {
         },
 
         clearPopup(clickAwayEvent) {
-            if (!this.isValidTarget(clickAwayEvent)) {
+            if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
                 this.removePopup();
             }
         },
-        isValidTarget(clickAwayEvent) {
+        canClose(clickAwayEvent) {
             const popupElement = this.popupComponent;
-            const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElement = popupElement.$el.contains(clickAwayEvent.target);
 
-            return isChildMenu || isPopupElement;
+            const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
+            const isPopupElementItem = popupElement.$el.contains(clickAwayEvent.target);
+
+            return !isChildMenu && !isPopupElementItem;
         },
         removePopup() {
             const popupElement = this.popupComponent;
@@ -100,7 +101,8 @@ export default {
                 },
                 provide: {
                     openmct: this.openmct,
-                    configuration: this.configuration
+                    configuration: this.configuration,
+                    objectPath: []
                 },
                 data() {
                     return {
@@ -112,7 +114,14 @@ export default {
                         removePopup
                     };
                 },
-                template: '<conductor-pop-up @dismiss="removePopup" @modeUpdated="saveMode" @fixedBoundsUpdated="saveFixedBounds" @clockOffsetsUpdated="saveClockOffsets" :bottom="false" :positionX="positionX" :positionY="positionY" />'
+                template: `<conductor-pop-up 
+                    @dismiss="removePopup()" 
+                    @modeUpdated="saveMode" 
+                    @fixedBoundsUpdated="saveFixedBounds" 
+                    @clockOffsetsUpdated="saveClockOffsets" 
+                    :bottom="false" 
+                    :positionX="positionX" 
+                    :positionY="positionY" />`
             }).$mount();
 
             return popupElement;
@@ -120,24 +129,6 @@ export default {
 
         registerPopUp() {
             this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
-        },
-
-        saveFixedBounds(bounds) {
-            this.openmct.time.bounds(bounds);
-        },
-        saveClockOffsets(offsets) {
-            this.openmct.time.clockOffsets(offsets);
-        },
-        saveMode(option) {
-            if (option.timeSystem) {
-                this.openmct.time.timeSystem(option.timeSystem, option.bounds);
-            }
-
-            if (option.clockKey === undefined) {
-                this.openmct.time.stopClock();
-            } else {
-                this.openmct.time.clock(option.clockKey, option.offsets);
-            }
         }
     }
 };

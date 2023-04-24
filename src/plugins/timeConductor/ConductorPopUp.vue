@@ -12,16 +12,27 @@
     <div
         class="c-tc-input-popup__options"
     >
+        <Mode
+            v-if="isIndependent"
+            class="c-button--compact c-conductor__mode-select"
+            :mode="timeOptions.mode"
+            :button-css-class="'c-button--compact'"
+            @modeChanged="saveMode"
+        />
         <ConductorMode
+            v-else
             class="c-conductor__mode-select"
             :button-css-class="'c-icon-button'"
             @updated="saveMode"
         />
+        <!-- TODO: Time system and history must work even with ITC later -->
         <ConductorTimeSystem
+            v-if="!isIndependent"
             class="c-conductor__time-system-select"
             :button-css-class="'c-icon-button'"
         />
         <ConductorHistory
+            v-if="!isIndependent"
             class="c-conductor__history-select"
             :button-css-class="'c-icon-button'"
             :offsets="timeOffsets"
@@ -47,6 +58,7 @@
 
 <script>
 import ConductorMode from './ConductorMode.vue';
+import Mode from './independent/Mode.vue';
 import ConductorTimeSystem from "./ConductorTimeSystem.vue";
 import ConductorHistory from "./ConductorHistory.vue";
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
@@ -56,12 +68,13 @@ export default {
 
     components: {
         ConductorMode,
+        Mode,
         ConductorTimeSystem,
         ConductorHistory,
         ConductorInputsFixed,
         ConductorInputsRealtime
     },
-    inject: ['openmct'],
+    inject: ['openmct', 'objectPath', 'configuration'],
     props: {
         positionX: {
             type: Number,
@@ -71,6 +84,18 @@ export default {
         //     type: Number,
         //     required: true
         // },
+        isIndependent: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        timeOptions: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         bottom: {
             type: Boolean,
             default() {
@@ -99,7 +124,7 @@ export default {
             };
         },
         timeOffsets() {
-            return this.isFixed ? undefined : this.openmct.time.clockOffsets();
+            return this.isFixed || !this.timeContext ? undefined : this.timeContext.clockOffsets();
         },
         timeMode() {
             return this.isFixed ? 'fixed' : 'realtime';
@@ -110,21 +135,42 @@ export default {
             return this.isFixed ? `${value} c-tc-input-popup--fixed-mode` : `${value} c-tc-input-popup--realtime-mode`;
         }
     },
+    watch: {
+        objectPath: {
+            handler() {
+                //domain object or view has probably changed
+                this.setTimeContext();
+            },
+            deep: true
+        }
+    },
     mounted() {
-        this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('bounds', this.setBounds);
+        this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('clock', this.setViewFromClock);
-        this.openmct.time.off('bounds', this.setBounds);
+        this.stopFollowingTimeContext();
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on('clock', this.setViewFromClock);
+            this.timeContext.on('bounds', this.setBounds);
+            this.setViewFromClock(this.timeContext.clock());
+            this.setBounds(this.timeContext.bounds());
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('clock', this.setViewFromClock);
+                this.timeContext.off('bounds', this.setBounds);
+            }
+        },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
-            this.bounds = this.openmct.time.bounds();
+            this.bounds = this.timeContext.bounds();
         },
         setBounds() {
-            this.bounds = this.openmct.time.bounds();
+            this.bounds = this.timeContext.bounds();
         },
         saveFixedBounds(bounds) {
             this.$emit('fixedBoundsUpdated', bounds);
