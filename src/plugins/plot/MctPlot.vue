@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,17 +22,11 @@
 <template>
 <div
     v-if="loaded"
+    ref="plot"
     class="gl-plot"
-    :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    :class="{ 'js-series-data-loaded' : seriesDataLoaded }"
 >
-    <plot-legend
-        v-if="!isNestedWithinAStackedPlot"
-        :cursor-locked="!!lockHighlightPoint"
-        :series="seriesModels"
-        :highlights="highlights"
-        :legend="legend"
-        @legendHoverChanged="legendHoverChanged"
-    />
+    <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div
             v-if="seriesModels.length"
@@ -42,13 +36,14 @@
                 v-for="(yAxis, index) in yAxesIds"
                 :id="yAxis.id"
                 :key="`yAxis-${yAxis.id}-${index}`"
-                :multiple-left-axes="multipleLeftAxes"
+                :has-multiple-left-axes="hasMultipleLeftAxes"
                 :position="yAxis.id > 2 ? 'right' : 'left'"
                 :class="{'plot-yaxis-right': yAxis.id > 2}"
                 :tick-width="yAxis.tickWidth"
+                :used-tick-width="plotFirstLeftTickWidth"
                 :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth: plotLeftTickWidth"
                 @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
+                @plotYTickWidth="onYTickWidthChange"
                 @toggleAxisVisibility="toggleSeriesForYAxis"
             />
         </div>
@@ -69,7 +64,6 @@
                     v-show="gridLines && !options.compact"
                     :axis-type="'xAxis'"
                     :position="'right'"
-                    @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks
@@ -79,7 +73,7 @@
                     :axis-type="'yAxis'"
                     :position="'bottom'"
                     :axis-id="yAxis.id"
-                    @plotTickWidth="onTickWidthChange"
+                    @plotTickWidth="onYTickWidthChange"
                 />
 
                 <div
@@ -94,7 +88,6 @@
                         :highlights="highlights"
                         :annotated-points="annotatedPoints"
                         :annotation-selections="annotationSelections"
-                        :show-limit-line-labels="showLimitLineLabels"
                         :hidden-y-axis-ids="hiddenYAxisIds"
                         :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
                         @plotReinitializeCanvas="initCanvas"
@@ -217,7 +210,6 @@ import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
@@ -232,7 +224,6 @@ export default {
     components: {
         XAxis,
         YAxis,
-        PlotLegend,
         MctTicks,
         MctChart
     },
@@ -258,10 +249,14 @@ export default {
                 return false;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         },
         limitLineLabels: {
@@ -296,7 +291,6 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: this.limitLineLabels,
             isFrozenOnMouseDown: false,
             cursorGuide: this.initCursorGuide,
             gridLines: this.initGridLines,
@@ -308,13 +302,14 @@ export default {
     computed: {
         xAxisStyle() {
             const rightAxis = this.yAxesIds.find(yAxis => yAxis.id > 2);
-            const leftOffset = this.multipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+            const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
             let style = {
                 left: `${this.plotLeftTickWidth + leftOffset}px`
             };
+            const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-            if (rightAxis) {
-                style.right = `${rightAxis.tickWidth + AXES_PADDING}px`;
+            if (parentRightAxisWidth || rightAxis) {
+                style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
             }
 
             return style;
@@ -322,8 +317,8 @@ export default {
         yAxesIds() {
             return this.yAxes.filter(yAxis => yAxis.seriesCount > 0);
         },
-        multipleLeftAxes() {
-            return this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
+        hasMultipleLeftAxes() {
+            return this.parentYTickWidth.hasMultipleLeftAxes || this.yAxes.filter(yAxis => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1;
         },
         isNestedWithinAStackedPlot() {
             const isNavigatedObject = this.openmct.router.isNavigatedObject([this.domainObject].concat(this.path));
@@ -337,19 +332,10 @@ export default {
             // only allow annotations viewing/editing if plot is paused or in fixed time mode
             return this.isFrozen || !this.isRealTime;
         },
-        plotLegendPositionClass() {
-            return !this.isNestedWithinAStackedPlot ? `plot-legend-${this.config.legend.get('position')}` : '';
-        },
-        plotLegendExpandedStateClass() {
-            if (this.isNestedWithinAStackedPlot) {
-                return '';
-            }
+        plotFirstLeftTickWidth() {
+            const firstYAxis = this.yAxes.find(yAxis => yAxis.id === 1);
 
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
+            return firstYAxis ? firstYAxis.tickWidth : 0;
         },
         plotLeftTickWidth() {
             let leftTickWidth = 0;
@@ -360,17 +346,15 @@ export default {
 
                 leftTickWidth = leftTickWidth + yAxis.tickWidth;
             });
+            const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
 
-            return this.plotTickWidth || leftTickWidth;
+            return parentLeftTickWidth || leftTickWidth;
+        },
+        seriesDataLoaded() {
+            return ((this.pending === 0) && this.loaded);
         }
     },
     watch: {
-        limitLineLabels: {
-            handler(limitLineLabels) {
-                this.legendHoverChanged(limitLineLabels);
-            },
-            deep: true
-        },
         initGridLines(newGridLines) {
             this.gridLines = newGridLines;
         },
@@ -406,8 +390,7 @@ export default {
             }));
         }
 
-        const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.$emit('configLoaded', configId);
+        this.$emit('configLoaded', true);
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -422,7 +405,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.$on('loadingUpdated', this.loadAnnotations);
+        this.$on('loadingComplete', this.loadAnnotations);
         this.openmct.selection.on('change', this.updateSelection);
         this.setTimeContext();
 
@@ -434,34 +417,72 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.body.removeEventListener('click', this.cancelSelection);
         this.destroy();
     },
     methods: {
-        updateSelection(selection) {
+        async updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
-            if (!selectionContext
-                || this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
-                // Selection changed, but it's us, so ignoring it
-                return;
-            }
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
 
-            const selectionType = selection?.[0]?.[1]?.context?.type;
-            if (selectionType !== 'plot-points-selection') {
+            if (!validSelectionTypes.includes(selectionType)) {
                 // wrong type of selection
                 return;
             }
 
-            const currentXaxis = this.config.xAxis.get('displayRange');
-            const currentYaxis = this.config.yAxis.get('displayRange');
-
-            // when there is no plot data, the ranges can be undefined
-            // in which case we should not perform selection
-            if (!currentXaxis || !currentYaxis) {
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
-            const selectedAnnotations = selection?.[0]?.[1]?.context?.annotations;
+            await this.waitForAxesToLoad();
+            const selectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                this.showAnnotationsFromSearchResults(selectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(selectedAnnotations);
+        },
+        cancelSelection(event) {
+            if (this.$refs?.plot) {
+                const clickedInsidePlot = this.$refs.plot.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+                    this.rectangles = [];
+                    this.annotationSelections = [];
+                    this.selectPlot();
+                    document.body.removeEventListener('click', this.cancelSelection);
+                }
+            }
+        },
+        waitForAxesToLoad() {
+            return new Promise(resolve => {
+                // When there is no plot data, the ranges can be undefined
+                // in which case we should not perform selection.
+                const currentXaxis = this.config.xAxis.get('displayRange');
+                const currentYaxis = this.config.yAxis.get('displayRange');
+                if (!currentXaxis || !currentYaxis) {
+                    this.$once('loadingComplete', () => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        },
+        showAnnotationsFromSearchResults(selectedAnnotations) {
             if (selectedAnnotations?.length) {
+                // pause the plot if we haven't already so we can actually display
+                // the annotations
+                this.freeze();
                 // just use first annotation
                 const boundingBoxes = Object.values(selectedAnnotations[0].targets);
                 let minX = Number.MAX_SAFE_INTEGER;
@@ -494,10 +515,9 @@ export default {
                     min: minY,
                     max: maxY
                 });
+                //Zoom out just a touch so that the highlighted section for annotations doesn't take over the whole view - which is not a nice look.
                 this.zoom('out', 0.2);
             }
-
-            this.prepareExistingAnnotationSelection(selectedAnnotations);
         },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
@@ -575,6 +595,14 @@ export default {
         updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
             this.updateAxisUsageCount(oldAxisId, -1);
             this.updateAxisUsageCount(newAxisId, 1);
+
+            const foundYAxis = this.yAxes.find(yAxis => yAxis.id === oldAxisId);
+            if (foundYAxis.seriesCount === 0) {
+                this.onYTickWidthChange({
+                    width: foundYAxis.tickWidth,
+                    yAxisId: foundYAxis.id
+                });
+            }
         },
 
         updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -671,6 +699,9 @@ export default {
         stopLoading() {
             this.pending -= 1;
             this.updateLoading();
+            if (this.pending === 0) {
+                this.$emit('loadingComplete');
+            }
         },
 
         updateLoading() {
@@ -688,9 +719,15 @@ export default {
                 series.reset();
             });
         },
+        shareCommonParent(domainObjectToFind) {
+            return false;
+        },
+        compositionPathContainsId(domainObjectToFind) {
+            if (!domainObjectToFind.composition) {
+                return false;
+            }
 
-        compositionPathContainsId(domainObjectToClear) {
-            return domainObjectToClear.composition.some((compositionIdentifier) => {
+            return domainObjectToFind.composition.some((compositionIdentifier) => {
                 return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
             });
         },
@@ -848,7 +885,7 @@ export default {
         gatherNearbyAnnotations() {
             const nearbyAnnotations = [];
             this.config.series.models.forEach(series => {
-                if (series.closest.annotationsById) {
+                if (series?.closest?.annotationsById) {
                     Object.values(series.closest.annotationsById).forEach(closeAnnotation => {
                         const addedAnnotationAlready = nearbyAnnotations.some(annotation => {
                             return _.isEqual(annotation.targets, closeAnnotation.targets)
@@ -946,8 +983,13 @@ export default {
             }
         },
 
-        onTickWidthChange(data, fromDifferentObject) {
-            const {width, yAxisId} = data;
+        /**
+       * Aggregate widths of all left and right y axes and send them up to any parent plots
+       * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+       * @param fromDifferentObject
+       */
+        onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
+            const {width, yAxisId} = tickWidthWithYAxisId;
             if (yAxisId) {
                 const index = this.yAxes.findIndex(yAxis => yAxis.id === yAxisId);
                 if (fromDifferentObject) {
@@ -956,13 +998,23 @@ export default {
                 } else {
                 // Otherwise, only accept tick with if it's larger.
                     const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-                    if (newWidth !== this.yAxes[index].tickWidth) {
+                    if (width !== this.yAxes[index].tickWidth) {
                         this.yAxes[index].tickWidth = newWidth;
                     }
                 }
 
                 const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.$emit('plotTickWidth', this.yAxes[index].tickWidth, id);
+                const leftTickWidth = this.yAxes.filter(yAxis => yAxis.id < 3).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                const rightTickWidth = this.yAxes.filter(yAxis => yAxis.id > 2).reduce((previous, current) => {
+                    return previous + current.tickWidth;
+                }, 0);
+                this.$emit('plotYTickWidth', {
+                    hasMultipleLeftAxes: this.hasMultipleLeftAxes,
+                    leftTickWidth,
+                    rightTickWidth
+                }, id);
             }
         },
 
@@ -1044,8 +1096,6 @@ export default {
 
         highlightValues(point) {
             this.highlightPoint = point;
-            // TODO: used in StackedPlotController
-            this.$emit('plotHighlightUpdate', point);
             if (this.lockHighlightPoint) {
                 return;
             }
@@ -1090,7 +1140,9 @@ export default {
 
             if (event.altKey && !event.shiftKey) {
                 return this.startPan(event);
-            } else if (this.annotationViewingAndEditingAllowed && event.altKey && event.shiftKey) {
+            } else if (event.altKey && event.shiftKey) {
+                this.freeze();
+
                 return this.startMarquee(event, true);
             } else {
                 return this.startMarquee(event, false);
@@ -1157,7 +1209,7 @@ export default {
                     endPixels: this.positionOverElement,
                     start: this.positionOverPlot,
                     end: this.positionOverPlot,
-                    color: [1, 1, 1, 0.5]
+                    color: [1, 1, 1, 0.25]
                 };
                 if (annotationEvent) {
                     this.marquee.annotationEvent = true;
@@ -1168,47 +1220,88 @@ export default {
             }
         },
         selectNearbyAnnotations(event) {
+            // need to stop propagation right away to prevent selecting the plot itself
             event.stopPropagation();
 
-            if (!this.annotationViewingAndEditingAllowed || this.annotationSelections.length) {
+            const nearbyAnnotations = this.gatherNearbyAnnotations();
+
+            if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+                //no annotations were found, but we are adding some now
                 return;
             }
 
-            const nearbyAnnotations = this.gatherNearbyAnnotations();
-            const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
-            this.selectPlotAnnotations({
-                targetDetails,
-                targetDomainObjects,
-                annotations: nearbyAnnotations
+            if (this.annotationViewingAndEditingAllowed && nearbyAnnotations.length) {
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectPlotAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
+
+                return;
+            }
+
+            //Fall through to here if either there is no new selection add tags or no existing annotations were retrieved
+            this.selectPlot();
+        },
+        selectPlot() {
+            // should show plot itself if we didn't find any annotations
+            const selection = this.createPathSelection();
+            this.openmct.selection.select(selection, true);
+        },
+        createPathSelection() {
+            let selection = [];
+            selection.unshift({
+                element: this.$el,
+                context: {
+                    item: this.domainObject
+                }
             });
+            this.path.forEach((pathObject, index) => {
+                selection.push({
+                    element: this.openmct.layout.$refs.browseObject.$el,
+                    context: {
+                        item: pathObject
+                    }
+                });
+            });
+
+            return selection;
         },
         selectPlotAnnotations({targetDetails, targetDomainObjects, annotations}) {
-            const selection =
-                    [
-                        {
-                            element: this.openmct.layout.$refs.browseObject.$el,
-                            context: {
-                                item: this.domainObject
-                            }
-                        },
-                        {
-                            element: this.$el,
-                            context: {
-                                type: 'plot-points-selection',
-                                targetDetails,
-                                targetDomainObjects,
-                                annotations,
-                                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
-                                onAnnotationChange: this.onAnnotationChange
-                            }
-                        }
-                    ];
+            const annotationContext = {
+                type: 'clicked-on-plot-selection',
+                targetDetails,
+                targetDomainObjects,
+                annotations,
+                annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+                onAnnotationChange: this.onAnnotationChange
+            };
+            const selection = this.createPathSelection();
+            if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
+                selection[0].context = {
+                    ...selection[0].context,
+                    ...annotationContext
+                };
+            } else {
+                selection.unshift({
+                    element: this.$el,
+                    context: {
+                        item: this.domainObject,
+                        ...annotationContext
+                    }
+                });
+            }
+
             this.openmct.selection.select(selection, true);
+
+            document.body.addEventListener('click', this.cancelSelection);
         },
         selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
             let targetDomainObjects = {};
             let targetDetails = {};
-            let annotations = {};
+            let annotations = [];
             pointsInBox.forEach(pointInBox => {
                 if (pointInBox.length) {
                     const seriesID = pointInBox[0].series.keyString;
@@ -1626,6 +1719,9 @@ export default {
         },
 
         resumeRealtimeData() {
+            // remove annotation selections
+            this.rectangles = [];
+
             this.clearPanZoomHistory();
             this.userViewportChangeEnd();
         },
@@ -1711,7 +1807,9 @@ export default {
         },
 
         destroy() {
-            configStore.deleteStore(this.config.id);
+            if (this.config) {
+                configStore.deleteStore(this.config.id);
+            }
 
             this.stopListening();
 
@@ -1751,9 +1849,6 @@ export default {
                 this.offsetWidth = newOffsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
-        },
-        legendHoverChanged(data) {
-            this.showLimitLineLabels = data;
         },
         toggleCursorGuide() {
             this.cursorGuide = !this.cursorGuide;

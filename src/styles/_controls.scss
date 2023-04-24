@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -405,16 +405,18 @@ textarea {
 
     &--autocomplete {
         &__wrapper {
-            display: inline-flex;
+            display: flex;
             flex-direction: row;
             align-items: center;
+            overflow: hidden;
+            width: 100%;
         }
 
         &__input {
             min-width: 100px;
+            width: 100%;
 
             // Fend off from afford-arrow
-            min-height: 2em;
             padding-right: 2.5em !important;
         }
 
@@ -437,7 +439,10 @@ textarea {
         }
 
         &__afford-arrow {
+            $p: 2px;
             font-size: 0.8em;
+            padding-bottom: $p;
+            padding-top: $p;
             position: absolute;
             right: 2px;
             z-index: 2;
@@ -524,7 +529,7 @@ select {
         display: block;
         height: 1px;
         width: 100%;
-        background: $colorBtnReverseBg;
+        background: $colorTabsBaseline;
         position: absolute;
         bottom: 0px;
         z-index: 1;
@@ -543,8 +548,8 @@ select {
             100% 100%,
             0% 100%
         );
-    background: rgba($colorBtnBg, 0.7);
-    color: $colorBtnFg;
+    background: $colorTabBg;
+    color: $colorTabFg;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -560,12 +565,12 @@ select {
     }
 
     @include hover() {
-        filter: $filterHov;
+        box-shadow: $shdwBtnHov;
     }
 
     &.is-current {
-        background: $colorBtnReverseBg;
-        color: $colorBtnReverseFg;
+        background: $colorTabCurrentBg;
+        color: $colorTabCurrentFg;
         pointer-events: none;
     }
 }
@@ -720,11 +725,6 @@ select {
         width: $d;
         height: $d;
         text-align: center;
-        transition: $transOut;
-
-        &:hover {
-            transition: $transIn;
-        }
 
         &.is-selected {
             border-width: 1px;
@@ -1079,7 +1079,7 @@ input[type="range"] {
     // Controls that are in close proximity to an element they effect
     &--show-on-hover {
         // Hidden by default; requires a hover 1 - 3 levels above to display
-        transition: $transOut;
+        @include transition(opacity, $transOutTime);
         opacity: 0;
         pointer-events: none;
     }
@@ -1091,7 +1091,7 @@ input[type="range"] {
     > * > * > .c-local-controls--show-on-hover,
     > * > * > * > .c-local-controls--show-on-hover
     {
-        transition: $transIn;
+        @include transition(opacity);
         opacity: 1;
         pointer-events: inherit;
 
@@ -1104,6 +1104,7 @@ input[type="range"] {
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
     @include abs();
+    @include transition($prop: background-color, $dur: $transOutTime);
     background-color: $colorDropHintBg;
     color: $colorDropHintFg;
     border-radius: $basicCr;
@@ -1112,7 +1113,6 @@ input[type="range"] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: $transOut;
     z-index: 50;
 
     &:not(.c-drop-hint--always-show) {
@@ -1137,13 +1137,11 @@ input[type="range"] {
     .is-dragging &,
     &.is-dragging {
         pointer-events: inherit;
-        transition: $transIn;
         opacity: 0.8;
     }
 
     .is-mouse-over &,
     &.is-mouse-over {
-        transition: $transIn;
         background-color: $colorDropHintBgHov;
         opacity: 0.9;
     }

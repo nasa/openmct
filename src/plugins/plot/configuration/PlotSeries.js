@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -73,7 +73,7 @@ export default class PlotSeries extends Model {
 
         super(options);
 
-        this.logMode = options.collection.plot.model.yAxis.logMode;
+        this.logMode = this.getLogMode(options);
 
         this.listenTo(this, 'change:xKey', this.onXKeyChange, this);
         this.listenTo(this, 'change:yKey', this.onYKeyChange, this);
@@ -85,6 +85,17 @@ export default class PlotSeries extends Model {
         this.onYKeyChange(this.get('yKey'));
 
         this.unPlottableValues = [undefined, Infinity, -Infinity];
+    }
+
+    getLogMode(options) {
+        const yAxisId = this.get('yAxisId');
+        if (yAxisId === 1) {
+            return options.collection.plot.model.yAxis.logMode;
+        } else {
+            const foundYAxis = options.collection.plot.model.additionalYAxes.find(yAxis => yAxis.id === yAxisId);
+
+            return foundYAxis ? foundYAxis.logMode : false;
+        }
     }
 
     /**
@@ -241,6 +252,7 @@ export default class PlotSeries extends Model {
         }
 
         const valueMetadata = this.metadata.value(newKey);
+        //TODO: Should we do this even if there is a persisted config?
         if (!this.persistedConfig || !this.persistedConfig.interpolate) {
             if (valueMetadata.format === 'enum') {
                 this.set('interpolate', 'stepAfter');

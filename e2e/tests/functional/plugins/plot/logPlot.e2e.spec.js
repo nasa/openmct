@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,6 +26,8 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
+const { selectInspectorTab } = require('../../../../appActions');
+
 test.describe('Log plot tests', () => {
     test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
@@ -36,6 +38,7 @@ test.describe('Log plot tests', () => {
         await makeOverlayPlot(page, myItemsFolderName);
         await testRegularTicks(page);
         await enableEditMode(page);
+        await selectInspectorTab(page, 'Config');
         await enableLogMode(page);
         await testLogTicks(page);
         await disableLogMode(page);
@@ -73,7 +76,7 @@ test.describe('Log plot tests', () => {
  */
 async function makeOverlayPlot(page, myItemsFolderName) {
     // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Set a specific time range for consistency, otherwise it will change
     // on every test to a range based on the current time.
@@ -144,7 +147,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
  * @param {import('@playwright/test').Page} page
  */
 async function testRegularTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
+    const yTicks = page.locator('.gl-plot-y-tick-label');
     expect(await yTicks.count()).toBe(7);
     await expect(yTicks.nth(0)).toHaveText('-2');
     await expect(yTicks.nth(1)).toHaveText('0');
@@ -159,36 +162,17 @@ async function testRegularTicks(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function testLogTicks(page) {
-    const yTicks = await page.locator('.gl-plot-y-tick-label');
-    expect(await yTicks.count()).toBe(28);
+    const yTicks = page.locator('.gl-plot-y-tick-label');
+    expect(await yTicks.count()).toBe(9);
     await expect(yTicks.nth(0)).toHaveText('-2.98');
-    await expect(yTicks.nth(1)).toHaveText('-2.50');
-    await expect(yTicks.nth(2)).toHaveText('-2.00');
-    await expect(yTicks.nth(3)).toHaveText('-1.51');
-    await expect(yTicks.nth(4)).toHaveText('-1.20');
-    await expect(yTicks.nth(5)).toHaveText('-1.00');
-    await expect(yTicks.nth(6)).toHaveText('-0.80');
-    await expect(yTicks.nth(7)).toHaveText('-0.58');
-    await expect(yTicks.nth(8)).toHaveText('-0.40');
-    await expect(yTicks.nth(9)).toHaveText('-0.20');
-    await expect(yTicks.nth(10)).toHaveText('-0.00');
-    await expect(yTicks.nth(11)).toHaveText('0.20');
-    await expect(yTicks.nth(12)).toHaveText('0.40');
-    await expect(yTicks.nth(13)).toHaveText('0.58');
-    await expect(yTicks.nth(14)).toHaveText('0.80');
-    await expect(yTicks.nth(15)).toHaveText('1.00');
-    await expect(yTicks.nth(16)).toHaveText('1.20');
-    await expect(yTicks.nth(17)).toHaveText('1.51');
-    await expect(yTicks.nth(18)).toHaveText('2.00');
-    await expect(yTicks.nth(19)).toHaveText('2.50');
-    await expect(yTicks.nth(20)).toHaveText('2.98');
-    await expect(yTicks.nth(21)).toHaveText('3.50');
-    await expect(yTicks.nth(22)).toHaveText('4.00');
-    await expect(yTicks.nth(23)).toHaveText('4.50');
-    await expect(yTicks.nth(24)).toHaveText('5.31');
-    await expect(yTicks.nth(25)).toHaveText('7.00');
-    await expect(yTicks.nth(26)).toHaveText('8.00');
-    await expect(yTicks.nth(27)).toHaveText('9.00');
+    await expect(yTicks.nth(1)).toHaveText('-1.51');
+    await expect(yTicks.nth(2)).toHaveText('-0.58');
+    await expect(yTicks.nth(3)).toHaveText('-0.00');
+    await expect(yTicks.nth(4)).toHaveText('0.58');
+    await expect(yTicks.nth(5)).toHaveText('1.51');
+    await expect(yTicks.nth(6)).toHaveText('2.98');
+    await expect(yTicks.nth(7)).toHaveText('5.31');
+    await expect(yTicks.nth(8)).toHaveText('9.00');
 }
 
 /**
@@ -196,25 +180,24 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
     // turn on edit mode
-    await page.locator('text=Unnamed Overlay Plot Snapshot >> button').nth(3).click();
-    await expect(await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1)).toBeVisible();
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function enableLogMode(page) {
-    // turn on log mode
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').check();
-    // await page.locator('text=Y Axis Label Log mode Auto scale Padding >> input[type="checkbox"]').first().check();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).not.toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).check();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function disableLogMode(page) {
-    // turn off log mode
-    await page.getByRole('listitem').filter({ hasText: 'Log mode' }).getByRole('checkbox').uncheck();
+    await expect(page.getByRole('checkbox', { name: 'Log mode' })).toBeChecked();
+    await page.getByRole('checkbox', { name: 'Log mode' }).uncheck();
 }
 
 /**

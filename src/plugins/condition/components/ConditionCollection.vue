@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -114,15 +114,11 @@ export default {
             telemetryObjs: [],
             moveIndex: undefined,
             isDragging: false,
-            defaultOutput: undefined,
             dragCounter: 0,
             currentConditionId: ''
         };
     },
     watch: {
-        defaultOutput(newOutput, oldOutput) {
-            this.$emit('updateDefaultOutput', newOutput);
-        },
         testData: {
             handler() {
                 this.updateTestData();
@@ -158,7 +154,7 @@ export default {
         this.observeForChanges();
         this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
         this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
-        this.updateDefaultCondition();
+        this.conditionManager.on('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
         this.stalenessSubscription = {};
     },
     methods: {
@@ -166,17 +162,15 @@ export default {
             this.currentConditionId = data.conditionId;
             this.$emit('conditionSetResultUpdated', data);
         },
+        emitNoTelemetryObjectEvent(data) {
+            this.currentConditionId = '';
+            this.$emit('noTelemetryObjects');
+        },
         observeForChanges() {
             this.stopObservingForChanges = this.openmct.objects.observe(this.domainObject, 'configuration.conditionCollection', (newConditionCollection) => {
                 //this forces children to re-render
                 this.conditionCollection = newConditionCollection.map(condition => condition);
-                this.updateDefaultCondition();
             });
-        },
-        updateDefaultCondition() {
-            const defaultCondition = this.domainObject.configuration.conditionCollection
-                .find(conditionConfiguration => conditionConfiguration.isDefault);
-            this.defaultOutput = defaultCondition.configuration.output;
         },
         setMoveIndex(index) {
             this.moveIndex = index;
@@ -232,10 +226,12 @@ export default {
             this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
 
             this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-                this.hanldeStaleness(keyString, stalenessResponse);
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
             });
             const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
-                this.hanldeStaleness(keyString, stalenessResponse);
+                this.handleStaleness(keyString, stalenessResponse);
             });
 
             this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
@@ -259,9 +255,10 @@ export default {
                     keyString,
                     isStale: false
                 });
+                delete this.stalenessSubscription[keyString];
             }
         },
-        hanldeStaleness(keyString, stalenessResponse) {
+        handleStaleness(keyString, stalenessResponse) {
             if (this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 this.emitStaleness({
                     keyString,

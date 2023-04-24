@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -275,7 +275,7 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
         local: Math.floor(timestamp / delay) * delay,
         url,
         sunOrientation: getCompassValues(0, 360),
-        cameraPan: getCompassValues(0, 360),
+        cameraAzimuth: getCompassValues(0, 360),
         heading: getCompassValues(0, 360),
         transformations: navCamTransformations,
         imageDownloadName

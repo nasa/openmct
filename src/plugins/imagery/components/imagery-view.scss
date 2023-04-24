@@ -195,7 +195,7 @@
         margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
         &.animate-scroll {
-            scroll-behavior: smooth; 
+            scroll-behavior: smooth;
         }
     }
 
@@ -246,7 +246,7 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    opacity: 0.5;
+    opacity: 1;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -320,7 +320,7 @@
         flex-direction: row;
         position: absolute;
         left: $interiorMargin; top: $interiorMargin;
-        z-index: 70;
+        z-index: 10;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         align-items: center;
@@ -495,7 +495,6 @@
         &:hover {
             z-index: 2;
 
-            filter: brightness(1) contrast(1) !important;
             [class*='__image-handle'] {
                 background-color: $colorBodyFg;
             }
@@ -518,10 +517,5 @@
         background-color: pushBack($colorBodyBg, 0.3);
         display: block;
         align-self: flex-end;
-    }
-
-    &:hover div.c-imagery-tsv__image-wrapper {
-        // TODO CH: convert to theme constants
-        filter: brightness(0.5) contrast(0.7);
     }
 }

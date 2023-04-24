@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -76,9 +76,14 @@ export default {
         this.telemetryCollection.destroy();
     },
     methods: {
-        dataAdded(dataToAdd) {
-            const normalizedDataToAdd = dataToAdd.map(datum => this.normalizeDatum(datum));
-            this.imageHistory = this.imageHistory.concat(normalizedDataToAdd);
+        dataAdded(addedItems, addedItemIndices) {
+            const normalizedDataToAdd = addedItems.map(datum => this.normalizeDatum(datum));
+            let newImageHistory = this.imageHistory.slice();
+            normalizedDataToAdd.forEach(((datum, index) => {
+                newImageHistory.splice(addedItemIndices[index] ?? -1, 0, datum);
+            }));
+            //Assign just once so imageHistory watchers don't get called too often
+            this.imageHistory = newImageHistory;
         },
         dataCleared() {
             this.imageHistory = [];
@@ -153,9 +158,6 @@ export default {
                 return;
             }
 
-            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
-            delete this.imageContainerWidth;
-            delete this.imageContainerHeight;
             this.bounds = bounds; // setting bounds for ImageryView watcher
         },
         timeSystemChange() {

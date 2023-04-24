@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -57,15 +57,12 @@
 import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
 import eventHelpers from "../lib/eventHelpers";
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import configStore from "../configuration/ConfigStore";
 
 export default {
     mixins: [stalenessMixin],
     inject: ['openmct', 'domainObject'],
     props: {
-        valueToShowWhenCollapsed: {
-            type: String,
-            required: true
-        },
         seriesObject: {
             type: Object,
             required: true,
@@ -88,10 +85,14 @@ export default {
             formattedYValue: '',
             formattedXValue: '',
             mctLimitStateClass: '',
-            formattedYValueFromStats: ''
+            formattedYValueFromStats: '',
+            loaded: false
         };
     },
     computed: {
+        valueToShowWhenCollapsed() {
+            return this.loaded ? this.legend.get('valueToShowWhenCollapsed') : [];
+        },
         valueToDisplayWhenCollapsedClass() {
             return `value-to-display-${ this.valueToShowWhenCollapsed }`;
         },
@@ -109,6 +110,9 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.legend = this.config.legend;
+        this.loaded = true;
         this.listenTo(this.seriesObject, 'change:color', (newColor) => {
             this.updateColor(newColor);
         }, this);
@@ -122,8 +126,13 @@ export default {
         this.stopListening();
     },
     methods: {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            return configStore.get(configId);
+        },
         initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
+            const seriesObject = highlightedObject?.series || this.seriesObject;
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();

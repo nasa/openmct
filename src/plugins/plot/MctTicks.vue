@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -85,6 +85,8 @@
 import eventHelpers from "./lib/eventHelpers";
 import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
+
+const SECONDARY_TICK_NUMBER = 2;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -205,7 +207,7 @@ export default {
             }
 
             if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
-                return getLogTicks(range.min, range.max, number, 4);
+                return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
             } else {
                 return ticks(range.min, range.max, number);
             }

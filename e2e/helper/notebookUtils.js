@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,13 +28,12 @@ const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
  * @param {import('@playwright/test').Page} page
  */
 async function enterTextEntry(page, text) {
-    // Click .c-notebook__drag-area
+    // Click the 'Add Notebook Entry' area
     await page.locator(NOTEBOOK_DROP_AREA).click();
 
     // enter text
-    await page.locator('div.c-ne__text').click();
-    await page.locator('div.c-ne__text').fill(text);
-    await page.locator('div.c-ne__text').press('Enter');
+    await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
+    await commitEntry(page);
 }
 
 /**
@@ -51,6 +50,16 @@ async function dragAndDropEmbed(page, notebookObject) {
     await page.click('button[title="Show selected item in tree"]');
     // Drag and drop the SWG into the notebook
     await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+    await commitEntry(page);
+}
+
+/**
+ * @private
+ * @param {import('@playwright/test').Page} page
+ */
+async function commitEntry(page) {
+    //Click the Commit Entry button
+    await page.locator('.c-ne__save-button > button').click();
 }
 
 // eslint-disable-next-line no-undef

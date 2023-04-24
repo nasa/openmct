@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -293,6 +293,13 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
+// Tabs
+$colorTabBg: pullForward($colorBodyBg, 5%);
+$colorTabFg: pullForward($colorBtnFg, 10%);
+$colorTabCurrentBg: pullForward($colorTabBg, 10%);
+$colorTabCurrentFg: pullForward($colorTabFg, 10%);
+$colorTabsBaseline: $colorTabCurrentBg;
+
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $overlayCr: $interiorMarginLg;
@@ -329,6 +336,12 @@ $colorLimitPurpleIc: #c327ff;
 $colorLimitCyanBg: #4BA6B3;
 $colorLimitCyanFg: #D3FAFF;
 $colorLimitCyanIc: #6BEDFF;
+
+// Events
+$colorEventPurpleFg: #6433ff;
+$colorEventRedFg: #cc0000;
+$colorEventOrangeFg: orange;
+$colorEventYellowFg: #ffcc00;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -387,6 +400,7 @@ $colorCurrentBorder: #fff;
 $colorFutureBg: rgba($colorKey, 0.2);
 $colorFutureFg: $colorCurrentFg;
 $colorFutureBorder: $colorCurrentBorder;
+$colorGanttSelectedBorder: #fff;
 
 // Tree
 $colorTreeBg: transparent;
@@ -394,7 +408,7 @@ $colorItemTreeHoverBg: rgba(#fff, 0.03);
 $colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
-$colorItemTreeFg: $colorBodyFg;
+$colorItemTreeFg: $colorA;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
 $filterItemTreeSelected: $filterHov;
@@ -460,6 +474,8 @@ $transInTime: 50ms;
 $transOutTime: 250ms;
 $transIn: all $transInTime ease-in-out;
 $transOut: all $transOutTime ease-in-out;
+$transInTransform: transform $transInTime ease-in-out;
+$transOutTransform: transform $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
 $transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
 

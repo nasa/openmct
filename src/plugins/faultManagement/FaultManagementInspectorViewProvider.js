@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ export default function FaultManagementInspectorViewProvider(openmct) {
     return {
         openmct: openmct,
         key: FAULT_MANAGEMENT_INSPECTOR,
-        name: 'FAULT_MANAGEMENT_TYPE',
+        name: 'Fault Management Configuration',
         canView: (selection) => {
             if (selection.length !== 1 || selection[0].length === 0) {
                 return false;
@@ -56,6 +56,9 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                         template: '<FaultManagementInspector></FaultManagementInspector>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -63,9 +66,6 @@ export default function FaultManagementInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: () => {
-            return 1;
         }
     };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@ const uuid = require('uuid').v4;
 test.describe('Gauge', () => {
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Can add and remove telemetry sources @unstable', async ({ page }) => {

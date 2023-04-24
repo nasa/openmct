@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -150,3 +150,17 @@ exports.test = test.extend({
     }
 });
 exports.expect = expect;
+
+/**
+ * Takes a readable stream and returns a string.
+ * @param {ReadableStream} readable - the readable stream
+ * @return {Promise<String>} the stringified stream
+ */
+exports.streamToString = async function (readable) {
+    let result = '';
+    for await (const chunk of readable) {
+        result += chunk;
+    }
+
+    return result;
+};

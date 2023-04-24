@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,7 +63,7 @@ test.describe('Renaming Timer Object', () => {
     let timer;
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all network events to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // We provide some helper functions in appActions like `createDomainObjectWithDefaults()`.
         // This example will create a Timer object with default properties, under the root folder:

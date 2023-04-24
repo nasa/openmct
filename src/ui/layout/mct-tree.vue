@@ -304,8 +304,7 @@ export default {
             }
 
             // will need to listen for root composition changes as well
-
-            this.treeItems = await this.loadAndBuildTreeItemsFor(root, []);
+            this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
         },
         treeItemAction(parentItem, type) {
             if (type === 'close') {
@@ -315,19 +314,19 @@ export default {
             }
         },
         targetedPathAnimationEnd() {
-            this.targetedPath = undefined;
+            this.targetedPath = null;
         },
         treeItemSelection(item) {
             this.selectedItem = item;
             this.$emit('tree-item-selection', item);
         },
         async openTreeItem(parentItem) {
-            let parentPath = parentItem.navigationPath;
+            const parentPath = parentItem.navigationPath;
 
             this.startItemLoad(parentPath);
             // pass in abort signal when functional
-            let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-            let parentIndex = this.treeItems.indexOf(parentItem);
+            const childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object.identifier, parentItem.objectPath);
+            const parentIndex = this.treeItems.indexOf(parentItem);
 
             // if it's not loading, it was aborted
             if (!this.isItemLoading(parentPath) || parentIndex === -1) {
@@ -356,17 +355,18 @@ export default {
                 this.abortItemLoad(path);
             }
 
-            let pathIndex = this.openTreeItems.indexOf(path);
+            const pathIndex = this.openTreeItems.indexOf(path);
 
             if (pathIndex === -1) {
                 return;
             }
 
-            this.treeItems = this.treeItems.filter((checkItem) => {
-                if (checkItem.navigationPath !== path
-                    && checkItem.navigationPath.includes(path)) {
-                    this.destroyObserverByPath(checkItem.navigationPath);
-                    this.destroyMutableByPath(checkItem.navigationPath);
+            this.treeItems = this.treeItems.filter((item) => {
+                const otherPath = item.navigationPath;
+                if (otherPath !== path
+                    && this.isTreeItemAChildOf(otherPath, path)) {
+                    this.destroyObserverByPath(otherPath);
+                    this.destroyMutableByPath(otherPath);
 
                     return false;
                 }
@@ -451,13 +451,14 @@ export default {
 
             }, Promise.resolve()).then(() => {
                 if (this.isSelectorTree) {
+                    let item = this.getTreeItemByPath(navigationPath);
                     // If item is missing due to error in object creation,
                     // walk up the navigationPath until we find an item
-                    let item = this.getTreeItemByPath(navigationPath);
-                    while (!item) {
+                    while (!item && navigationPath !== '') {
                         const startIndex = 0;
                         const endIndex = navigationPath.lastIndexOf('/');
                         navigationPath = navigationPath.substring(startIndex, endIndex);
+
                         item = this.getTreeItemByPath(navigationPath);
                     }
 
@@ -558,8 +559,10 @@ export default {
             // determine if any part of the parent's path includes a key value of mine; aka My Items
             return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
         },
-        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
-            let collection = this.openmct.composition.get(domainObject);
+        async loadAndBuildTreeItemsFor(identifier, parentObjectPath, abortSignal) {
+            const domainObject = await this.openmct.objects.get(identifier);
+
+            const collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
 
             if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
@@ -957,6 +960,24 @@ export default {
         },
         isTreeItemPathOpen(path) {
             return this.openTreeItems.includes(path);
+        },
+        isTreeItemAChildOf(childNavigationPath, parentNavigationPath) {
+            const childPathKeys = childNavigationPath.split('/');
+            const parentPathKeys = parentNavigationPath.split('/');
+
+            // If child path is shorter than or same length as
+            // the parent path, then it's not a child.
+            if (childPathKeys.length <= parentPathKeys.length) {
+                return false;
+            }
+
+            for (let i = 0; i < parentPathKeys.length; i++) {
+                if (childPathKeys[i] !== parentPathKeys[i]) {
+                    return false;
+                }
+            }
+
+            return true;
         },
         getElementStyleValue(el, style) {
             if (!el) {

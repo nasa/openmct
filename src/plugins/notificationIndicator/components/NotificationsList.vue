@@ -11,8 +11,8 @@
         class="w-messages c-overlay__messages"
     >
         <notification-message
-            v-for="notification in notifications"
-            :key="notification.model.timestamp"
+            v-for="(notification, notificationIndex) in notifications"
+            :key="notificationIndex"
             :close-overlay="closeOverlay"
             :notification="notification"
             :notifications-count="notifications.length"

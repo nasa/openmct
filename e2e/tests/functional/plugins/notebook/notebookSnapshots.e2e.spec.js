@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -66,7 +66,7 @@ test.describe('Snapshot Menu tests', () => {
 test.describe('Snapshot Container tests', () => {
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         // const notebook = await createDomainObjectWithDefaults(page, {

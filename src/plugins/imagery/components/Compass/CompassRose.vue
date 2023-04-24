@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,7 +75,6 @@
                     :style="sunHeadingStyle"
                 />
 
-                <!-- Camera FOV -->
                 <mask
                     id="mask2"
                     class="c-cr__cam-fov-l-mask"
@@ -107,55 +106,61 @@
                         height="100"
                     />
                 </mask>
-
-                <!-- Equipment (spacecraft) body holder. Transforms relative to the camera position. -->
                 <g
-                    v-if="hasHeading"
-                    class="cr-vrover"
-                    :style="camAngleAndPositionStyle"
-                >
-                    <!-- Equipment body. Rotates relative to the camera gimbal value for cams that gimbal. -->
-                    <path
-                        class="cr-vrover__body"
-                        :style="camGimbalAngleStyle"
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M5 0C2.23858 0 0 2.23858 0 5V95C0 97.7614 2.23858 100 5 100H95C97.7614 100 100 97.7614 100 95V5C100 2.23858 97.7614 0 95 0H5ZM85 59L50 24L15 59H33V75H67.0455V59H85Z"
-                    />
-                </g>
-
-                <g
-                    class="c-cr__cam-fov"
+                    class="c-cr-cam-and-body"
                     :style="cameraHeadingStyle"
                 >
-                    <g mask="url(#mask2)">
-                        <rect
-                            class="c-cr__cam-fov-r"
-                            x="49"
-                            width="51"
-                            height="100"
-                            :style="cameraFOVStyleRightHalf"
+                    <!-- Equipment (spacecraft) body holder. Transforms relative to the camera position. -->
+                    <g
+                        v-if="hasHeading"
+                        class="cr-vrover"
+                        :style="camAngleAndPositionStyle"
+                    >
+                        <!-- Equipment body. Rotates relative to the camera pan value for cameras that gimble. -->
+                        <path
+                            class="cr-vrover__body"
+                            :style="gimbledCameraPanStyle"
+                            x
+                            fill-rule="evenodd"
+                            clip-rule="evenodd"
+                            d="M5 0C2.23858 0 0 2.23858 0 5V95C0 97.7614 2.23858 100 5 100H95C97.7614 100 100 97.7614 100 95V5C100 2.23858 97.7614 0 95 0H5ZM85 59L50 24L15 59H33V75H67.0455V59H85Z"
                         />
                     </g>
-                    <g mask="url(#mask1)">
-                        <rect
-                            class="c-cr__cam-fov-l"
-                            width="51"
-                            height="100"
-                            :style="cameraFOVStyleLeftHalf"
+
+                    <!-- Camera FOV -->
+                    <g
+                        class="c-cr__cam-fov"
+                    >
+                        <g mask="url(#mask2)">
+                            <rect
+                                class="c-cr__cam-fov-r"
+                                x="49"
+                                width="51"
+                                height="100"
+                                :style="cameraFOVStyleRightHalf"
+                            />
+                        </g>
+                        <g mask="url(#mask1)">
+                            <rect
+                                class="c-cr__cam-fov-l"
+                                width="51"
+                                height="100"
+                                :style="cameraFOVStyleLeftHalf"
+                            />
+                        </g>
+                        <polygon
+                            class="c-cr__cam"
+                            points="0,0 100,0 70,40 70,100 30,100 30,40"
                         />
                     </g>
-                    <polygon
-                        class="c-cr__cam"
-                        points="0,0 100,0 70,40 70,100 30,100 30,40"
-                    />
+
                 </g>
             </g>
 
             <!-- NSEW and ticks -->
             <g
                 class="c-cr__nsew"
-                :style="compassRoseStyle"
+                :style="compassDialStyle"
             >
                 <g class="c-cr__ticks-major">
                     <path d="M50 3L43 10H57L50 3Z" />
@@ -254,23 +259,32 @@ import { throttle } from 'lodash';
 
 export default {
     props: {
+        cameraAngleOfView: {
+            type: Number,
+            required: true
+        },
         heading: {
             type: Number,
-            required: true,
-            default() {
-                return 0;
-            }
+            required: true
         },
-        sunHeading: {
-            type: Number,
-            default: undefined
-        },
-        cameraPan: {
+        cameraAzimuth: {
             type: Number,
             default: undefined
         },
         transformations: {
             type: Object,
+            required: true
+        },
+        hasGimble: {
+            type: Boolean,
+            required: true
+        },
+        normalizedCameraAzimuth: {
+            type: Number,
+            required: true
+        },
+        sunHeading: {
+            type: Number,
             default: undefined
         },
         sizedImageDimensions: {
@@ -284,18 +298,6 @@ export default {
         };
     },
     computed: {
-        cameraHeading() {
-            return this.cameraPan ?? this.heading;
-        },
-        cameraAngleOfView() {
-            const cameraAngleOfView = this.transformations?.cameraAngleOfView;
-
-            if (!cameraAngleOfView) {
-                console.warn('No Camera Angle of View provided');
-            }
-
-            return cameraAngleOfView;
-        },
         camAngleAndPositionStyle() {
             const translateX = this.transformations?.translateX;
             const translateY = this.transformations?.translateY;
@@ -304,18 +306,22 @@ export default {
 
             return { transform: `translate(${translateX}%, ${translateY}%) rotate(${rotation}deg) scale(${scale})` };
         },
-        camGimbalAngleStyle() {
-            const rotation = rotate(this.north, this.heading);
+        gimbledCameraPanStyle() {
+            if (!this.hasGimble) {
+                return;
+            }
+
+            const gimbledCameraPan = rotate(this.normalizedCameraAzimuth, -this.heading);
 
             return {
-                transform: `rotate(${ rotation }deg)`
+                transform: `rotate(${ -gimbledCameraPan }deg)`
             };
         },
-        compassRoseStyle() {
+        compassDialStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
         north() {
-            return this.lockCompass ? rotate(-this.cameraHeading) : 0;
+            return this.lockCompass ? rotate(-this.normalizedCameraAzimuth) : 0;
         },
         cardinalTextRotateN() {
             return { transform: `translateY(-27%) rotate(${ -this.north }deg)` };
@@ -332,14 +338,6 @@ export default {
         hasHeading() {
             return this.heading !== undefined;
         },
-        headingStyle() {
-            /* Replaced with computed camGimbalStyle, but left here just in case. */
-            const rotation = rotate(this.north, this.heading);
-
-            return {
-                transform: `rotate(${ rotation }deg)`
-            };
-        },
         hasSunHeading() {
             return this.sunHeading !== undefined;
         },
@@ -351,7 +349,7 @@ export default {
             };
         },
         cameraHeadingStyle() {
-            const rotation = rotate(this.north, this.cameraHeading);
+            const rotation = rotate(this.north, this.normalizedCameraAzimuth);
 
             return {
                 transform: `rotate(${ rotation }deg)`

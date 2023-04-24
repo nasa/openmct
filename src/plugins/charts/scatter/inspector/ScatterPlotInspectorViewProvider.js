@@ -5,7 +5,7 @@ import PlotOptions from "./PlotOptions.vue";
 export default function ScatterPlotInspectorViewProvider(openmct) {
     return {
         key: SCATTER_PLOT_INSPECTOR_KEY,
-        name: 'Bar Graph Inspector View',
+        name: 'Config',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
@@ -33,6 +33,9 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
                         template: '<plot-options></plot-options>'
                     });
                 },
+                priority: function () {
+                    return openmct.priority.HIGH + 1;
+                },
                 destroy: function () {
                     if (component) {
                         component.$destroy();
@@ -40,9 +43,6 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
                     }
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

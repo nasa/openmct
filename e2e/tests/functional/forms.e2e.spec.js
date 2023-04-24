@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,7 +36,7 @@ const imageFilePath = 'e2e/test-data/rick.jpg';
 test.describe('Form Validation Behavior', () => {
     test('Required Field indicators appear if title is empty and can be corrected', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.click('button:has-text("Create")');
         await page.click(':nth-match(:text("Folder"), 2)');
@@ -77,7 +77,7 @@ test.describe('Form File Input Behavior', () => {
     });
 
     test('Can select a JSON file type', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.getByRole('button', { name: ' Create ' }).click();
         await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
@@ -91,7 +91,7 @@ test.describe('Form File Input Behavior', () => {
     });
 
     test('Can select an image file type', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.getByRole('button', { name: ' Create ' }).click();
         await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
@@ -117,7 +117,7 @@ test.describe('Persistence operations @addInit', () => {
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/4323'
         });
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.click('button:has-text("Create")');
 
@@ -138,7 +138,7 @@ test.describe('Persistence operations @couchdb', () => {
             description: 'https://github.com/nasa/openmct/issues/5616'
         });
 
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a new 'Clock' object with default settings
         const clock = await createDomainObjectWithDefaults(page, {
@@ -166,12 +166,13 @@ test.describe('Persistence operations @couchdb', () => {
             timeout: 1000
         }).toEqual(1);
     });
-    test('Can create an object after a conflict error @couchdb @2p', async ({ page }) => {
+    test('Can create an object after a conflict error @couchdb @2p', async ({ page, openmctConfig }) => {
         test.info().annotations.push({
             type: 'issue',
             description: 'https://github.com/nasa/openmct/issues/5982'
         });
-
+        const { myItemsFolderName } = openmctConfig;
+        // Instantiate a second page/tab
         const page2 = await page.context().newPage();
 
         // Both pages: Go to baseURL
@@ -179,6 +180,10 @@ test.describe('Persistence operations @couchdb', () => {
             page.goto('./', { waitUntil: 'networkidle' }),
             page2.goto('./', { waitUntil: 'networkidle' })
         ]);
+
+        //Slow down the test a bit
+        await expect(page.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
+        await expect(page2.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
 
         // Both pages: Click the Create button
         await Promise.all([

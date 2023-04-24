@@ -34,7 +34,7 @@ test.describe('Visual - Check Notification Info Banner of \'Save successful\'', 
         await page.goto('./', { waitUntil: 'networkidle' });
     });
 
-    test('Create a clock, click on \'Save successful\' banner and dismiss it', async ({ page }) => {
+    test('Create a clock, click on \'Save successful\' banner and dismiss it', async ({ page, theme }) => {
         // Create a clock domain object
         await createDomainObjectWithDefaults(page, { type: 'Clock' });
         // Verify there is a button with aria-label="Review 1 Notification"
@@ -47,7 +47,7 @@ test.describe('Visual - Check Notification Info Banner of \'Save successful\'', 
         expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
         // Verify the div with role="dialog" contains text "Save successful"
         expect(await page.locator('div[role="dialog"]').innerText()).toContain('Save successful');
-        await percySnapshot(page, 'Notification banner');
+        await percySnapshot(page, `Notification banner - ${theme}`);
         // Verify there is a button with text "Dismiss"
         expect(await page.locator('button:has-text("Dismiss")').isVisible()).toBe(true);
         // Click on button with text "Dismiss"

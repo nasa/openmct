@@ -89,17 +89,37 @@ Read more about [Playwright Snapshots](https://playwright.dev/docs/test-snapshot
 #### Open MCT's implementation
 
 - Our Snapshot tests receive a `@snapshot` tag.
-- Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally.
+- Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally. To do a valid comparison locally:
 
 ```sh
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:[GET THIS VERSION FROM OUR CIRCLECI CONFIG FILE]-focal /bin/bash
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot
 ```
 
-### (WIP) Updating Snapshots
+### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to see if the failure is an acceptable change or
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+
+To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
+
+MacOS
+
+```
+npm run test:e2e:updatesnapshots
+```
+
+Linux/CI
+
+```sh
+// Replace {X.X.X} with the current Playwright version 
+// from our package.json or circleCI configuration file
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
+npm install
+npm run test:e2e:updatesnapshots
+```
 
 ## Performance Testing
 
@@ -119,16 +139,18 @@ These tests are expected to become blocking and gating with assertions as we ext
 
 Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
-- `./helper` - contains helper functions or scripts which are leveraged directly within the testsuites. i.e. non-default plugin scripts injected into DOM
-- `./test-data` - contains test data which is leveraged or generated in the functional, performance, or visual test suites. i.e. localStorage data
-- `./tests/functional` - the bulk of the tests are contained within this folder to verify the functionality of open mct
-- `./tests/functional/example/` - tests which specifically verify the example plugins
-- `./tests/functional/plugins/` - tests which loosely test each plugin. This folder is the most likely to change. Note: some @snapshot tests are still contained within this structure
-- `./tests/framework/` - tests which verify that our testframework functionality and assumptions will continue to work based on further refactoring or playwright version changes
-- `./tests/performance/` - performance tests
-- `./tests/visual/` - Visual tests
-- `./appActions.js` - Contains common fixtures which can be leveraged by testcase authors to quickly move through the application when writing new tests.
-- `./baseFixture.js` - Contains base fixtures which only extend default `@playwright/test` functionality. The goal is to remove these fixtures as native Playwright APIs improve.
+|File Path|Description|
+|:-:|-|
+|`./helper`                    | Contains helper functions or scripts which are leveraged directly within the test suites (e.g.: non-default plugin scripts injected into the DOM)|
+|`./test-data`                 | Contains test data which is leveraged or generated in the functional, performance, or visual test suites (e.g.: localStorage data).|
+|`./tests/functional`          | The bulk of the tests are contained within this folder to verify the functionality of Open MCT.|
+|`./tests/functional/example/` | Tests which specifically verify the example plugins (e.g.: Sine Wave Generator).|
+|`./tests/functional/plugins/` | Tests which loosely test each plugin. This folder is the most likely to change. Note: some `@snapshot` tests are still contained within this structure.|
+|`./tests/framework/`          | Tests which verify that our testing framework's functionality and assumptions will continue to work based on further refactoring or Playwright version changes (e.g.: verifying custom fixtures and appActions).|
+|`./tests/performance/`        | Performance tests.|
+|`./tests/visual/`             | Visual tests.|
+|`./appActions.js`             | Contains common methods which can be leveraged by test case authors to quickly move through the application when writing new tests.|
+|`./baseFixture.js`            | Contains base fixtures which only extend default `@playwright/test` functionality. The expectation is that these fixtures will be removed as the native Playwright API improves|
 
 Our functional tests end in `*.e2e.spec.js`, visual tests in `*.visual.spec.js` and performance tests in `*.perf.spec.js`.
 
@@ -138,10 +160,12 @@ Where possible, we try to run Open MCT without modification or configuration cha
 
 Open MCT is leveraging the [config file](https://playwright.dev/docs/test-configuration) pattern to describe the capabilities of Open MCT e2e _where_ it's run
 
-- `./playwright-ci.config.js` - Used when running in CI or to debug CI issues locally
-- `./playwright-local.config.js` - Used when running locally
-- `./playwright-performance.config.js` - Used when running performance tests in CI or locally
-- `./playwright-visual.config.js` - Used to run the visual tests in CI or locally
+|Config File|Description|
+|:-:|-|
+|`./playwright-ci.config.js` | Used when running in CI or to debug CI issues locally|
+|`./playwright-local.config.js` | Used when running locally|
+|`./playwright-performance.config.js` | Used when running performance tests in CI or locally|
+|`./playwright-visual.config.js` | Used to run the visual tests in CI or locally|
 
 #### Test Tags
 
@@ -149,13 +173,15 @@ Test tags are a great way of organizing tests outside of a file structure. To le
 
 Current list of test tags:
 
-- `@ipad` - Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no Create button).
-- `@gds` - Denotes a GDS Test Case used in the VIPER Mission.
-- `@addInit` - Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.
-- `@localStorage` - Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).
-- `@snapshot` - Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.
-- `@unstable` - A new test or test which is known to be flaky.
-- `@2p` - Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.
+|Test Tag|Description|
+|:-:|-|
+|`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
+|`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
+|`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
+|`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).|
+|`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
+|`@unstable` | A new test or test which is known to be flaky.|
+|`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
 
 ### Continuous Integration
 
@@ -180,6 +206,7 @@ CircleCI
 Github Actions / Workflow
 
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
+- CouchDB Tests. Triggered on PR Create and again with Github Label Event 'pr:e2e:couchdb'
 - Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
@@ -211,7 +238,8 @@ At the same time, we don't want to waste CI resources on parallel runs, so we've
 
 In order to maintain fast and reliable feedback, tests go through a promotion process. All new test cases or test suites must be labeled with the `@unstable` annotation. The Open MCT dev team runs these unstable tests in our private repos to ensure they work downstream and are reliable.
 
-To run the stable tests, use the ```npm run test:e2e:stable``` command. To run the new and flaky tests, use the ```npm run test:e2e:unstable``` command.
+- To run the stable tests, use the `npm run test:e2e:stable` command.
+- To run the new and flaky tests, use the `npm run test:e2e:unstable` command.
 
 A testcase and testsuite are to be unmarked as @unstable when:
 
@@ -272,13 +300,24 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
 - How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
   - Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`
 - How to make tests faster and more resilient
-  - When possible, navigate directly by URL
-  - Leverage `await page.goto('./', { waitUntil: 'networkidle' });`
+  - When possible, navigate directly by URL:
+
+  ```javascript
+    // You can capture the CreatedObjectInfo returned from this appAction:
+    const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
+
+    // ...and use its `url` property to navigate directly to it later in the test:
+    await page.goto(clock.url);
+  ```
+
+  - Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });`
+    - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
 ### How to write a great test (WIP)
 
 - Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
+  - Use `waitForPlotsToRender()` before asserting against anything that is dependent upon plot series data being loaded and drawn.
 - If you create an object outside of using the `createDomainObjectWithDefaults` App Action, make sure to fill in the 'Notes' section of your object with `page.testNotes`:
 
   ```js
@@ -325,11 +364,15 @@ We leverage the following official Playwright reporters:
 - Tracefile
 - Screenshots
 
-When running the tests locally with the `npm run test:local` command, the html report will open automatically on failure. Inside this HTML report will be a complete summary of the finished tests. If the tests failed, you'll see embedded links to screenshot failure, execution logs, and the Tracefile.
+When running the tests locally with the `npm run test:e2e:local` command, the html report will open automatically on failure. Inside this HTML report will be a complete summary of the finished tests. If the tests failed, you'll see embedded links to screenshot failure, execution logs, and the Tracefile.
 
 When looking at the reports run in CI, you'll leverage this same HTML Report which is hosted either in CircleCI or Github Actions as a build artifact.
 
 ### e2e Code Coverage
+
+Our e2e code coverage is captured and combined with our unit test coverage. For more information, please see our [code coverage documentation](../TESTING.md)
+
+#### Generating e2e code coverage
 
 Code coverage is collected during test execution using our custom [baseFixture](./baseFixtures.js). The raw coverage files are stored in a `.nyc_report` directory to be converted into a lcov file with the following [nyc](https://github.com/istanbuljs/nyc) command:
 
@@ -340,10 +383,6 @@ At this point, the nyc linecov report can be published to [codecov.io](https://a
 ```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu.
 or
 ```npm run cov:e2e:full:publish``` for the full suite running against all available platforms.
-
-Codecov.io will combine each of the above commands with [Codecov.io Flags](https://docs.codecov.com/docs/flags). Effectively, this allows us to combine multiple reports which are run at various stages of our CI Pipeline or run as part of a parallel process.
-
-This e2e coverage is combined with our unit test report to give a comprehensive (if flawed) view of line coverage.
 
 ## Other
 

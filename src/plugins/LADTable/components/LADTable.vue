@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,13 +25,17 @@
     class="c-lad-table-wrapper u-style-receiver js-style-receiver"
     :class="staleClass"
 >
-    <table class="c-table c-lad-table">
+    <table
+        class="c-table c-lad-table"
+        :class="applyLayoutClass"
+    >
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Timestamp</th>
+                <th v-if="showTimestamp">Timestamp</th>
                 <th>Value</th>
-                <th v-if="hasUnits">Unit</th>
+                <th v-if="hasUnits">Units</th>
+                <th v-if="showType">Type</th>
             </tr>
         </thead>
         <tbody>
@@ -42,6 +46,7 @@
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
                 :is-stale="staleObjects.includes(ladRow.key)"
+                :configuration="configuration"
                 @rowContextClick="updateViewContext"
             />
         </tbody>
@@ -50,7 +55,7 @@
 </template>
 
 <script>
-
+import Vue from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -58,7 +63,7 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct', 'currentView'],
+    inject: ['openmct', 'currentView', 'ladTableConfiguration'],
     props: {
         domainObject: {
             type: Object,
@@ -73,7 +78,8 @@ export default {
         return {
             items: [],
             viewContext: {},
-            staleObjects: []
+            staleObjects: [],
+            configuration: this.ladTableConfiguration.getConfiguration()
         };
     },
     computed: {
@@ -86,7 +92,13 @@ export default {
 
             });
 
-            return itemsWithUnits.length !== 0;
+            return itemsWithUnits.length !== 0 && !this.configuration?.hiddenColumns?.units;
+        },
+        showTimestamp() {
+            return !this.configuration?.hiddenColumns?.timestamp;
+        },
+        showType() {
+            return !this.configuration?.hiddenColumns?.type;
         },
         staleClass() {
             if (this.staleObjects.length !== 0) {
@@ -94,17 +106,46 @@ export default {
             }
 
             return '';
+        },
+        applyLayoutClass() {
+            if (this.configuration.isFixedLayout) {
+                return 'fixed-layout';
+            }
+
+            return '';
         }
     },
-    mounted() {
+    watch: {
+        configuration: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal.isFixedLayout) {
+                        this.viewActionsCollection.show(['lad-expand-columns']);
+                        this.viewActionsCollection.hide(['lad-autosize-columns']);
+                    } else {
+                        this.viewActionsCollection.show(['lad-autosize-columns']);
+                        this.viewActionsCollection.hide(['lad-expand-columns']);
+                    }
+                }
+            },
+            deep: true
+        }
+    },
+    async mounted() {
+        this.ladTableConfiguration.on('change', this.handleConfigurationChange);
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addItem);
         this.composition.on('remove', this.removeItem);
         this.composition.on('reorder', this.reorder);
         this.composition.load();
         this.stalenessSubscription = {};
+        await Vue.nextTick();
+        this.viewActionsCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+        this.initializeViewActions();
     },
     destroyed() {
+        this.ladTableConfiguration.off('change', this.handleConfigurationChange);
+
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
@@ -156,6 +197,9 @@ export default {
 
             return metadataWithUnits.length > 0;
         },
+        handleConfigurationChange(configuration) {
+            this.configuration = configuration;
+        },
         handleStaleness(id, stalenessResponse, skipCheck = false) {
             if (skipCheck || this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
                 const index = this.staleObjects.indexOf(id);
@@ -174,7 +218,25 @@ export default {
             this.viewContext.row = rowContext;
         },
         getViewContext() {
-            return this.viewContext;
+            return {
+                ...this.viewContext,
+                type: 'lad-table',
+                toggleFixedLayout: this.toggleFixedLayout
+
+            };
+        },
+        toggleFixedLayout() {
+            this.configuration.isFixedLayout = !this.configuration.isFixedLayout;
+        },
+        initializeViewActions() {
+            if (this.configuration.isFixedLayout) {
+                this.viewActionsCollection.show(['lad-expand-columns']);
+                this.viewActionsCollection.hide(['lad-autosize-columns']);
+
+            } else {
+                this.viewActionsCollection.hide(['lad-expand-columns']);
+                this.viewActionsCollection.show(['lad-autosize-columns']);
+            }
         }
     }
 };

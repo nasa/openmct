@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,8 +30,8 @@ export default class TelemetryCollection extends EventEmitter {
     /**
      * Creates a Telemetry Collection
      *
-     * @param  {object} openmct - Openm MCT
-     * @param  {object} domainObject - Domain Object to user for telemetry collection
+     * @param  {OpenMCT} openmct - Open MCT
+     * @param  {module:openmct.DomainObject} domainObject - Domain Object to use for telemetry collection
      * @param  {object} options - Any options passed in for request/subscribe
      */
     constructor(openmct, domainObject, options) {
@@ -50,6 +50,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.lastBounds = undefined;
         this.requestAbort = undefined;
         this.isStrategyLatest = this.options.strategy === 'latest';
+        this.dataOutsideTimeBounds = false;
     }
 
     /**
@@ -139,6 +140,10 @@ export default class TelemetryCollection extends EventEmitter {
         this.emit('requestEnded');
         this.requestAbort = undefined;
 
+        if (!historicalData || !historicalData.length) {
+            return;
+        }
+
         this._processNewTelemetry(historicalData);
 
     }
@@ -180,6 +185,8 @@ export default class TelemetryCollection extends EventEmitter {
         let beforeStartOfBounds;
         let afterEndOfBounds;
         let added = [];
+        let addedIndices = [];
+        let hasDataBeforeStartBound = false;
 
         // loop through, sort and dedupe
         for (let datum of data) {
@@ -187,7 +194,7 @@ export default class TelemetryCollection extends EventEmitter {
             beforeStartOfBounds = parsedValue < this.lastBounds.start;
             afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-            if (!afterEndOfBounds && !beforeStartOfBounds) {
+            if (!afterEndOfBounds && (!beforeStartOfBounds || (this.isStrategyLatest && this.openmct.telemetry.greedyLAD()))) {
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
@@ -212,7 +219,12 @@ export default class TelemetryCollection extends EventEmitter {
                     let index = endIndex || startIndex;
 
                     this.boundedTelemetry.splice(index, 0, datum);
+                    addedIndices.push(index);
                     added.push(datum);
+
+                    if (!hasDataBeforeStartBound && beforeStartOfBounds) {
+                        hasDataBeforeStartBound = true;
+                    }
                 }
 
             } else if (afterEndOfBounds) {
@@ -221,16 +233,22 @@ export default class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
-            // if latest strategy is requested, we need to check if the value is the latest unmitted value
+            // if latest strategy is requested, we need to check if the value is the latest unemitted value
             if (this.isStrategyLatest) {
                 this.boundedTelemetry = [this.boundedTelemetry[this.boundedTelemetry.length - 1]];
 
                 // if true, then this value has yet to be emitted
                 if (this.boundedTelemetry[0] !== latestBoundedDatum) {
+                    if (hasDataBeforeStartBound) {
+                        this._handleDataOutsideBounds();
+                    } else {
+                        this._handleDataInsideBounds();
+                    }
+
                     this.emit('add', this.boundedTelemetry);
                 }
             } else {
-                this.emit('add', added);
+                this.emit('add', added, addedIndices);
             }
         }
     }
@@ -289,6 +307,17 @@ export default class TelemetryCollection extends EventEmitter {
             let added = [];
             let testDatum = {};
 
+            if (endChanged) {
+                testDatum[this.timeKey] = bounds.end;
+                // Calculate the new index of the last item in bounds
+                endIndex = _.sortedLastIndexBy(
+                    this.futureBuffer,
+                    testDatum,
+                    datum => this.parseTime(datum)
+                );
+                added = this.futureBuffer.splice(0, endIndex);
+            }
+
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
 
@@ -302,20 +331,19 @@ export default class TelemetryCollection extends EventEmitter {
                     );
                     discarded = this.boundedTelemetry.splice(0, startIndex);
                 } else if (this.parseTime(testDatum) > this.parseTime(this.boundedTelemetry[0])) {
-                    discarded = this.boundedTelemetry;
-                    this.boundedTelemetry = [];
-                }
-            }
+                    // if greedyLAD is active and there is no new data to replace, don't discard
+                    const isGreedyLAD = this.openmct.telemetry.greedyLAD();
+                    const shouldRemove = (!isGreedyLAD || (isGreedyLAD && added.length > 0));
 
-            if (endChanged) {
-                testDatum[this.timeKey] = bounds.end;
-                // Calculate the new index of the last item in bounds
-                endIndex = _.sortedLastIndexBy(
-                    this.futureBuffer,
-                    testDatum,
-                    datum => this.parseTime(datum)
-                );
-                added = this.futureBuffer.splice(0, endIndex);
+                    if (shouldRemove) {
+                        discarded = this.boundedTelemetry;
+                        this.boundedTelemetry = [];
+                    // since it IS strategy latest, we can assume there will be at least 1 datum
+                    // unless no data was returned in the first request, we need to account for that
+                    } else if (this.boundedTelemetry.length === 1) {
+                        this._handleDataOutsideBounds();
+                    }
+                }
             }
 
             if (discarded.length > 0) {
@@ -326,17 +354,34 @@ export default class TelemetryCollection extends EventEmitter {
                 if (!this.isStrategyLatest) {
                     this.boundedTelemetry = [...this.boundedTelemetry, ...added];
                 } else {
+                    this._handleDataInsideBounds();
+
                     added = [added[added.length - 1]];
                     this.boundedTelemetry = added;
                 }
 
-                this.emit('add', added);
+                // Assumption is that added will be of length 1 here, so just send the last index of the boundedTelemetry in the add event
+                this.emit('add', added, [this.boundedTelemetry.length]);
             }
         } else {
             // user bounds change, reset
             this._reset();
         }
 
+    }
+
+    _handleDataInsideBounds() {
+        if (this.dataOutsideTimeBounds) {
+            this.dataOutsideTimeBounds = false;
+            this.emit('dataInsideTimeBounds');
+        }
+    }
+
+    _handleDataOutsideBounds() {
+        if (!this.dataOutsideTimeBounds) {
+            this.dataOutsideTimeBounds = true;
+            this.emit('dataOutsideTimeBounds');
+        }
     }
 
     /**

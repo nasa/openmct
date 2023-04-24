@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 const ALLOWED_TYPES = [
     'telemetry.plot.overlay',
     'telemetry.plot.stacked',
-    'plan'
+    'plan',
+    'gantt-chart'
 ];
 const DISALLOWED_TYPES = [
     'telemetry.plot.bar-graph',

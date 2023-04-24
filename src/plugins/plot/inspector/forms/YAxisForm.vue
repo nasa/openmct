@@ -1,6 +1,9 @@
 <template>
 <div v-if="loaded">
-    <ul class="l-inspector-part">
+    <ul
+        class="l-inspector-part"
+        :aria-label="id > 1 ? `Y Axis ${id} Properties` : 'Y Axis Properties'"
+    >
         <h2>Y Axis {{ id > 1 ? id : '' }}</h2>
         <li class="grid-row">
             <div
@@ -16,6 +19,7 @@
         </li>
         <li class="grid-row">
             <div
+                id="log-mode-checkbox"
                 class="grid-cell label"
                 title="Enable log mode."
             >
@@ -26,6 +30,7 @@
                 <input
                     v-model="logMode"
                     class="js-log-mode-input"
+                    aria-labelledby="log-mode-checkbox"
                     type="checkbox"
                     @change="updateForm('logMode')"
                 />
@@ -33,12 +38,14 @@
         </li>
         <li class="grid-row">
             <div
+                id="autoscale-checkbox"
                 class="grid-cell label"
                 title="Automatically scale the Y axis to keep all values in view."
             >Auto scale</div>
             <div class="grid-cell value"><input
                 v-model="autoscale"
                 type="checkbox"
+                aria-labelledby="autoscale-checkbox"
                 @change="updateForm('autoscale')"
             ></div>
         </li>
@@ -78,7 +85,7 @@
             >Minimum Value</div>
             <div class="grid-cell value">
                 <input
-                    v-model="rangeMin"
+                    v-model.lazy="rangeMin"
                     class="c-input--flex"
                     type="number"
                     @change="updateForm('range')"
@@ -91,7 +98,7 @@
                 title="Maximum Y axis value."
             >Maximum Value</div>
             <div class="grid-cell value"><input
-                v-model="rangeMax"
+                v-model.lazy="rangeMax"
                 class="c-input--flex"
                 type="number"
                 @change="updateForm('range')"
@@ -127,6 +134,12 @@ export default {
             validationErrors: {},
             loaded: false
         };
+    },
+    beforeDestroy() {
+        if (this.autoscale === false && this.validationErrors.range) {
+            this.autoscale = true;
+            this.updateForm('autoscale');
+        }
     },
     mounted() {
         eventHelpers.extend(this);
@@ -169,12 +182,9 @@ export default {
                     objectPath: `${prefix}.logMode`
                 },
                 range: {
-                    objectPath: `${prefix}.range'`,
+                    objectPath: `${prefix}.range`,
                     coerce: function coerceRange(range) {
-                        const newRange = {
-                            min: -1,
-                            max: 1
-                        };
+                        const newRange = {};
 
                         if (range && typeof range.min !== 'undefined' && range.min !== null) {
                             newRange.min = Number(range.min);
@@ -219,9 +229,11 @@ export default {
             this.autoscale = this.yAxis.get('autoscale');
             this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
-            const range = this.yAxis.get('range') ?? this.yAxis.get('displayRange');
-            this.rangeMin = range?.min;
-            this.rangeMax = range?.max;
+            const range = this.yAxis.get('range');
+            if (range && range.min !== undefined && range.max !== undefined) {
+                this.rangeMin = range.min;
+                this.rangeMax = range.max;
+            }
         },
         getPrefix() {
             let prefix = 'yAxis';
@@ -307,6 +319,15 @@ export default {
                                 value: newVal
                             });
                         }
+                    }
+
+                    //If autoscale is turned off, we must know what the user defined min and max ranges are
+                    if (formKey === 'autoscale' && this.autoscale === false) {
+                        const rangeFormField = this.fields.range;
+                        this.validationErrors.range = rangeFormField.validate?.({
+                            min: this.rangeMin,
+                            max: this.rangeMax
+                        }, this.yAxis);
                     }
                 }
             }

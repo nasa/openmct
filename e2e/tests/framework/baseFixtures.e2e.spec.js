@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,7 +32,7 @@ test.describe('baseFixtures tests', () => {
     test('Verify that tests fail if console.error is thrown', async ({ page }) => {
         test.fail();
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Verify that ../fixtures.js detects console log errors
         await Promise.all([
@@ -43,7 +43,7 @@ test.describe('baseFixtures tests', () => {
     });
     test('Verify that tests pass if console.warn is thrown', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Verify that ../fixtures.js detects console log errors
         await Promise.all([

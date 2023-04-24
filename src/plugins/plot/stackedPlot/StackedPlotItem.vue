@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div></div>
+<div
+    :aria-label="`Stacked Plot Item ${childObject.name}`"
+></div>
 </template>
 <script>
 
@@ -28,6 +30,7 @@ import MctPlot from '../MctPlot.vue';
 import Vue from "vue";
 import conditionalStylesMixin from "./mixins/objectStyles-mixin";
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import StalenessUtils from '@/utils/staleness';
 import configStore from "@/plugins/plot/configuration/ConfigStore";
 import PlotConfigurationModel from "@/plugins/plot/configuration/PlotConfigurationModel";
 import ProgressBar from "../../../ui/components/ProgressBar.vue";
@@ -72,12 +75,21 @@ export default {
                 return undefined;
             }
         },
-        plotTickWidth: {
-            type: Number,
+        parentYTickWidth: {
+            type: Object,
             default() {
-                return 0;
+                return {
+                    leftTickWidth: 0,
+                    rightTickWidth: 0,
+                    hasMultipleLeftAxes: false
+                };
             }
         }
+    },
+    data() {
+        return {
+            staleObjects: []
+        };
     },
     watch: {
         gridLines(newGridLines) {
@@ -86,20 +98,29 @@ export default {
         cursorGuide(newCursorGuide) {
             this.updateComponentProp('cursorGuide', newCursorGuide);
         },
-        plotTickWidth(width) {
-            this.updateComponentProp('plotTickWidth', width);
+        parentYTickWidth(width) {
+            this.updateComponentProp('parentYTickWidth', width);
         },
         showLimitLineLabels: {
             handler(data) {
                 this.updateComponentProp('limitLineLabels', data);
             },
             deep: true
+        },
+        staleObjects() {
+            this.isStale = this.staleObjects.length > 0;
+            this.updateComponentProp('isStale', this.isStale);
         }
     },
     mounted() {
+        this.stalenessSubscription = {};
         this.updateView();
+        this.isEditing = this.openmct.editor.isEditing();
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.setEditState);
+
         if (this.removeSelectable) {
             this.removeSelectable();
         }
@@ -107,8 +128,22 @@ export default {
         if (this.component) {
             this.component.$destroy();
         }
+
+        this.destroyStalenessListeners();
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+
+            if (this.isEditing) {
+                this.setSelection();
+            } else {
+                if (this.removeSelectable) {
+                    this.removeSelectable();
+                }
+            }
+        },
+
         updateComponentProp(prop, value) {
             if (this.component) {
                 this.component[prop] = value;
@@ -117,15 +152,15 @@ export default {
         updateView() {
             this.isStale = false;
 
-            this.triggerUnsubscribeFromStaleness();
+            this.destroyStalenessListeners();
 
             if (this.component) {
                 this.component.$destroy();
-                this.component = undefined;
+                this.component = null;
                 this.$el.innerHTML = '';
             }
 
-            const onTickWidthChange = this.onTickWidthChange;
+            const onYTickWidthChange = this.onYTickWidthChange;
             const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
             const onHighlightsUpdated = this.onHighlightsUpdated;
             const onConfigLoaded = this.onConfigLoaded;
@@ -144,9 +179,18 @@ export default {
             let viewContainer = document.createElement('div');
             this.$el.append(viewContainer);
 
-            this.subscribeToStaleness(object, (isStale) => {
-                this.updateComponentProp('isStale', isStale);
-            });
+            if (this.openmct.telemetry.isTelemetryObject(object)) {
+                this.subscribeToStaleness(object, (isStale) => {
+                    this.updateComponentProp('isStale', isStale);
+                });
+            } else {
+                // possibly overlay or other composition based plot
+                this.composition = this.openmct.composition.get(object);
+
+                this.composition.on('add', this.watchStaleness);
+                this.composition.on('remove', this.unwatchStaleness);
+                this.composition.load();
+            }
 
             this.component = new Vue({
                 el: viewContainer,
@@ -162,7 +206,7 @@ export default {
                 data() {
                     return {
                         ...getProps(),
-                        onTickWidthChange,
+                        onYTickWidthChange,
                         onLockHighlightPointUpdated,
                         onHighlightsUpdated,
                         onConfigLoaded,
@@ -178,10 +222,72 @@ export default {
                         this.loading = loaded;
                     }
                 },
-                template: '<div v-if="!isMissing" ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\', \'is-stale\': isStale}"><progress-bar v-show="loading !== false" class="c-telemetry-table__progress-bar" :model="{progressPerc: undefined}" /><mct-plot :init-grid-lines="gridLines" :init-cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :limit-line-labels="limitLineLabels" :color-palette="colorPalette" :options="options" @plotTickWidth="onTickWidthChange" @lockHighlightPoint="onLockHighlightPointUpdated" @highlights="onHighlightsUpdated" @configLoaded="onConfigLoaded" @cursorGuide="onCursorGuideChange" @gridLines="onGridLinesChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
+                template: `
+                  <div v-if="!isMissing" ref="plotWrapper"
+                      class="l-view-section u-style-receiver js-style-receiver"
+                      :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced', 'is-stale': isStale}">
+                      <progress-bar
+                          v-show="loading !== false"
+                          class="c-telemetry-table__progress-bar"
+                          :model="{progressPerc: undefined}" />
+                      <mct-plot
+                          :init-grid-lines="gridLines"
+                          :init-cursor-guide="cursorGuide"
+                          :parent-y-tick-width="parentYTickWidth"
+                          :limit-line-labels="limitLineLabels"
+                          :color-palette="colorPalette"
+                          :options="options"
+                          @plotYTickWidth="onYTickWidthChange"
+                          @lockHighlightPoint="onLockHighlightPointUpdated"
+                          @highlights="onHighlightsUpdated"
+                          @configLoaded="onConfigLoaded"
+                          @cursorGuide="onCursorGuideChange"
+                          @gridLines="onGridLinesChange"
+                          @statusUpdated="setStatus"
+                          @loadingUpdated="loadingUpdated"/>
+                  </div>`
             });
 
-            this.setSelection();
+            if (this.isEditing) {
+                this.setSelection();
+            }
+        },
+        watchStaleness(domainObject) {
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            this.stalenessSubscription[keyString] = {};
+            this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(this.openmct, domainObject);
+
+            this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+                if (stalenessResponse !== undefined) {
+                    this.handleStaleness(keyString, stalenessResponse);
+                }
+            });
+            const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+                this.handleStaleness(keyString, stalenessResponse);
+            });
+
+            this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+        },
+        unwatchStaleness(domainObject) {
+            const SKIP_CHECK = true;
+            const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+            this.stalenessSubscription[keyString].unsubscribe();
+            this.stalenessSubscription[keyString].stalenessUtils.destroy();
+            this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
+
+            delete this.stalenessSubscription[keyString];
+        },
+        handleStaleness(keyString, stalenessResponse, skipCheck = false) {
+            if (skipCheck || this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
+                const index = this.staleObjects.indexOf(keyString);
+                const foundStaleObject = index > -1;
+                if (stalenessResponse.isStale && !foundStaleObject) {
+                    this.staleObjects.push(keyString);
+                } else if (!stalenessResponse.isStale && foundStaleObject) {
+                    this.staleObjects.splice(index, 1);
+                }
+            }
         },
         onLockHighlightPointUpdated() {
             this.$emit('lockHighlightPoint', ...arguments);
@@ -192,8 +298,8 @@ export default {
         onConfigLoaded() {
             this.$emit('configLoaded', ...arguments);
         },
-        onTickWidthChange() {
-            this.$emit('plotTickWidth', ...arguments);
+        onYTickWidthChange() {
+            this.$emit('plotYTickWidth', ...arguments);
         },
         onCursorGuideChange() {
             this.$emit('cursorGuide', ...arguments);
@@ -221,7 +327,7 @@ export default {
                 limitLineLabels: this.showLimitLineLabels,
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
-                plotTickWidth: this.plotTickWidth,
+                parentYTickWidth: this.parentYTickWidth,
                 options: this.options,
                 status: this.status,
                 colorPalette: this.colorPalette,
@@ -230,7 +336,7 @@ export default {
         },
         getPlotObject() {
             if (this.childObject.configuration && this.childObject.configuration.series) {
-                //If the object has a configuration, allow initialization of the config from it's persisted config
+                //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
                 return this.childObject;
             } else {
                 //If object is missing, warn and return object
@@ -281,6 +387,20 @@ export default {
 
                 return this.childObject;
             }
+        },
+        destroyStalenessListeners() {
+            this.triggerUnsubscribeFromStaleness();
+
+            if (this.composition) {
+                this.composition.off('add', this.watchStaleness);
+                this.composition.off('remove', this.unwatchStaleness);
+                this.composition = null;
+            }
+
+            Object.values(this.stalenessSubscription).forEach(stalenessSubscription => {
+                stalenessSubscription.unsubscribe();
+                stalenessSubscription.stalenessUtils.destroy();
+            });
         }
     }
 };

@@ -6,8 +6,7 @@ export const NOTEBOOK_DEFAULT = 'DEFAULT';
 export const NOTEBOOK_SNAPSHOT = 'SNAPSHOT';
 export const NOTEBOOK_VIEW_TYPE = 'notebook-vue';
 export const RESTRICTED_NOTEBOOK_VIEW_TYPE = 'restricted-notebook-vue';
-export const NOTEBOOK_INSTALLED_KEY = '_NOTEBOOK_PLUGIN_INSTALLED';
-export const RESTRICTED_NOTEBOOK_INSTALLED_KEY = '_RESTRICTED_NOTEBOOK_PLUGIN_INSTALLED';
+export const NOTEBOOK_BASE_INSTALLED = '_NOTEBOOK_BASE_FUNCTIONALITY_INSTALLED';
 
 // these only deals with constants, figured this could skip going into a utils file
 export function isNotebookOrAnnotationType(domainObject) {

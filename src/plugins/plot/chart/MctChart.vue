@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -52,6 +52,41 @@ const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 const ANNOTATION_SIZE = MARKER_SIZE * 3.0;
 const CLEARANCE = 15;
+// These attributes are changed in the plot model, but we don't need to react to the changes.
+const NO_HANDLING_NEEDED_ATTRIBUTES = {
+    label: 'label',
+    values: 'values',
+    format: 'format',
+    color: 'color',
+    name: 'name',
+    unit: 'unit'
+};
+// These attributes in turn set one of HANDLED_ATTRIBUTES, so we don't need specific listeners for them - this prevents excessive redraws.
+const IMPLICIT_HANDLED_ATTRIBUTES = {
+    range: 'range',
+    //series stats update y axis stats
+    stats: 'stats',
+    frozen: 'frozen',
+    autoscale: 'autoscale',
+    autoscalePadding: 'autoscalePadding',
+    logMode: 'logMode',
+    yKey: 'yKey'
+};
+// Attribute changes that we are specifically handling with listeners
+const HANDLED_ATTRIBUTES = {
+    //X and Y Axis attributes
+    key: 'key',
+    displayRange: 'displayRange',
+    //series attributes
+    xKey: 'xKey',
+    interpolate: 'interpolate',
+    markers: 'markers',
+    markerShape: 'markerShape',
+    markerSize: 'markerSize',
+    alarmMarkers: 'alarmMarkers',
+    limitLines: 'limitLines',
+    yAxisId: 'yAxisId'
+};
 
 export default {
     inject: ['openmct', 'domainObject', 'path'],
@@ -116,12 +151,12 @@ export default {
             this.scheduleDraw();
         },
         showLimitLineLabels() {
-            this.drawLimitLines();
+            this.updateLimitLines();
         },
         hiddenYAxisIds() {
             this.hiddenYAxisIds.forEach(id => {
                 this.resetYOffsetAndSeriesDataForYAxis(id);
-                this.drawLimitLines();
+                this.updateLimitLines();
             });
             this.scheduleDraw();
         }
@@ -138,14 +173,16 @@ export default {
         this.offset = {
             [yAxisId]: {}
         };
-        this.listenTo(this.config.yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
-        this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
+        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+        this.listenTo(this.config.yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId), this);
+        this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
         if (this.config.additionalYAxes.length) {
             this.config.additionalYAxes.forEach(yAxis => {
                 const id = yAxis.get('id');
                 this.offset[id] = {};
-                this.listenTo(yAxis, 'change', this.updateLimitsAndDraw);
-                this.listenTo(yAxis, 'change:key', this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
+                this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.key}`, this.resetYOffsetAndSeriesDataForYAxis.bind(this, id), this);
+                this.listenTo(yAxis, 'change', this.redrawIfNotAlreadyHandled);
             });
         }
 
@@ -162,7 +199,8 @@ export default {
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
 
-        this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
+        this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
+        this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
         this.config.series.forEach(this.onSeriesAdd, this);
         this.$emit('chartLoaded');
     },
@@ -184,24 +222,30 @@ export default {
 
             return config;
         },
-        reDraw(mode, o, series) {
-            this.changeInterpolate(mode, o, series);
-            this.changeMarkers(mode, o, series);
-            this.changeAlarmMarkers(mode, o, series);
-            this.changeLimitLines(mode, o, series);
+        reDraw(newXKey, oldXKey, series) {
+            this.changeInterpolate(newXKey, oldXKey, series);
+            this.changeMarkers(newXKey, oldXKey, series);
+            this.changeAlarmMarkers(newXKey, oldXKey, series);
+            this.changeLimitLines(newXKey, oldXKey, series);
         },
         onSeriesAdd(series) {
-            this.listenTo(series, 'change:xKey', this.reDraw, this);
-            this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
-            this.listenTo(series, 'change:markers', this.changeMarkers, this);
-            this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
-            this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
-            this.listenTo(series, 'change:yAxisId', this.resetAxisAndRedraw, this);
-            // TODO: Which other changes is the listener below reacting to?
-            this.listenTo(series, 'change', this.scheduleDraw);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.xKey}`, this.reDraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.interpolate}`, this.changeInterpolate, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markers}`, this.changeMarkers, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.alarmMarkers}`, this.changeAlarmMarkers, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.limitLines}`, this.changeLimitLines, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.yAxisId}`, this.resetAxisAndRedraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerShape}`, this.scheduleDraw, this);
+            this.listenTo(series, `change:${HANDLED_ATTRIBUTES.markerSize}`, this.scheduleDraw, this);
+            this.listenTo(series, 'change', this.redrawIfNotAlreadyHandled);
             this.listenTo(series, 'add', this.onAddPoint);
             this.makeChartElement(series);
             this.makeLimitLines(series);
+        },
+        onSeriesRemove(series) {
+            this.stopListening(series);
+            this.removeChartElement(series);
+            this.scheduleDraw();
         },
         onAddPoint(point, insertIndex, series) {
             const mainYAxisId = this.config.yAxis.get('id');
@@ -278,13 +322,14 @@ export default {
                 this.pointSets.push(pointSet);
             }
         },
-        changeLimitLines(mode, o, series) {
-            if (mode === o) {
+        changeLimitLines(showLimitLines, oldShowLimitLines, series) {
+            if (showLimitLines === oldShowLimitLines) {
                 return;
             }
 
             this.makeLimitLines(series);
-            this.updateLimitsAndDraw();
+            this.updateLimitLines();
+            this.scheduleDraw();
         },
         resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
             if (!oldYAxisId) {
@@ -298,12 +343,7 @@ export default {
             //Make the chart elements again for the new y-axis and offset
             this.makeChartElement(series);
             this.makeLimitLines(series);
-
-            this.scheduleDraw();
-        },
-        onSeriesRemove(series) {
-            this.stopListening(series);
-            this.removeChartElement(series);
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         destroy() {
@@ -531,8 +571,20 @@ export default {
 
             return true;
         },
-        updateLimitsAndDraw() {
-            this.drawLimitLines();
+        redrawIfNotAlreadyHandled(attribute, value, oldValue) {
+            if (Object.keys(HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(IMPLICIT_HANDLED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            if (Object.keys(NO_HANDLING_NEEDED_ATTRIBUTES).includes(attribute) && oldValue) {
+                return;
+            }
+
+            this.updateLimitLines();
             this.scheduleDraw();
         },
         scheduleDraw() {
@@ -551,19 +603,20 @@ export default {
             const mainYAxisId = this.config.yAxis.get('id');
             //There has to be at least one yAxis
             const yAxisIds = [mainYAxisId].concat(this.config.additionalYAxes.map(yAxis => yAxis.get('id')));
-            // Repeat drawing for all yAxes
-            yAxisIds.forEach((id) => {
-                if (this.canDraw(id)) {
-                    this.updateViewport(id);
-                    this.drawSeries(id);
-                    this.drawRectangles(id);
-                    this.drawHighlights(id);
 
-                    // only draw these in fixed time mode or plot is paused
-                    if (this.annotationViewingAndEditingAllowed) {
-                        this.drawAnnotatedPoints(id);
-                        this.drawAnnotationSelections(id);
-                    }
+            // Repeat drawing for all yAxes
+            yAxisIds.filter(this.canDraw).forEach((id, yAxisIndex) => {
+                this.updateViewport(id);
+                this.drawSeries(id);
+                if (yAxisIndex === 0) {
+                    this.drawRectangles(id);
+                }
+
+                this.drawHighlights(id);
+                // only draw these in fixed time mode or plot is paused
+                if (this.annotationViewingAndEditingAllowed) {
+                    this.drawAnnotatedPoints(id);
+                    this.drawAnnotationSelections(id);
                 }
             });
         },
@@ -626,17 +679,17 @@ export default {
             const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
             alarmSets.forEach(this.drawAlarmPoints, this);
         },
-        drawLimitLines() {
+        updateLimitLines() {
             Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
             this.config.series.models.forEach(series => {
                 const yAxisId = series.get('yAxisId');
 
                 if (this.hiddenYAxisIds.indexOf(yAxisId) < 0) {
-                    this.drawLimitLinesForSeries(yAxisId, series);
+                    this.updateLimitLinesForSeries(yAxisId, series);
                 }
             });
         },
-        drawLimitLinesForSeries(yAxisId, series) {
+        updateLimitLinesForSeries(yAxisId, series) {
             if (!this.canDraw(yAxisId)) {
                 return;
             }

@@ -49,12 +49,10 @@
         background-size: 3px 30%;
         background-color: $colorBodyBgSubtle;
         box-shadow: inset rgba(black, 0.4) 0 1px 1px;
-        transition: $transOut;
 
         svg text {
             fill: $colorBodyFg;
             stroke: $colorBodyBgSubtle;
-            transition: $transOut;
         }
     }
 

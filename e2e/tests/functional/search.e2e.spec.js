@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,10 +24,18 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../appActions');
 const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
+    const searchResultSelector = '.c-gsearch-result__title';
+    const searchResultDropDownSelector = '.c-gsearch__results';
+
+    test.beforeEach(async ({ page }) => {
+        // Go to baseURL
+        await page.goto("./", { waitUntil: "networkidle" });
+    });
+
     test('Can search for objects, and subsequent search dropdown behaves properly', async ({ page, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
@@ -42,7 +50,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
         // Click the Elements pool to dismiss the search menu
-        await page.locator('.l-pane__label:has-text("Elements")').click();
+        await selectInspectorTab(page, 'Elements');
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
@@ -55,7 +63,7 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(`Clock A ${myItemsFolderName} Red Folder Blue Folder`);
 
         // Click [aria-label="OpenMCT Search"] a >> nth=0
-        await page.locator('[aria-label="OpenMCT Search"] a').first().click();
+        await page.locator('[aria-label="Search Result"] >> nth=0').click();
         await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
         // Fill [aria-label="OpenMCT Search"] input[type="search"]
@@ -89,15 +97,8 @@ test.describe('Grand Search', () => {
         await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(`Clock C ${myItemsFolderName} Red Folder Blue Folder`);
         await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(`Clock D ${myItemsFolderName} Red Folder Blue Folder`);
     });
-});
-
-test.describe("Search Tests @unstable", () => {
-    const searchResultSelector = '.c-gsearch-result__title';
 
     test('Validate empty search result', async ({ page }) => {
-        // Go to baseURL
-        await page.goto("./", { waitUntil: "networkidle" });
-
         // Invalid search for objects
         await page.type("input[type=search]", 'not found');
 
@@ -105,7 +106,7 @@ test.describe("Search Tests @unstable", () => {
         await waitForSearchCompletion(page);
 
         // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResults = page.locator(searchResultSelector);
 
         // Verify that no results are found
         expect(await searchResults.count()).toBe(0);
@@ -115,9 +116,6 @@ test.describe("Search Tests @unstable", () => {
     });
 
     test('Validate single object in search result @couchdb', async ({ page }) => {
-        //Go to baseURL
-        await page.goto("./", { waitUntil: "networkidle" });
-
         // Create a folder object
         const folderName = uuid();
         await createDomainObjectWithDefaults(page, {
@@ -135,8 +133,40 @@ test.describe("Search Tests @unstable", () => {
         const searchResults = page.locator(searchResultSelector);
 
         // Verify that one result is found
+        await expect(searchResults).toBeVisible();
         expect(await searchResults.count()).toBe(1);
         await expect(searchResults).toHaveText(folderName);
+    });
+
+    test('Search results are debounced @couchdb', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6179'
+        });
+        await createObjectsForSearch(page);
+
+        let networkRequests = [];
+        page.on('request', (request) => {
+            const searchRequest = request.url().endsWith('_find');
+            const fetchRequest = request.resourceType() === 'fetch';
+            if (searchRequest && fetchRequest) {
+                networkRequests.push(request);
+            }
+        });
+
+        // Full search for object
+        await page.type("input[type=search]", 'Clock', { delay: 100 });
+
+        // Wait for search to finish
+        await waitForSearchCompletion(page);
+
+        // Network requests for the composite telemetry with multiple items should be:
+        // 1.  batched request for latest telemetry using the bulk API
+        expect(networkRequests.length).toBe(1);
+
+        const searchResultDropDown = await page.locator(searchResultDropDownSelector);
+
+        await expect(searchResultDropDown).toContainText('Clock A');
     });
 
     test("Validate multiple objects in search results return partial matches", async ({ page }) => {
@@ -145,15 +175,19 @@ test.describe("Search Tests @unstable", () => {
             description: 'https://github.com/nasa/openmct/issues/4667'
         });
 
-        // Go to baseURL
-        await page.goto("/", { waitUntil: "networkidle" });
-
         // Create folder objects
-        const folderName = "e928a26e-e924-4ea0";
+        const folderName1 = "e928a26e-e924-4ea0";
         const folderName2 = "e928a26e-e924-4001";
 
-        await createFolderObject(page, folderName);
-        await createFolderObject(page, folderName2);
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            name: folderName1
+        });
+
+        await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            name: folderName2
+        });
 
         // Partial search for objects
         await page.type("input[type=search]", 'e928a26e');
@@ -161,36 +195,22 @@ test.describe("Search Tests @unstable", () => {
         // Wait for search to finish
         await waitForSearchCompletion(page);
 
-        // Get the search results
-        const searchResults = await page.locator(searchResultSelector);
+        const searchResultDropDown = page.locator(searchResultDropDownSelector);
 
         // Verify that the search result/s correctly match the search query
+        await expect(searchResultDropDown).toContainText(folderName1);
+        await expect(searchResultDropDown).toContainText(folderName2);
+
+        // Get the search results
+        const searchResults = page.locator(searchResultSelector);
+        // Verify that two results are found
         expect(await searchResults.count()).toBe(2);
-        await expect(await searchResults.first()).toHaveText(folderName);
-        await expect(await searchResults.last()).toHaveText(folderName2);
     });
 });
 
-async function createFolderObject(page, folderName) {
-    // Open Create menu
-    await page.locator('button:has-text("Create")').click();
-
-    // Select Folder object
-    await page.locator('text=Folder').nth(1).click();
-
-    // Click folder title to enter edit mode
-    await page.locator('text=Properties Title Notes >> input[type="text"]').click();
-
-    // Enter folder name
-    await page.locator('text=Properties Title Notes >> input[type="text"]').fill(folderName);
-
-    // Create folder object
-    await page.locator('button:has-text("OK")').click();
-}
-
 async function waitForSearchCompletion(page) {
     // Wait loading spinner to disappear
-    await page.waitForSelector('.c-tree-and-search__loading', { state: 'detached' });
+    await page.waitForSelector('.search-finished');
 }
 
 /**
@@ -198,9 +218,6 @@ async function waitForSearchCompletion(page) {
   * @param {import('@playwright/test').Page} page
   */
 async function createObjectsForSearch(page) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
     const redFolder = await createDomainObjectWithDefaults(page, {
         type: 'Folder',
         name: 'Red Folder'

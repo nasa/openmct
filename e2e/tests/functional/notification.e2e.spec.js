@@ -24,18 +24,51 @@
 This test suite is dedicated to tests which verify Open MCT's Notification functionality
 */
 
-// FIXME: Remove this eslint exception once tests are implemented
-// eslint-disable-next-line no-unused-vars
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, createNotification } = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Notifications List', () => {
-    test.fixme('Notifications can be dismissed individually', async ({ page }) => {
-        // Create some persistent notifications
-        // Verify that they are present in the notifications list
-        // Dismiss one of the notifications
-        // Verify that it is no longer present in the notifications list
-        // Verify that the other notifications are still present in the notifications list
+    test('Notifications can be dismissed individually', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6122'
+        });
+
+        // Go to baseURL
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+        // Create an error notification with the message "Error message"
+        await createNotification(page, {
+            severity: 'error',
+            message: 'Error message'
+        });
+
+        // Create an alert notification with the message "Alert message"
+        await createNotification(page, {
+            severity: 'alert',
+            message: 'Alert message'
+        });
+
+        // Verify that there is a button with aria-label "Review 2 Notifications"
+        expect(await page.locator('button[aria-label="Review 2 Notifications"]').count()).toBe(1);
+
+        // Click on button with aria-label "Review 2 Notifications"
+        await page.click('button[aria-label="Review 2 Notifications"]');
+
+        // Click on button with aria-label="Dismiss notification of Error message"
+        await page.click('button[aria-label="Dismiss notification of Error message"]');
+
+        // Verify there is no a notification (listitem) with the text "Error message" since it was dismissed
+        expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).not.toContain('Error message');
+
+        // Verify there is still a notification (listitem) with the text "Alert message"
+        expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).toContain('Alert message');
+
+        // Click on button with aria-label="Dismiss notification of Alert message"
+        await page.click('button[aria-label="Dismiss notification of Alert message"]');
+
+        // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
+        expect(await page.locator('div[role="dialog"]').count()).toBe(0);
     });
 });
 
@@ -47,7 +80,7 @@ test.describe('Notification Overlay', () => {
         });
 
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a new Display Layout object
         await createDomainObjectWithDefaults(page, { type: 'Display Layout' });

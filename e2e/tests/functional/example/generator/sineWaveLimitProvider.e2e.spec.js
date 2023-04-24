@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,7 +32,7 @@ test.describe('Sine Wave Generator', () => {
         test.skip(browserName === 'firefox', 'This test needs to be updated to work with firefox');
 
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
