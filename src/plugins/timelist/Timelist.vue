@@ -296,8 +296,6 @@ export default {
 
             this.viewBounds = {};
 
-            this.noCurrent = currentEventsIndex === 0;
-
             if (pastEventsIndex !== 1) {
                 const pastDurationInMS = this.getDurationInMilliSeconds(pastEventsDuration, pastEventsDurationIndex);
                 this.viewBounds.pastEnd = (timestamp) => {
@@ -360,7 +358,7 @@ export default {
             }
 
             //current event or future start event or past end event
-            const isCurrent = (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end);
+            const isCurrent = (this.timestamp >= activity.start && this.timestamp <= activity.end);
             const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
             const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
 
