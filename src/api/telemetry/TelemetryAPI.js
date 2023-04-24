@@ -49,7 +49,7 @@ import objectUtils from 'objectUtils';
  * @property {AbortController} [signal] an AbortController which can be used
  *           to cancel a telemetry request
  * @property {String} [domain] the domain key of the request
- * @property {TimeContext} [timeContext] the maximum number of values to return
+ * @property {TimeContext} [timeContext] the time context to use for this request
  * @memberof module:openmct.TelemetryAPI~
  */
 
@@ -371,7 +371,7 @@ export default class TelemetryAPI {
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
-     * @param {TelemetryRequestOptions} options options for subscription
+     * @param {TelemetryRequestOptions} options configuration items for subscription
      * @param {Function} callback the callback to invoke with new data, as
      *        it becomes available
      * @returns {Function} a function which may be called to terminate
