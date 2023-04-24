@@ -86,7 +86,8 @@ export default class ImportAsJSONAction {
         let objectIdentifiers = this._getObjectReferenceIds(parent);
 
         if (objectIdentifiers.length) {
-            seen.push(parent.id);
+            const parentId = this.openmct.objects.makeKeyString(parent.identifier);
+            seen.push(parentId);
 
             for (const childId of objectIdentifiers) {
                 const keystring = this.openmct.objects.makeKeyString(childId);
@@ -118,7 +119,7 @@ export default class ImportAsJSONAction {
         const parentComposition = this.openmct.composition.get(parent);
 
         if (parentComposition) {
-            objectIdentifiers = Array.from(parentComposition.domainObject.composition);
+            objectIdentifiers = Array.from(parent.composition);
         }
 
         //conditional object styles are not saved on the composition, so we need to check for them
@@ -205,20 +206,16 @@ export default class ImportAsJSONAction {
      * @param {object} model
      * @returns {object}
      */
-    _instantiate(model) {
-        return new Promise((resolve) => {
-            setTimeout(async () => {
-                try {
-                    await this.openmct.objects.save(model);
+    async _instantiate(model) {
+        try {
+            const result = await this.openmct.objects.save(model);
 
-                    resolve();
-                } catch (error) {
-                    this.openmct.notifications.error('Error saving objects');
+            return result;
+        } catch (error) {
+            this.openmct.notifications.error('Error saving objects');
 
-                    throw error;
-                }
-            }, 0);
-        });
+            throw error;
+        }
     }
     /**
      * @private
