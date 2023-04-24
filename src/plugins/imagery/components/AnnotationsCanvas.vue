@@ -64,13 +64,20 @@ export default {
     mounted() {
         this.canvas = this.$refs.canvas;
         this.context = this.canvas.getContext("2d");
-        console.debug(`🔮 AnnotationsCanvas mounted`, this.context);
+        this.openmct.selection.on('change', this.updateSelection);
         this.loadAnnotations();
     },
-    beforeDestroy() {
+    destroy() {
+        this.openmct.selection.off('change', this.updateSelection);
+        document.body.removeEventListener('click', this.cancelSelection);
     },
     methods: {
         async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
+
             // find annotations for this image time
             const annotationsForThisObject = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -92,13 +99,89 @@ export default {
                 this.drawAnnotations();
             }
         },
+        onAnnotationChange(annotations) {
+            this.selectedAnnotations = annotations;
+            this.loadAnnotations();
+        },
+        updateSelection(selection) {
+            const selectionContext = selection?.[0]?.[0]?.context?.item;
+            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
+            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
+            const selectionType = selection?.[0]?.[0]?.context?.type;
+            const validSelectionTypes = ['clicked-on-image-selection', 'image-annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'image-annotation-search-result';
+
+            if (!validSelectionTypes.includes(selectionType)) {
+                // wrong type of selection
+                return;
+            }
+
+            if (selectionContext
+                && (!isAnnotationSearchResult)
+                && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
+                return;
+            }
+
+            const incomingSelectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
+            //This section is only for the annotations search results entry to displaying annotations
+            if (isAnnotationSearchResult) {
+                // this.showAnnotationsFromSearchResults(incomingSelectedAnnotations);
+            }
+
+            //This section is common to all entry points for annotation display
+            this.prepareExistingAnnotationSelection(incomingSelectedAnnotations);
+        },
+
+        prepareExistingAnnotationSelection(annotations) {
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
+
+            const targetDetails = {};
+            const uniqueBoundsAnnotations = [];
+            annotations.forEach(annotation => {
+                Object.entries(annotation.targets).forEach(([key, value]) => {
+                    targetDetails[key] = value;
+                });
+
+                const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some(existingAnnotation => {
+                    const existingTime = Object.values(existingAnnotation.targets)[0].time;
+                    const newTime = Object.values(annotation.targets)[0].time;
+                    if (existingTime !== newTime) {
+                        return false;
+                    }
+
+                    const existingBoundingBox = Object.values(existingAnnotation.targets)[0].rectangle;
+                    const newBoundingBox = Object.values(annotation.targets)[0].rectangle;
+
+                    return (existingBoundingBox.x === newBoundingBox.x
+                        && existingBoundingBox.y === newBoundingBox.y
+                        && existingBoundingBox.height === newBoundingBox.height
+                        && existingBoundingBox.width === newBoundingBox.width);
+
+                });
+                if (!boundingBoxAlreadyAdded) {
+                    uniqueBoundsAnnotations.push(annotation);
+                }
+            });
+            this.selectedAnnotations = uniqueBoundsAnnotations;
+            this.drawAnnotations();
+
+            return {
+                targetDomainObjects,
+                targetDetails
+            };
+        },
         clearSelectedAnnotations() {
-            console.debug(`🐁 mouseDown`);
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother with new annotations if there are no tags
+                return;
+            }
+
             this.mouseDown = true;
             this.selectedAnnotations = [];
         },
         drawRectInCanvas(rectangle, fillStyle, strokeStyle) {
-            console.debug(`🪟 Drawing rectangle, ${rectangle.x} ${rectangle.y} ${rectangle.width} ${rectangle.height}`, rectangle);
             this.context.beginPath();
             this.context.lineWidth = "1";
             this.context.fillStyle = fillStyle;
@@ -111,7 +194,6 @@ export default {
             if (this.mouseDown && !this.dragging) {
                 this.startAnnotationDrag(event);
             } else if (this.dragging) {
-                console.debug(`🐭 mouseMove with existing drag: ${event.type}`);
                 const boundingRect = this.canvas.getBoundingClientRect();
                 const scaleX = this.canvas.width / boundingRect.width;
                 const scaleY = this.canvas.height / boundingRect.height;
@@ -139,34 +221,15 @@ export default {
 
             return selection;
         },
-        createNewAnnotation() {
-            this.dragging = false;
-            this.selectedAnnotations = [];
-
-            console.debug(`🖼️ Creating new image annotation of size ${this.newAnnotationRectangle.width}x${this.newAnnotationRectangle.height} at ${this.newAnnotationRectangle.x},${this.newAnnotationRectangle.y}`);
-
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const targetDetails = {};
-            targetDetails[keyString] = {
-                rectangle: {
-                    x: this.newAnnotationRectangle.x,
-                    y: this.newAnnotationRectangle.y,
-                    width: this.newAnnotationRectangle.width,
-                    height: this.newAnnotationRectangle.height
-                },
-                time: this.image.time
-            };
-            const targetDomainObjects = {};
-            targetDomainObjects[keyString] = this.domainObject;
+        selectImageAnnotations({targetDetails, targetDomainObjects, annotations}) {
             const annotationContext = {
                 type: 'clicked-on-image-selection',
                 targetDetails,
                 targetDomainObjects,
-                annotations: [],
+                annotations,
                 annotationType: this.openmct.annotation.ANNOTATION_TYPES.PIXEL_SPATIAL,
-                onAnnotationChange: null
+                onAnnotationChange: this.onAnnotationChange
             };
-
             const selection = this.createPathSelection();
             if (selection.length && this.openmct.objects.areIdsEqual(selection[0].context.item.identifier, this.domainObject.identifier)) {
                 selection[0].context = {
@@ -183,9 +246,46 @@ export default {
                 });
             }
 
-            console.debug(`🍊 firing selection event`, selection);
             this.openmct.selection.select(selection, true);
-            // would add cancel selection here
+
+            document.body.addEventListener('click', this.cancelSelection);
+        },
+        cancelSelection(event) {
+            if (this.$refs.canvas) {
+                const clickedInsideCanvas = this.$refs.canvas.contains(event.target);
+                const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
+                const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
+                if (!clickedInsideCanvas && !clickedInsideInspector && !clickedOption) {
+                    this.newAnnotationRectangle = {};
+                    this.selectedAnnotations = [];
+                    this.drawAnnotations();
+                }
+            }
+        },
+        createNewAnnotation() {
+            this.dragging = false;
+            this.selectedAnnotations = [];
+
+            console.debug(`🖼️ Creating new image annotation of size ${this.newAnnotationRectangle.width}x${this.newAnnotationRectangle.height} at ${this.newAnnotationRectangle.x},${this.newAnnotationRectangle.y}`);
+
+            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const targetDomainObjects = {};
+            targetDomainObjects[keyString] = this.domainObject;
+            const targetDetails = {};
+            targetDetails[keyString] = {
+                rectangle: {
+                    x: this.newAnnotationRectangle.x,
+                    y: this.newAnnotationRectangle.y,
+                    width: this.newAnnotationRectangle.width,
+                    height: this.newAnnotationRectangle.height
+                },
+                time: this.image.time
+            };
+            this.selectImageAnnotations({
+                targetDetails,
+                targetDomainObjects,
+                annotations: []
+            });
         },
         attemptToSelectExistingAnnotation(event) {
             this.dragging = false;
@@ -196,14 +296,21 @@ export default {
             const x = (event.clientX - boundingRect.left) * scaleX;
             const y = (event.clientY - boundingRect.top) * scaleY;
             if (this.annotationsIndex) {
+                let nearbyAnnotations = [];
                 const resultIndicies = this.annotationsIndex.search(x, y, x, y);
                 resultIndicies.forEach((resultIndex) => {
                     const foundAnnotation = this.indexToAnnotationMap[resultIndex];
                     console.debug(`🐭 found annotations at ${x} ${y}`, foundAnnotation);
 
-                    this.selectedAnnotations.push(foundAnnotation);
+                    nearbyAnnotations.push(foundAnnotation);
                 });
-                this.drawAnnotations();
+                //show annotations if some were found
+                const { targetDomainObjects, targetDetails } = this.prepareExistingAnnotationSelection(nearbyAnnotations);
+                this.selectImageAnnotations({
+                    targetDetails,
+                    targetDomainObjects,
+                    annotations: nearbyAnnotations
+                });
             }
         },
         selectOrCreateAnnotation(event) {
