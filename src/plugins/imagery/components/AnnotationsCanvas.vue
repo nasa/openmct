@@ -58,7 +58,6 @@ export default {
             dragging: false,
             mouseDown: false,
             newAnnotationRectangle: {},
-            annotationsForThisImage: [],
             keyString: null,
             context: null,
             canvas: null,
@@ -67,35 +66,34 @@ export default {
             indexToAnnotationMap: {}
         };
     },
+    watch: {
+        imageryAnnotations() {
+            this.buildAnnotationIndex();
+        }
+    },
     mounted() {
         this.canvas = this.$refs.canvas;
         this.context = this.canvas.getContext("2d");
         this.openmct.selection.on('change', this.updateSelection);
-        this.loadAnnotations();
+        this.buildAnnotationIndex();
     },
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
         document.body.removeEventListener('click', this.cancelSelection);
     },
     methods: {
-        async loadAnnotations() {
-            if (!this.openmct.annotation.getAvailableTags().length) {
-                // don't bother loading annotations if there are no tags
+        buildAnnotationIndex() {
+            if (!this.imageryAnnotations.length) {
                 return;
             }
 
             // find annotations for this image time
-            const annotationsForThisObject = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.annotationsForThisImage = annotationsForThisObject.filter((foundAnnotation) => {
-                const annotationTime = foundAnnotation.targets[this.keyString].time;
 
-                return annotationTime === this.image.time;
-            });
-            if (this.annotationsForThisImage.length) {
+            if (this.imageryAnnotations.length) {
             // create a flatbush index for the annotations
-                this.annotationsIndex = new Flatbush(this.annotationsForThisImage.length);
-                this.annotationsForThisImage.forEach((annotation) => {
+                this.annotationsIndex = new Flatbush(this.imageryAnnotations.length);
+                this.imageryAnnotations.forEach((annotation) => {
                     const annotationRectangle = annotation.targets[this.keyString].rectangle;
                     const indexNumber = this.annotationsIndex.add(annotationRectangle.x, annotationRectangle.y, annotationRectangle.x + annotationRectangle.width, annotationRectangle.y + annotationRectangle.height);
                     this.indexToAnnotationMap[indexNumber] = annotation;
@@ -107,7 +105,7 @@ export default {
         },
         onAnnotationChange(annotations) {
             this.selectedAnnotations = annotations;
-            this.loadAnnotations();
+            this.buildAnnotationIndex();
         },
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
@@ -139,9 +137,8 @@ export default {
         },
 
         prepareExistingAnnotationSelection(annotations) {
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const targetDomainObjects = {};
-            targetDomainObjects[keyString] = this.domainObject;
+            targetDomainObjects[this.keyString] = this.domainObject;
 
             const targetDetails = {};
             annotations.forEach(annotation => {
@@ -253,11 +250,10 @@ export default {
 
             console.debug(`🖼️ Creating new image annotation of size ${this.newAnnotationRectangle.width}x${this.newAnnotationRectangle.height} at ${this.newAnnotationRectangle.x},${this.newAnnotationRectangle.y}`);
 
-            const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const targetDomainObjects = {};
-            targetDomainObjects[keyString] = this.domainObject;
+            targetDomainObjects[this.keyString] = this.domainObject;
             const targetDetails = {};
-            targetDetails[keyString] = {
+            targetDetails[this.keyString] = {
                 rectangle: {
                     x: this.newAnnotationRectangle.x,
                     y: this.newAnnotationRectangle.y,
@@ -353,7 +349,7 @@ export default {
         },
         drawAnnotations() {
             this.clearCanvas();
-            this.annotationsForThisImage.forEach((annotation) => {
+            this.imageryAnnotations.forEach((annotation) => {
                 if (this.isSelectedAnnotation(annotation)) {
                     this.drawRectInCanvas(annotation.targets[this.keyString].rectangle, SELECTED_ANNOTATION_FILL_STYLE, SELECTED_ANNOTATION_STROKE_COLOR);
                 } else {
