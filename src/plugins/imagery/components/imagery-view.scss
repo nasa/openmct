@@ -284,6 +284,13 @@
         width: 100%;
     }
 
+    &__annotation-indicator {
+        color: $colorClickIconButton;
+        position: absolute;
+        top: 6px;
+        right: 8px;
+    }
+
     &__timestamp {
         flex: 0 0 auto;
         padding: 2px 3px;

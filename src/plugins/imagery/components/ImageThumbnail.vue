@@ -43,6 +43,8 @@
             fetchpriority="low"
             @load="imageLoadCompleted"
         >
+        <i class="c-thumb__annotation-indicator icon-status-poll-edit">
+        </i>
     </a>
     <div
         v-if="viewableArea"
