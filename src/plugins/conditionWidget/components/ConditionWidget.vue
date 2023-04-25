@@ -21,16 +21,25 @@
 *****************************************************************************/
 
 <template>
-<component
-    :is="urlDefined ? 'a' : 'span'"
+<span
     ref="conditionWidgetElement"
     class="c-condition-widget u-style-receiver js-style-receiver"
-    :href="url"
 >
-    <div class="c-condition-widget__label">
+    <div
+        v-if="!urlDefined"
+        class="c-condition-widget__label"
+    >
         {{ label }}
     </div>
-</component>
+    <a
+        v-if="urlDefined"
+        :href="url"
+    >
+        <div class="c-condition-widget__label">
+            {{ label }}
+        </div>
+    </a>
+</span>
 </template>
 
 <script>
@@ -75,8 +84,7 @@ export default {
             deep: true
         },
         urlDefined() {
-            console.log(this.urlDefined);
-            this.updateElementDataset();
+            // this.updateElementDataset();
         }
     },
     mounted() {
@@ -129,17 +137,17 @@ export default {
             this.conditionalLabel = latestDatum.output || '';
         },
         async updateElementDataset() {
-            console.log('update');
-            let element = this.$refs.conditionWidgetElement;
-            let dataset = element.dataset;
-            const keys = Object.keys(dataset);
+            const elementBeforeUpdate = this.$refs.conditionWidgetElement;
+            const datasetBeforeUpdate = elementBeforeUpdate.dataset;
+            const entries = Object.entries(datasetBeforeUpdate);
 
-            console.log(Object.keys(dataset));
             await this.$nextTick();
-            element = this.$refs.conditionWidgetElement;
-            dataset = element.dataset;
+            const elementAfterUpdate = this.$refs.conditionWidgetElement;
+            const datasetAfterUpdate = elementAfterUpdate.dataset;
 
-            console.log(Object.keys(dataset));
+            entries.forEach(([key, value]) => {
+                datasetAfterUpdate[key] = value;
+            });
         }
     }
 };
