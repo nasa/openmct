@@ -97,7 +97,7 @@
                     :sized-image-dimensions="sizedImageDimensions"
                 />
                 <AnnotationsCanvas
-                    v-if="shouldDisplayCompass"
+                    v-if="shouldDisplayAnnotations"
                     :image="focusedImage"
                     :imagery-annotations="imageryAnnotations[focusedImage.time]"
                 />
@@ -428,6 +428,19 @@ export default {
             }
 
             return result;
+        },
+        shouldDisplayAnnotations() {
+            const imageHeightAndWidth = this.sizedImageHeight !== 0
+                && this.sizedImageWidth !== 0;
+            const display = this.focusedImage !== undefined
+                && this.focusedImageNaturalAspectRatio !== undefined
+                && this.imageContainerWidth !== undefined
+                && this.imageContainerHeight !== undefined
+                && imageHeightAndWidth
+                && this.zoomFactor === 1
+                && this.imagePanned !== true;
+
+            return display;
         },
         shouldDisplayCompass() {
             const imageHeightAndWidth = this.sizedImageHeight !== 0
@@ -763,7 +776,7 @@ export default {
 
             const incomingSelectedAnnotation = selection?.[0]?.[0]?.context?.annotations?.[0];
             console.debug(`📲 incoming search selections`, incomingSelectedAnnotation);
-            // for incoming search results, we should:
+            // TODO: for incoming search results, we should:
             // 1. set the the time bounds to match the search result
             // 2. search the imageHistory for the image that matches the time of the search result
             // 3. using the index from the above, "click" on the image to select it
