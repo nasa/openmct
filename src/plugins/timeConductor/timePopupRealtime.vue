@@ -232,6 +232,10 @@ export default {
             // change to text, select, then change back to number
             // number inputs do not support select()
             this.$nextTick(() => {
+                if (this.$refs[input] === undefined) {
+                    return;
+                }
+
                 this.$refs[input].setAttribute('type', 'text');
                 this.$refs[input].select();
 
