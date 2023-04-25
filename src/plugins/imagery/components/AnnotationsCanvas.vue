@@ -74,6 +74,7 @@ export default {
     mounted() {
         this.canvas = this.$refs.canvas;
         this.context = this.canvas.getContext("2d");
+        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.openmct.selection.on('change', this.updateSelection);
         this.buildAnnotationIndex();
     },
@@ -86,9 +87,6 @@ export default {
             if (!this.imageryAnnotations.length) {
                 return;
             }
-
-            // find annotations for this image time
-            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             if (this.imageryAnnotations.length) {
             // create a flatbush index for the annotations
