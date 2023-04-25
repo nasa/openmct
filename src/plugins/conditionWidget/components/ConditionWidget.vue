@@ -25,20 +25,19 @@
     ref="conditionWidgetElement"
     class="c-condition-widget u-style-receiver js-style-receiver"
 >
+    <a
+        v-if="urlDefined"
+        class="c-condition-widget__label"
+        :href="url"
+    >
+        {{ label }}
+    </a>
     <div
-        v-if="!urlDefined"
+        v-else
         class="c-condition-widget__label"
     >
         {{ label }}
     </div>
-    <a
-        v-if="urlDefined"
-        :href="url"
-    >
-        <div class="c-condition-widget__label">
-            {{ label }}
-        </div>
-    </a>
 </span>
 </template>
 
