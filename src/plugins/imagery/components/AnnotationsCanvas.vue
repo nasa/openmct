@@ -84,12 +84,8 @@ export default {
     },
     methods: {
         buildAnnotationIndex() {
-            if (!this.imageryAnnotations.length) {
-                return;
-            }
-
             if (this.imageryAnnotations.length) {
-            // create a flatbush index for the annotations
+                // create a flatbush index for the annotations
                 this.annotationsIndex = new Flatbush(this.imageryAnnotations.length);
                 this.imageryAnnotations.forEach((annotation) => {
                     const annotationRectangle = annotation.targets[this.keyString].rectangle;
@@ -236,8 +232,6 @@ export default {
             this.dragging = false;
             this.selectedAnnotations = [];
 
-            console.debug(`🖼️ Creating new image annotation of size ${this.newAnnotationRectangle.width}x${this.newAnnotationRectangle.height} at ${this.newAnnotationRectangle.x},${this.newAnnotationRectangle.y}`);
-
             const targetDomainObjects = {};
             targetDomainObjects[this.keyString] = this.domainObject;
             const targetDetails = {};
@@ -269,7 +263,6 @@ export default {
                 const resultIndicies = this.annotationsIndex.search(x, y, x, y);
                 resultIndicies.forEach((resultIndex) => {
                     const foundAnnotation = this.indexToAnnotationMap[resultIndex];
-                    console.debug(`🐭 found annotations at ${x} ${y}`, foundAnnotation);
 
                     nearbyAnnotations.push(foundAnnotation);
                 });
@@ -285,13 +278,10 @@ export default {
         selectOrCreateAnnotation(event) {
             event.stopPropagation();
             this.mouseDown = false;
-            console.debug(`🐭 mouseClick`);
             if ((!this.dragging) || (!this.newAnnotationRectangle.width && !this.newAnnotationRectangle.height)) {
-                console.debug(`🐭 checking for existing annotations`);
                 this.newAnnotationRectangle = {};
                 this.attemptToSelectExistingAnnotation(event);
             } else {
-                console.debug(`🐭 creating new annotation`);
                 this.createNewAnnotation();
             }
 
@@ -316,7 +306,6 @@ export default {
             return selection;
         },
         startAnnotationDrag(event) {
-            console.debug(`🐭 mouseMoving for new drag`);
             this.newAnnotationRectangle = {};
             const boundingRect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / boundingRect.width;
@@ -331,7 +320,6 @@ export default {
             const someSelectedAnnotationExists = this.selectedAnnotations.some((selectedAnnotation) => {
                 return this.openmct.objects.areIdsEqual(selectedAnnotation.identifier, annotation.identifier);
             });
-            console.debug(`someSelectedAnnotationExists`, someSelectedAnnotationExists);
 
             return someSelectedAnnotationExists;
         },
