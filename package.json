@@ -30,7 +30,7 @@
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "eventemitter3": "1.2.0",
     "file-saver": "2.0.5",
-    "flatbush": "^4.1.0",
+    "flatbush": "4.1.0",
     "git-rev-sync": "3.0.2",
     "html2canvas": "1.4.1",
     "imports-loader": "4.0.1",
