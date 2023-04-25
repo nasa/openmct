@@ -43,7 +43,10 @@
             fetchpriority="low"
             @load="imageLoadCompleted"
         >
-        <i class="c-thumb__annotation-indicator icon-status-poll-edit">
+        <i
+            v-show="showAnnotationIndicator"
+            class="c-thumb__annotation-indicator icon-status-poll-edit"
+        >
         </i>
     </a>
     <div
@@ -76,6 +79,12 @@ export default {
         realTime: {
             type: Boolean,
             required: true
+        },
+        imageryAnnotations: {
+            type: Array,
+            default() {
+                return [];
+            }
         },
         viewableArea: {
             type: Object,
@@ -136,6 +145,9 @@ export default {
                 'width': `${width}px`,
                 'height': `${height}px`
             };
+        },
+        showAnnotationIndicator() {
+            return this.imageryAnnotations?.length > 0;
         }
     },
     methods: {

@@ -99,6 +99,7 @@
                 <AnnotationsCanvas
                     v-if="shouldDisplayCompass"
                     :image="focusedImage"
+                    :imagery-annotations="imageryAnnotations[focusedImage.time]"
                 />
             </div>
         </div>
@@ -177,6 +178,7 @@
                 :key="`${image.thumbnailUrl || image.url}-${image.time}-${index}`"
                 :image="image"
                 :active="focusedImageIndex === index"
+                :imagery-annotations="imageryAnnotations[image.time]"
                 :selected="focusedImageIndex === index && isPaused"
                 :real-time="!isFixed"
                 :viewable-area="focusedImageIndex === index ? viewableArea : null"
@@ -301,7 +303,9 @@ export default {
             animateZoom: true,
             imagePanned: false,
             forceShowThumbnails: false,
-            animateThumbScroll: false
+            animateThumbScroll: false,
+            imageryAnnotations: {},
+            lastLocalAnnotationCreation: 0
         };
     },
     computed: {
@@ -679,6 +683,8 @@ export default {
 
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         this.loadVisibleLayers();
+        this.loadAnnotations();
+        this.unobserveAnnotationLastCreated = this.openmct.objects.observe(this.domainObject, 'annotationLastCreated', this.checkForNewAnnotations);
     },
     beforeDestroy() {
         this.persistVisibleLayers();
@@ -707,6 +713,16 @@ export default {
 
         this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
 
+        Object.keys(this.imageryAnnotations).forEach(time => {
+            const imageAnnotationsForTime = this.imageryAnnotations[time];
+            imageAnnotationsForTime.forEach(imageAnnotation => {
+                this.openmct.objects.destroyMutable(imageAnnotation);
+            });
+        });
+
+        if (this.unobserveAnnotationLastCreated) {
+            this.unobserveAnnotationLastCreated();
+        }
     },
     methods: {
         calculateViewHeight() {
@@ -818,6 +834,37 @@ export default {
                 this.layers.forEach((layer) => {
                     layer.visible = false;
                 });
+            }
+        },
+        async loadAnnotations() {
+            if (!this.openmct.annotation.getAvailableTags().length) {
+                // don't bother loading annotations if there are no tags
+                return;
+            }
+
+            this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
+
+            const foundAnnotations = await this.openmct.annotation.getAnnotations(this.domainObject.identifier);
+            foundAnnotations.forEach((foundAnnotation) => {
+                const targetId = Object.keys(foundAnnotation.targets)[0];
+                const timeForAnnotation = foundAnnotation.targets[targetId].time;
+                if (!this.imageryAnnotations[timeForAnnotation]) {
+                    this.$set(this.imageryAnnotations, timeForAnnotation, []);
+                }
+
+                const annotationExtant = this.imageryAnnotations[timeForAnnotation].some((existingAnnotation) => {
+                    return this.openmct.objects.areIdsEqual(existingAnnotation.identifier, foundAnnotation.identifier);
+                });
+                if (!annotationExtant) {
+                    const annotationArray = this.imageryAnnotations[timeForAnnotation];
+                    const mutableAnnotation = this.openmct.objects.toMutable(foundAnnotation);
+                    annotationArray.push(mutableAnnotation);
+                }
+            });
+        },
+        checkForNewAnnotations() {
+            if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
+                this.loadAnnotations();
             }
         },
         persistVisibleLayers() {

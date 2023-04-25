@@ -45,6 +45,12 @@ export default {
         image: {
             type: Object,
             required: true
+        },
+        imageryAnnotations: {
+            type: Array,
+            default() {
+                return [];
+            }
         }
     },
     data() {
@@ -67,7 +73,7 @@ export default {
         this.openmct.selection.on('change', this.updateSelection);
         this.loadAnnotations();
     },
-    destroy() {
+    beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
         document.body.removeEventListener('click', this.cancelSelection);
     },
