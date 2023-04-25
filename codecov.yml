@@ -15,14 +15,14 @@ coverage:
 
 flags:
   unit:
-    carryforward: true 
-  e2e-ci:
-    carryforward: true
+    carryforward: false
+  e2e-stable:
+    carryforward: false
   e2e-full:
     carryforward: true    
 
 comment:
-  layout: "reach,diff,flags,files,footer"
+  layout: "diff,flags,files,footer"
   behavior: default
   require_changes: false
   show_carryforward_flags: true

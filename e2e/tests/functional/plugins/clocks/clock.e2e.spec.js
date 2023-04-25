@@ -34,7 +34,7 @@ test.describe('Clock Generator CRUD Operations', () => {
             description: 'https://github.com/nasa/openmct/issues/4878'
         });
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');

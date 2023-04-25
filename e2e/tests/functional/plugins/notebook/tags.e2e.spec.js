@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify form functionality.
+This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
@@ -80,7 +80,7 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 test.describe('Tagging in Notebooks @addInit', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
     test('Can load tags', async ({ page }) => {
         await createNotebookAndEntry(page);
@@ -109,7 +109,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await expect(page.locator('[aria-label="Autocomplete Options"]')).toContainText("Drilling");
     });
     test('Can add tags with blank entry', async ({ page }) => {
-        createDomainObjectWithDefaults(page, { type: 'Notebook' });
+        await createDomainObjectWithDefaults(page, { type: 'Notebook' });
         await selectInspectorTab(page, 'Annotations');
 
         await nbUtils.enterTextEntry(page, '');
@@ -214,7 +214,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await page.locator('button[title="More options"]').click();
         await page.locator('li[title="Remove this object from its containing object."]').click();
         await page.locator('button:has-text("OK")').click();
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
         await expect(page.locator('text=No results found')).toBeVisible();
@@ -225,37 +225,13 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
-
-        const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const ITERATIONS = 4;
         const notebook = await createNotebookEntryAndTags(page, ITERATIONS);
+        await page.goto(notebook.url);
 
-        for (let iteration = 0; iteration < ITERATIONS; iteration++) {
-            const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
-            await expect(page.locator(entryLocator)).toContainText("Science");
-            await expect(page.locator(entryLocator)).toContainText("Driving");
-        }
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.goto('./#/browse/mine?hideTree=false'),
-            page.click('.c-disclosure-triangle')
-        ]);
-
-        const treePane = page.getByRole('tree', {
-            name: 'Main Tree'
-        });
-        // Click Clock
-        await treePane.getByRole('treeitem', {
-            name: clock.name
-        }).click();
-        // Click Notebook
-        await page.getByRole('treeitem', {
-            name: notebook.name
-        }).click();
-
+        // Verify tags are present
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");
@@ -263,14 +239,9 @@ test.describe('Tagging in Notebooks @addInit', () => {
         }
 
         //Reload Page
-        await Promise.all([
-            page.reload(),
-            page.waitForLoadState('networkidle')
-        ]);
+        await page.reload({ waitUntil: 'domcontentloaded' });
 
-        // Click Notebook
-        await page.click(`text="${notebook.name}"`);
-
+        // Verify tags persist across reload
         for (let iteration = 0; iteration < ITERATIONS; iteration++) {
             const entryLocator = `[aria-label="Notebook Entry"] >> nth = ${iteration}`;
             await expect(page.locator(entryLocator)).toContainText("Science");

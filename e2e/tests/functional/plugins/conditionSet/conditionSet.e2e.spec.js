@@ -37,7 +37,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
         //TODO: This needs to be refactored
         const context = await browser.newContext();
         const page = await context.newPage();
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         await page.click('button:has-text("Create")');
 
         await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
@@ -148,7 +148,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     });
     test('condition set object can be deleted by Search Tree Actions menu on @localStorage', async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
         await expect(page.locator('a:has-text("Unnamed Condition Set Condition Set") >> nth=0')).toBeVisible();
@@ -182,7 +182,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 test.describe('Basic Condition Set Use', () => {
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all network events to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
     test('Can add a condition', async ({ page }) => {
         // Create a new condition set
@@ -247,7 +247,7 @@ test.describe('Basic Condition Set Use', () => {
     });
     test('ConditionSet should output blank instead of the default value', async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         //Click the Create button
         await page.click('button:has-text("Create")');
