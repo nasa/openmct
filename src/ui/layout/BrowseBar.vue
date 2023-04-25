@@ -40,7 +40,7 @@
         >
             <independent-time-conductor
                 :domain-object="domainObject"
-                :object-path="[domainObject]"
+                :object-path="openmct.router.path"
                 @stateChanged="updateIndependentTimeState"
                 @updated="saveTimeOptions"
             />
