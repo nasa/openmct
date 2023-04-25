@@ -34,6 +34,9 @@ export default {
         this.registerPopUp();
         this.popupComponent = this.createPopupComponent();
     },
+    beforeDestroy() {
+        this.removePopup();
+    },
     methods: {
         showPopup() {
             const popupElement = this.popupComponent;
@@ -101,8 +104,7 @@ export default {
                 },
                 provide: {
                     openmct: this.openmct,
-                    configuration: this.configuration,
-                    objectPath: []
+                    configuration: this.configuration
                 },
                 data() {
                     return {

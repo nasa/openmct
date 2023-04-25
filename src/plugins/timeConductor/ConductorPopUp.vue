@@ -15,9 +15,9 @@
         <Mode
             v-if="isIndependent"
             class="c-button--compact c-conductor__mode-select"
-            :mode="timeOptions.mode"
+            :mode="timeOptionMode"
             :button-css-class="'c-button--compact'"
-            @modeChanged="saveMode"
+            @modeChanged="saveIndependentMode"
         />
         <ConductorMode
             v-else
@@ -44,12 +44,14 @@
     <conductor-inputs-fixed
         v-if="isFixed"
         :input-bounds="bounds"
+        :object-path="objectPath"
         @updated="saveFixedBounds"
         @dismiss="dismiss"
     />
     <conductor-inputs-realtime
         v-else
         :input-bounds="bounds"
+        :object-path="objectPath"
         @updated="saveClockOffsets"
         @dismiss="dismiss"
     />
@@ -74,7 +76,7 @@ export default {
         ConductorInputsFixed,
         ConductorInputsRealtime
     },
-    inject: ['openmct', 'objectPath', 'configuration'],
+    inject: ['openmct', 'configuration'],
     props: {
         positionX: {
             type: Number,
@@ -93,13 +95,19 @@ export default {
         timeOptions: {
             type: Object,
             default() {
-                return {};
+                return undefined;
             }
         },
         bottom: {
             type: Boolean,
             default() {
                 return false;
+            }
+        },
+        objectPath: {
+            type: Array,
+            default() {
+                return [];
             }
         }
     },
@@ -133,12 +141,19 @@ export default {
             const value = this.bottom ? 'c-tc-input-popup--bottom' : '';
 
             return this.isFixed ? `${value} c-tc-input-popup--fixed-mode` : `${value} c-tc-input-popup--realtime-mode`;
+        },
+        timeOptionMode() {
+            return this.timeOptions?.mode;
         }
     },
     watch: {
         objectPath: {
-            handler() {
+            handler(newPath, oldPath) {
                 //domain object or view has probably changed
+                if (newPath === oldPath) {
+                    return;
+                }
+
                 this.setTimeContext();
             },
             deep: true
@@ -180,6 +195,9 @@ export default {
         },
         saveMode(option) {
             this.$emit('modeUpdated', option);
+        },
+        saveIndependentMode(mode) {
+            this.$emit('independentModeUpdated', mode);
         },
         dismiss() {
             this.$emit('dismiss');
