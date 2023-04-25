@@ -34,6 +34,9 @@ export default {
         this.registerPopUp();
         this.popupComponent = this.createPopupComponent();
     },
+    beforeDestroy() {
+        this.removePopup();
+    },
     methods: {
         showPopup() {
             if (!this.independentTCEnabled) {
@@ -98,6 +101,8 @@ export default {
             const saveClockOffsets = this.saveClockOffsets;
             const saveMode = this.saveMode;
             const removePopup = this.removePopup;
+            const objectPath = this.objectPath;
+            const timeOptions = this.timeOptions;
 
             const popupElement = new Vue({
                 components: {
@@ -105,8 +110,7 @@ export default {
                 },
                 provide: {
                     openmct: this.openmct,
-                    configuration: undefined,
-                    objectPath: this.objectPath
+                    configuration: undefined
                 },
                 data() {
                     return {
@@ -116,14 +120,16 @@ export default {
                         saveFixedBounds,
                         saveMode,
                         removePopup,
-                        timeOptions: this.timeOptions
+                        timeOptions,
+                        objectPath
                     };
                 },
                 template: `<conductor-pop-up 
                     @dismiss="removePopup()" 
-                    @modeUpdated="saveMode" 
-                    @fixedBoundsUpdated="saveFixedBounds" 
+                    @independentModeUpdated="saveMode" 
+                    @fixedBoundsUpdated="saveFixedBounds"
                     @clockOffsetsUpdated="saveClockOffsets" 
+                    :object-path="objectPath"
                     :is-independent="true"
                     :time-options="timeOptions"
                     :bottom="true" 

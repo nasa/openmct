@@ -77,7 +77,11 @@ export default {
     },
     watch: {
         objectPath: {
-            handler() {
+            handler(newPath, oldPath) {
+                if (newPath === oldPath) {
+                    return;
+                }
+
                 this.setTimeContext();
             },
             deep: true
