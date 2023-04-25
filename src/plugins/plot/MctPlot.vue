@@ -214,7 +214,6 @@ import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
-import KDBush from 'kdbush';
 import Flatbush from 'flatbush';
 import _ from "lodash";
 
@@ -427,8 +426,8 @@ export default {
             // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
             // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
             const selectionType = selection?.[0]?.[0]?.context?.type;
-            const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
-            const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
+            const validSelectionTypes = ['clicked-on-plot-selection', 'annotation-search-result'];
+            const isAnnotationSearchResult = selectionType === 'annotation-search-result';
 
             if (!validSelectionTypes.includes(selectionType)) {
                 // wrong type of selection
@@ -1349,19 +1348,6 @@ export default {
 
             return annotationsByPoints.flat();
         },
-        searchWithKDTree(seriesData, seriesModel, boundingBox) {
-            const kdTree = new KDBush(seriesData,
-                (point) => {
-                    return seriesModel.getXVal(point);
-                },
-                (point) => {
-                    return seriesModel.getYVal(point);
-                }
-            );
-            const rangeResults = kdTree.range(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
-
-            return rangeResults;
-        },
         searchWithFlatbush(seriesData, seriesModel, boundingBox) {
             const flatbush = new Flatbush(seriesData.length);
             seriesData.forEach(point => {
@@ -1389,14 +1375,7 @@ export default {
                 const seriesData = seriesModel.getSeriesData();
                 if (seriesData && seriesData.length) {
                     const searchResults = [];
-                    let startTime = Date.now();
-                    let rangeResults = this.searchWithKDTree(seriesData, seriesModel, boundingBox);
-                    let endTime = Date.now();
-                    console.debug(`KD Tree Annotation search took ${endTime - startTime} ms for ${seriesData.length} points`);
-                    startTime = Date.now();
-                    rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
-                    endTime = Date.now();
-                    console.debug(`Flatbush Tree Annotation search took ${endTime - startTime} ms for ${seriesData.length} points`);
+                    const rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
                     rangeResults.forEach(id => {
                         const seriesDatum = seriesData[id];
                         if (seriesDatum) {
