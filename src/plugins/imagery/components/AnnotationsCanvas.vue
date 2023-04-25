@@ -109,11 +109,8 @@ export default {
         },
         updateSelection(selection) {
             const selectionContext = selection?.[0]?.[0]?.context?.item;
-            // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
-            // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
             const selectionType = selection?.[0]?.[0]?.context?.type;
-            const validSelectionTypes = ['clicked-on-image-selection', 'image-annotation-search-result'];
-            const isAnnotationSearchResult = selectionType === 'image-annotation-search-result';
+            const validSelectionTypes = ['clicked-on-image-selection'];
 
             if (!validSelectionTypes.includes(selectionType)) {
                 // wrong type of selection
@@ -121,21 +118,14 @@ export default {
             }
 
             if (selectionContext
-                && (!isAnnotationSearchResult)
                 && this.openmct.objects.areIdsEqual(selectionContext.identifier, this.domainObject.identifier)) {
                 return;
             }
 
             const incomingSelectedAnnotations = selection?.[0]?.[0]?.context?.annotations;
-            //This section is only for the annotations search results entry to displaying annotations
-            if (isAnnotationSearchResult) {
-                // this.showAnnotationsFromSearchResults(incomingSelectedAnnotations);
-            }
 
-            //This section is common to all entry points for annotation display
             this.prepareExistingAnnotationSelection(incomingSelectedAnnotations);
         },
-
         prepareExistingAnnotationSelection(annotations) {
             const targetDomainObjects = {};
             targetDomainObjects[this.keyString] = this.domainObject;
