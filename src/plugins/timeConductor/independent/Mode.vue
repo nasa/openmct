@@ -43,9 +43,10 @@
 
 <script>
 import toggleMixin from '../../../ui/mixins/toggle-mixin';
+import modeMixin from '../mode-mixin';
 
 export default {
-    mixins: [toggleMixin],
+    mixins: [toggleMixin, modeMixin],
     inject: ['openmct'],
     props: {
         mode: {
@@ -59,32 +60,20 @@ export default {
             default() {
                 return false;
             }
-        },
-        buttonCssClass: {
-            type: String,
-            required: false,
-            default() {
-                return '';
-            }
         }
     },
     data: function () {
-        let clock;
-        if (this.mode && this.mode.key === 'fixed') {
-            clock = undefined;
-        } else {
-        //We want the clock from the global time context here
-            clock = this.openmct.time.clock();
-        }
-
-        if (clock !== undefined) {
-        //Create copy of active clock so the time API does not get reactified.
-            clock = Object.create(clock);
+        const clock = this.getActiveClock();
+        let mode = 'fixed';
+        if (this.mode?.key !== 'fixed') {
+            mode = 'real-time';
         }
 
         return {
-            selectedMode: this.getModeOptionForClock(clock),
-            modes: []
+            selectedMode: this.getModeMetadata(mode),
+            selectedClock: clock ? this.getClockMetadata(clock) : undefined,
+            modes: [],
+            clocks: []
         };
     },
     watch: {
@@ -109,16 +98,7 @@ export default {
 
         this.followTimeConductor();
     },
-    destroyed: function () {
-        this.stopFollowTimeConductor();
-    },
     methods: {
-        followTimeConductor() {
-            this.openmct.time.on('clock', this.setViewFromClock);
-        },
-        stopFollowTimeConductor() {
-            this.openmct.time.off('clock', this.setViewFromClock);
-        },
         showModesMenu() {
             const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
@@ -130,13 +110,23 @@ export default {
             };
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
+        showClocksMenu() {
+            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
+            const menuOptions = {
+                menuClass: 'c-conductor__clock-menu',
+                placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
+            };
+            this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
+        },
         getMenuOptions() {
-            let clocks = [{
+            let menuOptions = [{
                 name: 'Fixed Timespan',
                 timeSystem: 'utc'
             }];
-            let currentGlobalClock = this.openmct.time.clock();
+            let currentGlobalClock = this.getActiveClock();
             if (currentGlobalClock !== undefined) {
             //Create copy of active clock so the time API does not get reactified.
                 currentGlobalClock = Object.assign({}, {
@@ -145,90 +135,37 @@ export default {
                     timeSystem: this.openmct.time.timeSystem().key
                 });
 
-                clocks.push(currentGlobalClock);
+                menuOptions.push(currentGlobalClock);
             }
 
-            return clocks;
+            return menuOptions;
         },
-        loadClocks() {
-            let clocks = this.getMenuOptions()
-                .map(menuOption => menuOption.clock)
-                .filter(isDefinedAndUnique)
-                .map(this.getClock);
-
-            /*
-         * Populate the modes menu with metadata from the available clocks
-         * "Fixed Mode" is always first, and has no defined clock
-         */
-            this.modes = [undefined]
-                .concat(clocks)
-                .map(this.getModeOptionForClock);
-
-            function isDefinedAndUnique(key, index, array) {
-                return key !== undefined && array.indexOf(key) === index;
-            }
-        },
-
-        getModeOptionForClock(clock) {
-            if (clock === undefined) {
-                const key = 'fixed';
-
-                return {
-                    key,
-                    name: 'Fixed Timespan',
-                    description: 'Query and explore data that falls between two fixed datetimes.',
-                    cssClass: 'icon-tabular',
-                    onItemClicked: () => this.setOption(key)
-                };
-            } else {
-                const key = clock.key;
-
-                return {
-                    key,
-                    name: clock.name,
-                    description: "Monitor streaming data in real-time. The Time "
-              + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
-                    cssClass: clock.cssClass || 'icon-clock',
-                    onItemClicked: () => this.setOption(key)
-                };
-            }
-        },
-
-        getClock(key) {
-            return this.openmct.time.getAllClocks().filter(function (clock) {
-                return clock.key === key;
-            })[0];
-        },
-
-        setOption(clockKey) {
-            let key = clockKey;
-            if (clockKey === 'fixed') {
-                key = undefined;
-            }
+        setMode(modeKey) {
+            let key = modeKey;
 
             const matchingOptions = this.getMenuOptions().filter(option => option.clock === key);
             const clock = matchingOptions.length && matchingOptions[0].clock ? Object.assign({}, matchingOptions[0], { key: matchingOptions[0].clock }) : undefined;
-            this.selectedMode = this.getModeOptionForClock(clock);
+            this.selectedMode = this.getModeMetadata(clock);
 
             if (this.mode) {
-                this.$emit('modeChanged', { key: clockKey });
+                this.$emit('modeChanged', { key: modeKey });
             }
         },
-
         setViewFromClock(clock) {
-            this.loadClocks();
+            const menuOptions = this.getMenuOptions();
+            this.loadModesAndClocks(menuOptions);
             //retain the mode chosen by the user
             if (this.mode) {
                 let found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
                 if (!found) {
                     found = this.modes.find(mode => mode.key === clock && clock.key);
-                    this.setOption(found ? this.getModeOptionForClock(clock).key : this.getModeOptionForClock().key);
+                    this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
                 } else if (this.mode.key !== this.selectedMode.key) {
-                    this.setOption(this.selectedMode.key);
+                    this.setMode(this.selectedMode.key);
                 }
             } else {
-                this.setOption(this.getModeOptionForClock(clock).key);
+                this.setMode(this.getModeMetadata(clock).key);
             }
         }
     }
