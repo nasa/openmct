@@ -75,9 +75,6 @@ export default {
                 this.listenToConditionSetChanges();
             },
             deep: true
-        },
-        urlDefined() {
-            // this.updateElementDataset();
         }
     },
     mounted() {
@@ -86,10 +83,6 @@ export default {
         }
     },
     beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
-
         this.stopListeningToConditionSetChanges();
     },
     methods: {
@@ -128,19 +121,6 @@ export default {
             }
 
             this.conditionalLabel = latestDatum.output || '';
-        },
-        async updateElementDataset() {
-            const elementBeforeUpdate = this.$refs.conditionWidgetElement;
-            const datasetBeforeUpdate = elementBeforeUpdate.dataset;
-            const entries = Object.entries(datasetBeforeUpdate);
-
-            await this.$nextTick();
-            const elementAfterUpdate = this.$refs.conditionWidgetElement;
-            const datasetAfterUpdate = elementAfterUpdate.dataset;
-
-            entries.forEach(([key, value]) => {
-                datasetAfterUpdate[key] = value;
-            });
         }
     }
 };
