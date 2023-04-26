@@ -21,24 +21,18 @@
 *****************************************************************************/
 
 <template>
-<span
+<div
     ref="conditionWidgetElement"
     class="c-condition-widget u-style-receiver js-style-receiver"
 >
-    <a
-        v-if="urlDefined"
-        class="c-condition-widget__label"
+    <component
+        :is="urlDefined ? 'a' : 'div'"
+        class="c-condition-widget__label-wrapper"
         :href="url"
     >
-        {{ label }}
-    </a>
-    <div
-        v-else
-        class="c-condition-widget__label"
-    >
-        {{ label }}
-    </div>
-</span>
+        <div class="c-condition-widget__label">{{ label }}</div>
+    </component>
+</div>
 </template>
 
 <script>
