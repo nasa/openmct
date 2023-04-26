@@ -13,7 +13,12 @@
         padding: 3px;
         @include smallerControlButtons; // Make button in frame headers a bit smaller
 
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
         .c-object-label {
+            flex: 0 0 auto; // Don't shrink me!
             font-size: 1.05em;
             min-width: 20%;
 

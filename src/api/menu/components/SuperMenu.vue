@@ -68,7 +68,10 @@
     </ul>
 
     <div class="c-super-menu__item-description">
-        <div :class="['l-item-description__icon', 'bg-' + hoveredItem.cssClass]"></div>
+        <div
+            v-if="hoveredItem.showIconInSuperMenu"
+            :class="['l-item-description__icon', 'bg-' + hoveredItem.cssClass]"
+        ></div>
         <div class="l-item-description__name">
             {{ hoveredItem.name }}
         </div>
@@ -88,11 +91,12 @@ export default {
         };
     },
     methods: {
-        toggleItemDescription(action = {}) {
+        toggleItemDescription: function (action = {}) {
             const hoveredItem = {
                 name: action.name,
                 description: action.description,
-                cssClass: action.cssClass
+                cssClass: action.cssClass,
+                showIconInSuperMenu: action.showIconInSuperMenu !== false
             };
 
             this.hoveredItem = Object.assign({}, this.hoveredItem, hoveredItem);

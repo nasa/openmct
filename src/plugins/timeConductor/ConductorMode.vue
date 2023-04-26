@@ -118,6 +118,7 @@ export default {
                     name: 'Fixed Timespan',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular',
+                    showIconInSuperMenu: false,
                     testId: 'conductor-modeOption-fixed',
                     onItemClicked: () => this.setOption(key)
                 };
@@ -127,9 +128,9 @@ export default {
                 return {
                     key,
                     name: clock.name,
-                    description: "Monitor streaming data in real-time. The Time "
-                    + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
+                    description: "Monitor streaming data in real-time. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock',
+                    showIconInSuperMenu: false,
                     testId: 'conductor-modeOption-realtime',
                     onItemClicked: () => this.setOption(key)
                 };

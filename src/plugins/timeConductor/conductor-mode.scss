@@ -1,9 +1,6 @@
 .c-conductor__mode-menu {
-    max-height: 80vh;
-    max-width: 500px;
-    min-height: 50px;
-    //We don't need the z-index now that we're using the popup
-    //z-index: 70;
+    height: 120px;
+    width: 500px;
 
     [class*="__icon"] {
         filter: $colorKeyFilter;

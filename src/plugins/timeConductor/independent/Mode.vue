@@ -186,8 +186,7 @@ export default {
                 return {
                     key,
                     name: clock.name,
-                    description: "Monitor streaming data in real-time. The Time "
-              + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
+                    description: "Monitor data streaming in real-time. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock',
                     onItemClicked: () => this.setOption(key)
                 };

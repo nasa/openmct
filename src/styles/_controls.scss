@@ -667,19 +667,18 @@ select {
         flex-direction: column;
         justify-content: stretch;
 
-        .l-item-description {
-            &__name,
-            &__description {
-                margin-top: $interiorMarginLg;
-            }
+        > * + * {
+            margin-top: $interiorMarginLg;
+        }
 
+        .l-item-description {
             &__icon {
                 min-height: 20%;
                 margin: 10% 25%;
             }
 
             &__name {
-                color: $colorMenuFg;
+                color: $colorMenuFgEm;
                 flex: 0 0 auto;
                 font-size: 1.25em;
             }
