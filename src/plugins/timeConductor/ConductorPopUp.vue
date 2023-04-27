@@ -175,7 +175,7 @@ export default {
             return this.isFixed ? `${value} c-tc-input-popup--fixed-mode` : `${value} c-tc-input-popup--realtime-mode`;
         },
         timeOptionMode() {
-            return this.timeOptions?.mode;
+            return this.timeOptions && this.timeOptions.mode ? this.timeOptions.mode : undefined;
         }
     },
     watch: {
