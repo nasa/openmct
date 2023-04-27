@@ -36,7 +36,6 @@ export default function plugin() {
                 domainObject.configuration = {};
                 domainObject.label = 'Condition Widget';
                 domainObject.conditionalLabel = '';
-                domainObject.url = '';
             },
             form: [
                 {
