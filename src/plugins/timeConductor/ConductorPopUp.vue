@@ -82,10 +82,10 @@ export default {
             type: Number,
             required: true
         },
-        // positionY: {
-        //     type: Number,
-        //     required: true
-        // },
+        positionY: {
+            type: Number,
+            required: true
+        },
         isIndependent: {
             type: Boolean,
             default() {
@@ -126,10 +126,42 @@ export default {
     },
     computed: {
         position() {
-            return {
-                left: `${this.positionX}px`
-                // top: `${this.positionY}px`
-            };
+            let positionX = this.positionX;
+            let positionY = this.positionY;
+
+            if (this.$el) {
+                const popupDimensions = this.$el.getBoundingClientRect();
+
+                let overflowX = (positionX + popupDimensions.width) - document.body.clientWidth;
+                let overflowY = (positionY + popupDimensions.height) - document.body.clientHeight;
+
+                if (overflowX > 0) {
+                    positionX = positionX - overflowX;
+                }
+
+                if (overflowY > 0) {
+                    positionY = positionY - overflowY;
+                }
+
+                if (positionX < 0) {
+                    positionX = 0;
+                }
+
+                if (positionY < 0) {
+                    positionY = 0;
+                }
+            }
+
+            if (this.bottom) {
+                return {
+                    left: `${positionX}px`,
+                    top: `${positionY}px`
+                };
+            } else {
+                return {
+                    left: `${positionX}px`
+                };
+            }
         },
         timeOffsets() {
             return this.isFixed || !this.timeContext ? undefined : this.timeContext.clockOffsets();
@@ -143,7 +175,7 @@ export default {
             return this.isFixed ? `${value} c-tc-input-popup--fixed-mode` : `${value} c-tc-input-popup--realtime-mode`;
         },
         timeOptionMode() {
-            return this.timeOptions?.mode;
+            return this.timeOptions && this.timeOptions.mode ? this.timeOptions.mode : undefined;
         }
     },
     watch: {
@@ -197,6 +229,7 @@ export default {
             this.$emit('modeUpdated', option);
         },
         saveIndependentMode(mode) {
+            this.isFixed = mode && mode.key === 'fixed';
             this.$emit('independentModeUpdated', mode);
         },
         dismiss() {

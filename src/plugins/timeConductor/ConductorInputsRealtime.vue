@@ -19,7 +19,7 @@
         v-else
         class="c-compact-tc__current-update"
     >
-        LAST UPDATE {{ formattedBounds.end }}
+        LAST UPDATE {{ formattedCurrentValue }}
     </div>
     <div class="c-compact-tc__bounds__value icon-plus">{{ offsets.end }}</div>
 </div>
