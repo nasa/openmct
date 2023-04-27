@@ -416,6 +416,10 @@
             padding: $p $p + 1;
         }
     }
+
+    &.is-expanded {
+        cursor: pointer;
+    }
 }
 
 .is-fixed-mode.is-expanded {
@@ -446,6 +450,12 @@
             }
         }
     }
+
+    &.c-compact-tc {
+        @include hover() {
+            background: $colorTimeFixedHov;
+        }
+    }
 }
 
 .is-realtime-mode.is-expanded {
@@ -474,6 +484,12 @@
             [class*='label'] {
                 color: $colorTimeRealtimeFg;
             }
+        }
+    }
+
+    &.c-compact-tc {
+        @include hover() {
+            background: $colorTimeRealtimeHov;
         }
     }
 }

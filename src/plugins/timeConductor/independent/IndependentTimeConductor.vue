@@ -36,7 +36,7 @@
         @change="toggleIndependentTC"
     />
 
-    <ConductorModeIcon v-if="independentTCEnabled" />
+    <ConductorModeIcon />
 
     <conductor-inputs-fixed
         v-if="isFixed && independentTCEnabled"
@@ -53,7 +53,6 @@
         :read-only="true"
         :compact="true"
     />
-    <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 </div>
 </template>
 
