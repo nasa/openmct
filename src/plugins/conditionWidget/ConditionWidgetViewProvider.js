@@ -48,11 +48,6 @@ export default function ConditionWidget(openmct) {
                             openmct,
                             domainObject
                         },
-                        data() {
-                            return {
-                                domainObject
-                            };
-                        },
                         template: '<condition-widget-component></condition-widget-component>'
                     });
                 },
