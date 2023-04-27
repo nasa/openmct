@@ -57,16 +57,12 @@ export default {
             const timeConductorOptions = this.timeConductorOptionsHolder;
 
             let timeConductorOptionsBox = timeConductorOptions.getBoundingClientRect();
-            popupElement.positionX = timeConductorOptionsBox.left;
+            popupElement.positionX = timeConductorOptionsBox.x;
             //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            popupElement.positionY = timeConductorOptionsBox.top;
-            const offsetTop = popupElement.$el.getBoundingClientRect().height;
+            popupElement.positionY = timeConductorOptionsBox.y;
+            const popupDimensions = popupElement.$el.getBoundingClientRect();
 
-            const popupRight = popupElement.positionX + popupElement.$el.clientWidth;
-            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
-
-            popupElement.positionX = popupElement.positionX + offsetLeft;
-            popupElement.positionY = popupElement.positionY - offsetTop;
+            popupElement.positionY = popupElement.positionY - popupDimensions.height;
         },
 
         clearPopup(clickAwayEvent) {
