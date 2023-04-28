@@ -22,14 +22,15 @@ export default {
             const clocks = menuOptions
                 .map(menuOption => menuOption.clock)
                 .filter(isDefinedAndUnique)
-                .map(this.getClock);
+                .map(this.getClock.bind(this));
 
             /*
             * Populate the modes menu with metadata from the available clocks
             * "Fixed Mode" is always first, and has no defined clock
             */
-            this.modes = ['fixed', 'real-time'].map(this.getModeMetadata);
-            this.clocks = clocks.map(this.getClockMetadata);
+            this.modes = ['fixed', 'real-time'].map(this.getModeMetadata.bind(this));
+            this.clocks = clocks.map(this.getClockMetadata.bind(this));
+            console.log('modes and clocks', this.modes, this.clocks);
 
             function isDefinedAndUnique(key, index, array) {
                 return key !== undefined && array.indexOf(key) === index;
@@ -49,10 +50,9 @@ export default {
         },
         getModeMetadata(mode, testIds = false) {
             let modeOptions;
+            const key = mode;
 
-            if (mode === undefined) {
-                const key = 'fixed';
-
+            if (key === 'fixed') {
                 modeOptions = {
                     key,
                     name: 'Fixed Timespan',
@@ -65,8 +65,6 @@ export default {
                     modeOptions.testId = 'conductor-modeOption-fixed';
                 }
             } else {
-                const key = 'real-time';
-
                 modeOptions = {
                     key,
                     name: 'Real-Time',

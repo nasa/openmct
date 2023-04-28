@@ -20,21 +20,41 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
-    ref="modeButton"
-    class="c-tc-input-popup__options"
->
-    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button
-            class="c-button--menu c-button--compact js-mode-button"
-            :class="[
-                buttonCssClass,
-                selectedMode.cssClass
-            ]"
-            @click.prevent.stop="showModesMenu"
-        >
-            <span class="c-button__label">{{ selectedMode.name }}</span>
-        </button>
+<div>
+    <div
+        ref="modeButton"
+        class="c-tc-input-popup__options"
+    >
+        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+            <button
+                class="c-button--menu c-button--compact js-mode-button"
+                :class="[
+                    buttonCssClass,
+                    selectedMode.cssClass
+                ]"
+                @click.prevent.stop="showModesMenu"
+            >
+                <span class="c-button__label">{{ selectedMode.name }}</span>
+            </button>
+        </div>
+    </div>
+    <div
+        v-if="selectedClock"
+        ref="clockButton"
+        class="c-tc-input-popup__options"
+    >
+        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+            <button
+                class="c-button--menu c-button--compact js-clock-button"
+                :class="[
+                    buttonCssClass,
+                    selectedClock.cssClass
+                ]"
+                @click.prevent.stop="showClocksMenu"
+            >
+                <span class="c-button__label">{{ selectedClock.name }}</span>
+            </button>
+        </div>
     </div>
 </div>
 </template>
@@ -53,10 +73,10 @@ export default {
 
         return {
             selectedMode: this.getModeMetadata(activeClock, TEST_IDS),
+            selectedClock: activeClock ? this.getClockMetadata(activeClock) : undefined,
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
-            clocks: [],
-            hoveredMode: {}
+            clocks: []
         };
     },
     mounted: function () {
