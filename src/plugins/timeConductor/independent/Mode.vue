@@ -20,23 +20,43 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<div
-    v-if="modes.length > 1"
-    ref="modeMenuButton"
-    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
->
-    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button
-            v-if="selectedMode"
-            class="c-icon-button c-button--menu js-mode-button"
-            :class="[
-                buttonCssClass,
-                selectedMode.cssClass
-            ]"
-            @click.prevent.stop="showModesMenu"
-        >
-            <span class="c-button__label">{{ selectedMode.name }}</span>
-        </button>
+<div>
+    <div
+        v-if="modes.length > 1"
+        ref="modeMenuButton"
+        class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+    >
+        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+            <button
+                v-if="selectedMode"
+                class="c-icon-button c-button--menu js-mode-button"
+                :class="[
+                    buttonCssClass,
+                    selectedMode.cssClass
+                ]"
+                @click.prevent.stop="showModesMenu"
+            >
+                <span class="c-button__label">{{ selectedMode.name }}</span>
+            </button>
+        </div>
+    </div>
+    <div
+        ref="clockMenuButton"
+        class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+    >
+        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+            <button
+                v-if="selectedClock"
+                class="c-icon-button c-button--menu js-clock-button"
+                :class="[
+                    buttonCssClass,
+                    selectedClock.cssClass
+                ]"
+                @click.prevent.stop="showClocksMenu"
+            >
+                <span class="c-button__label">{{ selectedClockname }}</span>
+            </button>
+        </div>
     </div>
 </div>
 </template>
