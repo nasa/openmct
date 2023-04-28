@@ -19,7 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import {
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
 import { debounce } from 'lodash';
 
 import Vue from 'vue';
@@ -132,7 +135,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -205,20 +208,13 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            const { min, max } = gaugeViewObject.configuration.gaugeController;
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(
-                new RegExp(`\\s*${min}\\s*${max}\\s*`)
-            );
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(
-                    Number(textElement.textContent).toFixed(
-                        gaugeViewObject.configuration.gaugeController.precision
-                    )
-                ).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -275,7 +271,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -348,20 +344,13 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            const { min, max } = gaugeViewObject.configuration.gaugeController;
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(
-                new RegExp(`\\s*${min}\\s*${max}\\s*`)
-            );
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(
-                    Number(textElement.textContent).toFixed(
-                        gaugeViewObject.configuration.gaugeController.precision
-                    )
-                ).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -418,7 +407,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -491,20 +480,13 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            const { min, max } = gaugeViewObject.configuration.gaugeController;
-            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toMatch(
-                new RegExp(`\\s*${max}\\s*${min}\\s*`)
-            );
+            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toEqual(`${maxValue} ${minValue}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = gaugeHolder.querySelector('.js-gauge-current-value');
-                expect(
-                    Number(textElement.textContent).toFixed(
-                        gaugeViewObject.configuration.gaugeController.precision
-                    )
-                ).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
@@ -551,7 +533,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -634,7 +616,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -726,7 +708,7 @@ describe('Gauge plugin', () => {
             openmct.editor.isEditing = () => false;
 
             const applicableViews = openmct.objectViews.get(gaugeViewObject, [gaugeViewObject]);
-            gaugeViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'gauge');
+            gaugeViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'gauge');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(gaugeViewObject));
             testObjectProvider.create.and.returnValue(Promise.resolve(gaugeViewObject));
@@ -757,15 +739,16 @@ describe('Gauge plugin', () => {
                     }
                 }
             });
-            spyOn(openmct.telemetry, 'getLimits').and.returnValue({
-                limits: () =>
-                    Promise.resolve({
+            spyOn(openmct.telemetry, 'getLimits').and.returnValue(
+                {
+                    limits: () => Promise.resolve({
                         CRITICAL: {
                             high: 0.99,
                             low: -0.99
                         }
                     })
-            });
+                }
+            );
             spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
             spyOn(openmct.time, 'bounds').and.returnValue({
                 start: 1000,
@@ -807,20 +790,13 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            const { min, max } = gaugeViewObject.configuration.gaugeController;
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(
-                new RegExp(`\\s*${min}\\s*${max}\\s*`)
-            );
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
         });
 
         it('renders correct current value', (done) => {
             function WatchUpdateValue() {
                 const textElement = gaugeHolder.querySelector('.js-dial-current-value');
-                expect(
-                    Number(textElement.textContent).toFixed(
-                        gaugeViewObject.configuration.gaugeController.precision
-                    )
-                ).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
+                expect(Number(textElement.textContent).toFixed(gaugeViewObject.configuration.gaugeController.precision)).toBe(randomValue.toFixed(gaugeViewObject.configuration.gaugeController.precision));
                 done();
             }
 
