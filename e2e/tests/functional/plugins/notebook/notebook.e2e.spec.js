@@ -80,21 +80,31 @@ test.describe('Notebook section tests', () => {
         });
     });
     test('Default and new sections are automatically named Unnamed Section with Unnamed Page', async ({ page }) => {
-        // Check that the default section and page are created and the name matches the defaults
-        const defaultSectionName = await page.locator('.c-notebook__sections .c-list__item__name').textContent();
-        expect(defaultSectionName).toBe('Unnamed Section');
-        const defaultPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
-        expect(defaultPageName).toBe('Unnamed Page');
-
-        // Expand sidebar and add a section
+        const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
+        const notebookPageNames = page.locator('.c-notebook__pages .c-list__item__name');
+        await expect(notebookSectionNames).toBeHidden();
+        await expect(notebookPageNames).toBeHidden();
+        // Expand sidebar
         await page.locator('.c-notebook__toggle-nav-button').click();
+        // Check that the default section and page are created and the name matches the defaults
+        const defaultSectionName = await notebookSectionNames.innerText();
+        await expect(notebookSectionNames).toBeVisible();
+        expect(defaultSectionName).toBe('Unnamed Section');
+        const defaultPageName = await notebookPageNames.innerText();
+        await expect(notebookPageNames).toBeVisible();
+        expect(defaultPageName).toBe('Unnamed Page');
+    
+        // Add a section
         await page.locator('.js-sidebar-sections .c-icon-button.icon-plus').click();
-
+    
         // Check that new section and page within the new section match the defaults
-        const newSectionName = await page.locator('.c-notebook__sections .c-list__item__name').nth(1).textContent();
+        const newSectionName = await notebookSectionNames.nth(1).innerText();
+        await expect(notebookSectionNames.nth(1)).toBeVisible();
         expect(newSectionName).toBe('Unnamed Section');
-        const newPageName = await page.locator('.c-notebook__pages .c-list__item__name').textContent();
+        const newPageName = await notebookPageNames.innerText();
+        await expect(notebookPageNames).toBeVisible();
         expect(newPageName).toBe('Unnamed Page');
+    
     });
     test.fixme('Section selection operations and associated behavior', async ({ page }) => {
         //Create new notebook A
@@ -270,10 +280,10 @@ test.describe('Notebook entry tests', () => {
         // Reveal the notebook in the tree
         await page.getByTitle('Show selected item in tree').click();
 
-        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, '.c-notebook__drag-area');
+        await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('.c-notebook__drag-area'));
 
         const embed = page.locator('.c-ne__embed__link');
-        const embedName = await embed.textContent();
+        const embedName = await embed.innerText();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
         expect(embedName).toBe(overlayPlot.name);
@@ -291,11 +301,13 @@ test.describe('Notebook entry tests', () => {
         await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
-        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, 'text=Entry to drop into');
+        await page.getByRole('treeitem', { name: overlayPlot.name }).dragTo(page.locator('text=Entry to drop into'));
 
-        const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
+        const existingEntry = page.locator('.c-ne__content', {
+            has: page.locator('text="Entry to drop into"')
+        });
         const embed = existingEntry.locator('.c-ne__embed__link');
-        const embedName = await embed.textContent();
+        const embedName = await embed.innerText();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
         expect(embedName).toBe(overlayPlot.name);
