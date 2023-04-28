@@ -41,11 +41,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
-      - name: Remove e2e-couchdb label
+      - name: Remove pr:e2e:couchdb label (if present)
         if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
         uses: octokit/request-action@v2.x
         with:
           route: DELETE /repos/{owner}/{repo}/issues/{pr_number}/labels/{name}
+          # These parameters will cause warnings due to
+          # a bug in the action runner. They can be ignored.
+          # https://github.com/octokit/request-action/issues/26
           owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
           pr_number: ${{ github.event.pull_request.number }}
