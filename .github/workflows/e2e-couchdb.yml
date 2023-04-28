@@ -41,9 +41,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
-      - name: Remove 'e2e-couchdb' label if present
+      - name: Remove e2e-couchdb label
         if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
-        run: |
-          curl --request DELETE \
-            --url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels/pr:e2e:couchdb \
-            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
+        uses: octokit/request-action@v2.x
+        with:
+          route: DELETE /repos/{owner}/{repo}/issues/{pr_number}/labels/{name}
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          pr_number: ${{ github.event.pull_request.number }}
+          name: 'pr:e2e:couchdb'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
