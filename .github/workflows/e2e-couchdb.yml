@@ -42,3 +42,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
+      - name: Remove 'e2e-couchdb' label if present
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
+        run: |
+          curl --request DELETE \
+            --url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels/pr:e2e:couchdb \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
