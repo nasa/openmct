@@ -23,6 +23,7 @@
 <div
     ref="timeConductorOptionsHolder"
     class="c-compact-tc"
+    :title="titleStr"
     :class="[
         isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
         { 'is-expanded' : independentTCEnabled }
@@ -95,7 +96,8 @@ export default {
             viewBounds: {
                 start: bounds.start,
                 end: bounds.end
-            }
+            },
+            titleStr: 'RT LOCAL UTC -00:30:00 <> +00:00:15'
         };
     },
     computed: {

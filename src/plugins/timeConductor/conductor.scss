@@ -380,11 +380,16 @@
         @include ellipsize();
         color: $colorTimeRealtimeFg;
         flex: 0 1 auto;
+        line-height: 100%;
 
         &:before {
-            font-size: 0.85em;
+            font-size: 0.75em;
             margin-right: $interiorMarginSm;
         }
+    }
+
+    &__current-state {
+        text-transform: uppercase;
     }
 
     &__current-update {
@@ -433,7 +438,7 @@
             color: $colorTimeFixedFg;
         }
 
-        &__bounds__valuelue {
+        &__bounds__value {
             color: $colorTimeFixedFg;
         }
 
@@ -469,7 +474,7 @@
             color: $colorTimeRealtimeFg;
         }
 
-        &__bounds__valuelue {
+        &__bounds__value {
             color: $colorTimeRealtimeFg;
         }
 

@@ -23,6 +23,7 @@
 <div
     ref="timeConductorOptionsHolder"
     class="c-compact-tc is-expanded"
+    :title="titleStr"
     :class="[
         { 'is-zooming': isZooming },
         { 'is-panning': isPanning },
@@ -32,6 +33,10 @@
 >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <!-- TODO - NEED TO ADD MODE, CLOCK AND TIMESYSTEM VIEW ONLY INFORMATION HERE -->
+    <div class="c-compact-tc__current-state">
+        {{ modeStr }} {{ clockStr }} {{ timeSystemStr }}
+    </div>
+
     <conductor-inputs-fixed
         v-if="isFixed"
         :input-bounds="viewBounds"
@@ -112,7 +117,11 @@ export default {
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
-            isZooming: false
+            isZooming: false,
+            modeStr: (this.openmct.time.clock() === undefined) ? 'Fixed' : 'RT',
+            clockStr: 'Local',
+            timeSystemStr: 'UTC',
+            titleStr: 'RT LOCAL UTC -00:30:00 <> +00:00:15'
         };
     },
     mounted() {
