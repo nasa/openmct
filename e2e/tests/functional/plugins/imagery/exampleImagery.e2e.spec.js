@@ -69,11 +69,11 @@ test.describe('Example Imagery Object', () => {
     test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
 
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        await page.locator('.c-imagery__main-image__bg').hover({trial: true});
 
         // zoom in
         await page.mouse.wheel(0, deltaYStep * 2);
-        await page.locator(backgroundImageSelector).hover({trial: true});
+        await page.locator('.c-imagery__main-image__bg').hover({trial: true});
         const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
