@@ -79,7 +79,6 @@ export default {
         this.buildAnnotationIndex();
     },
     beforeDestroy() {
-        console.debug(`🚮 Canvas destroyed`);
         this.openmct.selection.off('change', this.updateSelection);
         document.body.removeEventListener('click', this.cancelSelection);
     },
@@ -158,7 +157,7 @@ export default {
             this.context.stroke();
         },
         trackAnnotationDrag(event) {
-            if (this.mouseDown && !this.dragging && event.shiftKey) {
+            if (this.mouseDown && !this.dragging && event.shiftKey && event.altKey) {
                 this.startAnnotationDrag(event);
             } else if (this.dragging) {
                 const boundingRect = this.canvas.getBoundingClientRect();

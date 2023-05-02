@@ -30,6 +30,7 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
+const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
@@ -127,6 +128,36 @@ test.describe('Example Imagery Object', () => {
         const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
         expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
 
+    });
+
+    test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+        const canvas = page.locator('canvas');
+        await canvas.hover({trial: true});
+
+        const canvasBoundingBox = await canvas.boundingBox();
+        const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
+        const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
+
+        await Promise.all(tagHotkey.map(x => page.keyboard.down(x)));
+        await page.mouse.down();
+        // steps not working for me here
+        await page.mouse.move(canvasCenterX - 20, canvasCenterY - 20);
+        await page.mouse.move(canvasCenterX - 100, canvasCenterY - 100);
+        await page.mouse.up();
+        await Promise.all(tagHotkey.map(x => page.keyboard.up(x)));
+
+        //Wait for canvas to stablize.
+        await canvas.hover({trial: true});
+
+        // add some tags
+        await page.getByText('Annotations').click();
+        await page.getByRole('button', { name: /Add Tag/ }).click();
+        await page.getByPlaceholder('Type to select tag').click();
+        await page.getByText('Driving').click();
+
+        await page.getByRole('button', { name: /Add Tag/ }).click();
+        await page.getByPlaceholder('Type to select tag').click();
+        await page.getByText('Science').click();
     });
 
     test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
