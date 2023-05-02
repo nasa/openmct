@@ -70,6 +70,7 @@
                 v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
+                aria-label="Edit"
                 @click="edit()"
             ></button>
 
@@ -80,6 +81,7 @@
                 <button
                     class="c-button--menu c-button--major icon-save"
                     title="Save"
+                    aria-label="Save"
                     @click.stop="toggleSaveMenu"
                 ></button>
                 <div

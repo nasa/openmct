@@ -27,7 +27,7 @@ const { assertPlanActivities } = require('../../../helper/planningUtils');
 test.describe("Plan", () => {
     let plan;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         plan = await createPlanFromJSON(page, {
             json: testPlan1
         });

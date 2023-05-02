@@ -19,7 +19,7 @@
             class="c-icon-button c-button--menu icon-font"
             @click.prevent.stop="showFontMenu"
         >
-            <span class="c-button__label">{{ fontTypeLable }}</span>
+            <span class="c-button__label">{{ fontTypeLabel }}</span>
         </button>
     </div>
 </div>
@@ -43,7 +43,7 @@ export default {
         }
     },
     computed: {
-        fontTypeLable() {
+        fontTypeLabel() {
             const fontType = FONTS.find(f => f.value === this.fontStyle.font);
             if (!fontType) {
                 return '??';

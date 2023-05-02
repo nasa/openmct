@@ -33,7 +33,7 @@ test.describe('Scatter Plot', () => {
 
     test.beforeEach(async ({ page }) => {
         // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create the Scatter Plot
         scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });

@@ -33,7 +33,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
 
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         testNotebook = await createDomainObjectWithDefaults(page, {type: 'Notebook' });

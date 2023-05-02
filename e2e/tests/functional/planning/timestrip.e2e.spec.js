@@ -80,7 +80,7 @@ test.describe("Time Strip", () => {
         const activityBounds = page.locator('.activity-bounds');
 
         // Goto baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const timestrip = await test.step("Create a Time Strip", async () => {
             const createdTimeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });

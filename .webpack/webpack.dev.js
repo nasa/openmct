@@ -53,7 +53,11 @@ module.exports = merge(common, {
         },
         client: {
             progress: true,
-            overlay: true
+            overlay: {
+                // Disable overlay for runtime errors.
+                // See: https://github.com/webpack/webpack-dev-server/issues/4771
+                runtimeErrors: false
+            }
         }
     }
 });

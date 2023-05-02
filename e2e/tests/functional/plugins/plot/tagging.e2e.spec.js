@@ -25,7 +25,7 @@ Tests to verify plot tagging functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setRealTimeMode, setFixedTimeMode } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setRealTimeMode, setFixedTimeMode, waitForPlotsToRender } = require('../../../../appActions');
 
 test.describe('Plot Tagging', () => {
     /**
@@ -133,12 +133,9 @@ test.describe('Plot Tagging', () => {
         await expect(page.getByText('No results found')).toBeVisible();
 
         //Reload Page
-        await Promise.all([
-            page.reload(),
-            page.waitForLoadState('networkidle')
-        ]);
+        await page.reload({ waitUntil: 'domcontentloaded' });
         // wait for plots to load
-        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+        await waitForPlotsToRender(page);
 
         await page.getByText('Annotations').click();
         await expect(page.getByText('No tags to display for this item')).toBeVisible();
@@ -157,7 +154,7 @@ test.describe('Plot Tagging', () => {
     }
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Tags work with Overlay Plots', async ({ page }) => {
