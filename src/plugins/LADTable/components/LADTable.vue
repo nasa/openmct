@@ -226,7 +226,10 @@ export default {
             };
         },
         toggleFixedLayout() {
-            this.configuration.isFixedLayout = !this.configuration.isFixedLayout;
+            const config = structuredClone(this.configuration);
+
+            config.isFixedLayout = !this.configuration.isFixedLayout;
+            this.ladTableConfiguration.updateConfiguration(config);
         },
         initializeViewActions() {
             if (this.configuration.isFixedLayout) {
