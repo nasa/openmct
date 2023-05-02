@@ -21,15 +21,18 @@
 *****************************************************************************/
 
 <template>
-<component
-    :is="urlDefined ? 'a' : 'span'"
+<div
+    ref="conditionWidgetElement"
     class="c-condition-widget u-style-receiver js-style-receiver"
-    :href="url"
 >
-    <div class="c-condition-widget__label">
-        {{ label }}
-    </div>
-</component>
+    <component
+        :is="urlDefined ? 'a' : 'div'"
+        class="c-condition-widget__label-wrapper"
+        :href="url"
+    >
+        <div class="c-condition-widget__label">{{ label }}</div>
+    </component>
+</div>
 </template>
 
 <script>
@@ -39,19 +42,26 @@ export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
-            conditionalLabel: '',
-            conditionSetIdentifier: null,
-            domainObjectLabel: '',
-            url: null,
-            urlDefined: false,
-            useConditionSetOutputAsLabel: false
+            conditionalLabel: ''
         };
     },
     computed: {
+        urlDefined() {
+            return this.domainObject.url?.length > 0;
+        },
+        url() {
+            return this.urlDefined ? sanitizeUrl(this.domainObject.url) : null;
+        },
+        useConditionSetOutputAsLabel() {
+            return this.conditionSetIdentifier && this.domainObject.configuration.useConditionSetOutputAsLabel;
+        },
+        conditionSetIdentifier() {
+            return this.domainObject.configuration?.objectStyles?.conditionSetIdentifier;
+        },
         label() {
             return this.useConditionSetOutputAsLabel
                 ? this.conditionalLabel
-                : this.domainObjectLabel
+                : this.domainObject.label
             ;
         }
     },
@@ -68,20 +78,11 @@ export default {
         }
     },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
-
         if (this.domainObject) {
-            this.updateDomainObject(this.domainObject);
             this.listenToConditionSetChanges();
         }
     },
     beforeDestroy() {
-        this.conditionSetIdentifier = null;
-
-        if (this.unlisten) {
-            this.unlisten();
-        }
-
         this.stopListeningToConditionSetChanges();
     },
     methods: {
@@ -120,31 +121,6 @@ export default {
             }
 
             this.conditionalLabel = latestDatum.output || '';
-        },
-        updateDomainObject(domainObject) {
-            if (this.domainObjectLabel !== domainObject.label) {
-                this.domainObjectLabel = domainObject.label;
-            }
-
-            const urlDefined = domainObject.url && domainObject.url.length > 0;
-            if (this.urlDefined !== urlDefined) {
-                this.urlDefined = urlDefined;
-            }
-
-            const url = this.urlDefined ? sanitizeUrl(domainObject.url) : null;
-            if (this.url !== url) {
-                this.url = url;
-            }
-
-            const conditionSetIdentifier = domainObject.configuration?.objectStyles?.conditionSetIdentifier;
-            if (conditionSetIdentifier && this.conditionSetIdentifier !== conditionSetIdentifier) {
-                this.conditionSetIdentifier = conditionSetIdentifier;
-            }
-
-            const useConditionSetOutputAsLabel = this.conditionSetIdentifier && domainObject.configuration.useConditionSetOutputAsLabel;
-            if (this.useConditionSetOutputAsLabel !== useConditionSetOutputAsLabel) {
-                this.useConditionSetOutputAsLabel = useConditionSetOutputAsLabel;
-            }
         }
     }
 };
