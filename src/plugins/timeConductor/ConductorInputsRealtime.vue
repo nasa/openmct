@@ -85,12 +85,12 @@ export default {
         }
     },
     data() {
-        let timeSystem = this.openmct.time.timeSystem();
-        let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-        let bounds = this.bounds || this.openmct.time.bounds();
-        let offsets = this.openmct.time.clockOffsets();
-        let currentValue = this.openmct.time.clock()?.currentValue();
+        const timeSystem = this.openmct.time.getTimeSystem();
+        const durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        const timeFormatter = this.getFormatter(timeSystem.timeFormat);
+        const bounds = this.bounds || this.openmct.time.getBounds();
+        const offsets = this.openmct.time.getClockOffsets();
+        const currentValue = this.openmct.time.getClock()?.currentValue();
 
         return {
             showTCInputStart: false,
@@ -134,25 +134,25 @@ export default {
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
+        this.setTimeSystem(this.copy(this.openmct.time.timeSystem()));
+        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
         this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystem', this.setTimeSystem);
+        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
         this.stopFollowingTime();
     },
     methods: {
         followTime() {
-            this.handleNewBounds(this.timeContext.bounds());
-            this.setViewFromOffsets(this.timeContext.clockOffsets());
-            this.timeContext.on('bounds', this.handleNewBounds);
-            this.timeContext.on('clockOffsets', this.setViewFromOffsets);
+            this.handleNewBounds(this.timeContext.getBounds());
+            this.setViewFromOffsets(this.timeContext.getClockOffsets());
+            this.timeContext.on('boundsChanged', this.handleNewBounds);
+            this.timeContext.on('clockOffsetsChanged', this.setViewFromOffsets);
         },
         stopFollowingTime() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', this.handleNewBounds);
-                this.timeContext.off('clockOffsets', this.setViewFromOffsets);
+                this.timeContext.off('boundsChanged', this.handleNewBounds);
+                this.timeContext.off('clockOffsetsChanged', this.setViewFromOffsets);
             }
         },
         setTimeContext() {
@@ -160,12 +160,15 @@ export default {
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.followTime();
         },
-        handleNewBounds(bounds) {
-            this.setBounds(bounds);
-            this.setViewFromBounds(bounds);
-            this.updateCurrentValue();
+        handleNewBounds(bounds, isTick) {
+            if (this.timeContext.isRealTime() || !isTick) {
+                this.setBounds(bounds);
+                this.setViewFromBounds(bounds);
+                this.updateCurrentValue();
+            }
         },
         setViewFromOffsets(offsets) {
+            console.log('offsets', offsets);
             if (offsets) {
                 this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
                 this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
@@ -179,7 +182,7 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
         updateCurrentValue() {
-            const currentValue = this.openmct.time.clock()?.currentValue();
+            const currentValue = this.openmct.time.getClock()?.currentValue();
 
             if (currentValue !== undefined) {
                 this.setCurrentValue(currentValue);
@@ -217,6 +220,9 @@ export default {
         },
         dismiss() {
             this.$emit('dismiss');
+        },
+        copy(object) {
+            return JSON.parse(JSON.stringify(object));
         }
     }
 };

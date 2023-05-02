@@ -64,6 +64,7 @@
 <script>
 import toggleMixin from '../../../ui/mixins/toggle-mixin';
 import modeMixin from '../mode-mixin';
+import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../../api/time/constants'
 
 export default {
     mixins: [toggleMixin, modeMixin],
@@ -84,9 +85,9 @@ export default {
     },
     data: function () {
         const clock = this.getActiveClock();
-        let mode = 'fixed';
-        if (this.mode?.key !== 'fixed') {
-            mode = 'real-time';
+        let mode = FIXED_MODE_KEY;
+        if (this.mode?.key !== FIXED_MODE_KEY) {
+            mode = REALTIME_MODE_KEY;
         }
 
         return {
@@ -101,19 +102,19 @@ export default {
             deep: true,
             handler(newMode) {
                 if (newMode) {
-                    this.setViewFromClock(newMode.key === 'fixed' ? undefined : newMode);
+                    this.setViewFromClock(newMode.key === FIXED_MODE_KEY ? undefined : newMode);
                 }
             }
         },
         enabled(newValue, oldValue) {
             if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
-                this.setViewFromClock(this.mode.key === 'fixed' ? undefined : this.mode);
+                this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
             }
         }
     },
     mounted: function () {
         if (this.mode) {
-            this.setViewFromClock(this.mode.key === 'fixed' ? undefined : this.mode);
+            this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
         }
 
         this.followTimeConductor();
@@ -160,15 +161,13 @@ export default {
 
             return menuOptions;
         },
-        setMode(modeKey) {
-            let key = modeKey;
-
+        setMode(key) {
             const matchingOptions = this.getMenuOptions().filter(option => option.clock === key);
             const clock = matchingOptions.length && matchingOptions[0].clock ? Object.assign({}, matchingOptions[0], { key: matchingOptions[0].clock }) : undefined;
             this.selectedMode = this.getModeMetadata(clock);
 
             if (this.mode) {
-                this.$emit('modeChanged', { key: modeKey });
+                this.$emit(TIME_CONTEXT_EVENTS.modeChanged, { key });
             }
         },
         setViewFromClock(clock) {

@@ -174,6 +174,9 @@
 </template>
 
 <script>
+
+import { REALTIME_MODE_KEY } from '../../api/time/constants';
+
 export default {
     props: {
         bottom: {
@@ -193,7 +196,7 @@ export default {
     },
     computed: {
         isRealtime() {
-            return this.mode.indexOf('realtime') !== -1;
+            return this.mode.indexOf(REALTIME_MODE_KEY) !== -1;
         }
     },
     mounted() {

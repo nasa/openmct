@@ -81,16 +81,17 @@ export default {
     mixins: [conductorPopUpManager],
     inject: ['openmct', 'configuration'],
     data() {
-        let bounds = this.openmct.time.bounds();
-        let offsets = this.openmct.time.clockOffsets();
-        let timeSystem = this.openmct.time.timeSystem();
-        let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-        let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        const isFixed = this.openmct.time.isFixed();
+        const bounds = this.openmct.time.getBounds();
+        const offsets = this.openmct.time.getClockOffsets();
+        const timeSystem = this.openmct.time.getTimeSystem();
+        const timeFormatter = this.getFormatter(timeSystem.timeFormat);
+        const durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
 
         return {
-            timeSystem: timeSystem,
-            timeFormatter: timeFormatter,
-            durationFormatter: durationFormatter,
+            timeSystem,
+            timeFormatter,
+            durationFormatter,
             offsets: {
                 start: offsets && durationFormatter.format(Math.abs(offsets.start)),
                 end: offsets && durationFormatter.format(Math.abs(offsets.end))
@@ -107,7 +108,7 @@ export default {
                 start: bounds.start,
                 end: bounds.end
             },
-            isFixed: this.openmct.time.clock() === undefined,
+            isFixed,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false,
             altPressed: false,
@@ -118,19 +119,26 @@ export default {
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
-        this.openmct.time.on('clock', this.setViewFromClock);
+        this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
+        this.openmct.time.on('boundsChanged', _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.on('modeChanged', this.setMode);
+        this.openmct.time.on('clockChanged', this.setViewFromClock);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        this.openmct.time.off('boundsChanged', _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.off('modeChanged', this.setMode);
+        this.openmct.time.off('clockChanged', this.setViewFromClock);
     },
     methods: {
-        handleNewBounds(bounds) {
-            this.setBounds(bounds);
-            this.setViewFromBounds(bounds);
+        handleNewBounds(bounds, isTick) {
+            if (this.openmct.time.isRealTime() || !isTick) {
+                this.setBounds(bounds);
+                this.setViewFromBounds(bounds);
+            }
         },
         setBounds(bounds) {
             this.bounds = bounds;
@@ -179,6 +187,9 @@ export default {
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
             this.isUTCBased = timeSystem.isUTCBased;
         },
+        setMode(mode) {
+            this.mode = mode;
+        },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
         },
@@ -197,18 +208,21 @@ export default {
             this.openmct.time.bounds(bounds);
         },
         saveClockOffsets(offsets) {
-            this.openmct.time.clockOffsets(offsets);
+            this.openmct.time.setClockOffsets(offsets);
         },
         saveMode(option) {
             if (option.timeSystem) {
-                this.openmct.time.timeSystem(option.timeSystem, option.bounds);
+                this.openmct.time.setTimeSystem(option.timeSystem, option.bounds);
             }
 
             if (option.clockKey === undefined) {
-                this.openmct.time.stopClock();
+                // this.openmct.time.stopClock();
             } else {
-                this.openmct.time.clock(option.clockKey, option.offsets);
+                this.openmct.time.setClock(option.clockKey, option.offsets);
             }
+        },
+        copy(object) {
+            return JSON.parse(JSON.stringify(object));
         }
     }
 };
