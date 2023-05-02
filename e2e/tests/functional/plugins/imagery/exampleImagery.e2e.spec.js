@@ -44,7 +44,7 @@ test.describe('Example Imagery Object', () => {
 
         // Verify that the created object is focused
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
-        await page.locator('canvas').hover({trial: true});
+        await page.locator('.c-imagery__main-image__bg').hover({trial: true});
     });
 
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -674,11 +674,7 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
     await page.mouse.move(imageCenterX, imageCenterY);
 
     // Wait for zoom animation to finish
-    await page.locator(backgroundImageSelector).hover({
-        trial: true,
-        // eslint-disable-next-line playwright/no-force-option
-        force: true
-    });
+    await page.locator('.c-imagery__main-image__bg').hover({trial: true});
     const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
 
     if (factor > 0) {
