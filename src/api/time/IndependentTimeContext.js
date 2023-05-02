@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext, { TIME_CONTEXT_EVENTS } from "./TimeContext";
+import TimeContext from "./TimeContext";
+import { TIME_CONTEXT_EVENTS } from './constants';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.

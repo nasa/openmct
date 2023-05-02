@@ -21,26 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-
-export const TIME_CONTEXT_EVENTS = {
-    //old API events - to be deprecated
-    bounds: 'bounds',
-    clock: 'clock',
-    timeSystem: 'timeSystem',
-    clockOffsets: 'clockOffsets',
-    //new API events
-    tick: 'tick',
-    modeChanged: 'modeChanged',
-    boundsChanged: 'boundsChanged',
-    clockChanged: 'clockChanged',
-    timeSystemChanged: 'timeSystemChanged',
-    clockOffsetsChanged: 'clockOffsetsChanged'
-};
-
-export const MODES = {
-    fixed: 'fixed',
-    realtime: 'realtime'
-};
+import { TIME_CONTEXT_EVENTS, MODES } from './constants';
 
 class TimeContext extends EventEmitter {
     constructor() {
@@ -75,6 +56,8 @@ class TimeContext extends EventEmitter {
      * @method timeSystem
      */
     timeSystem(timeSystemOrKey, bounds) {
+        this.#warnMethodDeprecated('"timeSystem"', '"getTimeSystem" and "setTimeSystem"');
+
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
@@ -105,7 +88,7 @@ class TimeContext extends EventEmitter {
                 throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
             }
 
-            this.system = timeSystem;
+            this.system = this.#copy(timeSystem);
 
             /**
              * The time system used by the time
@@ -116,7 +99,7 @@ class TimeContext extends EventEmitter {
              * @property {TimeSystem} The value of the currently applied
              * Time System
              * */
-            this.emit('timeSystem', this.system);
+            this.emit('timeSystem', this.#copy(this.system));
             if (bounds) {
                 this.bounds(bounds);
             }
@@ -177,6 +160,8 @@ class TimeContext extends EventEmitter {
      * @method bounds
      */
     bounds(newBounds) {
+        this.#warnMethodDeprecated('"bounds"', '"getBounds" and "setBounds"');
+
         if (arguments.length > 0) {
             const validationResult = this.validateBounds(newBounds);
             if (validationResult.valid !== true) {
@@ -184,7 +169,7 @@ class TimeContext extends EventEmitter {
             }
 
             //Create a copy to avoid direct mutation of conductor bounds
-            this.boundsVal = JSON.parse(JSON.stringify(newBounds));
+            this.boundsVal = this.#copy(newBounds);
             /**
              * The start time, end time, or both have been updated.
              * @event bounds
@@ -197,7 +182,7 @@ class TimeContext extends EventEmitter {
         }
 
         //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(this.boundsVal));
+        return this.#copy(this.boundsVal);
     }
 
     /**
@@ -261,6 +246,8 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     clockOffsets(offsets) {
+        this.#warnMethodDeprecated('"clockOffsets"', '"getClockOffsets" and "setClockOffsets"');
+
         if (arguments.length > 0) {
 
             const validationResult = this.validateOffsets(offsets);
@@ -297,6 +284,8 @@ class TimeContext extends EventEmitter {
      * bounds.
      */
     stopClock() {
+        this.#warnMethodDeprecated('"stopClock"');
+
         if (this.activeClock) {
             this.clock(undefined, undefined);
         }
@@ -315,6 +304,8 @@ class TimeContext extends EventEmitter {
      * @return {Clock} the currently active clock;
      */
     clock(keyOrClock, offsets) {
+        this.#warnMethodDeprecated('"clock"', '"getClock" and "setClock"');
+
         if (arguments.length === 2) {
             let clock;
 
@@ -379,18 +370,6 @@ class TimeContext extends EventEmitter {
     }
 
     /**
-     * Checks if this time context is in real-time mode or not.
-     * @returns {boolean} true if this context is in real-time mode, false if not
-    */
-    isRealTime() {
-        if (this.clock()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get the time system of the TimeAPI.
      * @returns {TimeSystem} The currently applied time system
      * @memberof module:openmct.TimeAPI#
@@ -412,13 +391,12 @@ class TimeContext extends EventEmitter {
     setTimeSystem(timeSystemOrKey, bounds) {
         if (!this.isRealTime() && !bounds) {
             throw new Error(
-                "Must specify bounds when changing time system without "
-                + "an active clock."
+                'Must specify bounds when changing time system without an active clock.'
             );
         }
 
         if (timeSystemOrKey === undefined) {
-            throw "Please provide a time system";
+            throw 'Please provide a time system';
         }
 
         let timeSystem;
@@ -427,19 +405,19 @@ class TimeContext extends EventEmitter {
             timeSystem = this.timeSystems.get(timeSystemOrKey);
 
             if (timeSystem === undefined) {
-                throw "Unknown time system " + timeSystemOrKey + ". Has it been registered with 'addTimeSystem'?";
+                throw `Unknown time system ${timeSystemOrKey}. Has it been registered with 'addTimeSystem'?`;
             }
         } else if (typeof timeSystemOrKey === 'object') {
             timeSystem = timeSystemOrKey;
 
             if (!this.timeSystems.has(timeSystem.key)) {
-                throw "Unknown time system " + timeSystem.key + ". Has it been registered with 'addTimeSystem'?";
+                throw `Unknown time system ${timeSystemOrKey.key}. Has it been registered with 'addTimeSystem'?`;
             }
         } else {
-            throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
+            throw 'Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key';
         }
 
-        this.system = timeSystem;
+        this.system = this.#copy(timeSystem);
         /**
          * The time system used by the time
          * conductor has changed. A change in Time System will always be
@@ -449,7 +427,7 @@ class TimeContext extends EventEmitter {
          * @property {TimeSystem} The value of the currently applied
          * Time System
          * */
-        this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.system);
+        this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.#copy(this.system));
 
         if (bounds) {
             this.setBounds(bounds);
@@ -467,7 +445,7 @@ class TimeContext extends EventEmitter {
      */
     getBounds() {
         //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(this.boundsVal));
+        return this.#copy(this.boundsVal);
     }
 
     /**
@@ -488,7 +466,7 @@ class TimeContext extends EventEmitter {
         }
 
         //Create a copy to avoid direct mutation of conductor bounds
-        this.boundsVal = JSON.parse(JSON.stringify(newBounds));
+        this.boundsVal = this.#copy(newBounds);
         /**
          * The start time, end time, or both have been updated.
          * @event bounds
@@ -500,7 +478,7 @@ class TimeContext extends EventEmitter {
         this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
 
         //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(this.boundsVal));
+        return this.#copy(this.boundsVal);
     }
 
     /**
@@ -529,19 +507,18 @@ class TimeContext extends EventEmitter {
         if (typeof keyOrClock === 'string') {
             clock = this.clocks.get(keyOrClock);
             if (clock === undefined) {
-                throw "Unknown clock '" + keyOrClock + "'. Has it been registered with 'addClock'?";
+                throw `Unknown clock ${keyOrClock}. Has it been registered with 'addClock'?`;
             }
         } else if (typeof keyOrClock === 'object') {
             clock = keyOrClock;
             if (!this.clocks.has(clock.key)) {
-                throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
+                throw `Unknown clock ${keyOrClock.key}. Has it been registered with 'addClock'?`;
             }
         }
 
-        const isRealtimeMode = this.getMode() === MODES.realtime;
         const previousClock = this.activeClock;
-        if (previousClock !== undefined && isRealtimeMode) {
-            previousClock.off("tick", this.tick);
+        if (previousClock !== undefined && this.isRealTime()) {
+            previousClock.off('tick', this.tick);
         }
 
         this.activeClock = clock;
@@ -555,7 +532,7 @@ class TimeContext extends EventEmitter {
          */
         this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
-        if (isRealtimeMode) {
+        if (this.isRealTime()) {
             if (this.activeClock !== undefined) {
                 this.activeClock.on("tick", this.tick);
             }
@@ -588,22 +565,22 @@ class TimeContext extends EventEmitter {
      */
     setMode(mode, offsets) {
         if (offsets === undefined) {
-            throw "When setting the mode, offsets must also be provided";
+            throw 'When setting the mode, offsets must also be provided';
         }
 
         const previousMode = this.mode;
-
+        console.log('set mode', this.mode, mode, offsets, previousMode);
         if (previousMode === MODES.realtime) {
             this.activeClock.off('tick', this.tick);
         }
 
-        this.mode = mode;
+        this.mode = this.#copy(mode);
 
         if (mode === MODES.realtime) {
-            this.activeClock.on("tick", this.tick);
+            this.activeClock.on('tick', this.tick);
             this.setClockOffsets(offsets);
         } else if (mode === MODES.fixed) {
-            this.activeClock.off("tick", this.tick);
+            this.activeClock.off('tick', this.tick);
             this.setBounds(offsets);
         }
 
@@ -614,9 +591,25 @@ class TimeContext extends EventEmitter {
          * @property {Clock} clock The newly activated clock, or undefined
          * if the system is no longer following a clock source
          */
-        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.mode);
+        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
 
         return this.mode;
+    }
+
+    /**
+     * Checks if this time context is in realtime mode or not.
+     * @returns {boolean} true if this context is in real-time mode, false if not
+    */
+    isRealTime() {
+        return this.mode === MODES.realtime;
+    }
+
+    /**
+     * Checks if this time context is in fixed mode or not.
+     * @returns {boolean} true if this context is in fixed mode, false if not
+    */
+    isFixed() {
+        return this.mode === MODES.fixed;
     }
 
     /**
@@ -640,7 +633,7 @@ class TimeContext extends EventEmitter {
             throw new Error(validationResult.message);
         }
 
-        this.offsets = offsets;
+        this.offsets = this.#copy(offsets);
 
         const currentValue = this.activeClock.currentValue();
         const newBounds = {
@@ -657,9 +650,26 @@ class TimeContext extends EventEmitter {
          * @property {ClockOffsets} clockOffsets The newly activated clock
          * offsets.
          */
-        this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, offsets);
+        this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
 
         return this.offsets;
+    }
+
+    #warnMethodDeprecated(method, newMethod) {
+        let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`; 
+
+        if (newMethod) {
+            message += ` Please use the ${newMethod} API method(s) instead.`;
+        }
+
+        // TODO: add docs and point to them in warning.
+        //  For more information and migration instructions, visit [link to documentation or migration guide].
+
+        console.warn(message);
+    }
+
+    #copy(object) {
+        return JSON.parse(JSON.stringify(object));
     }
 }
 

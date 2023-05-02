@@ -65,6 +65,7 @@ import ConductorTimeSystem from "./ConductorTimeSystem.vue";
 import ConductorHistory from "./ConductorHistory.vue";
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "./ConductorInputsRealtime.vue";
+import { REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
 
 export default {
 
@@ -135,7 +136,7 @@ export default {
             return this.isFixed || !this.timeContext ? undefined : this.timeContext.clockOffsets();
         },
         timeMode() {
-            return this.isFixed ? 'fixed' : 'realtime';
+            return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
         },
         modeClass() {
             const value = this.bottom ? 'c-tc-input-popup--bottom' : '';

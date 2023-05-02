@@ -62,6 +62,7 @@
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 import modeMixin from './mode-mixin';
+import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
 
 const TEST_IDS = true;
 
@@ -140,7 +141,9 @@ export default {
             this.$emit('updated', option);
         },
         setMode(modeKey) {
-            if (!modeKey || modeKey === 'fixed') {
+            this.openmct.time.setMode(modeKey, this.openmct.time.bounds());
+
+            if (modeKey === FIXED_MODE_KEY) {
                 this.openmct.time.stopClock();
             }
         },
@@ -163,7 +166,9 @@ export default {
             return this.configuration.menuOptions.filter(configMatches)[0];
         },
         setViewFromClock(clock) {
-            this.selectedMode = this.getModeMetadata(clock, TEST_IDS);
+            console.log('set view from clock', clock);
+            this.activeClock = clock;
+            this.selectedMode = this.getModeMetadata(REALTIME_MODE_KEY, TEST_IDS);
         }
     }
 };

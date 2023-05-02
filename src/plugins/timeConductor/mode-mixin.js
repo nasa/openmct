@@ -1,3 +1,5 @@
+import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
+
 export default {
     props: {
         buttonCssClass: {
@@ -13,10 +15,10 @@ export default {
     },
     methods: {
         followTimeConductor() {
-            this.openmct.time.on('clock', this.setViewFromClock);
+            this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
         },
         stopFollowTimeConductor() {
-            this.openmct.time.off('clock', this.setViewFromClock);
+            this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
         },
         loadModesAndClocks(menuOptions) {
             const clocks = menuOptions
@@ -28,7 +30,7 @@ export default {
             * Populate the modes menu with metadata from the available clocks
             * "Fixed Mode" is always first, and has no defined clock
             */
-            this.modes = ['fixed', 'real-time'].map(this.getModeMetadata.bind(this));
+            this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata.bind(this));
             this.clocks = clocks.map(this.getClockMetadata.bind(this));
             console.log('modes and clocks', this.modes, this.clocks);
 
@@ -52,7 +54,7 @@ export default {
             let modeOptions;
             const key = mode;
 
-            if (key === 'fixed') {
+            if (key === FIXED_MODE_KEY) {
                 modeOptions = {
                     key,
                     name: 'Fixed Timespan',
