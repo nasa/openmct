@@ -29,12 +29,12 @@ test.describe('Visual - LAD Table', () => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
-        // Create Notebook
+        // Create LAD Table
         const ladTable = await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
             name: 'LAD Table Test'
         });
-        // Create Overlay Plot
+        // Create SWG
         await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
             name: "SWG for LAD Table"
