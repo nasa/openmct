@@ -55,7 +55,7 @@ test.describe('Visual - LAD Table', () => {
     });
     test('Toggled column widths behave accordingly', async ({ page, theme }) => {
 
-        await page.goto(ladTable.url, { waitUntil: 'domcontentloaded' });
+        await page.goto(ladTable.url);
         //Close panes for visual consistency
         await page.getByTitle('Collapse Inspect Pane').click();
         await page.getByTitle('Collapse Browse Pane').click();
