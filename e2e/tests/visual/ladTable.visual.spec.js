@@ -20,36 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
+const { expect, test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - LAD Table', () => {
-    test('Toggled column widths behave accordingly', async ({ page, theme, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    /** @type {import('@playwright/test').Locator} */
+    let ladTable;
 
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         // Create LAD Table
-        const ladTable = await createDomainObjectWithDefaults(page, {
+        ladTable = await createDomainObjectWithDefaults(page, {
             type: 'LAD Table',
             name: 'LAD Table Test'
         });
-        // Create SWG
+        // Create SWG inside of LAD Table
         await createDomainObjectWithDefaults(page, {
             type: 'Sine Wave Generator',
-            name: "SWG for LAD Table"
+            name: 'SWG4LAD Table Test',
+            parent: ladTable.uuid
         });
 
-        await expandTreePaneItemByName(page, myItemsFolderName);
+        //Modify SWG to create a really stable SWG
+        await page.locator('button[title="More options"]').click();
 
-        await page.goto(ladTable.url);
-        await page.dragAndDrop('role=treeitem[name=/SWG for LAD Table/]', '.c-lad-table-wrapper');
+        await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
+
+        //Forgive me, padre
+        await page.getByRole('spinbutton', { name: 'Data Rate (hz)' }).fill('0');
+        await page.getByRole('spinbutton', { name: 'Period' }).fill('0');
+
+        await page.getByRole('button', { name: 'Save' }).click();
+    });
+    test('Toggled column widths behave accordingly', async ({ page, theme }) => {
+        await page.goto(ladTable.url, { waitUntil: 'domcontentloaded' });
+
+        await expect(page.locator('button[title="Expand Columns"]')).toBeVisible();
 
         await percySnapshot(page, `LAD Table w/ Sine Wave Generator columns autosized (theme: ${theme})`);
 
         await page.locator('button[title="Expand Columns"]').click();
 
-        await page.locator('button[title="Autosize Columns"]').waitFor();
+        await expect(page.locator('button[title="Autosize Columns"]')).toBeVisible();
 
         await percySnapshot(page, `LAD Table w/ Sine Wave Generator columns expanded (theme: ${theme})`);
 
