@@ -68,15 +68,14 @@ jobs:
             })
       - name: Remove pr:e2e label (if present)
         if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e') }}
-        uses: octokit/request-action@v2.x
+        uses: actions/github-script@v6
         with:
-          route: DELETE /repos/{owner}/{repo}/issues/{pr_number}/labels/{name}
-          # These parameters will cause warnings due to
-          # a bug in the action runner. They can be ignored.
-          # https://github.com/octokit/request-action/issues/26
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.event.repository.name }}
-          pr_number: ${{ github.event.pull_request.number }}
-          name: 'pr:e2e'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e';
+            await github.rest.issues.removeLabel({
+              owner,
+              repo,
+              issue_number: number,
+              name: labelToRemove
+            });
