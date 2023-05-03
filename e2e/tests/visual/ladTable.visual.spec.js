@@ -25,7 +25,7 @@ const percySnapshot = require('@percy/playwright');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - LAD Table', () => {
-    test('Toggled coumn widths behave accordingly', async ({ page, theme, openmctConfig }) => {
+    test('Toggled column widths behave accordingly', async ({ page, theme, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
         await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
 
