@@ -41,3 +41,16 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
+      - name: Remove pr:e2e:couchdb label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:couchdb';
+            await github.rest.issues.removeLabel({
+              owner,
+              repo,
+              issue_number: number,
+              name: labelToRemove
+            });
