@@ -54,7 +54,11 @@ test.describe('Visual - LAD Table', () => {
         await page.getByRole('button', { name: 'Save' }).click();
     });
     test('Toggled column widths behave accordingly', async ({ page, theme }) => {
+
         await page.goto(ladTable.url, { waitUntil: 'domcontentloaded' });
+        //Close panes for visual consistency
+        await page.getByTitle('Collapse Inspect Pane').click();
+        await page.getByTitle('Collapse Browse Pane').click();
 
         await expect(page.locator('button[title="Expand Columns"]')).toBeVisible();
 
