@@ -28,12 +28,13 @@ const { getPreciseDuration } = require('../../../../src/utils/duration');
 
 test.describe("Gantt Chart", () => {
     let ganttChart;
+    let plan;
     test.beforeEach(async ({ page }) => {
         await page.goto('./', { waitUntil: 'domcontentloaded' });
         ganttChart = await createDomainObjectWithDefaults(page, {
             type: 'Gantt Chart'
         });
-        await createPlanFromJSON(page, {
+        plan = await createPlanFromJSON(page, {
             json: testPlan1,
             parent: ganttChart.uuid
         });
@@ -82,4 +83,21 @@ test.describe("Gantt Chart", () => {
         expect(expectedEndDate).toEqual(actualEndDate);
         expect(expectedDuration).toEqual(actualDuration);
     });
+    test("Displays a Plan's draft status", async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6641'
+        });
+
+        // Mark the Plan's status as draft in the OpenMCT API
+        await page.evaluate(async (planObject) => {
+            await window.openmct.status.set(planObject.uuid, 'draft');
+        }, plan);
+
+        // Navigate to the Gantt Chart
+        await page.goto(ganttChart.url);
+
+        // Assert that the Plan's status is displayed as draft
+        expect(await page.locator('.u-contents.c-swimlane.is-status--draft').count()).toBe(Object.keys(testPlan1).length);
+    }); 
 });
