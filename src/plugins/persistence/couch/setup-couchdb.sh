@@ -66,10 +66,10 @@ enable_cors() {
 update_db_permissions() {
     local db_name=$1
     echo "Updating ${db_name} database permissions"
-    response=$(curl -su "${CURL_USERPASS_ARG}" --location
-    --request PUT $COUCH_BASE_LOCAL/$db_name/_security \
-    --header 'Content-Type: application/json' \
-    --data-raw '{ "admins": {"roles": []},"members": {"roles": []}}');
+    response=$(curl -su "${CURL_USERPASS_ARG}" --location \
+        --request PUT $COUCH_BASE_LOCAL/$db_name/_security \
+        --header 'Content-Type: application/json' \
+        --data-raw '{ "admins": {"roles": []},"members": {"roles": []}}')
     if [ "{\"ok\":true}" == "${response}" ]; then
         echo "Database permissions successfully updated"
     else
