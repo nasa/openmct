@@ -3,7 +3,7 @@
   "version": "2.2.3-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
-    "@babel/eslint-parser": "7.18.9",
+    "@babel/eslint-parser": "7.19.1",
     "@braintree/sanitize-url": "6.0.2",
     "@deploysentinel/playwright": "0.3.4",
     "@percy/cli": "1.24.0",
