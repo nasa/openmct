@@ -99,5 +99,5 @@ test.describe("Gantt Chart", () => {
 
         // Assert that the Plan's status is displayed as draft
         expect(await page.locator('.u-contents.c-swimlane.is-status--draft').count()).toBe(Object.keys(testPlan1).length);
-    }); 
+    });
 });
