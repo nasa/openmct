@@ -48,9 +48,13 @@ jobs:
           script: |
             const { owner, repo, number } = context.issue;
             const labelToRemove = 'pr:e2e:couchdb';
-            await github.rest.issues.removeLabel({
-              owner,
-              repo,
-              issue_number: number,
-              name: labelToRemove
-            });
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+            }
