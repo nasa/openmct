@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/gallium'
-      - run: npx playwright@1.29.0 install
+      - run: npx playwright@1.32.3 install
       - run: npm install
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run : |
@@ -41,3 +41,20 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
+      - name: Remove pr:e2e:couchdb label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:couchdb';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+            }

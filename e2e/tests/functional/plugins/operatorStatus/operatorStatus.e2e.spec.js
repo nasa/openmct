@@ -44,7 +44,7 @@ test.describe('Operator Status', () => {
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')});
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')});
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     // verify that operator status is visible

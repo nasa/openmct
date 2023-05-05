@@ -29,7 +29,7 @@ const { test, expect } = require('../../baseFixtures.js');
 test.describe('Branding tests', () => {
     test('About Modal launches with basic branding properties', async ({ page }) => {
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Click About button
         await page.click('.l-shell__app-logo');
@@ -47,7 +47,7 @@ test.describe('Branding tests', () => {
     });
     test('Verify Links in About Modal @2p', async ({ page }) => {
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Click About button
         await page.click('.l-shell__app-logo');

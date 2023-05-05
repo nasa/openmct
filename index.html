@@ -200,6 +200,8 @@
         openmct.install(openmct.plugins.Timelist());
         openmct.install(openmct.plugins.BarChart());
         openmct.install(openmct.plugins.ScatterPlot());
-        openmct.start();
+        document.addEventListener('DOMContentLoaded', function () {
+            openmct.start();
+        });
     </script>
 </html>

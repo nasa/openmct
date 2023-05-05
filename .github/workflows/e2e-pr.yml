@@ -29,10 +29,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.29.0 install
+      - run: npx playwright@1.32.3 install
       - run: npx playwright install chrome-beta
       - run: npm install
-      - run: npm run test:e2e:full -- --maxFailures=40
+      - run: npm run test:e2e:full -- --max-failures=40
       - run: npm run cov:e2e:report || true
       - shell: bash
         env:
@@ -66,3 +66,20 @@ jobs:
               repo: "openmct",
               body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
+      - name: Remove pr:e2e label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove 'pr:e2e' label: ${error.message}`);
+            }

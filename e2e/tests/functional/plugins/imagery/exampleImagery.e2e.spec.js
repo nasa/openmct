@@ -37,7 +37,7 @@ const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 test.describe('Example Imagery Object', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a default 'Example Imagery' object
         const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
@@ -178,7 +178,7 @@ test.describe('Example Imagery in Display Layout', () => {
     let displayLayout;
     test.beforeEach(async ({ page }) => {
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
         await page.goto(displayLayout.url);
@@ -317,7 +317,7 @@ test.describe('Example Imagery in Display Layout', () => {
 test.describe('Example Imagery in Flexible layout', () => {
     let flexibleLayout;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
         await page.goto(flexibleLayout.url);
@@ -359,7 +359,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 test.describe('Example Imagery in Tabs View', () => {
     let tabsView;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
         await page.goto(tabsView.url);
@@ -395,7 +395,7 @@ test.describe('Example Imagery in Tabs View', () => {
 test.describe('Example Imagery in Time Strip', () => {
     let timeStripObject;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         timeStripObject = await createDomainObjectWithDefaults(page, {
             type: 'Time Strip'
         });

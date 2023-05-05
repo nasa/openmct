@@ -36,7 +36,7 @@ test.describe('Persistence operations @addInit', () => {
     });
 
     test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await page.locator('text=Persistence Testing').first().click({
             button: 'right'

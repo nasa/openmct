@@ -25,7 +25,7 @@ const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRea
 
 test.describe('Testing LAD table configuration', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create LAD table
         const ladTable = await createDomainObjectWithDefaults(page, {
@@ -139,7 +139,7 @@ test.describe('Testing LAD table configuration', () => {
 test.describe('Testing LAD table @unstable', () => {
     let sineWaveObject;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         await setRealTimeMode(page);
 
         // Create Sine Wave Generator

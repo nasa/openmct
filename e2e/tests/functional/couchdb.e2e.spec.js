@@ -100,7 +100,7 @@ test.describe("CouchDB initialization with mocked responses @couchdb", () => {
             && req.method() === 'GET');
 
         // Go to baseURL.
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Wait for both requests to resolve.
         await Promise.all([
