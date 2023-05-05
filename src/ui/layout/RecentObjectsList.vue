@@ -181,6 +181,10 @@ export default {
          */
         setSavedRecentItems() {
             localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
+            // send event to parent for enabled button
+            if (this.recents.length === 1) {
+                this.$emit("setClearButtonDisabled", false);
+            }
         },
         /**
          * Returns true if the `domainObject` supports composition and we are not already
@@ -191,11 +195,35 @@ export default {
         shouldTrackCompositionFor(domainObject, navigationPath) {
             return this.compositionCollections[navigationPath] === undefined
                 && this.openmct.composition.supportsComposition(domainObject);
+        },
+        /**
+         * Clears the Recent Objects list in localStorage and in the component.
+         * Before clearing, prompts the user to confirm the action with a dialog.
+         */
+        clearRecentObjects() {
+            const dialog = this.openmct.overlays.dialog({
+                title: 'Clear Recently Viewed Objects',
+                iconClass: 'alert',
+                message: 'This action will clear the Recently Viewed Objects list. Are you sure you want to continue?',
+                buttons: [
+                    {
+                        label: 'OK',
+                        callback: () => {
+                            localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+                            this.recents = [];
+                            dialog.dismiss();
+                            this.$emit("setClearButtonDisabled", true);
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         }
     }
 };
 </script>
-
-<style>
-
-</style>

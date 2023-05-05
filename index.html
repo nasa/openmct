@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -84,7 +84,9 @@
 
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.PlanLayout());
+        openmct.install(openmct.plugins.PlanLayout({
+            creatable: true
+        }));
         openmct.install(openmct.plugins.Timeline());
         openmct.install(openmct.plugins.Hyperlink());
         openmct.install(openmct.plugins.UTCTimeSystem());
@@ -198,6 +200,8 @@
         openmct.install(openmct.plugins.Timelist());
         openmct.install(openmct.plugins.BarChart());
         openmct.install(openmct.plugins.ScatterPlot());
-        openmct.start();
+        document.addEventListener('DOMContentLoaded', function () {
+            openmct.start();
+        });
     </script>
 </html>

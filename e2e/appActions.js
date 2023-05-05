@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,6 +55,7 @@
 
 const Buffer = require('buffer').Buffer;
 const genUuid = require('uuid').v4;
+const { expect } = require('@playwright/test');
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -74,7 +75,6 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // Navigate to the parent object. This is necessary to create the object
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
-    await page.waitForLoadState('networkidle');
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -140,6 +140,7 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
+ * Expand an item in the tree by a given object name.
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  */
@@ -159,24 +160,26 @@ async function expandTreePaneItemByName(page, name) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
+    if (!name) {
+        name = `Plan:${genUuid()}`;
+    }
+
     const parentUrl = await getHashUrlToDomainObject(page, parent);
 
     // Navigate to the parent object. This is necessary to create the object
     // in the correct location, such as a folder, layout, or plot.
     await page.goto(`${parentUrl}?hideTree=true`);
 
-    //Click the Create button
+    // Click the Create button
     await page.click('button:has-text("Create")');
 
     // Click 'Plan' menu option
     await page.click(`li:text("Plan")`);
 
     // Modify the name input field of the domain object to accept 'name'
-    if (name) {
-        const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-        await nameInput.fill("");
-        await nameInput.fill(name);
-    }
+    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+    await nameInput.fill("");
+    await nameInput.fill(name);
 
     // Upload buffer from memory
     await page.locator('input#fileElem').setInputFiles({
@@ -194,7 +197,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     ]);
 
     // Wait until the URL is updated
-    await page.waitForURL(`**/mine/*`);
+    await page.waitForURL(`**/${parent}/*`);
     const uuid = await getFocusedObjectUuid(page);
     const objectUrl = await getHashUrlToDomainObject(page, uuid);
 
@@ -270,6 +273,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, uuid) {
+    await page.waitForLoadState('load'); //Add some determinism
     const hashUrl = await page.evaluate(async (objectUuid) => {
         const path = await window.openmct.objects.getOriginalPath(objectUuid);
         let url = './#/browse/' + [...path].reverse()
@@ -383,18 +387,111 @@ async function setEndOffset(page, offset) {
     await setTimeConductorOffset(page, offset, endOffsetButton);
 }
 
+/**
+ * Selects an inspector tab based on the provided tab name
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {String} name the name of the tab
+ */
+async function selectInspectorTab(page, name) {
+    const inspectorTabs = page.getByRole('tablist');
+    const inspectorTab = inspectorTabs.getByTitle(name);
+    const inspectorTabClass = await inspectorTab.getAttribute('class');
+    const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
+
+    // do not click a tab that is already selected or it will timeout your test
+    // do to a { pointer-events: none; } on selected tabs
+    if (!isSelectedInspectorTab) {
+        await inspectorTab.click();
+    }
+}
+
+/**
+* Waits and asserts that all plot series data on the page
+* is loaded and drawn.
+*
+* In lieu of a better way to detect when a plot is done rendering,
+* we [attach a class to the '.gl-plot' element](https://github.com/nasa/openmct/blob/5924d7ea95a0c2d4141c602a3c7d0665cb91095f/src/plugins/plot/MctPlot.vue#L27)
+* once all pending series data has been loaded. The following appAction retrieves
+* all plots on the page and waits up to the default timeout for the class to be
+* attached to each plot.
+* @param {import('@playwright/test').Page} page
+*/
+async function waitForPlotsToRender(page) {
+    const plotLocator = page.locator('.gl-plot');
+    for (const plot of await plotLocator.all()) {
+        await expect(plot).toHaveClass(/js-series-data-loaded/);
+    }
+}
+
+/**
+ * @typedef {Object} PlotPixel
+ * @property {number} r The value of the red channel (0-255)
+ * @property {number} g The value of the green channel (0-255)
+ * @property {number} b The value of the blue channel (0-255)
+ * @property {number} a The value of the alpha channel (0-255)
+ * @property {string} strValue The rgba string value of the pixel
+ */
+
+/**
+ * Wait for all plots to render and then retrieve and return an array
+ * of canvas plot pixel data (RGBA values).
+ * @param {import('@playwright/test').Page} page
+ * @param {string} canvasSelector The selector for the canvas element
+ * @return {Promise<PlotPixel[]>}
+ */
+async function getCanvasPixels(page, canvasSelector) {
+    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
+    const canvasHandle = await page.evaluateHandle((canvas) => document.querySelector(canvas), canvasSelector);
+    const canvasContextHandle = await page.evaluateHandle(canvas => canvas.getContext('2d'), canvasHandle);
+
+    await waitForPlotsToRender(page);
+    await page.evaluate(([canvas, ctx]) => {
+        // The document canvas is where the plot points and lines are drawn.
+        // The only way to access the canvas is using document (using page.evaluate)
+        /** @type {ImageData} */
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        /** @type {number[]} */
+        const imageDataValues = Object.values(data);
+        /** @type {PlotPixel[]} */
+        const plotPixels = [];
+        // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
+        // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
+        for (let i = 0; i < imageDataValues.length;) {
+            if (imageDataValues[i] > 0) {
+                plotPixels.push({
+                    r: imageDataValues[i],
+                    g: imageDataValues[i + 1],
+                    b: imageDataValues[i + 2],
+                    a: imageDataValues[i + 3],
+                    strValue: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
+                });
+            }
+
+            i = i + 4;
+        }
+
+        window.getCanvasValue(plotPixels);
+    }, [canvasHandle, canvasContextHandle]);
+
+    return getTelemValuePromise;
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
     createDomainObjectWithDefaults,
     createNotification,
-    expandTreePaneItemByName,
-    expandEntireTree,
     createPlanFromJSON,
-    openObjectTreeContextMenu,
+    expandEntireTree,
+    expandTreePaneItemByName,
+    getCanvasPixels,
     getHashUrlToDomainObject,
     getFocusedObjectUuid,
+    openObjectTreeContextMenu,
     setFixedTimeMode,
     setRealTimeMode,
     setStartOffset,
-    setEndOffset
+    setEndOffset,
+    selectInspectorTab,
+    waitForPlotsToRender
 };

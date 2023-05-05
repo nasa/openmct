@@ -74,7 +74,7 @@ export default {
             return this.domainObject && (this.currentObjectPath || this.objectPath);
         },
         objectFontStyle() {
-            return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
+            return this.domainObject?.configuration?.fontStyle;
         },
         fontSize() {
             return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
@@ -286,6 +286,9 @@ export default {
             this.openmct.objectViews.on('clearData', this.clearData);
 
             this.$nextTick(() => {
+                this.updateStyle(this.styleRuleManager?.currentStyle);
+                this.setFontSize(this.fontSize);
+                this.setFont(this.font);
                 this.getActionCollection();
             });
         },
@@ -328,9 +331,9 @@ export default {
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
-                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this), true);
+                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration?.objectStyles), this.openmct, this.updateStyle.bind(this), true);
             } else {
-                this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
+                this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration?.objectStyles);
             }
 
             if (this.stopListeningStyles) {
@@ -341,9 +344,6 @@ export default {
                 //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
-
-            this.setFontSize(this.fontSize);
-            this.setFont(this.font);
 
             this.stopListeningFontStyles = this.openmct.objects.observe(this.domainObject, 'configuration.fontStyle', (newFontStyle) => {
                 this.setFontSize(newFontStyle.fontSize);

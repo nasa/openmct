@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,15 +29,15 @@ const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
-const panHotkey = process.platform === 'linux' ? ['Control', 'Alt'] : ['Alt'];
-const expectedAltText = process.platform === 'linux' ? 'Ctrl+Alt drag to pan' : 'Alt drag to pan';
+const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
+const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
     test.beforeEach(async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a default 'Example Imagery' object
         const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
@@ -178,7 +178,7 @@ test.describe('Example Imagery in Display Layout', () => {
     let displayLayout;
     test.beforeEach(async ({ page }) => {
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
         await page.goto(displayLayout.url);
@@ -317,7 +317,7 @@ test.describe('Example Imagery in Display Layout', () => {
 test.describe('Example Imagery in Flexible layout', () => {
     let flexibleLayout;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
         await page.goto(flexibleLayout.url);
@@ -359,7 +359,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 test.describe('Example Imagery in Tabs View', () => {
     let tabsView;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
         await page.goto(tabsView.url);
@@ -395,7 +395,7 @@ test.describe('Example Imagery in Tabs View', () => {
 test.describe('Example Imagery in Time Strip', () => {
     let timeStripObject;
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         timeStripObject = await createDomainObjectWithDefaults(page, {
             type: 'Time Strip'
         });

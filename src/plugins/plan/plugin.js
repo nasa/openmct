@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,15 +21,18 @@
  *****************************************************************************/
 
 import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import ActivityInspectorViewProvider from "./inspector/ActivityInspectorViewProvider";
+import GanttChartInspectorViewProvider from "./inspector/GanttChartInspectorViewProvider";
+import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
+import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration';
 
-export default function (configuration) {
+export default function (options = {}) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'A configurable timeline-like view for a compatible mission plan file.',
-            creatable: true,
+            description: 'A non-configurable timeline-like view for a compatible plan file.',
+            creatable: options.creatable ?? false,
             cssClass: 'icon-plan',
             form: [
                 {
@@ -45,10 +48,30 @@ export default function (configuration) {
                 }
             ],
             initialize: function (domainObject) {
+                domainObject.configuration = {
+                    clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames
+                };
+            }
+        });
+        // Name TBD and subject to change
+        openmct.types.addType('gantt-chart', {
+            name: 'Gantt Chart',
+            key: 'gantt-chart',
+            description: 'A configurable timeline-like view for a compatible plan file.',
+            creatable: true,
+            cssClass: 'icon-plan',
+            form: [],
+            initialize(domainObject) {
+                domainObject.configuration = {
+                    clipActivityNames: true
+                };
+                domainObject.composition = [];
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new ActivityInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new GanttChartInspectorViewProvider(openmct));
+        openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
     };
 }
 

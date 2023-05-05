@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,7 +38,7 @@ const { test, expect } = require('../../pluginFixtures');
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
     //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,7 @@
 Testsuite for plot autoscale.
 */
 
+const { selectInspectorTab } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
     viewport: {
@@ -39,7 +40,7 @@ test.describe('Autoscale', () => {
         //This is necessary due to the size of the test suite.
         test.slow();
 
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         await setTimeRange(page);
 
@@ -50,6 +51,7 @@ test.describe('Autoscale', () => {
         // enter edit mode
         await page.click('button[title="Edit"]');
 
+        await selectInspectorTab(page, 'Config');
         await turnOffAutoscale(page);
 
         await setUserDefinedMinAndMax(page, '-2', '2');
@@ -71,6 +73,7 @@ test.describe('Autoscale', () => {
         const canvas = page.locator('canvas').nth(1);
 
         await canvas.hover({trial: true});
+        await expect(page.locator('.js-series-data-loaded')).toBeVisible();
 
         expect.soft(await canvas.screenshot()).toMatchSnapshot('autoscale-canvas-prepan.png', { animations: 'disabled' });
 
@@ -170,7 +173,7 @@ async function createSinewaveOverlayPlot(page, myItemsFolderName) {
  */
 async function turnOffAutoscale(page) {
     // uncheck autoscale
-    await page.getByRole('listitem').filter({ hasText: 'Auto scale' }).getByRole('checkbox').uncheck();
+    await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 }
 
 /**
@@ -180,14 +183,9 @@ async function turnOffAutoscale(page) {
  */
 async function setUserDefinedMinAndMax(page, min, max) {
     // set minimum value
-    const minRangeInput = page.getByRole('listitem').filter({ hasText: 'Minimum Value' }).locator('input[type="number"]');
-    await minRangeInput.click();
-    await minRangeInput.fill(min);
-
+    await page.getByRole('spinbutton').first().fill(min);
     // set maximum value
-    const maxRangeInput = page.getByRole('listitem').filter({ hasText: 'Maximum Value' }).locator('input[type="number"]');
-    await maxRangeInput.click();
-    await maxRangeInput.fill(max);
+    await page.getByRole('spinbutton').nth(1).fill(max);
 }
 
 /**

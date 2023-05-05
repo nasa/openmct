@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,11 +26,11 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, getCanvasPixels, selectInspectorTab, waitForPlotsToRender } = require('../../../../appActions');
 
 test.describe('Overlay Plot', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 
     test('Plot legend color is in sync with plot series color', async ({ page }) => {
@@ -45,19 +45,79 @@ test.describe('Overlay Plot', () => {
 
         await page.goto(overlayPlot.url);
 
+        await selectInspectorTab(page, 'Config');
+
         // navigate to plot series color palette
         await page.click('.l-browse-bar__actions__edit');
         await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
-
         // gets color for swatch located in legend
-        const element = await page.waitForSelector('.plot-series-color-swatch');
-        const color = await element.evaluate((el) => {
-            return window.getComputedStyle(el).getPropertyValue('background-color');
+        const seriesColorSwatch = page.locator('.gl-plot-label > .plot-series-color-swatch');
+        await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
+    });
+
+    test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({ page }) => {
+        test.info().annotations.push({
+            type: 'issue',
+            description: 'https://github.com/nasa/openmct/issues/6338'
+        });
+        // Create an Overlay Plot with a default SWG
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
+            type: "Overlay Plot"
         });
 
-        expect(color).toBe('rgb(255, 166, 61)');
+        const swgA = await createDomainObjectWithDefaults(page, {
+            type: "Sine Wave Generator",
+            parent: overlayPlot.uuid
+        });
+
+        await page.goto(overlayPlot.url);
+
+        // Assert that no limit lines are shown by default
+        await page.waitForSelector('.js-limit-area', { state: 'attached' });
+        expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+
+        // Enter edit mode
+        await page.click('button[title="Edit"]');
+
+        // Expand the "Sine Wave Generator" plot series options and enable limit lines
+        await selectInspectorTab(page, 'Config');
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('[title="Display limit lines"]~div input').check();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        await page.reload();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Enter edit mode
+        await page.click('button[title="Edit"]');
+
+        await selectInspectorTab(page, 'Elements');
+
+        // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
+        await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        // Save (exit edit mode)
+        await page.locator('button[title="Save"]').click();
+        await page.locator('li[title="Save and Finish Editing"]').click();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
+        await page.reload();
+
+        await assertLimitLinesExistAndAreVisible(page);
+
     });
 
     test('The elements pool supports dragging series into multiple y-axis buckets', async ({ page }) => {
@@ -89,22 +149,7 @@ test.describe('Overlay Plot', () => {
         await page.goto(overlayPlot.url);
         await page.click('button[title="Edit"]');
 
-        // Expand the elements pool vertically
-        await page.locator('.l-pane.l-pane--vertical-handle-before', {
-            hasText: 'Elements'
-        }).locator('.l-pane__handle').hover();
-        await page.mouse.down();
-        await page.mouse.move(0, 100);
-        await page.mouse.up();
-
-        const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
-        const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
-        const yAxis3PropertyGroup = page.locator('[aria-label="Y Axis 3 Properties"]');
-
-        // Assert that Y Axis 1 property group is visible only
-        await expect(yAxis1PropertyGroup).toBeVisible();
-        await expect(yAxis2PropertyGroup).toBeHidden();
-        await expect(yAxis3PropertyGroup).toBeHidden();
+        await selectInspectorTab(page, 'Elements');
 
         // Drag swg a, c, e into Y Axis 2
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
@@ -112,6 +157,12 @@ test.describe('Overlay Plot', () => {
         await page.locator(`#inspector-elements-tree >> text=${swgE.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
         // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
+        await selectInspectorTab(page, 'Config');
+
+        const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
+        const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
+        const yAxis3PropertyGroup = page.locator('[aria-label="Y Axis 3 Properties"]');
+
         await expect(yAxis1PropertyGroup).toBeVisible();
         await expect(yAxis2PropertyGroup).toBeVisible();
         await expect(yAxis3PropertyGroup).toBeHidden();
@@ -120,15 +171,21 @@ test.describe('Overlay Plot', () => {
         const yAxis2Group = page.getByLabel("Y Axis 2");
         const yAxis3Group = page.getByLabel("Y Axis 3");
 
+        await selectInspectorTab(page, 'Elements');
+
         // Drag swg b into Y Axis 3
         await page.locator(`#inspector-elements-tree >> text=${swgB.name}`).dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
 
         // Assert that all Y Axis property groups are visible
+        await selectInspectorTab(page, 'Config');
+
         await expect(yAxis1PropertyGroup).toBeVisible();
         await expect(yAxis2PropertyGroup).toBeVisible();
         await expect(yAxis3PropertyGroup).toBeVisible();
 
         // Verify that the elements are in the correct buckets and in the correct order
+        await selectInspectorTab(page, 'Elements');
+
         expect(yAxis1Group.getByRole('listitem', { name: swgD.name })).toBeTruthy();
         expect(yAxis1Group.getByRole('listitem').nth(0).getByText(swgD.name)).toBeTruthy();
         expect(yAxis2Group.getByRole('listitem', { name: swgE.name })).toBeTruthy();
@@ -152,49 +209,33 @@ test.describe('Overlay Plot', () => {
         });
 
         await page.goto(overlayPlot.url);
+        // Wait for plot series data to load and be drawn
+        await waitForPlotsToRender(page);
         await page.click('button[title="Edit"]');
 
+        await selectInspectorTab(page, 'Elements');
+
         await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
-        await page.locator('.js-overlay canvas').nth(1);
-        const plotPixelSize = await getCanvasPixelsWithData(page);
+
+        const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+        const plotPixelSize = plotPixels.length;
         expect(plotPixelSize).toBeGreaterThan(0);
     });
 });
 
 /**
+ * Asserts that limit lines exist and are visible
  * @param {import('@playwright/test').Page} page
  */
-async function getCanvasPixelsWithData(page) {
-    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getCanvasValue', resolve));
-
-    await page.evaluate(() => {
-        // The document canvas is where the plot points and lines are drawn.
-        // The only way to access the canvas is using document (using page.evaluate)
-        let data;
-        let canvas;
-        let ctx;
-        canvas = document.querySelector('.js-overlay canvas');
-        ctx = canvas.getContext('2d');
-        data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const imageDataValues = Object.values(data);
-        let plotPixels = [];
-        // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
-        // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
-        for (let i = 0; i < imageDataValues.length;) {
-            if (imageDataValues[i] > 0) {
-                plotPixels.push({
-                    startIndex: i,
-                    endIndex: i + 3,
-                    value: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${imageDataValues[i + 2]}, ${imageDataValues[i + 3]})`
-                });
-            }
-
-            i = i + 4;
-
-        }
-
-        window.getCanvasValue(plotPixels.length);
-    });
-
-    return getTelemValuePromise;
+async function assertLimitLinesExistAndAreVisible(page) {
+    // Wait for plot series data to load
+    await waitForPlotsToRender(page);
+    // Wait for limit lines to be created
+    await page.waitForSelector('.js-limit-area', { state: 'attached' });
+    const limitLineCount = await page.locator('.c-plot-limit-line').count();
+    // There should be 10 limit lines created by default
+    expect(await page.locator('.c-plot-limit-line').count()).toBe(10);
+    for (let i = 0; i < limitLineCount; i++) {
+        await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
+    }
 }

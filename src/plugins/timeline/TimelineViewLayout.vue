@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2022, United States Government
+* Open MCT, Copyright (c) 2014-2023, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -111,6 +111,8 @@ export default {
             let rowCount = 0;
             if (domainObject.type === 'plan') {
                 rowCount = Object.keys(getValidatedData(domainObject)).length;
+            } else if (domainObject.type === 'gantt-chart') {
+                rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
             }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';

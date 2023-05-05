@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -225,7 +225,7 @@ const SHOW_THUMBS_FULLSIZE_THRESHOLD_HEIGHT = 600;
 const IMAGE_CONTAINER_BORDER_WIDTH = 1;
 
 const DEFAULT_IMAGE_PAN_ALT_TEXT = "Alt drag to pan";
-const LINUX_IMAGE_PAN_ALT_TEXT = `Ctrl+${DEFAULT_IMAGE_PAN_ALT_TEXT}`;
+const LINUX_IMAGE_PAN_ALT_TEXT = `Shift+${DEFAULT_IMAGE_PAN_ALT_TEXT}`;
 
 export default {
     name: 'ImageryView',
@@ -322,7 +322,7 @@ export default {
                                 rgba(125,125,125,.2) 8px
                             )`
                     ) : ''}`,
-                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${this.imageTranslateY / 2}px)`,
                 transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                 width: `${this.sizedImageWidth}px`,
                 height: `${this.sizedImageHeight}px`
@@ -709,7 +709,7 @@ export default {
         getVisibleLayerStyles(layer) {
             return {
                 backgroundImage: `url(${layer.source})`,
-                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX}px, ${this.imageTranslateY}px)`,
+                transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${this.imageTranslateY / 2}px)`,
                 transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
             };
         },
@@ -885,6 +885,10 @@ export default {
             });
         },
         focusElement() {
+            if (this.isComposedInLayout) {
+                return false;
+            }
+
             this.$el.focus();
         },
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const nbUtils = require('../../../../helper/notebookUtils');
 const path = require('path');
@@ -72,7 +72,7 @@ test.describe('Notebook section tests', () => {
     //The following test cases are associated with Notebook Sections
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
@@ -133,7 +133,7 @@ test.describe('Notebook page tests', () => {
     //The following test cases are associated with Notebook Pages
     test.beforeEach(async ({ page }) => {
         //Navigate to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create Notebook
         await createDomainObjectWithDefaults(page, {
@@ -198,6 +198,36 @@ test.describe('Notebook page tests', () => {
     });
 });
 
+test.describe('Notebook export tests', () => {
+    test.beforeEach(async ({ page }) => {
+        //Navigate to baseURL
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+        // Create Notebook
+        await createDomainObjectWithDefaults(page, {
+            type: NOTEBOOK_NAME
+        });
+    });
+    test('can export notebook as text', async ({ page }) => {
+        await nbUtils.enterTextEntry(page, `Foo bar entry`);
+        // Click on 3 Dot Menu
+        await page.locator('button[title="More options"]').click();
+        const downloadPromise = page.waitForEvent('download');
+
+        await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
+
+        await page.getByRole('button', { name: 'Save' }).click();
+        const download = await downloadPromise;
+        const readStream = await download.createReadStream();
+        const exportedText = await streamToString(readStream);
+        expect(exportedText).toContain('Foo bar entry');
+    });
+    test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+    test.fixme('can export all notebook entry metdata', async ({ page }) => {});
+    test.fixme('can export all notebook tags', async ({ page }) => {});
+    test.fixme('can export all notebook snapshots', async ({ page }) => {});
+});
+
 test.describe('Notebook search tests', () => {
     test.fixme('Can search for a single result', async ({ page }) => {});
     test.fixme('Can search for many results', async ({ page }) => {});
@@ -213,16 +243,24 @@ test.describe('Notebook entry tests', () => {
     test.beforeEach(async ({ page }) => {
         // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js') });
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         notebookObject = await createDomainObjectWithDefaults(page, {
             type: NOTEBOOK_NAME
         });
     });
-    test.fixme('When a new entry is created, it should be focused', async ({ page }) => {});
+    test('When a new entry is created, it should be focused and selected', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        // Click .c-notebook__drag-area
+        await page.locator('.c-notebook__drag-area').click();
+        await expect(page.locator('[aria-label="Notebook Entry Input"]')).toBeVisible();
+        await expect(page.locator('[aria-label="Notebook Entry"]')).toHaveClass(/is-selected/);
+    });
     test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
-        await createDomainObjectWithDefaults(page, {
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: 'Overlay Plot'
         });
 
@@ -232,17 +270,17 @@ test.describe('Notebook entry tests', () => {
         // Reveal the notebook in the tree
         await page.getByTitle('Show selected item in tree').click();
 
-        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, '.c-notebook__drag-area');
 
         const embed = page.locator('.c-ne__embed__link');
         const embedName = await embed.textContent();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
-        expect(embedName).toBe('Dropped Overlay Plot');
+        expect(embedName).toBe(overlayPlot.name);
     });
     test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({ page }) => {
         // Create Overlay Plot
-        await createDomainObjectWithDefaults(page, {
+        const overlayPlot = await createDomainObjectWithDefaults(page, {
             type: 'Overlay Plot'
         });
 
@@ -253,17 +291,35 @@ test.describe('Notebook entry tests', () => {
         await page.getByTitle('Show selected item in tree').click();
 
         await nbUtils.enterTextEntry(page, 'Entry to drop into');
-        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', 'text=Entry to drop into');
+        await page.dragAndDrop(`role=treeitem[name=/${overlayPlot.name}/]`, 'text=Entry to drop into');
 
         const existingEntry = page.locator('.c-ne__content', { has: page.locator('text="Entry to drop into"') });
         const embed = existingEntry.locator('.c-ne__embed__link');
         const embedName = await embed.textContent();
 
         await expect(embed).toHaveClass(/icon-plot-overlay/);
-        expect(embedName).toBe('Dropped Overlay Plot');
+        expect(embedName).toBe(overlayPlot.name);
     });
     test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
-    test.fixme('previous and new entries can be deleted', async ({ page }) => {});
+    test('previous and new entries can be deleted', async ({ page }) => {
+        // Navigate to the notebook object
+        await page.goto(notebookObject.url);
+
+        await nbUtils.enterTextEntry(page, 'First Entry');
+        await page.hover('text="First Entry"');
+        await page.click('button[title="Delete this entry"]');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="First Entry"')).toBeHidden();
+        await nbUtils.enterTextEntry(page, 'Another First Entry');
+        await nbUtils.enterTextEntry(page, 'Second Entry');
+        await nbUtils.enterTextEntry(page, 'Third Entry');
+        await page.hover('[aria-label="Notebook Entry"] >> nth=2');
+        await page.click('button[title="Delete this entry"] >> nth=2');
+        await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
+        await expect(page.locator('text="Third Entry"')).toBeHidden();
+        await expect(page.locator('text="Another First Entry"')).toBeVisible();
+        await expect(page.locator('text="Second Entry"')).toBeVisible();
+    });
     test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({ page }) => {
         const TEST_LINK = 'http://www.google.com';
 

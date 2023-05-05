@@ -5,7 +5,6 @@ on:
     types:
       - labeled
       - opened
-
 jobs:
   e2e-full:
     if: ${{ github.event.label.name == 'pr:e2e' }}
@@ -30,11 +29,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - run: npx playwright@1.29.0 install
+      - run: npx playwright@1.32.3 install
       - run: npx playwright install chrome-beta
       - run: npm install
-      - run: npm run test:e2e:full
+      - run: npm run test:e2e:full -- --max-failures=40
+      - run: npm run cov:e2e:report || true
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          npm run cov:e2e:full:publish
       - name: Archive test results
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
@@ -60,3 +66,16 @@ jobs:
               repo: "openmct",
               body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
+      - name: Remove pr:e2e label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e';
+            await github.rest.issues.removeLabel({
+              owner,
+              repo,
+              issue_number: number,
+              name: labelToRemove
+            });

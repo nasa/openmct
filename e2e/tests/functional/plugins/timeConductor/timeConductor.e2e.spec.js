@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@ const { setFixedTimeMode, setRealTimeMode, setStartOffset, setEndOffset } = requ
 test.describe('Time conductor operations', () => {
     test('validate start time does not exceeds end time', async ({ page }) => {
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
         const year = new Date().getFullYear();
 
         let startDate = 'xxxx-01-01 01:00:00.000Z';
@@ -82,7 +82,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         };
 
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Switch to real-time mode
         await setRealTimeMode(page);
@@ -119,7 +119,7 @@ test.describe('Time conductor input fields real-time mode', () => {
         const endDelta = (1 * 1000);
 
         // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Switch to real-time mode
         await setRealTimeMode(page);

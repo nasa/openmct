@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,7 +36,7 @@ const { test, expect } = require('../../pluginFixtures.js');
 
 test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
     //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
 
     // click create button

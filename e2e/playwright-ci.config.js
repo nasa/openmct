@@ -9,7 +9,7 @@ const NUM_WORKERS = 2;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with maxFailures = 5, this should ensure that flake is managed without failing the full suite
+    retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
     testDir: 'tests',
     testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
     timeout: 60 * 1000,
@@ -74,7 +74,8 @@ const config = {
             outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
         }],
         ['junit', { outputFile: '../test-results/results.xml' }],
-        ['github']
+        ['github'],
+        ['@deploysentinel/playwright']
     ]
 };
 

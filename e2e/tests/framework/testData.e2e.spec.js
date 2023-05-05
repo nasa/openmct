@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ test.describe('recycled_local_storage @localStorage', () => {
     //We may want to do some additional level of verification of this file. For now, we just verify that it exists and can be used in a test suite.
     test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
     test('Can use recycled_local_storage file', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
     });
 });
 
