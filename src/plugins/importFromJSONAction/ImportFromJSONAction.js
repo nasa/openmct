@@ -92,7 +92,7 @@ export default class ImportAsJSONAction {
             for (const childId of objectIdentifiers) {
                 const keystring = this.openmct.objects.makeKeyString(childId);
                 if (!tree[keystring] || seen.includes(keystring)) {
-                    return;
+                    continue;
                 }
 
                 const newModel = tree[keystring];
@@ -179,7 +179,13 @@ export default class ImportAsJSONAction {
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
             this._deepInstantiate(rootObj, tree.openmct, []);
 
-            await Promise.all(this.newObjects.map(this._instantiate, this));
+            try {
+                await Promise.all(this.newObjects.map(this._instantiate, this));
+            } catch (error) {
+                this.openmct.notifications.error('Error saving objects');
+
+                throw error;
+            }
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -206,16 +212,8 @@ export default class ImportAsJSONAction {
      * @param {object} model
      * @returns {object}
      */
-    async _instantiate(model) {
-        try {
-            const result = await this.openmct.objects.save(model);
-
-            return result;
-        } catch (error) {
-            this.openmct.notifications.error('Error saving objects');
-
-            throw error;
-        }
+    _instantiate(model) {
+        return this.openmct.objects.save(model);
     }
     /**
      * @private
