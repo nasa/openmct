@@ -17,6 +17,7 @@
         <button
             v-if="isCollapsable"
             class="l-pane__collapse-button c-icon-button"
+            :title="collapseTitle"
             @click="toggleCollapse"
         ></button>
     </div>
@@ -68,6 +69,9 @@ export default {
     computed: {
         isCollapsable() {
             return this.hideParam?.length > 0;
+        },
+        collapseTitle() {
+            return `Collapse ${this.label} Pane`;
         },
         localStorageKey() {
             if (!this.label) {
