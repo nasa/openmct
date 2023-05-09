@@ -211,6 +211,7 @@ export default {
                             this.removeFromComposition(this.planObject);
                             this.planObject = domainObject;
                             this.planData = getValidatedData(domainObject);
+                            this.setStatus(this.openmct.status.get(domainObject.identifier));
                             this.setScaleAndGenerateActivities();
                             dialog.dismiss();
                         }
@@ -232,6 +233,7 @@ export default {
                 this.planObject = domainObject;
                 this.swimlaneVisibility = this.configuration.swimlaneVisibility;
                 this.planData = getValidatedData(domainObject);
+                this.setStatus(this.openmct.status.get(domainObject.identifier));
                 this.setScaleAndGenerateActivities();
             }
         },
