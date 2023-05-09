@@ -100,6 +100,7 @@
                     v-if="shouldDisplayAnnotations"
                     :image="focusedImage"
                     :imagery-annotations="imageryAnnotations[focusedImage.time]"
+                    @annotationMarqueed="handlePauseButton(true)"
                 />
             </div>
         </div>

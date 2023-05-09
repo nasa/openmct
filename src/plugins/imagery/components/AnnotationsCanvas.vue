@@ -315,6 +315,7 @@ export default {
             return selection;
         },
         startAnnotationDrag(event) {
+            this.$emit('annotationMarqueed');
             this.newAnnotationRectangle = {};
             const boundingRect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / boundingRect.width;
