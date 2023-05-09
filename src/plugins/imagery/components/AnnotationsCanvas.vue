@@ -74,6 +74,12 @@ export default {
     mounted() {
         this.canvas = this.$refs.canvas;
         this.context = this.canvas.getContext("2d");
+
+        // adjust canvas size for retina displays
+        const scale = window.devicePixelRatio;
+        this.canvas.width = Math.floor(this.canvas.width * scale);
+        this.canvas.height = Math.floor(this.canvas.height * scale);
+
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.openmct.selection.on('change', this.updateSelection);
         this.buildAnnotationIndex();
@@ -149,7 +155,7 @@ export default {
         },
         drawRectInCanvas(rectangle, fillStyle, strokeStyle) {
             this.context.beginPath();
-            this.context.lineWidth = "1";
+            this.context.lineWidth = 1;
             this.context.fillStyle = fillStyle;
             this.context.strokeStyle = strokeStyle;
             this.context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
