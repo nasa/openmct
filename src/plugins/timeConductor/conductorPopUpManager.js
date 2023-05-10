@@ -40,26 +40,23 @@ export default {
         this.registerPopUp();
         // this.popupComponent = this.createPopupComponent();
     },
-    beforeDestroy() {
-        document.removeEventListener('click', this.clearPopup, {
-            capture: true
-        });
-        window.removeEventListener('resize', this.positionBox);
-    },
     methods: {
         showPopup() {
-            // const popupElement = this.popupComponent;
+            if (this.showConductorPopup) {
+                return;
+            }
 
-            // document.body.appendChild(this.$refs.conductorPopup);
-            //Use capture, so we don't trigger immediately on the same iteration of the event loop
             this.showConductorPopup = true;
-            document.addEventListener('click', this.clearPopup, {
-                capture: true
-            });
 
             this.positionBox();
 
-            window.addEventListener('resize', this.positionBox);
+            // setTimeout so we don't trigger immediately on the same iteration of the event loop
+            // using capture, was preventing the dropdown menues from disappearing with
+            // the conductor popup, requiring an extra click and floating dropdown
+            setTimeout(() => {
+                window.addEventListener('resize', this.positionBox);
+                document.addEventListener('click', this.clearPopup);
+            }, 0);
         },
 
         positionBox() {
@@ -70,27 +67,30 @@ export default {
             this.positionX = timeConductorOptionsBox.left;
             //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
             this.positionY = timeConductorOptionsBox.top;
-            const offsetTop = this.$refs.conductorPopup.getBoundingClientRect().height;
+            const offsetTop = this.$refs.conductorPopup.$el.getBoundingClientRect().height;
 
-            const popupRight = this.positionX + this.$refs.conductorPopup.clientWidth;
+            const popupRight = this.positionX + this.$refs.conductorPopup.$el.clientWidth;
             const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
 
             this.positionX = this.positionX + offsetLeft;
             this.positionY = this.positionY - offsetTop;
+            console.log('position xy', this.positionX, this.positionY);
         },
 
         clearPopup(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
                 this.showConductorPopup = false;
-                // this.removePopup();
+
+                document.removeEventListener('click', this.clearPopup);
+                window.removeEventListener('resize', this.positionBox);
             }
         },
         canClose(clickAwayEvent) {
             // const popupElement = this.popupComponent;
 
             const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = this.$refs.conductorPopup.contains(clickAwayEvent.target);
+            const isPopupElementItem = this.$refs.conductorPopup.$el.contains(clickAwayEvent.target);
 
             return !isChildMenu && !isPopupElementItem;
         },

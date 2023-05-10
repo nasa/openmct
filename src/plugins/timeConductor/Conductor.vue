@@ -29,6 +29,7 @@
         { 'alt-pressed': altPressed },
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
+    style="overflow: visible"
 >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <!-- TODO - NEED TO ADD MODE, CLOCK AND TIMESYSTEM VIEW ONLY INFORMATION HERE -->
