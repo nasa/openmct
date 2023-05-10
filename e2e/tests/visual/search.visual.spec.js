@@ -41,7 +41,7 @@ test.describe('Grand Search', () => {
         await page.goto('./#/browse/mine?hideTree=true');
     });
 
-    test.only('Can search for folder object, and subsequent search dropdown behaves properly', async ({ page, theme }) => {
+    test('Can search for folder object, and subsequent search dropdown behaves properly', async ({ page, theme }) => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
 
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill(folder.name);
