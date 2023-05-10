@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { TIME_CONTEXT_EVENTS, MODES } from './constants';
+import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY } from './constants';
 
 class TimeContext extends EventEmitter {
     constructor() {
@@ -516,12 +516,15 @@ class TimeContext extends EventEmitter {
             }
         }
 
+        // this.setMode(REALTIME_MODE_KEY);
+
         const previousClock = this.activeClock;
-        if (previousClock !== undefined && this.isRealTime()) {
+        if (previousClock) {
             previousClock.off('tick', this.tick);
         }
 
         this.activeClock = clock;
+        this.activeClock.on('tick', this.tick);
 
         /**
          * The active clock has changed.
@@ -532,14 +535,8 @@ class TimeContext extends EventEmitter {
          */
         this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
-        if (this.isRealTime()) {
-            if (this.activeClock !== undefined) {
-                this.activeClock.on("tick", this.tick);
-            }
-
-            if (offsets !== undefined) {
-                this.setClockOffsets(offsets);
-            }
+        if (offsets !== undefined) {
+            this.setClockOffsets(offsets);
         }
 
         return this.activeClock;
@@ -557,32 +554,27 @@ class TimeContext extends EventEmitter {
      * Set the mode to either fixed or realtime.
      *
      * @param {Mode} mode The mode to activate
-     * @param {ClockOffsets | Bounds} offsets on each tick these will be used to calculate
-     * the start and end bounds. In realtime mode, this maintains a sliding time window of a fixed
-     * width that automatically updates.
      * @fires module:openmct.TimeAPI~clock
      * @return {Mode} the currently active mode;
      */
-    setMode(mode, offsets) {
-        if (offsets === undefined) {
-            throw 'When setting the mode, offsets must also be provided';
+    setMode(mode) {
+        if (!mode || mode === this.mode) {
+            return;
         }
 
-        const previousMode = this.mode;
-        console.log('set mode', this.mode, mode, offsets);
-        if (previousMode === MODES.realtime) {
-            this.activeClock.off('tick', this.tick);
-        }
+        // we don't want to do this now since we will always listen to the tick
+        // if (previousMode === MODES.realtime) {
+        //     this.activeClock.off('tick', this.tick);
+        // }
 
-        this.mode = this.#copy(mode);
-
-        if (mode === MODES.realtime) {
-            this.activeClock.on('tick', this.tick);
-            this.setClockOffsets(offsets);
-        } else if (mode === MODES.fixed) {
-            this.activeClock.off('tick', this.tick);
-            this.setBounds(offsets);
-        }
+        // if (mode === MODES.realtime) {
+        //     this.activeClock.on('tick', this.tick);
+        //     // this.setClockOffsets(offsets);
+        // }
+        // else if (mode === MODES.fixed) {
+        // this.activeClock.off('tick', this.tick);
+        // this.setBounds(offsets);
+        // }
 
         /**
          * The active clock has changed. Clock can be unset by calling {@link stopClock}
@@ -601,6 +593,7 @@ class TimeContext extends EventEmitter {
      * @returns {boolean} true if this context is in real-time mode, false if not
     */
     isRealTime() {
+        console.log('this.mode', this.mode)
         return this.mode !== MODES.fixed;
     }
 

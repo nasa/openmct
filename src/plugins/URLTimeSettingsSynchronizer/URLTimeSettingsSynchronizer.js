@@ -118,14 +118,15 @@ export default class URLTimeSettingsSynchronizer {
                 this.openmct.time.setBounds(timeParameters.bounds);
             }
 
+            this.openmct.time.setMode('fixed');
+
             // if (this.openmct.time.clock()) {
             //      this.openmct.time.stopClock();
             // }
         } else {
-            console.log('realtime mode');
             const clock = this.openmct.time.getClock();
-            console.log('clock offsets', this.openmct.time.getClockOffsets(), timeParameters.clockOffsets);
-            if (clock?.key !== timeParameters.mode) {
+            console.log('REALTIME: ', clock, timeParameters.mode);
+            if (!clock || clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {
                 this.openmct.time.setClockOffsets(timeParameters.clockOffsets);
@@ -145,8 +146,8 @@ export default class URLTimeSettingsSynchronizer {
 
     setUrlFromTimeApi() {
         let searchParams = this.openmct.router.getAllSearchParams();
-        let clock = this.openmct.time.clock();
-        let bounds = this.openmct.time.bounds();
+        let clock = this.openmct.time.getClock();
+        let bounds = this.openmct.time.getBounds();
         let clockOffsets = this.openmct.time.getClockOffsets();
 
         if (clock === undefined) {
@@ -171,7 +172,7 @@ export default class URLTimeSettingsSynchronizer {
             searchParams.delete(SEARCH_END_BOUND);
         }
 
-        searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
+        searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.getTimeSystem().key);
         this.openmct.router.setAllSearchParams(searchParams);
     }
 
