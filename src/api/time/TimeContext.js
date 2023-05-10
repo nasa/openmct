@@ -593,7 +593,6 @@ class TimeContext extends EventEmitter {
      * @returns {boolean} true if this context is in real-time mode, false if not
     */
     isRealTime() {
-        console.log('this.mode', this.mode)
         return this.mode !== MODES.fixed;
     }
 

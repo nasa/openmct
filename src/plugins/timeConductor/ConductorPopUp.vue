@@ -1,8 +1,8 @@
 <template>
 <div
-    :style="position"
     class="c-tc-input-popup"
     :class="modeClass"
+    :style="position"
     @click.stop
     @keydown.enter.prevent
     @keyup.enter.prevent="submit"
@@ -114,16 +114,17 @@ export default {
         }
     },
     data() {
-        let bounds = this.openmct.time.bounds();
-        let timeSystem = this.openmct.time.timeSystem();
+        let bounds = this.openmct.time.getBounds();
+        let timeSystem = this.openmct.time.getTimeSystem();
+        let isFixed = this.openmct.time.isFixed();
 
         return {
-            timeSystem: timeSystem,
+            timeSystem,
             bounds: {
                 start: bounds.start,
                 end: bounds.end
             },
-            isFixed: this.openmct.time.clock() === undefined
+            isFixed
         };
     },
     computed: {
@@ -172,23 +173,28 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            this.timeContext.on('clock', this.setViewFromClock);
-            this.timeContext.on('bounds', this.setBounds);
+            this.timeContext.on('clockChanged', this.setViewFromClock);
+            this.timeContext.on('boundsChanged', this.setBounds);
+            this.openmct.time.on('modeChanged', this.setMode);
             this.setViewFromClock(this.timeContext.clock());
             this.setBounds(this.timeContext.bounds());
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('clock', this.setViewFromClock);
-                this.timeContext.off('bounds', this.setBounds);
+                this.timeContext.off('clockChanged', this.setViewFromClock);
+                this.timeContext.off('boundsChanged', this.setBounds);
+                this.openmct.time.off('modeChanged', this.setMode);
             }
         },
         setViewFromClock(clock) {
             this.isFixed = clock === undefined;
-            this.bounds = this.timeContext.bounds();
+            this.bounds = this.timeContext.getBounds();
         },
         setBounds() {
-            this.bounds = this.timeContext.bounds();
+            this.bounds = this.timeContext.getBounds();
+        },
+        setMode() {
+            this.isFixed = this.timeContext.isFixed();
         },
         saveFixedBounds(bounds) {
             this.$emit('fixedBoundsUpdated', bounds);
