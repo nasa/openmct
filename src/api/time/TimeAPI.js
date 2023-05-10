@@ -111,13 +111,13 @@ class TimeAPI extends GlobalTimeContext {
      * @param {Clock} clock
      */
     addClock(clock) {
-        const hasActiveClock = Boolean(this.activeClock);
+        // const hasActiveClock = Boolean(this.activeClock);
 
         this.clocks.set(clock.key, clock);
 
-        if (!hasActiveClock) {
-            this.setClock(clock.key);
-        }
+        // if (!hasActiveClock) {
+        //     this.setClock(clock.key);
+        // }
     }
 
     /**
