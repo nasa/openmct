@@ -58,6 +58,18 @@
         class="u-flex-spreader"
     ></div>
     <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
+
+    <conductor-pop-up
+        v-if="showConductorPopup"
+        ref="conductorPopup"
+        :bottom="false"
+        :position-x="positionX"
+        :position-y="positionY"
+        @dismiss="removePopup()"
+        @modeUpdated="saveMode"
+        @fixedBoundsUpdated="saveFixedBounds"
+        @clockOffsetsUpdated="saveClockOffsets"
+    />
 </div>
 </template>
 
@@ -68,6 +80,7 @@ import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "./ConductorInputsRealtime.vue";
 import conductorPopUpManager from "./conductorPopUpManager";
+import ConductorPopUp from "./ConductorPopUp.vue";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -76,7 +89,8 @@ export default {
         ConductorInputsRealtime,
         ConductorInputsFixed,
         ConductorAxis,
-        ConductorModeIcon
+        ConductorModeIcon,
+        ConductorPopUp
     },
     mixins: [conductorPopUpManager],
     inject: ['openmct', 'configuration'],
@@ -117,6 +131,7 @@ export default {
         };
     },
     mounted() {
+        console.log('conductor mounted');
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));

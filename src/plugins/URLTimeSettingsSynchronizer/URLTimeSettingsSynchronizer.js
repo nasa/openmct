@@ -46,6 +46,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     initialize() {
+        console.log('time context initialized');
         this.updateTimeSettings();
         this.openmct.router.on('change:params', this.updateTimeSettings);
 
@@ -69,7 +70,7 @@ export default class URLTimeSettingsSynchronizer {
 
     updateTimeSettings() {
         let timeParameters = this.parseParametersFromUrl();
-
+        console.log('update time settings, params valid?', this.areTimeParametersValid(timeParameters));
         if (this.areTimeParametersValid(timeParameters)) {
             this.setTimeApiFromUrl(timeParameters);
             this.openmct.router.setLocationFromUrl();
@@ -80,7 +81,7 @@ export default class URLTimeSettingsSynchronizer {
 
     parseParametersFromUrl() {
         let searchParams = this.openmct.router.getAllSearchParams();
-
+        console.log('search params', searchParams)
         let mode = searchParams.get(SEARCH_MODE);
         let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
 
@@ -108,7 +109,7 @@ export default class URLTimeSettingsSynchronizer {
 
     setTimeApiFromUrl(timeParameters) {
         const timeSystem = this.openmct.time.getTimeSystem();
-
+        console.log('set time api from url', timeParameters.mode, FIXED_MODE_KEY);
         if (timeParameters.mode === FIXED_MODE_KEY) {
             // should update timesystem
             if (timeSystem.key !== timeParameters.timeSystem) {
@@ -121,8 +122,9 @@ export default class URLTimeSettingsSynchronizer {
             //      this.openmct.time.stopClock();
             // }
         } else {
+            console.log('realtime mode');
             const clock = this.openmct.time.getClock();
-
+            console.log('clock offsets', this.openmct.time.getClockOffsets(), timeParameters.clockOffsets);
             if (clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {
@@ -180,8 +182,10 @@ export default class URLTimeSettingsSynchronizer {
             && this.isTimeSystemValid(timeParameters.timeSystem)) {
 
             if (timeParameters.mode === FIXED_MODE_KEY) {
+                console.log('mode fixed start end valid?', this.areStartAndEndValid(timeParameters.bounds));
                 isValid = this.areStartAndEndValid(timeParameters.bounds);
             } else {
+                console.log('mode NOOOOOT fixed offsets valide?', this.areStartAndEndValid(timeParameters.clockOffsets));
                 isValid = this.areStartAndEndValid(timeParameters.clockOffsets);
             }
         }

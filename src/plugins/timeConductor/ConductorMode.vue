@@ -81,6 +81,7 @@ export default {
         };
     },
     mounted: function () {
+        console.log('conductor mode mounted');
         this.loadModesAndClocks(this.configuration.menuOptions);
 
         this.followTimeConductor();

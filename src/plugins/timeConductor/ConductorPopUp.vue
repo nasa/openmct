@@ -59,6 +59,7 @@
 </template>
 
 <script>
+
 import ConductorMode from './ConductorMode.vue';
 import Mode from './independent/Mode.vue';
 import ConductorTimeSystem from "./ConductorTimeSystem.vue";
@@ -133,7 +134,7 @@ export default {
             };
         },
         timeOffsets() {
-            return this.isFixed || !this.timeContext ? undefined : this.timeContext.clockOffsets();
+            return this.isFixed || !this.timeContext ? undefined : this.timeContext.getClockOffsets();
         },
         timeMode() {
             return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
@@ -161,6 +162,7 @@ export default {
         }
     },
     mounted() {
+        console.log('conductor popup mounted');
         this.setTimeContext();
     },
     beforeDestroy() {

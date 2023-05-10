@@ -304,7 +304,7 @@ class TimeContext extends EventEmitter {
      */
     clock(keyOrClock, offsets) {
         this.#warnMethodDeprecated('"clock"', '"getClock" and "setClock"');
-
+        console.log('time context clock', keyOrClock, offsets)
         if (arguments.length === 2) {
             let clock;
 
@@ -537,7 +537,7 @@ class TimeContext extends EventEmitter {
             }
 
             if (offsets !== undefined) {
-                this.clockOffsets(offsets);
+                this.setClockOffsets(offsets);
             }
         }
 
@@ -568,7 +568,7 @@ class TimeContext extends EventEmitter {
         }
 
         const previousMode = this.mode;
-        console.log('set mode', this.mode, mode, offsets, previousMode);
+        console.log('set mode', this.mode, mode, offsets);
         if (previousMode === MODES.realtime) {
             this.activeClock.off('tick', this.tick);
         }
@@ -600,7 +600,7 @@ class TimeContext extends EventEmitter {
      * @returns {boolean} true if this context is in real-time mode, false if not
     */
     isRealTime() {
-        return this.mode === MODES.realtime;
+        return this.mode !== MODES.fixed;
     }
 
     /**
@@ -616,6 +616,7 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     getClockOffsets() {
+        console.log('get clock offsets timecontext', this.offsets);
         return this.offsets;
     }
 
@@ -627,6 +628,7 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     setClockOffsets(offsets) {
+        console.log('set clock offsets timecontext', offsets);
         const validationResult = this.validateOffsets(offsets);
         if (validationResult.valid !== true) {
             throw new Error(validationResult.message);
