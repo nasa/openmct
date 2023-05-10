@@ -29,6 +29,7 @@ test.describe('Visual - LAD Table', () => {
     let ladTable;
 
     test.beforeEach(async ({ page }) => {
+
         await page.goto('./', { waitUntil: 'domcontentloaded' });
         // Create LAD Table
         ladTable = await createDomainObjectWithDefaults(page, {

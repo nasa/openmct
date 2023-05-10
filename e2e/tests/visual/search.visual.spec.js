@@ -30,36 +30,33 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Grand Search', () => {
+    let folder;
     test.beforeEach(async ({ page, theme }) => {
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+        folder = await createDomainObjectWithDefaults(page, {
+            type: 'Folder',
+            name: "Folder for Search"
+        });
         //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+        await page.goto('./#/browse/mine?hideTree=true');
     });
 
-    //This needs to be rewritten to use a non clock or non display layout object
-    test('Can search for objects, and subsequent search dropdown behaves properly @unstable', async ({ page, theme }) => {
-        // await createDomainObjectWithDefaults(page, 'Display Layout');
-        // await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
-        // await page.locator('text=Save and Finish Editing').click();
-        const folder1 = 'Folder1';
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: folder1
-        });
-
-        // Click [aria-label="OpenMCT Search"] input[type="search"]
+    test.only('Can search for folder object, and subsequent search dropdown behaves properly', async ({ page, theme }) => {
         await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill [aria-label="OpenMCT Search"] input[type="search"]
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill(folder1);
-        await expect(page.locator('[aria-label="Search Result"]')).toContainText(folder1);
-        await percySnapshot(page, 'Searching for Folder Object');
+
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill(folder.name);
+        await expect(page.locator('[aria-label="Search Result"]')).toContainText(folder.name);
+        //Searching for an object returns that object in the grandsearch
+        await percySnapshot(page, `Searching for Folder Object (theme: '${theme}')`);
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
         await page.locator('[aria-label="Unnamed Clock clock result"] >> text=Unnamed Clock').click();
-        await percySnapshot(page, 'Preview for clock should display when editing enabled and search item clicked');
+        //???
+        await percySnapshot(page, `Preview for clock should display when editing enabled and search item clicked (theme: '${theme}')`);
 
         await page.locator('[aria-label="Close"]').click();
-        await percySnapshot(page, 'Search should still be showing after preview closed');
+
+        await percySnapshot(page, `Search should still be showing after preview closed (theme: '${theme}')`);
 
         await page.locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button').nth(1).click();
 
@@ -67,7 +64,7 @@ test.describe('Grand Search', () => {
 
         await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
 
-        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
+        await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill(folder.name);
 
         await Promise.all([
             page.waitForNavigation(),

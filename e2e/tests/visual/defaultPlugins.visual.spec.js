@@ -24,12 +24,6 @@
 Collection of Visual Tests set to run in a default context with default Plugins. The tests within this suite
 are only meant to run against openmct's app.js started by `npm run start` within the
 `./e2e/playwright-visual.config.js` file.
-
-These should only use functional expect statements to verify assumptions about the state
-in a test and not for functional verification of correctness. Visual tests are not supposed
-to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
-
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
 */
 
 const { test, expect } = require('../../pluginFixtures');

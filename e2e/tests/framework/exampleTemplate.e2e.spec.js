@@ -127,6 +127,35 @@ test.describe('Renaming Timer Object', () => {
 });
 
 /**
+ * The next most important concept in our testing is working with telemetry objects. Telemetry is at the core of Open MCT
+ * and we have developed a great pattern for working with it.
+ */
+test.describe('Advanced: Working with telemetry objects', () => {
+    let displayLayout;
+    test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+        // Create a Display Layout with a meaningful name
+        displayLayout = await createDomainObjectWithDefaults(page, {
+            type: 'Display Layout',
+            name: 'Display Layout with Embedded SWG'
+        });
+        // Create Telemetry object within the parent object created above
+        await createDomainObjectWithDefaults(page, {
+            type: 'Sine Wave Generator',
+            name: 'Telemetry',
+            parent: displayLayout.uuid //reference the display layout in the creation process
+        });
+    });
+    test('Can directly navigate to a Display Layout with embedded telemetry', async ({ page }) => {
+        //Now you can directly navigate to the displayLayout created in the beforeEach with the embedded telemetry
+        await page.goto(displayLayout.url);
+        //Expect the created Telemetry Object to be visible when directly navigating to the displayLayout
+        await expect(page.getByTitle('Sine')).toBeVisible();
+    });
+});
+
+/**
  * Structure:
  * Custom functions should be declared last.
  * We are leaning on JSDoc pretty heavily to describe functionality. It is not required, but highly recommended.

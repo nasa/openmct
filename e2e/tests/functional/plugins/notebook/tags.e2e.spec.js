@@ -26,59 +26,7 @@ This test suite is dedicated to tests which verify notebook tag functionality.
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
-
-/**
-  * Creates a notebook object and adds an entry.
-  * @param {import('@playwright/test').Page} - page to load
-  * @param {number} [iterations = 1] - the number of entries to create
-  */
-async function createNotebookAndEntry(page, iterations = 1) {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-
-    createDomainObjectWithDefaults(page, { type: 'Notebook' });
-
-    for (let iteration = 0; iteration < iterations; iteration++) {
-        await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
-    }
-
-    return notebook;
-}
-
-/**
-  * Creates a notebook object, adds an entry, and adds a tag.
-  * @param {import('@playwright/test').Page} page
-  * @param {number} [iterations = 1] - the number of entries (and tags) to create
-  */
-async function createNotebookEntryAndTags(page, iterations = 1) {
-    const notebook = await createNotebookAndEntry(page, iterations);
-    await selectInspectorTab(page, 'Annotations');
-
-    for (let iteration = 0; iteration < iterations; iteration++) {
-        // Hover and click "Add Tag" button
-        // Hover is needed here to "slow down" the actions while running in headless mode
-        await page.locator(`[aria-label="Notebook Entry"] >> nth = ${iteration}`).click();
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-
-        // Click inside the tag search input
-        await page.locator('[placeholder="Type to select tag"]').click();
-        // Select the "Driving" tag
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-
-        // Hover and click "Add Tag" button
-        // Hover is needed here to "slow down" the actions while running in headless mode
-        await page.hover(`button:has-text("Add Tag")`);
-        await page.locator(`button:has-text("Add Tag")`).click();
-        // Click inside the tag search input
-        await page.locator('[placeholder="Type to select tag"]').click();
-        // Select the "Science" tag
-        await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-    }
-
-    return notebook;
-}
+const { enterTextEntry, createNotebookAndEntry, createNotebookEntryAndTags} = require('../../../../helper/notebookUtils');
 
 test.describe('Tagging in Notebooks @addInit', () => {
     test.beforeEach(async ({ page }) => {
@@ -115,7 +63,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
         await createDomainObjectWithDefaults(page, { type: 'Notebook' });
         await selectInspectorTab(page, 'Annotations');
 
-        await nbUtils.enterTextEntry(page, '');
+        await enterTextEntry(page, '');
         await page.hover(`button:has-text("Add Tag")`);
         await page.locator(`button:has-text("Add Tag")`).click();
 

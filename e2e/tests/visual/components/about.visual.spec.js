@@ -32,11 +32,6 @@ test.describe('Visual - Branding', () => {
         //Go to baseURL and Hide Tree
         await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
     });
-    test.use({
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
 
     test('Visual - About Modal', async ({ page, theme }) => {
         // Click About button

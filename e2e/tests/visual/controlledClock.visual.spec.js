@@ -40,11 +40,7 @@ test.describe('Visual - Controlled Clock', () => {
         }
     });
 
-    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
-        await setFixedTimeMode(page);
-        const startTimeInput = page.locator('input[type="text"].c-input--datetime').nth(0);
-        const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
-
+    test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
         await page.locator('a').filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' }).click();
         //Ensure that we're on the Unnamed Overlay Plot object
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Overlay Plot with Telemetry Object');

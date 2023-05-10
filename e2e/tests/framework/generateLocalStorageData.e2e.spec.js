@@ -75,7 +75,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         // Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
     });
-    test.only('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
+    test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
 
         // add overlay plot with defaults
         const overlayPlot = await createDomainObjectWithDefaults(page, {

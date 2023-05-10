@@ -22,30 +22,15 @@
 
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
-const path = require('path');
-
-const CUSTOM_NAME = 'CUSTOM_NAME';
+const { selectInspectorTab, expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
+const { startAndAddRestrictedNotebookObject, enterTextEntry } = require('../../helper/notebookUtils');
 
 test.describe('Visual - Restricted Notebook', () => {
     test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-    });
-    test.use({
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
+        await startAndAddRestrictedNotebookObject(page);
     });
 
-    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
-        //Go to baseURL and hide tree
-        await page.goto('./', { waitUntil: 'networkidle' });
-
-        await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
-
+    test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
         // Take a snapshot of the newly created CUSTOM_NAME notebook
         await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
     });
@@ -59,7 +44,6 @@ test.describe('Visual - Notebook', () => {
     test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
         const { myItemsFolderName } = openmctConfig;
 
-        // Create Notebook
         const notebook = await createDomainObjectWithDefaults(page, {
             type: 'Notebook',
             name: "Embed Test Notebook"
@@ -80,24 +64,18 @@ test.describe('Visual - Notebook', () => {
 
     });
     test("Blur 'Add tag' on Notebook", async ({ page, theme }) => {
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
         await createDomainObjectWithDefaults(page, {
             type: 'Notebook',
             name: "Add Tag Test Notebook"
         });
-        await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-        const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 0`;
-        await page.locator(entryLocator).click();
-        await page.locator(entryLocator).fill(`Entry 0`);
-        await page.locator(entryLocator).press('Enter');
+        await enterTextEntry(page, "Entry 0");
 
         // Click on Annotations tab
-        await page.locator('.c-inspector__tab', { hasText: "Annotations" }).click();
+        await selectInspectorTab(page, "Annotations");
 
         // Take snapshot of the notebook with the Annotations tab opened
         await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
 
-        // Click on the "Add Tag" button
         await page.locator('button:has-text("Add Tag")').click();
 
         // Take snapshot of the notebook with the AutoComplete field visible
