@@ -20,29 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import raf from '@/utils/raf';
-import Vue from "vue";
-import ConductorPopUp from "./ConductorPopUp.vue";
 
 export default {
     inject: ['openmct', 'configuration'],
+    data() {
+        return {
+            showConductorPopup: false,
+            positionX: 0,
+            positionY: 0
+        };
+    },
     mounted() {
         this.showPopup = this.showPopup.bind(this);
         this.clearPopup = this.clearPopup.bind(this);
         this.positionBox = this.positionBox.bind(this);
         this.positionBox = raf(this.positionBox);
         this.timeConductorOptionsHolder = this.$refs.timeConductorOptionsHolder;
+        this.showConductorPopup = false;
         this.registerPopUp();
-        this.popupComponent = this.createPopupComponent();
+        // this.popupComponent = this.createPopupComponent();
     },
     beforeDestroy() {
-        this.removePopup();
+        document.removeEventListener('click', this.clearPopup, {
+            capture: true
+        });
+        window.removeEventListener('resize', this.positionBox);
     },
     methods: {
         showPopup() {
-            const popupElement = this.popupComponent;
+            // const popupElement = this.popupComponent;
 
-            document.body.appendChild(popupElement.$el);
+            // document.body.appendChild(this.$refs.conductorPopup);
             //Use capture, so we don't trigger immediately on the same iteration of the event loop
+            this.showConductorPopup = true;
             document.addEventListener('click', this.clearPopup, {
                 capture: true
             });
@@ -53,81 +63,82 @@ export default {
         },
 
         positionBox() {
-            const popupElement = this.popupComponent;
+            // const popupElement = this.popupComponent;
             const timeConductorOptions = this.timeConductorOptionsHolder;
 
             let timeConductorOptionsBox = timeConductorOptions.getBoundingClientRect();
-            popupElement.positionX = timeConductorOptionsBox.left;
+            this.positionX = timeConductorOptionsBox.left;
             //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            popupElement.positionY = timeConductorOptionsBox.top;
-            const offsetTop = popupElement.$el.getBoundingClientRect().height;
+            this.positionY = timeConductorOptionsBox.top;
+            const offsetTop = this.$refs.conductorPopup.getBoundingClientRect().height;
 
-            const popupRight = popupElement.positionX + popupElement.$el.clientWidth;
+            const popupRight = this.positionX + this.$refs.conductorPopup.clientWidth;
             const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
 
-            popupElement.positionX = popupElement.positionX + offsetLeft;
-            popupElement.positionY = popupElement.positionY - offsetTop;
+            this.positionX = this.positionX + offsetLeft;
+            this.positionY = this.positionY - offsetTop;
         },
 
         clearPopup(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
-                this.removePopup();
+                this.showConductorPopup = false;
+                // this.removePopup();
             }
         },
         canClose(clickAwayEvent) {
-            const popupElement = this.popupComponent;
+            // const popupElement = this.popupComponent;
 
             const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = popupElement.$el.contains(clickAwayEvent.target);
+            const isPopupElementItem = this.$refs.conductorPopup.contains(clickAwayEvent.target);
 
             return !isChildMenu && !isPopupElementItem;
         },
-        removePopup() {
-            const popupElement = this.popupComponent;
-            popupElement.$el.remove();
-            document.removeEventListener('click', this.clearPopup, {
-                capture: true
-            });
-            window.removeEventListener('resize', this.positionBox);
-        },
+        // removePopup() {
+        //     const popupElement = this.popupComponent;
+        //     this.$refs.conductorPopup.remove();
+        //     document.removeEventListener('click', this.clearPopup, {
+        //         capture: true
+        //     });
+        //     window.removeEventListener('resize', this.positionBox);
+        // },
 
-        createPopupComponent() {
-            const saveFixedBounds = this.saveFixedBounds;
-            const saveClockOffsets = this.saveClockOffsets;
-            const saveMode = this.saveMode;
-            const removePopup = this.removePopup;
+        // createPopupComponent() {
+        //     const saveFixedBounds = this.saveFixedBounds;
+        //     const saveClockOffsets = this.saveClockOffsets;
+        //     const saveMode = this.saveMode;
+        //     const removePopup = this.removePopup;
 
-            const popupElement = new Vue({
-                components: {
-                    ConductorPopUp
-                },
-                provide: {
-                    openmct: this.openmct,
-                    configuration: this.configuration
-                },
-                data() {
-                    return {
-                        positionX: 0,
-                        positionY: 0,
-                        saveClockOffsets,
-                        saveFixedBounds,
-                        saveMode,
-                        removePopup
-                    };
-                },
-                template: `<conductor-pop-up 
-                    @dismiss="removePopup()" 
-                    @modeUpdated="saveMode" 
-                    @fixedBoundsUpdated="saveFixedBounds" 
-                    @clockOffsetsUpdated="saveClockOffsets" 
-                    :bottom="false" 
-                    :positionX="positionX" 
-                    :positionY="positionY" />`
-            }).$mount();
+        //     const popupElement = new Vue({
+        //         components: {
+        //             ConductorPopUp
+        //         },
+        //         provide: {
+        //             openmct: this.openmct,
+        //             configuration: this.configuration
+        //         },
+        //         data() {
+        //             return {
+        //                 positionX: 0,
+        //                 positionY: 0,
+        //                 saveClockOffsets,
+        //                 saveFixedBounds,
+        //                 saveMode,
+        //                 removePopup
+        //             };
+        //         },
+        //         template: `<conductor-pop-up 
+        //             @dismiss="removePopup()" 
+        //             @modeUpdated="saveMode" 
+        //             @fixedBoundsUpdated="saveFixedBounds" 
+        //             @clockOffsetsUpdated="saveClockOffsets" 
+        //             :bottom="false" 
+        //             :positionX="positionX" 
+        //             :positionY="positionY" />`
+        //     }).$mount();
 
-            return popupElement;
-        },
+        //     return popupElement;
+        // },
 
         registerPopUp() {
             this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);

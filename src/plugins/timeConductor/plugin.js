@@ -110,6 +110,7 @@ export default function (config) {
 
         const defaults = config.menuOptions[0];
         if (defaults.clock) {
+            console.log(console.log(defaults))
             openmct.time.clock(defaults.clock, defaults.clockOffsets);
             openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
         } else {

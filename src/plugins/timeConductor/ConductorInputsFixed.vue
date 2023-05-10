@@ -94,6 +94,7 @@ export default {
         }
     },
     mounted() {
+        console.log('conductor inputs fixed mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('timeSystem', this.setTimeSystem);

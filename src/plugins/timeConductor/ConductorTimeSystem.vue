@@ -50,20 +50,20 @@ export default {
         }
     },
     data: function () {
-        let activeClock = this.openmct.time.clock();
+        let activeClock = this.openmct.time.getClock();
 
         return {
-            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
+            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())),
             timeSystems: this.getValidTimesystemsForClock(activeClock)
         };
     },
     mounted: function () {
-        this.openmct.time.on('timeSystem', this.setViewFromTimeSystem);
+        this.openmct.time.on('timeSysteChanged', this.setViewFromTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
     },
     destroyed: function () {
-        this.openmct.time.off('timeSystem', this.setViewFromTimeSystem);
-        this.openmct.time.on('clock', this.setViewFromClock);
+        this.openmct.time.off('timeSystemChanged', this.setViewFromTimeSystem);
+        this.openmct.time.on('clockChanged', this.setViewFromClock);
     },
     methods: {
         showTimeSystemMenu() {
@@ -89,7 +89,7 @@ export default {
         },
         setTimeSystemFromView(timeSystem) {
             if (timeSystem.key !== this.selectedTimeSystem.key) {
-                let activeClock = this.openmct.time.clock();
+                let activeClock = this.openmct.time.getClock();
                 let configuration = this.getMatchingConfig({
                     clock: activeClock && activeClock.key,
                     timeSystem: timeSystem.key
@@ -98,15 +98,15 @@ export default {
                     let bounds;
 
                     if (this.selectedTimeSystem.isUTCBased && timeSystem.isUTCBased) {
-                        bounds = this.openmct.time.bounds();
+                        bounds = this.openmct.time.getBounds();
                     } else {
                         bounds = configuration.bounds;
                     }
 
-                    this.openmct.time.timeSystem(timeSystem.key, bounds);
+                    this.openmct.time.setTimeSystem(timeSystem.key, bounds);
                 } else {
-                    this.openmct.time.timeSystem(timeSystem.key);
-                    this.openmct.time.clockOffsets(configuration.clockOffsets);
+                    this.openmct.time.setTimeSystem(timeSystem.key);
+                    this.openmct.time.setClockOffsets(configuration.clockOffsets);
                 }
             }
         },
@@ -135,7 +135,7 @@ export default {
         },
 
         setViewFromClock(clock) {
-            let activeClock = this.openmct.time.clock();
+            let activeClock = this.openmct.time.getClock();
             this.timeSystems = this.getValidTimesystemsForClock(activeClock);
         }
     }
