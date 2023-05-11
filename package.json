@@ -19,7 +19,7 @@
     "copy-webpack-plugin": "11.0.0",
     "css-loader": "6.7.3",
     "d3-axis": "3.0.0",
-    "d3-scale": "3.3.0",
+    "d3-scale": "4.0.2",
     "d3-selection": "3.0.0",
     "eslint": "8.39.0",
     "eslint-plugin-compat": "4.1.4",
