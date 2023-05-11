@@ -31,6 +31,7 @@ export default class ImportAsJSONAction {
         this.cssClass = "icon-import";
         this.group = "import";
         this.priority = 2;
+        this.newObjects = [];
 
         this.openmct = openmct;
     }
@@ -85,22 +86,25 @@ export default class ImportAsJSONAction {
         let objectIdentifiers = this._getObjectReferenceIds(parent);
 
         if (objectIdentifiers.length) {
-            let newObj;
+            const parentId = this.openmct.objects.makeKeyString(parent.identifier);
+            seen.push(parentId);
 
-            seen.push(parent.id);
-
-            objectIdentifiers.forEach(async (childId) => {
+            for (const childId of objectIdentifiers) {
                 const keystring = this.openmct.objects.makeKeyString(childId);
                 if (!tree[keystring] || seen.includes(keystring)) {
-                    return;
+                    continue;
                 }
 
                 const newModel = tree[keystring];
                 delete newModel.persisted;
 
-                newObj = await this._instantiate(newModel);
-                this._deepInstantiate(newObj, tree, seen);
-            }, this);
+                this.newObjects.push(newModel);
+
+                // make sure there weren't any errors saving
+                if (newModel) {
+                    this._deepInstantiate(newModel, tree, seen);
+                }
+            }
         }
     }
     /**
@@ -110,19 +114,32 @@ export default class ImportAsJSONAction {
      */
     _getObjectReferenceIds(parent) {
         let objectIdentifiers = [];
+        let itemObjectReferences = [];
+        const objectStyles = parent?.configuration?.objectStyles;
+        const parentComposition = this.openmct.composition.get(parent);
 
-        let parentComposition = this.openmct.composition.get(parent);
         if (parentComposition) {
-            objectIdentifiers = Array.from(parentComposition.domainObject.composition);
+            objectIdentifiers = Array.from(parent.composition);
         }
 
         //conditional object styles are not saved on the composition, so we need to check for them
-        let parentObjectReference = parent.configuration?.objectStyles?.conditionSetIdentifier;
-        if (parentObjectReference) {
-            objectIdentifiers.push(parentObjectReference);
+        if (objectStyles) {
+            const parentObjectReference = objectStyles.conditionSetIdentifier;
+
+            if (parentObjectReference) {
+                objectIdentifiers.push(parentObjectReference);
+            }
+
+            function hasConditionSetIdentifier(item) {
+                return Boolean(item.conditionSetIdentifier);
+            }
+
+            itemObjectReferences = Object.values(objectStyles)
+                .filter(hasConditionSetIdentifier)
+                .map(item => item.conditionSetIdentifier);
         }
 
-        return objectIdentifiers;
+        return Array.from(new Set([...objectIdentifiers, ...itemObjectReferences]));
     }
     /**
      * @private
@@ -155,12 +172,20 @@ export default class ImportAsJSONAction {
         const tree = this._generateNewIdentifiers(objTree, namespace);
         const rootId = tree.rootId;
 
-        const rootModel = tree.openmct[rootId];
-        delete rootModel.persisted;
+        const rootObj = tree.openmct[rootId];
+        delete rootObj.persisted;
+        this.newObjects.push(rootObj);
 
-        const rootObj = await this._instantiate(rootModel);
         if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
             this._deepInstantiate(rootObj, tree.openmct, []);
+
+            try {
+                await Promise.all(this.newObjects.map(this._instantiate, this));
+            } catch (error) {
+                this.openmct.notifications.error('Error saving objects');
+
+                throw error;
+            }
 
             const compositionCollection = this.openmct.composition.get(domainObject);
             let domainObjectKeyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -184,16 +209,11 @@ export default class ImportAsJSONAction {
     }
     /**
      * @private
-     * @param {object} rootModel
+     * @param {object} model
      * @returns {object}
      */
-    async _instantiate(rootModel) {
-        const success = await this.openmct.objects.save(rootModel);
-        if (success) {
-            return rootModel;
-        }
-
-        this.openmct.notifications.error('Error saving objects');
+    _instantiate(model) {
+        return this.openmct.objects.save(model);
     }
     /**
      * @private
