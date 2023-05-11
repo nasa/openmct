@@ -45,6 +45,9 @@ import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
+const CURRENT_CSS_SUFFIX = '--is-current';
+const PAST_CSS_SUFFIX = '--is-past';
+const FUTURE_CSS_SUFFIX = '--is-future';
 const headerItems = [
     {
         defaultDirection: true,
@@ -391,23 +394,28 @@ export default {
             let currentActivitiesCount = 0;
             const styledActivities = activities.map((activity, index) => {
                 if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-                    activity.cssClass = '--is-current';
+                    activity.cssClass = CURRENT_CSS_SUFFIX;
                     if (firstCurrentActivityIndex < 0) {
                         firstCurrentActivityIndex = index;
                     }
 
                     currentActivitiesCount = currentActivitiesCount + 1;
                 } else if (this.timestamp < activity.start) {
-                    activity.cssClass = '--is-future';
+                    activity.cssClass = FUTURE_CSS_SUFFIX;
                 } else {
-                    activity.cssClass = '--is-past';
+                    activity.cssClass = PAST_CSS_SUFFIX;
                 }
 
                 if (!activity.key) {
                     activity.key = uuid();
                 }
 
-                activity.duration = activity.start - this.timestamp;
+                if (activity.start < this.timestamp) {
+                    //if the activity start time has passed, display the time to the end of the activity
+                    activity.duration = activity.end - this.timestamp;
+                } else {
+                    activity.duration = activity.start - this.timestamp;
+                }
 
                 return activity;
             });
