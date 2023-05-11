@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* global __dirname */
 const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
+const { openObjectTreeContextMenu } = require('../../../../appActions');
 const { lockPage, dragAndDropEmbed, enterTextEntry, startAndAddRestrictedNotebookObject } = require('../../../../helper/notebookUtils');
 
 const TEST_TEXT = 'Testing text for entries.';
