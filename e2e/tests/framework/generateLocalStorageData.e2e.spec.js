@@ -79,8 +79,8 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
         // add overlay plot with defaults
         const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot with 5s Delay',
-            name: overlayPlotName
+            type: 'Overlay Plot',
+            name: 'Overlay Plot with 5s Delay'
         });
 
         await createExampleTelemetryObject(page);
