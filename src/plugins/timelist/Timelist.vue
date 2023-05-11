@@ -44,7 +44,6 @@ import moment from "moment";
 import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
-const ROW_HEIGHT = 30;
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
 const headerItems = [
     {
@@ -346,10 +345,12 @@ export default {
                 activities = activities.concat(this.planData[key]);
             });
             activities = activities.filter(this.filterActivities);
+            activities = activities.sort(this.sortByStartTime);
             activities = this.applyStyles(activities);
-            this.setScrollTop();
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
+            //We need to wait for the next tick since we need the height of the row from the DOM
+            this.$nextTick(this.setScrollTop);
         },
         updateTimeStampAndListActivities(time) {
             this.timestamp = time;
@@ -434,7 +435,10 @@ export default {
         },
         setScrollTop() {
             //scroll to somewhere mid-way of the current activities
-            if (this.firstCurrentActivityIndex > -1) {
+            const row = this.$el.querySelector('.js-list-item');
+            if (row && this.firstCurrentActivityIndex > -1) {
+                const ROW_HEIGHT = row.getBoundingClientRect().height;
+
                 if (this.canAutoScroll() === false) {
                     return;
                 }
