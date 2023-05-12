@@ -32,15 +32,14 @@
 
 const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds } = require('../../appActions.js');
+const { MISSION_TIME } = require('../../constants.js');
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
-    // TODO: Document and move this to a greater scope as a constant
-    const missionTime = 1732392000000;
     test.use({
         clockOptions: {
-            now: missionTime, //Set clock to 2024-11-23T12:00:00.000Z
+            now: MISSION_TIME,
             shouldAdvanceTime: true
         }
     });
