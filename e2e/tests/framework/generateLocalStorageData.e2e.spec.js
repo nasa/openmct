@@ -31,7 +31,7 @@
  */
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds, selectInspectorTab } = require('../../appActions.js');
 const { MISSION_TIME } = require('../../constants.js');
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
@@ -61,27 +61,43 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         });
 
         // Create Telemetry Object
-        await createExampleTelemetryObject(page);
+        const exampleTelemetry = await createExampleTelemetryObject(page);
 
         // Make Link from Telemetry Object to Overlay Plot
         await page.locator('button[title="More options"]').click();
 
-        // Click text=Create Link
-        await page.getByText('Create Link').click();
+        // Select 'Create Link' from dropdown
+        await page.getByRole('menuitem', { name: ' Create Link' }).click();
 
         // Search and Select for overlay Plot within Create Modal
-        await page.locator('text=location Open MCT My Items >> [aria-label="Search Input"]').click();
-        await page.locator('text=location Open MCT My Items >> [aria-label="Search Input"]').fill(overlayPlot.name);
-        await page.locator(`a:has-text("${overlayPlot.name}")`).click();
-        await page.locator('text=OK').click();
+        await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
+        await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).fill(overlayPlot.name);
+        await page.getByRole('treeitem', { name: new RegExp(overlayPlot.name) }).locator('a').click();
+        await page.getByRole('button', { name: 'Save' }).click();
 
         await page.goto(overlayPlot.url);
 
         // TODO: Flesh Out Assertions against created Objects
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
+        await selectInspectorTab(page, 'Config');
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
 
         // TODO: Modify the Overlay Plot to use fixed Scaling
         // TODO: Verify Autoscaling.
+
+        // TODO: Fix accessibility of Plot Series Properties tables
+        // Assert that the Plot Series properties have the correct values
+        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
+
+        await page.goto(exampleTelemetry.url);
+        await selectInspectorTab(page, 'Properties');
+
+        // TODO: assert Example Telemetry property values
+        // await page.goto(exampleTelemetry.url);
 
         // Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
@@ -121,8 +137,10 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     });
 
     test('Create example telemetry object', async ({ page }) => {
+        const START_BOUND = MISSION_TIME;
+        const END_BOUND = MISSION_TIME + (10 * 1000);
         const swg = await createExampleTelemetryObject(page);
-        await navigateToObjectWithFixedTimeBounds(page, swg.url, missionTime, (missionTime) + (10 * 1000));
+        await navigateToObjectWithFixedTimeBounds(page, swg.url, START_BOUND, END_BOUND);
         await page.pause();
         await page.waitForTimeout(1000);
     });
