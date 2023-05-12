@@ -199,6 +199,17 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 }
 
 /**
+ * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url The url to the domainObject
+ * @param {string | number} start The starting time bound in milliseconds since epoch
+ * @param {string | number} end The ending time bound in milliseconds since epoch
+ */
+async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
+    await page.goto(`${url}?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${start}&tc.endBound=${end}`);
+}
+
+/**
 * Open the given `domainObject`'s context menu from the object tree.
 * Expands the 'My Items' folder if it is not already expanded.
 *
