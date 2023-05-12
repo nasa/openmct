@@ -175,11 +175,11 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
     await nameInputLocator.fill(name);
 
     // Fill out the fields with default values
-    await page.locator('[aria-label="Period"]').fill('1');
+    await page.locator('[aria-label="Period"]').fill('10');
     await page.locator('[aria-label="Amplitude"]').fill('1');
     await page.locator('[aria-label="Offset"]').fill('0');
-    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
     await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
+    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
     await page.locator('[aria-label="Randomness"]').fill('0');
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
 
@@ -188,7 +188,7 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
     // Wait until the URL is updated
     await page.waitForURL(`**/${parent}/*`);
 
-    const uuid = getFocusedObjectUuid(page);
+    const uuid = await getFocusedObjectUuid(page);
     const url = await getHashUrlToDomainObject(page, uuid);
 
     return {
@@ -286,8 +286,10 @@ module.exports = {
     createExampleTelemetryObject,
     createNotification,
     expandTreePaneItemByName,
-    expandEntireTree,
-    createPlanFromJSON,
+    getCanvasPixels,
+    getHashUrlToDomainObject,
+    getFocusedObjectUuid,
+    navigateToObjectWithFixedTimeBounds,
     openObjectTreeContextMenu,
     getHashUrlToDomainObject,
     getFocusedObjectUuid
