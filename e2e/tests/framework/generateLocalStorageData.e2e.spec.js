@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /**
  * This test suite is dedicated to generating LocalStorage via Session Storage to be used
  * in some visual test suites like controlledClock.visual.spec.js. This suite should run to completion
@@ -33,6 +33,7 @@
 const { test, expect } = require('../../pluginFixtures.js');
 const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds, selectInspectorTab } = require('../../appActions.js');
 const { MISSION_TIME } = require('../../constants.js');
+const path = require('path');
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
@@ -100,7 +101,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         // await page.goto(exampleTelemetry.url);
 
         // Save localStorage for future test execution
-        await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
+        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json') });
     });
     // TODO: Merge this with previous test. Edit object created in previous test.
     test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
@@ -133,16 +134,17 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
 
         //Save localStorage for future test execution
-        await context.storageState({ path: './e2e/test-data/overlay_plot_with_delay_storage.json' });
+        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json') });
     });
 
-    test('Create example telemetry object', async ({ page }) => {
+    test('Generate example telemetry object', async ({ page, context }) => {
         const START_BOUND = MISSION_TIME;
         const END_BOUND = MISSION_TIME + (10 * 1000);
         const swg = await createExampleTelemetryObject(page);
         await navigateToObjectWithFixedTimeBounds(page, swg.url, START_BOUND, END_BOUND);
-        await page.pause();
-        await page.waitForTimeout(1000);
+
+        //Save localStorage for future test execution
+        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/example_telemetry_storage.json') });
     });
 });
 
