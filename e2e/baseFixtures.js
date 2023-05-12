@@ -144,7 +144,20 @@ exports.test = base.test.extend({
      * Extends the base page class to enable console log error detection.
      * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
      */
-    page: async ({ page, failOnConsoleError }, use) => {
+    page: async ({ page, failOnConsoleError, clockOptions }, use) => {
+        // If overriding the clock, we must also override the Date.now()
+        // function in the generatorWorker context. This is necessary
+        // to ensure that example telemetry data is generated for the new clock time.
+        if (clockOptions?.now !== undefined) {
+            page.on('worker', (worker) => {
+                if (worker.url().includes('generatorWorker')) {
+                    worker.evaluate((time) => {
+                        self.Date.now = () => time;
+                    });
+                }
+            }, clockOptions.now);
+        }
+
         // Capture any console errors during test execution
         const messages = [];
         page.on('console', (msg) => messages.push(msg));
