@@ -50,53 +50,92 @@
     <li
         v-show="expanded"
         class="c-tree__item menus-to-left"
+        role="table"
     >
-        <ul class="grid-properties js-plot-options-browse-properties">
-            <li class="grid-row">
+        <ul
+            class="grid-properties js-plot-options-browse-properties"
+            role="rowgroup"
+        >
+            <li
+                class="grid-row"
+                role="row"
+            >
                 <div
                     class="grid-cell label"
                     title="The field to be plotted as a value for this series."
+                    role="cell"
                 >Value</div>
-                <div class="grid-cell value">
+                <div
+                    class="grid-cell value"
+                    role="cell"
+                >
                     {{ yKey }}
                 </div>
             </li>
-            <li class="grid-row">
+            <li
+                class="grid-row"
+                role="row"
+            >
                 <div
                     class="grid-cell label"
                     title="The rendering method to join lines for this series."
+                    role="cell"
                 >Line Method</div>
-                <div class="grid-cell value">{{ {
+                <div
+                    class="grid-cell value"
+                    role="cell"
+                >{{ {
                     'none': 'None',
                     'linear': 'Linear interpolation',
                     'stepAfter': 'Step After'
                 }[interpolate] }}
                 </div>
             </li>
-            <li class="grid-row">
+            <li
+                class="grid-row"
+                role="row"
+            >
                 <div
                     class="grid-cell label"
                     title="Whether markers are displayed, and their size."
+                    role="cell"
                 >Markers</div>
-                <div class="grid-cell value">
+                <div
+                    class="grid-cell value"
+                    role="cell"
+                >
                     {{ markerOptionsDisplayText }}
                 </div>
             </li>
-            <li class="grid-row">
+            <li
+                class="grid-row"
+                role="row"
+            >
                 <div
                     class="grid-cell label"
                     title="Display markers visually denoting points in alarm."
+                    role="cell"
                 >Alarm Markers</div>
-                <div class="grid-cell value">
+                <div
+                    class="grid-cell value"
+                    role="cell"
+                >
                     {{ alarmMarkers ? "Enabled" : "Disabled" }}
                 </div>
             </li>
-            <li class="grid-row">
+            <li
+                class="grid-row"
+                role="row"
+            >
                 <div
                     class="grid-cell label"
                     title="Display lines visually denoting alarm limits."
-                >Limit lines</div>
-                <div class="grid-cell value">
+                    role="cell"
+                >Limit Lines</div>
+                <div
+                    class="grid-cell value"
+                    role="cell"
+                >
                     {{ limitLines ? "Enabled" : "Disabled" }}
                 </div>
             </li>
