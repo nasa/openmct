@@ -31,16 +31,28 @@
  */
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createExampleTelemetryObject } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds } = require('../../appActions.js');
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./', { waitUntil: 'networkidle' });
+    // TODO: Document and move this to a greater scope as a constant
+    const missionTime = 1732392000000;
+    test.use({
+        clockOptions: {
+            now: missionTime, //Set clock to 2024-11-23T12:00:00.000Z
+            shouldAdvanceTime: true
+        }
     });
 
+    test.beforeEach(async ({ page }) => {
+        // Go to baseURL
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+    });
+
+    // TODO: Visual test for the generated object here
+    // - Move to using appActions to create the overlay plot
+    //   and embedded standard telemetry object
     test('Generate Overlay Plot with Telemetry Object', async ({ page, context }) => {
 
         // Create Overlay Plot
@@ -75,6 +87,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
         // Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_storage.json' });
     });
+    // TODO: Merge this with previous test. Edit object created in previous test.
     test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
 
         // add overlay plot with defaults
@@ -83,7 +96,11 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
             name: 'Overlay Plot with 5s Delay'
         });
 
-        await createExampleTelemetryObject(page);
+        const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
+
+        await page.goto(swgWith5sDelay.url);
+        await page.getByTitle('More options').click();
+        await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
 
         //Edit Example Telemetry Object to include 5s loading Delay
         await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
@@ -102,6 +119,13 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
         //Save localStorage for future test execution
         await context.storageState({ path: './e2e/test-data/overlay_plot_with_delay_storage.json' });
+    });
+
+    test('Create example telemetry object', async ({ page }) => {
+        const swg = await createExampleTelemetryObject(page);
+        await navigateToObjectWithFixedTimeBounds(page, swg.url, missionTime, (missionTime) + (10 * 1000));
+        await page.pause();
+        await page.waitForTimeout(1000);
     });
 });
 
