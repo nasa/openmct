@@ -154,17 +154,17 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 }
 
 /**
- * Create a SineWaveGenerator with properties ideal for local app.js testing. The goal is to call this make this function
- * interchangeable with 'getting' a telemetry endpoint from YAMCS Dictionary.
+ * Create a standardized Telemetry Object (Sine Wave Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests).
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} parent the uuid or identifier of the parent object. Defaults to 'mine'
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
     const parentUrl = await getHashUrlToDomainObject(page, parent);
-    //TODO Make this field more accessible
+    // TODO: Make this field even more accessible
     const name = 'VIPER Rover Heading';
-    const nameInputLocator = page.locator('input[type="text"]').nth(2);
+    const nameInputLocator = page.getByRole('dialog').locator('input[type="text"]');
 
     await page.goto(`${parentUrl}?hideTree=true`);
 
@@ -175,15 +175,15 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
     await nameInputLocator.fill(name);
 
     // Fill out the fields with default values
-    await page.locator('[aria-label="Period"]').fill('10');
-    await page.locator('[aria-label="Amplitude"]').fill('1');
-    await page.locator('[aria-label="Offset"]').fill('0');
-    await page.locator('[aria-label="Data Rate \\(hz\\)"]').fill('1');
-    await page.locator('[aria-label="Phase \\(radians\\)"]').fill('0');
-    await page.locator('[aria-label="Randomness"]').fill('0');
-    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('0');
+    await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
+    await page.getByRole('spinbutton', { name: 'Amplitude' }).fill('1');
+    await page.getByRole('spinbutton', { name: 'Offset' }).fill('0');
+    await page.getByRole('spinbutton', { name: 'Data Rate (hz)' }).fill('1');
+    await page.getByRole('spinbutton', { name: 'Phase (radians)' }).fill('0');
+    await page.getByRole('spinbutton', { name: 'Randomness' }).fill('0');
+    await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('0');
 
-    await page.locator('[aria-label="Save"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     // Wait until the URL is updated
     await page.waitForURL(`**/${parent}/*`);
