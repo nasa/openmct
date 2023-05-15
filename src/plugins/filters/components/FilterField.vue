@@ -42,12 +42,30 @@
                     type="text"
                     :disabled="useGlobal"
                     :value="persistedValue(filter)"
-                    @change="updateFilterValue($event, filter)"
+                    @change="updateFilterValueFromString($event, filter)"
                 >
             </template>
 
+            <!-- Dropdown, editing -->
+            <template v-if="filter.possibleValues && filter.singleSelectionThreshold && isEditing">
+                <select
+                    name="setSelectionThreshold"
+                    :disabled="useGlobal"
+                    @change="updateFilterValueFromDropdown($event, filter, $event.target.value)"
+                >
+                    <option
+                        v-for="option in filter.possibleValues"
+                        :key="option.label"
+                        :value="option.value"
+                        :selected="isSelected(filter.comparator, option.value)"
+                    >
+                        {{ option.label }}
+                    </option>
+                </select>
+            </template>
+
             <!-- Checkbox list, editing -->
-            <template v-if="filter.possibleValues && isEditing">
+            <template v-if="filter.possibleValues && isEditing && !filter.singleSelectionThreshold">
                 <div
                     v-for="option in filter.possibleValues"
                     :key="option.value"
@@ -58,8 +76,8 @@
                         class="c-checkbox-list__input"
                         type="checkbox"
                         :disabled="useGlobal"
-                        :checked="isChecked(filter.comparator, option.value)"
-                        @change="updateFilterValue($event, filter.comparator, option.value)"
+                        :checked="isSelected(filter.comparator, option.value)"
+                        @change="updateFilterValueFromCheckbox($event, filter.comparator, option.value)"
                     >
                     <span class="c-checkbox-list__value">
                         {{ option.label }}
@@ -117,7 +135,7 @@ export default {
         toggleIsEditing(isEditing) {
             this.isEditing = isEditing;
         },
-        isChecked(comparator, value) {
+        isSelected(comparator, value) {
             if (this.persistedFilters[comparator] && this.persistedFilters[comparator].includes(value)) {
                 return true;
             } else {
@@ -127,12 +145,14 @@ export default {
         persistedValue(comparator) {
             return this.persistedFilters && this.persistedFilters[comparator];
         },
-        updateFilterValue(event, comparator, value) {
-            if (value !== undefined) {
-                this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
-            } else {
-                this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
-            }
+        updateFilterValueFromString(event, comparator) {
+            this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
+        },
+        updateFilterValueFromCheckbox(event, comparator, value) {
+            this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
+        },
+        updateFilterValueFromDropdown(event, comparator, value) {
+            this.$emit('filterSelected', this.filterField.key, comparator, value, value);
         },
         getFilterLabels(filter) {
             return this.persistedFilters[filter.comparator].reduce((accum, filterValue) => {

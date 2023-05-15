@@ -56,7 +56,14 @@ define([
                         });
                     },
                     showTab: function (isEditing) {
-                        return isEditing;
+                        if (isEditing) {
+                            return true;
+                        }
+
+                        const metadata = openmct.telemetry.getMetadata(domainObject);
+                        const metadataWithFilters = metadata ? metadata.valueMetadatas.filter(value => value.filters) : [];
+
+                        return metadataWithFilters.length;
                     },
                     priority: function () {
                         return openmct.priority.DEFAULT;
