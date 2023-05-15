@@ -47,11 +47,12 @@ define([
             },
             view: function (selection) {
                 let component;
-                let domainObject = selection[0][0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                let tableConfiguration;
+                const domainObject = selection[0][0].context.item;
 
                 return {
                     show: function (element) {
+                        tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
                         component = new Vue({
                             el: element,
                             components: {
@@ -63,6 +64,9 @@ define([
                             },
                             template: '<table-configuration></table-configuration>'
                         });
+                    },
+                    showTab: function (isEditing) {
+                        return isEditing;
                     },
                     priority: function () {
                         return 1;
