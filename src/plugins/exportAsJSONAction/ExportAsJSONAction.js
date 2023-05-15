@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import JSONExporter from '/src/exporters/JSONExporter.js';
-
-import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 export default class ExportAsJSONAction {
@@ -35,10 +33,9 @@ export default class ExportAsJSONAction {
         this.group = "json";
         this.priority = 1;
 
-        this.externalIdentifiers = [];
-        this.tree = {};
-        this.calls = 0;
-        this.idMap = {};
+        this.tree = null;
+        this.calls = null;
+        this.idMap = null;
 
         this.JSONExportService = new JSONExporter();
     }
@@ -60,21 +57,164 @@ export default class ExportAsJSONAction {
      */
     invoke(objectpath) {
         this.tree = {};
+        this.calls = 0;
+        this.idMap = {};
+
         const root = objectpath[0];
-        this.root = JSON.parse(JSON.stringify(root));
-        const rootId = this._getId(this.root);
+        this.root = this._copy(root);
+
+        const rootId = this._getKeystring(this.root);
         this.tree[rootId] = this.root;
 
         this._write(this.root);
     }
+
+    /**
+     * @private
+     * @param {object} parent
+     */
+    async _write(parent) {
+        this.calls++;
+
+        //conditional object styles are not saved on the composition, so we need to check for them
+        const conditionSetIdentifier = this._getConditionSetIdentifier(parent);
+        const hasItemConditionSetIdentifiers = this._hasItemConditionSetIdentifiers(parent);
+        const composition = this.openmct.composition.get(parent);
+
+        if (composition) {
+            const children = await composition.load();
+
+            children.forEach((child) => {
+                this._exportObject(child, parent);
+            });
+        }
+
+        if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
+            this._decrementCallsAndSave();
+        } else {
+            const conditionSetObjects = [];
+
+            // conditionSetIdentifiers directly in objectStyles object
+            if (conditionSetIdentifier) {
+                conditionSetObjects.push(await this.openmct.objects.get(conditionSetIdentifier));
+            }
+
+            // conditionSetIdentifiers stored on item ids in the objectStyles object
+            if (hasItemConditionSetIdentifiers) {
+                const itemConditionSetIdentifiers = this._getItemConditionSetIdentifiers(parent);
+
+                for (const itemConditionSetIdentifier of itemConditionSetIdentifiers) {
+                    conditionSetObjects.push(await this.openmct.objects.get(itemConditionSetIdentifier));
+                }
+            }
+
+            for (const conditionSetObject of conditionSetObjects) {
+                this._exportObject(conditionSetObject, parent);
+            }
+
+            this._decrementCallsAndSave();
+        }
+    }
+
+    _exportObject(child, parent) {
+        const originalKeyString = this._getKeystring(child);
+        const createable = this._isCreatableAndPersistable(child);
+        const isNotInfinite = !Object.prototype.hasOwnProperty.call(this.tree, originalKeyString);
+
+        if (createable && isNotInfinite) {
+            // for external or linked objects we generate new keys, if they don't exist already
+            if (this._isLinkedObject(child, parent)) {
+                child = this._rewriteLink(child, parent);
+            } else {
+                this.tree[originalKeyString] = child;
+            }
+
+            this._write(child);
+        }
+    }
+
+    /**
+     * @private
+     * @param {object} child
+     * @param {object} parent
+     * @returns {object}
+     */
+    _rewriteLink(child, parent) {
+        const originalKeyString = this._getKeystring(child);
+        const parentKeyString = this._getKeystring(parent);
+        const conditionSetIdentifier = this._getConditionSetIdentifier(parent);
+        const hasItemConditionSetIdentifiers = this._hasItemConditionSetIdentifiers(parent);
+        const existingMappedKeyString = this.idMap[originalKeyString];
+        let copy;
+
+        if (!existingMappedKeyString) {
+            copy = this._copy(child);
+            copy.identifier.key = uuid();
+
+            if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
+                copy.location = parentKeyString;
+            }
+
+            let newKeyString = this._getKeystring(copy);
+            this.idMap[originalKeyString] = newKeyString;
+            this.tree[newKeyString] = copy;
+        } else {
+            copy = this.tree[existingMappedKeyString];
+        }
+
+        if (conditionSetIdentifier || hasItemConditionSetIdentifiers) {
+
+            // update objectStyle object
+            if (conditionSetIdentifier) {
+                const directObjectStylesIdentifier = this.openmct.objects.areIdsEqual(
+                    parent.configuration.objectStyles.conditionSetIdentifier,
+                    child.identifier
+                );
+
+                if (directObjectStylesIdentifier) {
+                    parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+                    this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+                }
+            }
+
+            // update per item id on objectStyle object
+            if (hasItemConditionSetIdentifiers) {
+                for (const itemId in parent.configuration.objectStyles) {
+                    if (parent.configuration.objectStyles[itemId]) {
+                        const itemConditionSetIdentifier = parent.configuration.objectStyles[itemId].conditionSetIdentifier;
+
+                        if (
+                            itemConditionSetIdentifier
+                            && this.openmct.objects.areIdsEqual(itemConditionSetIdentifier, child.identifier)
+                        ) {
+                            parent.configuration.objectStyles[itemId].conditionSetIdentifier = copy.identifier;
+                            this.tree[parentKeyString].configuration.objectStyles[itemId].conditionSetIdentifier = copy.identifier;
+                        }
+                    }
+                }
+            }
+        } else {
+            // just update parent
+            const index = parent.composition.findIndex(identifier => {
+                return this.openmct.objects.areIdsEqual(child.identifier, identifier);
+            });
+
+            parent.composition[index] = copy.identifier;
+            this.tree[parentKeyString].composition[index] = copy.identifier;
+        }
+
+        return copy;
+    }
+
     /**
      * @private
      * @param {object} domainObject
      * @returns {string} A string representation of the given identifier, including namespace and key
      */
-    _getId(domainObject) {
+    _getKeystring(domainObject) {
         return this.openmct.objects.makeKeyString(domainObject.identifier);
     }
+
     /**
      * @private
      * @param {object} domainObject
@@ -86,6 +226,7 @@ export default class ExportAsJSONAction {
 
         return type && type.definition.creatable && isPersistable;
     }
+
     /**
      * @private
      * @param {object} child
@@ -93,65 +234,47 @@ export default class ExportAsJSONAction {
      * @returns {boolean}
      */
     _isLinkedObject(child, parent) {
-        if (child.location !== this._getId(parent)
-            && !Object.keys(this.tree).includes(child.location)
-            && this._getId(child) !== this._getId(this.root)
-            || this.externalIdentifiers.includes(this._getId(child))) {
+        const rootKeyString = this._getKeystring(this.root);
+        const childKeyString = this._getKeystring(child);
+        const parentKeyString = this._getKeystring(parent);
 
-            return true;
+        return (child.location !== parentKeyString
+            && !Object.keys(this.tree).includes(child.location)
+            && childKeyString !== rootKeyString)
+            || this.idMap[childKeyString] !== undefined;
+    }
+
+    _getConditionSetIdentifier(object) {
+        return object.configuration?.objectStyles?.conditionSetIdentifier;
+    }
+
+    _hasItemConditionSetIdentifiers(parent) {
+        const objectStyles = parent.configuration?.objectStyles;
+
+        for (const itemId in objectStyles) {
+            if (Object.prototype.hasOwnProperty.call(objectStyles[itemId], 'conditionSetIdentifier')) {
+                return true;
+            }
         }
 
         return false;
     }
-    /**
-     * @private
-     * @param {object} child
-     * @param {object} parent
-     * @returns {object}
-     */
-    _rewriteLink(child, parent) {
-        this.externalIdentifiers.push(this._getId(child));
-        const index = parent.composition.findIndex(id => {
-            return _.isEqual(child.identifier, id);
-        });
-        const copyOfChild = JSON.parse(JSON.stringify(child));
 
-        copyOfChild.identifier.key = uuid();
-        const newIdString = this._getId(copyOfChild);
-        const parentId = this._getId(parent);
+    _getItemConditionSetIdentifiers(parent) {
+        const objectStyles = parent.configuration?.objectStyles;
+        let identifiers = new Set();
 
-        this.idMap[this._getId(child)] = newIdString;
-        copyOfChild.location = parentId;
-        parent.composition[index] = copyOfChild.identifier;
-        this.tree[newIdString] = copyOfChild;
-        this.tree[parentId].composition[index] = copyOfChild.identifier;
+        if (objectStyles) {
+            Object.keys(objectStyles).forEach(itemId => {
+                if (objectStyles[itemId].conditionSetIdentifier) {
+                    identifiers.add(objectStyles[itemId].conditionSetIdentifier);
+                }
+            });
+        }
 
-        return copyOfChild;
+        return Array.from(identifiers);
     }
 
-    /**
-     * @private
-     * @param {object} child
-     * @param {object} parent
-     * @returns {object}
-     */
-    _rewriteLinkForReference(child, parent) {
-        const childId = this._getId(child);
-        this.externalIdentifiers.push(childId);
-        const copyOfChild = JSON.parse(JSON.stringify(child));
-
-        copyOfChild.identifier.key = uuid();
-        const newIdString = this._getId(copyOfChild);
-        const parentId = this._getId(parent);
-
-        this.idMap[childId] = newIdString;
-        copyOfChild.location = null;
-        parent.configuration.objectStyles.conditionSetIdentifier = copyOfChild.identifier;
-        this.tree[newIdString] = copyOfChild;
-        this.tree[parentId].configuration.objectStyles.conditionSetIdentifier = copyOfChild.identifier;
-
-        return copyOfChild;
-    }
     /**
      * @private
      */
@@ -204,70 +327,8 @@ export default class ExportAsJSONAction {
     _wrapTree() {
         return {
             "openmct": this.tree,
-            "rootId": this._getId(this.root)
+            "rootId": this._getKeystring(this.root)
         };
-    }
-
-    /**
-     * @private
-     * @param {object} parent
-     */
-    _write(parent) {
-        this.calls++;
-        //conditional object styles are not saved on the composition, so we need to check for them
-        let childObjectReferenceId = parent.configuration?.objectStyles?.conditionSetIdentifier;
-
-        const composition = this.openmct.composition.get(parent);
-        if (composition !== undefined) {
-            composition.load()
-                .then((children) => {
-                    children.forEach((child, index) => {
-                    // Only export if object is creatable
-                        if (this._isCreatableAndPersistable(child)) {
-                        // Prevents infinite export of self-contained objs
-                            if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
-                            // If object is a link to something absent from
-                            // tree, generate new id and treat as new object
-                                if (this._isLinkedObject(child, parent)) {
-                                    child = this._rewriteLink(child, parent);
-                                } else {
-                                    this.tree[this._getId(child)] = child;
-                                }
-
-                                this._write(child);
-                            }
-                        }
-                    });
-                    if (!childObjectReferenceId) {
-                        this._decrementCallsAndSave();
-                    }
-                });
-        } else if (!childObjectReferenceId) {
-            this._decrementCallsAndSave();
-        }
-
-        if (childObjectReferenceId) {
-            this.openmct.objects.get(childObjectReferenceId)
-                .then((child) => {
-                    // Only export if object is creatable
-                    if (this._isCreatableAndPersistable(child)) {
-                        // Prevents infinite export of self-contained objs
-                        if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
-                            // If object is a link to something absent from
-                            // tree, generate new id and treat as new object
-                            if (this._isLinkedObject(child, parent)) {
-                                child = this._rewriteLinkForReference(child, parent);
-                            } else {
-                                this.tree[this._getId(child)] = child;
-                            }
-
-                            this._write(child);
-                        }
-                    }
-
-                    this._decrementCallsAndSave();
-                });
-        }
     }
 
     _decrementCallsAndSave() {
@@ -276,5 +337,9 @@ export default class ExportAsJSONAction {
             this._rewriteReferences();
             this._saveAs(this._wrapTree());
         }
+    }
+
+    _copy(object) {
+        return JSON.parse(JSON.stringify(object));
     }
 }
