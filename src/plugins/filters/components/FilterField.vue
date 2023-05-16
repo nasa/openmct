@@ -51,7 +51,7 @@
                 <select
                     name="setSelectionThreshold"
                     :disabled="useGlobal"
-                    @change="updateFilterValueFromDropdown($event, filter, $event.target.value)"
+                    @change="updateFilterValueFromDropdown($event, filter.comparator, $event.target.value)"
                 >
                     <option
                         key="NONE"
