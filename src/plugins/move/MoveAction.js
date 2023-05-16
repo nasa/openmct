@@ -128,6 +128,7 @@ export default class MoveAction {
                         },
                         {
                             name: "Location",
+                            cssClass: "grows",
                             control: "locator",
                             parent: parentDomainObject,
                             required: true,
