@@ -28,10 +28,12 @@
  * *.e2e.spec.js suffix.
  *
  * TODO: Provide additional validation of object properties as it grows.
+ * Verification of object properties happens in this file before the test-data is generated,
+ * and is additionally verified in the validation test suites below.
  */
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createExampleTelemetryObject, navigateToObjectWithFixedTimeBounds, selectInspectorTab } = require('../../appActions.js');
+const { createDomainObjectWithDefaults, createExampleTelemetryObject, selectInspectorTab } = require('../../appActions.js');
 const { MISSION_TIME } = require('../../constants.js');
 const path = require('path');
 
@@ -133,18 +135,59 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
 
+        // Clear Recently Viewed
+        await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
+        await page.getByRole('button', { name: 'OK' }).click();
         //Save localStorage for future test execution
         await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json') });
     });
+});
 
-    test('Generate example telemetry object', async ({ page, context }) => {
-        const START_BOUND = MISSION_TIME;
-        const END_BOUND = MISSION_TIME + (10 * 1000);
-        const swg = await createExampleTelemetryObject(page);
-        await navigateToObjectWithFixedTimeBounds(page, swg.url, START_BOUND, END_BOUND);
+test.describe('Validate Overlay Plot with Telemetry Object @localStorage @generatedata', () => {
+    test.use({ storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json') });
+    test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-        //Save localStorage for future test execution
-        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/example_telemetry_storage.json') });
+        await page.locator('a').filter({ hasText: overlayPlotName }).click();
+        // TODO: Flesh Out Assertions against created Objects
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
+        await selectInspectorTab(page, 'Config');
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+
+        // TODO: Modify the Overlay Plot to use fixed Scaling
+        // TODO: Verify Autoscaling.
+
+        // TODO: Fix accessibility of Plot Series Properties tables
+        // Assert that the Plot Series properties have the correct values
+        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
     });
 });
 
+test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorage @generatedata', () => {
+    test.use({ storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json') });
+    test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
+        const plotName = 'Overlay Plot with 5s Delay';
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+        await page.locator('a').filter({ hasText: plotName }).click();
+        // TODO: Flesh Out Assertions against created Objects
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
+        await selectInspectorTab(page, 'Config');
+        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+
+        // TODO: Modify the Overlay Plot to use fixed Scaling
+        // TODO: Verify Autoscaling.
+
+        // TODO: Fix accessibility of Plot Series Properties tables
+        // Assert that the Plot Series properties have the correct values
+        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
+        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
+    });
+});
