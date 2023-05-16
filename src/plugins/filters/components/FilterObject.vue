@@ -170,9 +170,9 @@ export default {
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        clearFilters(key) {
-            this.$set(this.updatedFilters[key], key, {});
-            this.$emit('updateFilters', this.keyString, this.updatedFilters);
+        clearFilters(key, comparator) {
+            this.$set(this.updatedFilters[key], comparator, []);
+            this.$emit('updateFilters', key, this.updatedFilters);
         },
         updateFiltersWithTextValue(key, comparator, value) {
             if (value.trim() === '') {

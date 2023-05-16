@@ -107,9 +107,9 @@ export default {
         toggleExpanded() {
             this.expanded = !this.expanded;
         },
-        clearFilters(key) {
-            this.$set(this.updatedFilters[key], key, {});
-            this.$emit('persistGlobalFilters', this.keyString, this.updatedFilters);
+        clearFilters(key, comparator) {
+            this.$set(this.updatedFilters[key], comparator, []);
+            this.$emit('persistGlobalFilters', key, this.updatedFilters);
         },
         updateFiltersWithSelectedValue(key, comparator, valueName, value) {
             let filterValue = this.updatedFilters[key];
