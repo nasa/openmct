@@ -160,9 +160,9 @@ export default {
         },
         updateFilterValueFromDropdown(event, comparator, value) {
             if (value === 'NONE') {
-                this.$emit('filterSelected', this.filterField.key, comparator, null, null);
+                this.$emit('clearFilters', this.filterField.key);
             } else {
-                this.$emit('filterSelected', this.filterField.key, comparator, value, value);
+                this.$emit('filterSingleSelected', this.filterField.key, comparator, value);
             }
         },
         getFilterLabels(filter) {
