@@ -54,6 +54,13 @@
                     @change="updateFilterValueFromDropdown($event, filter, $event.target.value)"
                 >
                     <option
+                        key="NONE"
+                        value="NONE"
+                        selected="isSelected(filter.comparator, option.value)"
+                    >
+                        None
+                    </option>
+                    <option
                         v-for="option in filter.possibleValues"
                         :key="option.label"
                         :value="option.value"
@@ -152,7 +159,11 @@ export default {
             this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
         },
         updateFilterValueFromDropdown(event, comparator, value) {
-            this.$emit('filterSelected', this.filterField.key, comparator, value, value);
+            if (value === 'NONE') {
+                this.$emit('filterSelected', this.filterField.key, comparator, null, null);
+            } else {
+                this.$emit('filterSelected', this.filterField.key, comparator, value, value);
+            }
         },
         getFilterLabels(filter) {
             return this.persistedFilters[filter.comparator].reduce((accum, filterValue) => {
