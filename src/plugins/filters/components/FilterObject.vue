@@ -171,7 +171,7 @@ export default {
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         clearFilters(key) {
-            this.$set(this.updatedFilters, key, {});
+            this.$set(this.updatedFilters[key], key, {});
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateFiltersWithTextValue(key, comparator, value) {
@@ -185,7 +185,7 @@ export default {
         },
         updateSingleSelection(key, comparator, value) {
             this.$set(this.updatedFilters[key], comparator, [value]);
-            this.$emit('persistGlobalFilters', key, this.updatedFilters);
+            this.$emit('updateFilters', key, this.updatedFilters);
         },
         useGlobalFilter(checked) {
             this.updatedFilters.useGlobal = checked;
