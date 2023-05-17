@@ -10,7 +10,7 @@ In OpenMCT, filters can be constructed to filter out telemetry data on the serve
 You'll need to install the filter plugin first. For example:
 
 ```js
-        openmct.install(openmct.plugins.Filters(['telemetry.plot.overlay', 'table']));
+openmct.install(openmct.plugins.Filters(['telemetry.plot.overlay', 'table']));
 ```
 
 will install the filters plugin and have it apply to overlay plots and tables. You can see an example of this in the [OpenMCT YAMCS plugin](https://github.com/akhenry/openmct-yamcs/blob/master/example/index.js#L54).
