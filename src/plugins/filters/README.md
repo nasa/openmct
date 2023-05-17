@@ -5,6 +5,16 @@
 
 In OpenMCT, filters can be constructed to filter out telemetry data on the server side. This is useful for reducing the amount of data that needs to be sent to the client. For example, in [OpenMCT for MCWS](https://github.com/NASA-AMMOS/openmct-mcws/blob/main/src/constants.js#L115), they can be used to filter realtime data from recorded data. In the [OpenMCT YAMCS plugin](https://github.com/akhenry/openmct-yamcs/blob/master/src/providers/events.js), we can use them to filter incoming event data by severity.
 
+## Installing the filter plugin
+
+You'll need to install the filter plugin first. For example:
+
+```js
+        openmct.install(openmct.plugins.Filters(['telemetry.plot.overlay', 'table']));
+```
+
+will install the filters plugin and have it apply to overlay plots and tables. You can see an example of this in the [OpenMCT YAMCS plugin](https://github.com/akhenry/openmct-yamcs/blob/master/example/index.js#L54).
+
 ## Defining a filter
 
 To define a filter, you'll need to add a new `filter` property to the domain object's `telemetry` metadata underneath the `values` array. For example, if you have a domain object with a `telemetry` metadata that looks like this:
@@ -25,12 +35,19 @@ To define a filter, you'll need to add a new `filter` property to the domain obj
 }
 ```
 
-This will define a filter that allows an operator to choose one (due to `singleSelectionThreshold` being `true`) of the three possible values. The `comparator` property defines how the filter will be applied to the telemetry data. How the filter is interpreted is defined by the individual telemetry providers.
+This will define a filter that allows an operator to choose one (due to `singleSelectionThreshold` being `true`) of the three possible values. The `comparator` property defines how the filter will be applied to the telemetry data.
+Setting `singleSelectionThreshold` to `false` will render the `possibleValues` as a series of checkboxes. Removing the `possibleValues` property will render the filter as a text box, allowing the operator to enter a value to filter on.
+
+Note that how the filter is interpreted is defined is ultimately decided by the individual telemetry providers.
 
 ## Implementing a filter in a telemetry provider
 
-Implementing a filter requires two parts.
+Implementing a filter requires two parts:
 
 - First, one needs to add the filter implementation to the [subscribe](https://github.com/nasa/openmct/blob/master/src/api/telemetry/TelemetryAPI.js#L366) method in your telemetry provider. The filter will be passed to you in the `options` argument. You can either add the filter to your telemetry subscription request, or filter manually as new messages appears. An example of the latter is [shown in the YAMCS plugin for OpenMCT](https://github.com/akhenry/openmct-yamcs/blob/master/src/providers/events.js).
 
 - Second, one needs to add the filter implementation to the [request](https://github.com/nasa/openmct/blob/master/src/api/telemetry/TelemetryAPI.js#L318) method in your telemetry provider. The filter again will be passed to you in the `options` argument. You can either add the filter to your telemetry request, or filter manually after the request is made. An example of the former is [shown in the YAMCS plugin for OpenMCT](https://github.com/akhenry/openmct-yamcs/blob/master/src/providers/historical-telemetry-provider.js#L148).
+
+## Using filters
+
+If you installed the plugin to have it apply to `table`, create a Telemetry Table in OpenMCT and drag your telemetry object that contains the filter to it. Then click "Edit", and notice the "Filter" tab in the inspector. It allows operator to either select a "Global Filter", or a regular filter. The "Global Filter" will apply for all telemetry objects in the table, while the regular filter will only apply to the telemetry object that it is defined on.
