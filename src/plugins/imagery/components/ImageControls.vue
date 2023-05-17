@@ -147,7 +147,7 @@ export default {
         imageUrl(newUrl, oldUrl) {
             // reset image pan/zoom if newUrl only if not locked
             if (newUrl && !this.panZoomLocked) {
-                this.$emit('resetImage');
+                this.handleResetImage();
             }
         },
         cursorStates(states) {
