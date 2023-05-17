@@ -72,7 +72,7 @@
                 :filter-field="metadatum"
                 :use-global="persistedFilters.useGlobal"
                 :persisted-filters="updatedFilters[metadatum.key]"
-                @filterSelected="updateFiltersWithSelectedValue"
+                @filterSelected="updateMultipleFiltersWithSelectedValue"
                 @filterTextValueChanged="updateFiltersWithTextValue"
                 @filterSingleSelected="updateSingleSelection"
                 @clearFilters="clearFilters"
@@ -170,9 +170,9 @@ export default {
 
             this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
-        clearFilters(key, comparator) {
-            this.$set(this.updatedFilters[key], comparator, []);
-            this.$emit('updateFilters', key, this.updatedFilters);
+        clearFilters(key) {
+            this.$set(this.updatedFilters, key, {});
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         updateFiltersWithTextValue(key, comparator, value) {
             if (value.trim() === '') {
@@ -185,7 +185,7 @@ export default {
         },
         updateSingleSelection(key, comparator, value) {
             this.$set(this.updatedFilters[key], comparator, [value]);
-            this.$emit('updateFilters', key, this.updatedFilters);
+            this.$emit('updateFilters', this.keyString, this.updatedFilters);
         },
         useGlobalFilter(checked) {
             this.updatedFilters.useGlobal = checked;
