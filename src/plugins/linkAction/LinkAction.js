@@ -77,7 +77,8 @@ export default class LinkAction {
                 {
                     rows: [
                         {
-                            name: "location",
+                            name: "Location",
+                            cssClass: "grows",
                             control: "locator",
                             parent: parentDomainObject,
                             required: true,
