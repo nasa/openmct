@@ -53,7 +53,7 @@ test.describe('Overlay Plot', () => {
         await page.locator('.c-click-swatch--menu').click();
         await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
         // gets color for swatch located in legend
-        const seriesColorSwatch = page.locator('.gl-plot-label > .plot-series-color-swatch');
+        const seriesColorSwatch = page.locator('.gl-plot-y-label-swatch-container > .plot-series-color-swatch');
         await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
     });
 
