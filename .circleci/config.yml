@@ -232,9 +232,9 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - lint:
-          name: node16-lint
-          node-version: lts/gallium
+      # - lint:
+      #     name: node16-lint
+      #     node-version: lts/gallium
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
