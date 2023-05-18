@@ -20,69 +20,58 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'objectUtils',
-    './components/table-configuration.vue',
-    './TelemetryTableConfiguration',
-    'vue'
-], function (
-    objectUtils,
-    TableConfigurationComponent,
-    TelemetryTableConfiguration,
-    Vue
-) {
+import Vue from 'vue';
+import TableConfigurationComponent from './components/table-configuration.vue';
+import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 
-    function TableConfigurationViewProvider(openmct) {
-        return {
-            key: 'table-configuration',
-            name: 'Configuration',
-            canView: function (selection) {
-                if (selection.length !== 1 || selection[0].length === 0) {
-                    return false;
-                }
-
-                let object = selection[0][0].context.item;
-
-                return object && object.type === 'table';
-            },
-            view: function (selection) {
-                let component;
-                let tableConfiguration;
-                const domainObject = selection[0][0].context.item;
-
-                return {
-                    show: function (element) {
-                        tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                TableConfiguration: TableConfigurationComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                tableConfiguration
-                            },
-                            template: '<table-configuration></table-configuration>'
-                        });
-                    },
-                    showTab: function (isEditing) {
-                        return isEditing;
-                    },
-                    priority: function () {
-                        return 1;
-                    },
-                    destroy: function () {
-                        if (component) {
-                            component.$destroy();
-                            component = undefined;
-                        }
-
-                        tableConfiguration = undefined;
-                    }
-                };
+export default function TableConfigurationViewProvider(openmct) {
+    return {
+        key: 'table-configuration',
+        name: 'Configuration',
+        canView: function (selection) {
+            if (selection.length !== 1 || selection[0].length === 0) {
+                return false;
             }
-        };
-    }
 
-    return TableConfigurationViewProvider;
-});
+            let object = selection[0][0].context.item;
+
+            return object && object.type === 'table';
+        },
+        view: function (selection) {
+            let component;
+            let tableConfiguration;
+            const domainObject = selection[0][0].context.item;
+
+            return {
+                show: function (element) {
+                    tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            TableConfiguration: TableConfigurationComponent.default
+                        },
+                        provide: {
+                            openmct,
+                            tableConfiguration
+                        },
+                        template: '<table-configuration></table-configuration>'
+                    });
+                },
+                showTab: function (isEditing) {
+                    return isEditing;
+                },
+                priority: function () {
+                    return 1;
+                },
+                destroy: function () {
+                    if (component) {
+                        component.$destroy();
+                        component = undefined;
+                    }
+
+                    tableConfiguration = undefined;
+                }
+            };
+        }
+    };
+}
