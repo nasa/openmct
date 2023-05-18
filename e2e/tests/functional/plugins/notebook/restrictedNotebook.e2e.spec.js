@@ -127,7 +127,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
         // Delete the page
         await page.getByRole('listitem', { name: 'Delete Page' }).click();
         // Click OK button
-        await page.getByRole('button', { name: 'Ok' }).click();
+        await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
         // deleted page, should no longer exist
         const deletedPageElement = page.getByText(TEST_TEXT_NAME);
