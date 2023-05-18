@@ -45,29 +45,10 @@ test.describe('Visual - Controlled Clock', () => {
         //Ensure that we're on the Unnamed Overlay Plot object
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Overlay Plot with Telemetry Object');
 
-        let date = await endTimeInput.inputValue();
-        date = new Date(date);
+        //Wait for canvas to be rendered and stop animating
+        await page.locator('canvas >> nth=1').hover({trial: true});
 
-        date.setUTCMinutes(date.getUTCMinutes() + 5);
-        const startDate = date.toISOString().replace(/T/, ' ');
-
-        // Fill start time with a value >= the current end time
-        await startTimeInput.fill('');
-        await startTimeInput.fill(startDate);
-        await page.keyboard.press('Enter');
-
-        //  verify error msg for start time (unable to capture snapshot of popup)
-        await percySnapshot(page, `Start time error (theme: '${theme}')`);
-
-        date.setUTCMinutes(date.getUTCMinutes() - 15);
-        const endDate = date.toISOString().replace(/T/, ' ');
-
-        // Fill end time with a value <= the current start time
-        await endTimeInput.fill('');
-        await endTimeInput.fill(endDate);
-        await page.keyboard.press('Enter');
-
-        // verify error msg for end time (unable to capture snapshot of popup)
-        await percySnapshot(page, `End time error (theme: '${theme}')`);
+        //Take snapshot of Sine Wave Generator within Overlay Plot
+        await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
     });
 });

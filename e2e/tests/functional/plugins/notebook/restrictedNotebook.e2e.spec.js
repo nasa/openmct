@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 const { test, expect, streamToString } = require('../../../../pluginFixtures');
 const { openObjectTreeContextMenu } = require('../../../../appActions');
 const { lockPage, dragAndDropEmbed, enterTextEntry, startAndAddRestrictedNotebookObject } = require('../../../../helper/notebookUtils');
