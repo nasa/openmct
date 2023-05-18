@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 * This test suite is dedicated to testing the operator status plugin.
 */
@@ -40,9 +40,7 @@ STUB (test.fixme) Rolling through each
 test.describe('Operator Status', () => {
     test.beforeEach(async ({ page }) => {
         // FIXME: determine if plugins will be added to index.html or need to be injected
-        // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')});
-        // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')});
         await page.goto('./', { waitUntil: 'domcontentloaded' });
     });

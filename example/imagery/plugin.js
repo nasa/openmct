@@ -52,8 +52,7 @@ export default function () {
             key: 'example.imagery',
             name: 'Example Imagery',
             cssClass: 'icon-image',
-            description: 'For development use. Creates example imagery '
-                + 'data that mimics a live imagery stream.',
+            description: 'For development use. Creates example imagery data that mimics a live imagery stream.',
             creatable: true,
             initialize: (object) => {
                 object.configuration = {

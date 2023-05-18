@@ -208,7 +208,7 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(new RegExp(`\\s*${minValue}\\s*${maxValue}\\s*`));
         });
 
         it('renders correct current value', (done) => {
@@ -344,7 +344,7 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${minValue} ${maxValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(new RegExp(`\\s*${minValue}\\s*${maxValue}\\s*`));
         });
 
         it('renders correct current value', (done) => {
@@ -480,7 +480,7 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toEqual(`${maxValue} ${minValue}`);
+            expect(gaugeHolder.querySelector('.js-gauge-meter-range').textContent).toMatch(new RegExp(`\\s*${maxValue}\\s*${minValue}\\s*`));
         });
 
         it('renders correct current value', (done) => {
@@ -790,7 +790,8 @@ describe('Gauge plugin', () => {
         });
 
         it('renders correct min max values', () => {
-            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toEqual(`${gaugeViewObject.configuration.gaugeController.min} ${gaugeViewObject.configuration.gaugeController.max}`);
+            const { min, max } = gaugeViewObject.configuration.gaugeController;
+            expect(gaugeHolder.querySelector('.js-gauge-dial-range').textContent).toMatch(new RegExp(`\\s*${min}\\s*${max}\\s*`));
         });
 
         it('renders correct current value', (done) => {

@@ -9,11 +9,13 @@ module.exports = {
     "globals": {
         "_": "readonly"
     },
+    "plugins": ["prettier"],
     "extends": [
         "eslint:recommended",
         "plugin:compat/recommended",
         "plugin:vue/recommended",
-        "plugin:you-dont-need-lodash-underscore/compatible"
+        "plugin:you-dont-need-lodash-underscore/compatible",
+        "plugin:prettier/recommended"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -26,6 +28,7 @@ module.exports = {
         }
     },
     "rules": {
+        "prettier/prettier": "error",
         "you-dont-need-lodash-underscore/omit": "off",
         "you-dont-need-lodash-underscore/throttle": "off",
         "you-dont-need-lodash-underscore/flatten": "off",
@@ -50,20 +53,6 @@ module.exports = {
             }
         ],
         "no-console": "off",
-        "no-trailing-spaces": "error",
-        "space-before-function-paren": [
-            "error",
-            {
-                "anonymous": "always",
-                "asyncArrow": "always",
-                "named": "never"
-            }
-        ],
-        "array-bracket-spacing": "error",
-        "space-in-parens": "error",
-        "space-before-blocks": "error",
-        "comma-dangle": "error",
-        "eol-last": "error",
         "new-cap": [
             "error",
             {
@@ -72,7 +61,6 @@ module.exports = {
             }
         ],
         "dot-notation": "error",
-        "indent": ["error", 4],
 
         // https://eslint.org/docs/rules/no-case-declarations
         "no-case-declarations": "error",
@@ -82,8 +70,6 @@ module.exports = {
         "no-eq-null": "error",
         // https://eslint.org/docs/rules/no-eval
         "no-eval": "error",
-        // https://eslint.org/docs/rules/no-floating-decimal
-        "no-floating-decimal": "error",
         // https://eslint.org/docs/rules/no-implicit-globals
         "no-implicit-globals": "error",
         // https://eslint.org/docs/rules/no-implied-eval
@@ -112,16 +98,10 @@ module.exports = {
         "no-unmodified-loop-condition": "error",
         // https://eslint.org/docs/rules/no-useless-call
         "no-useless-call": "error",
-        // https://eslint.org/docs/rules/wrap-iife
-        "wrap-iife": "error",
         // https://eslint.org/docs/rules/no-nested-ternary
         "no-nested-ternary": "error",
-        // https://eslint.org/docs/rules/switch-colon-spacing
-        "switch-colon-spacing": "error",
         // https://eslint.org/docs/rules/no-useless-computed-key
         "no-useless-computed-key": "error",
-        // https://eslint.org/docs/rules/rest-spread-spacing
-        "rest-spread-spacing": ["error"],
         // https://eslint.org/docs/rules/no-var
         "no-var": "error",
         // https://eslint.org/docs/rules/one-var
@@ -159,96 +139,11 @@ module.exports = {
         "no-implicit-coercion": "error",
         //https://eslint.org/docs/rules/no-unneeded-ternary
         "no-unneeded-ternary": "error",
-        // https://eslint.org/docs/rules/semi
-        "semi": ["error", "always"],
-        // https://eslint.org/docs/rules/no-multi-spaces
-        "no-multi-spaces": "error",
-        // https://eslint.org/docs/rules/key-spacing
-        "key-spacing": ["error", {
-            "afterColon": true
-        }],
-        // https://eslint.org/docs/rules/keyword-spacing
-        "keyword-spacing": ["error", {
-            "before": true,
-            "after": true
-        }],
-        // https://eslint.org/docs/rules/comma-spacing
-        // Also requires one line code fix
-        "comma-spacing": ["error", {
-            "after": true
-        }],
-        //https://eslint.org/docs/rules/no-whitespace-before-property
-        "no-whitespace-before-property": "error",
-        // https://eslint.org/docs/rules/object-curly-newline
-        "object-curly-newline": ["error", {
-            "consistent": true,
-            "multiline": true
-        }],
-        // https://eslint.org/docs/rules/object-property-newline
-        "object-property-newline": "error",
-        // https://eslint.org/docs/rules/brace-style
-        "brace-style": "error",
-        // https://eslint.org/docs/rules/no-multiple-empty-lines
-        "no-multiple-empty-lines": ["error", {"max": 1}],
-        // https://eslint.org/docs/rules/operator-linebreak
-        "operator-linebreak": ["error", "before", {"overrides": {"=": "after"}}],
-        // https://eslint.org/docs/rules/padding-line-between-statements
-        "padding-line-between-statements": ["error", {
-            "blankLine": "always",
-            "prev": "multiline-block-like",
-            "next": "*"
-        }, {
-            "blankLine": "always",
-            "prev": "*",
-            "next": "return"
-        }],
-        // https://eslint.org/docs/rules/space-infix-ops
-        "space-infix-ops": "error",
-        // https://eslint.org/docs/rules/space-unary-ops
-        "space-unary-ops": ["error", {
-            "words": true,
-            "nonwords": false
-        }],
-        // https://eslint.org/docs/rules/arrow-spacing
-        "arrow-spacing": "error",
-        // https://eslint.org/docs/rules/semi-spacing
-        "semi-spacing": ["error", {
-            "before": false,
-            "after": true
-        }],
-
-        "vue/html-indent": [
-            "error",
-            4,
-            {
-                "attribute": 1,
-                "baseIndent": 0,
-                "closeBracket": 0,
-                "alignAttributesVertically": true,
-                "ignores": []
-            }
-        ],
-        "vue/html-self-closing": ["error",
-            {
-                "html": {
-                    "void": "never",
-                    "normal": "never",
-                    "component": "always"
-                },
-                "svg": "always",
-                "math": "always"
-            }
-        ],
-        "vue/max-attributes-per-line": ["error", {
-            "singleline": 1,
-            "multiline": 1,
-        }],
         "vue/first-attribute-linebreak": "error",
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
         "vue/multi-word-component-names": "off", // TODO enable, align with conventions
         "vue/no-mutating-props": "off"
-
     },
     "overrides": [
         {

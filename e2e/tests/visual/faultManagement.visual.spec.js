@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 const path = require('path');
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
@@ -29,7 +29,6 @@ const utils = require('../../helper/faultUtils');
 test.describe('The Fault Management Plugin Visual Test', () => {
 
     test('icon test', async ({ page, theme }) => {
-        // eslint-disable-next-line no-undef
         await page.addInitScript({ path: path.join(__dirname, '../../helper/', 'addInitFaultManagementPlugin.js') });
         await page.goto('./', { waitUntil: 'networkidle' });
 

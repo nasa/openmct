@@ -64,8 +64,7 @@ class TimeContext extends EventEmitter {
         if (arguments.length >= 1) {
             if (arguments.length === 1 && !this.activeClock) {
                 throw new Error(
-                    "Must specify bounds when changing time system without "
-                    + "an active clock."
+                    "Must specify bounds when changing time system without an active clock."
                 );
             }
 
