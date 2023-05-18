@@ -19,47 +19,46 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { checkIfOld } from "./time";
+import { checkIfOld } from './time';
 
 describe('time related utils', () => {
-    let subscription;
-    let mockListener;
+  let subscription;
+  let mockListener;
 
-    beforeEach(() => {
-        mockListener = jasmine.createSpy('listener');
-        subscription = checkIfOld(mockListener, 100);
+  beforeEach(() => {
+    mockListener = jasmine.createSpy('listener');
+    subscription = checkIfOld(mockListener, 100);
+  });
+
+  describe('check if old', () => {
+    it('should call listeners when old', (done) => {
+      setTimeout(() => {
+        expect(mockListener).toHaveBeenCalled();
+        done();
+      }, 200);
     });
 
-    describe('check if old', () => {
-        it('should call listeners when old', (done) => {
-            setTimeout(() => {
-                expect(mockListener).toHaveBeenCalled();
-                done();
-            }, 200);
-        });
+    it('should update the subscription', (done) => {
+      function updated() {
+        setTimeout(() => {
+          expect(mockListener).not.toHaveBeenCalled();
+          done();
+        }, 50);
+      }
 
-        it('should update the subscription', (done) => {
-            function updated() {
-                setTimeout(() => {
-                    expect(mockListener).not.toHaveBeenCalled();
-                    done();
-                }, 50);
-            }
-
-            setTimeout(() => {
-                subscription.update();
-                updated();
-            }, 50);
-        });
-
-        it('should clear the subscription', (done) => {
-            subscription.clear();
-
-            setTimeout(() => {
-                expect(mockListener).not.toHaveBeenCalled();
-                done();
-            }, 200);
-        });
+      setTimeout(() => {
+        subscription.update();
+        updated();
+      }, 50);
     });
 
+    it('should clear the subscription', (done) => {
+      subscription.clear();
+
+      setTimeout(() => {
+        expect(mockListener).not.toHaveBeenCalled();
+        done();
+      }, 200);
+    });
+  });
 });

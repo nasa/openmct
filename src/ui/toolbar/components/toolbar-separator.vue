@@ -20,16 +20,16 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-toolbar__separator"></div>
+  <div class="c-toolbar__separator"></div>
 </template>
 
 <script>
 export default {
-    props: {
-        options: {
-            type: Object,
-            required: true
-        }
+  props: {
+    options: {
+      type: Object,
+      required: true
     }
+  }
 };
 </script>

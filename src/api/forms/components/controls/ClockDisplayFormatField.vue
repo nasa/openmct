@@ -21,47 +21,42 @@
 -->
 
 <template>
-<div class="c-form-control--clock-display-format-fields">
-    <SelectField
-        v-for="item in items"
-        :key="item.key"
-        :model="item"
-        @onChange="onChange"
-    />
-</div>
+  <div class="c-form-control--clock-display-format-fields">
+    <SelectField v-for="item in items" :key="item.key" :model="item" @onChange="onChange" />
+  </div>
 </template>
 
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
 
 export default {
-    components: {
-        SelectField
-    },
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            items: []
-        };
-    },
-    mounted() {
-        const values = this.model.value || [];
-        this.items = this.model.items.map((item, index) => {
-            item.value = values[index];
-            item.key = `${this.model.key}.${index}`;
-
-            return item;
-        });
-    },
-    methods: {
-        onChange(data) {
-            this.$emit('onChange', data);
-        }
+  components: {
+    SelectField
+  },
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      items: []
+    };
+  },
+  mounted() {
+    const values = this.model.value || [];
+    this.items = this.model.items.map((item, index) => {
+      item.value = values[index];
+      item.key = `${this.model.key}.${index}`;
+
+      return item;
+    });
+  },
+  methods: {
+    onChange(data) {
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

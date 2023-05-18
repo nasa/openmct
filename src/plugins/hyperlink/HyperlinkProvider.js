@@ -24,36 +24,35 @@ import HyperlinkLayout from './HyperlinkLayout.vue';
 import Vue from 'vue';
 
 export default function HyperlinkProvider(openmct) {
+  return {
+    key: 'hyperlink.view',
+    name: 'Hyperlink',
+    cssClass: 'icon-chain-links',
+    canView(domainObject) {
+      return domainObject.type === 'hyperlink';
+    },
 
-    return {
-        key: 'hyperlink.view',
-        name: 'Hyperlink',
-        cssClass: 'icon-chain-links',
-        canView(domainObject) {
-            return domainObject.type === 'hyperlink';
+    view: function (domainObject) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              HyperlinkLayout
+            },
+            provide: {
+              domainObject
+            },
+            template: '<hyperlink-layout></hyperlink-layout>'
+          });
         },
-
-        view: function (domainObject) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            HyperlinkLayout
-                        },
-                        provide: {
-                            domainObject
-                        },
-                        template: '<hyperlink-layout></hyperlink-layout>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

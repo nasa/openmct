@@ -25,30 +25,29 @@ import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProv
 import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType(BAR_GRAPH_KEY, {
-            key: BAR_GRAPH_KEY,
-            name: "Graph",
-            cssClass: "icon-bar-chart",
-            description: "Visualize data as a bar or line graph.",
-            creatable: true,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    barStyles: { series: {} },
-                    axes: {},
-                    useInterpolation: 'linear',
-                    useBar: true
-                };
-            },
-            priority: 891
-        });
+  return function install(openmct) {
+    openmct.types.addType(BAR_GRAPH_KEY, {
+      key: BAR_GRAPH_KEY,
+      name: 'Graph',
+      cssClass: 'icon-bar-chart',
+      description: 'Visualize data as a bar or line graph.',
+      creatable: true,
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+        domainObject.configuration = {
+          barStyles: { series: {} },
+          axes: {},
+          useInterpolation: 'linear',
+          useBar: true
+        };
+      },
+      priority: 891
+    });
 
-        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
+    openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
-        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
 
-        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
-    };
+    openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
+  };
 }
-

@@ -21,66 +21,61 @@
 -->
 
 <template>
-<div
-    class="c-inspector__content"
-    role="tabpanel"
-    aria-label="Inspector Views"
-></div>
+  <div class="c-inspector__content" role="tabpanel" aria-label="Inspector Views"></div>
 </template>
 
 <script>
 export default {
-    inject: ['openmct'],
-    props: {
-        selectedTab: {
-            type: Object,
-            default: undefined
-        },
-        selection: {
-            type: Array,
-            default: () => {
-                return [];
-            }
-        }
+  inject: ['openmct'],
+  props: {
+    selectedTab: {
+      type: Object,
+      default: undefined
     },
-    watch: {
-        selection() {
-            this.updateSelectionViews();
-        },
-        selectedTab() {
-            this.clearAndShowViewsForTab();
-        }
-    },
-    methods: {
-        updateSelectionViews(selection) {
-            this.clearViews();
-            this.selectedViews = this.openmct.inspectorViews.get(this.selection);
-            this.showViewsForTab();
-        },
-        clearViews() {
-            if (this.visibleViews) {
-                this.visibleViews.forEach(visibleView => {
-                    visibleView.destroy();
-                });
-
-                this.visibleViews = [];
-                this.$el.innerHTML = '';
-            }
-        },
-        showViewsForTab() {
-            this.visibleViews = this.selectedViews
-                .filter(view => view.key === this.selectedTab.key);
-
-            this.visibleViews.forEach(visibleView => {
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                visibleView.show(viewContainer);
-            });
-        },
-        clearAndShowViewsForTab() {
-            this.clearViews();
-            this.showViewsForTab();
-        }
+    selection: {
+      type: Array,
+      default: () => {
+        return [];
+      }
     }
+  },
+  watch: {
+    selection() {
+      this.updateSelectionViews();
+    },
+    selectedTab() {
+      this.clearAndShowViewsForTab();
+    }
+  },
+  methods: {
+    updateSelectionViews(selection) {
+      this.clearViews();
+      this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+      this.showViewsForTab();
+    },
+    clearViews() {
+      if (this.visibleViews) {
+        this.visibleViews.forEach((visibleView) => {
+          visibleView.destroy();
+        });
+
+        this.visibleViews = [];
+        this.$el.innerHTML = '';
+      }
+    },
+    showViewsForTab() {
+      this.visibleViews = this.selectedViews.filter((view) => view.key === this.selectedTab.key);
+
+      this.visibleViews.forEach((visibleView) => {
+        let viewContainer = document.createElement('div');
+        this.$el.append(viewContainer);
+        visibleView.show(viewContainer);
+      });
+    },
+    clearAndShowViewsForTab() {
+      this.clearViews();
+      this.showViewsForTab();
+    }
+  }
 };
 </script>

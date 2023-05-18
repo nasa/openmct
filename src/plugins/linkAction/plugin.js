@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LinkAction from "./LinkAction";
+import LinkAction from './LinkAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new LinkAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new LinkAction(openmct));
+  };
 }

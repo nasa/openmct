@@ -21,118 +21,124 @@
 -->
 
 <template>
-<swim-lane
+  <swim-lane
     :icon-class="item.type.definition.cssClass"
     :status="status"
     :min-height="item.height"
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
->
+  >
     <template #label>
-        {{ item.domainObject.name }}
+      {{ item.domainObject.name }}
     </template>
     <template #object>
-        <object-view
-            ref="objectView"
-            class="u-contents"
-            :default-object="item.domainObject"
-            :object-path="item.objectPath"
-            @change-action-collection="setActionCollection"
-        />
+      <object-view
+        ref="objectView"
+        class="u-contents"
+        :default-object="item.domainObject"
+        :object-path="item.objectPath"
+        @change-action-collection="setActionCollection"
+      />
     </template>
-</swim-lane>
+  </swim-lane>
 </template>
 
 <script>
 import ObjectView from '@/ui/components/ObjectView.vue';
-import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 export default {
-    components: {
-        ObjectView,
-        SwimLane
-    },
-    inject: ['openmct'],
-    props: {
-        item: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            domainObject: undefined,
-            mutablePromise: undefined,
-            status: ''
-        };
-    },
-    watch: {
-        item(newItem) {
-            if (!this.context) {
-                return;
-            }
-
-            this.context.item = newItem.domainObject;
-        }
-    },
-    mounted() {
-        if (this.openmct.objects.supportsMutation(this.item.domainObject.identifier)) {
-            this.mutablePromise = this.openmct.objects.getMutable(this.item.domainObject.identifier)
-                .then(this.setObject);
-        } else {
-            this.openmct.objects.get(this.item.domainObject.identifier)
-                .then(this.setObject);
-        }
-    },
-    beforeDestroy() {
-        if (this.removeSelectable) {
-            this.removeSelectable();
-        }
-
-        if (this.mutablePromise) {
-            this.mutablePromise.then(() => {
-                this.openmct.objects.destroyMutable(this.domainObject);
-            });
-        } else if (this?.domainObject?.isMutable) {
-            this.openmct.objects.destroyMutable(this.domainObject);
-        }
-    },
-    methods: {
-        setObject(domainObject) {
-            this.domainObject = domainObject;
-            this.mutablePromise = undefined;
-            this.$nextTick(() => {
-                let reference = this.$refs.objectView;
-
-                if (reference) {
-                    let childContext = this.$refs.objectView.getSelectionContext();
-                    childContext.item = domainObject;
-                    this.context = childContext;
-                    if (this.removeSelectable) {
-                        this.removeSelectable();
-                    }
-
-                    this.removeSelectable = this.openmct.selection.selectable(
-                        this.$el, this.context);
-                }
-
-                if (this.removeStatusListener) {
-                    this.removeStatusListener();
-                }
-
-                this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
-                this.status = this.openmct.status.get(this.domainObject.identifier);
-            });
-        },
-        setActionCollection(actionCollection) {
-            this.openmct.menus.actionsToMenuItems(actionCollection.getVisibleActions(), actionCollection.objectPath, actionCollection.view);
-        },
-        setStatus(status) {
-            this.status = status;
-        },
-        isPlanLikeObject(domainObject) {
-            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
-        }
+  components: {
+    ObjectView,
+    SwimLane
+  },
+  inject: ['openmct'],
+  props: {
+    item: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      domainObject: undefined,
+      mutablePromise: undefined,
+      status: ''
+    };
+  },
+  watch: {
+    item(newItem) {
+      if (!this.context) {
+        return;
+      }
+
+      this.context.item = newItem.domainObject;
+    }
+  },
+  mounted() {
+    if (this.openmct.objects.supportsMutation(this.item.domainObject.identifier)) {
+      this.mutablePromise = this.openmct.objects
+        .getMutable(this.item.domainObject.identifier)
+        .then(this.setObject);
+    } else {
+      this.openmct.objects.get(this.item.domainObject.identifier).then(this.setObject);
+    }
+  },
+  beforeDestroy() {
+    if (this.removeSelectable) {
+      this.removeSelectable();
+    }
+
+    if (this.mutablePromise) {
+      this.mutablePromise.then(() => {
+        this.openmct.objects.destroyMutable(this.domainObject);
+      });
+    } else if (this?.domainObject?.isMutable) {
+      this.openmct.objects.destroyMutable(this.domainObject);
+    }
+  },
+  methods: {
+    setObject(domainObject) {
+      this.domainObject = domainObject;
+      this.mutablePromise = undefined;
+      this.$nextTick(() => {
+        let reference = this.$refs.objectView;
+
+        if (reference) {
+          let childContext = this.$refs.objectView.getSelectionContext();
+          childContext.item = domainObject;
+          this.context = childContext;
+          if (this.removeSelectable) {
+            this.removeSelectable();
+          }
+
+          this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
+        }
+
+        if (this.removeStatusListener) {
+          this.removeStatusListener();
+        }
+
+        this.removeStatusListener = this.openmct.status.observe(
+          this.domainObject.identifier,
+          this.setStatus
+        );
+        this.status = this.openmct.status.get(this.domainObject.identifier);
+      });
+    },
+    setActionCollection(actionCollection) {
+      this.openmct.menus.actionsToMenuItems(
+        actionCollection.getVisibleActions(),
+        actionCollection.objectPath,
+        actionCollection.view
+      );
+    },
+    setStatus(status) {
+      this.status = status;
+    },
+    isPlanLikeObject(domainObject) {
+      return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
+    }
+  }
 };
 </script>

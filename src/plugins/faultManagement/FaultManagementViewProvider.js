@@ -25,45 +25,45 @@ import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
 import Vue from 'vue';
 
 export default class FaultManagementViewProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.key = FAULT_MANAGEMENT_VIEW;
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = FAULT_MANAGEMENT_VIEW;
+  }
 
-    canView(domainObject) {
-        return domainObject.type === FAULT_MANAGEMENT_TYPE;
-    }
+  canView(domainObject) {
+    return domainObject.type === FAULT_MANAGEMENT_TYPE;
+  }
 
-    canEdit(domainObject) {
-        return false;
-    }
+  canEdit(domainObject) {
+    return false;
+  }
 
-    view(domainObject) {
-        let component;
-        const openmct = this.openmct;
+  view(domainObject) {
+    let component;
+    const openmct = this.openmct;
 
-        return {
-            show: (element) => {
-                component = new Vue({
-                    el: element,
-                    components: {
-                        FaultManagementView
-                    },
-                    provide: {
-                        openmct,
-                        domainObject
-                    },
-                    template: '<FaultManagementView></FaultManagementView>'
-                });
-            },
-            destroy: () => {
-                if (!component) {
-                    return;
-                }
+    return {
+      show: (element) => {
+        component = new Vue({
+          el: element,
+          components: {
+            FaultManagementView
+          },
+          provide: {
+            openmct,
+            domainObject
+          },
+          template: '<FaultManagementView></FaultManagementView>'
+        });
+      },
+      destroy: () => {
+        if (!component) {
+          return;
+        }
 
-                component.$destroy();
-                component = undefined;
-            }
-        };
-    }
+        component.$destroy();
+        component = undefined;
+      }
+    };
+  }
 }

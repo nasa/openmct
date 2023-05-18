@@ -23,7 +23,7 @@
 import LocalStorageObjectProvider from './LocalStorageObjectProvider';
 
 export default function (namespace = '', storageSpace = 'mct') {
-    return function (openmct) {
-        openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
-    };
+  return function (openmct) {
+    openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
+  };
 }

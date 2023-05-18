@@ -21,107 +21,102 @@
 -->
 
 <template>
-<div
-    ref="conditionWidgetElement"
-    class="c-condition-widget u-style-receiver js-style-receiver"
->
-    <component
-        :is="urlDefined ? 'a' : 'div'"
-        class="c-condition-widget__label-wrapper"
-        :href="url"
-    >
-        <div class="c-condition-widget__label">{{ label }}</div>
+  <div ref="conditionWidgetElement" class="c-condition-widget u-style-receiver js-style-receiver">
+    <component :is="urlDefined ? 'a' : 'div'" class="c-condition-widget__label-wrapper" :href="url">
+      <div class="c-condition-widget__label">{{ label }}</div>
     </component>
-</div>
+  </div>
 </template>
 
 <script>
-const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    data: function () {
-        return {
-            conditionalLabel: ''
-        };
+  inject: ['openmct', 'domainObject'],
+  data: function () {
+    return {
+      conditionalLabel: ''
+    };
+  },
+  computed: {
+    urlDefined() {
+      return this.domainObject.url?.length > 0;
     },
-    computed: {
-        urlDefined() {
-            return this.domainObject.url?.length > 0;
-        },
-        url() {
-            return this.urlDefined ? sanitizeUrl(this.domainObject.url) : null;
-        },
-        useConditionSetOutputAsLabel() {
-            return this.conditionSetIdentifier && this.domainObject.configuration.useConditionSetOutputAsLabel;
-        },
-        conditionSetIdentifier() {
-            return this.domainObject.configuration?.objectStyles?.conditionSetIdentifier;
-        },
-        label() {
-            return this.useConditionSetOutputAsLabel
-                ? this.conditionalLabel
-                : this.domainObject.label
-            ;
-        }
+    url() {
+      return this.urlDefined ? sanitizeUrl(this.domainObject.url) : null;
     },
-    watch: {
-        conditionSetIdentifier: {
-            handler(newValue, oldValue) {
-                if (!oldValue || !newValue || !this.openmct.objects.areIdsEqual(newValue, oldValue)) {
-                    return;
-                }
-
-                this.listenToConditionSetChanges();
-            },
-            deep: true
-        }
+    useConditionSetOutputAsLabel() {
+      return (
+        this.conditionSetIdentifier && this.domainObject.configuration.useConditionSetOutputAsLabel
+      );
     },
-    mounted() {
-        if (this.domainObject) {
-            this.listenToConditionSetChanges();
-        }
+    conditionSetIdentifier() {
+      return this.domainObject.configuration?.objectStyles?.conditionSetIdentifier;
     },
-    beforeDestroy() {
-        this.stopListeningToConditionSetChanges();
-    },
-    methods: {
-        async listenToConditionSetChanges() {
-            if (!this.conditionSetIdentifier) {
-                return;
-            }
-
-            const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
-            this.stopListeningToConditionSetChanges();
-
-            if (!conditionSetDomainObject) {
-                this.openmct.notifications.alert('Unable to find condition set');
-            }
-
-            this.telemetryCollection = this.openmct.telemetry.requestCollection(conditionSetDomainObject, {
-                size: 1,
-                strategy: 'latest'
-            });
-
-            this.telemetryCollection.on('add', this.updateConditionLabel, this);
-            this.telemetryCollection.load();
-        },
-        stopListeningToConditionSetChanges() {
-            if (this.telemetryCollection) {
-                this.telemetryCollection.off('add', this.updateConditionLabel, this);
-                this.telemetryCollection.destroy();
-                this.telemetryCollection = null;
-            }
-        },
-        updateConditionLabel([latestDatum]) {
-            if (!this.conditionSetIdentifier) {
-                this.stopListeningToConditionSetChanges();
-
-                return;
-            }
-
-            this.conditionalLabel = latestDatum.output || '';
-        }
+    label() {
+      return this.useConditionSetOutputAsLabel ? this.conditionalLabel : this.domainObject.label;
     }
+  },
+  watch: {
+    conditionSetIdentifier: {
+      handler(newValue, oldValue) {
+        if (!oldValue || !newValue || !this.openmct.objects.areIdsEqual(newValue, oldValue)) {
+          return;
+        }
+
+        this.listenToConditionSetChanges();
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    if (this.domainObject) {
+      this.listenToConditionSetChanges();
+    }
+  },
+  beforeDestroy() {
+    this.stopListeningToConditionSetChanges();
+  },
+  methods: {
+    async listenToConditionSetChanges() {
+      if (!this.conditionSetIdentifier) {
+        return;
+      }
+
+      const conditionSetDomainObject = await this.openmct.objects.get(this.conditionSetIdentifier);
+      this.stopListeningToConditionSetChanges();
+
+      if (!conditionSetDomainObject) {
+        this.openmct.notifications.alert('Unable to find condition set');
+      }
+
+      this.telemetryCollection = this.openmct.telemetry.requestCollection(
+        conditionSetDomainObject,
+        {
+          size: 1,
+          strategy: 'latest'
+        }
+      );
+
+      this.telemetryCollection.on('add', this.updateConditionLabel, this);
+      this.telemetryCollection.load();
+    },
+    stopListeningToConditionSetChanges() {
+      if (this.telemetryCollection) {
+        this.telemetryCollection.off('add', this.updateConditionLabel, this);
+        this.telemetryCollection.destroy();
+        this.telemetryCollection = null;
+      }
+    },
+    updateConditionLabel([latestDatum]) {
+      if (!this.conditionSetIdentifier) {
+        this.stopListeningToConditionSetChanges();
+
+        return;
+      }
+
+      this.conditionalLabel = latestDatum.output || '';
+    }
+  }
 };
 </script>

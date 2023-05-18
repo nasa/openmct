@@ -24,80 +24,82 @@ import Plot from './Plot.vue';
 import Vue from 'vue';
 
 export default function PlotViewProvider(openmct) {
-    function hasNumericTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
+  function hasNumericTelemetry(domainObject) {
+    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+      return false;
     }
 
-    function hasDomainAndNumericRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
-        const domains = metadata.valuesForHints(['domain']);
+    let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return domains.length > 0
-            && rangeValues.length > 0
-            && !rangeValues.every(value => value.format === 'string');
-    }
+    return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
+  }
 
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function hasDomainAndNumericRange(metadata) {
+    const rangeValues = metadata.valuesForHints(['range']);
+    const domains = metadata.valuesForHints(['domain']);
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return (
+      domains.length > 0 &&
+      rangeValues.length > 0 &&
+      !rangeValues.every((value) => value.format === 'string')
+    );
+  }
 
-    return {
-        key: 'plot-single',
-        name: 'Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return hasNumericTelemetry(domainObject);
-        },
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        view: function (domainObject, objectPath) {
-            let component;
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Plot
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<plot ref="plotComponent" :options="options"></plot>'
-                    });
-                },
-                getViewContext() {
-                    if (!component) {
-                        return {};
-                    }
+  return {
+    key: 'plot-single',
+    name: 'Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return hasNumericTelemetry(domainObject);
+    },
 
-                    return component.$refs.plotComponent.getViewContext();
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                },
-                getComponent() {
-                    return component;
+    view: function (domainObject, objectPath) {
+      let component;
+
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
+          component = new Vue({
+            el: element,
+            components: {
+              Plot
+            },
+            provide: {
+              openmct,
+              domainObject,
+              path: objectPath
+            },
+            data() {
+              return {
+                options: {
+                  compact: isCompact
                 }
-            };
+              };
+            },
+            template: '<plot ref="plotComponent" :options="options"></plot>'
+          });
+        },
+        getViewContext() {
+          if (!component) {
+            return {};
+          }
+
+          return component.$refs.plotComponent.getViewContext();
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
+        },
+        getComponent() {
+          return component;
         }
-    };
+      };
+    }
+  };
 }

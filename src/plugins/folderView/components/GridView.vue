@@ -20,24 +20,23 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="l-grid-view">
+  <div class="l-grid-view">
     <grid-item
-        v-for="(item, index) in items"
-        :key="index"
-        :item="item"
-        :object-path="item.objectPath"
+      v-for="(item, index) in items"
+      :key="index"
+      :item="item"
+      :object-path="item.objectPath"
     />
-</div>
+  </div>
 </template>
 
 <script>
-
 import compositionLoader from './composition-loader';
 import GridItem from './GridItem.vue';
 
 export default {
-    components: {GridItem},
-    mixins: [compositionLoader],
-    inject: ['openmct']
+  components: { GridItem },
+  mixins: [compositionLoader],
+  inject: ['openmct']
 };
 </script>

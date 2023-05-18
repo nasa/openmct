@@ -21,45 +21,37 @@
 -->
 
 <template>
-<div
-    class="c-cs"
-    :class="{'is-stale': isStale }"
->
+  <div class="c-cs" :class="{ 'is-stale': isStale }">
     <section class="c-cs__current-output c-section">
-        <div class="c-cs__content c-cs__current-output-value">
-            <span class="c-cs__current-output-value__label">Current Output</span>
-            <span
-                class="c-cs__current-output-value__value"
-                aria-label="Current Output Value"
-            >
-                <template v-if="currentConditionOutput">
-                    {{ currentConditionOutput }}
-                </template>
-                <template v-else>
-                    ---
-                </template>
-            </span>
-        </div>
+      <div class="c-cs__content c-cs__current-output-value">
+        <span class="c-cs__current-output-value__label">Current Output</span>
+        <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
+          <template v-if="currentConditionOutput">
+            {{ currentConditionOutput }}
+          </template>
+          <template v-else> --- </template>
+        </span>
+      </div>
     </section>
     <div class="c-cs__test-data-and-conditions-w">
-        <TestData
-            class="c-cs__test-data"
-            :is-editing="isEditing"
-            :test-data="testData"
-            :telemetry="telemetryObjs"
-            @updateTestData="updateTestData"
-        />
-        <ConditionCollection
-            class="c-cs__conditions"
-            :is-editing="isEditing"
-            :test-data="testData"
-            @conditionSetResultUpdated="updateCurrentOutput"
-            @noTelemetryObjects="updateCurrentOutput('---')"
-            @telemetryUpdated="updateTelemetry"
-            @telemetryStaleness="handleStaleness"
-        />
+      <TestData
+        class="c-cs__test-data"
+        :is-editing="isEditing"
+        :test-data="testData"
+        :telemetry="telemetryObjs"
+        @updateTestData="updateTestData"
+      />
+      <ConditionCollection
+        class="c-cs__conditions"
+        :is-editing="isEditing"
+        :test-data="testData"
+        @conditionSetResultUpdated="updateCurrentOutput"
+        @noTelemetryObjects="updateCurrentOutput('---')"
+        @telemetryUpdated="updateTelemetry"
+        @telemetryStaleness="handleStaleness"
+      />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -67,60 +59,59 @@ import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
 
 export default {
-    components: {
-        TestData,
-        ConditionCollection
-    },
-    inject: ["openmct", "domainObject"],
-    props: {
-        isEditing: Boolean
-    },
-    data() {
-        return {
-            currentConditionOutput: '',
-            telemetryObjs: [],
-            testData: {},
-            staleObjects: []
-        };
-    },
-    computed: {
-        isStale() {
-            return this.staleObjects.length !== 0;
-        }
-    },
-    mounted() {
-        this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.testData = {
-            applied: false,
-            conditionTestInputs: this.domainObject.configuration.conditionTestData || []
-        };
-    },
-    methods: {
-        updateCurrentOutput(currentConditionResult) {
-            this.currentConditionOutput = currentConditionResult.output;
-        },
-        updateDefaultOutput(output) {
-            this.currentConditionOutput = output;
-        },
-        updateTelemetry(telemetryObjs) {
-            this.telemetryObjs = telemetryObjs;
-        },
-        updateTestData(testData) {
-            this.testData = testData;
-        },
-        handleStaleness({ keyString, isStale }) {
-            const index = this.staleObjects.indexOf(keyString);
-            if (isStale) {
-                if (index === -1) {
-                    this.staleObjects.push(keyString);
-                }
-            } else {
-                if (index !== -1) {
-                    this.staleObjects.splice(index, 1);
-                }
-            }
-        }
+  components: {
+    TestData,
+    ConditionCollection
+  },
+  inject: ['openmct', 'domainObject'],
+  props: {
+    isEditing: Boolean
+  },
+  data() {
+    return {
+      currentConditionOutput: '',
+      telemetryObjs: [],
+      testData: {},
+      staleObjects: []
+    };
+  },
+  computed: {
+    isStale() {
+      return this.staleObjects.length !== 0;
     }
+  },
+  mounted() {
+    this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+    this.testData = {
+      applied: false,
+      conditionTestInputs: this.domainObject.configuration.conditionTestData || []
+    };
+  },
+  methods: {
+    updateCurrentOutput(currentConditionResult) {
+      this.currentConditionOutput = currentConditionResult.output;
+    },
+    updateDefaultOutput(output) {
+      this.currentConditionOutput = output;
+    },
+    updateTelemetry(telemetryObjs) {
+      this.telemetryObjs = telemetryObjs;
+    },
+    updateTestData(testData) {
+      this.testData = testData;
+    },
+    handleStaleness({ keyString, isStale }) {
+      const index = this.staleObjects.indexOf(keyString);
+      if (isStale) {
+        if (index === -1) {
+          this.staleObjects.push(keyString);
+        }
+      } else {
+        if (index !== -1) {
+          this.staleObjects.splice(index, 1);
+        }
+      }
+    }
+  }
 };
 </script>
-

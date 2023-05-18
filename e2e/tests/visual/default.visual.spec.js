@@ -37,132 +37,134 @@ const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Default', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-    });
-    test.use({
-        clockOptions: {
-            now: 0, //Set browser clock to UNIX Epoch
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  });
+  test.use({
+    clockOptions: {
+      now: 0, //Set browser clock to UNIX Epoch
+      shouldAdvanceTime: false //Don't advance the clock
+    }
+  });
 
-    test('Visual - Root and About', async ({ page, theme }) => {
-        // Verify that Create button is actionable
-        await expect(page.locator('button:has-text("Create")')).toBeEnabled();
+  test('Visual - Root and About', async ({ page, theme }) => {
+    // Verify that Create button is actionable
+    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
-        // Take a snapshot of the Dashboard
-        await percySnapshot(page, `Root (theme: '${theme}')`);
+    // Take a snapshot of the Dashboard
+    await percySnapshot(page, `Root (theme: '${theme}')`);
 
-        // Click About button
-        await page.click('.l-shell__app-logo');
+    // Click About button
+    await page.click('.l-shell__app-logo');
 
-        // Modify the Build information in 'about' to be consistent run-over-run
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-        await expect(versionInformationLocator).toBeEnabled();
-        await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
+    // Modify the Build information in 'about' to be consistent run-over-run
+    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
+    await expect(versionInformationLocator).toBeEnabled();
+    await versionInformationLocator.evaluate(
+      (node) =>
+        (node.innerHTML =
+          '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
+    );
 
-        // Take a snapshot of the About modal
-        await percySnapshot(page, `About (theme: '${theme}')`);
-    });
+    // Take a snapshot of the About modal
+    await percySnapshot(page, `About (theme: '${theme}')`);
+  });
 
-    test('Visual - Default Condition Set @unstable', async ({ page, theme }) => {
+  test('Visual - Default Condition Set @unstable', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
 
-        await createDomainObjectWithDefaults(page, { type: 'Condition Set' });
+    // Take a snapshot of the newly created Condition Set object
+    await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
+  });
 
-        // Take a snapshot of the newly created Condition Set object
-        await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
-    });
-
-    test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5349'
-        });
-
-        await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
-
-        // Take a snapshot of the newly created Condition Widget object
-        await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
+  test('Visual - Default Condition Widget @unstable', async ({ page, theme }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/5349'
     });
 
-    test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
-        const year = new Date().getFullYear();
+    await createDomainObjectWithDefaults(page, { type: 'Condition Widget' });
 
-        let startDate = 'xxxx-01-01 01:00:00.000Z';
-        startDate = year + startDate.substring(4);
+    // Take a snapshot of the newly created Condition Widget object
+    await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
+  });
 
-        let endDate = 'xxxx-01-01 02:00:00.000Z';
-        endDate = year + endDate.substring(4);
+  test('Visual - Time Conductor start time is less than end time', async ({ page, theme }) => {
+    const year = new Date().getFullYear();
 
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
+    let startDate = 'xxxx-01-01 01:00:00.000Z';
+    startDate = year + startDate.substring(4);
 
-        //  verify no error msg
-        await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
+    let endDate = 'xxxx-01-01 02:00:00.000Z';
+    endDate = year + endDate.substring(4);
 
-        startDate = (year + 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
-        await page.locator('input[type="text"]').nth(1).click();
+    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
 
-        //  verify error msg for start time (unable to capture snapshot of popup)
-        await percySnapshot(page, `Start time error (theme: '${theme}')`);
+    //  verify no error msg
+    await percySnapshot(page, `Default Time conductor (theme: '${theme}')`);
 
-        startDate = (year - 1) + startDate.substring(4);
-        await page.locator('input[type="text"]').first().fill(startDate.toString());
+    startDate = year + 1 + startDate.substring(4);
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
+    await page.locator('input[type="text"]').nth(1).click();
 
-        endDate = (year - 2) + endDate.substring(4);
-        await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
+    //  verify error msg for start time (unable to capture snapshot of popup)
+    await percySnapshot(page, `Start time error (theme: '${theme}')`);
 
-        await page.locator('input[type="text"]').first().click();
+    startDate = year - 1 + startDate.substring(4);
+    await page.locator('input[type="text"]').first().fill(startDate.toString());
 
-        //  verify error msg for end time (unable to capture snapshot of popup)
-        await percySnapshot(page, `End time error (theme: '${theme}')`);
-    });
+    endDate = year - 2 + endDate.substring(4);
+    await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
 
-    test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
-        //Click the Create button
-        await page.click('button:has-text("Create")');
+    await page.locator('input[type="text"]').first().click();
 
-        // Click text=Sine Wave Generator
-        await page.click('text=Sine Wave Generator');
+    //  verify error msg for end time (unable to capture snapshot of popup)
+    await percySnapshot(page, `End time error (theme: '${theme}')`);
+  });
 
-        await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
+  test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
+    //Click the Create button
+    await page.click('button:has-text("Create")');
 
-        await page.locator('.field.control.l-input-sm input').first().click();
-        await page.locator('.field.control.l-input-sm input').first().fill('');
+    // Click text=Sine Wave Generator
+    await page.click('text=Sine Wave Generator');
 
-        // Validate red x mark
-        await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
-    });
+    await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
 
-    test('Visual - Save Successful Banner @unstable', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, { type: 'Timer' });
+    await page.locator('.field.control.l-input-sm input').first().click();
+    await page.locator('.field.control.l-input-sm input').first().fill('');
 
-        await page.locator('.c-message-banner__message').hover({ trial: true });
-        await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
+    // Validate red x mark
+    await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
+  });
 
-        //Wait until Save Banner is gone
-        await page.locator('.c-message-banner__close-button').click();
-        await page.waitForSelector('.c-message-banner__message', { state: 'detached'});
-        await percySnapshot(page, `Banner message gone (theme: '${theme}')`);
-    });
+  test('Visual - Save Successful Banner @unstable', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
-    test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
-        //Click the Create button
-        await page.click('button:has-text("Create")');
+    await page.locator('.c-message-banner__message').hover({ trial: true });
+    await percySnapshot(page, `Banner message shown (theme: '${theme}')`);
 
-        //Hover on Display Layout option.
-        await page.locator('text=Display Layout').hover();
-        await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
+    //Wait until Save Banner is gone
+    await page.locator('.c-message-banner__close-button').click();
+    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await percySnapshot(page, `Banner message gone (theme: '${theme}')`);
+  });
 
-    });
+  test('Visual - Display Layout Icon is correct', async ({ page, theme }) => {
+    //Click the Create button
+    await page.click('button:has-text("Create")');
 
-    test('Visual - Default Gauge is correct @unstable', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+    //Hover on Display Layout option.
+    await page.locator('text=Display Layout').hover();
+    await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
+  });
 
-        // Take a snapshot of the newly created Gauge object
-        await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
-    });
+  test('Visual - Default Gauge is correct @unstable', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, { type: 'Gauge' });
+
+    // Take a snapshot of the newly created Gauge object
+    await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+  });
 });
