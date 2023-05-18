@@ -23,23 +23,24 @@
 import WebPageViewProvider from './WebPageViewProvider.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        openmct.objectViews.addProvider(new WebPageViewProvider(openmct));
+  return function install(openmct) {
+    openmct.objectViews.addProvider(new WebPageViewProvider(openmct));
 
-        openmct.types.addType('webPage', {
-            name: "Web Page",
-            description: "Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.",
-            creatable: true,
-            cssClass: 'icon-page',
-            form: [
-                {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": true,
-                    "cssClass": "l-input-lg"
-                }
-            ]
-        });
-    };
+    openmct.types.addType('webPage', {
+      name: 'Web Page',
+      description:
+        'Embed a web page or web-based image in a resizeable window component. Note that the URL being embedded must allow iframing.',
+      creatable: true,
+      cssClass: 'icon-page',
+      form: [
+        {
+          key: 'url',
+          name: 'URL',
+          control: 'textfield',
+          required: true,
+          cssClass: 'l-input-lg'
+        }
+      ]
+    });
+  };
 }

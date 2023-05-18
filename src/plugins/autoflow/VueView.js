@@ -21,14 +21,14 @@
  *****************************************************************************/
 
 define(['vue'], function (Vue) {
-    function VueView(options) {
-        const vm = new Vue(options);
-        this.show = function (container) {
-            container.appendChild(vm.$mount().$el);
-        };
+  function VueView(options) {
+    const vm = new Vue(options);
+    this.show = function (container) {
+      container.appendChild(vm.$mount().$el);
+    };
 
-        this.destroy = vm.$destroy.bind(vm);
-    }
+    this.destroy = vm.$destroy.bind(vm);
+  }
 
-    return VueView;
+  return VueView;
 });

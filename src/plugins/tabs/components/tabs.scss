@@ -1,60 +1,60 @@
 .c-tabs-view {
-    $h: 20px;
-    @include abs();
-    display: flex;
-    flex-flow: column nowrap;
+  $h: 20px;
+  @include abs();
+  display: flex;
+  flex-flow: column nowrap;
+
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &__tabs-holder {
+    min-height: $h;
+  }
+
+  &__tab {
+    justify-content: space-between; // Places remove button to far side of tab
+
+    &__close-btn {
+      flex: 0 0 auto;
+      pointer-events: all;
+    }
 
     > * + * {
-        margin-top: $interiorMargin;
+      margin-left: $interiorMargin;
     }
+  }
 
-    &__tabs-holder {
-        min-height: $h;
+  &__object-holder {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    &--hidden {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
     }
+  }
 
-    &__tab {
-        justify-content: space-between; // Places remove button to far side of tab
+  &__object-name {
+    font-size: 1em;
+    margin: $interiorMargin 0 $interiorMarginLg 0;
+  }
 
-        &__close-btn {
-            flex: 0 0 auto;
-            pointer-events: all;
-        }
+  &__object {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 auto;
+    height: 0; // Chrome 73 overflow bug fix
+  }
 
-        > * + * {
-            margin-left: $interiorMargin;
-        }
-    }
-
-    &__object-holder {
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-
-        &--hidden {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
-        }
-    }
-
-    &__object-name {
-        font-size: 1em;
-        margin: $interiorMargin 0 $interiorMarginLg 0;
-    }
-
-    &__object {
-        display: flex;
-        flex-flow: column nowrap;
-        flex: 1 1 auto;
-        height: 0; // Chrome 73 overflow bug fix
-    }
-
-    &__empty-message {
-        background: rgba($colorBodyFg, 0.1);
-        color: rgba($colorBodyFg, 0.7);
-        font-style: italic;
-        text-align: center;
-        line-height: $h;
-        width: 100%;
-    }
+  &__empty-message {
+    background: rgba($colorBodyFg, 0.1);
+    color: rgba($colorBodyFg, 0.7);
+    font-style: italic;
+    text-align: center;
+    line-height: $h;
+    width: 100%;
+  }
 }

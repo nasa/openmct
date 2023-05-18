@@ -20,42 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/globalClearIndicator.vue',
-    './ClearDataAction',
-    'vue'
-], function (
-    GlobaClearIndicator,
-    ClearDataAction,
-    Vue
+define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], function (
+  GlobaClearIndicator,
+  ClearDataAction,
+  Vue
 ) {
-    return function plugin(appliesToObjects, options = {indicator: true}) {
-        let installIndicator = options.indicator;
+  return function plugin(appliesToObjects, options = { indicator: true }) {
+    let installIndicator = options.indicator;
 
-        appliesToObjects = appliesToObjects || [];
+    appliesToObjects = appliesToObjects || [];
 
-        return function install(openmct) {
-            if (installIndicator) {
-                let component = new Vue ({
-                    components: {
-                        GlobalClearIndicator: GlobaClearIndicator.default
-                    },
-                    provide: {
-                        openmct
-                    },
-                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                });
+    return function install(openmct) {
+      if (installIndicator) {
+        let component = new Vue({
+          components: {
+            GlobalClearIndicator: GlobaClearIndicator.default
+          },
+          provide: {
+            openmct
+          },
+          template: '<GlobalClearIndicator></GlobalClearIndicator>'
+        });
 
-                let indicator = {
-                    element: component.$mount().$el,
-                    key: 'global-clear-indicator',
-                    priority: openmct.priority.DEFAULT
-                };
-
-                openmct.indicators.add(indicator);
-            }
-
-            openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
+        let indicator = {
+          element: component.$mount().$el,
+          key: 'global-clear-indicator',
+          priority: openmct.priority.DEFAULT
         };
+
+        openmct.indicators.add(indicator);
+      }
+
+      openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
     };
+  };
 });

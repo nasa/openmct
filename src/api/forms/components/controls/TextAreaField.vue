@@ -21,50 +21,47 @@
 -->
 
 <template>
-<span class="form-control shell">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <textarea
-            :id="`${model.key}-textarea`"
-            v-model="field"
-            type="text"
-            :size="model.size"
-            @input="updateText()"
-        >
-        </textarea>
+  <span class="form-control shell">
+    <span class="field control" :class="model.cssClass">
+      <textarea
+        :id="`${model.key}-textarea`"
+        v-model="field"
+        type="text"
+        :size="model.size"
+        @input="updateText()"
+      >
+      </textarea>
     </span>
-</span>
+  </span>
 </template>
 
 <script>
 import { throttle } from 'lodash';
 
 export default {
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            field: this.model.value
-        };
-    },
-    mounted() {
-        this.updateText = throttle(this.updateText.bind(this), 500);
-    },
-    methods: {
-        updateText() {
-            const data = {
-                model: this.model,
-                value: this.field
-            };
-
-            this.$emit('onChange', data);
-        }
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      field: this.model.value
+    };
+  },
+  mounted() {
+    this.updateText = throttle(this.updateText.bind(this), 500);
+  },
+  methods: {
+    updateText() {
+      const data = {
+        model: this.model,
+        value: this.field
+      };
+
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

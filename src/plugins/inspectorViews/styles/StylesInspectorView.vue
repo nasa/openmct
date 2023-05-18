@@ -21,23 +21,16 @@
 -->
 
 <template>
-<multipane
-    type="vertical"
->
+  <multipane type="vertical">
     <pane class="c-inspector__styles">
-        <div class="u-contents">
-            <StylesView />
-        </div>
+      <div class="u-contents">
+        <StylesView />
+      </div>
     </pane>
-    <pane
-        v-if="isEditing"
-        class="c-inspector__saved-styles"
-        handle="before"
-        label="Saved Styles"
-    >
-        <SavedStylesInspectorView />
+    <pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
+      <SavedStylesInspectorView />
     </pane>
-</multipane>
+  </multipane>
 </template>
 
 <script>
@@ -47,28 +40,28 @@ import StylesView from '@/plugins/condition/components/inspector/StylesView.vue'
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {
-    components: {
-        multipane,
-        pane,
-        StylesView,
-        SavedStylesInspectorView
-    },
-    inject: ['openmct'],
-    data() {
-        return {
-            isEditing: this.openmct.editor.isEditing()
-        };
-    },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.setEditMode);
-    },
-    beforeDestroyed() {
-        this.openmct.editor.off('isEditing', this.setEditMode);
-    },
-    methods: {
-        setEditMode(isEditing) {
-            this.isEditing = isEditing;
-        }
+  components: {
+    multipane,
+    pane,
+    StylesView,
+    SavedStylesInspectorView
+  },
+  inject: ['openmct'],
+  data() {
+    return {
+      isEditing: this.openmct.editor.isEditing()
+    };
+  },
+  mounted() {
+    this.openmct.editor.on('isEditing', this.setEditMode);
+  },
+  beforeDestroyed() {
+    this.openmct.editor.off('isEditing', this.setEditMode);
+  },
+  methods: {
+    setEditMode(isEditing) {
+      this.isEditing = isEditing;
     }
+  }
 };
 </script>

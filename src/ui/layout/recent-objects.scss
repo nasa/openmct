@@ -26,96 +26,94 @@
   align-items: flex-start;
 
   > * + * {
-      margin-left: $interiorMarginSm;
+    margin-left: $interiorMarginSm;
   }
 
   + .c-recentobjects-listitem {
-      border-top: 1px solid $colorInteriorBorder;
+    border-top: 1px solid $colorInteriorBorder;
   }
 
   &.is-alias {
-      // Object is an alias to an original.
-      [class~='recent-object-icon'] {
-          @include isAlias();
-          &:after {
-              bottom: 20%;
-          }
+    // Object is an alias to an original.
+    [class~='recent-object-icon'] {
+      @include isAlias();
+      &:after {
+        bottom: 20%;
       }
+    }
   }
 
   &__object-path {
-   padding: 0 $interiorMarginSm;
+    padding: 0 $interiorMarginSm;
   }
 
-  &__target-button{
+  &__target-button {
     opacity: 0;
   }
 
   &__type-icon,
   &__more-options-button {
-      flex: 0 0 auto;
+    flex: 0 0 auto;
   }
 
   &__type-icon {
-      color: $colorItemTreeIcon;
-      font-size: 1.25em;
+    color: $colorItemTreeIcon;
+    font-size: 1.25em;
 
-      // TEMP: uses object-label component, hide label part
-      .c-object-label__name {
-          display: none;
-      }
+    // TEMP: uses object-label component, hide label part
+    .c-object-label__name {
+      display: none;
+    }
   }
 
   &__more-options-button {
-      display: none; // TEMP until enabled
+    display: none; // TEMP until enabled
   }
 
   &__body {
-      flex: 1 1 auto;
-      padding-top: 2px; // Align with type icon
+    flex: 1 1 auto;
+    padding-top: 2px; // Align with type icon
 
-      > * + * {
-          margin-top: $interiorMarginSm;
+    > * + * {
+      margin-top: $interiorMarginSm;
+    }
+
+    .c-location {
+      font-size: 0.9em;
+      opacity: 0.8;
+
+      &__item {
+        > * + * {
+          background: blue !important;
+        }
       }
-
-      .c-location {
-          font-size: 0.9em;
-          opacity: 0.8;
-
-          &__item {
-
-            > * + * {
-                background: blue !important;
-
-            }
-          }
-      }
+    }
   }
 
   &__tags {
-      display: flex;
+    display: flex;
 
-      > * + * {
-          margin-left: $interiorMargin;
-      }
+    > * + * {
+      margin-left: $interiorMargin;
+    }
   }
 
   &__title {
-      border-radius: $basicCr;
-      color: $colorItemTreeFg;
-      cursor: pointer;
-      padding: $interiorMarginSm;
+    border-radius: $basicCr;
+    color: $colorItemTreeFg;
+    cursor: pointer;
+    padding: $interiorMarginSm;
 
-      &:hover {
-          background-color: $colorItemTreeHoverBg;
-      }
+    &:hover {
+      background-color: $colorItemTreeHoverBg;
+    }
   }
 
   .c-tag {
-      font-size: 0.9em;
+    font-size: 0.9em;
   }
 }
 
 .c-recentobjects-listitem:hover .c-recentobjects-listitem__target-button {
-    opacity: 100;
+  opacity: 100;
 }

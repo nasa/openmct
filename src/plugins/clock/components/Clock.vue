@@ -21,21 +21,21 @@
 -->
 
 <template>
-<div class="l-angular-ov-wrapper">
+  <div class="l-angular-ov-wrapper">
     <div class="u-contents">
-        <div class="c-clock l-time-display u-style-receiver js-style-receiver">
-            <div class="c-clock__timezone">
-                {{ timeZoneAbbr }}
-            </div>
-            <div class="c-clock__value">
-                {{ timeTextValue }}
-            </div>
-            <div class="c-clock__ampm">
-                {{ timeAmPm }}
-            </div>
+      <div class="c-clock l-time-display u-style-receiver js-style-receiver">
+        <div class="c-clock__timezone">
+          {{ timeZoneAbbr }}
         </div>
+        <div class="c-clock__value">
+          {{ timeTextValue }}
+        </div>
+        <div class="c-clock__ampm">
+          {{ timeAmPm }}
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -44,56 +44,58 @@ import momentTimezone from 'moment-timezone';
 import ticker from 'utils/clock/Ticker';
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    data() {
-        return {
-            lastTimestamp: null
-        };
+  inject: ['openmct', 'domainObject'],
+  data() {
+    return {
+      lastTimestamp: null
+    };
+  },
+  computed: {
+    configuration() {
+      return this.domainObject.configuration;
     },
-    computed: {
-        configuration() {
-            return this.domainObject.configuration;
-        },
-        baseFormat() {
-            return this.configuration.baseFormat;
-        },
-        use24() {
-            return this.configuration.use24 === 'clock24';
-        },
-        timezone() {
-            return this.configuration.timezone;
-        },
-        timeFormat() {
-            return this.use24 ? this.baseFormat.replace('hh', "HH") : this.baseFormat;
-        },
-        zoneName() {
-            return momentTimezone.tz.names().includes(this.timezone) ? this.timezone : "UTC";
-        },
-        momentTime() {
-            return this.zoneName ? moment.utc(this.lastTimestamp).tz(this.zoneName) : moment.utc(this.lastTimestamp);
-        },
-        timeZoneAbbr() {
-            return this.momentTime.zoneAbbr();
-        },
-        timeTextValue() {
-            return this.timeFormat && this.momentTime.format(this.timeFormat);
-        },
-        timeAmPm() {
-            return this.use24 ? '' : this.momentTime.format("A");
-        }
+    baseFormat() {
+      return this.configuration.baseFormat;
     },
-    mounted() {
-        this.unlisten = ticker.listen(this.tick);
+    use24() {
+      return this.configuration.use24 === 'clock24';
     },
-    beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
+    timezone() {
+      return this.configuration.timezone;
     },
-    methods: {
-        tick(timestamp) {
-            this.lastTimestamp = timestamp;
-        }
+    timeFormat() {
+      return this.use24 ? this.baseFormat.replace('hh', 'HH') : this.baseFormat;
+    },
+    zoneName() {
+      return momentTimezone.tz.names().includes(this.timezone) ? this.timezone : 'UTC';
+    },
+    momentTime() {
+      return this.zoneName
+        ? moment.utc(this.lastTimestamp).tz(this.zoneName)
+        : moment.utc(this.lastTimestamp);
+    },
+    timeZoneAbbr() {
+      return this.momentTime.zoneAbbr();
+    },
+    timeTextValue() {
+      return this.timeFormat && this.momentTime.format(this.timeFormat);
+    },
+    timeAmPm() {
+      return this.use24 ? '' : this.momentTime.format('A');
     }
+  },
+  mounted() {
+    this.unlisten = ticker.listen(this.tick);
+  },
+  beforeDestroy() {
+    if (this.unlisten) {
+      this.unlisten();
+    }
+  },
+  methods: {
+    tick(timestamp) {
+      this.lastTimestamp = timestamp;
+    }
+  }
 };
 </script>

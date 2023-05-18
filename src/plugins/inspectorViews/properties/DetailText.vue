@@ -21,23 +21,23 @@
 -->
 
 <template>
-<li class="c-inspect-properties__row">
+  <li class="c-inspect-properties__row">
     <div class="c-inspect-properties__label">
-        {{ detail.name }}
+      {{ detail.name }}
     </div>
     <div class="c-inspect-properties__value">
-        {{ detail.value }}
+      {{ detail.value }}
     </div>
-</li>
+  </li>
 </template>
 
 <script>
 export default {
-    props: {
-        detail: {
-            type: Object,
-            required: true
-        }
+  props: {
+    detail: {
+      type: Object,
+      required: true
     }
+  }
 };
 </script>

@@ -13,12 +13,12 @@ executors:
       docker_layer_caching: true
 parameters:
   BUST_CACHE:
-    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
+    description: 'Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!'
     default: false
     type: boolean
 commands:
   build_and_install:
-    description: "All steps used to build and install. Will use cache if found"
+    description: 'All steps used to build and install. Will use cache if found'
     parameters:
       node-version:
         type: string
@@ -30,19 +30,19 @@ commands:
           node-version: << parameters.node-version >>
       - run: npm install --no-audit --progress=false
   restore_cache_cmd:
-    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
+    description: 'Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache'
     parameters:
       node-version:
         type: string
     steps:
       - when:
           condition:
-            equal: [false, << pipeline.parameters.BUST_CACHE >> ]
+            equal: [false, << pipeline.parameters.BUST_CACHE >>]
           steps:
             - restore_cache:
                 key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
-    description: "Custom command for saving cache."
+    description: 'Custom command for saving cache.'
     parameters:
       node-version:
         type: string
@@ -53,7 +53,7 @@ commands:
             - ~/.npm
             - node_modules
   generate_and_store_version_and_filesystem_artifacts:
-    description: "Track important packages and files"
+    description: 'Track important packages and files'
     steps:
       - run: |
           [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
@@ -64,13 +64,13 @@ commands:
       - store_artifacts:
           path: /tmp/artifacts/
   generate_e2e_code_cov_report:
-   description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
-   parameters:
+    description: 'Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test'
+    parameters:
       suite:
         type: string
-   steps:
-    - run: npm run cov:e2e:report || true
-    - run: npm run cov:e2e:<<parameters.suite>>:publish
+    steps:
+      - run: npm run cov:e2e:report || true
+      - run: npm run cov:e2e:<<parameters.suite>>:publish
 orbs:
   node: circleci/node@5.1.0
   browser-tools: circleci/browser-tools@1.3.0
@@ -115,7 +115,7 @@ jobs:
           path: coverage
       - when:
           condition:
-            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
@@ -131,16 +131,16 @@ jobs:
           node-version: <<parameters.node-version>>
       - when: #Only install chrome-beta when running the 'full' suite to save $$$
           condition:
-            equal: [ "full", <<parameters.suite>> ]
+            equal: ['full', <<parameters.suite>>]
           steps:
             - run: npx playwright install chrome-beta
       - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
-          - generate_e2e_code_cov_report:
-              suite: <<parameters.suite>>          
+            - generate_e2e_code_cov_report:
+                suite: <<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -151,7 +151,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-couchdb:
@@ -168,14 +168,14 @@ jobs:
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
-      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB 
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB
       - run: npm run test:e2e:couchdb
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
-          - generate_e2e_code_cov_report:
-              suite: full #add to full suite
+            - generate_e2e_code_cov_report:
+                suite: full #add to full suite
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -186,7 +186,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   perf-test:
@@ -206,7 +206,7 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   visual-test:
@@ -226,15 +226,15 @@ jobs:
           path: html-test-results
       - when:
           condition:
-            equal: [ 42, 42 ] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      # - lint:
-      #     name: node16-lint
-      #     node-version: lts/gallium
+      - lint:
+          name: node16-lint
+          node-version: lts/gallium
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -246,7 +246,7 @@ workflows:
           node-version: lts/hydrogen
       - visual-test:
           node-version: lts/hydrogen
-        
+
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
@@ -269,7 +269,7 @@ workflows:
           node-version: lts/hydrogen
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: '0 0 * * *'
           filters:
             branches:
               only:

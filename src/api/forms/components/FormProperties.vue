@@ -21,155 +21,136 @@
 -->
 
 <template>
-<div class="c-form js-form">
+  <div class="c-form js-form">
     <div class="c-overlay__top-bar c-form__top-bar">
-        <div class="c-overlay__dialog-title js-form-title">{{ model.title }}</div>
-        <div
-            v-if="hasRequiredFields"
-            class="c-overlay__dialog-hint hint"
-        >All fields marked <span class="req icon-asterisk"></span> are required.</div>
+      <div class="c-overlay__dialog-title js-form-title">{{ model.title }}</div>
+      <div v-if="hasRequiredFields" class="c-overlay__dialog-hint hint">
+        All fields marked <span class="req icon-asterisk"></span> are required.
+      </div>
     </div>
-    <form
-        name="mctForm"
-        class="c-form__contents"
-        autocomplete="off"
-        @submit.prevent
-    >
-        <div
-            v-for="section in formSections"
-            :key="section.id"
-            class="c-form__section"
-            :class="section.cssClass"
-        >
-            <h2
-                v-if="section.name"
-                class="c-form__section-header"
-            >
-                {{ section.name }}
-            </h2>
-            <FormRow
-                v-for="(row, index) in section.rows"
-                :key="row.id"
-                :css-class="row.cssClass"
-                :first="index < 1"
-                :row="row"
-                @onChange="onChange"
-            />
-        </div>
+    <form name="mctForm" class="c-form__contents" autocomplete="off" @submit.prevent>
+      <div
+        v-for="section in formSections"
+        :key="section.id"
+        class="c-form__section"
+        :class="section.cssClass"
+      >
+        <h2 v-if="section.name" class="c-form__section-header">
+          {{ section.name }}
+        </h2>
+        <FormRow
+          v-for="(row, index) in section.rows"
+          :key="row.id"
+          :css-class="row.cssClass"
+          :first="index < 1"
+          :row="row"
+          @onChange="onChange"
+        />
+      </div>
     </form>
 
     <div class="mct-form__controls c-overlay__button-bar c-form__bottom-bar">
-        <button
-            tabindex="0"
-            :disabled="isInvalid"
-            class="c-button c-button--major"
-            aria-label="Save"
-            @click="onSave"
-        >
-            {{ submitLabel }}
-        </button>
-        <button
-            v-if="!shouldHideCancelButton"
-            tabindex="0"
-            class="c-button js-cancel-button"
-            aria-label="Cancel"
-            @click="onCancel"
-        >
-            {{ cancelLabel }}
-        </button>
+      <button
+        tabindex="0"
+        :disabled="isInvalid"
+        class="c-button c-button--major"
+        aria-label="Save"
+        @click="onSave"
+      >
+        {{ submitLabel }}
+      </button>
+      <button
+        v-if="!shouldHideCancelButton"
+        tabindex="0"
+        class="c-button js-cancel-button"
+        aria-label="Cancel"
+        @click="onCancel"
+      >
+        {{ cancelLabel }}
+      </button>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
-import FormRow from "@/api/forms/components/FormRow.vue";
+import FormRow from '@/api/forms/components/FormRow.vue';
 import { v4 as uuid } from 'uuid';
 
 export default {
-    components: {
-        FormRow
+  components: {
+    FormRow
+  },
+  inject: ['openmct'],
+  props: {
+    model: {
+      type: Object,
+      required: true
     },
-    inject: ['openmct'],
-    props: {
-        model: {
-            type: Object,
-            required: true
-        },
-        value: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
-    data() {
-        return {
-            invalidProperties: {},
-            formSections: []
-        };
-    },
-    computed: {
-        hasRequiredFields() {
-            return this.model.sections.some(section =>
-                section.rows.some(row => row.required));
-        },
-        isInvalid() {
-            return Object.entries(this.invalidProperties)
-                .some(([key, value]) => {
-                    return value;
-                });
-        },
-        submitLabel() {
-            if (
-                this.model.buttons
-                && this.model.buttons.submit
-                && this.model.buttons.submit.label
-            ) {
-                return this.model.buttons.submit.label;
-            }
-
-            return 'OK';
-        },
-        cancelLabel() {
-            if (
-                this.model.buttons
-                && this.model.buttons.cancel
-                && this.model.buttons.cancel.label
-            ) {
-                return this.model.buttons.submit.label;
-            }
-
-            return 'Cancel';
-        },
-        shouldHideCancelButton() {
-            return this.model.buttons?.cancel?.hide === true;
-        }
-    },
-    mounted() {
-        this.formSections = this.model.sections.map(section => {
-            section.id = uuid();
-
-            section.rows = section.rows.map(row => {
-                row.id = uuid();
-
-                return row;
-            });
-
-            return section;
-        });
-    },
-    methods: {
-        onChange(data) {
-            this.$set(this.invalidProperties, data.model.key, data.invalid);
-
-            this.$emit('onChange', data);
-        },
-        onCancel() {
-            this.$emit('onCancel');
-        },
-        onSave() {
-            this.$emit('onSave');
-        }
+    value: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
+  },
+  data() {
+    return {
+      invalidProperties: {},
+      formSections: []
+    };
+  },
+  computed: {
+    hasRequiredFields() {
+      return this.model.sections.some((section) => section.rows.some((row) => row.required));
+    },
+    isInvalid() {
+      return Object.entries(this.invalidProperties).some(([key, value]) => {
+        return value;
+      });
+    },
+    submitLabel() {
+      if (this.model.buttons && this.model.buttons.submit && this.model.buttons.submit.label) {
+        return this.model.buttons.submit.label;
+      }
+
+      return 'OK';
+    },
+    cancelLabel() {
+      if (this.model.buttons && this.model.buttons.cancel && this.model.buttons.cancel.label) {
+        return this.model.buttons.submit.label;
+      }
+
+      return 'Cancel';
+    },
+    shouldHideCancelButton() {
+      return this.model.buttons?.cancel?.hide === true;
+    }
+  },
+  mounted() {
+    this.formSections = this.model.sections.map((section) => {
+      section.id = uuid();
+
+      section.rows = section.rows.map((row) => {
+        row.id = uuid();
+
+        return row;
+      });
+
+      return section;
+    });
+  },
+  methods: {
+    onChange(data) {
+      this.$set(this.invalidProperties, data.model.key, data.invalid);
+
+      this.$emit('onChange', data);
+    },
+    onCancel() {
+      this.$emit('onCancel');
+    },
+    onSave() {
+      this.$emit('onSave');
+    }
+  }
 };
 </script>

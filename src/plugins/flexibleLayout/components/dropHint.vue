@@ -21,63 +21,63 @@
 -->
 
 <template>
-<div v-show="isValidTarget">
+  <div v-show="isValidTarget">
     <div
-        class="c-drop-hint c-drop-hint--always-show"
-        :class="{'is-mouse-over': isMouseOver}"
-        @dragover.prevent
-        @dragenter="dragenter"
-        @dragleave="dragleave"
-        @drop="dropHandler"
+      class="c-drop-hint c-drop-hint--always-show"
+      :class="{ 'is-mouse-over': isMouseOver }"
+      @dragover.prevent
+      @dragenter="dragenter"
+      @dragleave="dragleave"
+      @drop="dropHandler"
     ></div>
-</div>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        index: {
-            type: Number,
-            required: true
-        },
-        allowDrop: {
-            type: Function,
-            required: true
-        }
+  props: {
+    index: {
+      type: Number,
+      required: true
     },
-    data() {
-        return {
-            isMouseOver: false,
-            isValidTarget: false
-        };
-    },
-    mounted() {
-        document.addEventListener('dragstart', this.dragstart);
-        document.addEventListener('dragend', this.dragend);
-        document.addEventListener('drop', this.dragend);
-    },
-    destroyed() {
-        document.removeEventListener('dragstart', this.dragstart);
-        document.removeEventListener('dragend', this.dragend);
-        document.removeEventListener('drop', this.dragend);
-    },
-    methods: {
-        dragenter() {
-            this.isMouseOver = true;
-        },
-        dragleave() {
-            this.isMouseOver = false;
-        },
-        dropHandler(event) {
-            this.$emit('object-drop-to', this.index, event);
-            this.isValidTarget = false;
-        },
-        dragstart(event) {
-            this.isValidTarget = this.allowDrop(event, this.index);
-        },
-        dragend() {
-            this.isValidTarget = false;
-        }
+    allowDrop: {
+      type: Function,
+      required: true
     }
+  },
+  data() {
+    return {
+      isMouseOver: false,
+      isValidTarget: false
+    };
+  },
+  mounted() {
+    document.addEventListener('dragstart', this.dragstart);
+    document.addEventListener('dragend', this.dragend);
+    document.addEventListener('drop', this.dragend);
+  },
+  destroyed() {
+    document.removeEventListener('dragstart', this.dragstart);
+    document.removeEventListener('dragend', this.dragend);
+    document.removeEventListener('drop', this.dragend);
+  },
+  methods: {
+    dragenter() {
+      this.isMouseOver = true;
+    },
+    dragleave() {
+      this.isMouseOver = false;
+    },
+    dropHandler(event) {
+      this.$emit('object-drop-to', this.index, event);
+      this.isValidTarget = false;
+    },
+    dragstart(event) {
+      this.isValidTarget = this.allowDrop(event, this.index);
+    },
+    dragend() {
+      this.isValidTarget = false;
+    }
+  }
 };
 </script>

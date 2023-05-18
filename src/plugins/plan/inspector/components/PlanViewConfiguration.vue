@@ -20,125 +20,109 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-inspect-properties">
-
-    <div class="c-inspect-properties__header">
-        Swimlane Visibility
-    </div>
+  <div class="c-inspect-properties">
+    <div class="c-inspect-properties__header">Swimlane Visibility</div>
     <ul class="c-inspect-properties__section">
-        <li
-            v-for="(visible, swimlaneName) in configuration.swimlaneVisibility"
-            :key="swimlaneName"
-            class="c-inspect-properties__row"
-        >
-            <div
-                class="c-inspect-properties__label"
-                title="Show or hide swimlane"
-            >
-                <label :for="swimlaneName + 'ColumnControl'">{{ swimlaneName }}</label>
-            </div>
-            <div class="c-inspect-properties__value">
-                <input
-                    v-if="isEditing"
-                    :id="swimlaneName + 'ColumnControl'"
-                    type="checkbox"
-                    :checked="visible === true"
-                    @change="toggleHideSwimlane(swimlaneName)"
-                >
-                <div
-                    v-else
-                    class="value"
-                >
-                    {{ visible === true ? 'Visible' : 'Hidden' }}
-                </div>
-            </div>
-        </li>
+      <li
+        v-for="(visible, swimlaneName) in configuration.swimlaneVisibility"
+        :key="swimlaneName"
+        class="c-inspect-properties__row"
+      >
+        <div class="c-inspect-properties__label" title="Show or hide swimlane">
+          <label :for="swimlaneName + 'ColumnControl'">{{ swimlaneName }}</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            :id="swimlaneName + 'ColumnControl'"
+            type="checkbox"
+            :checked="visible === true"
+            @change="toggleHideSwimlane(swimlaneName)"
+          />
+          <div v-else class="value">
+            {{ visible === true ? 'Visible' : 'Hidden' }}
+          </div>
+        </div>
+      </li>
     </ul>
-    <div class="c-inspect-properties__header">
-        Display settings
-    </div>
+    <div class="c-inspect-properties__header">Display settings</div>
     <ul class="c-inspect-properties__section">
-        <li class="c-inspect-properties__row">
-            <div
-                class="c-inspect-properties__label"
-                title="Clip Activity Names"
-            >
-                <label for="clipActivityNames">Clip Activity Names</label>
-            </div>
-            <div class="c-inspect-properties__value">
-                <input
-                    v-if="isEditing"
-                    id="clipActivityNames"
-                    type="checkbox"
-                    :checked="configuration.clipActivityNames === true"
-                    @change="toggleClipActivityNames"
-                >
-                <div
-                    v-else
-                    class="value"
-                >
-                    {{ configuration.clipActivityNames === true ? 'On' : 'Off' }}
-                </div>
-            </div></li>
+      <li class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Clip Activity Names">
+          <label for="clipActivityNames">Clip Activity Names</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="clipActivityNames"
+            type="checkbox"
+            :checked="configuration.clipActivityNames === true"
+            @change="toggleClipActivityNames"
+          />
+          <div v-else class="value">
+            {{ configuration.clipActivityNames === true ? 'On' : 'Off' }}
+          </div>
+        </div>
+      </li>
     </ul>
-</div>
+  </div>
 </template>
 <script>
-
 import PlanViewConfiguration from '../../PlanViewConfiguration';
 
 export default {
-    components: {
-    },
-    inject: ['openmct'],
-    data() {
-        const selection = this.openmct.selection.get();
-        /** @type {import('../../../api/objects/ObjectAPI').DomainObject}  */
-        const domainObject = selection[0][0].context.item;
-        const planViewConfiguration = new PlanViewConfiguration(domainObject, this.openmct);
+  components: {},
+  inject: ['openmct'],
+  data() {
+    const selection = this.openmct.selection.get();
+    /** @type {import('../../../api/objects/ObjectAPI').DomainObject}  */
+    const domainObject = selection[0][0].context.item;
+    const planViewConfiguration = new PlanViewConfiguration(domainObject, this.openmct);
 
-        return {
-            planViewConfiguration,
-            isEditing: this.openmct.editor.isEditing(),
-            configuration: planViewConfiguration.getConfiguration()
-        };
-    },
-    computed: {
-        canEdit() {
-            return this.isEditing;
-        }
-    },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.setIsEditing);
-        this.planViewConfiguration.on('change', this.handleConfigurationChange);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.setIsEditing);
-        this.planViewConfiguration.off('change', this.handleConfigurationChange);
-    },
-    methods: {
-        /**
-         * @param {Object.<string, any>} newConfiguration
-         */
-        handleConfigurationChange(newConfiguration) {
-            this.configuration = newConfiguration;
-        },
-        /**
-         * @param {boolean} isEditing
-         */
-        setIsEditing(isEditing) {
-            this.isEditing = isEditing;
-        },
-        toggleClipActivityNames() {
-            this.planViewConfiguration.setClipActivityNames(!this.configuration.clipActivityNames);
-        },
-        /**
-         * @param {string} swimlaneName
-         */
-        toggleHideSwimlane(swimlaneName) {
-            this.planViewConfiguration.setSwimlaneVisibility(swimlaneName, !this.configuration.swimlaneVisibility[swimlaneName]);
-        }
-
+    return {
+      planViewConfiguration,
+      isEditing: this.openmct.editor.isEditing(),
+      configuration: planViewConfiguration.getConfiguration()
+    };
+  },
+  computed: {
+    canEdit() {
+      return this.isEditing;
     }
+  },
+  mounted() {
+    this.openmct.editor.on('isEditing', this.setIsEditing);
+    this.planViewConfiguration.on('change', this.handleConfigurationChange);
+  },
+  beforeDestroy() {
+    this.openmct.editor.off('isEditing', this.setIsEditing);
+    this.planViewConfiguration.off('change', this.handleConfigurationChange);
+  },
+  methods: {
+    /**
+     * @param {Object.<string, any>} newConfiguration
+     */
+    handleConfigurationChange(newConfiguration) {
+      this.configuration = newConfiguration;
+    },
+    /**
+     * @param {boolean} isEditing
+     */
+    setIsEditing(isEditing) {
+      this.isEditing = isEditing;
+    },
+    toggleClipActivityNames() {
+      this.planViewConfiguration.setClipActivityNames(!this.configuration.clipActivityNames);
+    },
+    /**
+     * @param {string} swimlaneName
+     */
+    toggleHideSwimlane(swimlaneName) {
+      this.planViewConfiguration.setSwimlaneVisibility(
+        swimlaneName,
+        !this.configuration.swimlaneVisibility[swimlaneName]
+      );
+    }
+  }
 };
 </script>

@@ -25,58 +25,58 @@ import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import Vue from 'vue';
 
 export default function BarGraphViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: BAR_GRAPH_VIEW,
-        name: 'Bar Graph',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
-        },
+  return {
+    key: BAR_GRAPH_VIEW,
+    name: 'Bar Graph',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject && domainObject.type === BAR_GRAPH_KEY;
+    },
 
-        canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
-        },
+    canEdit(domainObject, objectPath) {
+      return domainObject && domainObject.type === BAR_GRAPH_KEY;
+    },
 
-        view: function (domainObject, objectPath) {
-            let component;
+    view: function (domainObject, objectPath) {
+      let component;
 
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            BarGraphView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                },
-                onClearData() {
-                    component.$refs.graphComponent.refreshData();
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
+          component = new Vue({
+            el: element,
+            components: {
+              BarGraphView
+            },
+            provide: {
+              openmct,
+              domainObject,
+              path: objectPath
+            },
+            data() {
+              return {
+                options: {
+                  compact: isCompact
                 }
-            };
+              };
+            },
+            template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
+          });
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
+        },
+        onClearData() {
+          component.$refs.graphComponent.refreshData();
         }
-    };
+      };
+    }
+  };
 }

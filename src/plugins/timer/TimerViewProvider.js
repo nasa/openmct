@@ -24,42 +24,42 @@ import Timer from './components/Timer.vue';
 import Vue from 'vue';
 
 export default function TimerViewProvider(openmct) {
-    return {
-        key: 'timer.view',
-        name: 'Timer',
-        cssClass: 'icon-timer',
-        canView(domainObject) {
-            return domainObject.type === 'timer';
+  return {
+    key: 'timer.view',
+    name: 'Timer',
+    cssClass: 'icon-timer',
+    canView(domainObject) {
+      return domainObject.type === 'timer';
+    },
+
+    view: function (domainObject, objectPath) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              Timer
+            },
+            provide: {
+              openmct,
+              objectPath,
+              currentView: this
+            },
+            data() {
+              return {
+                domainObject
+              };
+            },
+            template: '<timer :domain-object="domainObject" />'
+          });
         },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Timer
-                        },
-                        provide: {
-                            openmct,
-                            objectPath,
-                            currentView: this
-                        },
-                        data() {
-                            return {
-                                domainObject
-                            };
-                        },
-                        template: '<timer :domain-object="domainObject" />'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

@@ -19,16 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {TIMELIST_TYPE} from "@/plugins/timelist/constants";
+import { TIMELIST_TYPE } from '@/plugins/timelist/constants';
 
 export default function TimelistCompositionPolicy(openmct) {
-    return {
-        allow: function (parent, child) {
-            if (parent.type === TIMELIST_TYPE && child.type !== 'plan') {
-                return false;
-            }
+  return {
+    allow: function (parent, child) {
+      if (parent.type === TIMELIST_TYPE && child.type !== 'plan') {
+        return false;
+      }
 
-            return true;
-        }
-    };
+      return true;
+    }
+  };
 }

@@ -24,43 +24,42 @@ import TimelineViewLayout from './TimelineViewLayout.vue';
 import Vue from 'vue';
 
 export default function TimelineViewProvider(openmct) {
+  return {
+    key: 'time-strip.view',
+    name: 'TimeStrip',
+    cssClass: 'icon-clock',
+    canView(domainObject) {
+      return domainObject.type === 'time-strip';
+    },
 
-    return {
-        key: 'time-strip.view',
-        name: 'TimeStrip',
-        cssClass: 'icon-clock',
-        canView(domainObject) {
-            return domainObject.type === 'time-strip';
+    canEdit(domainObject) {
+      return domainObject.type === 'time-strip';
+    },
+
+    view: function (domainObject, objectPath) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              TimelineViewLayout
+            },
+            provide: {
+              openmct,
+              domainObject,
+              composition: openmct.composition.get(domainObject),
+              objectPath
+            },
+            template: '<timeline-view-layout></timeline-view-layout>'
+          });
         },
-
-        canEdit(domainObject) {
-            return domainObject.type === 'time-strip';
-        },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            TimelineViewLayout
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            composition: openmct.composition.get(domainObject),
-                            objectPath
-                        },
-                        template: '<timeline-view-layout></timeline-view-layout>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }
