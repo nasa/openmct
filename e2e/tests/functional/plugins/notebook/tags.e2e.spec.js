@@ -176,9 +176,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
     test('Tags persist across reload', async ({ page }) => {
         //Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
-
-        await createDomainObjectWithDefaults(page, { type: 'Clock' });
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         const ITERATIONS = 4;
         const notebook = await createNotebookEntryAndTags(page, ITERATIONS);

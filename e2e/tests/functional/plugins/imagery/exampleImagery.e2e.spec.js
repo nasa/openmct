@@ -40,14 +40,7 @@ test.describe('Example Imagery Object', () => {
         await page.goto('./', { waitUntil: 'domcontentloaded' });
 
         // Create a default 'Example Imagery' object
-        createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator(backgroundImageSelector).hover({trial: true}),
-            // eslint-disable-next-line playwright/missing-playwright-await
-            expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery')
-        ]);
+        const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
 
         // Verify that the created object is focused
         await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);

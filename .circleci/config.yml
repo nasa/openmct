@@ -234,9 +234,9 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      # - lint:
-      #     name: node16-lint
-      #     node-version: lts/gallium
+      - lint:
+          name: node16-lint
+          node-version: lts/gallium
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -248,8 +248,8 @@ workflows:
           node-version: lts/hydrogen
       - visual-test:
           name: visual-test-ci
-          node-version: lts/gallium
           suite: ci
+          node-version: lts/hydrogen
         
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
@@ -269,8 +269,10 @@ workflows:
           node-version: lts/hydrogen
       - visual-test:
           name: visual-test-nightly
-          node-version: lts/gallium
           suite: full
+          node-version: lts/hydrogen
+      - e2e-couchdb:
+          node-version: lts/hydrogen
     triggers:
       - schedule:
           cron: "0 0 * * *"

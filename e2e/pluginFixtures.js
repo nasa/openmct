@@ -144,5 +144,20 @@ exports.test = test.extend({
         await use({ myItemsFolderName });
     }
 });
+
 exports.expect = expect;
 //exports.getOrCreateDomainObject = getOrCreateDomainObject;
+
+/**
+ * Takes a readable stream and returns a string.
+ * @param {ReadableStream} readable - the readable stream
+ * @return {Promise<String>} the stringified stream
+ */
+exports.streamToString = async function (readable) {
+    let result = '';
+    for await (const chunk of readable) {
+        result += chunk;
+    }
+
+    return result;
+};
