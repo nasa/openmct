@@ -17,26 +17,25 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div></div>
+  <div></div>
 </template>
 
 <script>
 export default {
-    inject: ['openmct'],
+  inject: ['openmct'],
 
-    beforeDestroy() {
-        this.openmct.indicators.off('addIndicator', this.addIndicator);
-    },
-    mounted() {
-        this.openmct.indicators.getIndicatorObjectsByPriority().forEach(this.addIndicator);
+  beforeDestroy() {
+    this.openmct.indicators.off('addIndicator', this.addIndicator);
+  },
+  mounted() {
+    this.openmct.indicators.getIndicatorObjectsByPriority().forEach(this.addIndicator);
 
-        this.openmct.indicators.on('addIndicator', this.addIndicator);
-    },
-    methods: {
-        addIndicator(indicator) {
-            this.$el.appendChild(indicator.element);
-        }
+    this.openmct.indicators.on('addIndicator', this.addIndicator);
+  },
+  methods: {
+    addIndicator(indicator) {
+      this.$el.appendChild(indicator.element);
     }
-
+  }
 };
 </script>

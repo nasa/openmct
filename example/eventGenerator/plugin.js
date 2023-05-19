@@ -23,20 +23,20 @@ import EventTelmetryProvider from './EventTelemetryProvider';
 import EventMetadataProvider from './EventMetadataProvider';
 
 export default function EventGeneratorPlugin(options) {
-    return function install(openmct) {
-        openmct.types.addType("eventGenerator", {
-            name: "Event Message Generator",
-            description: "For development use. Creates sample event message data that mimics a live data stream.",
-            cssClass: "icon-generator-events",
-            creatable: true,
-            initialize: function (object) {
-                object.telemetry = {
-                    duration: 5
-                };
-            }
-        });
-        openmct.telemetry.addProvider(new EventTelmetryProvider());
-        openmct.telemetry.addProvider(new EventMetadataProvider());
-
-    };
+  return function install(openmct) {
+    openmct.types.addType('eventGenerator', {
+      name: 'Event Message Generator',
+      description:
+        'For development use. Creates sample event message data that mimics a live data stream.',
+      cssClass: 'icon-generator-events',
+      creatable: true,
+      initialize: function (object) {
+        object.telemetry = {
+          duration: 5
+        };
+      }
+    });
+    openmct.telemetry.addProvider(new EventTelmetryProvider());
+    openmct.telemetry.addProvider(new EventMetadataProvider());
+  };
 }

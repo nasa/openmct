@@ -45,23 +45,23 @@ $tabMaxW: 1024px;
 $desktopMinW: 1025px;
 
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
-$screenPortrait: "(orientation: portrait)";
-$screenLandscape: "(orientation: landscape)";
+$screenPortrait: '(orientation: portrait)';
+$screenLandscape: '(orientation: landscape)';
 
 //$mobileDevice: "(max-device-width: #{$tabMaxW})";
 
-$phoneCheck: "(max-device-width: #{$phoMaxW})";
-$tabletCheck: "(min-device-width: #{$tabMinW}) and (max-device-width: #{$tabMaxW})";
-$desktopCheck: "(min-device-width: #{$desktopMinW}) and (-webkit-min-device-pixel-ratio: 1)";
+$phoneCheck: '(max-device-width: #{$phoMaxW})';
+$tabletCheck: '(min-device-width: #{$tabMinW}) and (max-device-width: #{$tabMaxW})';
+$desktopCheck: '(min-device-width: #{$desktopMinW}) and (-webkit-min-device-pixel-ratio: 1)';
 
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
-$phonePortrait: "only screen and #{$screenPortrait} and #{$phoneCheck}";
-$phoneLandscape: "only screen and #{$screenLandscape} and #{$phoneCheck}";
+$phonePortrait: 'only screen and #{$screenPortrait} and #{$phoneCheck}';
+$phoneLandscape: 'only screen and #{$screenLandscape} and #{$phoneCheck}';
 
-$tabletPortrait: "only screen and #{$screenPortrait} and #{$tabletCheck}";
-$tabletLandscape: "only screen and #{$screenLandscape} and #{$tabletCheck}";
+$tabletPortrait: 'only screen and #{$screenPortrait} and #{$tabletCheck}';
+$tabletLandscape: 'only screen and #{$screenLandscape} and #{$tabletCheck}';
 
-$desktop: "only screen and #{$desktopCheck}";
+$desktop: 'only screen and #{$desktopCheck}';
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 $proporMenuOnly: 90%;
@@ -69,81 +69,81 @@ $proporMenuWithView: 40%;
 
 // Phones in any orientation
 @mixin phone {
-    @media #{$phonePortrait},
+  @media #{$phonePortrait},
     #{$phoneLandscape} {
-        @content
-    }
+    @content;
+  }
 }
 
 //Phones in portrait orientation
 @mixin phonePortrait {
-    @media #{$phonePortrait} {
-        @content
-    }
+  @media #{$phonePortrait} {
+    @content;
+  }
 }
 
 // Phones in landscape orientation
 @mixin phoneLandscape {
-    @media #{$phoneLandscape} {
-        @content
-    }
+  @media #{$phoneLandscape} {
+    @content;
+  }
 }
 
 // Tablets in any orientation
 @mixin tablet {
-    @media #{$tabletPortrait},
+  @media #{$tabletPortrait},
     #{$tabletLandscape} {
-        @content
-    }
+    @content;
+  }
 }
 
 // Tablets in portrait orientation
 @mixin tabletPortrait {
-    @media #{$tabletPortrait} {
-        @content
-    }
+  @media #{$tabletPortrait} {
+    @content;
+  }
 }
 
 // Tablets in landscape orientation
 @mixin tabletLandscape {
-    @media #{$tabletLandscape} {
-        @content
-    }
+  @media #{$tabletLandscape} {
+    @content;
+  }
 }
 
 // Phones and tablets in any orientation
 @mixin phoneandtablet {
-    @media #{$phonePortrait},
+  @media #{$phonePortrait},
     #{$phoneLandscape},
     #{$tabletPortrait},
     #{$tabletLandscape} {
-        @content
-    }
+    @content;
+  }
 }
 
 // Desktop monitors in any orientation
 @mixin desktopandtablet {
-    // Keeping only for legacy - should not be used moving forward
-    // Use body.desktop, body.tablet instead.
-    @media #{$tabletPortrait},
+  // Keeping only for legacy - should not be used moving forward
+  // Use body.desktop, body.tablet instead.
+  @media #{$tabletPortrait},
     #{$tabletLandscape},
     #{$desktop} {
-        @content
-    }
+    @content;
+  }
 }
 
 // Desktop monitors in any orientation
 @mixin desktop {
-    // Keeping only for legacy - should not be used moving forward
-    // Use body.desktop instead.
-    @media #{$desktop} {
-        @content
-    }
+  // Keeping only for legacy - should not be used moving forward
+  // Use body.desktop instead.
+  @media #{$desktop} {
+    @content;
+  }
 }
 
 // Transition used for the slide menu
 @mixin slMenuTransitions {
-    @include transition-duration(.35s);
-    transition-timing-function: ease;
-    backface-visibility: hidden;
+  @include transition-duration(0.35s);
+  transition-timing-function: ease;
+  backface-visibility: hidden;
 }

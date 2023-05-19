@@ -23,16 +23,16 @@ import Licenses from './Licenses.vue';
 import Vue from 'vue';
 
 export default function () {
-    return function install(openmct) {
-        openmct.router.route(/^\/licenses$/, () => {
-            let licensesVm = new Vue(Licenses).$mount();
+  return function install(openmct) {
+    openmct.router.route(/^\/licenses$/, () => {
+      let licensesVm = new Vue(Licenses).$mount();
 
-            openmct.overlays.overlay({
-                element: licensesVm.$el,
-                size: 'fullscreen',
-                dismissable: false,
-                onDestroy: () => licensesVm.$destroy()
-            });
-        });
-    };
+      openmct.overlays.overlay({
+        element: licensesVm.$el,
+        size: 'fullscreen',
+        dismissable: false,
+        onDestroy: () => licensesVm.$destroy()
+      });
+    });
+  };
 }

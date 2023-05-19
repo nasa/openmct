@@ -20,70 +20,65 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/flexibleLayout.vue',
-    'vue'
-], function (
-    FlexibleLayoutComponent,
-    Vue
-) {
-    function FlexibleLayoutViewProvider(openmct) {
+define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutComponent, Vue) {
+  function FlexibleLayoutViewProvider(openmct) {
+    return {
+      key: 'flexible-layout',
+      name: 'FlexibleLayout',
+      cssClass: 'icon-layout-view',
+      canView: function (domainObject) {
+        return domainObject.type === 'flexible-layout';
+      },
+      canEdit: function (domainObject) {
+        return domainObject.type === 'flexible-layout';
+      },
+      view: function (domainObject, objectPath) {
+        let component;
+
         return {
-            key: 'flexible-layout',
-            name: 'FlexibleLayout',
-            cssClass: 'icon-layout-view',
-            canView: function (domainObject) {
-                return domainObject.type === 'flexible-layout';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'flexible-layout';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
-
+          show: function (element, isEditing) {
+            component = new Vue({
+              el: element,
+              components: {
+                FlexibleLayoutComponent: FlexibleLayoutComponent.default
+              },
+              provide: {
+                openmct,
+                objectPath,
+                layoutObject: domainObject
+              },
+              data() {
                 return {
-                    show: function (element, isEditing) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                objectPath,
-                                layoutObject: domainObject
-                            },
-                            data() {
-                                return {
-                                    isEditing: isEditing
-                                };
-                            },
-                            template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
-                        });
-                    },
-                    getSelectionContext: function () {
-                        return {
-                            item: domainObject,
-                            addContainer: component.$refs.flexibleLayout.addContainer,
-                            deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-                            deleteFrame: component.$refs.flexibleLayout.deleteFrame,
-                            type: 'flexible-layout'
-                        };
-                    },
-                    onEditModeChange: function (isEditing) {
-                        component.isEditing = isEditing;
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
+                  isEditing: isEditing
                 };
-            },
-            priority: function () {
-                return 1;
-            }
+              },
+              template:
+                '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
+            });
+          },
+          getSelectionContext: function () {
+            return {
+              item: domainObject,
+              addContainer: component.$refs.flexibleLayout.addContainer,
+              deleteContainer: component.$refs.flexibleLayout.deleteContainer,
+              deleteFrame: component.$refs.flexibleLayout.deleteFrame,
+              type: 'flexible-layout'
+            };
+          },
+          onEditModeChange: function (isEditing) {
+            component.isEditing = isEditing;
+          },
+          destroy: function (element) {
+            component.$destroy();
+            component = undefined;
+          }
         };
-    }
+      },
+      priority: function () {
+        return 1;
+      }
+    };
+  }
 
-    return FlexibleLayoutViewProvider;
+  return FlexibleLayoutViewProvider;
 });

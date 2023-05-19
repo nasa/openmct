@@ -21,135 +21,134 @@
  *****************************************************************************/
 import DuplicateActionPlugin from './plugin.js';
 import DuplicateTask from './DuplicateTask.js';
-import {
-    createOpenMct,
-    resetApplicationState,
-    getMockObjects
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState, getMockObjects } from 'utils/testing';
 
-describe("The Duplicate Action plugin", () => {
-    let openmct;
-    let duplicateTask;
-    let childObject;
-    let parentObject;
-    let anotherParentObject;
+describe('The Duplicate Action plugin', () => {
+  let openmct;
+  let duplicateTask;
+  let childObject;
+  let parentObject;
+  let anotherParentObject;
 
-    // this setups up the app
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  // this setups up the app
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        childObject = getMockObjects({
-            objectKeyStrings: ['folder'],
-            overwrite: {
-                folder: {
-                    name: "Child Folder",
-                    identifier: {
-                        namespace: "",
-                        key: "child-folder-object"
-                    }
-                }
+    childObject = getMockObjects({
+      objectKeyStrings: ['folder'],
+      overwrite: {
+        folder: {
+          name: 'Child Folder',
+          identifier: {
+            namespace: '',
+            key: 'child-folder-object'
+          }
+        }
+      }
+    }).folder;
+
+    parentObject = getMockObjects({
+      objectKeyStrings: ['folder'],
+      overwrite: {
+        folder: {
+          name: 'Parent Folder',
+          type: 'folder',
+          composition: [childObject.identifier]
+        }
+      }
+    }).folder;
+
+    anotherParentObject = getMockObjects({
+      objectKeyStrings: ['folder'],
+      overwrite: {
+        folder: {
+          name: 'Another Parent Folder'
+        }
+      }
+    }).folder;
+
+    let objectGet = openmct.objects.get.bind(openmct.objects);
+    spyOn(openmct.objects, 'get').and.callFake((identifier) => {
+      let obj = [childObject, parentObject, anotherParentObject].find(
+        (ob) => ob.identifier.key === identifier.key
+      );
+
+      if (!obj) {
+        // not one of the mocked objs, callthrough basically
+        return objectGet(identifier);
+      }
+
+      return Promise.resolve(obj);
+    });
+
+    spyOn(openmct.composition, 'get').and.callFake((domainObject) => {
+      return {
+        load: async () => {
+          let obj = [childObject, parentObject, anotherParentObject].find(
+            (ob) => ob.identifier.key === domainObject.identifier.key
+          );
+          let children = [];
+
+          if (obj) {
+            for (let i = 0; i < obj.composition.length; i++) {
+              children.push(await openmct.objects.get(obj.composition[i]));
             }
-        }).folder;
+          }
 
-        parentObject = getMockObjects({
-            objectKeyStrings: ['folder'],
-            overwrite: {
-                folder: {
-                    name: "Parent Folder",
-                    type: "folder",
-                    composition: [childObject.identifier]
-                }
-            }
-        }).folder;
-
-        anotherParentObject = getMockObjects({
-            objectKeyStrings: ['folder'],
-            overwrite: {
-                folder: {
-                    name: "Another Parent Folder"
-                }
-            }
-        }).folder;
-
-        let objectGet = openmct.objects.get.bind(openmct.objects);
-        spyOn(openmct.objects, 'get').and.callFake((identifier) => {
-            let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === identifier.key);
-
-            if (!obj) {
-                // not one of the mocked objs, callthrough basically
-                return objectGet(identifier);
-            }
-
-            return Promise.resolve(obj);
-        });
-
-        spyOn(openmct.composition, 'get').and.callFake((domainObject) => {
-            return {
-                load: async () => {
-                    let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === domainObject.identifier.key);
-                    let children = [];
-
-                    if (obj) {
-                        for (let i = 0; i < obj.composition.length; i++) {
-                            children.push(await openmct.objects.get(obj.composition[i]));
-                        }
-                    }
-
-                    return Promise.resolve(children);
-                },
-                add: (child) => {
-                    domainObject.composition.push(child.identifier);
-                }
-            };
-        });
-
-        // already installed by default, but never hurts, just adds to context menu
-        openmct.install(DuplicateActionPlugin());
-        openmct.types.addType('folder', {creatable: true});
-
-        openmct.on('start', done);
-        openmct.startHeadless();
+          return Promise.resolve(children);
+        },
+        add: (child) => {
+          domainObject.composition.push(child.identifier);
+        }
+      };
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    // already installed by default, but never hurts, just adds to context menu
+    openmct.install(DuplicateActionPlugin());
+    openmct.types.addType('folder', { creatable: true });
+
+    openmct.on('start', done);
+    openmct.startHeadless();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('should be defined', () => {
+    expect(DuplicateActionPlugin).toBeDefined();
+  });
+
+  describe('when moving an object to a new parent', () => {
+    beforeEach(async () => {
+      duplicateTask = new DuplicateTask(openmct);
+      await duplicateTask.duplicate(parentObject, anotherParentObject);
     });
 
-    it("should be defined", () => {
-        expect(DuplicateActionPlugin).toBeDefined();
+    it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
+      let duplicatedObjectIdentifier = anotherParentObject.composition[0];
+      let duplicatedObject = await openmct.objects.get(duplicatedObjectIdentifier);
+      let duplicateObjectName = duplicatedObject.name;
+
+      expect(duplicateObjectName).toEqual(parentObject.name);
     });
 
-    describe("when moving an object to a new parent", () => {
-        beforeEach(async () => {
-            duplicateTask = new DuplicateTask(openmct);
-            await duplicateTask.duplicate(parentObject, anotherParentObject);
-        });
+    it("the duplicate child object's identifier should be new", () => {
+      let duplicatedObjectIdentifier = anotherParentObject.composition[0];
 
-        it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
-            let duplicatedObjectIdentifier = anotherParentObject.composition[0];
-            let duplicatedObject = await openmct.objects.get(duplicatedObjectIdentifier);
-            let duplicateObjectName = duplicatedObject.name;
-
-            expect(duplicateObjectName).toEqual(parentObject.name);
-        });
-
-        it("the duplicate child object's identifier should be new", () => {
-            let duplicatedObjectIdentifier = anotherParentObject.composition[0];
-
-            expect(duplicatedObjectIdentifier.key).not.toEqual(parentObject.identifier.key);
-        });
+      expect(duplicatedObjectIdentifier.key).not.toEqual(parentObject.identifier.key);
     });
+  });
 
-    describe("when a new name is provided for the duplicated object", () => {
-        it("the name is updated", async () => {
-            const NEW_NAME = 'New Name';
+  describe('when a new name is provided for the duplicated object', () => {
+    it('the name is updated', async () => {
+      const NEW_NAME = 'New Name';
 
-            duplicateTask = new DuplicateTask(openmct);
-            duplicateTask.changeName(NEW_NAME);
-            const child = await duplicateTask.duplicate(childObject, anotherParentObject);
+      duplicateTask = new DuplicateTask(openmct);
+      duplicateTask.changeName(NEW_NAME);
+      const child = await duplicateTask.duplicate(childObject, anotherParentObject);
 
-            expect(child.name).toEqual(NEW_NAME);
-        });
+      expect(child.name).toEqual(NEW_NAME);
     });
-
+  });
 });
