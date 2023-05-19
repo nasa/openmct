@@ -122,15 +122,10 @@ export default class TelemetryCollection extends EventEmitter {
    */
   async _requestHistoricalTelemetry() {
     let options = { ...this.options };
-    let historicalProvider;
-
-    // TODO: When https://github.com/nasa/openmct/issues/6493 is resolved,
-    // this should be removed.
-    const bounds = this.options.timeContext.bounds();
-    options.start = bounds.start;
-    options.end = bounds.end;
-
-    historicalProvider = this.openmct.telemetry.findRequestProvider(this.domainObject, options);
+    const historicalProvider = this.openmct.telemetry.findRequestProvider(
+      this.domainObject,
+      options
+    );
 
     if (!historicalProvider) {
       return;
