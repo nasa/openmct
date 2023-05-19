@@ -66,7 +66,6 @@
         :bottom="false"
         :position-x="positionX"
         :position-y="positionY"
-        @dismiss="removePopup()"
         @modeUpdated="saveMode"
         @fixedBoundsUpdated="saveFixedBounds"
         @clockOffsetsUpdated="saveClockOffsets"
@@ -139,7 +138,7 @@ export default {
         this.openmct.time.on('boundsChanged', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
         this.openmct.time.on('modeChanged', this.setMode);
-        this.openmct.time.on('clockChanged', this.setViewFromClock);
+        // this.openmct.time.on('clockChanged', this.setViewFromClock);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -147,7 +146,7 @@ export default {
         this.openmct.time.off('boundsChanged', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
         this.openmct.time.off('modeChanged', this.setMode);
-        this.openmct.time.off('clockChanged', this.setViewFromClock);
+        // this.openmct.time.off('clockChanged', this.setViewFromClock);
     },
     methods: {
         handleNewBounds(bounds, isTick) {
@@ -204,11 +203,14 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setMode(mode) {
+            console.log('mode', mode);
             this.mode = mode;
+            this.isFixed = this.openmct.time.isFixed();
+            console.log('isFixed?', this.isFixed);
         },
-        setViewFromClock(clock) {
-            this.isFixed = clock === undefined;
-        },
+        // setViewFromClock(clock) {
+        //     this.isFixed = this.openmct.time.isFixed();
+        // },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);

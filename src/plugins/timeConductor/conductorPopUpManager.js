@@ -40,6 +40,11 @@ export default {
         this.registerPopUp();
         // this.popupComponent = this.createPopupComponent();
     },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.positionBox);
+        document.removeEventListener('click', this.clearPopup);
+        this.timeConductorOptionsHolder.removeEventListener('click', this.showPopup);
+    },
     methods: {
         showPopup() {
             if (this.showConductorPopup) {
@@ -94,52 +99,6 @@ export default {
 
             return !isChildMenu && !isPopupElementItem;
         },
-        // removePopup() {
-        //     const popupElement = this.popupComponent;
-        //     this.$refs.conductorPopup.remove();
-        //     document.removeEventListener('click', this.clearPopup, {
-        //         capture: true
-        //     });
-        //     window.removeEventListener('resize', this.positionBox);
-        // },
-
-        // createPopupComponent() {
-        //     const saveFixedBounds = this.saveFixedBounds;
-        //     const saveClockOffsets = this.saveClockOffsets;
-        //     const saveMode = this.saveMode;
-        //     const removePopup = this.removePopup;
-
-        //     const popupElement = new Vue({
-        //         components: {
-        //             ConductorPopUp
-        //         },
-        //         provide: {
-        //             openmct: this.openmct,
-        //             configuration: this.configuration
-        //         },
-        //         data() {
-        //             return {
-        //                 positionX: 0,
-        //                 positionY: 0,
-        //                 saveClockOffsets,
-        //                 saveFixedBounds,
-        //                 saveMode,
-        //                 removePopup
-        //             };
-        //         },
-        //         template: `<conductor-pop-up 
-        //             @dismiss="removePopup()" 
-        //             @modeUpdated="saveMode" 
-        //             @fixedBoundsUpdated="saveFixedBounds" 
-        //             @clockOffsetsUpdated="saveClockOffsets" 
-        //             :bottom="false" 
-        //             :positionX="positionX" 
-        //             :positionY="positionY" />`
-        //     }).$mount();
-
-        //     return popupElement;
-        // },
-
         registerPopUp() {
             this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
         }

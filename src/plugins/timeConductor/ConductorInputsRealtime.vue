@@ -114,7 +114,7 @@ export default {
     mounted() {
         console.log('conductor inputs realtime mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-        this.setTimeSystem(this.copy(this.openmct.time.timeSystem()));
+        this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
         this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
         this.setTimeContext();
     },

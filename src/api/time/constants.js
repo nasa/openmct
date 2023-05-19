@@ -17,6 +17,6 @@ export const REALTIME_MODE_KEY = 'realtime';
 export const FIXED_MODE_KEY = 'fixed';
 
 export const MODES = {
-    FIXED_MODE_KEY,
-    REALTIME_MODE_KEY
+    [FIXED_MODE_KEY]: FIXED_MODE_KEY,
+    [REALTIME_MODE_KEY]: REALTIME_MODE_KEY
 };

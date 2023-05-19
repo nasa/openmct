@@ -359,14 +359,16 @@ class TimeContext extends EventEmitter {
             return;
         }
 
-        const newBounds = {
-            start: timestamp + this.offsets.start,
-            end: timestamp + this.offsets.end
-        };
+        if (this.mode === REALTIME_MODE_KEY) {
+            const newBounds = {
+                start: timestamp + this.offsets.start,
+                end: timestamp + this.offsets.end
+            };
 
-        this.boundsVal = newBounds;
-        this.emit('bounds', this.boundsVal, true);
-        this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
+            this.boundsVal = newBounds;
+            this.emit('bounds', this.boundsVal, true);
+            this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
+        }
     }
 
     /**
@@ -562,19 +564,7 @@ class TimeContext extends EventEmitter {
             return;
         }
 
-        // we don't want to do this now since we will always listen to the tick
-        // if (previousMode === MODES.realtime) {
-        //     this.activeClock.off('tick', this.tick);
-        // }
-
-        // if (mode === MODES.realtime) {
-        //     this.activeClock.on('tick', this.tick);
-        //     // this.setClockOffsets(offsets);
-        // }
-        // else if (mode === MODES.fixed) {
-        // this.activeClock.off('tick', this.tick);
-        // this.setBounds(offsets);
-        // }
+        this.mode = mode;
 
         /**
          * The active clock has changed. Clock can be unset by calling {@link stopClock}
@@ -609,7 +599,6 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     getClockOffsets() {
-        console.log('get clock offsets timecontext', this.offsets);
         return this.offsets;
     }
 
