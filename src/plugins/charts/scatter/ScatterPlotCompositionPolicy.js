@@ -23,35 +23,35 @@
 import { SCATTER_PLOT_KEY } from './scatterPlotConstants';
 
 export default function ScatterPlotCompositionPolicy(openmct) {
-    function hasRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']).map((value) => {
-            return value.source;
-        });
+  function hasRange(metadata) {
+    const rangeValues = metadata.valuesForHints(['range']).map((value) => {
+      return value.source;
+    });
 
-        const uniqueRangeValues = new Set(rangeValues);
+    const uniqueRangeValues = new Set(rangeValues);
 
-        return uniqueRangeValues && uniqueRangeValues.size > 1;
+    return uniqueRangeValues && uniqueRangeValues.size > 1;
+  }
+
+  function hasScatterPlotTelemetry(domainObject) {
+    if (!openmct.telemetry.isTelemetryObject(domainObject)) {
+      return false;
     }
 
-    function hasScatterPlotTelemetry(domainObject) {
-        if (!openmct.telemetry.isTelemetryObject(domainObject)) {
-            return false;
+    let metadata = openmct.telemetry.getMetadata(domainObject);
+
+    return metadata.values().length > 0 && hasRange(metadata);
+  }
+
+  return {
+    allow: function (parent, child) {
+      if (parent.type === SCATTER_PLOT_KEY) {
+        if (child.type === 'conditionSet' || !hasScatterPlotTelemetry(child)) {
+          return false;
         }
+      }
 
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasRange(metadata);
+      return true;
     }
-
-    return {
-        allow: function (parent, child) {
-            if (parent.type === SCATTER_PLOT_KEY) {
-                if ((child.type === 'conditionSet') || (!hasScatterPlotTelemetry(child))) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    };
+  };
 }

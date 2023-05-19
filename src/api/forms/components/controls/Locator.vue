@@ -21,36 +21,36 @@
 -->
 
 <template>
-<mct-tree
+  <mct-tree
     :is-selector-tree="true"
     :initial-selection="model.parent"
     @tree-item-selection="handleItemSelection"
-/>
+  />
 </template>
 
 <script>
 import MctTree from '@/ui/layout/mct-tree.vue';
 
 export default {
-    components: {
-        MctTree
-    },
-    inject: ['openmct'],
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        handleItemSelection(item) {
-            const data = {
-                model: this.model,
-                value: item.objectPath
-            };
-
-            this.$emit('onChange', data);
-        }
+  components: {
+    MctTree
+  },
+  inject: ['openmct'],
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  methods: {
+    handleItemSelection(item) {
+      const data = {
+        model: this.model,
+        value: item.objectPath
+      };
+
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

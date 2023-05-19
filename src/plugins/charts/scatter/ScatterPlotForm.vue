@@ -21,126 +21,106 @@
 -->
 
 <template>
-<span class="form-control">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <div
-            class="c-form--sub-grid"
-        >
-            <div class="c-form__row">
-                <span
-                    class="req-indicator"
-                    :class="{'req': isRequired}"
-                >
-                </span>
-                <label>Minimum X axis value</label>
-                <input
-                    ref="domainMin"
-                    v-model.number="domainMin"
-                    data-field-name="domainMin"
-                    type="number"
-                    @input="onChange('domainMin')"
-                >
-            </div>
-
-            <div class="c-form__row">
-                <span
-                    class="req-indicator"
-                    :class="{'req': isRequired}"
-                >
-                </span>
-                <label>Maximum X axis value</label>
-                <input
-                    ref="domainMax"
-                    v-model.number="domainMax"
-                    data-field-name="domainMax"
-                    type="number"
-                    @input="onChange('domainMax')"
-                >
-            </div>
-
-            <div class="c-form__row">
-                <span
-                    class="req-indicator"
-                    :class="{'req': isRequired}"
-                >
-                </span>
-                <label>Minimum Y axis value</label>
-                <input
-                    ref="rangeMin"
-                    v-model.number="rangeMin"
-                    data-field-name="rangeMin"
-                    type="number"
-                    @input="onChange('rangeMin')"
-                >
-            </div>
-
-            <div class="c-form__row">
-                <span
-                    class="req-indicator"
-                    :class="{'req': isRequired}"
-                >
-                </span>
-                <label>Maximum Y axis value</label>
-                <input
-                    ref="rangeMax"
-                    v-model.number="rangeMax"
-                    data-field-name="rangeMax"
-                    type="number"
-                    @input="onChange('rangeMax')"
-                >
-            </div>
+  <span class="form-control">
+    <span class="field control" :class="model.cssClass">
+      <div class="c-form--sub-grid">
+        <div class="c-form__row">
+          <span class="req-indicator" :class="{ req: isRequired }"> </span>
+          <label>Minimum X axis value</label>
+          <input
+            ref="domainMin"
+            v-model.number="domainMin"
+            data-field-name="domainMin"
+            type="number"
+            @input="onChange('domainMin')"
+          />
         </div>
+
+        <div class="c-form__row">
+          <span class="req-indicator" :class="{ req: isRequired }"> </span>
+          <label>Maximum X axis value</label>
+          <input
+            ref="domainMax"
+            v-model.number="domainMax"
+            data-field-name="domainMax"
+            type="number"
+            @input="onChange('domainMax')"
+          />
+        </div>
+
+        <div class="c-form__row">
+          <span class="req-indicator" :class="{ req: isRequired }"> </span>
+          <label>Minimum Y axis value</label>
+          <input
+            ref="rangeMin"
+            v-model.number="rangeMin"
+            data-field-name="rangeMin"
+            type="number"
+            @input="onChange('rangeMin')"
+          />
+        </div>
+
+        <div class="c-form__row">
+          <span class="req-indicator" :class="{ req: isRequired }"> </span>
+          <label>Maximum Y axis value</label>
+          <input
+            ref="rangeMax"
+            v-model.number="rangeMax"
+            data-field-name="rangeMax"
+            type="number"
+            @input="onChange('rangeMax')"
+          />
+        </div>
+      </div>
     </span>
-</span>
+  </span>
 </template>
 
 <script>
-
 export default {
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            rangeMax: this.model.value.rangeMax,
-            rangeMin: this.model.value.rangeMin,
-            domainMax: this.model.value.domainMax,
-            domainMin: this.model.value.domainMin
-        };
-    },
-    computed: {
-        isRequired() {
-            return [this.rangeMax, this.rangeMin, this.domainMin, this.domainMax].some(value => value !== undefined && value !== '');
-        }
-    },
-    methods: {
-        onChange(property) {
-            if (this[property] === '') {
-                this[property] = undefined;
-            }
-
-            const data = {
-                model: this.model,
-                value: {
-                    rangeMax: this.rangeMax,
-                    rangeMin: this.rangeMin,
-                    domainMax: this.domainMax,
-                    domainMin: this.domainMin
-                }
-            };
-
-            if (property) {
-                this.model.validate(data);
-            }
-
-            this.$emit('onChange', data);
-        }
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      rangeMax: this.model.value.rangeMax,
+      rangeMin: this.model.value.rangeMin,
+      domainMax: this.model.value.domainMax,
+      domainMin: this.model.value.domainMin
+    };
+  },
+  computed: {
+    isRequired() {
+      return [this.rangeMax, this.rangeMin, this.domainMin, this.domainMax].some(
+        (value) => value !== undefined && value !== ''
+      );
+    }
+  },
+  methods: {
+    onChange(property) {
+      if (this[property] === '') {
+        this[property] = undefined;
+      }
+
+      const data = {
+        model: this.model,
+        value: {
+          rangeMax: this.rangeMax,
+          rangeMin: this.rangeMin,
+          domainMax: this.domainMax,
+          domainMin: this.domainMin
+        }
+      };
+
+      if (property) {
+        this.model.validate(data);
+      }
+
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

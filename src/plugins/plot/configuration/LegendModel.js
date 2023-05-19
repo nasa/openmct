@@ -20,42 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Model from "./Model";
+import Model from './Model';
 /**
  * TODO: doc strings.
  */
 export default class LegendModel extends Model {
-    listenToSeriesCollection(seriesCollection) {
-        this.seriesCollection = seriesCollection;
-        this.listenTo(this.seriesCollection, 'add', this.setHeight, this);
-        this.listenTo(this.seriesCollection, 'remove', this.setHeight, this);
-        this.listenTo(this, 'change:expanded', this.setHeight, this);
-        this.set('expanded', this.get('expandByDefault'));
-    }
+  listenToSeriesCollection(seriesCollection) {
+    this.seriesCollection = seriesCollection;
+    this.listenTo(this.seriesCollection, 'add', this.setHeight, this);
+    this.listenTo(this.seriesCollection, 'remove', this.setHeight, this);
+    this.listenTo(this, 'change:expanded', this.setHeight, this);
+    this.set('expanded', this.get('expandByDefault'));
+  }
 
-    setHeight() {
-        const expanded = this.get('expanded');
-        if (this.get('position') !== 'top') {
-            this.set('height', '0px');
-        } else {
-            this.set('height', expanded ? (20 * (this.seriesCollection.size() + 1) + 40) + 'px' : '21px');
-        }
+  setHeight() {
+    const expanded = this.get('expanded');
+    if (this.get('position') !== 'top') {
+      this.set('height', '0px');
+    } else {
+      this.set('height', expanded ? 20 * (this.seriesCollection.size() + 1) + 40 + 'px' : '21px');
     }
+  }
 
-    /**
-     * @override
-     */
-    defaultModel(options) {
-        return {
-            position: 'top',
-            expandByDefault: false,
-            hideLegendWhenSmall: false,
-            valueToShowWhenCollapsed: 'nearestValue',
-            showTimestampWhenExpanded: true,
-            showValueWhenExpanded: true,
-            showMaximumWhenExpanded: true,
-            showMinimumWhenExpanded: true,
-            showUnitsWhenExpanded: true
-        };
-    }
+  /**
+   * @override
+   */
+  defaultModel(options) {
+    return {
+      position: 'top',
+      expandByDefault: false,
+      hideLegendWhenSmall: false,
+      valueToShowWhenCollapsed: 'nearestValue',
+      showTimestampWhenExpanded: true,
+      showValueWhenExpanded: true,
+      showMaximumWhenExpanded: true,
+      showMinimumWhenExpanded: true,
+      showUnitsWhenExpanded: true
+    };
+  }
 }

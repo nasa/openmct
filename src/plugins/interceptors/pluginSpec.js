@@ -20,60 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
-import InterceptorPlugin from "./plugin";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import InterceptorPlugin from './plugin';
 
 describe('the plugin', function () {
-    let element;
-    let child;
-    let openmct;
-    const TEST_NAMESPACE = 'test';
+  let element;
+  let child;
+  let openmct;
+  const TEST_NAMESPACE = 'test';
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
-        openmct.install(new InterceptorPlugin(openmct));
+  beforeEach((done) => {
+    openmct = createOpenMct();
+    openmct.install(new InterceptorPlugin(openmct));
 
-        element = document.createElement('div');
-        element.style.width = '640px';
-        element.style.height = '480px';
-        child = document.createElement('div');
-        child.style.width = '640px';
-        child.style.height = '480px';
-        element.appendChild(child);
+    element = document.createElement('div');
+    element.style.width = '640px';
+    element.style.height = '480px';
+    child = document.createElement('div');
+    child.style.width = '640px';
+    child.style.height = '480px';
+    element.appendChild(child);
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+    openmct.on('start', done);
+    openmct.startHeadless();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  describe('the missingObjectInterceptor', () => {
+    let mockProvider;
+
+    beforeEach(() => {
+      mockProvider = jasmine.createSpyObj('mock provider', ['get']);
+      mockProvider.get.and.returnValue(Promise.resolve(undefined));
+      openmct.objects.addProvider(TEST_NAMESPACE, mockProvider);
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
+    it('returns missing objects', () => {
+      const identifier = {
+        namespace: TEST_NAMESPACE,
+        key: 'hello'
+      };
 
-    describe('the missingObjectInterceptor', () => {
-        let mockProvider;
-
-        beforeEach(() => {
-            mockProvider = jasmine.createSpyObj("mock provider", [
-                "get"
-            ]);
-            mockProvider.get.and.returnValue(Promise.resolve(undefined));
-            openmct.objects.addProvider(TEST_NAMESPACE, mockProvider);
+      return openmct.objects.get(identifier).then((testObject) => {
+        expect(testObject).toEqual({
+          identifier,
+          type: 'unknown',
+          name: 'Missing: test:hello'
         });
-
-        it('returns missing objects', () => {
-            const identifier = {
-                namespace: TEST_NAMESPACE,
-                key: 'hello'
-            };
-
-            return openmct.objects.get(identifier).then((testObject) => {
-                expect(testObject).toEqual({
-                    identifier,
-                    type: 'unknown',
-                    name: 'Missing: test:hello'
-                });
-            });
-        });
-
+      });
     });
+  });
 });

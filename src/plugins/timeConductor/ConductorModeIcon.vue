@@ -20,8 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-clock-symbol">
+  <div class="c-clock-symbol">
     <div class="hand-little"></div>
     <div class="hand-big"></div>
-</div>
+  </div>
 </template>

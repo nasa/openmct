@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 export default function ConditionSetCompositionPolicy(openmct) {
-    return {
-        allow: function (parent, child) {
-            if (parent.type === 'conditionSet' && !openmct.telemetry.isTelemetryObject(child)) {
-                return false;
-            }
+  return {
+    allow: function (parent, child) {
+      if (parent.type === 'conditionSet' && !openmct.telemetry.isTelemetryObject(child)) {
+        return false;
+      }
 
-            return true;
-        }
-    };
+      return true;
+    }
+  };
 }

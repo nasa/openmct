@@ -21,41 +21,41 @@
  *****************************************************************************/
 
 class RootObjectProvider {
-    constructor(rootRegistry) {
-        if (!RootObjectProvider.instance) {
-            this.rootRegistry = rootRegistry;
-            this.rootObject = {
-                identifier: {
-                    key: "ROOT",
-                    namespace: ""
-                },
-                name: 'Open MCT',
-                type: 'root',
-                composition: []
-            };
-            RootObjectProvider.instance = this;
-        } else if (rootRegistry) {
-            // if called twice, update instance rootRegistry
-            RootObjectProvider.instance.rootRegistry = rootRegistry;
-        }
-
-        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+  constructor(rootRegistry) {
+    if (!RootObjectProvider.instance) {
+      this.rootRegistry = rootRegistry;
+      this.rootObject = {
+        identifier: {
+          key: 'ROOT',
+          namespace: ''
+        },
+        name: 'Open MCT',
+        type: 'root',
+        composition: []
+      };
+      RootObjectProvider.instance = this;
+    } else if (rootRegistry) {
+      // if called twice, update instance rootRegistry
+      RootObjectProvider.instance.rootRegistry = rootRegistry;
     }
 
-    updateName(name) {
-        this.rootObject.name = name;
-    }
+    return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+  }
 
-    async get() {
-        let roots = await this.rootRegistry.getRoots();
-        this.rootObject.composition = roots;
+  updateName(name) {
+    this.rootObject.name = name;
+  }
 
-        return this.rootObject;
-    }
+  async get() {
+    let roots = await this.rootRegistry.getRoots();
+    this.rootObject.composition = roots;
+
+    return this.rootObject;
+  }
 }
 
 function instance(rootRegistry) {
-    return new RootObjectProvider(rootRegistry);
+  return new RootObjectProvider(rootRegistry);
 }
 
 export default instance;

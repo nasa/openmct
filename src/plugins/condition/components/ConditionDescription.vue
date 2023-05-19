@@ -21,51 +21,39 @@
 -->
 
 <template>
-<div class="c-style__condition-desc">
-    <span
-        v-if="showLabel && condition"
-        class="c-style__condition-desc__name c-condition__name"
-    >
-        {{ condition.configuration.name }}
+  <div class="c-style__condition-desc">
+    <span v-if="showLabel && condition" class="c-style__condition-desc__name c-condition__name">
+      {{ condition.configuration.name }}
     </span>
-    <span
-        v-if="!condition.isDefault"
-        class="c-style__condition-desc__text"
-    >
-        {{ description }}
+    <span v-if="!condition.isDefault" class="c-style__condition-desc__text">
+      {{ description }}
     </span>
-    <span
-        v-else
-        class="c-style__condition-desc__text"
-    >
-        Match if no other condition is matched
+    <span v-else class="c-style__condition-desc__text">
+      Match if no other condition is matched
     </span>
-</div>
+  </div>
 </template>
 
 <script>
-
 export default {
-    name: 'ConditionDescription',
-    inject: [
-        'openmct'
-    ],
-    props: {
-        showLabel: {
-            type: Boolean,
-            default: false
-        },
-        condition: {
-            type: Object,
-            default() {
-                return undefined;
-            }
-        }
+  name: 'ConditionDescription',
+  inject: ['openmct'],
+  props: {
+    showLabel: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-        description() {
-            return this.condition ? this.condition.summary : '';
-        }
+    condition: {
+      type: Object,
+      default() {
+        return undefined;
+      }
     }
+  },
+  computed: {
+    description() {
+      return this.condition ? this.condition.summary : '';
+    }
+  }
 };
 </script>

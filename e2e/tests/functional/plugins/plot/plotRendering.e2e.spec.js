@@ -21,44 +21,46 @@
  *****************************************************************************/
 
 /*
-* This test suite is dedicated to testing the rendering and interaction of plots.
-*
-*/
+ * This test suite is dedicated to testing the rendering and interaction of plots.
+ *
+ */
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults, getCanvasPixels } = require('../../../../appActions');
 
 test.describe('Plot Rendering', () => {
-    let sineWaveGeneratorObject;
+  let sineWaveGeneratorObject;
 
-    test.beforeEach(async ({ page }) => {
-        // Open a browser, navigate to the main page, and wait until all networkevents to resolve
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
-        sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, { type: 'Sine Wave Generator' });
+  test.beforeEach(async ({ page }) => {
+    // Open a browser, navigate to the main page, and wait until all networkevents to resolve
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    sineWaveGeneratorObject = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
     });
+  });
 
-    test('Plots do not re-request data when a plot is clicked', async ({ page }) => {
-        // Navigate to Sine Wave Generator
-        await page.goto(sineWaveGeneratorObject.url);
-        // Click on the plot canvas
-        await page.locator('canvas').nth(1).click();
-        // No request was made to get historical data
-        const createMineFolderRequests = [];
-        page.on('request', req => {
-            createMineFolderRequests.push(req);
-        });
-        expect(createMineFolderRequests.length).toEqual(0);
+  test('Plots do not re-request data when a plot is clicked', async ({ page }) => {
+    // Navigate to Sine Wave Generator
+    await page.goto(sineWaveGeneratorObject.url);
+    // Click on the plot canvas
+    await page.locator('canvas').nth(1).click();
+    // No request was made to get historical data
+    const createMineFolderRequests = [];
+    page.on('request', (req) => {
+      createMineFolderRequests.push(req);
     });
+    expect(createMineFolderRequests.length).toEqual(0);
+  });
 
-    test('Plot is rendered when infinity values exist', async ({ page }) => {
-        // Edit Plot
-        await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
+  test('Plot is rendered when infinity values exist', async ({ page }) => {
+    // Edit Plot
+    await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
-        //Get pixel data from Canvas
-        const plotPixels = await getCanvasPixels(page, 'canvas');
-        const plotPixelSize = plotPixels.length;
-        expect(plotPixelSize).toBeGreaterThan(0);
-    });
+    //Get pixel data from Canvas
+    const plotPixels = await getCanvasPixels(page, 'canvas');
+    const plotPixelSize = plotPixels.length;
+    expect(plotPixelSize).toBeGreaterThan(0);
+  });
 });
 
 /**
@@ -69,20 +71,24 @@ test.describe('Plot Rendering', () => {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the edited domain object.
  */
 async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
-    await page.goto(sineWaveGeneratorObject.url);
-    // Edit SWG properties to include infinity values
-    await page.locator('[title="More options"]').click();
-    await page.locator('[title="Edit properties of this object."]').click();
-    await page.getByRole('switch', {
-        name: "Include Infinity Values"
-    }).check();
+  await page.goto(sineWaveGeneratorObject.url);
+  // Edit SWG properties to include infinity values
+  await page.locator('[title="More options"]').click();
+  await page.locator('[title="Edit properties of this object."]').click();
+  await page
+    .getByRole('switch', {
+      name: 'Include Infinity Values'
+    })
+    .check();
 
-    await page.getByRole('button', {
-        name: 'Save'
-    }).click();
+  await page
+    .getByRole('button', {
+      name: 'Save'
+    })
+    .click();
 
-    // FIXME: Changes to SWG properties should be reflected on save, but they're not?
-    // Thus, navigate away and back to the object.
-    await page.goto('./#/browse/mine');
-    await page.goto(sineWaveGeneratorObject.url);
+  // FIXME: Changes to SWG properties should be reflected on save, but they're not?
+  // Thus, navigate away and back to the object.
+  await page.goto('./#/browse/mine');
+  await page.goto(sineWaveGeneratorObject.url);
 }

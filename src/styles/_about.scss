@@ -22,105 +22,107 @@
 
 // Used by About screen, licenses, etc.
 .c-splash-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('../ui/layout/assets/images/bg-splash.jpg');
+  margin-top: 30px; // Don't overlap with close "X" button
+
+  &:before,
+  &:after {
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
-    background-image: url('../ui/layout/assets/images/bg-splash.jpg');
-    margin-top: 30px; // Don't overlap with close "X" button
+    position: absolute;
+    background-image: url('../ui/layout/assets/images/logo-openmct-shdw.svg');
+    background-size: contain;
+    content: '';
+  }
 
-    &:before,
-    &:after {
-        background-position: center;
-        background-repeat: no-repeat;
-        position: absolute;
-        background-image: url('../ui/layout/assets/images/logo-openmct-shdw.svg');
-        background-size: contain;
-        content: '';
-    }
+  &:before {
+    // NASA logo, dude
+    $w: 5%;
+    $m: 10px;
+    background-image: url('../ui/layout/assets/images/logo-nasa.svg');
+    top: $m;
+    right: auto;
+    bottom: auto;
+    left: $m;
+    height: auto;
+    width: $w * 2;
+    padding-bottom: $w;
+    padding-top: $w;
+  }
 
-    &:before {
-        // NASA logo, dude
-        $w: 5%;
-        $m: 10px;
-        background-image: url('../ui/layout/assets/images/logo-nasa.svg');
-        top: $m;
-        right: auto;
-        bottom: auto;
-        left: $m;
-        height: auto;
-        width: $w * 2;
-        padding-bottom: $w;
-        padding-top: $w;
-    }
-
-    &:after {
-        // App logo
-        $d: 25%;
-        top: $d;
-        right: $d;
-        bottom: $d;
-        left: $d;
-    }
+  &:after {
+    // App logo
+    $d: 25%;
+    top: $d;
+    right: $d;
+    bottom: $d;
+    left: $d;
+  }
 }
 
 .c-about {
-    &--splash {
-        // Large initial image after click on app logo with text beneath
-        @include abs();
-        display: flex;
-        flex-direction: column;
-    }
+  &--splash {
+    // Large initial image after click on app logo with text beneath
+    @include abs();
+    display: flex;
+    flex-direction: column;
+  }
 
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &__image,
+  &__text {
+    flex: 1 1 auto;
+  }
+
+  &__image {
+    height: 35%;
+  }
+
+  &__text {
+    height: 65%;
+    overflow: auto;
     > * + * {
-        margin-top: $interiorMargin;
+      border-top: 1px solid $colorInteriorBorder;
+      margin-top: 1em;
     }
+  }
 
-    &__image,
-    &__text {
-        flex: 1 1 auto;
+  &--licenses {
+    padding: 0 10%;
+    .c-license {
+      + .c-license {
+        border-top: 1px solid $colorInteriorBorder;
+        margin-top: 2em;
+      }
     }
+  }
 
-    &__image {
-        height: 35%;
-    }
+  a {
+    color: $colorAboutLink;
+  }
 
-    &__text {
-        height: 65%;
-        overflow: auto;
-        > * + * {
-            border-top: 1px solid $colorInteriorBorder;
-            margin-top: 1em;
-        }
-    }
+  em {
+    color: pushBack($colorBodyFg, 20%);
+  }
 
-    &--licenses {
-        padding: 0 10%;
-        .c-license {
-            + .c-license {
-                border-top: 1px solid $colorInteriorBorder;
-                margin-top: 2em;
-            }
-        }
-    }
+  h1,
+  h2,
+  h3 {
+    font-weight: normal;
+    margin-bottom: 0.25em;
+  }
 
-    a {
-        color: $colorAboutLink;
-    }
+  h1 {
+    font-size: 2.25em;
+  }
 
-    em {
-        color: pushBack($colorBodyFg, 20%);
-    }
-
-    h1, h2, h3 {
-        font-weight: normal;
-        margin-bottom: .25em;
-    }
-
-    h1 {
-        font-size: 2.25em;
-    }
-
-    h2 {
-        font-size: 1.5em;
-    }
+  h2 {
+    font-size: 1.5em;
+  }
 }

@@ -22,123 +22,123 @@
 
 /******************************* EXPANDED SEARCH 2022 */
 .c-gsearch {
-    .l-shell__head & {
-        // Search input in the shell head
-        width: 20%;
+  .l-shell__head & {
+    // Search input in the shell head
+    width: 20%;
 
-        .c-search {
-            background: rgba($colorHeadFg, 0.2);
-            box-shadow: none;
-        }
+    .c-search {
+      background: rgba($colorHeadFg, 0.2);
+      box-shadow: none;
     }
+  }
 
-    &__results-wrapper {
-        @include menuOuter();
-        display: flex;
-        flex-direction: column;
-        padding: $interiorMarginLg;
-        min-width: 500px;
-        max-height: 500px;
-        z-index: 60;
+  &__results-wrapper {
+    @include menuOuter();
+    display: flex;
+    flex-direction: column;
+    padding: $interiorMarginLg;
+    min-width: 500px;
+    max-height: 500px;
+    z-index: 60;
+  }
+
+  &__results,
+  &__results-section {
+    flex: 1 1 auto;
+  }
+
+  &__results {
+    // Holds n __results-sections
+    padding-right: $interiorMargin; // Fend off scrollbar
+    overflow-y: auto;
+
+    > * + * {
+      margin-top: $interiorMarginLg;
     }
+  }
 
-    &__results,
-    &__results-section {
-        flex: 1 1 auto;
+  &__results-section {
+    > * + * {
+      margin-top: $interiorMarginSm;
     }
+  }
 
-    &__results {
-        // Holds n __results-sections
-        padding-right: $interiorMargin; // Fend off scrollbar
-        overflow-y: auto;
+  &__results-section-title {
+    @include propertiesHeader();
+  }
 
-        > * + * {
-            margin-top: $interiorMarginLg;
-        }
+  &__result-pane-msg {
+    > * + * {
+      margin-top: $interiorMargin;
     }
-
-    &__results-section {
-        > * + * {
-            margin-top: $interiorMarginSm;
-        }
-    }
-
-    &__results-section-title {
-        @include propertiesHeader();
-    }
-
-    &__result-pane-msg {
-        > * + * {
-            margin-top: $interiorMargin;
-        }
-    }
+  }
 }
 
 .c-gsearch-result {
-    display: flex;
-    padding: $interiorMargin $interiorMarginSm;
+  display: flex;
+  padding: $interiorMargin $interiorMarginSm;
+
+  > * + * {
+    margin-left: $interiorMarginLg;
+  }
+
+  + .c-gsearch-result {
+    border-top: 1px solid $colorInteriorBorder;
+  }
+
+  &__type-icon,
+  &__more-options-button {
+    flex: 0 0 auto;
+  }
+
+  &__type-icon {
+    color: $colorItemTreeIcon;
+    font-size: 2.2em;
+
+    // TEMP: uses object-label component, hide label part
+    .c-object-label__name {
+      display: none;
+    }
+  }
+
+  &__more-options-button {
+    display: none; // TEMP until enabled
+  }
+
+  &__body {
+    flex: 1 1 auto;
 
     > * + * {
-        margin-left: $interiorMarginLg;
+      margin-top: $interiorMarginSm;
     }
 
-    + .c-gsearch-result {
-        border-top: 1px solid $colorInteriorBorder;
+    .c-location {
+      font-size: 0.9em;
+      opacity: 0.8;
     }
+  }
 
-    &__type-icon,
-    &__more-options-button {
-        flex: 0 0 auto;
+  &__tags {
+    display: flex;
+
+    > * + * {
+      margin-left: $interiorMargin;
     }
+  }
 
-    &__type-icon {
-        color: $colorItemTreeIcon;
-        font-size: 2.2em;
+  &__title {
+    border-radius: $basicCr;
+    color: pullForward($colorBodyFg, 30%);
+    cursor: pointer;
+    font-size: 1.15em;
+    padding: 3px $interiorMarginSm;
 
-        // TEMP: uses object-label component, hide label part
-        .c-object-label__name {
-            display: none;
-        }
+    &:hover {
+      background-color: $colorItemTreeHoverBg;
     }
+  }
 
-    &__more-options-button {
-        display: none; // TEMP until enabled
-    }
-
-    &__body {
-        flex: 1 1 auto;
-
-        > * + * {
-            margin-top: $interiorMarginSm;
-        }
-
-        .c-location {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-    }
-
-    &__tags {
-        display: flex;
-
-        > * + * {
-            margin-left: $interiorMargin;
-        }
-    }
-
-    &__title {
-        border-radius: $basicCr;
-        color: pullForward($colorBodyFg, 30%);
-        cursor: pointer;
-        font-size: 1.15em;
-        padding: 3px $interiorMarginSm;
-
-        &:hover {
-            background-color: $colorItemTreeHoverBg;
-        }
-    }
-
-    .c-tag {
-        font-size: 0.9em;
-    }
+  .c-tag {
+    font-size: 0.9em;
+  }
 }

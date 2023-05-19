@@ -20,51 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistPropertiesView from "./TimelistPropertiesView.vue";
+import TimelistPropertiesView from './TimelistPropertiesView.vue';
 import { TIMELIST_TYPE } from '../constants';
 import Vue from 'vue';
 
 export default function TimeListInspectorViewProvider(openmct) {
-    return {
-        key: 'timelist-inspector',
-        name: 'Timelist Inspector View',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                return false;
-            }
+  return {
+    key: 'timelist-inspector',
+    name: 'Timelist Inspector View',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
 
-            let context = selection[0][0].context;
+      let context = selection[0][0].context;
 
-            return context && context.item
-                && context.item.type === TIMELIST_TYPE;
+      return context && context.item && context.item.type === TIMELIST_TYPE;
+    },
+    view: function (selection) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              TimelistPropertiesView: TimelistPropertiesView
+            },
+            provide: {
+              openmct,
+              domainObject: selection[0][0].context.item
+            },
+            template: '<timelist-properties-view></timelist-properties-view>'
+          });
         },
-        view: function (selection) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            TimelistPropertiesView: TimelistPropertiesView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject: selection[0][0].context.item
-                        },
-                        template: '<timelist-properties-view></timelist-properties-view>'
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.HIGH + 1;
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+        priority: function () {
+          return openmct.priority.HIGH + 1;
+        },
+        destroy: function () {
+          if (component) {
+            component.$destroy();
+            component = undefined;
+          }
         }
-    };
+      };
+    }
+  };
 }

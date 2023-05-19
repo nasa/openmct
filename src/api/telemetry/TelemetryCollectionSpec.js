@@ -20,82 +20,79 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { TIMESYSTEM_KEY_WARNING } from './constants';
 
 describe('Telemetry Collection', () => {
-    let openmct;
-    let mockMetadataProvider;
-    let mockMetadata = {};
-    let domainObject;
+  let openmct;
+  let mockMetadataProvider;
+  let mockMetadata = {};
+  let domainObject;
 
-    beforeEach(done => {
-        openmct = createOpenMct();
-        openmct.on('start', done);
+  beforeEach((done) => {
+    openmct = createOpenMct();
+    openmct.on('start', done);
 
-        domainObject = {
-            identifier: {
-                key: 'a',
-                namespace: 'b'
-            },
-            type: 'sample-type'
-        };
+    domainObject = {
+      identifier: {
+        key: 'a',
+        namespace: 'b'
+      },
+      type: 'sample-type'
+    };
 
-        mockMetadataProvider = {
-            key: 'mockMetadataProvider',
-            supportsMetadata() {
-                return true;
-            },
-            getMetadata() {
-                return mockMetadata;
-            }
-        };
+    mockMetadataProvider = {
+      key: 'mockMetadataProvider',
+      supportsMetadata() {
+        return true;
+      },
+      getMetadata() {
+        return mockMetadata;
+      }
+    };
 
-        openmct.telemetry.addProvider(mockMetadataProvider);
-        openmct.startHeadless();
-    });
+    openmct.telemetry.addProvider(mockMetadataProvider);
+    openmct.startHeadless();
+  });
 
-    afterEach(() => {
-        return resetApplicationState();
-    });
+  afterEach(() => {
+    return resetApplicationState();
+  });
 
-    it('Warns if telemetry metadata does not match the active timesystem', () => {
-        mockMetadata.values = [
-            {
-                key: 'foo',
-                name: 'Bar',
-                hints: {
-                    domain: 1
-                }
-            }
-        ];
+  it('Warns if telemetry metadata does not match the active timesystem', () => {
+    mockMetadata.values = [
+      {
+        key: 'foo',
+        name: 'Bar',
+        hints: {
+          domain: 1
+        }
+      }
+    ];
 
-        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
-        spyOn(telemetryCollection, '_warn');
-        telemetryCollection.load();
+    const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+    spyOn(telemetryCollection, '_warn');
+    telemetryCollection.load();
 
-        expect(telemetryCollection._warn).toHaveBeenCalledOnceWith(TIMESYSTEM_KEY_WARNING);
-    });
+    expect(telemetryCollection._warn).toHaveBeenCalledOnceWith(TIMESYSTEM_KEY_WARNING);
+  });
 
-    it('Does not warn if telemetry metadata matches the active timesystem', () => {
-        mockMetadata.values = [
-            {
-                key: 'utc',
-                name: 'Timestamp',
-                format: 'utc',
-                hints: {
-                    domain: 1
-                }
-            }
-        ];
+  it('Does not warn if telemetry metadata matches the active timesystem', () => {
+    mockMetadata.values = [
+      {
+        key: 'utc',
+        name: 'Timestamp',
+        format: 'utc',
+        hints: {
+          domain: 1
+        }
+      }
+    ];
 
-        const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
-        spyOn(telemetryCollection, '_warn');
-        telemetryCollection.load();
+    const telemetryCollection = openmct.telemetry.requestCollection(domainObject);
+    spyOn(telemetryCollection, '_warn');
+    telemetryCollection.load();
 
-        expect(telemetryCollection._warn).not.toHaveBeenCalled();
-    });
+    expect(telemetryCollection._warn).not.toHaveBeenCalled();
+  });
 });

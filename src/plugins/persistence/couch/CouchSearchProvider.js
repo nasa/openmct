@@ -28,99 +28,100 @@
 // back into the object provider.
 
 class CouchSearchProvider {
-    constructor(couchObjectProvider) {
-        this.couchObjectProvider = couchObjectProvider;
-        this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.TAGS];
-    }
+  constructor(couchObjectProvider) {
+    this.couchObjectProvider = couchObjectProvider;
+    this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+    this.supportedSearchTypes = [
+      this.searchTypes.OBJECTS,
+      this.searchTypes.ANNOTATIONS,
+      this.searchTypes.TAGS
+    ];
+  }
 
-    supportsSearchType(searchType) {
-        return this.supportedSearchTypes.includes(searchType);
-    }
+  supportsSearchType(searchType) {
+    return this.supportedSearchTypes.includes(searchType);
+  }
 
-    search(query, abortSignal, searchType) {
-        if (searchType === this.searchTypes.OBJECTS) {
-            return this.searchForObjects(query, abortSignal);
-        } else if (searchType === this.searchTypes.ANNOTATIONS) {
-            return this.searchForAnnotations(query, abortSignal);
-        } else if (searchType === this.searchTypes.TAGS) {
-            return this.searchForTags(query, abortSignal);
-        } else {
-            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+  search(query, abortSignal, searchType) {
+    if (searchType === this.searchTypes.OBJECTS) {
+      return this.searchForObjects(query, abortSignal);
+    } else if (searchType === this.searchTypes.ANNOTATIONS) {
+      return this.searchForAnnotations(query, abortSignal);
+    } else if (searchType === this.searchTypes.TAGS) {
+      return this.searchForTags(query, abortSignal);
+    } else {
+      throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+    }
+  }
+
+  searchForObjects(query, abortSignal) {
+    const filter = {
+      selector: {
+        model: {
+          name: {
+            $regex: `(?i)${query}`
+          }
         }
-    }
+      }
+    };
 
-    searchForObjects(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
-                }
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
+
+  searchForAnnotations(keyString, abortSignal) {
+    const filter = {
+      selector: {
+        $and: [
+          {
+            model: {
+              targets: {}
             }
-        };
-
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
-    searchForAnnotations(keyString, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model": {
-                            "targets": {
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
+          },
+          {
+            'model.type': {
+              $eq: 'annotation'
             }
-        };
-        filter.selector.$and[0].model.targets[keyString] = {
-            "$exists": true
-        };
+          }
+        ]
+      }
+    };
+    filter.selector.$and[0].model.targets[keyString] = {
+      $exists: true
+    };
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
+
+  searchForTags(tagsArray, abortSignal) {
+    if (!tagsArray || !tagsArray.length) {
+      return [];
     }
 
-    searchForTags(tagsArray, abortSignal) {
-        if (!tagsArray || !tagsArray.length) {
-            return [];
-        }
-
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model.tags": {
-                            "$elemMatch": {
-                                "$or": [
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
+    const filter = {
+      selector: {
+        $and: [
+          {
+            'model.tags': {
+              $elemMatch: {
+                $or: []
+              }
             }
-        };
-        tagsArray.forEach(tag => {
-            filter.selector.$and[0]["model.tags"].$elemMatch.$or.push({
-                "$eq": `${tag}`
-            });
-        });
+          },
+          {
+            'model.type': {
+              $eq: 'annotation'
+            }
+          }
+        ]
+      }
+    };
+    tagsArray.forEach((tag) => {
+      filter.selector.$and[0]['model.tags'].$elemMatch.$or.push({
+        $eq: `${tag}`
+      });
+    });
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
 }
 export default CouchSearchProvider;
