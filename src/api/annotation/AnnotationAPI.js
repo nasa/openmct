@@ -246,15 +246,16 @@ export default class AnnotationAPI extends EventEmitter {
   /**
    * @method getAnnotations
    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations. For example, a telemetry object identifier.
+   * @param {AbortSignal} abortSignal - An abort signal to cancel the search
    * @returns {DomainObject[]} Returns an array of annotations that match the search query
    */
-  async getAnnotations(domainObjectIdentifier) {
+  async getAnnotations(domainObjectIdentifier, abortSignal = null) {
     const keyStringQuery = this.openmct.objects.makeKeyString(domainObjectIdentifier);
     const searchResults = (
       await Promise.all(
         this.openmct.objects.search(
           keyStringQuery,
-          null,
+          abortSignal,
           this.openmct.objects.SEARCH_TYPES.ANNOTATIONS
         )
       )
