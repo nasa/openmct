@@ -27,63 +27,67 @@ import Vue from 'vue';
 const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
 
 function isLayoutObject(selection, objectType) {
-    //we allow conditionSets to be styled if they're part of a layout
-    return selection.length > 1
-        && ((objectType === 'conditionSet') || (NON_STYLABLE_TYPES.indexOf(objectType) < 0));
+  //we allow conditionSets to be styled if they're part of a layout
+  return (
+    selection.length > 1 &&
+    (objectType === 'conditionSet' || NON_STYLABLE_TYPES.indexOf(objectType) < 0)
+  );
 }
 
 function isCreatableObject(object, type) {
-    return (NON_STYLABLE_TYPES.indexOf(object.type) < 0) && type.definition.creatable;
+  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && type.definition.creatable;
 }
 
 export default function StylesInspectorViewProvider(openmct) {
-    return {
-        key: 'stylesInspectorView',
-        name: 'Styles',
-        glyph: 'icon-paint-bucket',
-        canView: function (selection) {
-            const objectSelection = selection?.[0];
-            const layoutItem = objectSelection?.[0]?.context?.layoutItem;
-            const domainObject = objectSelection?.[0]?.context?.item;
+  return {
+    key: 'stylesInspectorView',
+    name: 'Styles',
+    glyph: 'icon-paint-bucket',
+    canView: function (selection) {
+      const objectSelection = selection?.[0];
+      const layoutItem = objectSelection?.[0]?.context?.layoutItem;
+      const domainObject = objectSelection?.[0]?.context?.item;
 
-            if (layoutItem) {
-                return true;
-            }
+      if (layoutItem) {
+        return true;
+      }
 
-            if (!domainObject) {
-                return false;
-            }
+      if (!domainObject) {
+        return false;
+      }
 
-            const type = openmct.types.get(domainObject.type);
+      const type = openmct.types.get(domainObject.type);
 
-            return isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type);
+      return (
+        isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type)
+      );
+    },
+    view: function (selection) {
+      let component;
+
+      return {
+        show: function (el) {
+          component = new Vue({
+            el,
+            components: {
+              StylesInspectorView
+            },
+            provide: {
+              openmct,
+              stylesManager,
+              selection
+            },
+            template: `<StylesInspectorView />`
+          });
         },
-        view: function (selection) {
-            let component;
-
-            return {
-                show: function (el) {
-                    component = new Vue({
-                        el,
-                        components: {
-                            StylesInspectorView
-                        },
-                        provide: {
-                            openmct,
-                            stylesManager,
-                            selection
-                        },
-                        template: `<StylesInspectorView />`
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.DEFAULT;
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        priority: function () {
+          return openmct.priority.DEFAULT;
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

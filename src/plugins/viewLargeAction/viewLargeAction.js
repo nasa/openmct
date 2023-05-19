@@ -25,71 +25,74 @@ import Preview from '@/ui/preview/Preview.vue';
 import Vue from 'vue';
 
 export default class ViewLargeAction {
-    constructor(openmct) {
-        this.openmct = openmct;
+  constructor(openmct) {
+    this.openmct = openmct;
 
-        this.cssClass = 'icon-items-expand';
-        this.description = 'View Large';
-        this.group = 'windowing';
-        this.key = 'large.view';
-        this.name = 'Large View';
-        this.priority = 1;
-        this.showInStatusBar = true;
+    this.cssClass = 'icon-items-expand';
+    this.description = 'View Large';
+    this.group = 'windowing';
+    this.key = 'large.view';
+    this.name = 'Large View';
+    this.priority = 1;
+    this.showInStatusBar = true;
+  }
+
+  invoke(objectPath, view) {
+    performance.mark('viewlarge.start');
+    const childElement = view?.parentElement?.firstChild;
+    if (!childElement) {
+      const message = 'ViewLargeAction: missing element';
+      this.openmct.notifications.error(message);
+      throw new Error(message);
     }
 
-    invoke(objectPath, view) {
-        performance.mark('viewlarge.start');
-        const childElement = view?.parentElement?.firstChild;
-        if (!childElement) {
-            const message = "ViewLargeAction: missing element";
-            this.openmct.notifications.error(message);
-            throw new Error(message);
-        }
+    this._expand(objectPath, view);
+  }
 
-        this._expand(objectPath, view);
-    }
+  appliesTo(objectPath, view) {
+    const childElement = view?.parentElement?.firstChild;
 
-    appliesTo(objectPath, view) {
-        const childElement = view?.parentElement?.firstChild;
+    return (
+      childElement &&
+      !childElement.classList.contains('js-main-container') &&
+      !this.openmct.router.isNavigatedObject(objectPath)
+    );
+  }
 
-        return childElement && !childElement.classList.contains('js-main-container')
-            && !this.openmct.router.isNavigatedObject(objectPath);
-    }
+  _expand(objectPath, view) {
+    const element = this._getPreview(objectPath, view);
+    view.onPreviewModeChange?.({ isPreviewing: true });
 
-    _expand(objectPath, view) {
-        const element = this._getPreview(objectPath, view);
-        view.onPreviewModeChange?.({ isPreviewing: true });
+    this.overlay = this.openmct.overlays.overlay({
+      element,
+      size: 'large',
+      autoHide: false,
+      onDestroy: () => {
+        this.preview.$destroy();
+        this.preview = undefined;
+        delete this.preview;
+        view.onPreviewModeChange?.();
+      }
+    });
+  }
 
-        this.overlay = this.openmct.overlays.overlay({
-            element,
-            size: 'large',
-            autoHide: false,
-            onDestroy: () => {
-                this.preview.$destroy();
-                this.preview = undefined;
-                delete this.preview;
-                view.onPreviewModeChange?.();
-            }
-        });
-    }
+  _getPreview(objectPath, view) {
+    this.preview = new Vue({
+      components: {
+        Preview
+      },
+      provide: {
+        openmct: this.openmct,
+        objectPath
+      },
+      data() {
+        return {
+          view
+        };
+      },
+      template: '<Preview :existing-view="view"></Preview>'
+    });
 
-    _getPreview(objectPath, view) {
-        this.preview = new Vue({
-            components: {
-                Preview
-            },
-            provide: {
-                openmct: this.openmct,
-                objectPath
-            },
-            data() {
-                return {
-                    view
-                };
-            },
-            template: '<Preview :existing-view="view"></Preview>'
-        });
-
-        return this.preview.$mount().$el;
-    }
+    return this.preview.$mount().$el;
+  }
 }

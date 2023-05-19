@@ -20,23 +20,30 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="items-holder abs contents autoflow obj-value-format">
-    <div class="abs l-flex-row holder t-autoflow-header l-autoflow-header">
-        <span class="t-filter l-filter">
-            <input type="search" class="t-filter-input" v-model="filter"/>
-            <a v-if="filter !== ''" v-on:click="filter = ''" class="clear-icon icon-x-in-circle"></a>
-        </span>
+  <div class="abs l-flex-row holder t-autoflow-header l-autoflow-header">
+    <span class="t-filter l-filter">
+      <input type="search" class="t-filter-input" v-model="filter" />
+      <a v-if="filter !== ''" v-on:click="filter = ''" class="clear-icon icon-x-in-circle"></a>
+    </span>
 
-        <div class="flex-elem grows t-last-update" title="Last Update">{{updated}}</div>
-        <a title="Change column width"
-           v-on:click="increaseColumnWidth()"
-           class="s-button flex-elem icon-arrows-right-left change-column-width"></a>
-    </div>
-    <div class="abs t-autoflow-items l-autoflow-items" ref="autoflowItems">
-        <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width + 'px' }">
-            <li v-for="row in column" class="l-autoflow-row" >
-                <span :title="row.value" :data-value="row.value" :class="'l-autoflow-item r l-obj-val-format ' + row.classes">{{row.value}}</span>
-                <span :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
-            </li>
-        </ul>
-    </div>
+    <div class="flex-elem grows t-last-update" title="Last Update">{{updated}}</div>
+    <a
+      title="Change column width"
+      v-on:click="increaseColumnWidth()"
+      class="s-button flex-elem icon-arrows-right-left change-column-width"
+    ></a>
+  </div>
+  <div class="abs t-autoflow-items l-autoflow-items" ref="autoflowItems">
+    <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width + 'px' }">
+      <li v-for="row in column" class="l-autoflow-row">
+        <span
+          :title="row.value"
+          :data-value="row.value"
+          :class="'l-autoflow-item r l-obj-val-format ' + row.classes"
+          >{{row.value}}</span
+        >
+        <span :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
+      </li>
+    </ul>
+  </div>
 </div>

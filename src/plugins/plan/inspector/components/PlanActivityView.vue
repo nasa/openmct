@@ -21,24 +21,18 @@
 -->
 
 <template>
-<div
-    v-if="timeProperties.length"
-    class="u-contents"
->
+  <div v-if="timeProperties.length" class="u-contents">
     <div class="c-inspect-properties__header">
-        {{ heading }}
+      {{ heading }}
     </div>
     <ul
-        v-for="timeProperty in timeProperties"
-        :key="timeProperty.id"
-        class="c-inspect-properties__section"
+      v-for="timeProperty in timeProperties"
+      :key="timeProperty.id"
+      class="c-inspect-properties__section"
     >
-        <activity-property
-            :label="timeProperty.label"
-            :value="timeProperty.value"
-        />
+      <activity-property :label="timeProperty.label" :value="timeProperty.value" />
     </ul>
-</div>
+  </div>
 </template>
 
 <script>
@@ -46,42 +40,42 @@ import ActivityProperty from './ActivityProperty.vue';
 import { v4 as uuid } from 'uuid';
 
 export default {
-    components: {
-        ActivityProperty
+  components: {
+    ActivityProperty
+  },
+  props: {
+    activity: {
+      type: Object,
+      required: true
     },
-    props: {
-        activity: {
-            type: Object,
-            required: true
-        },
-        heading: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return {
-            timeProperties: []
-        };
-    },
-    mounted() {
-        this.setProperties();
-    },
-    methods: {
-        setProperties() {
-            Object.keys(this.activity).forEach((key) => {
-                if (this.activity[key].label) {
-                    const label = this.activity[key].label;
-                    const value = String(this.activity[key].value);
-
-                    this.$set(this.timeProperties, this.timeProperties.length, {
-                        id: uuid(),
-                        label,
-                        value
-                    });
-                }
-            });
-        }
+    heading: {
+      type: String,
+      required: true
     }
+  },
+  data() {
+    return {
+      timeProperties: []
+    };
+  },
+  mounted() {
+    this.setProperties();
+  },
+  methods: {
+    setProperties() {
+      Object.keys(this.activity).forEach((key) => {
+        if (this.activity[key].label) {
+          const label = this.activity[key].label;
+          const value = String(this.activity[key].value);
+
+          this.$set(this.timeProperties, this.timeProperties.length, {
+            id: uuid(),
+            label,
+            value
+          });
+        }
+      });
+    }
+  }
 };
 </script>

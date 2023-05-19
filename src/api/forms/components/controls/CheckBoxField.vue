@@ -21,35 +21,28 @@
 -->
 
 <template>
-<span class="form-control shell">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <input
-            type="checkbox"
-            :checked="isChecked"
-            @input="toggleCheckBox"
-        >
+  <span class="form-control shell">
+    <span class="field control" :class="model.cssClass">
+      <input type="checkbox" :checked="isChecked" @input="toggleCheckBox" />
     </span>
-</span>
+  </span>
 </template>
 
 <script>
 import toggleMixin from '../../toggle-check-box-mixin';
 
 export default {
-    mixins: [toggleMixin],
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            isChecked: this.model.value
-        };
+  mixins: [toggleMixin],
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      isChecked: this.model.value
+    };
+  }
 };
 </script>

@@ -21,68 +21,70 @@
  *****************************************************************************/
 
 export default class FaultManagementAPI {
-    /**
-     * @param {import("openmct").OpenMCT} openmct
-     */
-    constructor(openmct) {
-        this.openmct = openmct;
+  /**
+   * @param {import("openmct").OpenMCT} openmct
+   */
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
+
+  /**
+   * @param {*} provider
+   */
+  addProvider(provider) {
+    this.provider = provider;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  supportsActions() {
+    return (
+      this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined
+    );
+  }
+
+  /**
+   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @returns {Promise.<FaultAPIResponse[]>}
+   */
+  request(domainObject) {
+    if (!this.provider?.supportsRequest(domainObject)) {
+      return Promise.reject();
     }
 
-    /**
-     * @param {*} provider
-     */
-    addProvider(provider) {
-        this.provider = provider;
+    return this.provider.request(domainObject);
+  }
+
+  /**
+   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @param {Function} callback
+   * @returns {Function} unsubscribe
+   */
+  subscribe(domainObject, callback) {
+    if (!this.provider?.supportsSubscribe(domainObject)) {
+      return Promise.reject();
     }
 
-    /**
-     * @returns {boolean}
-     */
-    supportsActions() {
-        return this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined;
-    }
+    return this.provider.subscribe(domainObject, callback);
+  }
 
-    /**
-     * @param {import("../objects/ObjectAPI").DomainObject} domainObject
-     * @returns {Promise.<FaultAPIResponse[]>}
-     */
-    request(domainObject) {
-        if (!this.provider?.supportsRequest(domainObject)) {
-            return Promise.reject();
-        }
+  /**
+   * @param {Fault} fault
+   * @param {*} ackData
+   */
+  acknowledgeFault(fault, ackData) {
+    return this.provider.acknowledgeFault(fault, ackData);
+  }
 
-        return this.provider.request(domainObject);
-    }
-
-    /**
-     * @param {import("../objects/ObjectAPI").DomainObject} domainObject
-     * @param {Function} callback
-     * @returns {Function} unsubscribe
-     */
-    subscribe(domainObject, callback) {
-        if (!this.provider?.supportsSubscribe(domainObject)) {
-            return Promise.reject();
-        }
-
-        return this.provider.subscribe(domainObject, callback);
-    }
-
-    /**
-     * @param {Fault} fault
-     * @param {*} ackData
-     */
-    acknowledgeFault(fault, ackData) {
-        return this.provider.acknowledgeFault(fault, ackData);
-    }
-
-    /**
-     * @param {Fault} fault
-     * @param {*} shelveData
-     * @returns {Promise.<T>}
-     */
-    shelveFault(fault, shelveData) {
-        return this.provider.shelveFault(fault, shelveData);
-    }
+  /**
+   * @param {Fault} fault
+   * @param {*} shelveData
+   * @returns {Promise.<T>}
+   */
+  shelveFault(fault, shelveData) {
+    return this.provider.shelveFault(fault, shelveData);
+  }
 }
 
 /**

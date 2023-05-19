@@ -48,83 +48,86 @@ import Menu, { MENU_PLACEMENT } from './menu.js';
  */
 
 class MenuAPI {
-    constructor(openmct) {
-        this.openmct = openmct;
+  constructor(openmct) {
+    this.openmct = openmct;
 
-        this.menuPlacement = MENU_PLACEMENT;
-        this.showMenu = this.showMenu.bind(this);
-        this.showSuperMenu = this.showSuperMenu.bind(this);
+    this.menuPlacement = MENU_PLACEMENT;
+    this.showMenu = this.showMenu.bind(this);
+    this.showSuperMenu = this.showSuperMenu.bind(this);
 
-        this._clearMenuComponent = this._clearMenuComponent.bind(this);
-        this._showObjectMenu = this._showObjectMenu.bind(this);
-    }
+    this._clearMenuComponent = this._clearMenuComponent.bind(this);
+    this._showObjectMenu = this._showObjectMenu.bind(this);
+  }
 
-    /**
-     * Show popup menu
-     * @param {number} x x-coordinates for popup
-     * @param {number} y x-coordinates for popup
-     * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions{@link Action} or collection of groups of actions {@link Action}
-     * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
-     */
-    showMenu(x, y, items, menuOptions) {
-        this._createMenuComponent(x, y, items, menuOptions);
+  /**
+   * Show popup menu
+   * @param {number} x x-coordinates for popup
+   * @param {number} y x-coordinates for popup
+   * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions{@link Action} or collection of groups of actions {@link Action}
+   * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+   */
+  showMenu(x, y, items, menuOptions) {
+    this._createMenuComponent(x, y, items, menuOptions);
 
-        this.menuComponent.showMenu();
-    }
+    this.menuComponent.showMenu();
+  }
 
-    actionsToMenuItems(actions, objectPath, view) {
-        return actions.map(action => {
-            const isActionGroup = Array.isArray(action);
-            if (isActionGroup) {
-                action = this.actionsToMenuItems(action, objectPath, view);
-            } else {
-                action.onItemClicked = () => {
-                    action.invoke(objectPath, view);
-                };
-            }
-
-            return action;
-        });
-    }
-
-    /**
-     * Show popup menu with description of item on hover
-     * @param {number} x x-coordinates for popup
-     * @param {number} y x-coordinates for popup
-     * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
-     * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
-     */
-    showSuperMenu(x, y, actions, menuOptions) {
-        this._createMenuComponent(x, y, actions, menuOptions);
-
-        this.menuComponent.showSuperMenu();
-    }
-
-    _clearMenuComponent() {
-        this.menuComponent = undefined;
-        delete this.menuComponent;
-    }
-
-    _createMenuComponent(x, y, actions, menuOptions = {}) {
-        if (this.menuComponent) {
-            this.menuComponent.dismiss();
-        }
-
-        let options = {
-            x,
-            y,
-            actions,
-            ...menuOptions
+  actionsToMenuItems(actions, objectPath, view) {
+    return actions.map((action) => {
+      const isActionGroup = Array.isArray(action);
+      if (isActionGroup) {
+        action = this.actionsToMenuItems(action, objectPath, view);
+      } else {
+        action.onItemClicked = () => {
+          action.invoke(objectPath, view);
         };
+      }
 
-        this.menuComponent = new Menu(options);
-        this.menuComponent.once('destroy', this._clearMenuComponent);
+      return action;
+    });
+  }
+
+  /**
+   * Show popup menu with description of item on hover
+   * @param {number} x x-coordinates for popup
+   * @param {number} y x-coordinates for popup
+   * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
+   * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+   */
+  showSuperMenu(x, y, actions, menuOptions) {
+    this._createMenuComponent(x, y, actions, menuOptions);
+
+    this.menuComponent.showSuperMenu();
+  }
+
+  _clearMenuComponent() {
+    this.menuComponent = undefined;
+    delete this.menuComponent;
+  }
+
+  _createMenuComponent(x, y, actions, menuOptions = {}) {
+    if (this.menuComponent) {
+      this.menuComponent.dismiss();
     }
 
-    _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
-        let applicableActions = this.openmct.actions._groupedAndSortedObjectActions(objectPath, actionsToBeIncluded);
+    let options = {
+      x,
+      y,
+      actions,
+      ...menuOptions
+    };
 
-        this.showMenu(x, y, applicableActions);
-    }
+    this.menuComponent = new Menu(options);
+    this.menuComponent.once('destroy', this._clearMenuComponent);
+  }
+
+  _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
+    let applicableActions = this.openmct.actions._groupedAndSortedObjectActions(
+      objectPath,
+      actionsToBeIncluded
+    );
+
+    this.showMenu(x, y, applicableActions);
+  }
 }
 export default MenuAPI;

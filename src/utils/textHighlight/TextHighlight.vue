@@ -20,48 +20,44 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<!-- eslint-disable-next-line vue/no-v-html -->
-<span v-html="highlightedText"></span>
-
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <span v-html="highlightedText"></span>
 </template>
 
 <script>
-
 export default {
-    props: {
-        text: {
-            type: String,
-            required: true
-        },
-        highlight: {
-            type: String,
-            default() {
-                return '';
-            }
-        },
-        highlightClass: {
-            type: String,
-            default() {
-                return 'highlight';
-            }
-        }
+  props: {
+    text: {
+      type: String,
+      required: true
     },
-    computed: {
-        highlightedText() {
-            const highlight = this.highlight;
-
-            const normalCharsRegex = /^[^A-Za-z0-9]+$/g;
-
-            const newHighLight = normalCharsRegex.test(highlight)
-                ? `\\${highlight}`
-                : highlight;
-
-            const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
-
-            const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
-
-            return this.text.replace(highlightRegex, replacement);
-        }
+    highlight: {
+      type: String,
+      default() {
+        return '';
+      }
+    },
+    highlightClass: {
+      type: String,
+      default() {
+        return 'highlight';
+      }
     }
+  },
+  computed: {
+    highlightedText() {
+      const highlight = this.highlight;
+
+      const normalCharsRegex = /^[^A-Za-z0-9]+$/g;
+
+      const newHighLight = normalCharsRegex.test(highlight) ? `\\${highlight}` : highlight;
+
+      const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
+
+      const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
+
+      return this.text.replace(highlightRegex, replacement);
+    }
+  }
 };
 </script>

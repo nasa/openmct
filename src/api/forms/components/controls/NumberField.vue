@@ -21,51 +21,48 @@
 -->
 
 <template>
-<span class="form-control shell">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <input
-            v-model="field"
-            :aria-label="model.name"
-            type="number"
-            :min="model.min"
-            :max="model.max"
-            :step="model.step"
-            @input="updateText()"
-        >
+  <span class="form-control shell">
+    <span class="field control" :class="model.cssClass">
+      <input
+        v-model="field"
+        :aria-label="model.name"
+        type="number"
+        :min="model.min"
+        :max="model.max"
+        :step="model.step"
+        @input="updateText()"
+      />
     </span>
-</span>
+  </span>
 </template>
 
 <script>
 import { throttle } from 'lodash';
 
 export default {
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            field: this.model.value
-        };
-    },
-    mounted() {
-        this.updateText = throttle(this.updateText.bind(this), 200);
-    },
-    methods: {
-        updateText() {
-            const data = {
-                model: this.model,
-                value: this.field
-            };
-
-            this.$emit('onChange', data);
-        }
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      field: this.model.value
+    };
+  },
+  mounted() {
+    this.updateText = throttle(this.updateText.bind(this), 200);
+  },
+  methods: {
+    updateText() {
+      const data = {
+        model: this.model,
+        value: this.field
+      };
+
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

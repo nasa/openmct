@@ -21,56 +21,56 @@
  *****************************************************************************/
 
 export default class StalenessUtils {
-    constructor(openmct, domainObject) {
-        this.openmct = openmct;
-        this.domainObject = domainObject;
-        this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-        this.lastStalenessResponseTime = 0;
+  constructor(openmct, domainObject) {
+    this.openmct = openmct;
+    this.domainObject = domainObject;
+    this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+    this.lastStalenessResponseTime = 0;
 
-        this.setTimeSystem(this.openmct.time.timeSystem());
-        this.watchTimeSystem();
+    this.setTimeSystem(this.openmct.time.timeSystem());
+    this.watchTimeSystem();
+  }
+
+  shouldUpdateStaleness(stalenessResponse, id) {
+    const stalenessResponseTime = this.parseTime(stalenessResponse);
+
+    if (stalenessResponseTime > this.lastStalenessResponseTime) {
+      this.lastStalenessResponseTime = stalenessResponseTime;
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  watchTimeSystem() {
+    this.openmct.time.on('timeSystem', this.setTimeSystem, this);
+  }
+
+  unwatchTimeSystem() {
+    this.openmct.time.off('timeSystem', this.setTimeSystem, this);
+  }
+
+  setTimeSystem(timeSystem) {
+    let metadataValue = { format: timeSystem.key };
+
+    if (this.metadata) {
+      metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
     }
 
-    shouldUpdateStaleness(stalenessResponse, id) {
-        const stalenessResponseTime = this.parseTime(stalenessResponse);
+    const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
-        if (stalenessResponseTime > this.lastStalenessResponseTime) {
-            this.lastStalenessResponseTime = stalenessResponseTime;
+    this.parseTime = (stalenessResponse) => {
+      const stalenessDatum = {
+        ...stalenessResponse,
+        source: stalenessResponse[timeSystem.key]
+      };
 
-            return true;
-        } else {
-            return false;
-        }
-    }
+      return valueFormatter.parse(stalenessDatum);
+    };
+  }
 
-    watchTimeSystem() {
-        this.openmct.time.on('timeSystem', this.setTimeSystem, this);
-    }
-
-    unwatchTimeSystem() {
-        this.openmct.time.off('timeSystem', this.setTimeSystem, this);
-    }
-
-    setTimeSystem(timeSystem) {
-        let metadataValue = { format: timeSystem.key };
-
-        if (this.metadata) {
-            metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
-        }
-
-        const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
-
-        this.parseTime = (stalenessResponse) => {
-            const stalenessDatum = {
-                ...stalenessResponse,
-                source: stalenessResponse[timeSystem.key]
-            };
-
-            return valueFormatter.parse(stalenessDatum);
-        };
-    }
-
-    destroy() {
-        this.unwatchTimeSystem();
-    }
+  destroy() {
+    this.unwatchTimeSystem();
+  }
 }

@@ -274,10 +274,7 @@
             "id": "ac0d7eb1-b485-458f-bd2a-a63aa87a3a8a"
           }
         ],
-        "layoutGrid": [
-          10,
-          10
-        ],
+        "layoutGrid": [10, 10],
         "objectStyles": {
           "ed63cc29-80e2-4e2b-a472-3d6d4adbf310": {
             "staticStyle": {
@@ -1455,9 +1452,7 @@
                   "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
                   "telemetry": "any",
                   "operation": "greaterThan",
-                  "input": [
-                    "120"
-                  ],
+                  "input": ["120"],
                   "metadata": "sin"
                 }
               ]
@@ -1475,10 +1470,7 @@
                   "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
                   "telemetry": "any",
                   "operation": "between",
-                  "input": [
-                    "120",
-                    "-20"
-                  ],
+                  "input": ["120", "-20"],
                   "metadata": "sin"
                 }
               ]
@@ -1496,9 +1488,7 @@
                   "id": "6707be12-6a6e-4535-bb97-ab5c86f99934",
                   "telemetry": "any",
                   "operation": "lessThan",
-                  "input": [
-                    "-20"
-                  ],
+                  "input": ["-20"],
                   "metadata": "sin"
                 }
               ]
@@ -1550,9 +1540,7 @@
                   "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
                   "telemetry": "any",
                   "operation": "greaterThan",
-                  "input": [
-                    "120"
-                  ],
+                  "input": ["120"],
                   "metadata": "sin"
                 }
               ]
@@ -1570,10 +1558,7 @@
                   "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
                   "telemetry": "any",
                   "operation": "between",
-                  "input": [
-                    "120",
-                    "-20"
-                  ],
+                  "input": ["120", "-20"],
                   "metadata": "sin"
                 }
               ]
@@ -1591,9 +1576,7 @@
                   "id": "6707be12-6a6e-4535-bb97-ab5c86f99934",
                   "telemetry": "any",
                   "operation": "lessThan",
-                  "input": [
-                    "-20"
-                  ],
+                  "input": ["-20"],
                   "metadata": "sin"
                 }
               ]
@@ -1645,9 +1628,7 @@
                   "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
                   "telemetry": "any",
                   "operation": "greaterThan",
-                  "input": [
-                    "150"
-                  ],
+                  "input": ["150"],
                   "metadata": "sin"
                 }
               ]
@@ -1665,10 +1646,7 @@
                   "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
                   "telemetry": "any",
                   "operation": "between",
-                  "input": [
-                    "50",
-                    "-50"
-                  ],
+                  "input": ["50", "-50"],
                   "metadata": "sin"
                 }
               ]
@@ -1720,9 +1698,7 @@
                   "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
                   "telemetry": "any",
                   "operation": "greaterThan",
-                  "input": [
-                    "150"
-                  ],
+                  "input": ["150"],
                   "metadata": "sin"
                 }
               ]
@@ -1740,10 +1716,7 @@
                   "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
                   "telemetry": "any",
                   "operation": "between",
-                  "input": [
-                    "50",
-                    "-50"
-                  ],
+                  "input": ["50", "-50"],
                   "metadata": "sin"
                 }
               ]

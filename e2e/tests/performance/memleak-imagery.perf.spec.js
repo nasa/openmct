@@ -38,82 +38,84 @@ const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 
 // eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('Memory Performance tests', () => {
-    test.beforeEach(async ({ page, browser }, testInfo) => {
-        // Go to baseURL
-        await page.goto('./', { waitUntil: 'networkidle' });
+  test.beforeEach(async ({ page, browser }, testInfo) => {
+    // Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
 
-        // Click a:has-text("My Items")
-        await page.locator('a:has-text("My Items")').click({
-            button: 'right'
-        });
-
-        // Click text=Import from JSON
-        await page.locator('text=Import from JSON').click();
-
-        // Upload Performance Display Layout.json
-        await page.setInputFiles('#fileElem', filePath);
-
-        // Click text=OK
-        await page.locator('text=OK').click();
-
-        await expect(page.locator('a:has-text("Performance Display Layout Display Layout")')).toBeVisible();
+    // Click a:has-text("My Items")
+    await page.locator('a:has-text("My Items")').click({
+      button: 'right'
     });
 
-    test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    // Click text=Import from JSON
+    await page.locator('text=Import from JSON').click();
 
-        await page.goto('./', {waitUntil: 'networkidle'});
+    // Upload Performance Display Layout.json
+    await page.setInputFiles('#fileElem', filePath);
 
-        // To to Search Available after Launch
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-        // Fill Search input
-        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Performance Display Layout');
-        //Search Result Appears and is clicked
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('a:has-text("Performance Display Layout")').first().click()
-        ]);
+    // Click text=OK
+    await page.locator('text=OK').click();
 
-        //Time to Example Imagery Frame loads within Display Layout
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+    await expect(
+      page.locator('a:has-text("Performance Display Layout Display Layout")')
+    ).toBeVisible();
+  });
 
-        const client = await page.context().newCDPSession(page);
-        await client.send('HeapProfiler.enable');
-        await client.send('HeapProfiler.startSampling');
-        // await client.send('HeapProfiler.collectGarbage');
-        await client.send('Performance.enable');
+  test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
+    await page.goto('./', { waitUntil: 'networkidle' });
 
-        let performanceMetricsBefore = await client.send('Performance.getMetrics');
-        console.log(performanceMetricsBefore.metrics);
+    // To to Search Available after Launch
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    // Fill Search input
+    await page
+      .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+      .fill('Performance Display Layout');
+    //Search Result Appears and is clicked
+    await Promise.all([
+      page.waitForNavigation(),
+      page.locator('a:has-text("Performance Display Layout")').first().click()
+    ]);
 
-        //await client.send('Performance.disable');
+    //Time to Example Imagery Frame loads within Display Layout
+    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+    //Time to Example Imagery object loads
+    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
 
-        //Open Large view
-        await page.locator('button:has-text("Large View")').click();
-        await client.send('HeapProfiler.takeHeapSnapshot');
+    const client = await page.context().newCDPSession(page);
+    await client.send('HeapProfiler.enable');
+    await client.send('HeapProfiler.startSampling');
+    // await client.send('HeapProfiler.collectGarbage');
+    await client.send('Performance.enable');
 
-        //Time to Imagery Rendered in Large Frame
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
+    let performanceMetricsBefore = await client.send('Performance.getMetrics');
+    console.log(performanceMetricsBefore.metrics);
 
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+    //await client.send('Performance.disable');
 
-        // Click Close Icon
-        await page.locator('.c-click-icon').click();
+    //Open Large view
+    await page.locator('button:has-text("Large View")').click();
+    await client.send('HeapProfiler.takeHeapSnapshot');
 
-        //Time to Example Imagery Frame loads within Display Layout
-        await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible'});
-        //Time to Example Imagery object loads
-        await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible'});
+    //Time to Imagery Rendered in Large Frame
+    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
 
-        await client.send('HeapProfiler.collectGarbage');
-        //await client.send('Performance.enable');
+    //Time to Example Imagery object loads
+    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
 
-        let performanceMetricsAfter = await client.send('Performance.getMetrics');
-        console.log(performanceMetricsAfter.metrics);
+    // Click Close Icon
+    await page.locator('.c-click-icon').click();
 
-        //await client.send('Performance.disable');
+    //Time to Example Imagery Frame loads within Display Layout
+    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+    //Time to Example Imagery object loads
+    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
 
-    });
+    await client.send('HeapProfiler.collectGarbage');
+    //await client.send('Performance.enable');
+
+    let performanceMetricsAfter = await client.send('Performance.getMetrics');
+    console.log(performanceMetricsAfter.metrics);
+
+    //await client.send('Performance.disable');
+  });
 });

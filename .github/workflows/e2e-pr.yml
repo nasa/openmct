@@ -1,4 +1,4 @@
-name: "e2e-pr"
+name: 'e2e-pr'
 on:
   workflow_dispatch:
   pull_request:

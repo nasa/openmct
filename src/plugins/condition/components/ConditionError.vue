@@ -21,62 +21,58 @@
 -->
 
 <template>
-<div
-    v-if="conditionErrors.length"
-    class="c-condition__errors"
->
+  <div v-if="conditionErrors.length" class="c-condition__errors">
     <div
-        v-for="(error, index) in conditionErrors"
-        :key="index"
-        class="u-alert u-alert--block u-alert--with-icon"
-    >{{ error.message.errorText }} {{ error.additionalInfo }}
+      v-for="(error, index) in conditionErrors"
+      :key="index"
+      class="u-alert u-alert--block u-alert--with-icon"
+    >
+      {{ error.message.errorText }} {{ error.additionalInfo }}
     </div>
-</div>
+  </div>
 </template>
 
 <script>
-
-import { ERROR } from "@/plugins/condition/utils/constants";
+import { ERROR } from '@/plugins/condition/utils/constants';
 
 export default {
-    name: 'ConditionError',
-    inject: [
-        'openmct'
-    ],
-    props: {
-        condition: {
-            type: Object,
-            default() {
-                return undefined;
-            }
-        }
-    },
-    data() {
-        return {
-            conditionErrors: []
-        };
-    },
-    mounted() {
-        this.getConditionErrors();
-    },
-    methods: {
-        getConditionErrors() {
-            if (this.condition) {
-                this.condition.configuration.criteria.forEach((criterion, index) => {
-                    this.getCriterionErrors(criterion, index);
-                });
-            }
-        },
-        getCriterionErrors(criterion, index) {
-            //It is sufficient to check for absence of telemetry here since the condition manager ensures that telemetry for a criterion is set if it exists
-            const isInvalidTelemetry = !criterion.telemetry && (criterion.telemetry !== 'all' && criterion.telemetry !== 'any');
-            if (isInvalidTelemetry) {
-                this.conditionErrors.push({
-                    message: ERROR.TELEMETRY_NOT_FOUND,
-                    additionalInfo: ''
-                });
-            }
-        }
+  name: 'ConditionError',
+  inject: ['openmct'],
+  props: {
+    condition: {
+      type: Object,
+      default() {
+        return undefined;
+      }
     }
+  },
+  data() {
+    return {
+      conditionErrors: []
+    };
+  },
+  mounted() {
+    this.getConditionErrors();
+  },
+  methods: {
+    getConditionErrors() {
+      if (this.condition) {
+        this.condition.configuration.criteria.forEach((criterion, index) => {
+          this.getCriterionErrors(criterion, index);
+        });
+      }
+    },
+    getCriterionErrors(criterion, index) {
+      //It is sufficient to check for absence of telemetry here since the condition manager ensures that telemetry for a criterion is set if it exists
+      const isInvalidTelemetry =
+        !criterion.telemetry && criterion.telemetry !== 'all' && criterion.telemetry !== 'any';
+      if (isInvalidTelemetry) {
+        this.conditionErrors.push({
+          message: ERROR.TELEMETRY_NOT_FOUND,
+          additionalInfo: ''
+        });
+      }
+    }
+  }
 };
 </script>

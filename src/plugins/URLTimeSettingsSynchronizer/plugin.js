@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import URLTimeSettingsSynchronizer from "./URLTimeSettingsSynchronizer.js";
+import URLTimeSettingsSynchronizer from './URLTimeSettingsSynchronizer.js';
 
 export default function () {
-    return function install(openmct) {
-        return new URLTimeSettingsSynchronizer(openmct);
-    };
+  return function install(openmct) {
+    return new URLTimeSettingsSynchronizer(openmct);
+  };
 }

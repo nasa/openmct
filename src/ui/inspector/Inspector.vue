@@ -21,18 +21,11 @@
 -->
 
 <template>
-<div class="c-inspector js-inspector">
+  <div class="c-inspector js-inspector">
     <object-name />
-    <InspectorTabs
-        :selection="selection"
-        :is-editing="isEditing"
-        @select-tab="selectTab"
-    />
-    <InspectorViews
-        :selection="selection"
-        :selected-tab="selectedTab"
-    />
-</div>
+    <InspectorTabs :selection="selection" :is-editing="isEditing" @select-tab="selectTab" />
+    <InspectorViews :selection="selection" :selected-tab="selectedTab" />
+  </div>
 </template>
 
 <script>
@@ -41,37 +34,37 @@ import InspectorTabs from './InspectorTabs.vue';
 import InspectorViews from './InspectorViews.vue';
 
 export default {
-    components: {
-        ObjectName,
-        InspectorTabs,
-        InspectorViews
-    },
-    inject: ['openmct'],
-    props: {
-        isEditing: {
-            type: Boolean,
-            required: true
-        }
-    },
-    data() {
-        return {
-            selection: this.openmct.selection.get(),
-            selectedTab: undefined
-        };
-    },
-    mounted() {
-        this.openmct.selection.on('change', this.setSelection);
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.setSelection);
-    },
-    methods: {
-        setSelection(selection) {
-            this.selection = selection;
-        },
-        selectTab(tab) {
-            this.selectedTab = tab;
-        }
+  components: {
+    ObjectName,
+    InspectorTabs,
+    InspectorViews
+  },
+  inject: ['openmct'],
+  props: {
+    isEditing: {
+      type: Boolean,
+      required: true
     }
+  },
+  data() {
+    return {
+      selection: this.openmct.selection.get(),
+      selectedTab: undefined
+    };
+  },
+  mounted() {
+    this.openmct.selection.on('change', this.setSelection);
+  },
+  destroyed() {
+    this.openmct.selection.off('change', this.setSelection);
+  },
+  methods: {
+    setSelection(selection) {
+      this.selection = selection;
+    },
+    selectTab(tab) {
+      this.selectedTab = tab;
+    }
+  }
 };
 </script>
