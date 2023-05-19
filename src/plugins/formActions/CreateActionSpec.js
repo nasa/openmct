@@ -21,10 +21,7 @@
  *****************************************************************************/
 import CreateAction from './CreateAction';
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 import { debounce } from 'lodash';
 
@@ -32,97 +29,96 @@ let parentObject;
 let parentObjectPath;
 let unObserve;
 
-describe("The create action plugin", () => {
-    let openmct;
+describe('The create action plugin', () => {
+  let openmct;
 
-    const TYPES = [
-        'clock',
-        'conditionWidget',
-        'conditionWidget',
-        'example.imagery',
-        'example.state-generator',
-        'flexible-layout',
-        'folder',
-        'generator',
-        'hyperlink',
-        'LadTable',
-        'LadTableSet',
-        'layout',
-        'mmgis',
-        'notebook',
-        'plan',
-        'table',
-        'tabs',
-        'telemetry-mean',
-        'telemetry.plot.bar-graph',
-        'telemetry.plot.overlay',
-        'telemetry.plot.stacked',
-        'time-strip',
-        'timer',
-        'webpage'
-    ];
+  const TYPES = [
+    'clock',
+    'conditionWidget',
+    'conditionWidget',
+    'example.imagery',
+    'example.state-generator',
+    'flexible-layout',
+    'folder',
+    'generator',
+    'hyperlink',
+    'LadTable',
+    'LadTableSet',
+    'layout',
+    'mmgis',
+    'notebook',
+    'plan',
+    'table',
+    'tabs',
+    'telemetry-mean',
+    'telemetry.plot.bar-graph',
+    'telemetry.plot.overlay',
+    'telemetry.plot.stacked',
+    'time-strip',
+    'timer',
+    'webpage'
+  ];
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+    openmct.on('start', done);
+    openmct.startHeadless();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  describe('creates new objects for a', () => {
+    beforeEach(() => {
+      parentObject = {
+        name: 'mock folder',
+        type: 'folder',
+        identifier: {
+          key: 'mock-folder',
+          namespace: ''
+        },
+        composition: []
+      };
+      parentObjectPath = [parentObject];
+
+      spyOn(openmct.objects, 'save');
+      openmct.objects.save.and.callThrough();
+      spyOn(openmct.forms, 'showForm');
+      openmct.forms.showForm.and.callFake((formStructure) => {
+        return Promise.resolve({
+          name: 'test',
+          notes: 'test notes',
+          location: parentObjectPath
+        });
+      });
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+      parentObject = null;
+      unObserve();
     });
 
-    describe('creates new objects for a', () => {
-        beforeEach(() => {
-            parentObject = {
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                },
-                composition: []
-            };
-            parentObjectPath = [parentObject];
+    TYPES.forEach((type) => {
+      it(`type ${type}`, (done) => {
+        function callback(newObject) {
+          const composition = newObject.composition;
 
-            spyOn(openmct.objects, 'save');
-            openmct.objects.save.and.callThrough();
-            spyOn(openmct.forms, 'showForm');
-            openmct.forms.showForm.and.callFake(formStructure => {
-                return Promise.resolve({
-                    name: 'test',
-                    notes: 'test notes',
-                    location: parentObjectPath
-                });
-            });
-        });
+          openmct.objects.get(composition[0]).then((object) => {
+            expect(object.type).toEqual(type);
+            expect(object.location).toEqual(openmct.objects.makeKeyString(parentObject.identifier));
 
-        afterEach(() => {
-            parentObject = null;
-            unObserve();
-        });
+            done();
+          });
+        }
 
-        TYPES.forEach(type => {
-            it(`type ${type}`, (done) => {
-                function callback(newObject) {
-                    const composition = newObject.composition;
+        const deBouncedCallback = debounce(callback, 300);
+        unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
-                    openmct.objects.get(composition[0])
-                        .then(object => {
-                            expect(object.type).toEqual(type);
-                            expect(object.location).toEqual(openmct.objects.makeKeyString(parentObject.identifier));
-
-                            done();
-                        });
-                }
-
-                const deBouncedCallback = debounce(callback, 300);
-                unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
-
-                const createAction = new CreateAction(openmct, type, parentObject);
-                createAction.invoke();
-            });
-        });
+        const createAction = new CreateAction(openmct, type, parentObject);
+        createAction.invoke();
+      });
     });
+  });
 });

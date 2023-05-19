@@ -25,55 +25,55 @@ import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPl
 import Vue from 'vue';
 
 export default function ScatterPlotViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === TIME_STRIP_KEY);
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === TIME_STRIP_KEY);
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: SCATTER_PLOT_VIEW,
-        name: 'Scatter Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
-        },
+  return {
+    key: SCATTER_PLOT_VIEW,
+    name: 'Scatter Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject && domainObject.type === SCATTER_PLOT_KEY;
+    },
 
-        canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
-        },
+    canEdit(domainObject, objectPath) {
+      return domainObject && domainObject.type === SCATTER_PLOT_KEY;
+    },
 
-        view: function (domainObject, objectPath) {
-            let component;
+    view: function (domainObject, objectPath) {
+      let component;
 
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            ScatterPlotView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<scatter-plot-view :options="options"></scatter-plot-view>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
+          component = new Vue({
+            el: element,
+            components: {
+              ScatterPlotView
+            },
+            provide: {
+              openmct,
+              domainObject,
+              path: objectPath
+            },
+            data() {
+              return {
+                options: {
+                  compact: isCompact
                 }
-            };
+              };
+            },
+            template: '<scatter-plot-view :options="options"></scatter-plot-view>'
+          });
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

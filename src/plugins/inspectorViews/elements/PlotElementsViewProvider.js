@@ -24,44 +24,44 @@ import PlotElementsPool from './PlotElementsPool.vue';
 import Vue from 'vue';
 
 export default function PlotElementsViewProvider(openmct) {
-    return {
-        key: 'plotElementsView',
-        name: 'Elements',
-        canView: function (selection) {
-            return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
+  return {
+    key: 'plotElementsView',
+    name: 'Elements',
+    canView: function (selection) {
+      return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
+    },
+    view: function (selection) {
+      let component;
+
+      const domainObject = selection?.[0]?.[0]?.context?.item;
+
+      return {
+        show: function (el) {
+          component = new Vue({
+            el,
+            components: {
+              PlotElementsPool
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: `<PlotElementsPool />`
+          });
         },
-        view: function (selection) {
-            let component;
+        showTab: function (isEditing) {
+          const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-            const domainObject = selection?.[0]?.[0]?.context?.item;
-
-            return {
-                show: function (el) {
-                    component = new Vue({
-                        el,
-                        components: {
-                            PlotElementsPool
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: `<PlotElementsPool />`
-                    });
-                },
-                showTab: function (isEditing) {
-                    const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
-
-                    return hasComposition && isEditing;
-                },
-                priority: function () {
-                    return openmct.priority.DEFAULT;
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+          return hasComposition && isEditing;
+        },
+        priority: function () {
+          return openmct.priority.DEFAULT;
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

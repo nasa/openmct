@@ -22,72 +22,78 @@
 
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const { selectInspectorTab, expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
-const { startAndAddRestrictedNotebookObject, enterTextEntry } = require('../../helper/notebookUtils');
+const {
+  selectInspectorTab,
+  expandTreePaneItemByName,
+  createDomainObjectWithDefaults
+} = require('../../appActions');
+const {
+  startAndAddRestrictedNotebookObject,
+  enterTextEntry
+} = require('../../helper/notebookUtils');
 
 test.describe('Visual - Restricted Notebook', () => {
-    test.beforeEach(async ({ page }) => {
-        await startAndAddRestrictedNotebookObject(page);
-    });
+  test.beforeEach(async ({ page }) => {
+    await startAndAddRestrictedNotebookObject(page);
+  });
 
-    test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
-        // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
-    });
+  test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
+    // Take a snapshot of the newly created CUSTOM_NAME notebook
+    await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
+  });
 });
 
 test.describe('Visual - Notebook', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  });
+  test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
+
+    const notebook = await createDomainObjectWithDefaults(page, {
+      type: 'Notebook',
+      name: 'Embed Test Notebook'
     });
-    test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-
-        const notebook = await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Embed Test Notebook"
-        });
-        // Create Overlay Plot
-        await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: "Dropped Overlay Plot"
-        });
-
-        await expandTreePaneItemByName(page, myItemsFolderName);
-
-        await page.goto(notebook.url);
-
-        await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
-
-        await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
-
+    // Create Overlay Plot
+    await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Dropped Overlay Plot'
     });
-    test("Blur 'Add tag' on Notebook", async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, {
-            type: 'Notebook',
-            name: "Add Tag Test Notebook"
-        });
-        await enterTextEntry(page, "Entry 0");
 
-        // Click on Annotations tab
-        await selectInspectorTab(page, "Annotations");
+    await expandTreePaneItemByName(page, myItemsFolderName);
 
-        // Take snapshot of the notebook with the Annotations tab opened
-        await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
+    await page.goto(notebook.url);
 
-        await page.locator('button:has-text("Add Tag")').click();
+    await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
 
-        // Take snapshot of the notebook with the AutoComplete field visible
-        await percySnapshot(page, `Notebook Add Tag (theme: '${theme}')`);
-
-        // Click inside the AutoComplete field
-        await page.locator('[placeholder="Type to select tag"]').click();
-
-        // Click on the "Tags" header (simulating a click outside the autocomplete field)
-        await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
-
-        // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
-        await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
+    await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
+  });
+  test("Blur 'Add tag' on Notebook", async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Notebook',
+      name: 'Add Tag Test Notebook'
     });
+    await enterTextEntry(page, 'Entry 0');
+
+    // Click on Annotations tab
+    await selectInspectorTab(page, 'Annotations');
+
+    // Take snapshot of the notebook with the Annotations tab opened
+    await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
+
+    await page.locator('button:has-text("Add Tag")').click();
+
+    // Take snapshot of the notebook with the AutoComplete field visible
+    await percySnapshot(page, `Notebook Add Tag (theme: '${theme}')`);
+
+    // Click inside the AutoComplete field
+    await page.locator('[placeholder="Type to select tag"]').click();
+
+    // Click on the "Tags" header (simulating a click outside the autocomplete field)
+    await page.locator('div.c-inspect-properties__header:has-text("Tags")').click();
+
+    // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
+    await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
+  });
 });

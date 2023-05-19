@@ -29,26 +29,31 @@ const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-    });
-    test.use({
-        storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-        clockOptions: {
-            shouldAdvanceTime: false //Don't advance the clock
-        }
-    });
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      shouldAdvanceTime: false //Don't advance the clock
+    }
+  });
 
-    test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-        await page.locator('a').filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' }).click();
-        //Ensure that we're on the Unnamed Overlay Plot object
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Overlay Plot with Telemetry Object');
+  test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
+    await page
+      .locator('a')
+      .filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' })
+      .click();
+    //Ensure that we're on the Unnamed Overlay Plot object
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+      'Overlay Plot with Telemetry Object'
+    );
 
-        //Wait for canvas to be rendered and stop animating
-        await page.locator('canvas >> nth=1').hover({trial: true});
+    //Wait for canvas to be rendered and stop animating
+    await page.locator('canvas >> nth=1').hover({ trial: true });
 
-        //Take snapshot of Sine Wave Generator within Overlay Plot
-        await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
-    });
+    //Take snapshot of Sine Wave Generator within Overlay Plot
+    await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
+  });
 });

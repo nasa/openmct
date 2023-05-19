@@ -30,65 +30,76 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Grand Search', () => {
-    let clock;
-    let displayLayout;
-    test.beforeEach(async ({ page, theme }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+  let clock;
+  let displayLayout;
+  test.beforeEach(async ({ page, theme }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-        displayLayout = await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: 'Visual Test Display Layout'
-        });
-
-        clock = await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            name: 'Visual Test Clock',
-            parent: displayLayout.uuid
-        });
-
-        // Navigate to display layout and collapse the left pane
-        await page.goto(displayLayout.url);
-        await page.getByTitle('Collapse Browse Pane').click();
+    displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Visual Test Display Layout'
     });
 
-    test('Can search for folder object, and subsequent search dropdown behaves properly', async ({ page, theme }) => {
-        const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
-        const searchResults = page.getByRole('searchbox', { name: 'OpenMCT Search' });
-
-        // Search for the clock object
-        await searchInput.click();
-        await searchInput.fill(clock.name);
-        await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
-
-        //Searching for an object returns that object in the grandsearch
-        await percySnapshot(page, `Searching for Clock Object (theme: '${theme}')`);
-
-        // Enter Edit mode on the Display Layout
-        await page.getByRole('button', { name: 'Edit' }).click();
-
-        // Navigate to the clock object while in edit mode on the display layout
-        await searchInput.click();
-        await searchResults.getByText('Visual Test Clock').click();
-
-        await percySnapshot(page, `Preview for clock should display when editing enabled and search item clicked (theme: '${theme}')`);
-
-        // Close the preview
-        await page.getByRole('button', { name: 'Close' }).click();
-        await percySnapshot(page, `Search should still be showing after preview closed (theme: '${theme}')`);
-
-        // Save and finish editing the Display Layout
-        await page.getByRole('button', { name: 'Save' }).click();
-        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-        // Search for the clock object
-        await searchInput.click();
-        await searchInput.fill(clock.name);
-        await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
-
-        // Navigate to the clock object while not in edit mode on the display layout
-        await searchResults.getByText('Visual Test Clock').click();
-
-        await percySnapshot(page, `Clicking on search results should navigate to them if not editing (theme: '${theme}')`);
+    clock = await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'Visual Test Clock',
+      parent: displayLayout.uuid
     });
+
+    // Navigate to display layout and collapse the left pane
+    await page.goto(displayLayout.url);
+    await page.getByTitle('Collapse Browse Pane').click();
+  });
+
+  test('Can search for folder object, and subsequent search dropdown behaves properly', async ({
+    page,
+    theme
+  }) => {
+    const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
+    const searchResults = page.getByRole('searchbox', { name: 'OpenMCT Search' });
+
+    // Search for the clock object
+    await searchInput.click();
+    await searchInput.fill(clock.name);
+    await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
+
+    //Searching for an object returns that object in the grandsearch
+    await percySnapshot(page, `Searching for Clock Object (theme: '${theme}')`);
+
+    // Enter Edit mode on the Display Layout
+    await page.getByRole('button', { name: 'Edit' }).click();
+
+    // Navigate to the clock object while in edit mode on the display layout
+    await searchInput.click();
+    await searchResults.getByText('Visual Test Clock').click();
+
+    await percySnapshot(
+      page,
+      `Preview for clock should display when editing enabled and search item clicked (theme: '${theme}')`
+    );
+
+    // Close the preview
+    await page.getByRole('button', { name: 'Close' }).click();
+    await percySnapshot(
+      page,
+      `Search should still be showing after preview closed (theme: '${theme}')`
+    );
+
+    // Save and finish editing the Display Layout
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Search for the clock object
+    await searchInput.click();
+    await searchInput.fill(clock.name);
+    await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
+
+    // Navigate to the clock object while not in edit mode on the display layout
+    await searchResults.getByText('Visual Test Clock').click();
+
+    await percySnapshot(
+      page,
+      `Clicking on search results should navigate to them if not editing (theme: '${theme}')`
+    );
+  });
 });
-

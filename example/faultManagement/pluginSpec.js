@@ -20,28 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
 
-describe("The Example Fault Source Plugin", () => {
-    let openmct;
+describe('The Example Fault Source Plugin', () => {
+  let openmct;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
-    });
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
 
-    it('is not installed by default', () => {
-        expect(openmct.faults.provider).toBeUndefined();
-    });
+  it('is not installed by default', () => {
+    expect(openmct.faults.provider).toBeUndefined();
+  });
 
-    it('can be installed', () => {
-        openmct.install(openmct.plugins.example.ExampleFaultSource());
-        expect(openmct.faults.provider).not.toBeUndefined();
-    });
+  it('can be installed', () => {
+    openmct.install(openmct.plugins.example.ExampleFaultSource());
+    expect(openmct.faults.provider).not.toBeUndefined();
+  });
 });

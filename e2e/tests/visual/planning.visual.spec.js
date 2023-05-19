@@ -29,71 +29,71 @@ const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Planning', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Plan View', async ({ page, theme }) => {
+    const plan = await createPlanFromJSON(page, {
+      name: 'Plan Visual Test',
+      json: examplePlanSmall
     });
 
-    test('Plan View', async ({ page, theme }) => {
-        const plan = await createPlanFromJSON(page, {
-            name: 'Plan Visual Test',
-            json: examplePlanSmall
-        });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
+    await percySnapshot(page, `Plan View (theme: ${theme})`, {
+      scope: snapshotScope
+    });
+  });
 
-        await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-        await percySnapshot(page, `Plan View (theme: ${theme})`, {
-            scope: snapshotScope
-        });
+  test('Plan View w/ draft status', async ({ page, theme }) => {
+    const plan = await createPlanFromJSON(page, {
+      name: 'Plan Visual Test (Draft)',
+      json: examplePlanSmall
+    });
+    await page.goto('./#/browse/mine');
+
+    await setDraftStatusForPlan(page, plan);
+
+    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
+    await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`, {
+      scope: snapshotScope
+    });
+  });
+
+  test('Gantt Chart View', async ({ page, theme }) => {
+    const ganttChart = await createDomainObjectWithDefaults(page, {
+      type: 'Gantt Chart',
+      name: 'Gantt Chart Visual Test'
+    });
+    await createPlanFromJSON(page, {
+      json: examplePlanSmall,
+      parent: ganttChart.uuid
+    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
+    await percySnapshot(page, `Gantt Chart View (theme: ${theme})`, {
+      scope: snapshotScope
+    });
+  });
+
+  test('Gantt Chart View w/ draft status', async ({ page, theme }) => {
+    const ganttChart = await createDomainObjectWithDefaults(page, {
+      type: 'Gantt Chart',
+      name: 'Gantt Chart Visual Test (Draft)'
+    });
+    const plan = await createPlanFromJSON(page, {
+      json: examplePlanSmall,
+      parent: ganttChart.uuid
     });
 
-    test('Plan View w/ draft status', async ({ page, theme }) => {
-        const plan = await createPlanFromJSON(page, {
-            name: 'Plan Visual Test (Draft)',
-            json: examplePlanSmall
-        });
-        await page.goto('./#/browse/mine');
+    await setDraftStatusForPlan(page, plan);
 
-        await setDraftStatusForPlan(page, plan);
+    await page.goto('./#/browse/mine');
 
-        await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-        await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`, {
-            scope: snapshotScope
-        });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
+    await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
+      scope: snapshotScope
     });
-
-    test('Gantt Chart View', async ({ page, theme }) => {
-        const ganttChart = await createDomainObjectWithDefaults(page, {
-            type: 'Gantt Chart',
-            name: 'Gantt Chart Visual Test'
-        });
-        await createPlanFromJSON(page, {
-            json: examplePlanSmall,
-            parent: ganttChart.uuid
-        });
-        await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-        await percySnapshot(page, `Gantt Chart View (theme: ${theme})`, {
-            scope: snapshotScope
-        });
-    });
-
-    test('Gantt Chart View w/ draft status', async ({ page, theme }) => {
-        const ganttChart = await createDomainObjectWithDefaults(page, {
-            type: 'Gantt Chart',
-            name: 'Gantt Chart Visual Test (Draft)'
-        });
-        const plan = await createPlanFromJSON(page, {
-            json: examplePlanSmall,
-            parent: ganttChart.uuid
-        });
-
-        await setDraftStatusForPlan(page, plan);
-
-        await page.goto('./#/browse/mine');
-
-        await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-        await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
-            scope: snapshotScope
-        });
-    });
+  });
 });
 
 /**
@@ -102,7 +102,7 @@ test.describe('Visual - Planning', () => {
  * @param {import('../../appActions').CreatedObjectInfo} plan
  */
 async function setDraftStatusForPlan(page, plan) {
-    await page.evaluate(async (planObject) => {
-        await window.openmct.status.set(planObject.uuid, 'draft');
-    }, plan);
+  await page.evaluate(async (planObject) => {
+    await window.openmct.status.set(planObject.uuid, 'draft');
+  }, plan);
 }

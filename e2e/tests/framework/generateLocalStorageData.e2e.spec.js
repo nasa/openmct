@@ -33,161 +33,228 @@
  */
 
 const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults, createExampleTelemetryObject, selectInspectorTab } = require('../../appActions.js');
+const {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
+  selectInspectorTab
+} = require('../../appActions.js');
 const { MISSION_TIME } = require('../../constants.js');
 const path = require('path');
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
-    test.use({
-        clockOptions: {
-            now: MISSION_TIME,
-            shouldAdvanceTime: true
-        }
+  test.use({
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    // Go to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  // TODO: Visual test for the generated object here
+  // - Move to using appActions to create the overlay plot
+  //   and embedded standard telemetry object
+  test('Generate Overlay Plot with Telemetry Object', async ({ page, context }) => {
+    // Create Overlay Plot
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: overlayPlotName
     });
 
-    test.beforeEach(async ({ page }) => {
-        // Go to baseURL
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+    // Create Telemetry Object
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    // Make Link from Telemetry Object to Overlay Plot
+    await page.locator('button[title="More options"]').click();
+
+    // Select 'Create Link' from dropdown
+    await page.getByRole('menuitem', { name: ' Create Link' }).click();
+
+    // Search and Select for overlay Plot within Create Modal
+    await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
+    await page
+      .getByRole('dialog')
+      .getByRole('searchbox', { name: 'Search Input' })
+      .fill(overlayPlot.name);
+    await page
+      .getByRole('treeitem', { name: new RegExp(overlayPlot.name) })
+      .locator('a')
+      .click();
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await page.goto(overlayPlot.url);
+
+    // TODO: Flesh Out Assertions against created Objects
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
+    await selectInspectorTab(page, 'Config');
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('span')
+      .first()
+      .click();
+
+    // TODO: Modify the Overlay Plot to use fixed Scaling
+    // TODO: Verify Autoscaling.
+
+    // TODO: Fix accessibility of Plot Series Properties tables
+    // Assert that the Plot Series properties have the correct values
+    await expect(
+      page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')
+    ).toBeVisible();
+    await expect(
+      page.locator(
+        '[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")'
+      )
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')
+    ).toBeVisible();
+
+    await page.goto(exampleTelemetry.url);
+    await selectInspectorTab(page, 'Properties');
+
+    // TODO: assert Example Telemetry property values
+    // await page.goto(exampleTelemetry.url);
+
+    // Save localStorage for future test execution
+    await context.storageState({
+      path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json')
+    });
+  });
+  // TODO: Merge this with previous test. Edit object created in previous test.
+  test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
+    // add overlay plot with defaults
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Overlay Plot with 5s Delay'
     });
 
-    // TODO: Visual test for the generated object here
-    // - Move to using appActions to create the overlay plot
-    //   and embedded standard telemetry object
-    test('Generate Overlay Plot with Telemetry Object', async ({ page, context }) => {
+    const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
 
-        // Create Overlay Plot
-        const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: overlayPlotName
-        });
+    await page.goto(swgWith5sDelay.url);
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
 
-        // Create Telemetry Object
-        const exampleTelemetry = await createExampleTelemetryObject(page);
+    //Edit Example Telemetry Object to include 5s loading Delay
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
-        // Make Link from Telemetry Object to Overlay Plot
-        await page.locator('button[title="More options"]').click();
+    await Promise.all([
+      page.waitForNavigation(),
+      page.locator('text=OK').click(),
+      //Wait for Save Banner to appear
+      page.waitForSelector('.c-message-banner__message')
+    ]);
 
-        // Select 'Create Link' from dropdown
-        await page.getByRole('menuitem', { name: ' Create Link' }).click();
+    // focus the overlay plot
+    await page.goto(overlayPlot.url);
 
-        // Search and Select for overlay Plot within Create Modal
-        await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
-        await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).fill(overlayPlot.name);
-        await page.getByRole('treeitem', { name: new RegExp(overlayPlot.name) }).locator('a').click();
-        await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
 
-        await page.goto(overlayPlot.url);
-
-        // TODO: Flesh Out Assertions against created Objects
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
-        await selectInspectorTab(page, 'Config');
-        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
-
-        // TODO: Modify the Overlay Plot to use fixed Scaling
-        // TODO: Verify Autoscaling.
-
-        // TODO: Fix accessibility of Plot Series Properties tables
-        // Assert that the Plot Series properties have the correct values
-        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
-
-        await page.goto(exampleTelemetry.url);
-        await selectInspectorTab(page, 'Properties');
-
-        // TODO: assert Example Telemetry property values
-        // await page.goto(exampleTelemetry.url);
-
-        // Save localStorage for future test execution
-        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json') });
+    // Clear Recently Viewed
+    await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
+    await page.getByRole('button', { name: 'OK' }).click();
+    //Save localStorage for future test execution
+    await context.storageState({
+      path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json')
     });
-    // TODO: Merge this with previous test. Edit object created in previous test.
-    test('Generate Overlay Plot with 5s Delay', async ({ page, context }) => {
-
-        // add overlay plot with defaults
-        const overlayPlot = await createDomainObjectWithDefaults(page, {
-            type: 'Overlay Plot',
-            name: 'Overlay Plot with 5s Delay'
-        });
-
-        const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
-
-        await page.goto(swgWith5sDelay.url);
-        await page.getByTitle('More options').click();
-        await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
-
-        //Edit Example Telemetry Object to include 5s loading Delay
-        await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
-
-        await Promise.all([
-            page.waitForNavigation(),
-            page.locator('text=OK').click(),
-            //Wait for Save Banner to appear
-            page.waitForSelector('.c-message-banner__message')
-        ]);
-
-        // focus the overlay plot
-        await page.goto(overlayPlot.url);
-
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
-
-        // Clear Recently Viewed
-        await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-        await page.getByRole('button', { name: 'OK' }).click();
-        //Save localStorage for future test execution
-        await context.storageState({ path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json') });
-    });
+  });
 });
 
 test.describe('Validate Overlay Plot with Telemetry Object @localStorage @generatedata', () => {
-    test.use({ storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json') });
-    test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+  test.use({
+    storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json')
+  });
+  test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-        await page.locator('a').filter({ hasText: overlayPlotName }).click();
-        // TODO: Flesh Out Assertions against created Objects
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
-        await selectInspectorTab(page, 'Config');
-        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+    await page.locator('a').filter({ hasText: overlayPlotName }).click();
+    // TODO: Flesh Out Assertions against created Objects
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
+    await selectInspectorTab(page, 'Config');
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('span')
+      .first()
+      .click();
 
-        // TODO: Modify the Overlay Plot to use fixed Scaling
-        // TODO: Verify Autoscaling.
+    // TODO: Modify the Overlay Plot to use fixed Scaling
+    // TODO: Verify Autoscaling.
 
-        // TODO: Fix accessibility of Plot Series Properties tables
-        // Assert that the Plot Series properties have the correct values
-        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
-    });
+    // TODO: Fix accessibility of Plot Series Properties tables
+    // Assert that the Plot Series properties have the correct values
+    await expect(
+      page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')
+    ).toBeVisible();
+    await expect(
+      page.locator(
+        '[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")'
+      )
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')
+    ).toBeVisible();
+  });
 });
 
 test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorage @generatedata', () => {
-    test.use({ storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json') });
-    test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
-        const plotName = 'Overlay Plot with 5s Delay';
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
+  test.use({
+    storageState: path.join(
+      __dirname,
+      '../../../e2e/test-data/overlay_plot_with_delay_storage.json'
+    )
+  });
+  test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
+    const plotName = 'Overlay Plot with 5s Delay';
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-        await page.locator('a').filter({ hasText: plotName }).click();
-        // TODO: Flesh Out Assertions against created Objects
-        await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
-        await selectInspectorTab(page, 'Config');
-        await page.getByRole('list', { name: 'Plot Series Properties' }).locator('span').first().click();
+    await page.locator('a').filter({ hasText: plotName }).click();
+    // TODO: Flesh Out Assertions against created Objects
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
+    await selectInspectorTab(page, 'Config');
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('span')
+      .first()
+      .click();
 
-        // TODO: Modify the Overlay Plot to use fixed Scaling
-        // TODO: Verify Autoscaling.
+    // TODO: Modify the Overlay Plot to use fixed Scaling
+    // TODO: Verify Autoscaling.
 
-        // TODO: Fix accessibility of Plot Series Properties tables
-        // Assert that the Plot Series properties have the correct values
-        await expect(page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')).toBeVisible();
-        await expect(page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')).toBeVisible();
-    });
+    // TODO: Fix accessibility of Plot Series Properties tables
+    // Assert that the Plot Series properties have the correct values
+    await expect(
+      page.locator('[role=cell]:has-text("Value")~[role=cell]:has-text("sin")')
+    ).toBeVisible();
+    await expect(
+      page.locator(
+        '[role=cell]:has-text("Line Method")~[role=cell]:has-text("Linear interpolation")'
+      )
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Markers")~[role=cell]:has-text("Point: 2px")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Alarm Markers")~[role=cell]:has-text("Enabled")')
+    ).toBeVisible();
+    await expect(
+      page.locator('[role=cell]:has-text("Limit Lines")~[role=cell]:has-text("Disabled")')
+    ).toBeVisible();
+  });
 });

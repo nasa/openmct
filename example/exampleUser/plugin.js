@@ -22,19 +22,21 @@
 
 import ExampleUserProvider from './ExampleUserProvider';
 
-export default function ExampleUserPlugin({autoLoginUser, defaultStatusRole} = {
+export default function ExampleUserPlugin(
+  { autoLoginUser, defaultStatusRole } = {
     autoLoginUser: 'guest',
     defaultStatusRole: 'test-role'
-}) {
-    return function install(openmct) {
-        const userProvider = new ExampleUserProvider(openmct, {
-            defaultStatusRole
-        });
+  }
+) {
+  return function install(openmct) {
+    const userProvider = new ExampleUserProvider(openmct, {
+      defaultStatusRole
+    });
 
-        if (autoLoginUser !== undefined) {
-            userProvider.autoLogin(autoLoginUser);
-        }
+    if (autoLoginUser !== undefined) {
+      userProvider.autoLogin(autoLoginUser);
+    }
 
-        openmct.user.setProvider(userProvider);
-    };
+    openmct.user.setProvider(userProvider);
+  };
 }

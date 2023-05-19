@@ -20,55 +20,41 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-toggle-switch">
+  <div class="c-toggle-switch">
     <label class="c-toggle-switch__control">
-        <input
-            :id="id"
-            type="checkbox"
-            :checked="checked"
-            @change="onUserSelect($event)"
-        >
-        <span
-            class="c-toggle-switch__slider"
-            role="switch"
-            :aria-label="name"
-        ></span>
+      <input :id="id" type="checkbox" :checked="checked" @change="onUserSelect($event)" />
+      <span class="c-toggle-switch__slider" role="switch" :aria-label="name"></span>
     </label>
-    <div
-        v-if="label && label.length"
-        class="c-toggle-switch__label"
-    >
-        {{ label }}
+    <div v-if="label && label.length" class="c-toggle-switch__label">
+      {{ label }}
     </div>
-</div>
+  </div>
 </template>
 
 <script>
-
 export default {
-    inject: ['openmct'],
-    props: {
-        id: {
-            type: String,
-            required: true
-        },
-        label: {
-            type: String,
-            required: false,
-            default: ''
-        },
-        name: {
-            type: String,
-            required: false,
-            default: ''
-        },
-        checked: Boolean
+  inject: ['openmct'],
+  props: {
+    id: {
+      type: String,
+      required: true
     },
-    methods: {
-        onUserSelect(event) {
-            this.$emit('change', event.target.checked);
-        }
+    label: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    name: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    checked: Boolean
+  },
+  methods: {
+    onUserSelect(event) {
+      this.$emit('change', event.target.checked);
     }
+  }
 };
-
 </script>

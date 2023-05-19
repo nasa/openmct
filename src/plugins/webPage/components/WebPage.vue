@@ -20,25 +20,25 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="l-iframe abs">
+  <div class="l-iframe abs">
     <iframe :src="url"></iframe>
-</div>
+  </div>
 </template>
 
 <script>
-const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    data: function () {
-        return {
-            currentDomainObject: this.domainObject
-        };
-    },
-    computed: {
-        url() {
-            return sanitizeUrl(this.currentDomainObject.url);
-        }
+  inject: ['openmct', 'domainObject'],
+  data: function () {
+    return {
+      currentDomainObject: this.domainObject
+    };
+  },
+  computed: {
+    url() {
+      return sanitizeUrl(this.currentDomainObject.url);
     }
+  }
 };
 </script>

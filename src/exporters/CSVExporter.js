@@ -21,17 +21,16 @@
  *****************************************************************************/
 
 import CSV from 'comma-separated-values';
-import {saveAs} from 'saveAs';
+import { saveAs } from 'saveAs';
 
 class CSVExporter {
-    export(rows, options) {
-        let headers = (options && options.headers)
-            || (Object.keys((rows[0] || {})).sort());
-        let filename = (options && options.filename) || "export.csv";
-        let csvText = new CSV(rows, { header: headers }).encode();
-        let blob = new Blob([csvText], { type: "text/csv" });
-        saveAs(blob, filename);
-    }
+  export(rows, options) {
+    let headers = (options && options.headers) || Object.keys(rows[0] || {}).sort();
+    let filename = (options && options.filename) || 'export.csv';
+    let csvText = new CSV(rows, { header: headers }).encode();
+    let blob = new Blob([csvText], { type: 'text/csv' });
+    saveAs(blob, filename);
+  }
 }
 
 export default CSVExporter;

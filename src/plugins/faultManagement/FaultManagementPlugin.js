@@ -27,16 +27,19 @@ import FaultManagementInspectorViewProvider from './FaultManagementInspectorView
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
 
 export default function FaultManagementPlugin() {
-    return function (openmct) {
-        openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
-            name: 'Fault Management',
-            creatable: false,
-            description: 'Fault Management View',
-            cssClass: 'icon-bell'
-        });
+  return function (openmct) {
+    openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
+      name: 'Fault Management',
+      creatable: false,
+      description: 'Fault Management View',
+      cssClass: 'icon-bell'
+    });
 
-        openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
-        openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
-    };
+    openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
+    openmct.objects.addProvider(
+      FAULT_MANAGEMENT_NAMESPACE,
+      new FaultManagementObjectProvider(openmct)
+    );
+  };
 }

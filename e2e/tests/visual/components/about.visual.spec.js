@@ -28,21 +28,25 @@ const { test, expect } = require('../../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Branding', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-    });
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  });
 
-    test('Visual - About Modal', async ({ page, theme }) => {
-        // Click About button
-        await page.click('.l-shell__app-logo');
+  test('Visual - About Modal', async ({ page, theme }) => {
+    // Click About button
+    await page.click('.l-shell__app-logo');
 
-        // Modify the Build information in 'about' to be consistent run-over-run
-        const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-        await expect(versionInformationLocator).toBeEnabled();
-        await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
+    // Modify the Build information in 'about' to be consistent run-over-run
+    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
+    await expect(versionInformationLocator).toBeEnabled();
+    await versionInformationLocator.evaluate(
+      (node) =>
+        (node.innerHTML =
+          '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
+    );
 
-        // Take a snapshot of the About modal
-        await percySnapshot(page, `About (theme: '${theme}')`);
-    });
+    // Take a snapshot of the About modal
+    await percySnapshot(page, `About (theme: '${theme}')`);
+  });
 });

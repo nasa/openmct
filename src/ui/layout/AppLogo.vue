@@ -20,11 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
-    ref="aboutLogo"
-    class="l-shell__app-logo"
-    @click="launchAbout"
-></div>
+  <div ref="aboutLogo" class="l-shell__app-logo" @click="launchAbout"></div>
 </template>
 
 <script>
@@ -32,28 +28,28 @@ import AboutDialog from './AboutDialog.vue';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct'],
-    mounted() {
-        let branding = this.openmct.branding();
-        if (branding.smallLogoImage) {
-            this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
-        }
-    },
-    methods: {
-        launchAbout() {
-            let vm = new Vue({
-                components: {AboutDialog},
-                provide: {
-                    openmct: this.openmct
-                },
-                template: '<about-dialog></about-dialog>'
-            }).$mount();
-
-            this.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'large'
-            });
-        }
+  inject: ['openmct'],
+  mounted() {
+    let branding = this.openmct.branding();
+    if (branding.smallLogoImage) {
+      this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
     }
+  },
+  methods: {
+    launchAbout() {
+      let vm = new Vue({
+        components: { AboutDialog },
+        provide: {
+          openmct: this.openmct
+        },
+        template: '<about-dialog></about-dialog>'
+      }).$mount();
+
+      this.openmct.overlays.overlay({
+        element: vm.$el,
+        size: 'large'
+      });
+    }
+  }
 };
 </script>

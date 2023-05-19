@@ -23,35 +23,39 @@
 import EventEmitter from 'EventEmitter';
 
 export default class LADTableConfiguration extends EventEmitter {
-    constructor(domainObject, openmct) {
-        super();
+  constructor(domainObject, openmct) {
+    super();
 
-        this.domainObject = domainObject;
-        this.openmct = openmct;
+    this.domainObject = domainObject;
+    this.openmct = openmct;
 
-        this.objectMutated = this.objectMutated.bind(this);
-        this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
+    this.objectMutated = this.objectMutated.bind(this);
+    this.unlistenFromMutation = openmct.objects.observe(
+      domainObject,
+      'configuration',
+      this.objectMutated
+    );
+  }
+
+  getConfiguration() {
+    const configuration = this.domainObject.configuration || {};
+    configuration.hiddenColumns = configuration.hiddenColumns || {};
+    configuration.isFixedLayout = configuration.isFixedLayout ?? true;
+
+    return configuration;
+  }
+
+  updateConfiguration(configuration) {
+    this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
+  }
+
+  objectMutated(configuration) {
+    if (configuration !== undefined) {
+      this.emit('change', configuration);
     }
+  }
 
-    getConfiguration() {
-        const configuration = this.domainObject.configuration || {};
-        configuration.hiddenColumns = configuration.hiddenColumns || {};
-        configuration.isFixedLayout = configuration.isFixedLayout ?? true;
-
-        return configuration;
-    }
-
-    updateConfiguration(configuration) {
-        this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
-    }
-
-    objectMutated(configuration) {
-        if (configuration !== undefined) {
-            this.emit('change', configuration);
-        }
-    }
-
-    destroy() {
-        this.unlistenFromMutation();
-    }
+  destroy() {
+    this.unlistenFromMutation();
+  }
 }

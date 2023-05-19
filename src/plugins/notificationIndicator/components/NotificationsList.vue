@@ -20,79 +20,76 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="t-message-list c-overlay__contents">
+  <div class="t-message-list c-overlay__contents">
     <div class="c-overlay__top-bar">
-        <div class="c-overlay__dialog-title">Notifications</div>
-        <div class="c-overlay__dialog-hint">
-            {{ notificationsCountDisplayMessage(notifications.length) }}
-        </div>
+      <div class="c-overlay__dialog-title">Notifications</div>
+      <div class="c-overlay__dialog-hint">
+        {{ notificationsCountDisplayMessage(notifications.length) }}
+      </div>
     </div>
-    <div
-        role="list"
-        class="w-messages c-overlay__messages"
-    >
-        <notification-message
-            v-for="(notification, notificationIndex) in notifications"
-            :key="notificationIndex"
-            :close-overlay="closeOverlay"
-            :notification="notification"
-            :notifications-count="notifications.length"
-        />
+    <div role="list" class="w-messages c-overlay__messages">
+      <notification-message
+        v-for="(notification, notificationIndex) in notifications"
+        :key="notificationIndex"
+        :close-overlay="closeOverlay"
+        :notification="notification"
+        :notifications-count="notifications.length"
+      />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
 import NotificationMessage from './NotificationMessage.vue';
 
 export default {
-    components: {
-        NotificationMessage
-    },
-    inject: ['openmct'],
-    props: {
-        notifications: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {};
-    },
-    mounted() {
-        this.openOverlay();
-    },
-    methods: {
-        openOverlay() {
-            this.overlay = this.openmct.overlays.overlay({
-                element: this.$el,
-                size: 'large',
-                dismissable: true,
-                buttons: [
-                    {
-                        label: 'Clear All Notifications',
-                        emphasis: true,
-                        callback: () => {
-                            this.$emit('clear-all');
-                            this.overlay.dismiss();
-                        }
-                    }
-                ],
-                onDestroy: () => {
-                    this.$emit('close', false);
-                }
-            });
-        },
-        closeOverlay() {
-            this.overlay.dismiss();
-        },
-        notificationsCountDisplayMessage(count) {
-            if (count > 1 || count === 0) {
-                return `Displaying ${count} notifications`;
-            } else {
-                return `Displaying ${count} notification`;
-            }
-        }
+  components: {
+    NotificationMessage
+  },
+  inject: ['openmct'],
+  props: {
+    notifications: {
+      type: Array,
+      required: true
     }
+  },
+  data() {
+    return {};
+  },
+  mounted() {
+    this.openOverlay();
+  },
+  methods: {
+    openOverlay() {
+      this.overlay = this.openmct.overlays.overlay({
+        element: this.$el,
+        size: 'large',
+        dismissable: true,
+        buttons: [
+          {
+            label: 'Clear All Notifications',
+            emphasis: true,
+            callback: () => {
+              this.$emit('clear-all');
+              this.overlay.dismiss();
+            }
+          }
+        ],
+        onDestroy: () => {
+          this.$emit('close', false);
+        }
+      });
+    },
+    closeOverlay() {
+      this.overlay.dismiss();
+    },
+    notificationsCountDisplayMessage(count) {
+      if (count > 1 || count === 0) {
+        return `Displaying ${count} notifications`;
+      } else {
+        return `Displaying ${count} notification`;
+      }
+    }
+  }
 };
 </script>

@@ -37,16 +37,16 @@
  *        deleted (see CouchDB docs for _deleted)
  */
 export default function CouchDocument(id, model, rev, markDeleted) {
-    return {
-        "_id": id,
-        "_rev": rev,
-        "_deleted": markDeleted,
-        "metadata": {
-            "category": "domain object",
-            "type": model.type,
-            "owner": "admin",
-            "name": model.name
-        },
-        "model": model
-    };
+  return {
+    _id: id,
+    _rev: rev,
+    _deleted: markDeleted,
+    metadata: {
+      category: 'domain object',
+      type: model.type,
+      owner: 'admin',
+      name: model.name
+    },
+    model: model
+  };
 }

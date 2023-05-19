@@ -21,32 +21,31 @@
 -->
 
 <template>
-<li class="c-inspect-properties__row">
+  <li class="c-inspect-properties__row">
     <div class="c-inspect-properties__label">
-        {{ label }}
+      {{ label }}
     </div>
     <div class="c-inspect-properties__value">
-        {{ value }}
+      {{ value }}
     </div>
-</li>
+  </li>
 </template>
 
 <script>
-
 export default {
-    props: {
-        label: {
-            type: String,
-            default() {
-                return '';
-            }
-        },
-        value: {
-            type: String,
-            default() {
-                return '';
-            }
-        }
+  props: {
+    label: {
+      type: String,
+      default() {
+        return '';
+      }
+    },
+    value: {
+      type: String,
+      default() {
+        return '';
+      }
     }
+  }
 };
 </script>

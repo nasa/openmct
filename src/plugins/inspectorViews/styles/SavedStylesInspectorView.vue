@@ -21,7 +21,7 @@
 -->
 
 <template>
-<div class="u-contents"></div>
+  <div class="u-contents"></div>
 </template>
 
 <script>
@@ -29,44 +29,44 @@ import SavedStylesView from './SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct', 'stylesManager'],
-    data() {
-        return {
-            selection: []
-        };
-    },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
-    },
-    methods: {
-        updateSelection(selection) {
-            if (selection.length > 0 && selection[0].length > 0) {
-                if (this.component) {
-                    this.component.$destroy();
-                    this.component = undefined;
-                    this.$el.innerHTML = '';
-                }
-
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                this.component = new Vue({
-                    el: viewContainer,
-                    components: {
-                        SavedStylesView
-                    },
-                    provide: {
-                        openmct: this.openmct,
-                        selection: selection,
-                        stylesManager: this.stylesManager
-                    },
-                    template: '<saved-styles-view />'
-                });
-            }
+  inject: ['openmct', 'stylesManager'],
+  data() {
+    return {
+      selection: []
+    };
+  },
+  mounted() {
+    this.openmct.selection.on('change', this.updateSelection);
+    this.updateSelection(this.openmct.selection.get());
+  },
+  destroyed() {
+    this.openmct.selection.off('change', this.updateSelection);
+  },
+  methods: {
+    updateSelection(selection) {
+      if (selection.length > 0 && selection[0].length > 0) {
+        if (this.component) {
+          this.component.$destroy();
+          this.component = undefined;
+          this.$el.innerHTML = '';
         }
+
+        let viewContainer = document.createElement('div');
+        this.$el.append(viewContainer);
+        this.component = new Vue({
+          el: viewContainer,
+          components: {
+            SavedStylesView
+          },
+          provide: {
+            openmct: this.openmct,
+            selection: selection,
+            stylesManager: this.stylesManager
+          },
+          template: '<saved-styles-view />'
+        });
+      }
     }
+  }
 };
 </script>

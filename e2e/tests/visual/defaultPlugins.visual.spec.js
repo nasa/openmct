@@ -31,73 +31,71 @@ const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
 test.describe('Visual - Default', () => {
-    test.beforeEach(async ({ page }) => {
-        //Go to baseURL and Hide Tree
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+  });
+
+  test('Visual - Default Dashboard', async ({ page, theme }) => {
+    // Verify that Create button is actionable
+    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
+
+    // Take a snapshot of the Dashboard
+    await percySnapshot(page, `Default Dashboard (theme: '${theme}')`);
+  });
+
+  test('Visual - Default Condition Set', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Default Condition Set'
     });
 
-    test('Visual - Default Dashboard', async ({ page, theme }) => {
-        // Verify that Create button is actionable
-        await expect(page.locator('button:has-text("Create")')).toBeEnabled();
+    // Take a snapshot of the newly created Condition Set object
+    await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
+  });
 
-        // Take a snapshot of the Dashboard
-        await percySnapshot(page, `Default Dashboard (theme: '${theme}')`);
+  test('Visual - Default Condition Widget', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Condition Widget',
+      name: 'Default Condition Widget'
     });
 
-    test('Visual - Default Condition Set', async ({ page, theme }) => {
+    // Take a snapshot of the newly created Condition Widget object
+    await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
+  });
 
-        await createDomainObjectWithDefaults(page, {
-            type: 'Condition Set',
-            name: 'Default Condition Set'
-        });
+  test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
+    //Click the Create button
+    await page.click('button:has-text("Create")');
 
-        // Take a snapshot of the newly created Condition Set object
-        await percySnapshot(page, `Default Condition Set (theme: '${theme}')`);
+    // Click text=Sine Wave Generator
+    await page.click('text=Sine Wave Generator');
+
+    await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
+
+    await page.locator('.field.control.l-input-sm input').first().click();
+    await page.locator('.field.control.l-input-sm input').first().fill('');
+
+    // Validate red x mark
+    await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
+  });
+
+  test('Visual - Display Layout Icon is correct in Create Menu', async ({ page, theme }) => {
+    // Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Hover on Display Layout option.
+    await page.locator('text=Display Layout').hover();
+    await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
+  });
+
+  test('Visual - Default Gauge', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Default Gauge'
     });
 
-    test('Visual - Default Condition Widget', async ({ page, theme }) => {
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Condition Widget',
-            name: 'Default Condition Widget'
-        });
-
-        // Take a snapshot of the newly created Condition Widget object
-        await percySnapshot(page, `Default Condition Widget (theme: '${theme}')`);
-    });
-
-    test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
-        //Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Click text=Sine Wave Generator
-        await page.click('text=Sine Wave Generator');
-
-        await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
-
-        await page.locator('.field.control.l-input-sm input').first().click();
-        await page.locator('.field.control.l-input-sm input').first().fill('');
-
-        // Validate red x mark
-        await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
-    });
-
-    test('Visual - Display Layout Icon is correct in Create Menu', async ({ page, theme }) => {
-        // Click the Create button
-        await page.click('button:has-text("Create")');
-
-        // Hover on Display Layout option.
-        await page.locator('text=Display Layout').hover();
-        await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
-    });
-
-    test('Visual - Default Gauge', async ({ page, theme }) => {
-        await createDomainObjectWithDefaults(page, {
-            type: 'Gauge',
-            name: 'Default Gauge'
-        });
-
-        // Take a snapshot of the newly created Gauge object
-        await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
-    });
+    // Take a snapshot of the newly created Gauge object
+    await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+  });
 });
