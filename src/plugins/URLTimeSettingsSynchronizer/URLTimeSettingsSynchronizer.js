@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const TIME_EVENTS = ['timeSystemChanged', 'clockChanged', 'clockOffsetsChanged'];
+const TIME_EVENTS = ['timeSystemChanged', 'modeChanged', 'clockChanged', 'clockOffsetsChanged'];
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';
 const SEARCH_START_BOUND = 'tc.startBound';
@@ -46,7 +46,6 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     initialize() {
-        console.log('time context initialized');
         this.updateTimeSettings();
         this.openmct.router.on('change:params', this.updateTimeSettings);
 
@@ -69,8 +68,8 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     updateTimeSettings() {
-        let timeParameters = this.parseParametersFromUrl();
-        console.log('update time settings, params valid?', this.areTimeParametersValid(timeParameters));
+        const timeParameters = this.parseParametersFromUrl();
+
         if (this.areTimeParametersValid(timeParameters)) {
             this.setTimeApiFromUrl(timeParameters);
             this.openmct.router.setLocationFromUrl();
@@ -80,21 +79,18 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     parseParametersFromUrl() {
-        let searchParams = this.openmct.router.getAllSearchParams();
-        console.log('search params', searchParams)
-        let mode = searchParams.get(SEARCH_MODE);
-        let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
-
-        let startBound = parseInt(searchParams.get(SEARCH_START_BOUND), 10);
-        let endBound = parseInt(searchParams.get(SEARCH_END_BOUND), 10);
-        let bounds = {
+        const searchParams = this.openmct.router.getAllSearchParams();
+        const mode = searchParams.get(SEARCH_MODE);
+        const timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
+        const startBound = parseInt(searchParams.get(SEARCH_START_BOUND), 10);
+        const endBound = parseInt(searchParams.get(SEARCH_END_BOUND), 10);
+        const bounds = {
             start: startBound,
             end: endBound
         };
-
-        let startOffset = parseInt(searchParams.get(SEARCH_START_DELTA), 10);
-        let endOffset = parseInt(searchParams.get(SEARCH_END_DELTA), 10);
-        let clockOffsets = {
+        const startOffset = parseInt(searchParams.get(SEARCH_START_DELTA), 10);
+        const endOffset = parseInt(searchParams.get(SEARCH_END_DELTA), 10);
+        const clockOffsets = {
             start: 0 - startOffset,
             end: endOffset
         };
@@ -109,7 +105,7 @@ export default class URLTimeSettingsSynchronizer {
 
     setTimeApiFromUrl(timeParameters) {
         const timeSystem = this.openmct.time.getTimeSystem();
-        console.log('set time api from url', timeParameters.mode, FIXED_MODE_KEY);
+
         if (timeParameters.mode === FIXED_MODE_KEY) {
             // should update timesystem
             if (timeSystem.key !== timeParameters.timeSystem) {
@@ -125,12 +121,14 @@ export default class URLTimeSettingsSynchronizer {
             // }
         } else {
             const clock = this.openmct.time.getClock();
-            console.log('REALTIME: ', clock, timeParameters.mode);
+
             if (!clock || clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {
                 this.openmct.time.setClockOffsets(timeParameters.clockOffsets);
             }
+
+            this.openmct.time.setMode('realtime');
 
             if (timeSystem?.key !== timeParameters.timeSystem) {
                 this.openmct.time.setTimeSystem(timeParameters.timeSystem);
@@ -145,12 +143,13 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let searchParams = this.openmct.router.getAllSearchParams();
-        let clock = this.openmct.time.getClock();
-        let bounds = this.openmct.time.getBounds();
-        let clockOffsets = this.openmct.time.getClockOffsets();
+        const searchParams = this.openmct.router.getAllSearchParams();
+        const clock = this.openmct.time.getClock();
+        const mode = this.openmct.time.getMode();
+        const bounds = this.openmct.time.getBounds();
+        const clockOffsets = this.openmct.time.getClockOffsets();
 
-        if (clock === undefined) {
+        if (mode === FIXED_MODE_KEY) {
             searchParams.set(SEARCH_MODE, FIXED_MODE_KEY);
             searchParams.set(SEARCH_START_BOUND, bounds.start);
             searchParams.set(SEARCH_END_BOUND, bounds.end);
@@ -183,10 +182,8 @@ export default class URLTimeSettingsSynchronizer {
             && this.isTimeSystemValid(timeParameters.timeSystem)) {
 
             if (timeParameters.mode === FIXED_MODE_KEY) {
-                console.log('mode fixed start end valid?', this.areStartAndEndValid(timeParameters.bounds));
                 isValid = this.areStartAndEndValid(timeParameters.bounds);
             } else {
-                console.log('mode NOOOOOT fixed offsets valide?', this.areStartAndEndValid(timeParameters.clockOffsets));
                 isValid = this.areStartAndEndValid(timeParameters.clockOffsets);
             }
         }
@@ -206,8 +203,9 @@ export default class URLTimeSettingsSynchronizer {
 
     isTimeSystemValid(timeSystem) {
         let isValid = timeSystem !== undefined;
+
         if (isValid) {
-            let timeSystemObject = this.openmct.time.timeSystems.get(timeSystem);
+            const timeSystemObject = this.openmct.time.timeSystems.get(timeSystem);
             isValid = timeSystemObject !== undefined;
         }
 

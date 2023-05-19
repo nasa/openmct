@@ -39,7 +39,7 @@
         </div>
     </div>
     <div
-        v-if="selectedClock"
+        v-if="clocks.length > 0"
         ref="clockButton"
         class="c-tc-input-popup__options"
     >
@@ -70,10 +70,11 @@ export default {
     mixins: [toggleMixin, modeMixin],
     inject: ['openmct', 'configuration'],
     data: function () {
-        let activeClock = this.getActiveClock();
+        const activeClock = this.getActiveClock();
+        const mode = this.openmct.time.getMode();
 
         return {
-            selectedMode: this.getModeMetadata(activeClock, TEST_IDS),
+            selectedMode: this.getModeMetadata(mode, TEST_IDS),
             selectedClock: activeClock ? this.getClockMetadata(activeClock) : undefined,
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
@@ -143,10 +144,7 @@ export default {
         },
         setMode(modeKey) {
             this.openmct.time.setMode(modeKey, this.openmct.time.bounds());
-
-            if (modeKey === FIXED_MODE_KEY) {
-                this.openmct.time.stopClock();
-            }
+            this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
         },
         getMatchingConfig(options) {
             const matchers = {

@@ -110,7 +110,7 @@ export default {
         }
     },
     data() {
-        let timeSystem = this.openmct.time.timeSystem();
+        let timeSystem = this.openmct.time.getTimeSystem();
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         let timeFormatter = this.getFormatter(timeSystem.timeFormat);
         let bounds = this.bounds || this.openmct.time.bounds();
@@ -148,7 +148,7 @@ export default {
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
     },
     beforeDestroy() {
         this.clearAllValidation();

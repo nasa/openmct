@@ -163,7 +163,6 @@ export default {
         }
     },
     mounted() {
-        console.log('conductor popup mounted');
         this.setTimeContext();
     },
     beforeDestroy() {
@@ -173,9 +172,17 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            this.timeContext.on('clockChanged', this.setViewFromClock);
-            this.timeContext.on('boundsChanged', this.setBounds);
-            this.openmct.time.on('modeChanged', this.setMode);
+
+            if (this.timeContext) {
+                this.timeContext.on('clockChanged', this.setViewFromClock);
+                this.timeContext.on('boundsChanged', this.setBounds);
+                this.timeContext.on('modeChanged', this.setMode);
+            } else {
+                this.openmct.time.on('clockChanged', this.setViewFromClock);
+                this.openmct.time.on('boundsChanged', this.setBounds);
+                this.openmct.time.on('modeChanged', this.setMode);
+            }
+
             this.setViewFromClock(this.timeContext.clock());
             this.setBounds(this.timeContext.bounds());
         },
@@ -183,18 +190,21 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off('clockChanged', this.setViewFromClock);
                 this.timeContext.off('boundsChanged', this.setBounds);
+                this.timeContext.off('modeChanged', this.setMode);
+            } else {
+                this.openmct.time.off('clockChanged', this.setViewFromClock);
+                this.openmct.time.off('boundsChanged', this.setBounds);
                 this.openmct.time.off('modeChanged', this.setMode);
             }
         },
-        setViewFromClock(clock) {
-            this.isFixed = clock === undefined;
-            this.bounds = this.timeContext.getBounds();
+        setViewFromClock() {
+            this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
         },
         setBounds() {
-            this.bounds = this.timeContext.getBounds();
+            this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
         },
         setMode() {
-            this.isFixed = this.timeContext.isFixed();
+            this.isFixed = this.timeContext ? this.timeContext.isFixed() : this.openmct.time.isFixed();
         },
         saveFixedBounds(bounds) {
             this.$emit('fixedBoundsUpdated', bounds);
