@@ -69,7 +69,7 @@ export default class URLTimeSettingsSynchronizer {
 
     updateTimeSettings() {
         const timeParameters = this.parseParametersFromUrl();
-
+        console.log('update time settings', timeParameters);
         if (this.areTimeParametersValid(timeParameters)) {
             this.setTimeApiFromUrl(timeParameters);
             this.openmct.router.setLocationFromUrl();
@@ -105,7 +105,7 @@ export default class URLTimeSettingsSynchronizer {
 
     setTimeApiFromUrl(timeParameters) {
         const timeSystem = this.openmct.time.getTimeSystem();
-
+        console.log('time parameters', timeParameters);
         if (timeParameters.mode === FIXED_MODE_KEY) {
             // should update timesystem
             if (timeSystem.key !== timeParameters.timeSystem) {
@@ -115,13 +115,9 @@ export default class URLTimeSettingsSynchronizer {
             }
 
             this.openmct.time.setMode('fixed');
-
-            // if (this.openmct.time.clock()) {
-            //      this.openmct.time.stopClock();
-            // }
         } else {
             const clock = this.openmct.time.getClock();
-
+            console.log('setting as realtime');
             if (!clock || clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {
@@ -170,9 +166,10 @@ export default class URLTimeSettingsSynchronizer {
             searchParams.delete(SEARCH_START_BOUND);
             searchParams.delete(SEARCH_END_BOUND);
         }
-
+        console.log('set url from time api', mode, bounds)
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.getTimeSystem().key);
-        this.openmct.router.setAllSearchParams(searchParams);
+        // this.openmct.router.setAllSearchParams(searchParams);
+        this.openmct.router.updateParams(searchParams);
     }
 
     areTimeParametersValid(timeParameters) {

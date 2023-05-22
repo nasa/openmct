@@ -111,7 +111,7 @@ export default {
             this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
         },
         setClock(clockKey) {
-            let option = {
+            const option = {
                 clockKey
             };
             let configuration = this.getMatchingConfig({
@@ -129,11 +129,11 @@ export default {
 
                 // this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
             }
-
+            console.log('set clock conductor mode');
             if (clockKey === undefined) {
                 // this.openmct.time.stopClock();
             } else {
-                const offsets = this.openmct.time.getClockOffsets() || configuration.clockOffsets;
+                const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
                 option.offsets = offsets;
                 // this.openmct.time.clock(clockKey, offsets);
             }
@@ -143,6 +143,10 @@ export default {
         setMode(modeKey) {
             this.openmct.time.setMode(modeKey, this.openmct.time.getBounds());
             this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
+
+            if (modeKey === REALTIME_MODE_KEY) {
+                this.setClock(modeKey);
+            }
         },
         getMatchingConfig(options) {
             const matchers = {

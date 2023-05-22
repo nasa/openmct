@@ -67,8 +67,8 @@ export default {
         const timeSystem = this.openmct.time.getTimeSystem();
         const durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         const timeFormatter = this.getFormatter(timeSystem.timeFormat);
-        const bounds = this.bounds || this.openmct.time.getBounds();
-        const offsets = this.openmct.time.getClockOffsets();
+        const bounds = this.bounds ?? this.openmct.time.getBounds();
+        const offsets = this.offsets ?? this.openmct.time.getClockOffsets();
         const currentValue = this.openmct.time.getClock()?.currentValue();
 
         return {
