@@ -305,7 +305,7 @@ class TimeContext extends EventEmitter {
      */
     clock(keyOrClock, offsets) {
         this.#warnMethodDeprecated('"clock"', '"getClock" and "setClock"');
-        console.log('time context clock', keyOrClock, offsets)
+
         if (arguments.length === 2) {
             let clock;
 
@@ -639,7 +639,7 @@ class TimeContext extends EventEmitter {
     }
 
     #warnMethodDeprecated(method, newMethod) {
-        let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`; 
+        let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`;
 
         if (newMethod) {
             message += ` Please use the ${newMethod} API method(s) instead.`;

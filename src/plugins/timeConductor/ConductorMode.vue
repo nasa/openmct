@@ -39,7 +39,6 @@
         </div>
     </div>
     <div
-        v-if="clocks.length > 0"
         ref="clockButton"
         class="c-tc-input-popup__options"
     >
@@ -82,7 +81,6 @@ export default {
         };
     },
     mounted: function () {
-        console.log('conductor mode mounted');
         this.loadModesAndClocks(this.configuration.menuOptions);
 
         this.followTimeConductor();
@@ -98,7 +96,7 @@ export default {
                 placement: this.openmct.menus.menuPlacement.TOP_RIGHT
             };
 
-            this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
+            this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
         showClocksMenu() {
             const elementBoundingClientRect = this.$refs.clockButton.getBoundingClientRect();
@@ -110,7 +108,7 @@ export default {
                 placement: this.openmct.menus.menuPlacement.TOP_RIGHT
             };
 
-            this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
+            this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
         },
         setClock(clockKey) {
             let option = {
@@ -118,7 +116,7 @@ export default {
             };
             let configuration = this.getMatchingConfig({
                 clock: clockKey,
-                timeSystem: this.openmct.time.timeSystem().key
+                timeSystem: this.openmct.time.getTimeSystem().key
             });
 
             if (configuration === undefined) {
@@ -135,7 +133,7 @@ export default {
             if (clockKey === undefined) {
                 // this.openmct.time.stopClock();
             } else {
-                const offsets = this.openmct.time.clockOffsets() || configuration.clockOffsets;
+                const offsets = this.openmct.time.getClockOffsets() || configuration.clockOffsets;
                 option.offsets = offsets;
                 // this.openmct.time.clock(clockKey, offsets);
             }
@@ -143,7 +141,7 @@ export default {
             this.$emit('updated', option);
         },
         setMode(modeKey) {
-            this.openmct.time.setMode(modeKey, this.openmct.time.bounds());
+            this.openmct.time.setMode(modeKey, this.openmct.time.getBounds());
             this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
         },
         getMatchingConfig(options) {

@@ -55,10 +55,10 @@ export default {
         }
     },
     data() {
-        let timeSystem = this.openmct.time.timeSystem();
+        let timeSystem = this.openmct.time.getTimeSystem();
         // let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-        let bounds = this.bounds || this.openmct.time.bounds();
+        let bounds = this.bounds || this.openmct.time.getBounds();
 
         return {
             timeSystem: timeSystem,
@@ -97,11 +97,11 @@ export default {
         console.log('conductor inputs fixed mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
+        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
         this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystem', this.setTimeSystem);
+        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
         this.stopFollowingTimeContext();
     },
     methods: {
@@ -110,11 +110,11 @@ export default {
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
             this.handleNewBounds(this.timeContext.bounds());
-            this.timeContext.on('bounds', this.handleNewBounds);
+            this.timeContext.on('boundsChanged', this.handleNewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', this.handleNewBounds);
+                this.timeContext.off('boundsChanged', this.handleNewBounds);
             }
         },
         handleNewBounds(bounds) {
