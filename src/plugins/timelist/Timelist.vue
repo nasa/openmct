@@ -347,11 +347,11 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-            activities = activities.filter(this.filterActivities);
-            activities = activities.sort(this.sortByStartTime);
+            // filter activities first, then sort by start time
+            activities = activities.filter(this.filterActivities)
+                .sort(this.sortByStartTime);
             activities = this.applyStyles(activities);
-            // sort by start time
-            this.planActivities = activities.sort(this.sortByStartTime);
+            this.planActivities = activities;
             //We need to wait for the next tick since we need the height of the row from the DOM
             this.$nextTick(this.setScrollTop);
         },
