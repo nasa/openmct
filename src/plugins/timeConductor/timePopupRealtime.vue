@@ -164,7 +164,6 @@ export default {
         }
     },
     mounted() {
-        console.log('time popup realtime mounted');
         this.setOffsets();
         document.addEventListener('click', this.hide);
     },

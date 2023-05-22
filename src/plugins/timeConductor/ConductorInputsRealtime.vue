@@ -145,20 +145,33 @@ export default {
     },
     methods: {
         followTime() {
-            this.handleNewBounds(this.timeContext.getBounds());
-            this.setViewFromOffsets(this.timeContext.getClockOffsets());
-            this.timeContext.on('boundsChanged', this.handleNewBounds);
-            this.timeContext.on('clockOffsetsChanged', this.setViewFromOffsets);
+            const bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
+            const offsets = this.timeContext ? this.timeContext.getClockOffsets() : this.openmct.time.getClockOffsets();
+
+            this.handleNewBounds(bounds);
+            this.setViewFromOffsets(offsets);
+
+            if (this.timeContext) {
+                this.timeContext.on('boundsChanged', this.handleNewBounds);
+                this.timeContext.on('clockOffsetsChanged', this.setViewFromOffsets);
+            } else {
+                this.openmct.time.on('boundsChanged', this.handleNewBounds);
+                this.openmct.time.on('clockOffsetsChanged', this.setViewFromOffsets);
+            }
         },
         stopFollowingTime() {
             if (this.timeContext) {
                 this.timeContext.off('boundsChanged', this.handleNewBounds);
                 this.timeContext.off('clockOffsetsChanged', this.setViewFromOffsets);
+            } else {
+                this.openmct.time.off('boundsChanged', this.handleNewBounds);
+                this.openmct.time.off('clockOffsetsChanged', this.setViewFromOffsets);
             }
         },
         setTimeContext() {
             this.stopFollowingTime();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            console.log('time context', this.timeContext);
             this.followTime();
         },
         handleNewBounds(bounds, isTick) {

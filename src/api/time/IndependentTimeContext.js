@@ -154,7 +154,7 @@ class IndependentTimeContext extends TimeContext {
     followTimeContext() {
         this.stopFollowingTimeContext();
         if (this.upstreamTimeContext) {
-            TIME_CONTEXT_EVENTS.forEach((eventName) => {
+            Object.values(TIME_CONTEXT_EVENTS).forEach((eventName) => {
                 const thisTimeContext = this;
                 this.upstreamTimeContext.on(eventName, passthrough);
                 this.unlisteners.push(() => {
