@@ -365,6 +365,7 @@ class TimeContext extends EventEmitter {
             };
 
             this.boundsVal = newBounds;
+            // "bounds" will be deprecated in a future release
             this.emit('bounds', this.boundsVal, true);
             this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
         }
@@ -559,6 +560,7 @@ class TimeContext extends EventEmitter {
      * @return {Mode} the currently active mode;
      */
     setMode(mode) {
+        console.log('setmode');
         if (!mode || mode === this.mode) {
             return;
         }
@@ -582,7 +584,7 @@ class TimeContext extends EventEmitter {
      * @returns {boolean} true if this context is in real-time mode, false if not
     */
     isRealTime() {
-        return this.mode !== MODES.fixed;
+        return this.mode === MODES.realtime;
     }
 
     /**

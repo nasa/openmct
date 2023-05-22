@@ -150,6 +150,7 @@ export default {
     },
     methods: {
         handleNewBounds(bounds, isTick) {
+            console.log('tick', bounds, isTick);
             if (this.openmct.time.isRealTime() || !isTick) {
                 this.setBounds(bounds);
                 this.setViewFromBounds(bounds);

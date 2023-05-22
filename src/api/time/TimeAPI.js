@@ -195,7 +195,7 @@ class TimeAPI extends GlobalTimeContext {
         const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
         if (!viewKey) {
-            // Return the global time context
+            // Return the global time contex
             return this;
         }
 

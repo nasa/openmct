@@ -56,6 +56,7 @@ class IndependentTimeContext extends TimeContext {
     }
 
     tick(timestamp) {
+        console.log('independent time context tick')
         if (this.upstreamTimeContext) {
             return this.upstreamTimeContext.tick(...arguments);
         } else {
