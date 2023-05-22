@@ -43,6 +43,7 @@
         :key="metadatum.key"
         :filter-field="metadatum"
         :persisted-filters="updatedFilters[metadatum.key]"
+        label="Global Filter"
         @filterSelected="updateFiltersWithSelectedValue"
         @filterTextValueChanged="updateFiltersWithTextValue"
         @filterSingleSelected="updateSingleSelection"

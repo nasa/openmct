@@ -37,6 +37,7 @@
             :id="`${filter}filterControl`"
             class="c-input--flex"
             type="text"
+            :aria-label="label"
             :disabled="useGlobal"
             :value="persistedValue(filter)"
             @change="updateFilterValueFromString($event, filter)"
@@ -47,6 +48,7 @@
         <template v-if="filter.possibleValues && filter.singleSelectionThreshold && isEditing">
           <select
             name="setSelectionThreshold"
+            :aria-label="label"
             :disabled="useGlobal"
             @change="updateFilterValueFromDropdown($event, filter.comparator, $event.target.value)"
           >
@@ -75,6 +77,7 @@
               :id="`${option.value}filterControl`"
               class="c-checkbox-list__input"
               type="checkbox"
+              :aria-label="label"
               :disabled="useGlobal"
               :checked="isSelected(filter.comparator, option.value)"
               @change="updateFilterValueFromCheckbox($event, filter.comparator, option.value)"
@@ -108,6 +111,10 @@ export default {
   props: {
     filterField: {
       type: Object,
+      required: true
+    },
+    label: {
+      type: String,
       required: true
     },
     useGlobal: Boolean,

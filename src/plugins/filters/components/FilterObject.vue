@@ -63,6 +63,7 @@
           :filter-field="metadatum"
           :use-global="persistedFilters.useGlobal"
           :persisted-filters="updatedFilters[metadatum.key]"
+          label="Specific Filter"
           @filterSelected="updateMultipleFiltersWithSelectedValue"
           @filterTextValueChanged="updateFiltersWithTextValue"
           @filterSingleSelected="updateSingleSelection"
