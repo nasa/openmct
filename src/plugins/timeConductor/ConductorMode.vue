@@ -75,7 +75,6 @@ export default {
         return {
             selectedMode: this.getModeMetadata(mode, TEST_IDS),
             selectedClock: activeClock ? this.getClockMetadata(activeClock) : undefined,
-            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
             modes: [],
             clocks: []
         };

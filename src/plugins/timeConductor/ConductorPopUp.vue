@@ -183,8 +183,8 @@ export default {
                 this.openmct.time.on('modeChanged', this.setMode);
             }
 
-            this.setViewFromClock(this.timeContext.clock());
-            this.setBounds(this.timeContext.bounds());
+            this.setViewFromClock(this.timeContext.getClock());
+            this.setBounds(this.timeContext.getBounds());
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
