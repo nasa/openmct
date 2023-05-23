@@ -117,8 +117,8 @@ export default class URLTimeSettingsSynchronizer {
             this.openmct.time.setMode('fixed');
         } else {
             const clock = this.openmct.time.getClock();
-            console.log('setting as realtime');
-            if (!clock || clock?.key !== timeParameters.mode) {
+            console.log('setting as realtime', clock?.key, timeParameters.mode);
+            if (clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {
                 this.openmct.time.setClockOffsets(timeParameters.clockOffsets);
@@ -229,7 +229,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     areStartAndEndEqual(firstBounds, secondBounds) {
-        return firstBounds.start === secondBounds.start
-            && firstBounds.end === secondBounds.end;
+        return firstBounds?.start === secondBounds.start
+            && firstBounds?.end === secondBounds.end;
     }
 }

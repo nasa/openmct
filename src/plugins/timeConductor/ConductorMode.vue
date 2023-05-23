@@ -129,14 +129,9 @@ export default {
 
                 // this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
             }
-            console.log('set clock conductor mode');
-            if (clockKey === undefined) {
-                // this.openmct.time.stopClock();
-            } else {
-                const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
-                option.offsets = offsets;
-                // this.openmct.time.clock(clockKey, offsets);
-            }
+
+            const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
+            option.offsets = offsets;
 
             this.$emit('updated', option);
         },
@@ -145,7 +140,9 @@ export default {
             this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
 
             if (modeKey === REALTIME_MODE_KEY) {
-                this.setClock(modeKey);
+                const clockKey = this.openmct.time.getClock().key;
+
+                this.setClock(clockKey);
             }
         },
         getMatchingConfig(options) {
@@ -167,7 +164,6 @@ export default {
             return this.configuration.menuOptions.filter(configMatches)[0];
         },
         setViewFromClock(clock) {
-            console.log('set view from clock', clock);
             this.activeClock = clock;
             this.selectedMode = this.getModeMetadata(REALTIME_MODE_KEY, TEST_IDS);
         }
