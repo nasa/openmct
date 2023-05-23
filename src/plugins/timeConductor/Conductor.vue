@@ -150,7 +150,6 @@ export default {
     },
     methods: {
         handleNewBounds(bounds, isTick) {
-            console.log('tick', bounds, isTick);
             if (this.openmct.time.isRealTime() || !isTick) {
                 this.setBounds(bounds);
                 this.setViewFromBounds(bounds);
@@ -204,10 +203,8 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setMode(mode) {
-            console.log('mode', mode);
             this.mode = mode;
             this.isFixed = this.openmct.time.isFixed();
-            console.log('isFixed?', this.isFixed);
         },
         // setViewFromClock(clock) {
         //     this.isFixed = this.openmct.time.isFixed();

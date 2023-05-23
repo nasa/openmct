@@ -210,6 +210,7 @@ export default {
             this.$emit('fixedBoundsUpdated', bounds);
         },
         saveClockOffsets(offsets) {
+            console.log('conductor popup offsets', offsets);
             this.$emit('clockOffsetsUpdated', offsets);
         },
         saveMode(option) {
