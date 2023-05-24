@@ -61,8 +61,11 @@ define(
                 this.emit('remove', removed);
             }
 
-            addRows(rows) {
+            addRows(rows, updateInPlace) {
                 let rowsToAdd = this.filterRows(rows);
+                if (updateInPlace) {
+                    this.updateRowsInPlace(rowsToAdd);
+                }
 
                 this.sortAndMergeRows(rowsToAdd);
 
@@ -119,6 +122,22 @@ define(
                 } else {
                     this.mergeSortedRows(sortedRowsToAdd);
                 }
+            }
+
+            updateRowsInPlace(rows) {
+                rows.forEach(row => {
+                    if (!row.messageId) {
+                        return;
+                    }
+
+                    const foundIndex = this.rows.findIndex(existingRow => existingRow.messageId && existingRow.messageId === row.messageId);
+                    if (foundIndex > -1) {
+                        this.rows[foundIndex] = {
+                            ...this.rows[foundIndex],
+                            ...row
+                        };
+                    }
+                });
             }
 
             sortCollection(rows) {

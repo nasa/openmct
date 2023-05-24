@@ -199,11 +199,12 @@ define([
                 }
 
                 let telemetryRows = telemetry.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-
+                const configuration = this.telemetryObjects[keyString].telemetryObject.configuration;
+                const updateInPlace = configuration && (configuration.inPlaceUpdates === true);
                 if (this.paused) {
-                    this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRows, 'add'));
+                    this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRows, updateInPlace, 'add'));
                 } else {
-                    this.tableRows.addRows(telemetryRows);
+                    this.tableRows.addRows(telemetryRows, updateInPlace);
                 }
             };
         }
