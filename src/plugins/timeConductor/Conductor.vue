@@ -78,7 +78,7 @@
 
 <script>
 import _ from 'lodash';
-import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
