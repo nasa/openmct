@@ -41,6 +41,7 @@
 <script>
 import TimePopupFixed from "./timePopupFixed.vue";
 import _ from "lodash";
+import { TIME_CONTEXT_EVENTS } from "../../api/time/constants";
 
 // const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -112,11 +113,11 @@ export default {
         console.log('conductor inputs fixed mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
         this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
         this.stopFollowingTimeContext();
     },
     methods: {
@@ -124,12 +125,12 @@ export default {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
-            this.handleNewBounds(this.timeContext.bounds());
-            this.timeContext.on('boundsChanged', this.handleNewBounds);
+            this.handleNewBounds(this.timeContext.getBounds());
+            this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('boundsChanged', this.handleNewBounds);
+                this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
             }
         },
         handleNewBounds(bounds) {

@@ -78,6 +78,7 @@
 
 <script>
 import _ from 'lodash';
+import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
@@ -141,18 +142,18 @@ export default {
 
         this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
 
-        this.openmct.time.on('boundsChanged', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
-        this.openmct.time.on('modeChanged', this.setMode);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
         // this.openmct.time.on('clockChanged', this.setViewFromClock);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
 
-        this.openmct.time.off('boundsChanged', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
-        this.openmct.time.off('modeChanged', this.setMode);
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
         // this.openmct.time.off('clockChanged', this.setViewFromClock);
     },
     methods: {
