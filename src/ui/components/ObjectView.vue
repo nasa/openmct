@@ -28,8 +28,6 @@
         <independent-time-conductor
             :domain-object="domainObject"
             :object-path="path"
-            @stateChanged="updateIndependentTimeState"
-            @updated="saveTimeOptions"
         />
     </div>
     <div
@@ -478,13 +476,6 @@ export default {
                 elemToStyle.dataset.font = newFont;
             }
         }
-        //Should the domainObject be updated in the Independent Time conductor component itself?
-        // updateIndependentTimeState(useIndependentTime) {
-        //     this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
-        // },
-        // saveTimeOptions(options) {
-        //     this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
-        // }
     }
 };
 </script>

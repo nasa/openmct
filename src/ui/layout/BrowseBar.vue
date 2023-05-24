@@ -62,8 +62,6 @@
             <independent-time-conductor
                 :domain-object="domainObject"
                 :object-path="openmct.router.path"
-                @stateChanged="updateIndependentTimeState"
-                @updated="saveTimeOptions"
             />
         </div>
         <ViewSwitcher
@@ -423,13 +421,6 @@ export default {
         setStatus(status) {
             this.status = status;
         }
-        //Should the domainObject be updated in the Independent Time conductor component itself?
-        // updateIndependentTimeState(useIndependentTime) {
-        //     this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
-        // },
-        // saveTimeOptions(options) {
-        //     this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
-        // }
     }
 };
 </script>
