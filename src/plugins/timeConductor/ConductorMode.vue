@@ -20,69 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div>
-    <div
-        ref="modeButton"
-        class="c-tc-input-popup__options"
-    >
-        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-            <button
-                class="c-button--menu c-button--compact js-mode-button"
-                :class="[
-                    buttonCssClass,
-                    selectedMode.cssClass
-                ]"
-                @click.prevent.stop="showModesMenu"
-            >
-                <span class="c-button__label">{{ selectedMode.name }}</span>
-            </button>
-        </div>
-    </div>
-    <div
-        ref="clockButton"
-        class="c-tc-input-popup__options"
-    >
-        <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-            <button
-                class="c-button--menu c-button--compact js-clock-button"
-                :class="[
-                    buttonCssClass,
-                    selectedClock.cssClass
-                ]"
-                @click.prevent.stop="showClocksMenu"
-            >
-                <span class="c-button__label">{{ selectedClock.name }}</span>
-            </button>
-        </div>
+<div
+    ref="modeButton"
+    class="c-tc-input-popup__options"
+>
+    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+        <button
+            class="c-button--menu c-button--compact js-mode-button"
+            :class="[
+                buttonCssClass,
+                selectedMode.cssClass
+            ]"
+            @click.prevent.stop="showModesMenu"
+        >
+            <span class="c-button__label">{{ selectedMode.name }}</span>
+        </button>
     </div>
 </div>
 </template>
 
 <script>
-import toggleMixin from '../../ui/mixins/toggle-mixin';
 import modeMixin from './mode-mixin';
-import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
 
 const TEST_IDS = true;
 
 export default {
-    mixins: [toggleMixin, modeMixin],
+    mixins: [modeMixin],
     inject: ['openmct', 'configuration'],
     data: function () {
-        const activeClock = this.getActiveClock();
         const mode = this.openmct.time.getMode();
 
         return {
             selectedMode: this.getModeMetadata(mode, TEST_IDS),
-            selectedClock: activeClock ? this.getClockMetadata(activeClock) : undefined,
-            modes: [],
-            clocks: []
+            modes: []
         };
     },
     mounted: function () {
-        this.loadModesAndClocks(this.configuration.menuOptions);
-
-        this.followTimeConductor();
+        this.loadModes(this.configuration.menuOptions);
     },
     methods: {
         showModesMenu() {
@@ -97,74 +71,9 @@ export default {
 
             this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },
-        showClocksMenu() {
-            const elementBoundingClientRect = this.$refs.clockButton.getBoundingClientRect();
-            const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y;
-
-            const menuOptions = {
-                menuClass: 'c-conductor__clock-menu',
-                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
-            };
-
-            this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
-        },
-        setClock(clockKey) {
-            const option = {
-                clockKey
-            };
-            let configuration = this.getMatchingConfig({
-                clock: clockKey,
-                timeSystem: this.openmct.time.getTimeSystem().key
-            });
-
-            if (configuration === undefined) {
-                configuration = this.getMatchingConfig({
-                    clock: clockKey
-                });
-
-                option.timeSystem = configuration.timeSystem;
-                option.bounds = configuration.bounds;
-
-                // this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
-            }
-
-            const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
-            option.offsets = offsets;
-
-            this.$emit('updated', option);
-        },
         setMode(modeKey) {
-            this.openmct.time.setMode(modeKey, this.openmct.time.getBounds());
             this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-
-            if (modeKey === REALTIME_MODE_KEY) {
-                const clockKey = this.openmct.time.getClock().key;
-
-                this.setClock(clockKey);
-            }
-        },
-        getMatchingConfig(options) {
-            const matchers = {
-                clock(config) {
-                    return options.clock === config.clock;
-                },
-                timeSystem(config) {
-                    return options.timeSystem === config.timeSystem;
-                }
-            };
-
-            function configMatches(config) {
-                return Object.keys(options).reduce((match, option) => {
-                    return match && matchers[option](config);
-                }, true);
-            }
-
-            return this.configuration.menuOptions.filter(configMatches)[0];
-        },
-        setViewFromClock(clock) {
-            this.activeClock = clock;
-            this.selectedMode = this.getModeMetadata(REALTIME_MODE_KEY, TEST_IDS);
+            this.$emit('updated', modeKey);
         }
     }
 };

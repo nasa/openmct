@@ -66,9 +66,12 @@
         :bottom="false"
         :position-x="positionX"
         :position-y="positionY"
+        @popupLoaded="initializePopup"
         @modeUpdated="saveMode"
+        @clockUpdated="saveClock"
         @fixedBoundsUpdated="saveFixedBounds"
         @clockOffsetsUpdated="saveClockOffsets"
+        @dismiss="clearPopup"
     />
 </div>
 </template>
@@ -125,6 +128,7 @@ export default {
             isFixed,
             isUTCBased: timeSystem.isUTCBased,
             showDatePicker: false,
+            showConductorPopup: false,
             altPressed: false,
             isPanning: false,
             isZooming: false
@@ -134,7 +138,9 @@ export default {
         console.log('conductor mounted');
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
+
         this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
+
         this.openmct.time.on('boundsChanged', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
         this.openmct.time.on('modeChanged', this.setMode);
@@ -143,6 +149,7 @@ export default {
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+
         this.openmct.time.off('boundsChanged', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
         this.openmct.time.off('modeChanged', this.setMode);
@@ -206,9 +213,6 @@ export default {
             this.mode = mode;
             this.isFixed = this.openmct.time.isFixed();
         },
-        // setViewFromClock(clock) {
-        //     this.isFixed = this.openmct.time.isFixed();
-        // },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
@@ -226,16 +230,11 @@ export default {
         saveClockOffsets(offsets) {
             this.openmct.time.setClockOffsets(offsets);
         },
-        saveMode(option) {
-            if (option.timeSystem) {
-                this.openmct.time.setTimeSystem(option.timeSystem, option.bounds);
-            }
-
-            if (option.clockKey === undefined) {
-                // this.openmct.time.stopClock();
-            } else {
-                this.openmct.time.setClock(option.clockKey, option.offsets);
-            }
+        saveClock(clockOptions) {
+            this.openmct.time.setClock(clockOptions.clockKey, clockOptions.offsets);
+        },
+        saveMode(mode) {
+            this.openmct.time.setMode(mode);
         },
         copy(object) {
             return JSON.parse(JSON.stringify(object));

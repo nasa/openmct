@@ -10,36 +10,24 @@ export default {
             }
         }
     },
-    destroyed: function () {
-        this.stopFollowTimeConductor();
-    },
     methods: {
-        followTimeConductor() {
-            this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+        loadModes() {
+            this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata.bind(this));
         },
-        stopFollowTimeConductor() {
-            this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
-        },
-        loadModesAndClocks(menuOptions) {
+        loadClocks(menuOptions) {
             const clocks = menuOptions
                 .map(menuOption => menuOption.clock)
                 .filter(isDefinedAndUnique)
                 .map(this.getClock.bind(this));
 
-            /*
-            * Populate the modes menu with metadata from the available clocks
-            * "Fixed Mode" is always first, and has no defined clock
-            */
-            this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata.bind(this));
             this.clocks = clocks.map(this.getClockMetadata.bind(this));
-            console.log('modes and clocks', this.modes, this.clocks);
 
             function isDefinedAndUnique(key, index, array) {
                 return key !== undefined && array.indexOf(key) === index;
             }
         },
         getActiveClock() {
-            let activeClock = this.openmct.time.clock();
+            let activeClock = this.openmct.time.getClock();
             if (activeClock !== undefined) {
                 //Create copy of active clock so the time API does not get reactified.
                 activeClock = Object.create(activeClock);
