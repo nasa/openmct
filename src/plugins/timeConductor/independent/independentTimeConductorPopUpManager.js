@@ -20,128 +20,130 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import raf from '@/utils/raf';
-import Vue from "vue";
-import ConductorPopUp from "../ConductorPopUp.vue";
 
 export default {
     inject: ['openmct'],
-    mounted() {
-        this.showPopup = this.showPopup.bind(this);
-        this.clearPopup = this.clearPopup.bind(this);
-        this.positionBox = this.positionBox.bind(this);
-        this.positionBox = raf(this.positionBox);
-        this.timeConductorOptionsHolder = this.$refs.timeConductorOptionsHolder;
-        this.registerPopUp();
-        this.popupComponent = this.createPopupComponent();
+    data() {
+        return {
+            showConductorPopup: false,
+            positionX: 0,
+            positionY: 0,
+            conductorPopup: null
+        };
     },
-    beforeDestroy() {
-        this.removePopup();
+    mounted() {
+        this.positionBox = raf(this.positionBox);
+        this.timeConductorOptionsHolder = this.$el;
+        this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
     },
     methods: {
-        showPopup() {
-            if (!this.independentTCEnabled) {
-                return;
-            }
-
-            const popupElement = this.popupComponent;
-
-            document.body.appendChild(popupElement.$el);
-            //Use capture, so we don't trigger immediately on the same iteration of the event loop
-            document.addEventListener('click', this.clearPopup, {
-                capture: true
+        initializePopup() {
+            this.conductorPopup = this.$refs.conductorPopup.$el;
+            this.$nextTick(() => {
+                window.addEventListener('resize', this.positionBox);
+                document.addEventListener('click', this.handleClickAway);
+                this.positionBox();
             });
-
-            this.positionBox();
-
-            window.addEventListener('resize', this.positionBox);
         },
 
-        positionBox() {
-            const popupElement = this.popupComponent;
-            const timeConductorOptions = this.timeConductorOptionsHolder;
-
-            let timeConductorOptionsBox = timeConductorOptions.getBoundingClientRect();
-            popupElement.positionX = timeConductorOptionsBox.left;
-            //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            popupElement.positionY = timeConductorOptionsBox.top;
-            const offsetTop = popupElement.$el.getBoundingClientRect().height;
-
-            const popupRight = popupElement.positionX + popupElement.$el.clientWidth;
-            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
-
-            popupElement.positionX = popupElement.positionX + offsetLeft;
-            popupElement.positionY = popupElement.positionY - offsetTop;
-        },
-
-        clearPopup(clickAwayEvent) {
+        handleClickAway(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
-                this.removePopup();
+                this.clearPopup();
             }
         },
-        canClose(clickAwayEvent) {
-            const popupElement = this.popupComponent;
+        // showPopup() {
+        //     if (!this.independentTCEnabled) {
+        //         return;
+        //     }
 
+        //     const popupElement = this.popupComponent;
+
+        //     document.body.appendChild(popupElement.$el);
+        //     //Use capture, so we don't trigger immediately on the same iteration of the event loop
+        //     document.addEventListener('click', this.clearPopup, {
+        //         capture: true
+        //     });
+
+        //     this.positionBox();
+
+        //     window.addEventListener('resize', this.positionBox);
+        // },
+
+        positionBox() {
+            let timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+            this.positionX = timeConductorOptionsBox.left;
+            //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
+            this.positionY = timeConductorOptionsBox.top;
+            const offsetTop = this.conductorPopup.getBoundingClientRect().height;
+
+            const popupRight = this.positionX + this.conductorPopup.clientWidth;
+            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
+
+            this.positionX = this.positionX + offsetLeft;
+            this.positionY = this.positionY - offsetTop;
+        },
+
+        clearPopup() {
+            this.showConductorPopup = false;
+            this.conductorPopup = null;
+
+            document.removeEventListener('click', this.handleClickAway);
+            window.removeEventListener('resize', this.positionBox);
+        },
+        canClose(clickAwayEvent) {
             const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = popupElement.$el.contains(clickAwayEvent.target);
+            const isPopupElementItem = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
 
             return !isChildMenu && !isPopupElementItem;
-        },
-        removePopup() {
-            const popupElement = this.popupComponent;
-            document.removeEventListener('click', this.clearPopup, {
-                capture: true
-            });
-            window.removeEventListener('resize', this.positionBox);
-            popupElement.$el.remove();
-        },
-
-        createPopupComponent() {
-            const saveFixedBounds = this.saveFixedBounds;
-            const saveClockOffsets = this.saveClockOffsets;
-            const saveMode = this.saveMode;
-            const removePopup = this.removePopup;
-            const objectPath = this.objectPath;
-            const timeOptions = this.timeOptions;
-
-            const popupElement = new Vue({
-                components: {
-                    ConductorPopUp
-                },
-                provide: {
-                    openmct: this.openmct,
-                    configuration: undefined
-                },
-                data() {
-                    return {
-                        positionX: 0,
-                        positionY: 0,
-                        saveClockOffsets,
-                        saveFixedBounds,
-                        saveMode,
-                        removePopup,
-                        timeOptions,
-                        objectPath
-                    };
-                },
-                template: `<conductor-pop-up 
-                    @dismiss="removePopup()" 
-                    @independentModeUpdated="saveMode" 
-                    @fixedBoundsUpdated="saveFixedBounds"
-                    @clockOffsetsUpdated="saveClockOffsets" 
-                    :object-path="objectPath"
-                    :is-independent="true"
-                    :time-options="timeOptions"
-                    :bottom="true" 
-                    :positionX="positionX" 
-                    :positionY="positionY" />`
-            }).$mount();
-
-            return popupElement;
-        },
-
-        registerPopUp() {
-            this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
         }
+
+        // createPopupComponent() {
+        //     const saveFixedBounds = this.saveFixedBounds;
+        //     const saveClockOffsets = this.saveClockOffsets;
+        //     const saveMode = this.saveMode;
+        //     const removePopup = this.removePopup;
+        //     const objectPath = this.objectPath;
+        //     const timeOptions = this.timeOptions;
+
+        //     const popupElement = new Vue({
+        //         components: {
+        //             ConductorPopUp
+        //         },
+        //         provide: {
+        //             openmct: this.openmct,
+        //             configuration: undefined
+        //         },
+        //         data() {
+        //             return {
+        //                 positionX: 0,
+        //                 positionY: 0,
+        //                 saveClockOffsets,
+        //                 saveFixedBounds,
+        //                 saveMode,
+        //                 removePopup,
+        //                 timeOptions,
+        //                 objectPath
+        //             };
+        //         },
+        //         template: `<conductor-pop-up 
+        //             @dismiss="removePopup()" 
+        //             @independentModeUpdated="saveMode" 
+        //             @fixedBoundsUpdated="saveFixedBounds"
+        //             @clockOffsetsUpdated="saveClockOffsets" 
+        //             :object-path="objectPath"
+        //             :is-independent="true"
+        //             :time-options="timeOptions"
+        //             :bottom="true" 
+        //             :positionX="positionX" 
+        //             :positionY="positionY" />`
+        //     }).$mount();
+
+        //     return popupElement;
+        // },
+
+        // registerPopUp() {
+        //     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+        // }
     }
 };

@@ -115,6 +115,8 @@ class TimeAPI extends GlobalTimeContext {
 
         this.clocks.set(clock.key, clock);
 
+        // if no active clocks, automatically set the first installed clock
+        // to always have a ticking time source
         if (!hasActiveClock) {
             this.setClock(clock.key);
         }
@@ -142,22 +144,22 @@ class TimeAPI extends GlobalTimeContext {
         let timeContext = this.getIndependentContext(key);
         let upstreamClock;
         if (timeContext.upstreamTimeContext) {
-            upstreamClock = timeContext.upstreamTimeContext.clock();
+            upstreamClock = timeContext.upstreamTimeContext.getClock();
         }
 
         //stop following upstream time context since the view has it's own
         timeContext.resetContext();
 
         if (clockKey) {
-            timeContext.clock(clockKey, value);
+            timeContext.setClock(clockKey, value);
         } else {
             timeContext.stopClock();
             //upstream clock was active, but now we don't have one
             if (upstreamClock) {
-                timeContext.emit('clock', timeContext.activeClock);
+                timeContext.emit('clockChanged', timeContext.activeClock);
             }
 
-            timeContext.bounds(value);
+            timeContext.setBounds(value);
         }
 
         // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context

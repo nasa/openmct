@@ -39,7 +39,7 @@
     <ConductorModeIcon v-if="independentTCEnabled" />
 
     <conductor-inputs-fixed
-        v-if="showInputs"
+        v-if="showFixedInputs"
         class="c-compact-tc__bounds--fixed"
         :object-path="objectPath"
         :read-only="true"
@@ -47,13 +47,29 @@
     />
 
     <conductor-inputs-realtime
-        v-if="showInputs"
+        v-if="showRealtimeInputs"
         class="c-compact-tc__bounds--real-time"
         :object-path="objectPath"
         :read-only="true"
         :compact="true"
     />
     <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
+
+    <conductor-pop-up
+        v-if="showConductorPopup"
+        ref="conductorPopup"
+        :object-path="objectPath"
+        :is-independent="true"
+        :time-options="timeOptions"
+        :bottom="true"
+        :position-x="positionX"
+        :position-y="positionY"
+        @popupLoaded="initializePopup"
+        @independentModeUpdated="saveMode"
+        @fixedBoundsUpdated="saveFixedBounds"
+        @clockOffsetsUpdated="saveClockOffsets"
+        @dismiss="clearPopup"
+    />
 </div>
 </template>
 
@@ -85,19 +101,28 @@ export default {
         }
     },
     data() {
-        const bounds = this.openmct.time.getBounds();
-        const isFixed = this.openmct.time.isFixed();
+        const fixedOffsets = this.openmct.time.getBounds();
+        const clockOffsets = this.openmct.time.getClockOffsets();
+        const clock = this.openmct.time.getClock();
+        const mode = this.openmct.time.getMode();
+
+        const timeOptions = this.domainObject.configuration.timeOptions || {
+            clockOffsets,
+            fixedOffsets,
+        };
+
+        timeOptions.clock = timeOptions.clock ?? clock;
+        timeOptions.mode = timeOptions.mode ?? { key: mode };
+
+        const isFixed = timeOptions.mode === FIXED_MODE_KEY;
 
         return {
-            timeOptions: this.domainObject.configuration.timeOptions || {
-                clockOffsets: this.openmct.time.getClockOffsets(),
-                fixedOffsets: this.openmct.time.getBounds()
-            },
+            timeOptions,
             isFixed,
             independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
             viewBounds: {
-                start: bounds.start,
-                end: bounds.end
+                start: fixedOffsets.start,
+                end: fixedOffsets.end
             }
         };
     },
@@ -105,8 +130,11 @@ export default {
         toggleTitle() {
             return `${this.independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`;
         },
-        showInputs() {
+        showFixedInputs() {
             return this.isFixed && this.independentTCEnabled;
+        },
+        showRealtimeInputs() {
+            return !this.isFixed && this.independentTCEnabled;
         }
     },
     watch: {
@@ -118,10 +146,16 @@ export default {
                     this.destroyIndependentTime();
 
                     this.independentTCEnabled = domainObject.configuration.useIndependentTime === true;
-                    this.timeOptions = domainObject.configuration.timeOptions || {
+                    this.timeOptions = domainObject.configuration.timeOptions ?? {
                         clockOffsets: this.openmct.time.getClockOffsets(),
-                        fixedOffsets: this.openmct.time.getBounds()
+                        fixedOffsets: this.openmct.time.getBounds(),
                     };
+
+                    // these may not be set due to older configurations
+                    this.timeOptions.clock = this.timeOptions.clock ?? this.openmct.time.getClock();
+                    this.timeOptions.mode = this.timeOptions.mode ?? { key: this.openmct.time.getMode() };
+
+                    this.isFixed = this.timeOptions.mode.key === FIXED_MODE_KEY;
 
                     this.initialize();
                 }
@@ -148,15 +182,15 @@ export default {
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             this.setTimeContext();
 
-            if (this.timeOptions.mode) {
-                this.mode = this.timeOptions.mode;
-            } else {
-                if (this.timeContext.getClock() === undefined) {
-                    this.timeOptions.mode = this.mode = { key: FIXED_MODE_KEY };
-                } else {
-                    this.timeOptions.mode = this.mode = { key: Object.create(this.timeContext.getClock()).key};
-                }
-            }
+            // if (this.timeOptions.mode) {
+            //     this.mode = this.timeOptions.mode;
+            // } else {
+            //     if (this.timeContext.getClock() === undefined) {
+            //         this.timeOptions.mode = this.mode = { key: FIXED_MODE_KEY };
+            //     } else {
+            //         this.timeOptions.mode = this.mode = { key: Object.create(this.timeContext.getClock()).key};
+            //     }
+            // }
 
             if (this.independentTCEnabled) {
                 this.registerIndependentTimeOffsets();
@@ -167,11 +201,11 @@ export default {
             if (this.independentTCEnabled) {
                 this.registerIndependentTimeOffsets();
             } else {
-                this.removePopup();
+                this.clearPopup();
                 this.destroyIndependentTime();
             }
 
-            this.$emit('stateChanged', this.independentTCEnabled); // no longer user this, but may be used elsewhere
+            this.$emit('stateChanged', this.independentTCEnabled); // no longer use this, but may be used elsewhere
             this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', this.independentTCEnabled);
         },
         setTimeContext() {
@@ -190,18 +224,18 @@ export default {
             this.timeOptions.fixedOffsets = this.timeOptions.fixedOffsets || this.timeContext.getBounds();
 
             if (!this.timeOptions.mode) {
-                this.mode = this.timeContext.getClock() === undefined ? {key: FIXED_MODE_KEY} : {key: Object.create(this.timeContext.getClock()).key};
+                this.mode = { key: this.timeContext.getMode() };
                 this.registerIndependentTimeOffsets();
             }
         },
         saveFixedBounds(bounds) {
-            const newOptions = Object.assign({}, this.timeOptions, {
+            const newOptions = this.updateTimeOptionProperty({
                 fixedOffsets: bounds
             });
             this.updateTimeOptions(newOptions);
         },
         saveClockOffsets(offsets) {
-            const newOptions = Object.assign({}, this.timeOptions, {
+            const newOptions = this.updateTimeOptionProperty({
                 clockOffsets: offsets
             });
 
@@ -209,9 +243,10 @@ export default {
         },
         saveMode(mode) {
             this.mode = mode;
-            const newOptions = Object.assign({}, this.timeOptions, {
+            const newOptions = this.updateTimeOptionProperty({
                 mode: this.mode
             });
+
             this.updateTimeOptions(newOptions);
         },
         updateTimeOptions(options) {
@@ -221,35 +256,35 @@ export default {
             }
 
             this.registerIndependentTimeOffsets();
-            this.$emit('updated', this.timeOptions); // no longer user this, but may be used elsewhere
+            this.$emit('updated', this.timeOptions); // no longer use this, but may be used elsewhere
             this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', this.timeOptions);
         },
         registerIndependentTimeOffsets() {
-            if (!this.timeOptions.mode) {
-                return;
-            }
-
-            let offsets;
-
-            if (this.isFixed) {
-                offsets = this.timeOptions.fixedOffsets;
-            } else {
-                if (this.timeOptions.clockOffsets === undefined) {
-                    this.timeOptions.clockOffsets = this.openmct.time.getClockOffsets();
-                }
-
-                offsets = this.timeOptions.clockOffsets;
-            }
+            // if (!this.timeOptions.mode) {
+            //     return;
+            // }
 
             const timeContext = this.openmct.time.getIndependentContext(this.keyString);
+            const offsets = this.timeOptions.clockOffsets;
+
+            // if (this.timeConductorOptionsHolder) {
+            //     offsets = this.timeOptions.fixedOffsets;
+            // } else {
+            //     if (this.timeOptions.clockOffsets === undefined) {
+            //         this.timeOptions.clockOffsets = this.openmct.time.getClockOffsets();
+            //     }
+
+            //     offsets = this.timeOptions.clockOffsets;
+            // }
+
             if (!timeContext.hasOwnContext()) {
-                this.unregisterIndependentTime = this.openmct.time.addIndependentContext(this.keyString, offsets, this.isFixed ? undefined : this.mode.key);
+                this.unregisterIndependentTime = this.openmct.time.addIndependentContext(this.keyString, offsets, this.timeOptions.clock);
             } else {
-                if (this.isFixed) {
+                if (timeContext.isFixed()) {
                     timeContext.stopClock();
                     timeContext.setBounds(offsets);
                 } else {
-                    timeContext.setClock(this.mode.key, offsets);
+                    timeContext.setClock(this.timeOptions.clock, offsets);
                 }
             }
         },
@@ -257,6 +292,9 @@ export default {
             if (this.unregisterIndependentTime) {
                 this.unregisterIndependentTime();
             }
+        },
+        updateTimeOptionProperty(option) {
+            return Object.assign({}, this.timeOptions, option);
         }
     }
 };

@@ -39,7 +39,7 @@ export default {
     methods: {
         initializePopup() {
             this.conductorPopup = this.$refs.conductorPopup.$el;
-            this.$nextTick(() =>{
+            this.$nextTick(() => {
                 window.addEventListener('resize', this.positionBox);
                 document.addEventListener('click', this.handleClickAway);
                 this.positionBox();
