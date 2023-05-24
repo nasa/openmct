@@ -62,7 +62,7 @@
     "sanitize-html": "2.10.0",
     "sass": "1.62.1",
     "sass-loader": "13.2.2",
-    "sinon": "15.0.1",
+    "sinon": "15.1.0",
     "style-loader": "3.3.2",
     "typescript": "5.0.4",
     "uuid": "9.0.0",
