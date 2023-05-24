@@ -29,6 +29,7 @@
 
 import TimePopupRealtime from "./timePopupRealtime.vue";
 import _ from "lodash";
+import { TIME_CONTEXT_EVENTS } from "../../api/time/constants";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -115,11 +116,11 @@ export default {
         console.log('conductor inputs realtime mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
-        this.openmct.time.on('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
         this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystemChanged', this.setTimeSystem);
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
         this.stopFollowingTime();
     },
     methods: {
@@ -131,20 +132,20 @@ export default {
             this.setViewFromOffsets(offsets);
 
             if (this.timeContext) {
-                this.timeContext.on('boundsChanged', this.handleNewBounds);
-                this.timeContext.on('clockOffsetsChanged', this.setViewFromOffsets);
+                this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
+                this.timeContext.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
             } else {
-                this.openmct.time.on('boundsChanged', this.handleNewBounds);
-                this.openmct.time.on('clockOffsetsChanged', this.setViewFromOffsets);
+                this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
+                this.openmct.time.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
             }
         },
         stopFollowingTime() {
             if (this.timeContext) {
-                this.timeContext.off('boundsChanged', this.handleNewBounds);
-                this.timeContext.off('clockOffsetsChanged', this.setViewFromOffsets);
+                this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
+                this.timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
             } else {
-                this.openmct.time.off('boundsChanged', this.handleNewBounds);
-                this.openmct.time.off('clockOffsetsChanged', this.setViewFromOffsets);
+                this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
+                this.openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
             }
         },
         setTimeContext() {

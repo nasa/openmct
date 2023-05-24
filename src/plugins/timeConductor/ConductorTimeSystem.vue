@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+
 export default {
     inject: ['openmct', 'configuration'],
     props: {
@@ -58,12 +60,12 @@ export default {
         };
     },
     mounted: function () {
-        this.openmct.time.on('timeSysteChanged', this.setViewFromTimeSystem);
-        this.openmct.time.on('clockChanged', this.setViewFromClock);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
     },
     destroyed: function () {
-        this.openmct.time.off('timeSystemChanged', this.setViewFromTimeSystem);
-        this.openmct.time.on('clockChanged', this.setViewFromClock);
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
     },
     methods: {
         showTimeSystemMenu() {

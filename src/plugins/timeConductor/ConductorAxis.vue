@@ -38,6 +38,7 @@ import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -92,12 +93,12 @@ export default {
         this.axisElement = vis.append("g")
             .attr("class", "axis");
 
-        this.setViewFromTimeSystem(this.openmct.time.timeSystem());
+        this.setViewFromTimeSystem(this.openmct.time.getTimeSystem());
         this.setAxisDimensions();
         this.setScale();
 
         //Respond to changes in conductor
-        this.openmct.time.on("timeSystem", this.setViewFromTimeSystem);
+        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
     },
     beforeDestroy() {
@@ -116,7 +117,7 @@ export default {
                 return;
             }
 
-            let timeSystem = this.openmct.time.timeSystem();
+            let timeSystem = this.openmct.time.getTimeSystem();
 
             if (timeSystem.isUTCBased) {
                 this.xScale.domain(
@@ -156,7 +157,7 @@ export default {
             this.setScale();
         },
         getActiveFormatter() {
-            let timeSystem = this.openmct.time.timeSystem();
+            let timeSystem = this.openmct.time.getTimeSystem();
 
             if (this.isFixed) {
                 return this.getFormatter(timeSystem.timeFormat);
@@ -227,7 +228,7 @@ export default {
             this.inPanMode = false;
         },
         getPanBounds() {
-            const bounds = this.openmct.time.bounds();
+            const bounds = this.openmct.time.getBounds();
             const deltaTime = bounds.end - bounds.start;
             const deltaX = this.dragX - this.dragStartX;
             const percX = deltaX / this.width;
@@ -294,7 +295,7 @@ export default {
             };
         },
         scaleToBounds(value) {
-            const bounds = this.openmct.time.bounds();
+            const bounds = this.openmct.time.getBounds();
             const timeDelta = bounds.end - bounds.start;
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
