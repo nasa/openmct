@@ -126,11 +126,11 @@ define(
 
             updateRowsInPlace(rows) {
                 rows.forEach(row => {
-                    if (!row.messageId) {
+                    if (!row.datum.messageId) {
                         return;
                     }
 
-                    const foundIndex = this.rows.findIndex(existingRow => existingRow.messageId && existingRow.messageId === row.messageId);
+                    const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
                     if (foundIndex > -1) {
                         this.rows[foundIndex] = {
                             ...this.rows[foundIndex],
