@@ -72,7 +72,7 @@ import ConductorTimeSystem from "./ConductorTimeSystem.vue";
 import ConductorHistory from "./ConductorHistory.vue";
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "./ConductorInputsRealtime.vue";
-import { REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
 
 export default {
 
@@ -174,7 +174,6 @@ export default {
         this.setTimeContext();
     },
     beforeDestroy() {
-        console.log('before destroy')
         this.stopFollowingTimeContext();
     },
     methods: {
@@ -185,18 +184,18 @@ export default {
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
-            this.timeContext.on('clockChanged', this.setViewFromClock);
-            this.timeContext.on('boundsChanged', this.setBounds);
-            this.timeContext.on('modeChanged', this.setMode);
+            this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+            this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
+            this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
 
             this.setViewFromClock(this.timeContext.getClock());
             this.setBounds(this.timeContext.getBounds());
         },
         stopFollowingTimeContext() {
-            console.log('stop')
-            this.timeContext.off('clockChanged', this.setViewFromClock);
-            this.timeContext.off('boundsChanged', this.setBounds);
-            this.timeContext.off('modeChanged', this.setMode);
+            console.log('stop');
+            this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+            this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
+            this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
         },
         setViewFromClock() {
             this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();

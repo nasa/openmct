@@ -266,14 +266,14 @@ export default {
             }
 
             return viewKey;
-        },
-        //Should the domainObject be updated in the Independent Time conductor component itself?
-        updateIndependentTimeState(useIndependentTime) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
-        },
-        saveTimeOptions(options) {
-            this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
         }
+        //Should the domainObject be updated in the Independent Time conductor component itself?
+        // updateIndependentTimeState(useIndependentTime) {
+        //     this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
+        // },
+        // saveTimeOptions(options) {
+        //     this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
+        // }
     }
 };
 </script>
