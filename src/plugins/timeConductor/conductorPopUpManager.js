@@ -27,80 +27,60 @@ export default {
         return {
             showConductorPopup: false,
             positionX: 0,
-            positionY: 0
+            positionY: 0,
+            conductorPopup: null
         };
     },
     mounted() {
-        this.showPopup = this.showPopup.bind(this);
-        this.clearPopup = this.clearPopup.bind(this);
-        this.positionBox = this.positionBox.bind(this);
         this.positionBox = raf(this.positionBox);
-        this.timeConductorOptionsHolder = this.$refs.timeConductorOptionsHolder;
-        this.showConductorPopup = false;
-        this.registerPopUp();
-        // this.popupComponent = this.createPopupComponent();
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.positionBox);
-        document.removeEventListener('click', this.clearPopup);
-        this.timeConductorOptionsHolder.removeEventListener('click', this.showPopup);
+        this.timeConductorOptionsHolder = this.$el;
+        this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
     },
     methods: {
+        initializePopup() {
+            this.conductorPopup = this.$refs.conductorPopup.$el;
+            this.$nextTick(() =>{
+                window.addEventListener('resize', this.positionBox);
+                document.addEventListener('click', this.handleClickAway);
+                this.positionBox();
+            });
+        },
         showPopup() {
-            if (this.showConductorPopup) {
+            if (this.conductorPopup) {
                 return;
             }
 
             this.showConductorPopup = true;
-
-            this.positionBox();
-
-            // setTimeout so we don't trigger immediately on the same iteration of the event loop
-            // using capture, was preventing the dropdown menues from disappearing with
-            // the conductor popup, requiring an extra click and floating dropdown
-            setTimeout(() => {
-                window.addEventListener('resize', this.positionBox);
-                document.addEventListener('click', this.clearPopup);
-            }, 0);
         },
 
         positionBox() {
-            // const popupElement = this.popupComponent;
-            const timeConductorOptions = this.timeConductorOptionsHolder;
+            const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+            const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 
-            let timeConductorOptionsBox = timeConductorOptions.getBoundingClientRect();
-            this.positionX = timeConductorOptionsBox.left;
             //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            this.positionY = timeConductorOptionsBox.top;
-            const offsetTop = this.$refs.conductorPopup.$el.getBoundingClientRect().height;
-
-            const popupRight = this.positionX + this.$refs.conductorPopup.$el.clientWidth;
-            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
-
-            this.positionX = this.positionX + offsetLeft;
-            this.positionY = this.positionY - offsetTop;
-            console.log('position xy', this.positionX, this.positionY);
+            this.positionY = timeConductorOptionsBox.top - offsetTop;
+            this.positionX = 0;
         },
 
-        clearPopup(clickAwayEvent) {
+        clearPopup() {
+            this.showConductorPopup = false;
+            this.conductorPopup = null;
+
+            document.removeEventListener('click', this.handleClickAway);
+            window.removeEventListener('resize', this.positionBox);
+        },
+
+        handleClickAway(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
-                this.showConductorPopup = false;
-
-                document.removeEventListener('click', this.clearPopup);
-                window.removeEventListener('resize', this.positionBox);
+                this.clearPopup();
             }
         },
         canClose(clickAwayEvent) {
-            // const popupElement = this.popupComponent;
-
             const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = this.$refs.conductorPopup.$el.contains(clickAwayEvent.target);
+            const isPopupElementItem = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
 
             return !isChildMenu && !isPopupElementItem;
-        },
-        registerPopUp() {
-            this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
         }
     }
 };
