@@ -33,7 +33,7 @@
     "git-rev-sync": "3.0.2",
     "html2canvas": "1.4.1",
     "imports-loader": "4.0.1",
-    "jasmine-core": "4.5.0",
+    "jasmine-core": "5.0.0",
     "karma": "6.4.2",
     "karma-chrome-launcher": "3.2.0",
     "karma-cli": "2.0.0",
