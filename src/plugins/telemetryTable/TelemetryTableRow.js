@@ -90,6 +90,15 @@ define([], function () {
         getContextMenuActions() {
             return ['viewDatumAction', 'viewHistoricalData'];
         }
+
+        updateWithDatum(updatesToDatum) {
+            const normalizedUpdatesToDatum = createNormalizedDatum(updatesToDatum, this.columns);
+            this.datum = {
+                ...this.datum,
+                ...normalizedUpdatesToDatum
+            };
+            this.fullDatum = this.datum;
+        }
     }
 
     /**
@@ -103,7 +112,10 @@ define([], function () {
         const normalizedDatum = JSON.parse(JSON.stringify(datum));
 
         Object.values(columns).forEach(column => {
-            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+            const rawValue = column.getRawValue(datum);
+            if (rawValue !== undefined) {
+                normalizedDatum[column.getKey()] = rawValue;
+            }
         });
 
         return normalizedDatum;

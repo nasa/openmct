@@ -61,7 +61,7 @@ define(
                 this.emit('remove', removed);
             }
 
-            addRows(rows, updateInPlace) {
+            addRows(rows) {
                 let rowsToAdd = this.filterRows(rows);
                 this.sortAndMergeRows(rowsToAdd);
 
@@ -135,10 +135,8 @@ define(
                 const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
                 if (foundIndex > -1) {
                     const foundRow = this.rows[foundIndex];
-                    this.rows[foundIndex] = {
-                        ...foundRow,
-                        ...row
-                    };
+                    foundRow.updateWithDatum(row);
+                    this.rows[foundIndex] = foundRow;
                 }
             }
 
@@ -152,7 +150,6 @@ define(
             }
 
             insertRows(rowsToAdd, addToBeginning) {
-                // this.rows = [...sortedRowsToAdd, ...this.rows];
                 rowsToAdd.forEach(row => {
                     if (this.inPlaceUpdate(row)) {
                         this.updateRowInPlace(row);
