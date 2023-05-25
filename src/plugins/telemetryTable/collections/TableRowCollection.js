@@ -135,7 +135,7 @@ define(
                 const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
                 if (foundIndex > -1) {
                     const foundRow = this.rows[foundIndex];
-                    foundRow.updateWithDatum(row);
+                    foundRow.updateWithDatum(row.datum);
                     this.rows[foundIndex] = foundRow;
                 }
             }
