@@ -114,17 +114,14 @@ define(
                 if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow)
                     === lastIncomingRow
                 ) {
-                    this.rows = [...sortedRowsToAdd, ...this.rows];
+                    this.insertRows(sortedRowsToAdd, true);
                 } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow)
                     === lastExistingRow
                 ) {
-                    this.rows = [...this.rows, ...sortedRowsToAdd];
+                    this.insertRows(sortedRowsToAdd, false);
                 } else {
                     this.mergeSortedRows(sortedRowsToAdd);
                 }
-
-                const sortedRowsToUpdateInPlace = sortedRows.filter(this.inPlaceUpdate);
-                this.updateRowsInPlace(sortedRowsToUpdateInPlace);
             }
 
             inPlaceUpdate(row) {
@@ -137,27 +134,15 @@ define(
                 return foundIndex > -1;
             }
 
-            noInPlaceUpdate(row) {
-                if (!row.datum.messageId) {
-                    return;
-                }
-
+            updateRowInPlace(row) {
                 const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
-
-                return foundIndex < 0;
-            }
-
-            updateRowsInPlace(rowsToUpdate) {
-                rowsToUpdate.forEach(row => {
-                    const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
-                    if (foundIndex > -1) {
-                        const foundRow = this.rows[foundIndex];
-                        this.rows[foundIndex] = {
-                            ...foundRow,
-                            ...row
-                        };
-                    }
-                });
+                if (foundIndex > -1) {
+                    const foundRow = this.rows[foundIndex];
+                    this.rows[foundIndex] = {
+                        ...foundRow,
+                        ...row
+                    };
+                }
             }
 
             sortCollection(rows) {
@@ -169,6 +154,21 @@ define(
                 return sortedRows;
             }
 
+            insertRows(rowsToAdd, addToBeginning) {
+                // this.rows = [...sortedRowsToAdd, ...this.rows];
+                rowsToAdd.forEach(row => {
+                    if (this.inPlaceUpdate(row)) {
+                        this.updateRowInPlace(row);
+                    } else {
+                        if (addToBeginning) {
+                            this.rows.unshift(row);
+                        } else {
+                            this.rows.push(row);
+                        }
+                    }
+                });
+            }
+
             mergeSortedRows(rows) {
                 const mergedRows = [];
                 let i = 0;
@@ -178,12 +178,16 @@ define(
                     const existingRow = this.rows[i];
                     const incomingRow = rows[j];
 
-                    if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
-                        mergedRows.push(existingRow);
-                        i++;
+                    if (this.inPlaceUpdate(incomingRow)) {
+                        this.updateRowInPlace(incomingRow);
                     } else {
-                        mergedRows.push(incomingRow);
-                        j++;
+                        if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+                            mergedRows.push(existingRow);
+                            i++;
+                        } else {
+                            mergedRows.push(incomingRow);
+                            j++;
+                        }
                     }
                 }
 
