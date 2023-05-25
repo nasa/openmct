@@ -63,10 +63,6 @@ define(
 
             addRows(rows, updateInPlace) {
                 let rowsToAdd = this.filterRows(rows);
-                if (updateInPlace) {
-                    this.updateRowsInPlace(rowsToAdd);
-                }
-
                 this.sortAndMergeRows(rowsToAdd);
 
                 // we emit filter no matter what to trigger
@@ -98,14 +94,18 @@ define(
             }
 
             sortAndMergeRows(rows) {
-                const sortedRowsToAdd = this.sortCollection(rows);
+                const sortedRows = this.sortCollection(rows);
 
                 if (this.rows.length === 0) {
-                    this.rows = sortedRowsToAdd;
+                    this.rows = sortedRows;
 
                     return;
                 }
 
+                //filter out in place updates
+                const sortedRowsToAdd = sortedRows.filter(this.noInPlaceUpdate);
+
+                //proceed with insertions
                 const firstIncomingRow = sortedRowsToAdd[0];
                 const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
                 const firstExistingRow = this.rows[0];
@@ -122,18 +122,38 @@ define(
                 } else {
                     this.mergeSortedRows(sortedRowsToAdd);
                 }
+
+                const sortedRowsToUpdateInPlace = sortedRows.filter(this.inPlaceUpdate);
+                this.updateRowsInPlace(sortedRowsToUpdateInPlace);
             }
 
-            updateRowsInPlace(rows) {
-                rows.forEach(row => {
-                    if (!row.datum.messageId) {
-                        return;
-                    }
+            inPlaceUpdate(row) {
+                if (!row.datum.messageId) {
+                    return;
+                }
 
+                const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
+
+                return foundIndex > -1;
+            }
+
+            noInPlaceUpdate(row) {
+                if (!row.datum.messageId) {
+                    return;
+                }
+
+                const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
+
+                return foundIndex < 0;
+            }
+
+            updateRowsInPlace(rowsToUpdate) {
+                rowsToUpdate.forEach(row => {
                     const foundIndex = this.rows.findIndex(existingRow => existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId);
                     if (foundIndex > -1) {
+                        const foundRow = this.rows[foundIndex];
                         this.rows[foundIndex] = {
-                            ...this.rows[foundIndex],
+                            ...foundRow,
                             ...row
                         };
                     }
