@@ -102,25 +102,22 @@ define(
                     return;
                 }
 
-                //filter out in place updates
-                const sortedRowsToAdd = sortedRows.filter(this.noInPlaceUpdate);
-
                 //proceed with insertions
-                const firstIncomingRow = sortedRowsToAdd[0];
-                const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
+                const firstIncomingRow = sortedRows[0];
+                const lastIncomingRow = sortedRows[sortedRows.length - 1];
                 const firstExistingRow = this.rows[0];
                 const lastExistingRow = this.rows[this.rows.length - 1];
 
                 if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow)
                     === lastIncomingRow
                 ) {
-                    this.insertRows(sortedRowsToAdd, true);
+                    this.insertRows(sortedRows, true);
                 } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow)
                     === lastExistingRow
                 ) {
-                    this.insertRows(sortedRowsToAdd, false);
+                    this.insertRows(sortedRows, false);
                 } else {
-                    this.mergeSortedRows(sortedRowsToAdd);
+                    this.mergeSortedRows(sortedRows);
                 }
             }
 
