@@ -30,11 +30,11 @@ import DurationFormat from './DurationFormat';
  * clock source that ticks every 100ms, providing UTC times.
  */
 export default function () {
-    return function (openmct) {
-        const timeSystem = new UTCTimeSystem();
-        openmct.time.addTimeSystem(timeSystem);
-        openmct.time.addClock(new LocalClock(100));
-        openmct.telemetry.addFormat(new UTCTimeFormat());
-        openmct.telemetry.addFormat(new DurationFormat());
-    };
+  return function (openmct) {
+    const timeSystem = new UTCTimeSystem();
+    openmct.time.addTimeSystem(timeSystem);
+    openmct.time.addClock(new LocalClock(100));
+    openmct.telemetry.addFormat(new UTCTimeFormat());
+    openmct.telemetry.addFormat(new DurationFormat());
+  };
 }

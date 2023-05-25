@@ -22,7 +22,7 @@
 import ExportAsJSONAction from './ExportAsJSONAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new ExportAsJSONAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new ExportAsJSONAction(openmct));
+  };
 }

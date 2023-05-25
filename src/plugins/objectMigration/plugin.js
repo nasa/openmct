@@ -23,33 +23,30 @@
 import Migrations from './Migrations.js';
 
 export default function () {
-    return function (openmct) {
-        let migrations = Migrations(openmct);
+  return function (openmct) {
+    let migrations = Migrations(openmct);
 
-        function needsMigration(domainObject) {
-            return migrations.some(m => m.check(domainObject));
+    function needsMigration(domainObject) {
+      return migrations.some((m) => m.check(domainObject));
+    }
+
+    function migrateObject(domainObject) {
+      return migrations.filter((m) => m.check(domainObject))[0].migrate(domainObject);
+    }
+
+    let wrappedFunction = openmct.objects.get;
+    openmct.objects.get = function migrate() {
+      return wrappedFunction.apply(openmct.objects, [...arguments]).then(function (object) {
+        if (needsMigration(object)) {
+          migrateObject(object).then((newObject) => {
+            openmct.objects.mutate(newObject, 'persisted', Date.now());
+
+            return newObject;
+          });
         }
 
-        function migrateObject(domainObject) {
-            return migrations.filter(m => m.check(domainObject))[0]
-                .migrate(domainObject);
-        }
-
-        let wrappedFunction = openmct.objects.get;
-        openmct.objects.get = function migrate() {
-            return wrappedFunction.apply(openmct.objects, [...arguments])
-                .then(function (object) {
-                    if (needsMigration(object)) {
-                        migrateObject(object)
-                            .then(newObject => {
-                                openmct.objects.mutate(newObject, 'persisted', Date.now());
-
-                                return newObject;
-                            });
-                    }
-
-                    return object;
-                });
-        };
+        return object;
+      });
     };
+  };
 }

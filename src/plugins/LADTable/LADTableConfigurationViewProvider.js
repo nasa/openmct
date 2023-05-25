@@ -24,44 +24,44 @@ import LADTableConfigurationComponent from './components/LADTableConfiguration.v
 import Vue from 'vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
-    return {
-        key: 'lad-table-configuration',
-        name: 'LAD Table Configuration',
-        canView(selection) {
-            if (selection.length !== 1 || selection[0].length === 0) {
-                return false;
-            }
+  return {
+    key: 'lad-table-configuration',
+    name: 'LAD Table Configuration',
+    canView(selection) {
+      if (selection.length !== 1 || selection[0].length === 0) {
+        return false;
+      }
 
-            const object = selection[0][0].context.item;
+      const object = selection[0][0].context.item;
 
-            return object?.type === 'LadTable' || object?.type === 'LadTableSet';
+      return object?.type === 'LadTable' || object?.type === 'LadTableSet';
+    },
+    view(selection) {
+      let component;
+
+      return {
+        show(element) {
+          component = new Vue({
+            el: element,
+            components: {
+              LADTableConfiguration: LADTableConfigurationComponent
+            },
+            provide: {
+              openmct
+            },
+            template: '<LADTableConfiguration />'
+          });
         },
-        view(selection) {
-            let component;
-
-            return {
-                show(element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            LADTableConfiguration: LADTableConfigurationComponent
-                        },
-                        provide: {
-                            openmct
-                        },
-                        template: '<LADTableConfiguration />'
-                    });
-                },
-                priority() {
-                    return 1;
-                },
-                destroy() {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+        priority() {
+          return 1;
+        },
+        destroy() {
+          if (component) {
+            component.$destroy();
+            component = undefined;
+          }
         }
-    };
+      };
+    }
+  };
 }

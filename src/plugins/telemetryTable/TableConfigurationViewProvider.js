@@ -21,64 +21,58 @@
  *****************************************************************************/
 
 define([
-    'objectUtils',
-    './components/table-configuration.vue',
-    './TelemetryTableConfiguration',
-    'vue'
-], function (
-    objectUtils,
-    TableConfigurationComponent,
-    TelemetryTableConfiguration,
-    Vue
-) {
+  'objectUtils',
+  './components/table-configuration.vue',
+  './TelemetryTableConfiguration',
+  'vue'
+], function (objectUtils, TableConfigurationComponent, TelemetryTableConfiguration, Vue) {
+  function TableConfigurationViewProvider(openmct) {
+    return {
+      key: 'table-configuration',
+      name: 'Configuration',
+      canView: function (selection) {
+        if (selection.length !== 1 || selection[0].length === 0) {
+          return false;
+        }
 
-    function TableConfigurationViewProvider(openmct) {
+        let object = selection[0][0].context.item;
+
+        return object && object.type === 'table';
+      },
+      view: function (selection) {
+        let component;
+        let domainObject = selection[0][0].context.item;
+        let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+
         return {
-            key: 'table-configuration',
-            name: 'Configuration',
-            canView: function (selection) {
-                if (selection.length !== 1 || selection[0].length === 0) {
-                    return false;
-                }
-
-                let object = selection[0][0].context.item;
-
-                return object && object.type === 'table';
-            },
-            view: function (selection) {
-                let component;
-                let domainObject = selection[0][0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                TableConfiguration: TableConfigurationComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                tableConfiguration
-                            },
-                            template: '<table-configuration></table-configuration>'
-                        });
-                    },
-                    priority: function () {
-                        return 1;
-                    },
-                    destroy: function () {
-                        if (component) {
-                            component.$destroy();
-                            component = undefined;
-                        }
-
-                        tableConfiguration = undefined;
-                    }
-                };
+          show: function (element) {
+            component = new Vue({
+              el: element,
+              components: {
+                TableConfiguration: TableConfigurationComponent.default
+              },
+              provide: {
+                openmct,
+                tableConfiguration
+              },
+              template: '<table-configuration></table-configuration>'
+            });
+          },
+          priority: function () {
+            return 1;
+          },
+          destroy: function () {
+            if (component) {
+              component.$destroy();
+              component = undefined;
             }
-        };
-    }
 
-    return TableConfigurationViewProvider;
+            tableConfiguration = undefined;
+          }
+        };
+      }
+    };
+  }
+
+  return TableConfigurationViewProvider;
 });

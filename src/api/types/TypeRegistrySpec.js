@@ -23,33 +23,33 @@
 import TypeRegistry from './TypeRegistry';
 
 describe('The Type API', function () {
-    let typeRegistryInstance;
+  let typeRegistryInstance;
 
-    beforeEach(function () {
-        typeRegistryInstance = new TypeRegistry ();
-        typeRegistryInstance.addType('testType', {
-            name: 'Test Type',
-            description: 'This is a test type.',
-            creatable: true
-        });
+  beforeEach(function () {
+    typeRegistryInstance = new TypeRegistry();
+    typeRegistryInstance.addType('testType', {
+      name: 'Test Type',
+      description: 'This is a test type.',
+      creatable: true
     });
+  });
 
-    it('types can be standardized', function () {
-        typeRegistryInstance.addType('standardizationTestType', {
-            label: 'Test Type',
-            description: 'This is a test type.',
-            creatable: true
-        });
-        typeRegistryInstance.standardizeType(typeRegistryInstance.types.standardizationTestType);
-        expect(typeRegistryInstance.get('standardizationTestType').definition.label).toBeUndefined();
-        expect(typeRegistryInstance.get('standardizationTestType').definition.name).toBe('Test Type');
+  it('types can be standardized', function () {
+    typeRegistryInstance.addType('standardizationTestType', {
+      label: 'Test Type',
+      description: 'This is a test type.',
+      creatable: true
     });
+    typeRegistryInstance.standardizeType(typeRegistryInstance.types.standardizationTestType);
+    expect(typeRegistryInstance.get('standardizationTestType').definition.label).toBeUndefined();
+    expect(typeRegistryInstance.get('standardizationTestType').definition.name).toBe('Test Type');
+  });
 
-    it('new types are registered successfully and can be retrieved', function () {
-        expect(typeRegistryInstance.get('testType').definition.name).toBe('Test Type');
-    });
+  it('new types are registered successfully and can be retrieved', function () {
+    expect(typeRegistryInstance.get('testType').definition.name).toBe('Test Type');
+  });
 
-    it('type registry contains new keys', function () {
-        expect(typeRegistryInstance.listKeys ()).toContain('testType');
-    });
+  it('type registry contains new keys', function () {
+    expect(typeRegistryInstance.listKeys()).toContain('testType');
+  });
 });

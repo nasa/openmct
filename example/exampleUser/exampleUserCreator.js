@@ -21,16 +21,16 @@
  *****************************************************************************/
 
 export default function createExampleUser(UserClass) {
-    return class ExampleUser extends UserClass {
-        constructor(id, name, roles) {
-            super(id, name);
+  return class ExampleUser extends UserClass {
+    constructor(id, name, roles) {
+      super(id, name);
 
-            this.roles = roles;
-            this.getRoles = this.getRoles.bind(this);
-        }
+      this.roles = roles;
+      this.getRoles = this.getRoles.bind(this);
+    }
 
-        getRoles() {
-            return this.roles;
-        }
-    };
+    getRoles() {
+      return this.roles;
+    }
+  };
 }

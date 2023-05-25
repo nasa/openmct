@@ -32,14 +32,14 @@ import availableTags from './tags.json';
  * @returns {function} The plugin install function
  */
 export default function exampleTagsPlugin(options) {
-    return function install(openmct) {
-        if (options?.namespaceToSaveAnnotations) {
-            openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
-        }
+  return function install(openmct) {
+    if (options?.namespaceToSaveAnnotations) {
+      openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
+    }
 
-        Object.keys(availableTags.tags).forEach(tagKey => {
-            const tagDefinition = availableTags.tags[tagKey];
-            openmct.annotation.defineTag(tagKey, tagDefinition);
-        });
-    };
+    Object.keys(availableTags.tags).forEach((tagKey) => {
+      const tagDefinition = availableTags.tags[tagKey];
+      openmct.annotation.defineTag(tagKey, tagDefinition);
+    });
+  };
 }

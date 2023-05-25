@@ -20,109 +20,105 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
+define(['lodash'], function (_) {
+  /**
+   * This is the default metadata provider; for any object with a "telemetry"
+   * property, this provider will return the value of that property as the
+   * telemetry metadata.
+   *
+   * This provider also implements legacy support for telemetry metadata
+   * defined on the type.  Telemetry metadata definitions on type will be
+   * depreciated in the future.
+   */
+  function DefaultMetadataProvider(openmct) {
+    this.openmct = openmct;
+  }
 
-    /**
-     * This is the default metadata provider; for any object with a "telemetry"
-     * property, this provider will return the value of that property as the
-     * telemetry metadata.
-     *
-     * This provider also implements legacy support for telemetry metadata
-     * defined on the type.  Telemetry metadata definitions on type will be
-     * depreciated in the future.
-     */
-    function DefaultMetadataProvider(openmct) {
-        this.openmct = openmct;
+  /**
+   * Applies to any domain object with a telemetry property, or whose type
+   * definition has a telemetry property.
+   */
+  DefaultMetadataProvider.prototype.supportsMetadata = function (domainObject) {
+    return Boolean(domainObject.telemetry) || Boolean(this.typeHasTelemetry(domainObject));
+  };
+
+  /**
+   * Retrieves valueMetadata from legacy metadata.
+   * @private
+   */
+  function valueMetadatasFromOldFormat(metadata) {
+    const valueMetadatas = [];
+
+    valueMetadatas.push({
+      key: 'name',
+      name: 'Name'
+    });
+
+    metadata.domains.forEach(function (domain, index) {
+      const valueMetadata = _.clone(domain);
+      valueMetadata.hints = {
+        domain: index + 1
+      };
+      valueMetadatas.push(valueMetadata);
+    });
+
+    metadata.ranges.forEach(function (range, index) {
+      const valueMetadata = _.clone(range);
+      valueMetadata.hints = {
+        range: index,
+        priority: index + metadata.domains.length + 1
+      };
+
+      if (valueMetadata.type === 'enum') {
+        valueMetadata.key = 'enum';
+        valueMetadata.hints.y -= 10;
+        valueMetadata.hints.range -= 10;
+        valueMetadata.enumerations = _.sortBy(
+          valueMetadata.enumerations.map(function (e) {
+            return {
+              string: e.string,
+              value: Number(e.value)
+            };
+          }),
+          'e.value'
+        );
+        valueMetadata.values = valueMetadata.enumerations.map((e) => e.value);
+        valueMetadata.max = Math.max(valueMetadata.values);
+        valueMetadata.min = Math.min(valueMetadata.values);
+      }
+
+      valueMetadatas.push(valueMetadata);
+    });
+
+    return valueMetadatas;
+  }
+
+  /**
+   * Returns telemetry metadata for a given domain object.
+   */
+  DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
+    const metadata = domainObject.telemetry || {};
+    if (this.typeHasTelemetry(domainObject)) {
+      const typeMetadata = this.openmct.types.get(domainObject.type).definition.telemetry;
+
+      Object.assign(metadata, typeMetadata);
+
+      if (!metadata.values) {
+        metadata.values = valueMetadatasFromOldFormat(metadata);
+      }
     }
 
-    /**
-     * Applies to any domain object with a telemetry property, or whose type
-     * definition has a telemetry property.
-     */
-    DefaultMetadataProvider.prototype.supportsMetadata = function (domainObject) {
-        return Boolean(domainObject.telemetry) || Boolean(this.typeHasTelemetry(domainObject));
-    };
+    return metadata;
+  };
 
-    /**
-     * Retrieves valueMetadata from legacy metadata.
-     * @private
-     */
-    function valueMetadatasFromOldFormat(metadata) {
-        const valueMetadatas = [];
+  /**
+   * @private
+   */
+  DefaultMetadataProvider.prototype.typeHasTelemetry = function (domainObject) {
+    const type = this.openmct.types.get(domainObject.type);
 
-        valueMetadatas.push({
-            key: 'name',
-            name: 'Name'
-        });
+    return Boolean(type.definition.telemetry);
+  };
 
-        metadata.domains.forEach(function (domain, index) {
-            const valueMetadata = _.clone(domain);
-            valueMetadata.hints = {
-                domain: index + 1
-            };
-            valueMetadatas.push(valueMetadata);
-        });
-
-        metadata.ranges.forEach(function (range, index) {
-            const valueMetadata = _.clone(range);
-            valueMetadata.hints = {
-                range: index,
-                priority: index + metadata.domains.length + 1
-            };
-
-            if (valueMetadata.type === 'enum') {
-                valueMetadata.key = 'enum';
-                valueMetadata.hints.y -= 10;
-                valueMetadata.hints.range -= 10;
-                valueMetadata.enumerations =
-                    _.sortBy(valueMetadata.enumerations.map(function (e) {
-                        return {
-                            string: e.string,
-                            value: Number(e.value)
-                        };
-                    }), 'e.value');
-                valueMetadata.values = valueMetadata.enumerations.map(e => e.value);
-                valueMetadata.max = Math.max(valueMetadata.values);
-                valueMetadata.min = Math.min(valueMetadata.values);
-            }
-
-            valueMetadatas.push(valueMetadata);
-        });
-
-        return valueMetadatas;
-    }
-
-    /**
-     * Returns telemetry metadata for a given domain object.
-     */
-    DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
-        const metadata = domainObject.telemetry || {};
-        if (this.typeHasTelemetry(domainObject)) {
-            const typeMetadata = this.openmct.types.get(domainObject.type).definition.telemetry;
-
-            Object.assign(metadata, typeMetadata);
-
-            if (!metadata.values) {
-                metadata.values = valueMetadatasFromOldFormat(metadata);
-            }
-        }
-
-        return metadata;
-    };
-
-    /**
-     * @private
-     */
-    DefaultMetadataProvider.prototype.typeHasTelemetry = function (domainObject) {
-        const type = this.openmct.types.get(domainObject.type);
-
-        return Boolean(type.definition.telemetry);
-    };
-
-    return DefaultMetadataProvider;
-
+  return DefaultMetadataProvider;
 });
