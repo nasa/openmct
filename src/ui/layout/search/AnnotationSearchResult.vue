@@ -98,6 +98,10 @@ export default {
         }
 
         return 'Could not find any matching Notebook entries';
+       } else if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.MAP) {
+        const targetID = Object.keys(this.result.targets)[0];
+        const { layerName, name } = this.result.targets[targetID];
+        return layerName ? `${layerName} - ${name}` : name;
       } else {
         return this.result.targetModels[0].name;
       }
