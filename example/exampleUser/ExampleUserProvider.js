@@ -58,7 +58,10 @@ const STATUSES = [{
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct, {defaultStatusRole} = {defaultStatusRole: undefined}) {
+    constructor(openmct, {defaultStatusRole, statusRoles} = {
+        defaultStatusRole: undefined,
+        statusRoles: []
+    }) {
         super();
 
         this.openmct = openmct;
@@ -67,7 +70,9 @@ export default class ExampleUserProvider extends EventEmitter {
         this.autoLoginUser = undefined;
         this.status = STATUSES[0];
         this.pollQuestion = undefined;
-        this.defaultStatusRole = defaultStatusRole;
+        // this.defaultStatusRole = defaultStatusRole;
+        this.statusRoles = statusRoles;
+        this.selectedStatusRole = defaultStatusRole;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
         this.loginPromise = undefined;
@@ -96,7 +101,6 @@ export default class ExampleUserProvider extends EventEmitter {
     canSetPollQuestion() {
         return Promise.resolve(true);
     }
-
     hasRole(roleId) {
         if (!this.loggedIn) {
             Promise.resolve(undefined);
@@ -105,12 +109,20 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
+    getActiveRole() {
+        if (!this.loggedIn) {
+            Promise.resolve(undefined);
+        }
+
+        return Promise.resolve(this.user.getRoles())
+    }
     getStatusRoleForCurrentUser() {
-        return Promise.resolve(this.defaultStatusRole);
+
+        return Promise.resolve(this.selectedStatusRole);
     }
 
     getAllStatusRoles() {
-        return Promise.resolve([this.defaultStatusRole]);
+        return Promise.resolve(this.statusRoles);
     }
 
     getStatusForRole(role) {
