@@ -123,6 +123,7 @@ export default {
     }
   },
   async mounted() {
+    this.abortController = null;
     this.openmct.annotation.on('targetDomainObjectAnnotated', this.loadAnnotationForTargetObject);
     this.openmct.selection.on('change', this.updateSelection);
     await this.updateSelection(this.openmct.selection.get());
@@ -191,8 +192,13 @@ export default {
     },
     async loadAnnotationForTargetObject(target) {
       const targetID = this.openmct.objects.makeKeyString(target.identifier);
+      if (this.abortController !== null) {
+        this.abortController.abort();
+      }
+      this.abortController = new AbortController();
       const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(
-        target.identifier
+        target.identifier,
+        this.abortController.signal
       );
       const filteredAnnotationsForSelection = allAnnotationsForTarget.filter((annotation) => {
         const matchingTargetID = Object.keys(annotation.targets).filter((loadedTargetID) => {
