@@ -23,7 +23,8 @@
 <template>
 <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
-        {{ userName }}
+        {{ `${userName}: ${role}` }}
+        <button>Change Role</button>
     </span>
 </div>
 </template>
@@ -35,6 +36,7 @@ export default {
     data() {
         return {
             userName: undefined,
+            role: undefined,
             loggedIn: false
         };
     },
@@ -46,6 +48,7 @@ export default {
         getUserInfo() {
             this.openmct.user.getCurrentUser().then((user) => {
                 this.userName = user.getName();
+                this.role = user.getRole();
                 this.loggedIn = this.openmct.user.isLoggedIn();
             });
         }

@@ -20,7 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
-export const NO_PROVIDER_ERROR = 'No user provider has been set.';
+import { SESSION_STORAGE_KEY } from './constants';
 
-export const SESSION_STORAGE_KEY = 'USER_ROLE';
+export default {
+    getActiveRole() {
+        return sessionStorage.getItem(SESSION_STORAGE_KEY);
+    },
+
+    setActiveRole(role) {
+        return sessionStorage.setItem(SESSION_STORAGE_KEY, role);
+    },
+
+    clearActiveRole() {
+        return sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    }
+};
