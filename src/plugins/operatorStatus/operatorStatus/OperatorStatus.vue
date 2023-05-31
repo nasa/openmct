@@ -58,7 +58,7 @@
 
 <script>
 const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
-
+const BROADCAST_CHANNEL_NAME = 'USER_ROLE';
 export default {
     inject: ['openmct', 'indicator', 'configuration'],
     props: {
@@ -73,8 +73,9 @@ export default {
     },
     data() {
         return {
-            allRoles: [],
+            allRoles: [{ key: 'FLIGHT', name: 'Flight'}, {key: 'CAPCOM', name: 'CAPCOM'}, { key: 'GUIDO', name: 'GUIDO' }],
             role: '--',
+            selectedRole: '',
             pollQuestionUpdated: '--',
             currentPollQuestion: DEFAULT_POLL_QUESTION,
             selectedStatus: undefined,
@@ -93,21 +94,66 @@ export default {
     beforeDestroy() {
         this.openmct.user.status.off('statusChange', this.setStatus);
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
+        this.unsubscribeToRole();
     },
     async mounted() {
         this.unsubscribe = [];
         await this.fetchUser();
-        await this.findFirstApplicableRole();
+        this.fetchOrPromptForRole();
         this.fetchPossibleStatusesForUser();
         this.fetchCurrentPoll();
         this.fetchMyStatus();
         this.subscribeToMyStatus();
         this.subscribeToPollQuestion();
+        this.createRoleChannel();
     },
     methods: {
-        async findFirstApplicableRole() {
+
+        async fetchOrPromptForRole() {
+            const UserAPI = this.openmct.user;
+            const activeRole = UserAPI.getActiveRole();
+            console.log('fetchOrPromptRole', activeRole)
+            if (!activeRole) {
+                // trigger role selection modal
+                this.promptForRoleSelection();
+            }
+
+            this.selectedRole = activeRole;
+
             this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
+
         },
+        promptForRoleSelection() {
+            console.log('allRoles', this.allRoles)
+            const selectionOptions = this.allRoles;
+            const dialog = this.openmct.overlays.selection({
+                selectionOptions,
+                iconClass: 'info',
+                title: 'Select Role',
+                message: 'Please select your role for operator status.',
+                currentSelection: this.selectedRole,
+                onChange: (event) => {
+                    console.log('updateRole', event.target.value)
+                    this.role = event.target.value;
+                },
+                buttons: [
+                    {
+                        label: 'Select',
+                        emphasis: true,
+                        callback: () => {
+                            this.setRole(this.role);
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        setRole(role) {
+            this.openmct.user.setActiveRole(role);
+            // update other tabs through broadcast channel
+            this.broadcastNewRole(role);
+        },
+
         async fetchUser() {
             this.user = await this.openmct.user.getCurrentUser();
         },
@@ -181,6 +227,26 @@ export default {
             } else {
                 return status;
             }
+        },
+        createRoleChannel() {
+            this.roleChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+            this.roleChannel.onmessage = (({data}) => {
+                const role = data;
+                this.openmct.user.setActiveRole(role);
+            });
+            this.roleChannel.onmessageerror = event => console.log(event);
+        },
+        unsubscribeToRole() {
+            this.roleChannel.close();
+        },
+        broadcastNewRole(role) {
+            // channel closed if name is no longer available
+            if (!this.roleChannel.name) {
+                return false;
+            }
+
+            this.roleChannel.postMessage(role);
+
         },
         noop() {}
     }

@@ -1,6 +1,7 @@
 import Overlay from './Overlay';
 import Dialog from './Dialog';
 import ProgressDialog from './ProgressDialog';
+import Selection from './Selection';
 
 /**
  * The OverlayAPI is responsible for pre-pending templates to
@@ -130,6 +131,13 @@ class OverlayAPI {
         this.showOverlay(progressDialog);
 
         return progressDialog;
+    }
+
+    selection(options) {
+        let selection = new Selection(options);
+        this.showOverlay(selection);
+
+        return selection;
     }
 
 }
