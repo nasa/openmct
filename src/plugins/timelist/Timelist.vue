@@ -44,7 +44,7 @@ import moment from "moment";
 import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
+const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const CURRENT_CSS_SUFFIX = '--is-current';
 const PAST_CSS_SUFFIX = '--is-past';
 const FUTURE_CSS_SUFFIX = '--is-future';
@@ -82,9 +82,9 @@ const headerItems = [
         format: function (value) {
             let result;
             if (value < 0) {
-                result = `-${getPreciseDuration(Math.abs(value))}`;
+                result = `+${getPreciseDuration(Math.abs(value), true)}`;
             } else if (value > 0) {
-                result = `+${getPreciseDuration(value)}`;
+                result = `-${getPreciseDuration(value, true)}`;
             } else {
                 result = 'Now';
             }
@@ -442,6 +442,11 @@ export default {
             this.autoScrolled = false;
         },
         setScrollTop() {
+            //The view isn't ready yet
+            if (!this.$el.parentElement) {
+                return;
+            }
+
             //scroll to somewhere mid-way of the current activities
             const row = this.$el.querySelector('.js-list-item');
             if (row && this.firstCurrentActivityIndex > -1) {
