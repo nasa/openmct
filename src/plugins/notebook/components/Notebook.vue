@@ -306,14 +306,17 @@ export default {
     this.getSearchResults = debounce(this.getSearchResults, 500);
     this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
   },
-  async mounted() {
+  async created() {
+    this.transaction = null;
+    this.abortController = new AbortController();
     await this.loadAnnotations();
+  },
+  async mounted() {
     this.formatSidebar();
     this.setSectionAndPageFromUrl();
 
     this.openmct.selection.on('change', this.updateSelection);
-    this.transaction = null;
-
+    
     window.addEventListener('orientationchange', this.formatSidebar);
     window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
     this.filterAndSortEntries();
@@ -321,9 +324,10 @@ export default {
       this.domainObject,
       '*',
       this.filterAndSortEntries
-    );
-  },
+      );
+    },
   beforeDestroy() {
+    this.abortController.abort();
     if (this.unlisten) {
       this.unlisten();
     }
@@ -387,8 +391,10 @@ export default {
       this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
 
       const foundAnnotations = await this.openmct.annotation.getAnnotations(
-        this.domainObject.identifier
+        this.domainObject.identifier,
+        this.abortController.signal
       );
+
       foundAnnotations.forEach((foundAnnotation) => {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const entryId = foundAnnotation.targets[targetId].entryId;

@@ -331,6 +331,9 @@ export default {
       return this.pending === 0 && this.loaded;
     }
   },
+  created() {
+    this.abortController = new AbortController();
+  },
   watch: {
     initGridLines(newGridLines) {
       this.gridLines = newGridLines;
@@ -398,6 +401,7 @@ export default {
     this.loaded = true;
   },
   beforeDestroy() {
+    this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
@@ -621,7 +625,8 @@ export default {
       await Promise.all(
         this.seriesModels.map(async (seriesModel) => {
           const seriesAnnotations = await this.openmct.annotation.getAnnotations(
-            seriesModel.model.identifier
+            seriesModel.model.identifier,
+            this.abortController.signal
           );
           rawAnnotationsForPlot.push(...seriesAnnotations);
         })
