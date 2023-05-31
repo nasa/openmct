@@ -309,14 +309,20 @@ export default {
   async created() {
     this.transaction = null;
     this.abortController = new AbortController();
-    await this.loadAnnotations();
+    try {
+      await this.loadAnnotations();
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        throw err;
+      }
+    }
   },
-  async mounted() {
+  mounted() {
     this.formatSidebar();
     this.setSectionAndPageFromUrl();
 
     this.openmct.selection.on('change', this.updateSelection);
-    
+
     window.addEventListener('orientationchange', this.formatSidebar);
     window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
     this.filterAndSortEntries();
@@ -324,8 +330,8 @@ export default {
       this.domainObject,
       '*',
       this.filterAndSortEntries
-      );
-    },
+    );
+  },
   beforeDestroy() {
     this.abortController.abort();
     if (this.unlisten) {
@@ -431,7 +437,11 @@ export default {
           : [...filteredPageEntriesByTime].reverse();
 
       if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
-        this.loadAnnotations();
+        this.loadAnnotations().catch((err) => {
+          if (err.name !== 'AbortError') {
+            throw err;
+          }
+        });
       }
     },
     changeSelectedSection({ sectionId, pageId }) {

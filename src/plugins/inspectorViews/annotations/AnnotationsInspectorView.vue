@@ -195,6 +195,7 @@ export default {
       if (this.abortController !== null) {
         this.abortController.abort();
       }
+
       this.abortController = new AbortController();
       const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(
         target.identifier,

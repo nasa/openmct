@@ -331,9 +331,6 @@ export default {
       return this.pending === 0 && this.loaded;
     }
   },
-  created() {
-    this.abortController = new AbortController();
-  },
   watch: {
     initGridLines(newGridLines) {
       this.gridLines = newGridLines;
@@ -341,6 +338,9 @@ export default {
     initCursorGuide(newCursorGuide) {
       this.cursorGuide = newCursorGuide;
     }
+  },
+  created() {
+    this.abortController = new AbortController();
   },
   mounted() {
     this.yAxisIdVisibility = {};
@@ -1529,7 +1529,11 @@ export default {
         this.endMarquee();
       }
 
-      this.loadAnnotations();
+      this.loadAnnotations().catch((err) => {
+        if (err.name !== 'AbortError') {
+          throw err;
+        }
+      });
     },
 
     zoom(zoomDirection, zoomFactor) {
