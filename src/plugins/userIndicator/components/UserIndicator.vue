@@ -48,7 +48,7 @@ export default {
         getUserInfo() {
             this.openmct.user.getCurrentUser().then((user) => {
                 this.userName = user.getName();
-                this.role = user.getRole();
+                this.role = this.openmct.user.getActiveRole();
                 this.loggedIn = this.openmct.user.isLoggedIn();
             });
         }
