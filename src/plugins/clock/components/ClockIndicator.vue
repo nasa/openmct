@@ -21,11 +21,11 @@
 -->
 
 <template>
-<div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
+  <div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
     <span class="label c-indicator__label">
-        {{ timeTextValue }}
+      {{ timeTextValue }}
     </span>
-</div>
+  </div>
 </template>
 
 <script>
@@ -33,30 +33,30 @@ import moment from 'moment';
 import ticker from 'utils/clock/Ticker';
 
 export default {
-    inject: ['openmct'],
-    props: {
-        indicatorFormat: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return {
-            timeTextValue: null
-        };
-    },
-    mounted() {
-        this.unlisten = ticker.listen(this.tick);
-    },
-    beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
-    },
-    methods: {
-        tick(timestamp) {
-            this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
-        }
+  inject: ['openmct'],
+  props: {
+    indicatorFormat: {
+      type: String,
+      required: true
     }
+  },
+  data() {
+    return {
+      timeTextValue: null
+    };
+  },
+  mounted() {
+    this.unlisten = ticker.listen(this.tick);
+  },
+  beforeDestroy() {
+    if (this.unlisten) {
+      this.unlisten();
+    }
+  },
+  methods: {
+    tick(timestamp) {
+      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
+    }
+  }
 };
 </script>

@@ -24,45 +24,45 @@ import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 import Vue from 'vue';
 
 export default function GanttChartInspectorViewProvider(openmct) {
-    return {
-        key: 'plan-inspector',
-        name: 'Config',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                return false;
-            }
+  return {
+    key: 'plan-inspector',
+    name: 'Config',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
 
-            const domainObject = selection[0][0].context.item;
+      const domainObject = selection[0][0].context.item;
 
-            return domainObject?.type === 'gantt-chart';
+      return domainObject?.type === 'gantt-chart';
+    },
+    view: function (selection) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              PlanViewConfiguration
+            },
+            provide: {
+              openmct,
+              selection: selection
+            },
+            template: '<plan-view-configuration></plan-view-configuration>'
+          });
         },
-        view: function (selection) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            PlanViewConfiguration
-                        },
-                        provide: {
-                            openmct,
-                            selection: selection
-                        },
-                        template: '<plan-view-configuration></plan-view-configuration>'
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.HIGH + 1;
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+        priority: function () {
+          return openmct.priority.HIGH + 1;
+        },
+        destroy: function () {
+          if (component) {
+            component.$destroy();
+            component = undefined;
+          }
         }
-    };
+      };
+    }
+  };
 }

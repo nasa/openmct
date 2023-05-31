@@ -25,6 +25,6 @@
 // await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.RestrictedNotebook('CUSTOM_NAME'));
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.RestrictedNotebook('CUSTOM_NAME'));
 });

@@ -20,57 +20,54 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventMessageGeneratorPlugin from './plugin.js';
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
 
 describe('the plugin', () => {
-    let openmct;
-    const mockDomainObject = {
-        identifier: {
-            namespace: '',
-            key: 'some-value'
-        },
-        telemetry: {
-            duration: 0
-        },
-        options: {},
-        type: 'eventGenerator'
-    };
+  let openmct;
+  const mockDomainObject = {
+    identifier: {
+      namespace: '',
+      key: 'some-value'
+    },
+    telemetry: {
+      duration: 0
+    },
+    options: {},
+    type: 'eventGenerator'
+  };
 
-    beforeEach((done) => {
-        const options = {};
-        openmct = createOpenMct();
-        openmct.install(new EventMessageGeneratorPlugin(options));
-        openmct.on('start', done);
-        openmct.startHeadless();
+  beforeEach((done) => {
+    const options = {};
+    openmct = createOpenMct();
+    openmct.install(new EventMessageGeneratorPlugin(options));
+    openmct.on('start', done);
+    openmct.startHeadless();
+  });
+
+  afterEach(async () => {
+    await resetApplicationState(openmct);
+  });
+
+  describe('the plugin', () => {
+    it('supports subscription', (done) => {
+      const unsubscribe = openmct.telemetry.subscribe(mockDomainObject, (telemetry) => {
+        expect(telemetry).not.toEqual(null);
+        expect(telemetry.message).toContain('CC: Eagle, Houston');
+        expect(unsubscribe).not.toEqual(null);
+        unsubscribe();
+        done();
+      });
     });
 
-    afterEach(async () => {
-        await resetApplicationState(openmct);
+    it('supports requests without start/end defined', async () => {
+      const telemetry = await openmct.telemetry.request(mockDomainObject);
+      expect(telemetry[0].message).toContain('CC: Eagle, Houston');
     });
 
-    describe('the plugin', () => {
-        it("supports subscription", (done) => {
-            const unsubscribe = openmct.telemetry.subscribe(mockDomainObject, (telemetry) => {
-                expect(telemetry).not.toEqual(null);
-                expect(telemetry.message).toContain('CC: Eagle, Houston');
-                expect(unsubscribe).not.toEqual(null);
-                unsubscribe();
-                done();
-            });
-        });
-
-        it("supports requests without start/end defined", async () => {
-            const telemetry = await openmct.telemetry.request(mockDomainObject);
-            expect(telemetry[0].message).toContain('CC: Eagle, Houston');
-        });
-
-        it("supports requests with arbitrary start time in the past", async () => {
-            mockDomainObject.options.start = 100000000000; // Mar 03 1973
-            const telemetry = await openmct.telemetry.request(mockDomainObject);
-            expect(telemetry[0].message).toContain('CC: Eagle, Houston');
-        });
+    it('supports requests with arbitrary start time in the past', async () => {
+      mockDomainObject.options.start = 100000000000; // Mar 03 1973
+      const telemetry = await openmct.telemetry.request(mockDomainObject);
+      expect(telemetry[0].message).toContain('CC: Eagle, Houston');
     });
+  });
 });

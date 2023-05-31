@@ -20,336 +20,328 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [
-        'lodash',
-        'EventEmitter'
-    ],
-    function (
-        _,
-        EventEmitter
-    ) {
-        /**
-         * @constructor
-         */
-        class TableRowCollection extends EventEmitter {
-            constructor() {
-                super();
+define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
+  /**
+   * @constructor
+   */
+  class TableRowCollection extends EventEmitter {
+    constructor() {
+      super();
 
-                this.rows = [];
-                this.columnFilters = {};
-                this.addRows = this.addRows.bind(this);
-                this.removeRowsByObject = this.removeRowsByObject.bind(this);
-                this.removeRowsByData = this.removeRowsByData.bind(this);
+      this.rows = [];
+      this.columnFilters = {};
+      this.addRows = this.addRows.bind(this);
+      this.removeRowsByObject = this.removeRowsByObject.bind(this);
+      this.removeRowsByData = this.removeRowsByData.bind(this);
 
-                this.clear = this.clear.bind(this);
-            }
+      this.clear = this.clear.bind(this);
+    }
 
-            removeRowsByObject(keyString) {
-                let removed = [];
+    removeRowsByObject(keyString) {
+      let removed = [];
 
-                this.rows = this.rows.filter((row) => {
-                    if (row.objectKeyString === keyString) {
-                        removed.push(row);
+      this.rows = this.rows.filter((row) => {
+        if (row.objectKeyString === keyString) {
+          removed.push(row);
 
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+          return false;
+        } else {
+          return true;
+        }
+      });
 
-                this.emit('remove', removed);
-            }
+      this.emit('remove', removed);
+    }
 
-            addRows(rows) {
-                let rowsToAdd = this.filterRows(rows);
+    addRows(rows) {
+      let rowsToAdd = this.filterRows(rows);
 
-                this.sortAndMergeRows(rowsToAdd);
+      this.sortAndMergeRows(rowsToAdd);
 
-                // we emit filter no matter what to trigger
-                // an update of visible rows
-                if (rowsToAdd.length > 0) {
-                    this.emit('add', rowsToAdd);
-                }
-            }
+      // we emit filter no matter what to trigger
+      // an update of visible rows
+      if (rowsToAdd.length > 0) {
+        this.emit('add', rowsToAdd);
+      }
+    }
 
-            clearRowsFromTableAndFilter(rows) {
+    clearRowsFromTableAndFilter(rows) {
+      let rowsToAdd = this.filterRows(rows);
+      // Reset of all rows, need to wipe current rows
+      this.rows = [];
 
-                let rowsToAdd = this.filterRows(rows);
-                // Reset of all rows, need to wipe current rows
-                this.rows = [];
+      this.sortAndMergeRows(rowsToAdd);
 
-                this.sortAndMergeRows(rowsToAdd);
+      // We emit filter and update of visible rows
+      this.emit('filter', rowsToAdd);
+    }
 
-                // We emit filter and update of visible rows
-                this.emit('filter', rowsToAdd);
-            }
+    filterRows(rows) {
+      if (Object.keys(this.columnFilters).length > 0) {
+        return rows.filter(this.matchesFilters, this);
+      }
 
-            filterRows(rows) {
+      return rows;
+    }
 
-                if (Object.keys(this.columnFilters).length > 0) {
-                    return rows.filter(this.matchesFilters, this);
-                }
+    sortAndMergeRows(rows) {
+      const sortedRowsToAdd = this.sortCollection(rows);
 
-                return rows;
-            }
+      if (this.rows.length === 0) {
+        this.rows = sortedRowsToAdd;
 
-            sortAndMergeRows(rows) {
-                const sortedRowsToAdd = this.sortCollection(rows);
+        return;
+      }
 
-                if (this.rows.length === 0) {
-                    this.rows = sortedRowsToAdd;
+      const firstIncomingRow = sortedRowsToAdd[0];
+      const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
+      const firstExistingRow = this.rows[0];
+      const lastExistingRow = this.rows[this.rows.length - 1];
 
-                    return;
-                }
+      if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow) === lastIncomingRow) {
+        this.rows = [...sortedRowsToAdd, ...this.rows];
+      } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow) === lastExistingRow) {
+        this.rows = [...this.rows, ...sortedRowsToAdd];
+      } else {
+        this.mergeSortedRows(sortedRowsToAdd);
+      }
+    }
 
-                const firstIncomingRow = sortedRowsToAdd[0];
-                const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
-                const firstExistingRow = this.rows[0];
-                const lastExistingRow = this.rows[this.rows.length - 1];
+    sortCollection(rows) {
+      const sortedRows = _.orderBy(
+        rows,
+        (row) => row.getParsedValue(this.sortOptions.key),
+        this.sortOptions.direction
+      );
 
-                if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow)
-                    === lastIncomingRow
-                ) {
-                    this.rows = [...sortedRowsToAdd, ...this.rows];
-                } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow)
-                    === lastExistingRow
-                ) {
-                    this.rows = [...this.rows, ...sortedRowsToAdd];
-                } else {
-                    this.mergeSortedRows(sortedRowsToAdd);
-                }
-            }
+      return sortedRows;
+    }
 
-            sortCollection(rows) {
-                const sortedRows = _.orderBy(
-                    rows,
-                    row => row.getParsedValue(this.sortOptions.key), this.sortOptions.direction
-                );
+    mergeSortedRows(rows) {
+      const mergedRows = [];
+      let i = 0;
+      let j = 0;
 
-                return sortedRows;
-            }
+      while (i < this.rows.length && j < rows.length) {
+        const existingRow = this.rows[i];
+        const incomingRow = rows[j];
 
-            mergeSortedRows(rows) {
-                const mergedRows = [];
-                let i = 0;
-                let j = 0;
+        if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+          mergedRows.push(existingRow);
+          i++;
+        } else {
+          mergedRows.push(incomingRow);
+          j++;
+        }
+      }
 
-                while (i < this.rows.length && j < rows.length) {
-                    const existingRow = this.rows[i];
-                    const incomingRow = rows[j];
+      // tail of existing rows is all that is left to merge
+      if (i < this.rows.length) {
+        for (i; i < this.rows.length; i++) {
+          mergedRows.push(this.rows[i]);
+        }
+      }
 
-                    if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
-                        mergedRows.push(existingRow);
-                        i++;
-                    } else {
-                        mergedRows.push(incomingRow);
-                        j++;
-                    }
-                }
+      // tail of incoming rows is all that is left to merge
+      if (j < rows.length) {
+        for (j; j < rows.length; j++) {
+          mergedRows.push(rows[j]);
+        }
+      }
 
-                // tail of existing rows is all that is left to merge
-                if (i < this.rows.length) {
-                    for (i; i < this.rows.length; i++) {
-                        mergedRows.push(this.rows[i]);
-                    }
-                }
+      this.rows = mergedRows;
+    }
 
-                // tail of incoming rows is all that is left to merge
-                if (j < rows.length) {
-                    for (j; j < rows.length; j++) {
-                        mergedRows.push(rows[j]);
-                    }
-                }
+    firstRowInSortOrder(row1, row2) {
+      const val1 = this.getValueForSortColumn(row1);
+      const val2 = this.getValueForSortColumn(row2);
 
-                this.rows = mergedRows;
-            }
+      if (this.sortOptions.direction === 'asc') {
+        return val1 <= val2 ? row1 : row2;
+      } else {
+        return val1 >= val2 ? row1 : row2;
+      }
+    }
 
-            firstRowInSortOrder(row1, row2) {
-                const val1 = this.getValueForSortColumn(row1);
-                const val2 = this.getValueForSortColumn(row2);
+    removeRowsByData(data) {
+      let removed = [];
 
-                if (this.sortOptions.direction === 'asc') {
-                    return val1 <= val2 ? row1 : row2;
-                } else {
-                    return val1 >= val2 ? row1 : row2;
-                }
-            }
+      this.rows = this.rows.filter((row) => {
+        if (data.includes(row.fullDatum)) {
+          removed.push(row);
 
-            removeRowsByData(data) {
-                let removed = [];
+          return false;
+        } else {
+          return true;
+        }
+      });
 
-                this.rows = this.rows.filter((row) => {
-                    if (data.includes(row.fullDatum)) {
-                        removed.push(row);
+      this.emit('remove', removed);
+    }
 
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+    /**
+     * Sorts the telemetry collection based on the provided sort field
+     * specifier. Subsequent inserts are sorted to maintain specified sport
+     * order.
+     *
+     * @example
+     * // First build some mock telemetry for the purpose of an example
+     * let now = Date.now();
+     * let telemetry = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (value) {
+     *     return {
+     *         // define an object property to demonstrate nested paths
+     *         timestamp: {
+     *             ms: now - value * 1000,
+     *             text:
+     *         },
+     *         value: value
+     *     }
+     * });
+     * let collection = new TelemetryCollection();
+     *
+     * collection.add(telemetry);
+     *
+     * // Sort by telemetry value
+     * collection.sortBy({
+     *  key: 'value', direction: 'asc'
+     * });
+     *
+     * // Sort by ms since epoch
+     * collection.sort({
+     *  key: 'timestamp.ms',
+     *  direction: 'asc'
+     * });
+     *
+     * // Sort by 'text' attribute, descending
+     * collection.sort("timestamp.text");
+     *
+     *
+     * @param {object} sortOptions An object specifying a sort key, and direction.
+     */
+    sortBy(sortOptions) {
+      if (arguments.length > 0) {
+        this.sortOptions = sortOptions;
+        this.rows = _.orderBy(
+          this.rows,
+          (row) => row.getParsedValue(sortOptions.key),
+          sortOptions.direction
+        );
+        this.emit('sort');
+      }
 
-                this.emit('remove', removed);
-            }
+      // Return duplicate to avoid direct modification of underlying object
+      return Object.assign({}, this.sortOptions);
+    }
 
-            /**
-             * Sorts the telemetry collection based on the provided sort field
-             * specifier. Subsequent inserts are sorted to maintain specified sport
-             * order.
-             *
-             * @example
-             * // First build some mock telemetry for the purpose of an example
-             * let now = Date.now();
-             * let telemetry = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (value) {
-             *     return {
-             *         // define an object property to demonstrate nested paths
-             *         timestamp: {
-             *             ms: now - value * 1000,
-             *             text:
-             *         },
-             *         value: value
-             *     }
-             * });
-             * let collection = new TelemetryCollection();
-             *
-             * collection.add(telemetry);
-             *
-             * // Sort by telemetry value
-             * collection.sortBy({
-             *  key: 'value', direction: 'asc'
-             * });
-             *
-             * // Sort by ms since epoch
-             * collection.sort({
-             *  key: 'timestamp.ms',
-             *  direction: 'asc'
-             * });
-             *
-             * // Sort by 'text' attribute, descending
-             * collection.sort("timestamp.text");
-             *
-             *
-             * @param {object} sortOptions An object specifying a sort key, and direction.
-             */
-            sortBy(sortOptions) {
-                if (arguments.length > 0) {
-                    this.sortOptions = sortOptions;
-                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key), sortOptions.direction);
-                    this.emit('sort');
-                }
+    setColumnFilter(columnKey, filter) {
+      filter = filter.trim().toLowerCase();
+      let wasBlank = this.columnFilters[columnKey] === undefined;
+      let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
 
-                // Return duplicate to avoid direct modification of underlying object
-                return Object.assign({}, this.sortOptions);
-            }
+      if (filter.length === 0) {
+        delete this.columnFilters[columnKey];
+      } else {
+        this.columnFilters[columnKey] = filter;
+      }
 
-            setColumnFilter(columnKey, filter) {
-                filter = filter.trim().toLowerCase();
-                let wasBlank = this.columnFilters[columnKey] === undefined;
-                let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
+      if (isSubset || wasBlank) {
+        this.rows = this.rows.filter(this.matchesFilters, this);
+        this.emit('filter');
+      } else {
+        this.emit('resetRowsFromAllData');
+      }
+    }
 
-                if (filter.length === 0) {
-                    delete this.columnFilters[columnKey];
-                } else {
-                    this.columnFilters[columnKey] = filter;
-                }
+    setColumnRegexFilter(columnKey, filter) {
+      filter = filter.trim();
+      this.columnFilters[columnKey] = new RegExp(filter);
 
-                if (isSubset || wasBlank) {
-                    this.rows = this.rows.filter(this.matchesFilters, this);
-                    this.emit('filter');
-                } else {
-                    this.emit('resetRowsFromAllData');
-                }
+      this.emit('resetRowsFromAllData');
+    }
 
-            }
+    getColumnMapForObject(objectKeyString) {
+      let columns = this.configuration.getColumns();
 
-            setColumnRegexFilter(columnKey, filter) {
-                filter = filter.trim();
-                this.columnFilters[columnKey] = new RegExp(filter);
+      if (columns[objectKeyString]) {
+        return columns[objectKeyString].reduce((map, column) => {
+          map[column.getKey()] = column;
 
-                this.emit('resetRowsFromAllData');
-            }
+          return map;
+        }, {});
+      }
 
-            getColumnMapForObject(objectKeyString) {
-                let columns = this.configuration.getColumns();
+      return {};
+    }
 
-                if (columns[objectKeyString]) {
-                    return columns[objectKeyString].reduce((map, column) => {
-                        map[column.getKey()] = column;
+    // /**
+    //  * @private
+    //  */
+    isSubsetOfCurrentFilter(columnKey, filter) {
+      if (this.columnFilters[columnKey] instanceof RegExp) {
+        return false;
+      }
 
-                        return map;
-                    }, {});
-                }
+      return (
+        this.columnFilters[columnKey] &&
+        filter.startsWith(this.columnFilters[columnKey]) &&
+        // startsWith check will otherwise fail when filter cleared
+        // because anyString.startsWith('') === true
+        filter !== ''
+      );
+    }
 
-                return {};
-            }
-
-            // /**
-            //  * @private
-            //  */
-            isSubsetOfCurrentFilter(columnKey, filter) {
-                if (this.columnFilters[columnKey] instanceof RegExp) {
-                    return false;
-                }
-
-                return this.columnFilters[columnKey]
-                    && filter.startsWith(this.columnFilters[columnKey])
-                    // startsWith check will otherwise fail when filter cleared
-                    // because anyString.startsWith('') === true
-                    && filter !== '';
-            }
-
-            /**
-             * @private
-             */
-            matchesFilters(row) {
-                let doesMatchFilters = true;
-                Object.keys(this.columnFilters).forEach((key) => {
-                    if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
-                        return false;
-                    }
-
-                    let formattedValue = row.getFormattedValue(key);
-                    if (formattedValue === undefined) {
-                        return false;
-                    }
-
-                    if (this.columnFilters[key] instanceof RegExp) {
-                        doesMatchFilters = this.columnFilters[key].test(formattedValue);
-                    } else {
-                        doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
-                    }
-                });
-
-                return doesMatchFilters;
-            }
-
-            rowHasColumn(row, key) {
-                return Object.prototype.hasOwnProperty.call(row.columns, key);
-            }
-
-            getRows() {
-                return this.rows;
-            }
-
-            getRowsLength() {
-                return this.rows.length;
-            }
-
-            getValueForSortColumn(row) {
-                return row.getParsedValue(this.sortOptions.key);
-            }
-
-            clear() {
-                let removedRows = this.rows;
-                this.rows = [];
-
-                this.emit('remove', removedRows);
-            }
-
-            destroy() {
-                this.removeAllListeners();
-            }
+    /**
+     * @private
+     */
+    matchesFilters(row) {
+      let doesMatchFilters = true;
+      Object.keys(this.columnFilters).forEach((key) => {
+        if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
+          return false;
         }
 
-        return TableRowCollection;
-    });
+        let formattedValue = row.getFormattedValue(key);
+        if (formattedValue === undefined) {
+          return false;
+        }
+
+        if (this.columnFilters[key] instanceof RegExp) {
+          doesMatchFilters = this.columnFilters[key].test(formattedValue);
+        } else {
+          doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
+        }
+      });
+
+      return doesMatchFilters;
+    }
+
+    rowHasColumn(row, key) {
+      return Object.prototype.hasOwnProperty.call(row.columns, key);
+    }
+
+    getRows() {
+      return this.rows;
+    }
+
+    getRowsLength() {
+      return this.rows.length;
+    }
+
+    getValueForSortColumn(row) {
+      return row.getParsedValue(this.sortOptions.key);
+    }
+
+    clear() {
+      let removedRows = this.rows;
+      this.rows = [];
+
+      this.emit('remove', removedRows);
+    }
+
+    destroy() {
+      this.removeAllListeners();
+    }
+  }
+
+  return TableRowCollection;
+});

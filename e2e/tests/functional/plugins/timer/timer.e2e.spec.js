@@ -21,43 +21,46 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu, createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  openObjectTreeContextMenu,
+  createDomainObjectWithDefaults
+} = require('../../../../appActions');
 
 test.describe('Timer', () => {
-    let timer;
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'domcontentloaded' });
-        timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+  let timer;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+  });
+
+  test('Can perform actions on the Timer', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/4313'
     });
 
-    test('Can perform actions on the Timer', async ({ page }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/4313'
-        });
+    const timerUrl = timer.url;
 
-        const timerUrl = timer.url;
-
-        await test.step("From the tree context menu", async () => {
-            await triggerTimerContextMenuAction(page, timerUrl, 'Start');
-            await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
-            await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
-            await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
-        });
-
-        await test.step("From the 3dot menu", async () => {
-            await triggerTimer3dotMenuAction(page, 'Start');
-            await triggerTimer3dotMenuAction(page, 'Pause');
-            await triggerTimer3dotMenuAction(page, 'Restart at 0');
-            await triggerTimer3dotMenuAction(page, 'Stop');
-        });
-
-        await test.step("From the object view", async () => {
-            await triggerTimerViewAction(page, 'Start');
-            await triggerTimerViewAction(page, 'Pause');
-            await triggerTimerViewAction(page, 'Restart at 0');
-        });
+    await test.step('From the tree context menu', async () => {
+      await triggerTimerContextMenuAction(page, timerUrl, 'Start');
+      await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
+      await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
+      await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
     });
+
+    await test.step('From the 3dot menu', async () => {
+      await triggerTimer3dotMenuAction(page, 'Start');
+      await triggerTimer3dotMenuAction(page, 'Pause');
+      await triggerTimer3dotMenuAction(page, 'Restart at 0');
+      await triggerTimer3dotMenuAction(page, 'Stop');
+    });
+
+    await test.step('From the object view', async () => {
+      await triggerTimerViewAction(page, 'Start');
+      await triggerTimerViewAction(page, 'Pause');
+      await triggerTimerViewAction(page, 'Restart at 0');
+    });
+  });
 });
 
 /**
@@ -76,10 +79,10 @@ test.describe('Timer', () => {
  * @param {TimerAction} action
  */
 async function triggerTimerContextMenuAction(page, timerUrl, action) {
-    const menuAction = `.c-menu ul li >> text="${action}"`;
-    await openObjectTreeContextMenu(page, timerUrl);
-    await page.locator(menuAction).click();
-    assertTimerStateAfterAction(page, action);
+  const menuAction = `.c-menu ul li >> text="${action}"`;
+  await openObjectTreeContextMenu(page, timerUrl);
+  await page.locator(menuAction).click();
+  assertTimerStateAfterAction(page, action);
 }
 
 /**
@@ -88,21 +91,21 @@ async function triggerTimerContextMenuAction(page, timerUrl, action) {
  * @param {TimerAction} action
  */
 async function triggerTimer3dotMenuAction(page, action) {
-    const menuAction = `.c-menu ul li >> text="${action}"`;
-    const threeDotMenuButton = 'button[title="More options"]';
-    let isActionAvailable = false;
-    let iterations = 0;
-    // Dismiss/open the 3dot menu until the action is available
-    // or a maximum number of iterations is reached
-    while (!isActionAvailable && iterations <= 20) {
-        await page.click('.c-object-view');
-        await page.click(threeDotMenuButton);
-        isActionAvailable = await page.locator(menuAction).isVisible();
-        iterations++;
-    }
+  const menuAction = `.c-menu ul li >> text="${action}"`;
+  const threeDotMenuButton = 'button[title="More options"]';
+  let isActionAvailable = false;
+  let iterations = 0;
+  // Dismiss/open the 3dot menu until the action is available
+  // or a maximum number of iterations is reached
+  while (!isActionAvailable && iterations <= 20) {
+    await page.click('.c-object-view');
+    await page.click(threeDotMenuButton);
+    isActionAvailable = await page.locator(menuAction).isVisible();
+    iterations++;
+  }
 
-    await page.locator(menuAction).click();
-    assertTimerStateAfterAction(page, action);
+  await page.locator(menuAction).click();
+  assertTimerStateAfterAction(page, action);
 }
 
 /**
@@ -111,10 +114,10 @@ async function triggerTimer3dotMenuAction(page, action) {
  * @param {TimerViewAction} action
  */
 async function triggerTimerViewAction(page, action) {
-    await page.locator('.c-timer').hover({trial: true});
-    const buttonTitle = buttonTitleFromAction(action);
-    await page.click(`button[title="${buttonTitle}"]`);
-    assertTimerStateAfterAction(page, action);
+  await page.locator('.c-timer').hover({ trial: true });
+  const buttonTitle = buttonTitleFromAction(action);
+  await page.click(`button[title="${buttonTitle}"]`);
+  assertTimerStateAfterAction(page, action);
 }
 
 /**
@@ -122,14 +125,14 @@ async function triggerTimerViewAction(page, action) {
  * @param {TimerViewAction} action
  */
 function buttonTitleFromAction(action) {
-    switch (action) {
+  switch (action) {
     case 'Start':
-        return 'Start';
+      return 'Start';
     case 'Pause':
-        return 'Pause';
+      return 'Pause';
     case 'Restart at 0':
-        return 'Reset';
-    }
+      return 'Reset';
+  }
 }
 
 /**
@@ -138,19 +141,19 @@ function buttonTitleFromAction(action) {
  * @param {TimerAction} action
  */
 async function assertTimerStateAfterAction(page, action) {
-    let timerStateClass;
-    switch (action) {
+  let timerStateClass;
+  switch (action) {
     case 'Start':
     case 'Restart at 0':
-        timerStateClass = "is-started";
-        break;
+      timerStateClass = 'is-started';
+      break;
     case 'Stop':
-        timerStateClass = 'is-stopped';
-        break;
+      timerStateClass = 'is-stopped';
+      break;
     case 'Pause':
-        timerStateClass = 'is-paused';
-        break;
-    }
+      timerStateClass = 'is-paused';
+      break;
+  }
 
-    await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
+  await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
 }

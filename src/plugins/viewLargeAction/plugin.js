@@ -23,7 +23,7 @@
 import ViewLargeAction from './viewLargeAction.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        openmct.actions.register(new ViewLargeAction(openmct));
-    };
+  return function install(openmct) {
+    openmct.actions.register(new ViewLargeAction(openmct));
+  };
 }

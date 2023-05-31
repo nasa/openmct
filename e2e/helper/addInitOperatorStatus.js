@@ -22,6 +22,6 @@
 
 // This should be used to install the Operator Status
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.OperatorStatus());
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.OperatorStatus());
 });

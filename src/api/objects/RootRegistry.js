@@ -23,40 +23,38 @@
 import utils from './object-utils';
 
 export default class RootRegistry {
+  constructor(openmct) {
+    this._rootItems = [];
+    this._openmct = openmct;
+  }
 
-    constructor(openmct) {
-        this._rootItems = [];
-        this._openmct = openmct;
+  getRoots() {
+    const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
+    const promises = sortedItems.map((rootItem) => rootItem.provider());
+
+    return Promise.all(promises).then((rootItems) => rootItems.flat());
+  }
+
+  addRoot(rootItem, priority) {
+    if (!this._isValid(rootItem)) {
+      return;
     }
 
-    getRoots() {
-        const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
-        const promises = sortedItems.map((rootItem) => rootItem.provider());
+    this._rootItems.push({
+      priority: priority || this._openmct.priority.DEFAULT,
+      provider: typeof rootItem === 'function' ? rootItem : () => rootItem
+    });
+  }
 
-        return Promise.all(promises).then(rootItems => rootItems.flat());
+  _isValid(rootItem) {
+    if (utils.isIdentifier(rootItem) || typeof rootItem === 'function') {
+      return true;
     }
 
-    addRoot(rootItem, priority) {
-
-        if (!this._isValid(rootItem)) {
-            return;
-        }
-
-        this._rootItems.push({
-            priority: priority || this._openmct.priority.DEFAULT,
-            provider: typeof rootItem === 'function' ? rootItem : () => rootItem
-        });
+    if (Array.isArray(rootItem)) {
+      return rootItem.every(utils.isIdentifier);
     }
 
-    _isValid(rootItem) {
-        if (utils.isIdentifier(rootItem) || typeof rootItem === 'function') {
-            return true;
-        }
-
-        if (Array.isArray(rootItem)) {
-            return rootItem.every(utils.isIdentifier);
-        }
-
-        return false;
-    }
+    return false;
+  }
 }

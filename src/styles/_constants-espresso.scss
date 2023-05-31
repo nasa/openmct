@@ -23,36 +23,36 @@
 /************************************************** ESPRESSO THEME CONSTANTS */
 
 // Fonts
-$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
 
 @mixin heroFont($size: 1em) {
-    font-family: $heroFont;
-    font-size: $size;
+  font-family: $heroFont;
+  font-size: $size;
 }
 
 @mixin headerFont($size: 1em) {
-    font-family: $headerFont;
-    font-size: $size;
+  font-family: $headerFont;
+  font-size: $size;
 }
 
 @mixin bodyFont($size: 1em) {
-    font-family: $bodyFont;
-    font-size: $size;
+  font-family: $bodyFont;
+  font-size: $size;
 }
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
-    @return linear-gradient(lighten($c, 5%), $c);
+  @return linear-gradient(lighten($c, 5%), $c);
 }
 
 @function pullForward($val, $amt) {
-    @return lighten($val, $amt);
+  @return lighten($val, $amt);
 }
 
 @function pushBack($val, $amt) {
-    @return darken($val, $amt);
+  @return darken($val, $amt);
 }
 
 // Constants
@@ -73,8 +73,10 @@ $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: lighten($colorKey, 10%);
-$colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
-$colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
+$colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%)
+  contrast(101%);
+$colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
+  contrast(100%);
 $colorKeySelectedBg: $colorKey;
 $uiColor: #0093ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
@@ -101,11 +103,14 @@ $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 $colorStatusFg: #888;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
-$colorStatusInfoFilter: invert(58%) sepia(44%) saturate(405%) hue-rotate(85deg) brightness(102%) contrast(92%);
+$colorStatusInfoFilter: invert(58%) sepia(44%) saturate(405%) hue-rotate(85deg) brightness(102%)
+  contrast(92%);
 $colorStatusAlert: #ffb66c;
-$colorStatusAlertFilter: invert(78%) sepia(26%) saturate(1160%) hue-rotate(324deg) brightness(107%) contrast(101%);
+$colorStatusAlertFilter: invert(78%) sepia(26%) saturate(1160%) hue-rotate(324deg) brightness(107%)
+  contrast(101%);
 $colorStatusError: #da0004;
-$colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351deg) brightness(111%) contrast(115%);
+$colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351deg) brightness(111%)
+  contrast(115%);
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #3f5e8b;
 $colorStatusCompleteBg: #457638;
@@ -114,11 +119,11 @@ $colorAlertFg: #fff;
 $colorError: #ff3c00;
 $colorErrorFg: #fff;
 $colorWarningHi: #990000;
-$colorWarningHiFg: #FF9594;
+$colorWarningHiFg: #ff9594;
 $colorWarningLo: #ff9900;
 $colorWarningLoFg: #523400;
 $colorDiagnostic: #a4b442;
-$colorDiagnosticFg: #39461A;
+$colorDiagnosticFg: #39461a;
 $colorCommand: #3693bd;
 $colorCommandFg: #fff;
 $colorInfo: #2294a2;
@@ -164,7 +169,10 @@ $borderMissing: 1px dashed $colorAlert !important;
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
-$editUIColorHov: pullForward(saturate($uiColor, 10%), 10%); // Hover color when $editUIColor is applied as a base color
+$editUIColorHov: pullForward(
+  saturate($uiColor, 10%),
+  10%
+); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
 $editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
@@ -183,7 +191,10 @@ $editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make h
 $editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
 $editFrameSelectedShdw: rgba(black, 0.4) 0 1px 5px 1px;
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
-$editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
+$editFrameMovebarColorFg: pullForward(
+  $editFrameMovebarColorBg,
+  20%
+); // Grippy lines, container size text
 $editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
 $editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
 $editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
@@ -241,7 +252,7 @@ $controlDisabledOpacity: 0.2;
 $colorMenuBg: $colorBodyBg;
 $colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
-$filterMenu:  brightness(1.4);
+$filterMenu: brightness(1.4);
 $colorMenuHovBg: rgba($colorKey, 0.5);
 $colorMenuHovFg: $colorBodyFgEm;
 $colorMenuHovIc: $colorMenuHovFg;
@@ -314,25 +325,25 @@ $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
 $colorTelemStale: cyan;
-$colorTelemStaleFg: #002A2A;
+$colorTelemStaleFg: #002a2a;
 $styleTelemStale: italic;
 
 // Limits
-$colorLimitYellowBg: #B18B05;
-$colorLimitYellowFg: #FEEEB5;
-$colorLimitYellowIc: #FDC707;
-$colorLimitOrangeBg: #B36B00;
-$colorLimitOrangeFg: #FFE0B2;
+$colorLimitYellowBg: #b18b05;
+$colorLimitYellowFg: #feeeb5;
+$colorLimitYellowIc: #fdc707;
+$colorLimitOrangeBg: #b36b00;
+$colorLimitOrangeFg: #ffe0b2;
 $colorLimitOrangeIc: #ff9900;
 $colorLimitRedBg: #940000;
 $colorLimitRedFg: #ffa489;
 $colorLimitRedIc: #ff4222;
-$colorLimitPurpleBg: #891BB3;
-$colorLimitPurpleFg: #EDBEFF;
+$colorLimitPurpleBg: #891bb3;
+$colorLimitPurpleFg: #edbeff;
 $colorLimitPurpleIc: #c327ff;
-$colorLimitCyanBg: #4BA6B3;
-$colorLimitCyanFg: #D3FAFF;
-$colorLimitCyanIc: #6BEDFF;
+$colorLimitCyanBg: #4ba6b3;
+$colorLimitCyanFg: #d3faff;
+$colorLimitCyanIc: #6bedff;
 
 // Events
 $colorEventPurpleFg: #6433ff;
@@ -473,36 +484,34 @@ $transIn: all $transInTime ease-in-out;
 $transOut: all $transOutTime ease-in-out;
 $transInTransform: transform $transInTime ease-in-out;
 $transOutTransform: transform $transOutTime ease-in-out;
-$transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
-$transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
+$transInBounce: all 200ms cubic-bezier(0.47, 0.01, 0.25, 1.5);
+$transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
 
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
-$colorDiscreteItemBg: rgba($colorBodyFg,0.1);
-$colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
+$colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
+$colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
-;
-
 @mixin discreteItem() {
-    background: $colorDiscreteItemBg;
-    border: none;
-    border-radius: $controlCr;
+  background: $colorDiscreteItemBg;
+  border: none;
+  border-radius: $controlCr;
 
-    .c-input-inline:hover {
-        background: $colorBodyBg;
-    }
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
 
-    &--current-match {
-        background: $colorDiscreteItemCurrentBg;
-    }
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
 }
 
 @mixin discreteItemInnerElem() {
-    border: 1px solid rgba(#fff, 0.1);
-    border-radius: $controlCr;
+  border: 1px solid rgba(#fff, 0.1);
+  border-radius: $controlCr;
 }
 
 @mixin themedButton($c: $colorBtnBg) {
-    background: linear-gradient(pullForward($c, 5%), $c);
-    box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+  background: linear-gradient(pullForward($c, 5%), $c);
+  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }

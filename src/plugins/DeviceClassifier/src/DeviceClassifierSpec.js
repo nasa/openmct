@@ -19,87 +19,71 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceClassifier from "./DeviceClassifier";
-import DeviceMatchers from "./DeviceMatchers";
+import DeviceClassifier from './DeviceClassifier';
+import DeviceMatchers from './DeviceMatchers';
 
-const AGENT_METHODS = [
-    "isMobile",
-    "isPhone",
-    "isTablet",
-    "isPortrait",
-    "isLandscape",
-    "isTouch"
-];
+const AGENT_METHODS = ['isMobile', 'isPhone', 'isTablet', 'isPortrait', 'isLandscape', 'isTouch'];
 const TEST_PERMUTATIONS = [
-    ["isMobile", "isPhone", "isTouch", "isPortrait"],
-    ["isMobile", "isPhone", "isTouch", "isLandscape"],
-    ["isMobile", "isTablet", "isTouch", "isPortrait"],
-    ["isMobile", "isTablet", "isTouch", "isLandscape"],
-    ["isTouch"],
-    []
+  ['isMobile', 'isPhone', 'isTouch', 'isPortrait'],
+  ['isMobile', 'isPhone', 'isTouch', 'isLandscape'],
+  ['isMobile', 'isTablet', 'isTouch', 'isPortrait'],
+  ['isMobile', 'isTablet', 'isTouch', 'isLandscape'],
+  ['isTouch'],
+  []
 ];
 
-describe("DeviceClassifier", function () {
-    let mockAgent;
-    let mockDocument;
-    let mockClassList;
+describe('DeviceClassifier', function () {
+  let mockAgent;
+  let mockDocument;
+  let mockClassList;
 
-    beforeEach(function () {
-        mockAgent = jasmine.createSpyObj(
-            "agent",
-            AGENT_METHODS
-        );
+  beforeEach(function () {
+    mockAgent = jasmine.createSpyObj('agent', AGENT_METHODS);
 
-        mockClassList = jasmine.createSpyObj("classList", ["add"]);
+    mockClassList = jasmine.createSpyObj('classList', ['add']);
 
-        mockDocument = jasmine.createSpyObj(
-            "document",
-            {},
-            { body: { classList: mockClassList } }
-        );
+    mockDocument = jasmine.createSpyObj('document', {}, { body: { classList: mockClassList } });
 
-        AGENT_METHODS.forEach(function (m) {
-            mockAgent[m].and.returnValue(false);
-        });
+    AGENT_METHODS.forEach(function (m) {
+      mockAgent[m].and.returnValue(false);
     });
+  });
 
-    TEST_PERMUTATIONS.forEach(function (trueMethods) {
-        const summary =
+  TEST_PERMUTATIONS.forEach(function (trueMethods) {
+    const summary =
       trueMethods.length === 0
-          ? "device has no detected characteristics"
-          : "device " + trueMethods.join(", ");
+        ? 'device has no detected characteristics'
+        : 'device ' + trueMethods.join(', ');
 
-        describe("when " + summary, function () {
-            beforeEach(function () {
-                trueMethods.forEach(function (m) {
-                    mockAgent[m].and.returnValue(true);
-                });
-
-                // eslint-disable-next-line no-new
-                DeviceClassifier(mockAgent, mockDocument);
-            });
-
-            it("adds classes for matching, detected characteristics", function () {
-                Object.keys(DeviceMatchers)
-                    .filter(function (m) {
-                        return DeviceMatchers[m](mockAgent);
-                    })
-                    .forEach(function (key) {
-                        expect(mockDocument.body.classList.add).toHaveBeenCalledWith(key);
-                    });
-            });
-
-            it("does not add classes for non-matching characteristics", function () {
-                Object.keys(DeviceMatchers)
-                    .filter(function (m) {
-                        return !DeviceMatchers[m](mockAgent);
-                    })
-                    .forEach(function (key) {
-                        expect(mockDocument.body.classList.add).not.toHaveBeenCalledWith(
-                            key
-                        );
-                    });
-            });
+    describe('when ' + summary, function () {
+      beforeEach(function () {
+        trueMethods.forEach(function (m) {
+          mockAgent[m].and.returnValue(true);
         });
+
+        // eslint-disable-next-line no-new
+        DeviceClassifier(mockAgent, mockDocument);
+      });
+
+      it('adds classes for matching, detected characteristics', function () {
+        Object.keys(DeviceMatchers)
+          .filter(function (m) {
+            return DeviceMatchers[m](mockAgent);
+          })
+          .forEach(function (key) {
+            expect(mockDocument.body.classList.add).toHaveBeenCalledWith(key);
+          });
+      });
+
+      it('does not add classes for non-matching characteristics', function () {
+        Object.keys(DeviceMatchers)
+          .filter(function (m) {
+            return !DeviceMatchers[m](mockAgent);
+          })
+          .forEach(function (key) {
+            expect(mockDocument.body.classList.add).not.toHaveBeenCalledWith(key);
+          });
+      });
     });
+  });
 });

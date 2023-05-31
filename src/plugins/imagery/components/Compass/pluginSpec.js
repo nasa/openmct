@@ -25,68 +25,64 @@ import Vue from 'vue';
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
-describe("The Compass component", () => {
-    let app;
-    let instance;
+describe('The Compass component', () => {
+  let app;
+  let instance;
 
-    beforeEach(() => {
-        let imageDatum = {
-            heading: 100,
-            roll: 90,
-            pitch: 90,
-            cameraTilt: 100,
-            cameraAzimuth: 90,
-            sunAngle: 30,
-            transformations: {
-                translateX: 0,
-                translateY: 18,
-                rotation: 0,
-                scale: 0.3,
-                cameraAngleOfView: 70
-            }
-        };
-        let propsData = {
-            naturalAspectRatio: 0.9,
-            image: imageDatum,
-            sizedImageDimensions: {
-                width: 100,
-                height: 100
-            }
-        };
+  beforeEach(() => {
+    let imageDatum = {
+      heading: 100,
+      roll: 90,
+      pitch: 90,
+      cameraTilt: 100,
+      cameraAzimuth: 90,
+      sunAngle: 30,
+      transformations: {
+        translateX: 0,
+        translateY: 18,
+        rotation: 0,
+        scale: 0.3,
+        cameraAngleOfView: 70
+      }
+    };
+    let propsData = {
+      naturalAspectRatio: 0.9,
+      image: imageDatum,
+      sizedImageDimensions: {
+        width: 100,
+        height: 100
+      }
+    };
 
-        app = new Vue({
-            components: { Compass },
-            data() {
-                return propsData;
-            },
-            template: `<Compass
+    app = new Vue({
+      components: { Compass },
+      data() {
+        return propsData;
+      },
+      template: `<Compass
                 :image="image"
                 :natural-aspect-ratio="naturalAspectRatio"
                 :sized-image-dimensions="sizedImageDimensions"
             />`
-        });
-        instance = app.$mount();
+    });
+    instance = app.$mount();
+  });
+
+  afterAll(() => {
+    app.$destroy();
+  });
+
+  describe('when a heading value and cameraAngleOfView exists on the image', () => {
+    it('should display a compass rose', () => {
+      let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS);
+
+      expect(compassRoseElement).toBeDefined();
     });
 
-    afterAll(() => {
-        app.$destroy();
+    it('should display a compass HUD', () => {
+      let compassHUDElement = instance.$el.querySelector(COMPASS_HUD_CLASS);
+
+      expect(compassHUDElement).toBeDefined();
     });
-
-    describe("when a heading value and cameraAngleOfView exists on the image", () => {
-
-        it("should display a compass rose", () => {
-            let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS
-            );
-
-            expect(compassRoseElement).toBeDefined();
-        });
-
-        it("should display a compass HUD", () => {
-            let compassHUDElement = instance.$el.querySelector(COMPASS_HUD_CLASS);
-
-            expect(compassHUDElement).toBeDefined();
-        });
-
-    });
-
+  });
 });
