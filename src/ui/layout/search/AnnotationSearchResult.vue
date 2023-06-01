@@ -98,7 +98,9 @@ export default {
         }
 
         return 'Could not find any matching Notebook entries';
-      } else if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL) {
+      } else if (
+        this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL
+      ) {
         const targetID = Object.keys(this.result.targets)[0];
         const { layerName, name } = this.result.targets[targetID];
 

@@ -192,6 +192,8 @@ export default {
     },
     async loadAnnotationForTargetObject(target) {
       const targetID = this.openmct.objects.makeKeyString(target.identifier);
+      // If the user changes targets while annotations are loading,
+      // abort the previous request.
       if (this.abortController !== null) {
         this.abortController.abort();
       }
