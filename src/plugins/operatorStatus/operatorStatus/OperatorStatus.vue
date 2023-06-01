@@ -244,10 +244,10 @@ export default {
                 this.roleChannel.postMessage(role);
             } catch (e) {
                 /** FIXME: there doesn't seem to be a reliable way to test for open/closed
-                * status of a broadcast channel; channel.name exists even after the channel
-                * is closed. Failure to update the subscribed tabs, should not block the
-                * focused tab's selection and so it is caught here. An error will often be
-                * thrown if the dialog remains open during HMR.
+                * status of a broadcast channel; channel.name exists even after the
+                * channel is closed. Failure to update the subscribed tabs, should
+                * not block the focused tab's selection and so it is caught here.
+                * An error will often be thrown if the dialog remains open during HMR.
                 **/
             }
 
