@@ -83,7 +83,7 @@ export default {
             return this.configuration.menuOptions
                 .filter(menuOption => menuOption.clock === (clock && clock.key))
                 .map(menuOption => {
-                    const timeSystem = JSON.parse(JSON.stringify(this.openmct.time.getTimeSystems.get(menuOption.timeSystem)));
+                    const timeSystem = JSON.parse(JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem)));
                     timeSystem.onItemClicked = () => this.setTimeSystemFromView(timeSystem);
 
                     return timeSystem;

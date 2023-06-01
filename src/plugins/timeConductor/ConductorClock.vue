@@ -45,7 +45,13 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
     mixins: [modeMixin],
-    inject: ['openmct', 'configuration'],
+    inject: {
+        openmct: 'openmct',
+        configuration: {
+            from: 'configuration',
+            default: undefined
+        }
+    },
     data: function () {
         const activeClock = this.getActiveClock();
 

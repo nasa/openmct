@@ -25,8 +25,16 @@
             :button-css-class="'c-icon-button'"
             @updated="saveMode"
         />
-        <ConductorClock
+        <IndependentClock
+            v-if="isIndependent"
             class="c-conductor__mode-select"
+            :button-css-class="'c-icon-button'"
+            @updated="saveClock"
+        />
+        <ConductorClock
+            v-else
+            class="c-conductor__mode-select"
+            :clock="timeOptionClock"
             :button-css-class="'c-icon-button'"
             @updated="saveClock"
         />
@@ -68,6 +76,7 @@
 import ConductorMode from './ConductorMode.vue';
 import ConductorClock from './ConductorClock.vue';
 import IndependentMode from './independent/IndependentMode.vue';
+import IndependentClock from './independent/IndependentClock.vue';
 import ConductorTimeSystem from "./ConductorTimeSystem.vue";
 import ConductorHistory from "./ConductorHistory.vue";
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
@@ -80,12 +89,19 @@ export default {
         ConductorMode,
         ConductorClock,
         IndependentMode,
+        IndependentClock,
         ConductorTimeSystem,
         ConductorHistory,
         ConductorInputsFixed,
         ConductorInputsRealtime
     },
-    inject: ['openmct', 'configuration'],
+    inject: {
+        openmct: 'openmct',
+        configuration: {
+            from: 'configuration',
+            default: undefined
+        }
+    },
     props: {
         positionX: {
             type: Number,
@@ -154,6 +170,9 @@ export default {
         },
         timeOptionMode() {
             return this.timeOptions?.mode;
+        },
+        timeOptionClock() {
+            return this.timeOptions?.clock;
         }
     },
     watch: {
@@ -220,6 +239,9 @@ export default {
         },
         saveIndependentMode(mode) {
             this.$emit('independentModeUpdated', mode);
+        },
+        saveIndependentClock(clock) {
+            this.$emit('independentClockUpdated', clock);
         },
         dismiss() {
             this.$emit('dismiss');

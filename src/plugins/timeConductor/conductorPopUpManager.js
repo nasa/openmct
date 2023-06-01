@@ -52,7 +52,6 @@ export default {
 
             this.showConductorPopup = true;
         },
-
         positionBox() {
             const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
             const offsetTop = this.conductorPopup.getBoundingClientRect().height;
@@ -61,7 +60,6 @@ export default {
             this.positionY = timeConductorOptionsBox.top - offsetTop;
             this.positionX = 0;
         },
-
         clearPopup() {
             this.showConductorPopup = false;
             this.conductorPopup = null;
@@ -69,7 +67,6 @@ export default {
             document.removeEventListener('click', this.handleClickAway);
             window.removeEventListener('resize', this.positionBox);
         },
-
         handleClickAway(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();

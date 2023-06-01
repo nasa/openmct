@@ -110,11 +110,10 @@ export default function (config) {
 
         const defaults = config.menuOptions[0];
         if (defaults.clock) {
-            console.log(console.log(defaults))
-            openmct.time.clock(defaults.clock, defaults.clockOffsets);
-            openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+            openmct.time.setClock(defaults.clock, defaults.clockOffsets);
+            openmct.time.setTimeSystem(defaults.timeSystem, openmct.time.bounds());
         } else {
-            openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+            openmct.time.setTimeSystem(defaults.timeSystem, defaults.bounds);
         }
 
         openmct.on('start', function () {

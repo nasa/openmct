@@ -22,7 +22,6 @@
 import raf from '@/utils/raf';
 
 export default {
-    inject: ['openmct'],
     data() {
         return {
             showConductorPopup: false,
@@ -45,31 +44,19 @@ export default {
                 this.positionBox();
             });
         },
+        showPopup() {
+            if (this.conductorPopup) {
+                return;
+            }
 
+            this.showConductorPopup = true;
+        },
         handleClickAway(clickAwayEvent) {
             if (this.canClose(clickAwayEvent)) {
                 clickAwayEvent.stopPropagation();
                 this.clearPopup();
             }
         },
-        // showPopup() {
-        //     if (!this.independentTCEnabled) {
-        //         return;
-        //     }
-
-        //     const popupElement = this.popupComponent;
-
-        //     document.body.appendChild(popupElement.$el);
-        //     //Use capture, so we don't trigger immediately on the same iteration of the event loop
-        //     document.addEventListener('click', this.clearPopup, {
-        //         capture: true
-        //     });
-
-        //     this.positionBox();
-
-        //     window.addEventListener('resize', this.positionBox);
-        // },
-
         positionBox() {
             let timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
             this.positionX = timeConductorOptionsBox.left;
@@ -83,7 +70,6 @@ export default {
             this.positionX = this.positionX + offsetLeft;
             this.positionY = this.positionY - offsetTop;
         },
-
         clearPopup() {
             this.showConductorPopup = false;
             this.conductorPopup = null;
@@ -97,53 +83,5 @@ export default {
 
             return !isChildMenu && !isPopupElementItem;
         }
-
-        // createPopupComponent() {
-        //     const saveFixedBounds = this.saveFixedBounds;
-        //     const saveClockOffsets = this.saveClockOffsets;
-        //     const saveMode = this.saveMode;
-        //     const removePopup = this.removePopup;
-        //     const objectPath = this.objectPath;
-        //     const timeOptions = this.timeOptions;
-
-        //     const popupElement = new Vue({
-        //         components: {
-        //             ConductorPopUp
-        //         },
-        //         provide: {
-        //             openmct: this.openmct,
-        //             configuration: undefined
-        //         },
-        //         data() {
-        //             return {
-        //                 positionX: 0,
-        //                 positionY: 0,
-        //                 saveClockOffsets,
-        //                 saveFixedBounds,
-        //                 saveMode,
-        //                 removePopup,
-        //                 timeOptions,
-        //                 objectPath
-        //             };
-        //         },
-        //         template: `<conductor-pop-up 
-        //             @dismiss="removePopup()" 
-        //             @independentModeUpdated="saveMode" 
-        //             @fixedBoundsUpdated="saveFixedBounds"
-        //             @clockOffsetsUpdated="saveClockOffsets" 
-        //             :object-path="objectPath"
-        //             :is-independent="true"
-        //             :time-options="timeOptions"
-        //             :bottom="true" 
-        //             :positionX="positionX" 
-        //             :positionY="positionY" />`
-        //     }).$mount();
-
-        //     return popupElement;
-        // },
-
-        // registerPopUp() {
-        //     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
-        // }
     }
 };

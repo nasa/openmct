@@ -43,16 +43,18 @@
 <script>
 import toggleMixin from '../../../ui/mixins/toggle-mixin';
 import modeMixin from '../mode-mixin';
-import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../../api/time/constants'
+import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants'
 
 export default {
     mixins: [toggleMixin, modeMixin],
     inject: ['openmct'],
     props: {
-        mode: {
-            type: Object,
-            default() {
-                return undefined;
+        clock: {
+            deep: true,
+            handler(newClock) {
+                if (newClock) {
+                    this.setViewFromClock(newClock.key === FIXED_MODE_KEY ? undefined : newClock);
+                }
             }
         },
         enabled: {
@@ -71,14 +73,6 @@ export default {
         };
     },
     watch: {
-        mode: {
-            deep: true,
-            handler(newMode) {
-                if (newMode) {
-                    this.setViewFromClock(newMode.key === FIXED_MODE_KEY ? undefined : newMode);
-                }
-            }
-        },
         enabled(newValue, oldValue) {
             if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
                 this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
