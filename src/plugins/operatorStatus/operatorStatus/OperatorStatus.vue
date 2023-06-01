@@ -112,13 +112,11 @@ export default {
         async fetchOrPromptForRole() {
             const UserAPI = this.openmct.user;
             const activeRole = UserAPI.getActiveRole();
-            console.log('fetchOrPromptRole', activeRole)
+            this.selectedRole = activeRole;
             if (!activeRole) {
                 // trigger role selection modal
                 this.promptForRoleSelection();
             }
-
-            this.selectedRole = activeRole;
 
             this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
 
@@ -134,14 +132,14 @@ export default {
                 currentSelection: this.selectedRole,
                 onChange: (event) => {
                     console.log('updateRole', event.target.value)
-                    this.role = event.target.value;
+                    this.selectedRole = event.target.value;
                 },
                 buttons: [
                     {
                         label: 'Select',
                         emphasis: true,
                         callback: () => {
-                            this.setRole(this.role);
+                            this.setRole(this.selectedRole);
                             dialog.dismiss();
                         }
                     }
@@ -230,22 +228,28 @@ export default {
         },
         createRoleChannel() {
             this.roleChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
-            this.roleChannel.onmessage = (({data}) => {
-                const role = data;
+            this.roleChannel.onmessage = (event => {
+                const role = event.data;
                 this.openmct.user.setActiveRole(role);
             });
-            this.roleChannel.onmessageerror = event => console.log(event);
         },
         unsubscribeToRole() {
             this.roleChannel.close();
         },
         broadcastNewRole(role) {
-            // channel closed if name is no longer available
             if (!this.roleChannel.name) {
                 return false;
             }
 
-            this.roleChannel.postMessage(role);
+            try {
+                this.roleChannel.postMessage(role);
+            } catch (e) {
+                /** FIXME: there doesn't seem to be a reliable way to test for open/closed
+                * status of a broadcast channel; channel.name exists even after the channel is closed
+                * failure to update the subscribed tabs, should not block the focused tab's selection.
+                * An error will often be thrown if the dialog remains open during HMR
+                **/
+            }
 
         },
         noop() {}
