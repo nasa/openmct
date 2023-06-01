@@ -23,7 +23,7 @@
 <template>
 <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
-        {{ `${userName}: ${role}` }}
+        {{ role ? `${userName}: ${role}` : userName }}
         <button>Change Role</button>
     </span>
 </div>

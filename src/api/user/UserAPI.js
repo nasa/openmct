@@ -27,6 +27,7 @@ import {
 } from './constants';
 import StatusAPI from './StatusAPI';
 import User from './User';
+import SessionPersistance from './SessionPersistance';
 
 class UserAPI extends EventEmitter {
     /**
@@ -88,6 +89,45 @@ class UserAPI extends EventEmitter {
         } else {
             return this._provider.getCurrentUser();
         }
+    }
+
+    getPossibleRoles() {
+        if (!this.hasProvider()) {
+            return Promise.resolve(undefined);
+        } else {
+            return this._provider.getPossibleRoles();
+        }
+
+    }
+    /**
+     * If a user provider is set, it will return the active role Id
+     * @returns object
+     */
+    getActiveRole() {
+        if (!this.hasProvider()) {
+            return Promise.resolve(undefined);
+        }
+
+        // get from session storage
+        const sessionStorageValue = SessionPersistance.getActiveRole();
+        if (sessionStorageValue === 'undefined' || sessionStorageValue === undefined) {
+            return undefined;
+        }
+
+        return sessionStorageValue;
+
+    }
+    setActiveRole(role) {
+        SessionPersistance.setActiveRole(role);
+    }
+
+    /**
+     * Will return if a role can provide a operator status response
+     * @memberof module:openmct.UserApi#
+     * @returns {Boolean}
+     */
+    canProvideStatusForRole(roleId) {
+        return true;
     }
 
     /**

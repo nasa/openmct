@@ -73,7 +73,7 @@ export default {
     },
     data() {
         return {
-            allRoles: [{ key: 'FLIGHT', name: 'Flight'}, {key: 'CAPCOM', name: 'CAPCOM'}, { key: 'GUIDO', name: 'GUIDO' }],
+            allRoles: [],
             role: '--',
             selectedRole: '',
             pollQuestionUpdated: '--',
@@ -117,12 +117,14 @@ export default {
                 // trigger role selection modal
                 this.promptForRoleSelection();
             }
+            // todo confirm status role
 
             this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
 
         },
         promptForRoleSelection() {
-            const selectionOptions = this.allRoles;
+            const allRoles = this.openmct.user.getPossibleRoles();
+            const selectionOptions = allRoles.filter(this.openmct.user.canProvideStatusForRole);
             const dialog = this.openmct.overlays.selection({
                 selectionOptions,
                 iconClass: 'info',
@@ -138,8 +140,9 @@ export default {
                         label: 'Select',
                         emphasis: true,
                         callback: () => {
-                            this.setRole(this.selectedRole);
                             dialog.dismiss();
+                            //TODO: introduce a notification of success
+                            this.setRole(this.selectedRole);
                         }
                     }
                 ]
