@@ -66,6 +66,7 @@
         :position-y="positionY"
         @popupLoaded="initializePopup"
         @independentModeUpdated="saveMode"
+        @independentClockUpdated="saveClock"
         @fixedBoundsUpdated="saveFixedBounds"
         @clockOffsetsUpdated="saveClockOffsets"
         @dismiss="clearPopup"
@@ -79,6 +80,7 @@ import ConductorInputsFixed from "../ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "../ConductorInputsRealtime.vue";
 import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import ConductorPopUp from '../ConductorPopUp.vue';
 import independentTimeConductorPopUpManager from "./independentTimeConductorPopUpManager";
 
 export default {
@@ -86,10 +88,17 @@ export default {
         ConductorModeIcon,
         ConductorInputsRealtime,
         ConductorInputsFixed,
+        ConductorPopUp,
         ToggleSwitch
     },
     mixins: [independentTimeConductorPopUpManager],
-    inject: ['openmct'],
+    inject: {
+        openmct: 'openmct',
+        configuration: {
+            from: 'configuration',
+            default: undefined
+        }
+    },
     props: {
         domainObject: {
             type: Object,
@@ -242,9 +251,15 @@ export default {
             this.updateTimeOptions(newOptions);
         },
         saveMode(mode) {
-            this.mode = mode;
             const newOptions = this.updateTimeOptionProperty({
-                mode: this.mode
+                mode: { key: mode }
+            });
+
+            this.updateTimeOptions(newOptions);
+        },
+        saveClock(clock) {
+            const newOptions = this.updateTimeOptionProperty({
+                clock
             });
 
             this.updateTimeOptions(newOptions);

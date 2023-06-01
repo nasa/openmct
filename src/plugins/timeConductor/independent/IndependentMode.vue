@@ -78,19 +78,19 @@ export default {
             deep: true,
             handler(newMode) {
                 if (newMode) {
-                    this.setViewFromClock(newMode.key === FIXED_MODE_KEY ? undefined : newMode);
+                    this.setMode(newMode.key === FIXED_MODE_KEY ? undefined : newMode);
                 }
             }
         },
         enabled(newValue, oldValue) {
             if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
-                this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
+                this.setMode(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
             }
         }
     },
     mounted: function () {
         if (this.mode) {
-            this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
+            this.setMode(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
         }
     },
     methods: {
@@ -104,17 +104,6 @@ export default {
                 placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
             };
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
-        },
-        showClocksMenu() {
-            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
-            const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
-
-            const menuOptions = {
-                menuClass: 'c-conductor__clock-menu',
-                placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
-            };
-            this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
         },
         getMenuOptions() {
             let menuOptions = [{
@@ -143,24 +132,24 @@ export default {
             if (this.mode) {
                 this.$emit(TIME_CONTEXT_EVENTS.modeChanged, { key });
             }
-        },
-        setViewFromClock(clock) {
-            const menuOptions = this.getMenuOptions();
-            this.loadModesAndClocks(menuOptions);
-            //retain the mode chosen by the user
-            if (this.mode) {
-                let found = this.modes.find(mode => mode.key === this.selectedMode.key);
-
-                if (!found) {
-                    found = this.modes.find(mode => mode.key === clock && clock.key);
-                    this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
-                } else if (this.mode.key !== this.selectedMode.key) {
-                    this.setMode(this.selectedMode.key);
-                }
-            } else {
-                this.setMode(this.getModeMetadata(clock).key);
-            }
         }
+        // setMode(clock) {
+        //     const menuOptions = this.getMenuOptions();
+        //     this.loadModes(menuOptions);
+        //     //retain the mode chosen by the user
+        //     if (this.mode) {
+        //         let found = this.modes.find(mode => mode.key === this.selectedMode.key);
+
+        //         if (!found) {
+        //             found = this.modes.find(mode => mode.key === clock && clock.key);
+        //             this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
+        //         } else if (this.mode.key !== this.selectedMode.key) {
+        //             this.setMode(this.selectedMode.key);
+        //         }
+        //     } else {
+        //         this.setMode(this.getModeMetadata(clock).key);
+        //     }
+        // }
     }
 };
 </script>
