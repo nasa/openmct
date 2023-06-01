@@ -32,15 +32,13 @@ import _ from 'lodash';
  * @property {String} PIXEL_SPATIAL The pixel-spatial annotation type
  * @property {String} TEMPORAL The temporal annotation type
  * @property {String} PLOT_SPATIAL The plot-spatial annotation type
- * @property {String} MAP The map annotation type
  */
 const ANNOTATION_TYPES = Object.freeze({
   NOTEBOOK: 'NOTEBOOK',
   GEOSPATIAL: 'GEOSPATIAL',
   PIXEL_SPATIAL: 'PIXEL_SPATIAL',
   TEMPORAL: 'TEMPORAL',
-  PLOT_SPATIAL: 'PLOT_SPATIAL',
-  MAP: 'MAP'
+  PLOT_SPATIAL: 'PLOT_SPATIAL'
 });
 
 const ANNOTATION_TYPE = 'annotation';
