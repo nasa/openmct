@@ -63,7 +63,7 @@
     "sass": "1.62.1",
     "sass-loader": "13.2.2",
     "sinon": "15.1.0",
-    "style-loader": "3.3.2",
+    "style-loader": "3.3.3",
     "typescript": "5.0.4",
     "uuid": "9.0.0",
     "vue": "2.6.14",
