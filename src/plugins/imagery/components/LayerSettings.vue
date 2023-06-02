@@ -13,13 +13,7 @@
             >
                 <label>
                     <input
-                        v-if="layer.visible"
-                        checked
-                        type="checkbox"
-                        @change="toggleLayerVisibility(index)"
-                    >
-                    <input
-                        v-else
+                        :checked="layer.visible"
                         type="checkbox"
                         @change="toggleLayerVisibility(index)"
                     >
