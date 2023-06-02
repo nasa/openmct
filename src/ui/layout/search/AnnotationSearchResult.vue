@@ -140,7 +140,8 @@ export default {
           // if we're not on the correct page, navigate to the object,
           // then wait for the selection event to fire before issuing a new selection
           if (
-            this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL
+            this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL ||
+            this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL
           ) {
             this.openmct.selection.on('change', this.clickedPlotAnnotation);
           }
