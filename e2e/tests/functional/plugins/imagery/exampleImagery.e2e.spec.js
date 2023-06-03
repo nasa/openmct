@@ -305,14 +305,14 @@ test.describe('Example Imagery in Display Layout', () => {
         await createImageryView(page);
         await page.goto(displayLayout.url);
 
-        const imageElementsCount = await page.locator('.c-imagery').count();
+        const imageElements = await page.locator('.c-imagery__main-image-wrapper');
 
-        expect(imageElementsCount).toEqual(2);
+        await expect(imageElements).toHaveCount(2);
 
-        const imageOne = await page.locator('.c-imagery__main-image-wrapper').first();
-        const imageTwo = await page.locator('.c-imagery__main-image-wrapper').last();
+        const imageOne = await page.locator('.c-imagery__main-image-wrapper').nth(0);
+        const imageTwo = await page.locator('.c-imagery__main-image-wrapper').nth(1);
         const imageOneWrapper = await imageOne.locator('.image-wrapper');
-        const imageTwoWrapper = await imageOne.locator('.image-wrapper');
+        const imageTwoWrapper = await imageTwo.locator('.image-wrapper');
 
         await imageTwo.hover();
 
@@ -321,15 +321,15 @@ test.describe('Example Imagery in Display Layout', () => {
             .click();
 
         const imageTwoLayersMenuContent = await imageTwo.locator('button[title="Layers"] + div');
-        const imageTwoLayersToggleLabel = await imageTwoLayersMenuContent.locator('label').first();
+        const imageTwoLayersToggleLabel = await imageTwoLayersMenuContent.locator('label').last();
 
         await imageTwoLayersToggleLabel.click();
 
-        const imageOneLayersCount = await imageOneWrapper.locator('.layer-image').count();
-        const imageTwoLayersCount = await imageTwoWrapper.locator('.layer-image').count();
+        const imageOneLayers = await imageOneWrapper.locator('.layer-image');
+        const imageTwoLayers = await imageTwoWrapper.locator('.layer-image');
 
-        expect(imageOneLayersCount).toEqual(0);
-        expect(imageTwoLayersCount).toEqual(1);
+        await expect(imageOneLayers).toHaveCount(0);
+        await expect(imageTwoLayers).toHaveCount(1);
     });
 });
 
