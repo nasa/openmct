@@ -308,6 +308,28 @@ test.describe('Example Imagery in Display Layout', () => {
         const imageElementsCount = await page.locator('.c-imagery').count();
 
         expect(imageElementsCount).toEqual(2);
+
+        const imageOne = await page.locator('.c-imagery__main-image-wrapper').first();
+        const imageTwo = await page.locator('.c-imagery__main-image-wrapper').last();
+        const imageOneWrapper = await imageOne.locator('.image-wrapper');
+        const imageTwoWrapper = await imageOne.locator('.image-wrapper');
+
+        await imageTwo.hover();
+
+        await imageTwo
+            .locator('button[title="Layers"]')
+            .click();
+
+        const imageTwoLayersMenuContent = await imageTwo.locator('button[title="Layers"] + div');
+        const imageTwoLayersToggleLabel = await imageTwoLayersMenuContent.locator('label').first();
+
+        await imageTwoLayersToggleLabel.click();
+
+        const imageOneLayersCount = await imageOneWrapper.locator('.layer-image').count();
+        const imageTwoLayersCount = await imageTwoWrapper.locator('.layer-image').count();
+
+        expect(imageOneLayersCount).toEqual(0);
+        expect(imageTwoLayersCount).toEqual(1);
     });
 });
 
