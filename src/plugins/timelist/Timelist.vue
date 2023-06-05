@@ -413,6 +413,7 @@ export default {
     },
     applyStyles(activities) {
       let firstCurrentActivityIndex = -1;
+      let activityClosestToNowIndex = -1;
       let currentActivitiesCount = 0;
       const styledActivities = activities.map((activity, index) => {
         if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
@@ -424,6 +425,10 @@ export default {
           currentActivitiesCount = currentActivitiesCount + 1;
         } else if (this.timestamp < activity.start) {
           activity.cssClass = FUTURE_CSS_SUFFIX;
+          //the index of the first activity that's greater than the current timestamp
+          if (activityClosestToNowIndex < 0) {
+            activityClosestToNowIndex = index;
+          }
         } else {
           activity.cssClass = PAST_CSS_SUFFIX;
         }
@@ -442,6 +447,7 @@ export default {
         return activity;
       });
 
+      this.activityClosestToNowIndex = activityClosestToNowIndex;
       this.firstCurrentActivityIndex = firstCurrentActivityIndex;
       this.currentActivitiesCount = currentActivitiesCount;
 
@@ -459,6 +465,7 @@ export default {
       }
 
       this.firstCurrentActivityIndex = -1;
+      this.activityClosestToNowIndex = -1;
       this.currentActivitiesCount = 0;
       this.$el.parentElement?.scrollTo({ top: 0 });
       this.autoScrolled = false;
@@ -469,9 +476,9 @@ export default {
         return;
       }
 
-      //scroll to somewhere mid-way of the current activities
       const row = this.$el.querySelector('.js-list-item');
       if (row && this.firstCurrentActivityIndex > -1) {
+        // scroll to somewhere mid-way of the current activities
         const ROW_HEIGHT = row.getBoundingClientRect().height;
 
         if (this.canAutoScroll() === false) {
@@ -485,7 +492,22 @@ export default {
           behavior: 'smooth'
         });
         this.autoScrolled = false;
+      } else if (row && this.activityClosestToNowIndex > -1) {
+        // scroll to somewhere close to 'now'
+
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
+        if (this.canAutoScroll() === false) {
+          return;
+        }
+
+        this.$el.parentElement.scrollTo({
+          top: ROW_HEIGHT * (this.activityClosestToNowIndex - 1),
+          behavior: 'smooth'
+        });
+        this.autoScrolled = false;
       } else {
+        // scroll to the top
         this.resetScroll();
       }
     },
