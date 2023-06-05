@@ -49,10 +49,16 @@ define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
             });
           },
           showTab: function (isEditing) {
-            const hasPersistedFilters = Boolean(domainObject?.configuration?.filters);
-            const hasGlobalFilters = Boolean(domainObject?.configuration?.globalFilters);
+            if (isEditing) {
+              return true;
+            }
 
-            return hasPersistedFilters || hasGlobalFilters;
+            const metadata = openmct.telemetry.getMetadata(domainObject);
+            const metadataWithFilters = metadata
+              ? metadata.valueMetadatas.filter((value) => value.filters)
+              : [];
+
+            return metadataWithFilters.length;
           },
           priority: function () {
             return openmct.priority.DEFAULT;
