@@ -23,67 +23,66 @@
 import HyperlinkProvider from './HyperlinkProvider';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType('hyperlink', {
-            name: 'Hyperlink',
-            key: 'hyperlink',
-            description: 'A text element or button that links to any URL including Open MCT views.',
-            creatable: true,
-            cssClass: 'icon-chain-links',
-            initialize: function (domainObject) {
-                domainObject.displayFormat = "link";
-                domainObject.linkTarget = "_self";
+  return function install(openmct) {
+    openmct.types.addType('hyperlink', {
+      name: 'Hyperlink',
+      key: 'hyperlink',
+      description: 'A text element or button that links to any URL including Open MCT views.',
+      creatable: true,
+      cssClass: 'icon-chain-links',
+      initialize: function (domainObject) {
+        domainObject.displayFormat = 'link';
+        domainObject.linkTarget = '_self';
+      },
+      form: [
+        {
+          key: 'url',
+          name: 'URL',
+          control: 'textfield',
+          required: true,
+          cssClass: 'l-input-lg'
+        },
+        {
+          key: 'displayText',
+          name: 'Text to Display',
+          control: 'textfield',
+          required: true,
+          cssClass: 'l-input-lg'
+        },
+        {
+          key: 'displayFormat',
+          name: 'Display Format',
+          control: 'select',
+          options: [
+            {
+              name: 'Link',
+              value: 'link'
             },
-            form: [
-                {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": true,
-                    "cssClass": "l-input-lg"
-                },
-                {
-                    "key": "displayText",
-                    "name": "Text to Display",
-                    "control": "textfield",
-                    "required": true,
-                    "cssClass": "l-input-lg"
-                },
-                {
-                    "key": "displayFormat",
-                    "name": "Display Format",
-                    "control": "select",
-                    "options": [
-                        {
-                            "name": "Link",
-                            "value": "link"
-                        },
-                        {
-                            "name": "Button",
-                            "value": "button"
-                        }
-                    ],
-                    "cssClass": "l-inline"
-                },
-                {
-                    "key": "linkTarget",
-                    "name": "Tab to Open Hyperlink",
-                    "control": "select",
-                    "options": [
-                        {
-                            "name": "Open in this tab",
-                            "value": "_self"
-                        },
-                        {
-                            "name": "Open in a new tab",
-                            "value": "_blank"
-                        }
-                    ],
-                    "cssClass": "l-inline"
-
-                }
-            ]
-        });
-        openmct.objectViews.addProvider(new HyperlinkProvider(openmct));
-    };
+            {
+              name: 'Button',
+              value: 'button'
+            }
+          ],
+          cssClass: 'l-inline'
+        },
+        {
+          key: 'linkTarget',
+          name: 'Tab to Open Hyperlink',
+          control: 'select',
+          options: [
+            {
+              name: 'Open in this tab',
+              value: '_self'
+            },
+            {
+              name: 'Open in a new tab',
+              value: '_blank'
+            }
+          ],
+          cssClass: 'l-inline'
+        }
+      ]
+    });
+    openmct.objectViews.addProvider(new HyperlinkProvider(openmct));
+  };
 }

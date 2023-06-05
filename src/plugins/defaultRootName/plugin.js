@@ -22,8 +22,8 @@
 import RootObjectProvider from '../../api/objects/RootObjectProvider.js';
 
 export default function (name) {
-    return function (openmct) {
-        let rootObjectProvider = new RootObjectProvider();
-        rootObjectProvider.updateName(name);
-    };
+  return function (openmct) {
+    let rootObjectProvider = new RootObjectProvider();
+    rootObjectProvider.updateName(name);
+  };
 }

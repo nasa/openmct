@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 export default class PropertiesAction {
-    constructor(openmct) {
-        this.openmct = openmct;
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
 
-    /**
-     * @private
-     */
-    _getTypeDefinition(type) {
-        const TypeDefinition = this.openmct.types.get(type);
+  /**
+   * @private
+   */
+  _getTypeDefinition(type) {
+    const TypeDefinition = this.openmct.types.get(type);
 
-        return TypeDefinition.definition;
-    }
+    return TypeDefinition.definition;
+  }
 }

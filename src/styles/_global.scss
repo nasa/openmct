@@ -26,199 +26,201 @@
 *,
 :before,
 :after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 div {
-    position: relative;
+  position: relative;
 }
 
 /******************************************************** UTILITIES */
 .u-contents {
-    display: contents;
+  display: contents;
 }
 
 .u-menu-to {
-    &--left {
-        .c-menu {
-            left: auto !important;
-            right: 0;
-        }
+  &--left {
+    .c-menu {
+      left: auto !important;
+      right: 0;
     }
+  }
 
-    &--center {
-        .c-menu {
-            left: 50% !important;
-            transform: translateX(-50%);
-        }
+  &--center {
+    .c-menu {
+      left: 50% !important;
+      transform: translateX(-50%);
     }
+  }
 }
 
 .u-space {
-    // Provides a separator space between elements
-    &--right {
-        + [class*="__"] {
-            margin-left: $interiorMarginLg !important;
-        }
+  // Provides a separator space between elements
+  &--right {
+    + [class*='__'] {
+      margin-left: $interiorMarginLg !important;
     }
+  }
 }
 
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
-    ::-webkit-scrollbar {
-        box-sizing: border-box;
-        box-shadow: inset $scrollbarTrackShdw;
-        background-color: $scrollbarTrackColorBg;
-        height: $scrollbarTrackSize;
-        width: $scrollbarTrackSize;
-    }
+  ::-webkit-scrollbar {
+    box-sizing: border-box;
+    box-shadow: inset $scrollbarTrackShdw;
+    background-color: $scrollbarTrackColorBg;
+    height: $scrollbarTrackSize;
+    width: $scrollbarTrackSize;
+  }
 
-    ::-webkit-scrollbar-thumb {
-        box-sizing: border-box;
-        background: $scrollbarThumbColor;
-        &:hover {
-            background: $scrollbarThumbColorHov;
-        }
+  ::-webkit-scrollbar-thumb {
+    box-sizing: border-box;
+    background: $scrollbarThumbColor;
+    &:hover {
+      background: $scrollbarThumbColorHov;
     }
+  }
 
-    ::-webkit-scrollbar-corner {
-        background: transparent;
-    }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 
-    .c-menu ::-webkit-scrollbar-thumb {
-        background: $scrollbarThumbColorMenu;
-        &:hover {
-            background: $scrollbarThumbColorMenuHov;
-        }
+  .c-menu ::-webkit-scrollbar-thumb {
+    background: $scrollbarThumbColorMenu;
+    &:hover {
+      background: $scrollbarThumbColorMenuHov;
     }
+  }
 
-    div, span {
-        // Firefox
-        scrollbar-color: $scrollbarThumbColor $scrollbarTrackColorBg;
-        scrollbar-width: thin;
-    }
+  div,
+  span {
+    // Firefox
+    scrollbar-color: $scrollbarThumbColor $scrollbarTrackColorBg;
+    scrollbar-width: thin;
+  }
 }
 
 /******************************************************** FONTS */
 @mixin fontAndSize() {
-    @each $size in $listFontSizes {
-        &[data-font-size="#{$size}"] {
-            font-size: #{$size}px;
+  @each $size in $listFontSizes {
+    &[data-font-size='#{$size}'] {
+      font-size: #{$size}px;
 
-            // Set row heights in telemetry tables
-            tr {
-                min-height: #{$size + ($tabularTdPadTB * 2)};
-            }
-
-        }
+      // Set row heights in telemetry tables
+      tr {
+        min-height: #{$size + ($tabularTdPadTB * 2)};
+      }
     }
+  }
 
-    &[data-font*="bold"] {
-        font-weight: bold;
-    }
+  &[data-font*='bold'] {
+    font-weight: bold;
+  }
 
-    &[data-font*="narrow"] {
-        font-family: 'Arial Narrow', sans-serif;
-    }
+  &[data-font*='narrow'] {
+    font-family: 'Arial Narrow', sans-serif;
+  }
 
-    &[data-font*="monospace"] {
-        font-family: 'Andale Mono', sans-serif;
-    }
+  &[data-font*='monospace'] {
+    font-family: 'Andale Mono', sans-serif;
+  }
 }
 
 .u-style-receiver {
-    @include fontAndSize();
+  @include fontAndSize();
 }
 
 /******************************************************** HTML ENTITIES */
 a {
-    color: $colorA;
-    cursor: pointer;
-    text-decoration: none;
+  color: $colorA;
+  cursor: pointer;
+  text-decoration: none;
 
-    &:focus {
-        outline: none !important;
-    }
+  &:focus {
+    outline: none !important;
+  }
 }
 
-body, html {
-    height: 100%;
-    width: 100%;
+body,
+html {
+  height: 100%;
+  width: 100%;
 }
 
 body {
-    -webkit-font-smoothing: subpixel-antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    @include bodyFont($fontBaseSize);
-    background-color: $colorBodyBg;
-    color: $colorBodyFg;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @include bodyFont($fontBaseSize);
+  background-color: $colorBodyBg;
+  color: $colorBodyFg;
 }
 
 em {
-    font-style: normal;
+  font-style: normal;
 }
 
 p {
-    margin-bottom: $interiorMarginLg;
+  margin-bottom: $interiorMarginLg;
 }
 
-ol, ul {
-    list-style: none;
-    margin: 0;
-    padding-left: 0;
+ol,
+ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
 }
 
 table {
-    border-spacing: 0;
-    border-collapse: collapse;
+  border-spacing: 0;
+  border-collapse: collapse;
 }
 
 li {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 /******************************************************** HAS */
 // Local Controls: Controls placed in proximity to or overlaid on components and views
 body.desktop .has-local-controls {
-    // Provides hover ability to show local controls
-    [class*='local-controls--hidden'] {
-        transition: opacity 500ms ease-in-out;
-        opacity: 0;
-        pointer-events: none;
-    }
+  // Provides hover ability to show local controls
+  [class*='local-controls--hidden'] {
+    transition: opacity 500ms ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+  }
 
-    // Look down up to two levels and display hidden LC's on hover
-    &:hover {
-        > [class*='local-controls--hidden'],
-        > * > [class*='local-controls--hidden'],
-        > * > * > [class*='local-controls--hidden'] {
-            transition: opacity 50ms ease-in-out;
-            opacity: 1;
-            pointer-events: inherit;
-        }
+  // Look down up to two levels and display hidden LC's on hover
+  &:hover {
+    > [class*='local-controls--hidden'],
+    > * > [class*='local-controls--hidden'],
+    > * > * > [class*='local-controls--hidden'] {
+      transition: opacity 50ms ease-in-out;
+      opacity: 1;
+      pointer-events: inherit;
     }
+  }
 }
 
 /******************************************************** ICON BACKGROUNDS */
 // Used with elements that utilize an SVG background element where specific coloring is needed
 .u-icon-bg-color {
-    // Messages and notifications
-    &-info {
-        @include glyphBg($bg-icon-info);
-        filter: $colorStatusInfoFilter;
-    }
+  // Messages and notifications
+  &-info {
+    @include glyphBg($bg-icon-info);
+    filter: $colorStatusInfoFilter;
+  }
 
-    &-alert {
-        @include glyphBg($bg-icon-alert-rect);
-        filter: $colorStatusAlertFilter;
-    }
+  &-alert {
+    @include glyphBg($bg-icon-alert-rect);
+    filter: $colorStatusAlertFilter;
+  }
 
-    &-error {
-        @include glyphBg($bg-icon-alert-triangle);
-        filter: $colorStatusErrorFilter;
-    }
+  &-error {
+    @include glyphBg($bg-icon-alert-triangle);
+    filter: $colorStatusErrorFilter;
+  }
 }
 
 /******************************************************** SELECTION AND EDITING */
@@ -226,143 +228,151 @@ body.desktop .has-local-controls {
 .c-grid,
 .c-grid__x,
 .c-grid__y {
-    @include abs();
+  @include abs();
 }
 
 .c-grid .c-grid {
-    pointer-events: none;
+  pointer-events: none;
 
-    &__x  { @include bgTicks($editUIGridColorFg, 'x'); }
-    &__y  { @include bgTicks($editUIGridColorFg, 'y'); }
+  &__x {
+    @include bgTicks($editUIGridColorFg, 'x');
+  }
+  &__y {
+    @include bgTicks($editUIGridColorFg, 'y');
+  }
 }
 
 /*************************** SELECTION */
 .u-inspectable {
-    &:hover {
-        box-shadow: $browseSelectableShdwHov;
-    }
+  &:hover {
+    box-shadow: $browseSelectableShdwHov;
+  }
 }
 
 /**************************** EDITING */
 .is-editing {
-    .is-moveable {
-        cursor: move;
-    }
+  .is-moveable {
+    cursor: move;
+  }
 
-    .u-links {
-        // Applied in markup to objects that provide links. Disable while editing.
-        pointer-events: none;
-    }
+  .u-links {
+    // Applied in markup to objects that provide links. Disable while editing.
+    pointer-events: none;
+  }
 }
 
 ::placeholder {
-    opacity: 0.7;
-    font-style: italic;
+  opacity: 0.7;
+  font-style: italic;
 }
 
 /******************************************************** STATES */
-@mixin  spinner($b: 5, $c: $colorKey) {
-    animation-name: rotation-centered;
-    animation-duration: 0.5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    border-radius: 100%;
-    box-sizing: border-box;
-    border-color: rgba($c, 0.25);
-    border-top-color: rgba($c, 1.0);
-    border-style: solid;
-    border-width: $b;
-    display: block;
-    position: absolute;
-    left: 50%; top: 50%;
-    transform-origin: center;
-    transform: translate(-50%, -50%);
+@mixin spinner($b: 5, $c: $colorKey) {
+  animation-name: rotation-centered;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  border-radius: 100%;
+  box-sizing: border-box;
+  border-color: rgba($c, 0.25);
+  border-top-color: rgba($c, 1);
+  border-style: solid;
+  border-width: $b;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+  transform: translate(-50%, -50%);
 }
 
 .wait-spinner {
-    @include spinner($waitSpinnerBorderW, $colorKey);
-    pointer-events: none;
-    z-index: 2;
-    &.inline {
-        display: inline-block !important;
-        margin-right: $interiorMargin;
-        position: relative !important;
-        vertical-align: middle;
-    }
+  @include spinner($waitSpinnerBorderW, $colorKey);
+  pointer-events: none;
+  z-index: 2;
+  &.inline {
+    display: inline-block !important;
+    margin-right: $interiorMargin;
+    position: relative !important;
+    vertical-align: middle;
+  }
 }
 
 .loading {
-    // Can be applied to any block element with height and width
-    pointer-events: none;
-    &:before,
-    &:after {
-        content: '';
+  // Can be applied to any block element with height and width
+  pointer-events: none;
+  &:before,
+  &:after {
+    content: '';
+  }
+  &:before {
+    @include spinner($waitSpinnerBorderW, $colorLoadingFg);
+    height: $waitSpinnerD;
+    width: $waitSpinnerD;
+    z-index: 10;
+  }
+  &:after {
+    @include abs();
+    background: $colorLoadingBg;
+    display: block;
+    z-index: 9;
+  }
+  &.c-tree__item {
+    $d: $waitSpinnerTreeD;
+    $spinnerL: 19 + math.div($d, 2);
+
+    display: flex;
+    align-items: center;
+    margin-left: $treeNavArrowD + $interiorMargin;
+    min-height: 5px + $d;
+
+    .c-tree__item__label {
+      font-style: italic;
+      margin-left: $interiorMargin;
+      opacity: 0.6;
     }
     &:before {
-        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
-        height: $waitSpinnerD; width: $waitSpinnerD;
-        z-index: 10;
+      left: auto;
+      top: auto;
+      transform: translate(0);
+      height: $d;
+      width: $d;
+      border-width: 3px;
+      //left: $spinnerL;
+      position: relative;
     }
     &:after {
-        @include abs();
-        background: $colorLoadingBg;
-        display: block;
-        z-index: 9;
+      display: none;
     }
-    &.c-tree__item {
-        $d: $waitSpinnerTreeD;
-        $spinnerL: 19 + math.div($d, 2);
+  }
 
-        display: flex;
-        align-items: center;
-        margin-left: $treeNavArrowD + $interiorMargin;
-        min-height: 5px + $d;
-
-        .c-tree__item__label {
-            font-style: italic;
-            margin-left: $interiorMargin;
-            opacity: 0.6;
-        }
-        &:before {
-            left: auto;
-            top: auto;
-            transform: translate(0);
-            height: $d;
-            width: $d;
-            border-width: 3px;
-            //left: $spinnerL;
-            position: relative;
-        }
-        &:after {
-            display: none;
-        }
-    }
-
-    &.c-loading--overlay {
-        @include abs();
-    }
+  &.c-loading--overlay {
+    @include abs();
+  }
 }
 
 *[disabled],
 .disabled {
-    opacity: $controlDisabledOpacity;
-    pointer-events: none !important;
-    cursor: default !important;
+  opacity: $controlDisabledOpacity;
+  pointer-events: none !important;
+  cursor: default !important;
 }
 
 /******************************************************** RESPONSIVE CONTAINERS */
 @mixin responsiveContainerWidths($dimension) {
-    // 3/21/22: `--width-less-than*` classes set in ObjectView.vue
-    .--show-if-less-than-#{$dimension} {
-        // Hide anything that displays within a given width by default.
-        // `display` property must be set within a more specific class
-        // for the particular item to be displayed.
-        display: none !important
-    }
+  // 3/21/22: `--width-less-than*` classes set in ObjectView.vue
+  .--show-if-less-than-#{$dimension} {
+    // Hide anything that displays within a given width by default.
+    // `display` property must be set within a more specific class
+    // for the particular item to be displayed.
+    display: none !important;
+  }
 
-    .--width-less-than-#{$dimension} {
-        .--hide-if-less-than-#{$dimension} { display: none; }
+  .--width-less-than-#{$dimension} {
+    .--hide-if-less-than-#{$dimension} {
+      display: none;
     }
+  }
 }
 
 //.--hide-by-default { display: none !important; }

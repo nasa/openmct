@@ -22,7 +22,7 @@
 import OpenInNewTabAction from './openInNewTabAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new OpenInNewTabAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new OpenInNewTabAction(openmct));
+  };
 }

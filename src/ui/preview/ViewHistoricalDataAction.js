@@ -23,22 +23,21 @@
 import PreviewAction from './PreviewAction';
 
 export default class ViewHistoricalDataAction extends PreviewAction {
-    constructor(openmct) {
-        super(openmct);
+  constructor(openmct) {
+    super(openmct);
 
-        this.name = 'View Historical Data';
-        this.key = 'viewHistoricalData';
-        this.description = 'View Historical Data in a Table or Plot';
-        this.cssClass = 'icon-eye-open';
-        this.hideInDefaultMenu = true;
-    }
+    this.name = 'View Historical Data';
+    this.key = 'viewHistoricalData';
+    this.description = 'View Historical Data in a Table or Plot';
+    this.cssClass = 'icon-eye-open';
+    this.hideInDefaultMenu = true;
+  }
 
-    appliesTo(objectPath, view = {}) {
-        let viewContext = view.getViewContext && view.getViewContext();
+  appliesTo(objectPath, view = {}) {
+    let viewContext = view.getViewContext && view.getViewContext();
 
-        return objectPath.length
-            && viewContext
-            && viewContext.row
-            && viewContext.row.viewHistoricalData;
-    }
+    return (
+      objectPath.length && viewContext && viewContext.row && viewContext.row.viewHistoricalData
+    );
+  }
 }

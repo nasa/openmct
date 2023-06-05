@@ -27,45 +27,45 @@ import Vue from 'vue';
 import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
 
 export default function FaultManagementInspectorViewProvider(openmct) {
-    return {
-        openmct: openmct,
-        key: FAULT_MANAGEMENT_INSPECTOR,
-        name: 'Fault Management Configuration',
-        canView: (selection) => {
-            if (selection.length !== 1 || selection[0].length === 0) {
-                return false;
-            }
+  return {
+    openmct: openmct,
+    key: FAULT_MANAGEMENT_INSPECTOR,
+    name: 'Fault Management Configuration',
+    canView: (selection) => {
+      if (selection.length !== 1 || selection[0].length === 0) {
+        return false;
+      }
 
-            let object = selection[0][0].context.item;
+      let object = selection[0][0].context.item;
 
-            return object && object.type === FAULT_MANAGEMENT_TYPE;
+      return object && object.type === FAULT_MANAGEMENT_TYPE;
+    },
+    view: (selection) => {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              FaultManagementInspector
+            },
+            provide: {
+              openmct
+            },
+            template: '<FaultManagementInspector></FaultManagementInspector>'
+          });
         },
-        view: (selection) => {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            FaultManagementInspector
-                        },
-                        provide: {
-                            openmct
-                        },
-                        template: '<FaultManagementInspector></FaultManagementInspector>'
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.HIGH + 1;
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+        priority: function () {
+          return openmct.priority.HIGH + 1;
+        },
+        destroy: function () {
+          if (component) {
+            component.$destroy();
+            component = undefined;
+          }
         }
-    };
+      };
+    }
+  };
 }

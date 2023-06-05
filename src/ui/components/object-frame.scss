@@ -1,158 +1,159 @@
 .c-so-view {
+  display: flex;
+  flex-direction: column;
+
+  /*************************** HEADER */
+  &__header {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $interiorMarginSm;
+    overflow: hidden;
+    padding: 3px;
+    @include smallerControlButtons; // Make button in frame headers a bit smaller
+
+    .c-object-label {
+      font-size: 1.05em;
+      &__type-icon {
+        opacity: $objectLabelTypeIconOpacity;
+      }
+
+      &__name {
+        color: $objectLabelNameColorFg;
+      }
+    }
+  }
+
+  &:not(.c-so-view--no-frame) {
+    border: $browseFrameBorder;
+    padding: 0 $interiorMarginSm;
+
+    .is-editing & {
+      background: rgba($colorBodyBg, 0.8);
+    }
+  }
+
+  /*************************** FRAME CONTROLS */
+  &__frame-controls {
+    display: flex;
+    flex: 0 0 auto;
+
+    &__btns,
+    &__more {
+      flex: 0 0 auto;
+    }
+
+    .--width-less-than-220 &,
+    .--width-less-than-600 & {
+      [class*='__label'] {
+        // button labels
+        display: none !important;
+      }
+    }
+  }
+
+  /*************************** HIDDEN FRAME */
+  &--no-frame {
+    > .c-so-view__header {
+      visibility: hidden;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: auto;
+      left: 0;
+      z-index: 10;
+
+      .c-object-label {
+        visibility: hidden;
+      }
+
+      .c-so-view__frame-controls {
+        background: $frameControlsColorBg;
+        border-radius: $controlCr;
+        box-shadow: $frameControlsShdw;
+        padding: 1px;
+        pointer-events: all;
+
+        .c-icon-button {
+          color: $frameControlsColorFg;
+
+          &:hover {
+            background: rgba($frameControlsColorFg, 0.3);
+          }
+        }
+
+        &__btns {
+          display: none;
+        }
+
+        &:hover {
+          [class*='__btns'] {
+            display: block;
+          }
+        }
+
+        [class*='__label'] {
+          // button labels
+          display: none;
+        }
+      }
+    }
+
+    &.c-so-view--flexible-layout,
+    &.c-so-view--layout {
+      // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
+      > .c-so-view__header {
+        display: none;
+      }
+    }
+
+    /* HOVERS */
+    &:hover {
+      > .c-so-view__header {
+        visibility: visible;
+      }
+    }
+
+    &[class*='is-status'] {
+      border: $borderMissing;
+    }
+  }
+
+  /*************************** OBJECT VIEW */
+  &__object-view {
+    flex: 1 1 auto;
+    height: 0; // Chrome 73 overflow bug fix
+    overflow: auto;
+    //To accommodate independent time conductor controls
     display: flex;
     flex-direction: column;
 
-    /*************************** HEADER */
-    &__header {
-        flex: 0 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: $interiorMarginSm;
-        overflow: hidden;
-        padding: 3px;
-        @include smallerControlButtons; // Make button in frame headers a bit smaller
-
-        .c-object-label {
-            font-size: 1.05em;
-            &__type-icon {
-                opacity: $objectLabelTypeIconOpacity;
-            }
-
-            &__name {
-                color: $objectLabelNameColorFg;
-            }
-        }
+    .u-fills-container {
+      // Expand component types that fill a container
+      @include abs();
     }
+  }
 
-    &:not(.c-so-view--no-frame) {
-        border: $browseFrameBorder;
-        padding: 0 $interiorMarginSm;
-
-        .is-editing & {
-            background: rgba($colorBodyBg, 0.8);
-        }
+  &.has-complex-content {
+    > .c-so-view__view-large {
+      display: block;
     }
+  }
 
-    /*************************** FRAME CONTROLS */
-    &__frame-controls {
-        display: flex;
-        flex: 0 0 auto;
+  &.is-status--missing {
+    border: $borderMissing;
+  }
 
-        &__btns,
-        &__more {
-            flex: 0 0 auto;
-        }
-
-        .--width-less-than-220 &,
-        .--width-less-than-600 & {
-            [class*="__label"] {
-                // button labels
-                display: none !important;
-
-            }
-        }
-    }
-
-    /*************************** HIDDEN FRAME */
-    &--no-frame {
-        > .c-so-view__header {
-            visibility: hidden;
-            pointer-events: none;
-            position: absolute;
-            top: 0; right: 0; bottom: auto; left: 0;
-            z-index: 10;
-
-            .c-object-label {
-                visibility: hidden;
-            }
-
-            .c-so-view__frame-controls {
-                background: $frameControlsColorBg;
-                border-radius: $controlCr;
-                box-shadow: $frameControlsShdw;
-                padding: 1px;
-                pointer-events: all;
-
-                .c-icon-button {
-                    color: $frameControlsColorFg;
-
-                    &:hover {
-                        background: rgba($frameControlsColorFg, 0.3);
-                    }
-                }
-
-                &__btns {
-                    display: none;
-                }
-
-                &:hover {
-                    [class*="__btns"] {
-                        display: block;
-                    }
-                }
-
-                [class*="__label"] {
-                    // button labels
-                    display: none;
-
-                }
-            }
-        }
-
-        &.c-so-view--flexible-layout,
-        &.c-so-view--layout {
-            // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
-            > .c-so-view__header {
-                display: none;
-            }
-        }
-
-        /* HOVERS */
-        &:hover {
-            > .c-so-view__header {
-                visibility: visible;
-            }
-        }
-
-        &[class*='is-status'] {
-            border: $borderMissing;
-        }
-    }
-
-    /*************************** OBJECT VIEW */
-    &__object-view {
-        flex: 1 1 auto;
-        height: 0; // Chrome 73 overflow bug fix
-        overflow: auto;
-        //To accommodate independent time conductor controls
-        display: flex;
-        flex-direction: column;
-
-        .u-fills-container {
-            // Expand component types that fill a container
-            @include abs();
-        }
-    }
-
-    &.has-complex-content {
-        > .c-so-view__view-large { display: block; }
-    }
-
-    &.is-status--missing {
-        border: $borderMissing;
-    }
-
-    // Leave for debugging
-    //&.--width-less-than-600 { background: rgba(orange, 0.2) !important; }
-    //&.--width-less-than-220 { background: rgba(red, 0.2) !important; }
+  // Leave for debugging
+  //&.--width-less-than-600 { background: rgba(orange, 0.2) !important; }
+  //&.--width-less-than-220 { background: rgba(red, 0.2) !important; }
 }
 
 .l-angular-ov-wrapper {
-    // This element is the recipient for object styling; cannot be display: contents
-    overflow: hidden;
-    display: block;
-    height: 100%;
+  // This element is the recipient for object styling; cannot be display: contents
+  overflow: hidden;
+  display: block;
+  height: 100%;
 }
-
-

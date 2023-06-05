@@ -22,7 +22,7 @@
 import ImportFromJSONAction from './ImportFromJSONAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new ImportFromJSONAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new ImportFromJSONAction(openmct));
+  };
 }

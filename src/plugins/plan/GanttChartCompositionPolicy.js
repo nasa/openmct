@@ -19,17 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const ALLOWED_TYPES = [
-    'plan'
-];
+const ALLOWED_TYPES = ['plan'];
 
 export default function ganttChartCompositionPolicy(openmct) {
-    return function (parent, child) {
-        if (parent.type === 'gantt-chart') {
-            return ALLOWED_TYPES.includes(child.type);
-        }
+  return function (parent, child) {
+    if (parent.type === 'gantt-chart') {
+      return ALLOWED_TYPES.includes(child.type);
+    }
 
-        return true;
-    };
+    return true;
+  };
 }
-

@@ -24,208 +24,208 @@ import MenuAPI from './MenuAPI';
 import Menu from './menu';
 import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
 
-describe ('The Menu API', () => {
-    let openmct;
-    let appHolder;
-    let menuAPI;
-    let actionsArray;
-    let result;
-    let menuElement;
+describe('The Menu API', () => {
+  let openmct;
+  let appHolder;
+  let menuAPI;
+  let actionsArray;
+  let result;
+  let menuElement;
 
-    const x = 8;
-    const y = 16;
+  const x = 8;
+  const y = 16;
 
-    const menuOptions = {
-        onDestroy: () => {
-            console.log('default onDestroy');
+  const menuOptions = {
+    onDestroy: () => {
+      console.log('default onDestroy');
+    }
+  };
+
+  beforeEach((done) => {
+    appHolder = document.createElement('div');
+    appHolder.style.display = 'block';
+    appHolder.style.width = '1920px';
+    appHolder.style.height = '1080px';
+
+    openmct = createOpenMct();
+
+    openmct.on('start', done);
+    openmct.startHeadless();
+
+    menuAPI = new MenuAPI(openmct);
+    actionsArray = [
+      {
+        key: 'test-css-class-1',
+        name: 'Test Action 1',
+        cssClass: 'icon-clock',
+        description: 'This is a test action 1',
+        onItemClicked: () => {
+          result = 'Test Action 1 Invoked';
         }
-    };
+      },
+      {
+        key: 'test-css-class-2',
+        name: 'Test Action 2',
+        cssClass: 'icon-clock',
+        description: 'This is a test action 2',
+        onItemClicked: () => {
+          result = 'Test Action 2 Invoked';
+        }
+      }
+    ];
+  });
 
-    beforeEach((done) => {
-        appHolder = document.createElement('div');
-        appHolder.style.display = 'block';
-        appHolder.style.width = '1920px';
-        appHolder.style.height = '1080px';
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
 
-        openmct = createOpenMct();
-
-        openmct.on('start', done);
-        openmct.startHeadless();
-
-        menuAPI = new MenuAPI(openmct);
-        actionsArray = [
-            {
-                key: 'test-css-class-1',
-                name: 'Test Action 1',
-                cssClass: 'icon-clock',
-                description: 'This is a test action 1',
-                onItemClicked: () => {
-                    result = 'Test Action 1 Invoked';
-                }
-            },
-            {
-                key: 'test-css-class-2',
-                name: 'Test Action 2',
-                cssClass: 'icon-clock',
-                description: 'This is a test action 2',
-                onItemClicked: () => {
-                    result = 'Test Action 2 Invoked';
-                }
-            }
-        ];
+  describe('showMenu method', () => {
+    beforeAll(() => {
+      spyOn(menuOptions, 'onDestroy').and.callThrough();
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('creates an instance of Menu when invoked', (done) => {
+      menuOptions.onDestroy = done;
+
+      menuAPI.showMenu(x, y, actionsArray, menuOptions);
+
+      expect(menuAPI.menuComponent).toBeInstanceOf(Menu);
+      document.body.click();
     });
 
-    describe('showMenu method', () => {
-        beforeAll(() => {
-            spyOn(menuOptions, 'onDestroy').and.callThrough();
-        });
+    describe('creates a menu component', () => {
+      it('with all the actions passed in', (done) => {
+        menuOptions.onDestroy = done;
 
-        it('creates an instance of Menu when invoked', (done) => {
-            menuOptions.onDestroy = done;
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
+        menuElement = document.querySelector('.c-menu');
+        expect(menuElement).toBeDefined();
 
-            menuAPI.showMenu(x, y, actionsArray, menuOptions);
+        const listItems = menuElement.children[0].children;
 
-            expect(menuAPI.menuComponent).toBeInstanceOf(Menu);
-            document.body.click();
-        });
+        expect(listItems.length).toEqual(actionsArray.length);
+        document.body.click();
+      });
 
-        describe('creates a menu component', () => {
-            it('with all the actions passed in', (done) => {
-                menuOptions.onDestroy = done;
+      it('with click-able menu items, that will invoke the correct callBack', (done) => {
+        menuOptions.onDestroy = done;
 
-                menuAPI.showMenu(x, y, actionsArray, menuOptions);
-                menuElement = document.querySelector('.c-menu');
-                expect(menuElement).toBeDefined();
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
-                const listItems = menuElement.children[0].children;
+        menuElement = document.querySelector('.c-menu');
+        const listItem1 = menuElement.children[0].children[0];
 
-                expect(listItems.length).toEqual(actionsArray.length);
-                document.body.click();
-            });
+        listItem1.click();
 
-            it('with click-able menu items, that will invoke the correct callBack', (done) => {
-                menuOptions.onDestroy = done;
+        expect(result).toEqual('Test Action 1 Invoked');
+      });
 
-                menuAPI.showMenu(x, y, actionsArray, menuOptions);
+      it('dismisses the menu when action is clicked on', (done) => {
+        menuOptions.onDestroy = done;
 
-                menuElement = document.querySelector('.c-menu');
-                const listItem1 = menuElement.children[0].children[0];
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
-                listItem1.click();
+        menuElement = document.querySelector('.c-menu');
+        const listItem1 = menuElement.children[0].children[0];
+        listItem1.click();
 
-                expect(result).toEqual('Test Action 1 Invoked');
-            });
+        menuElement = document.querySelector('.c-menu');
 
-            it('dismisses the menu when action is clicked on', (done) => {
-                menuOptions.onDestroy = done;
+        expect(menuElement).toBeNull();
+      });
 
-                menuAPI.showMenu(x, y, actionsArray, menuOptions);
+      it('invokes the destroy method when menu is dismissed', (done) => {
+        menuOptions.onDestroy = done;
 
-                menuElement = document.querySelector('.c-menu');
-                const listItem1 = menuElement.children[0].children[0];
-                listItem1.click();
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
-                menuElement = document.querySelector('.c-menu');
+        const vueComponent = menuAPI.menuComponent.component;
+        spyOn(vueComponent, '$destroy');
 
-                expect(menuElement).toBeNull();
-            });
+        document.body.click();
 
-            it('invokes the destroy method when menu is dismissed', (done) => {
-                menuOptions.onDestroy = done;
+        expect(vueComponent.$destroy).toHaveBeenCalled();
+      });
 
-                menuAPI.showMenu(x, y, actionsArray, menuOptions);
+      it('invokes the onDestroy callback if passed in', (done) => {
+        let count = 0;
+        menuOptions.onDestroy = () => {
+          count++;
+          expect(count).toEqual(1);
+          done();
+        };
 
-                const vueComponent = menuAPI.menuComponent.component;
-                spyOn(vueComponent, '$destroy');
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
-                document.body.click();
+        document.body.click();
+      });
+    });
+  });
 
-                expect(vueComponent.$destroy).toHaveBeenCalled();
-            });
+  describe('superMenu method', () => {
+    it('creates a superMenu', (done) => {
+      menuOptions.onDestroy = done;
 
-            it('invokes the onDestroy callback if passed in', (done) => {
-                let count = 0;
-                menuOptions.onDestroy = () => {
-                    count++;
-                    expect(count).toEqual(1);
-                    done();
-                };
+      menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);
+      menuElement = document.querySelector('.c-super-menu__menu');
 
-                menuAPI.showMenu(x, y, actionsArray, menuOptions);
-
-                document.body.click();
-            });
-        });
+      expect(menuElement).not.toBeNull();
+      document.body.click();
     });
 
-    describe('superMenu method', () => {
-        it('creates a superMenu', (done) => {
-            menuOptions.onDestroy = done;
+    it('Mouse over a superMenu shows correct description', (done) => {
+      menuOptions.onDestroy = done;
 
-            menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);
-            menuElement = document.querySelector('.c-super-menu__menu');
+      menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);
+      menuElement = document.querySelector('.c-super-menu__menu');
 
-            expect(menuElement).not.toBeNull();
-            document.body.click();
-        });
+      const superMenuItem = menuElement.querySelector('li');
+      const mouseOverEvent = createMouseEvent('mouseover');
 
-        it('Mouse over a superMenu shows correct description', (done) => {
-            menuOptions.onDestroy = done;
+      superMenuItem.dispatchEvent(mouseOverEvent);
+      const itemDescription = document.querySelector('.l-item-description__description');
 
-            menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);
-            menuElement = document.querySelector('.c-super-menu__menu');
+      menuAPI.menuComponent.component.$nextTick(() => {
+        expect(menuElement).not.toBeNull();
+        expect(itemDescription.innerText).toEqual(actionsArray[0].description);
 
-            const superMenuItem = menuElement.querySelector('li');
-            const mouseOverEvent = createMouseEvent('mouseover');
+        document.body.click();
+      });
+    });
+  });
 
-            superMenuItem.dispatchEvent(mouseOverEvent);
-            const itemDescription = document.querySelector('.l-item-description__description');
+  describe('Menu Placements', () => {
+    it('default menu position BOTTOM_RIGHT', (done) => {
+      menuOptions.onDestroy = done;
 
-            menuAPI.menuComponent.component.$nextTick(() => {
-                expect(menuElement).not.toBeNull();
-                expect(itemDescription.innerText).toEqual(actionsArray[0].description);
+      menuAPI.showMenu(x, y, actionsArray, menuOptions);
+      menuElement = document.querySelector('.c-menu');
 
-                document.body.click();
-            });
-        });
+      const boundingClientRect = menuElement.getBoundingClientRect();
+      const left = boundingClientRect.left;
+      const top = boundingClientRect.top;
+
+      expect(left).toEqual(x);
+      expect(top).toEqual(y);
+
+      document.body.click();
     });
 
-    describe('Menu Placements', () => {
-        it('default menu position BOTTOM_RIGHT', (done) => {
-            menuOptions.onDestroy = done;
+    it('menu position BOTTOM_RIGHT', (done) => {
+      menuOptions.onDestroy = done;
+      menuOptions.placement = openmct.menus.menuPlacement.BOTTOM_RIGHT;
 
-            menuAPI.showMenu(x, y, actionsArray, menuOptions);
-            menuElement = document.querySelector('.c-menu');
+      menuAPI.showMenu(x, y, actionsArray, menuOptions);
+      menuElement = document.querySelector('.c-menu');
 
-            const boundingClientRect = menuElement.getBoundingClientRect();
-            const left = boundingClientRect.left;
-            const top = boundingClientRect.top;
+      const boundingClientRect = menuElement.getBoundingClientRect();
+      const left = boundingClientRect.left;
+      const top = boundingClientRect.top;
 
-            expect(left).toEqual(x);
-            expect(top).toEqual(y);
+      expect(left).toEqual(x);
+      expect(top).toEqual(y);
 
-            document.body.click();
-        });
-
-        it('menu position BOTTOM_RIGHT', (done) => {
-            menuOptions.onDestroy = done;
-            menuOptions.placement = openmct.menus.menuPlacement.BOTTOM_RIGHT;
-
-            menuAPI.showMenu(x, y, actionsArray, menuOptions);
-            menuElement = document.querySelector('.c-menu');
-
-            const boundingClientRect = menuElement.getBoundingClientRect();
-            const left = boundingClientRect.left;
-            const top = boundingClientRect.top;
-
-            expect(left).toEqual(x);
-            expect(top).toEqual(y);
-
-            document.body.click();
-        });
+      document.body.click();
     });
+  });
 });

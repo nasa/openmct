@@ -23,7 +23,7 @@
 import EditPropertiesAction from './EditPropertiesAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new EditPropertiesAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new EditPropertiesAction(openmct));
+  };
 }

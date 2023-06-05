@@ -25,7 +25,7 @@ import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
 import Plot from '../../plugins/plot/Plot.vue';
 
 export default {
-    ObjectView,
-    StackedPlot,
-    Plot
+  ObjectView,
+  StackedPlot,
+  Plot
 };

@@ -20,42 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 class ConfigStore {
-    /** @type {Record<string, Destroyable>} */
-    store = {};
+  /** @type {Record<string, Destroyable>} */
+  store = {};
 
-    /**
+  /**
     @param {string} id
     */
-    deleteStore(id) {
-        const obj = this.store[id];
+  deleteStore(id) {
+    const obj = this.store[id];
 
-        if (obj) {
-            if (obj.destroy) {
-                obj.destroy();
-            }
+    if (obj) {
+      if (obj.destroy) {
+        obj.destroy();
+      }
 
-            delete this.store[id];
-        }
+      delete this.store[id];
     }
+  }
 
-    deleteAll() {
-        Object.keys(this.store).forEach(id => this.deleteStore(id));
-    }
+  deleteAll() {
+    Object.keys(this.store).forEach((id) => this.deleteStore(id));
+  }
 
-    /**
+  /**
     @param {string} id
     @param {any} config
     */
-    add(id, config) {
-        this.store[id] = config;
-    }
+  add(id, config) {
+    this.store[id] = config;
+  }
 
-    /**
+  /**
     @param {string} id
     */
-    get(id) {
-        return this.store[id];
-    }
+  get(id) {
+    return this.store[id];
+  }
 }
 
 const STORE = new ConfigStore();

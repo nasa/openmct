@@ -27,11 +27,11 @@ import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
 import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
 
 export default function InspectorViewsPlugin() {
-    return function install(openmct) {
-        openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlotElementsViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new AnnotationsViewProvider(openmct));
-    };
+  return function install(openmct) {
+    openmct.inspectorViews.addProvider(new PropertiesViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new ElementsViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new PlotElementsViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new AnnotationsViewProvider(openmct));
+  };
 }

@@ -1,8 +1,8 @@
-name: "pr-platform"
+name: 'pr-platform'
 on:
   workflow_dispatch:
   pull_request:
-    types: [ labeled ]
+    types: [labeled]
 
 jobs:
   e2e-full:
