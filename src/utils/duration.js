@@ -66,13 +66,13 @@ export function millisecondsToDHMS(numericDuration) {
 export function getPreciseDuration(value, excludeMilliSeconds) {
   const ms = value || 0;
   const duration = [
-      toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
-      toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
-      toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
-      toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+    toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
   ];
-    if (!excludeMilliSeconds) {
-        duration.push(toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND))));
-    }
+  if (!excludeMilliSeconds) {
+    duration.push(toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND))));
+  }
   return duration.join(':');
 }
