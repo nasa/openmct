@@ -37,25 +37,27 @@ export default {
         return {
             userName: undefined,
             role: undefined,
-            loggedIn: false
+            loggedIn: false,
+            roleChannelProvider: undefined
         };
     },
 
     async mounted() {
         this.getUserInfo();
-        RoleChannelProvider.createRoleChannel();
+        this.roleChannelProvider = new RoleChannelProvider(this.openmct);
+        this.roleChannelProvider.createRoleChannel();
+        this.roleChannelProvider.subscribeToRole(this.setRoleSelection);
         await this.fetchOrPromptForRole();
     },
     beforeDestroy() {
-        RoleChannelProvider.unsubscribeToRole();
+        this.roleChannelProvider.unsubscribeToRole();
     },
     methods: {
-        getUserInfo() {
-            this.openmct.user.getCurrentUser().then((user) => {
-                this.userName = user.getName();
-                this.role = this.openmct.user.getActiveRole();
-                this.loggedIn = this.openmct.user.isLoggedIn();
-            });
+        async getUserInfo() {
+            const user = await this.openmct.user.getCurrentUser();
+            this.userName = user.getName();
+            this.role = this.openmct.user.getActiveRole();
+            this.loggedIn = this.openmct.user.isLoggedIn();
         },
         async fetchOrPromptForRole() {
             const UserAPI = this.openmct.user;
@@ -93,18 +95,21 @@ export default {
                         callback: () => {
                             dialog.dismiss();
                             //TODO: introduce a notification of success
-                            this.setRole(this.selectedRole);
+                            this.updateRole(this.selectedRole);
                         }
                     }
                 ]
             });
         },
-
-        setRole(role) {
+        setRoleSelection(role) {
             this.role = role;
+        },
+
+        updateRole(role) {
+            this.setRoleSelection(role);
             this.openmct.user.setActiveRole(role);
             // update other tabs through broadcast channel
-            RoleChannelProvider.broadcastNewRole(role);
+            this.roleChannelProvider.broadcastNewRole(role);
         }
 
     }
