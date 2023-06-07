@@ -22,16 +22,17 @@
 
 import { SESSION_STORAGE_KEY } from './constants';
 
-export default {
+class SessionPersistance {
     getActiveRole() {
         return sessionStorage.getItem(SESSION_STORAGE_KEY);
-    },
-
+    }
     setActiveRole(role) {
         return sessionStorage.setItem(SESSION_STORAGE_KEY, role);
-    },
-
+    }
     clearActiveRole() {
         return sessionStorage.removeItem(SESSION_STORAGE_KEY);
     }
-};
+}
+
+export default new SessionPersistance();
+

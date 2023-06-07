@@ -58,7 +58,6 @@
 
 <script>
 const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
-const BROADCAST_CHANNEL_NAME = 'USER_ROLE';
 export default {
     inject: ['openmct', 'indicator', 'configuration'],
     props: {
@@ -94,65 +93,17 @@ export default {
     beforeDestroy() {
         this.openmct.user.status.off('statusChange', this.setStatus);
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
-        this.unsubscribeToRole();
     },
     async mounted() {
         this.unsubscribe = [];
         await this.fetchUser();
-        this.fetchOrPromptForRole();
         this.fetchPossibleStatusesForUser();
         this.fetchCurrentPoll();
         this.fetchMyStatus();
         this.subscribeToMyStatus();
         this.subscribeToPollQuestion();
-        this.createRoleChannel();
     },
     methods: {
-
-        async fetchOrPromptForRole() {
-            const UserAPI = this.openmct.user;
-            const activeRole = UserAPI.getActiveRole();
-            this.selectedRole = activeRole;
-            if (!activeRole) {
-                // trigger role selection modal
-                this.promptForRoleSelection();
-            }
-            // todo confirm status role
-
-            this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
-
-        },
-        promptForRoleSelection() {
-            const allRoles = this.openmct.user.getPossibleRoles();
-            const selectionOptions = allRoles.filter(this.openmct.user.canProvideStatusForRole);
-            const dialog = this.openmct.overlays.selection({
-                selectionOptions,
-                iconClass: 'info',
-                title: 'Select Role',
-                message: 'Please select your role for operator status.',
-                currentSelection: this.selectedRole,
-                onChange: (event) => {
-                    console.log('updateRole', event.target.value)
-                    this.selectedRole = event.target.value;
-                },
-                buttons: [
-                    {
-                        label: 'Select',
-                        emphasis: true,
-                        callback: () => {
-                            dialog.dismiss();
-                            //TODO: introduce a notification of success
-                            this.setRole(this.selectedRole);
-                        }
-                    }
-                ]
-            });
-        },
-        setRole(role) {
-            this.openmct.user.setActiveRole(role);
-            // update other tabs through broadcast channel
-            this.broadcastNewRole(role);
-        },
 
         async fetchUser() {
             this.user = await this.openmct.user.getCurrentUser();
@@ -227,33 +178,6 @@ export default {
             } else {
                 return status;
             }
-        },
-        createRoleChannel() {
-            this.roleChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
-            this.roleChannel.onmessage = (event => {
-                const role = event.data;
-                this.openmct.user.setActiveRole(role);
-            });
-        },
-        unsubscribeToRole() {
-            this.roleChannel.close();
-        },
-        broadcastNewRole(role) {
-            if (!this.roleChannel.name) {
-                return false;
-            }
-
-            try {
-                this.roleChannel.postMessage(role);
-            } catch (e) {
-                /** FIXME: there doesn't seem to be a reliable way to test for open/closed
-                * status of a broadcast channel; channel.name exists even after the
-                * channel is closed. Failure to update the subscribed tabs, should
-                * not block the focused tab's selection and so it is caught here.
-                * An error will often be thrown if the dialog remains open during HMR.
-                **/
-            }
-
         },
         noop() {}
     }
