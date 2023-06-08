@@ -1,0 +1,218 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2023, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+const { test, expect } = require('@playwright/test');
+
+const filePath = "e2e/test-data/memory-leak-detection.json";
+/**
+ * Executes tests to verify that views are not leaking memory on navigation away. This sort of 
+ * memory leak is generally caused by a failure to clean up registered listeners.
+ * 
+ * These tests are executed on a set of pre-built displays loaded from ../test-data/memory-leak-detection.json.
+ * 
+ * In order to modify the test data set:
+ * 1. Run Open MCT locally (npm start)
+ * 2. Right click on a folder in the tree, and select "Import From JSON"
+ * 3. In the subsequent dialog, select the file ../test-data/memory-leak-detection.json
+ * 4. Click "OK"
+ * 5. Modify test objects as desired
+ * 6. Right click on the "Memory Leak Detection" folder, and select "Export to JSON"
+ * 7. Copy the exported file to ../test-data/memory-leak-detection.json
+ * 
+ */
+test.describe.only("Navigation memory leak is not detected in", () => {
+    test.beforeEach(async ({ page, browser }, testInfo) => {
+        // Go to baseURL
+        await page.goto('./', { waitUntil: 'networkidle' });
+    
+        // Click a:has-text("My Items")
+        await page.locator('a:has-text("My Items")').click({
+          button: 'right'
+        });
+    
+        // Click text=Import from JSON
+        await page.locator('text=Import from JSON').click();
+    
+        // Upload memory-leak-detection.json
+        await page.setInputFiles('#fileElem', filePath);
+    
+        // Click text=OK
+        await page.locator('text=OK').click();
+    
+        await expect(
+          page.locator('a:has-text("Memory Leak Detection")')
+        ).toBeVisible();
+      });
+
+    test('plot view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "overlay-plot-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('stacked plot view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "stacked-plot-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('LAD table view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "lad-table-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('LAD table set', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "lad-table-set-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('telemetry table view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "telemetry-table-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('notebook view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "notebook-memory-leak-detection-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('display layout of a single SWG alphanumeric', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "display-layout-single-1hz-swg");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test('display layout of a single SWG plot', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "display-layout-single-overlay-plot");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('example imagery view', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "example-imagery-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('display layout of example imagery views', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "display-layout-images-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "display-layout-simple-telemetry");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('flexible layout with plots of swgs', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "flexible-layout-plots-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('flexible layout of example imagery views', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "flexible-layout-images-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('tabbed view of display layouts and time strips', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "tab-view-simple-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    test.skip('time strip view of telemetry', async ({ page }) => {
+        await navigateToObjectAndDetectMemoryLeak(page, "time-strip-telemetry-memory-leak-test");
+
+        // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+        expect(true)
+    });
+
+    async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
+        await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+        // Fill Search input
+        await page
+            .locator('[aria-label="OpenMCT Search"] input[type="search"]')
+            .fill(objectName);
+
+        //Search Result Appears and is clicked
+        await Promise.all([
+            page.locator(`div.c-gsearch-result__title:has-text("${objectName}")`).first().click(),
+            page.waitForNavigation()
+        ]);
+
+        // Register a finalization listener on the root node for the view. This tends to be the last thing to be 
+        // garbage collected since it has either direct or indirect references to all resources used by the view. Therefore it's a pretty good proxy 
+        // for detecting memory leaks.
+        await page.evaluate(() => {
+            window.gcPromise = new Promise((resolve) => {
+                window.fr = new FinalizationRegistry(resolve);
+                window.fr.register(window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vue__, 'navigatedObject', window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vue__); 
+            });
+        });
+
+        // Nav back to folder
+        await page.goto("./#/browse/mine", { waitUntil: "networkidle" });
+        await page.waitForNavigation();
+
+        // This next code block blocks until the finalization listener is called and the gcPromise resolved. This means that the root node for the view has been garbage collected.
+        // In the event that the root node is not garbage collected, the gcPromise will never resolve and the test will time out.
+        await page.evaluate(() => {
+            const gcPromise = window.gcPromise;
+            window.gcPromise = null;
+
+            // Manually invoke the garbage collector once all references are removed.
+            window.gc();
+
+            return gcPromise;
+        });
+
+        // Clean up the finalization registry since we don't need it any more.
+        await page.evaluate(() => {
+            window.fr = null;
+        });
+
+        // If we get here without timing out, it means the garbage collection promise resolved and the test passed.
+        expect(true);
+    }
+});

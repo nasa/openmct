@@ -23,7 +23,11 @@ const config = {
     ignoreHTTPSErrors: true,
     screenshot: 'off',
     trace: 'on-first-retry',
-    video: 'off'
+    video: 'off',
+    launchOptions: {
+      args: [
+          '--js-flags=--expose-gc'
+      ]}
   },
   projects: [
     {
