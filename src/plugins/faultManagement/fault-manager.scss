@@ -25,244 +25,243 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
 
 /*********************************************** SEARCH  */
 .c-fault-mgmt__search-row {
-    display: flex;
-    align-items: center;
-    flex: 0 0 auto;
-    > * + * {
-       margin-left: 10px;
-       float: right;
-    }
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  > * + * {
+    margin-left: 10px;
+    float: right;
+  }
 }
 
 .c-fault-mgmt-search {
-    width: 95%;
+  width: 95%;
 }
 
 /*********************************************** TOOLBAR */
 .c-fault-mgmt__toolbar {
-    display: flex;
-    justify-content: center;
-    flex: 0 0 auto;
-    > * + * {
-       margin-left: $interiorMargin;
-    }
+  display: flex;
+  justify-content: center;
+  flex: 0 0 auto;
+  > * + * {
+    margin-left: $interiorMargin;
+  }
 }
 
 /*********************************************** LIST VIEW */
 .c-faults-list-view {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
+  > * + * {
+    margin-top: $interiorMargin;
+  }
 }
 
 .c-faults-list-view-header-item-container {
-    display: grid;
-    width: 100%;
-    grid-template-columns: max-content max-content repeat(5,minmax(max-content, 20%)) max-content;
-    grid-row-gap: $interiorMargin;
+  display: grid;
+  width: 100%;
+  grid-template-columns: max-content max-content repeat(5, minmax(max-content, 20%)) max-content;
+  grid-row-gap: $interiorMargin;
 
-    &-wrapper {
-        flex: 1 1 auto;
-        padding-right: $interiorMargin; // Fend of from scrollbar
-        overflow-y: auto;
-    }
+  &-wrapper {
+    flex: 1 1 auto;
+    padding-right: $interiorMargin; // Fend of from scrollbar
+    overflow-y: auto;
+  }
 
-    .--width-less-than-600 & {
-        grid-template-columns: max-content max-content 1fr 1fr max-content;
-    }
+  .--width-less-than-600 & {
+    grid-template-columns: max-content max-content 1fr 1fr max-content;
+  }
 }
 
 .c-faults-list-view-item-body {
-   display: contents;
+  display: contents;
 }
 
 /*********************************************** LIST */
 .c-fault-mgmt__list {
+  display: contents;
+  color: $colorFaultItemFg;
+
+  &-checkbox {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  &-severity {
+    font-size: 2em;
+
+    &.is-severity-critical {
+      @include glyphBefore($glyph-icon-alert-triangle);
+      color: $colorStatusError;
+    }
+
+    &.is-severity-warning {
+      @include glyphBefore($glyph-icon-alert-rect);
+      color: $colorStatusAlert;
+    }
+
+    &.is-severity-watch {
+      @include glyphBefore($glyph-icon-info);
+      color: $colorCommand;
+    }
+  }
+
+  &-content {
     display: contents;
-    color: $colorFaultItemFg;
 
-    &-checkbox{
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+    .--width-less-than-600 & {
+      display: flex;
+      flex-wrap: wrap;
+      grid-column: span 2;
     }
+  }
 
-    &-severity {
-        font-size: 2em;
+  &-pathname {
+    padding-right: $interiorMarginLg;
+    overflow-wrap: anywhere;
+    min-width: 100px;
+  }
+  &-path {
+    font-size: 0.85em;
+    margin-left: $interiorMargin;
+  }
 
-        &.is-severity-critical {
-            @include glyphBefore($glyph-icon-alert-triangle);
-            color: $colorStatusError;
-        }
+  &-faultname {
+    font-size: 1.3em;
+    margin-left: $interiorMargin;
+  }
 
-        &.is-severity-warning {
-            @include glyphBefore($glyph-icon-alert-rect);
-            color: $colorStatusAlert;
-        }
+  &-content-right {
+    display: contents;
+  }
 
-        &.is-severity-watch {
-            @include glyphBefore($glyph-icon-info);
-            color: $colorCommand;
-        }
+  &-trigTime {
+    grid-column: 6 / span 2;
+  }
+
+  &-action-wrapper {
+    text-align: right;
+    flex: 0 0 auto;
+    align-items: stretch;
+  }
+
+  &-action-button {
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+  }
+
+  // STATES
+  &.is-unacknowledged {
+    color: $colorFaultItemFgEmphasis;
+    .c-fault-mgmt__list-severity {
+      @include pulse($animName: severityAnim, $dur: 200ms);
     }
+  }
 
-     &-content {
-        display: contents;
+  &.is-acknowledged,
+  &.is-shelved {
+    .c-fault-mgmt__list-severity {
+      &:before {
+        opacity: 60%;
+        //font-size: 1.5em;
+      }
 
-        .--width-less-than-600 & {
-            display: flex;
-            flex-wrap: wrap;
-            grid-column: span 2;
-         }
-    }
-
-    &-pathname {
-        padding-right: $interiorMarginLg;
-        overflow-wrap: anywhere;
-        min-width: 100px;
-
-    }
-    &-path {
-        font-size: .85em;
-        margin-left: $interiorMargin;
-    }
-
-    &-faultname{
-        font-size: 1.3em;
-        margin-left: $interiorMargin;
-    }
-
-    &-content-right {
-        display: contents;
-    }
-
-    &-trigTime {
-        grid-column: 6 / span 2;
-    }
-
-    &-action-wrapper {
-        text-align: right;
-        flex: 0 0 auto;
-        align-items: stretch;
-    }
-
-    &-action-button {
-        flex: 0 0 auto;
-        margin-left: auto;
-        text-align: right;
-    }
-
-    // STATES
-    &.is-unacknowledged {
+      &:after {
         color: $colorFaultItemFgEmphasis;
-        .c-fault-mgmt__list-severity {
-            @include pulse($animName: severityAnim, $dur: 200ms);
-        }
+        display: block;
+        font-family: symbolsfont;
+        position: absolute;
+        //text-shadow: black 0 0 2px;
+        right: -3px;
+        bottom: -3px;
+        transform-origin: right bottom;
+        transform: scale(0.6);
+      }
     }
+  }
 
-    &.is-acknowledged,
-    &.is-shelved {
-        .c-fault-mgmt__list-severity {
-            &:before {
-                opacity: 60%;
-                //font-size: 1.5em;
-            }
-
-            &:after {
-                color: $colorFaultItemFgEmphasis;
-                display: block;
-                font-family: symbolsfont;
-                position: absolute;
-                //text-shadow: black 0 0 2px;
-                right: -3px;
-                bottom: -3px;
-                transform-origin: right bottom;
-                transform: scale(0.6);
-            }
-        }
+  &.is-shelved {
+    .c-fault-mgmt__list-pathname {
+      font-style: italic;
     }
+  }
 
-    &.is-shelved {
-        .c-fault-mgmt__list-pathname {
-            font-style: italic;
-        }
-    }
+  &.is-acknowledged .c-fault-mgmt__list-severity:after {
+    content: $glyph-icon-check;
+  }
 
-    &.is-acknowledged .c-fault-mgmt__list-severity:after {
-        content: $glyph-icon-check;
-    }
-
-    &.is-shelved .c-fault-mgmt__list-severity:after {
-        content: $glyph-icon-timer;
-    }
+  &.is-shelved .c-fault-mgmt__list-severity:after {
+    content: $glyph-icon-timer;
+  }
 }
 
 /*********************************************** LIST HEADER */
 .c-fault-mgmt__list-header {
-    display: contents;
-    border-radius: $controlCr;
-    align-items: center;
+  display: contents;
+  border-radius: $controlCr;
+  align-items: center;
 
-    * {
-        margin: 0px;
-        border-radius: 0px;
+  * {
+    margin: 0px;
+    border-radius: 0px;
+  }
+
+  .--width-less-than-600 & {
+    .c-fault-mgmt__list-content-right {
+      display: none;
     }
+  }
+
+  &-content {
+    display: contents;
+  }
+
+  &-results {
+    grid-column: 2 / span 2;
+    font-size: 1em;
+    height: auto;
+  }
+
+  &-action-wrapper {
+    grid-column: 7 / span 2;
 
     .--width-less-than-600 & {
-        .c-fault-mgmt__list-content-right {
-            display:none;
-        }
+      grid-column: 4 / span 2;
     }
-
-    &-content {
-        display: contents;
-    }
-
-    &-results {
-        grid-column: 2 / span 2;
-        font-size: 1em;
-        height: auto;
-    }
-
-    &-action-wrapper {
-        grid-column: 7 / span 2;
-
-        .--width-less-than-600 & {
-            grid-column: 4 / span 2;
-        }
-    }
+  }
 }
 
 /*********************************************** GRID ITEM */
 .c-fault-mgmt-item {
-    $p: $interiorMargin;
+  $p: $interiorMargin;
+  padding: $p;
+  background: $colorFaultItemBg;
+  white-space: nowrap;
+
+  &-header {
+    $c: $colorBodyBg;
+    background: $c;
+    border-bottom: 5px solid $c; // Creates illusion of "space" beneath header
+    min-height: 30px; // Needed to align cells
     padding: $p;
-    background: $colorFaultItemBg;
-    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
 
-    &-header {
-        $c: $colorBodyBg;
-        background: $c;
-        border-bottom: 5px solid $c; // Creates illusion of "space" beneath header
-        min-height: 30px; // Needed to align cells
-        padding: $p;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
+  &__value {
+    @include isLimit();
+    background: rgba($colorBodyFg, 0.1);
+    padding: $p;
+    border-radius: $controlCr;
+    display: inline-flex;
+  }
 
-    &__value {
-        @include isLimit();
-        background: rgba($colorBodyFg, 0.1);
-        padding: $p;
-        border-radius: $controlCr;
-        display: inline-flex;
-    }
-
-    .is-selected & {
-        background: $colorSelectedBg;
-    }
+  .is-selected & {
+    background: $colorSelectedBg;
+  }
 }

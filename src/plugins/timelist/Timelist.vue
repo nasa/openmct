@@ -21,26 +21,23 @@
 -->
 
 <template>
-<div
-    ref="timelistHolder"
-    class="c-timelist"
->
+  <div ref="timelistHolder" class="c-timelist">
     <list-view
-        :items="planActivities"
-        :header-items="headerItems"
-        :default-sort="defaultSort"
-        class="sticky"
+      :items="planActivities"
+      :header-items="headerItems"
+      :default-sort="defaultSort"
+      class="sticky"
     />
-</div>
+  </div>
 </template>
 
 <script>
-import {getValidatedData} from "../plan/util";
+import { getValidatedData } from '../plan/util';
 import ListView from '../../ui/components/List/ListView.vue';
-import {getPreciseDuration} from "../../utils/duration";
-import {SORT_ORDER_OPTIONS} from "./constants";
+import { getPreciseDuration } from '../../utils/duration';
+import { SORT_ORDER_OPTIONS } from './constants';
 import _ from 'lodash';
-import moment from "moment";
+import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
@@ -87,85 +84,96 @@ const headerItems = [
                 result = 'Now';
             }
 
-            return result;
-        }
-    }, {
-        defaultDirection: true,
-        property: 'name',
-        name: 'Activity'
+      return result;
     }
+  },
+  {
+    defaultDirection: true,
+    property: 'name',
+    name: 'Activity'
+  }
 ];
 
 const defaultSort = {
-    property: 'start',
-    defaultDirection: true
+  property: 'start',
+  defaultDirection: true
 };
 
 export default {
-    components: {
-        ListView
-    },
-    inject: ['openmct', 'domainObject', 'path', 'composition'],
-    data() {
-        this.planObjects = [];
+  components: {
+    ListView
+  },
+  inject: ['openmct', 'domainObject', 'path', 'composition'],
+  data() {
+    this.planObjects = [];
 
-        return {
-            viewBounds: undefined,
-            height: 0,
-            planActivities: [],
-            headerItems: headerItems,
-            defaultSort: defaultSort
-        };
-    },
-    mounted() {
-        this.isEditing = this.openmct.editor.isEditing();
-        this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
-        this.openmct.time.on('clock', this.setViewFromClock);
+    return {
+      viewBounds: undefined,
+      height: 0,
+      planActivities: [],
+      headerItems: headerItems,
+      defaultSort: defaultSort
+    };
+  },
+  mounted() {
+    this.isEditing = this.openmct.editor.isEditing();
+    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
+    this.openmct.time.on('clock', this.setViewFromClock);
 
-        this.getPlanDataAndSetConfig(this.domainObject);
+    this.getPlanDataAndSetConfig(this.domainObject);
 
-        this.unlisten = this.openmct.objects.observe(this.domainObject, 'selectFile', this.planFileUpdated);
-        this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.setViewFromConfig);
-        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
-        this.status = this.openmct.status.get(this.domainObject.identifier);
+    this.unlisten = this.openmct.objects.observe(
+      this.domainObject,
+      'selectFile',
+      this.planFileUpdated
+    );
+    this.unlistenConfig = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      this.setViewFromConfig
+    );
+    this.removeStatusListener = this.openmct.status.observe(
+      this.domainObject.identifier,
+      this.setStatus
+    );
+    this.status = this.openmct.status.get(this.domainObject.identifier);
 
-        this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-        this.openmct.time.on('bounds', this.updateTimestamp);
-        this.openmct.editor.on('isEditing', this.setEditState);
+    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.openmct.time.on('bounds', this.updateTimestamp);
+    this.openmct.editor.on('isEditing', this.setEditState);
 
-        this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
-        this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
+    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
+    this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
 
-        if (this.composition) {
-            this.composition.on('add', this.addToComposition);
-            this.composition.on('remove', this.removeItem);
-            this.composition.load();
-        }
+    if (this.composition) {
+      this.composition.on('add', this.addToComposition);
+      this.composition.on('remove', this.removeItem);
+      this.composition.load();
+    }
 
-        this.setViewFromClock(this.openmct.time.clock());
+    this.setViewFromClock(this.openmct.time.clock());
+  },
+  beforeDestroy() {
+    if (this.unlisten) {
+      this.unlisten();
+    }
 
-    },
-    beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
+    if (this.unlistenConfig) {
+      this.unlistenConfig();
+    }
 
-        if (this.unlistenConfig) {
-            this.unlistenConfig();
-        }
+    if (this.removeStatusListener) {
+      this.removeStatusListener();
+    }
 
-        if (this.removeStatusListener) {
-            this.removeStatusListener();
-        }
+    this.openmct.editor.off('isEditing', this.setEditState);
+    this.openmct.time.off('bounds', this.updateTimestamp);
+    this.openmct.time.off('clock', this.setViewFromClock);
 
-        this.openmct.editor.off('isEditing', this.setEditState);
-        this.openmct.time.off('bounds', this.updateTimestamp);
-        this.openmct.time.off('clock', this.setViewFromClock);
-
-        this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
-        if (this.clearAutoScrollDisabledTimer) {
-            clearTimeout(this.clearAutoScrollDisabledTimer);
-        }
+    this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
+    if (this.clearAutoScrollDisabledTimer) {
+      clearTimeout(this.clearAutoScrollDisabledTimer);
+    }
 
         if (this.composition) {
             this.composition.off('add', this.addToComposition);
@@ -283,16 +291,16 @@ export default {
                 this.viewBounds = undefined;
                 this.hideAll = true;
 
-                return;
-            }
+        return;
+      }
 
-            this.hideAll = false;
+      this.hideAll = false;
 
             if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
                 this.viewBounds = undefined;
 
-                return;
-            }
+        return;
+      }
 
             this.viewBounds = {};
 
@@ -307,43 +315,46 @@ export default {
                 };
             }
 
-            if (futureEventsIndex !== 1) {
-                const futureDurationInMS = this.getDurationInMilliSeconds(futureEventsDuration, futureEventsDurationIndex);
-                this.viewBounds.futureStart = (timestamp) => {
-                    if (futureEventsIndex === 2) {
-                        return timestamp + futureDurationInMS;
-                    } else if (futureEventsIndex === 0) {
-                        return 0;
-                    }
-                };
-            }
-        },
-        getDurationInMilliSeconds(duration, durationIndex) {
-            if (duration > 0) {
-                if (durationIndex === 0) {
-                    return duration * 1000;
-                } else if (durationIndex === 1) {
-                    return duration * 60 * 1000;
-                } else if (durationIndex === 2) {
-                    return duration * 60 * 60 * 1000;
-                }
-            }
-        },
-        listActivities() {
-            let groups = Object.keys(this.planData);
-            let activities = [];
+      if (futureEventsIndex !== 1) {
+        const futureDurationInMS = this.getDurationInMilliSeconds(
+          futureEventsDuration,
+          futureEventsDurationIndex
+        );
+        this.viewBounds.futureStart = (timestamp) => {
+          if (futureEventsIndex === 2) {
+            return timestamp + futureDurationInMS;
+          } else if (futureEventsIndex === 0) {
+            return 0;
+          }
+        };
+      }
+    },
+    getDurationInMilliSeconds(duration, durationIndex) {
+      if (duration > 0) {
+        if (durationIndex === 0) {
+          return duration * 1000;
+        } else if (durationIndex === 1) {
+          return duration * 60 * 1000;
+        } else if (durationIndex === 2) {
+          return duration * 60 * 60 * 1000;
+        }
+      }
+    },
+    listActivities() {
+      let groups = Object.keys(this.planData);
+      let activities = [];
 
-            groups.forEach((key) => {
-                activities = activities.concat(this.planData[key]);
-            });
-            activities = activities.filter(this.filterActivities);
-            activities = this.applyStyles(activities);
-            this.setScrollTop();
-            // sort by start time
-            this.planActivities = activities.sort(this.sortByStartTime);
-        },
-        updateTimeStampAndListActivities(time) {
-            this.timestamp = time;
+      groups.forEach((key) => {
+        activities = activities.concat(this.planData[key]);
+      });
+      activities = activities.filter(this.filterActivities);
+      activities = this.applyStyles(activities);
+      this.setScrollTop();
+      // sort by start time
+      this.planActivities = activities.sort(this.sortByStartTime);
+    },
+    updateTimeStampAndListActivities(time) {
+      this.timestamp = time;
 
             this.listActivities();
         },
@@ -362,123 +373,124 @@ export default {
             const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
             const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
 
-            return isCurrent || isPast || isFuture;
-        },
-        filterByName(name) {
-            const filters = this.filterValue.split(',');
+      return isCurrent || isPast || isFuture;
+    },
+    filterByName(name) {
+      const filters = this.filterValue.split(',');
 
-            return filters.some((search => {
-                const normalized = search.trim().toLowerCase();
-                const regex = new RegExp(normalized);
+      return filters.some((search) => {
+        const normalized = search.trim().toLowerCase();
+        const regex = new RegExp(normalized);
 
-                return regex.test(name.toLowerCase());
-            }));
-        },
-        applyStyles(activities) {
-            let firstCurrentActivityIndex = -1;
-            let currentActivitiesCount = 0;
-            const styledActivities = activities.map((activity, index) => {
-                if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-                    activity.cssClass = '--is-current';
-                    if (firstCurrentActivityIndex < 0) {
-                        firstCurrentActivityIndex = index;
-                    }
+        return regex.test(name.toLowerCase());
+      });
+    },
+    applyStyles(activities) {
+      let firstCurrentActivityIndex = -1;
+      let currentActivitiesCount = 0;
+      const styledActivities = activities.map((activity, index) => {
+        if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
+          activity.cssClass = '--is-current';
+          if (firstCurrentActivityIndex < 0) {
+            firstCurrentActivityIndex = index;
+          }
 
-                    currentActivitiesCount = currentActivitiesCount + 1;
-                } else if (this.timestamp < activity.start) {
-                    activity.cssClass = '--is-future';
-                } else {
-                    activity.cssClass = '--is-past';
-                }
-
-                if (!activity.key) {
-                    activity.key = uuid();
-                }
-
-                activity.duration = activity.start - this.timestamp;
-
-                return activity;
-            });
-
-            this.firstCurrentActivityIndex = firstCurrentActivityIndex;
-            this.currentActivitiesCount = currentActivitiesCount;
-
-            return styledActivities;
-        },
-        canAutoScroll() {
-            //this distinguishes between programmatic vs user-triggered scroll events
-            this.autoScrolled = (this.dontAutoScroll !== true);
-
-            return this.autoScrolled;
-        },
-        resetScroll() {
-            if (this.canAutoScroll() === false) {
-                return;
-            }
-
-            this.firstCurrentActivityIndex = -1;
-            this.currentActivitiesCount = 0;
-            this.$el.parentElement?.scrollTo({top: 0});
-            this.autoScrolled = false;
-        },
-        setScrollTop() {
-            //scroll to somewhere mid-way of the current activities
-            if (this.firstCurrentActivityIndex > -1) {
-                if (this.canAutoScroll() === false) {
-                    return;
-                }
-
-                const scrollOffset = this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
-                this.$el.parentElement.scrollTo({
-                    top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
-                    behavior: "smooth"
-                });
-                this.autoScrolled = false;
-            } else {
-                this.resetScroll();
-            }
-        },
-        deferAutoScroll() {
-            //if this is not a user-triggered event, don't defer auto scrolling
-            if (this.autoScrolled) {
-                this.autoScrolled = false;
-
-                return;
-            }
-
-            this.dontAutoScroll = true;
-            const self = this;
-            if (this.clearAutoScrollDisabledTimer) {
-                clearTimeout(this.clearAutoScrollDisabledTimer);
-            }
-
-            this.clearAutoScrollDisabledTimer = setTimeout(() => {
-                self.dontAutoScroll = false;
-                self.setScrollTop();
-            }, SCROLL_TIMEOUT);
-        },
-        setSort() {
-            const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
-            const property = sortOrder.property;
-            const direction = sortOrder.direction.toLowerCase() === 'asc';
-            this.defaultSort = {
-                property,
-                defaultDirection: direction
-            };
-        },
-        sortByStartTime(a, b) {
-            const numA = parseInt(a.start, 10);
-            const numB = parseInt(b.start, 10);
-
-            return numA - numB;
-        },
-        setStatus(status) {
-            this.status = status;
-        },
-        setEditState(isEditing) {
-            this.isEditing = isEditing;
-            this.setViewFromConfig(this.domainObject.configuration);
+          currentActivitiesCount = currentActivitiesCount + 1;
+        } else if (this.timestamp < activity.start) {
+          activity.cssClass = '--is-future';
+        } else {
+          activity.cssClass = '--is-past';
         }
+
+        if (!activity.key) {
+          activity.key = uuid();
+        }
+
+        activity.duration = activity.start - this.timestamp;
+
+        return activity;
+      });
+
+      this.firstCurrentActivityIndex = firstCurrentActivityIndex;
+      this.currentActivitiesCount = currentActivitiesCount;
+
+      return styledActivities;
+    },
+    canAutoScroll() {
+      //this distinguishes between programmatic vs user-triggered scroll events
+      this.autoScrolled = this.dontAutoScroll !== true;
+
+      return this.autoScrolled;
+    },
+    resetScroll() {
+      if (this.canAutoScroll() === false) {
+        return;
+      }
+
+      this.firstCurrentActivityIndex = -1;
+      this.currentActivitiesCount = 0;
+      this.$el.parentElement?.scrollTo({ top: 0 });
+      this.autoScrolled = false;
+    },
+    setScrollTop() {
+      //scroll to somewhere mid-way of the current activities
+      if (this.firstCurrentActivityIndex > -1) {
+        if (this.canAutoScroll() === false) {
+          return;
+        }
+
+        const scrollOffset =
+          this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
+        this.$el.parentElement.scrollTo({
+          top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
+          behavior: 'smooth'
+        });
+        this.autoScrolled = false;
+      } else {
+        this.resetScroll();
+      }
+    },
+    deferAutoScroll() {
+      //if this is not a user-triggered event, don't defer auto scrolling
+      if (this.autoScrolled) {
+        this.autoScrolled = false;
+
+        return;
+      }
+
+      this.dontAutoScroll = true;
+      const self = this;
+      if (this.clearAutoScrollDisabledTimer) {
+        clearTimeout(this.clearAutoScrollDisabledTimer);
+      }
+
+      this.clearAutoScrollDisabledTimer = setTimeout(() => {
+        self.dontAutoScroll = false;
+        self.setScrollTop();
+      }, SCROLL_TIMEOUT);
+    },
+    setSort() {
+      const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
+      const property = sortOrder.property;
+      const direction = sortOrder.direction.toLowerCase() === 'asc';
+      this.defaultSort = {
+        property,
+        defaultDirection: direction
+      };
+    },
+    sortByStartTime(a, b) {
+      const numA = parseInt(a.start, 10);
+      const numB = parseInt(b.start, 10);
+
+      return numA - numB;
+    },
+    setStatus(status) {
+      this.status = status;
+    },
+    setEditState(isEditing) {
+      this.isEditing = isEditing;
+      this.setViewFromConfig(this.domainObject.configuration);
     }
+  }
 };
 </script>

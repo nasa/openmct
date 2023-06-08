@@ -21,34 +21,35 @@
  *****************************************************************************/
 
 .c-plan {
-    svg {
-        text-rendering: geometricPrecision;
+  svg {
+    text-rendering: geometricPrecision;
 
-        text {
-            stroke: none;
-        }
+    text {
+      stroke: none;
     }
+  }
 
-    &__activity {
-        cursor: pointer;
+  &__activity {
+    cursor: pointer;
 
-        &[s-selected] {
-            rect, use {
-                outline-style: dotted;
-                outline-width: 2px;
-                stroke: $colorGanttSelectedBorder;
-                stroke-width: 2px;
-            }
-        }
+    &[s-selected] {
+      rect,
+      use {
+        outline-style: dotted;
+        outline-width: 2px;
+        stroke: $colorGanttSelectedBorder;
+        stroke-width: 2px;
+      }
     }
+  }
 
-    &__activity-label {
-        &--outside-rect {
-            fill: $colorBodyFg !important;
-        }
+  &__activity-label {
+    &--outside-rect {
+      fill: $colorBodyFg !important;
     }
+  }
 
-    canvas {
-        display: none;
-    }
+  canvas {
+    display: none;
+  }
 }

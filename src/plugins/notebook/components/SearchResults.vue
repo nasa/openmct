@@ -1,83 +1,83 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
+<!--
+ Open MCT, Copyright (c) 2014-2023, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
 
 <template>
-<div class="c-notebook__search-results">
+  <div class="c-notebook__search-results">
     <div class="c-notebook__search-results__header">Search Results ({{ results.length }})</div>
     <div class="c-notebook__entries">
-        <NotebookEntry
-            v-for="(result, index) in results"
-            :key="index"
-            :domain-object="domainObject"
-            :result="result"
-            :entry="result.entry"
-            :read-only="true"
-            :selected-page="result.page"
-            :selected-section="result.section"
-            :is-locked="result.page.isLocked"
-            @editingEntry="editingEntry"
-            @cancelEdit="cancelEdit"
-            @changeSectionPage="changeSectionPage"
-            @updateEntries="updateEntries"
-        />
+      <NotebookEntry
+        v-for="(result, index) in results"
+        :key="index"
+        :domain-object="domainObject"
+        :result="result"
+        :entry="result.entry"
+        :read-only="true"
+        :selected-page="result.page"
+        :selected-section="result.section"
+        :is-locked="result.page.isLocked"
+        @editingEntry="editingEntry"
+        @cancelEdit="cancelEdit"
+        @changeSectionPage="changeSectionPage"
+        @updateEntries="updateEntries"
+      />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
 import NotebookEntry from './NotebookEntry.vue';
 
 export default {
-    components: {
-        NotebookEntry
+  components: {
+    NotebookEntry
+  },
+  inject: ['openmct', 'snapshotContainer'],
+  props: {
+    domainObject: {
+      type: Object,
+      default() {
+        return {};
+      }
     },
-    inject: ['openmct', 'snapshotContainer'],
-    props: {
-        domainObject: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
-        results: {
-            type: Array,
-            default() {
-                return [];
-            }
-        }
-    },
-    methods: {
-        editingEntry() {
-            this.$emit('editingEntry');
-        },
-        cancelEdit() {
-            this.$emit('cancelEdit');
-        },
-        changeSectionPage(data) {
-            this.$emit('changeSectionPage', data);
-        },
-        updateEntries(entries) {
-            this.$emit('updateEntries', entries);
-        }
+    results: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
+  },
+  methods: {
+    editingEntry() {
+      this.$emit('editingEntry');
+    },
+    cancelEdit() {
+      this.$emit('cancelEdit');
+    },
+    changeSectionPage(data) {
+      this.$emit('changeSectionPage', data);
+    },
+    updateEntries(entries) {
+      this.$emit('updateEntries', entries);
+    }
+  }
 };
 </script>

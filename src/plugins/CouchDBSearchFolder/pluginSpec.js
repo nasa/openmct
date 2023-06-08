@@ -20,81 +20,83 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import CouchDBSearchFolderPlugin from './plugin';
 
 describe('the plugin', function () {
-    let identifier = {
-        namespace: 'couch-search',
-        key: "couch-search"
-    };
-    let testPath = '/test/db';
-    let openmct;
-    let composition;
+  let identifier = {
+    namespace: 'couch-search',
+    key: 'couch-search'
+  };
+  let testPath = '/test/db';
+  let openmct;
+  let composition;
 
-    beforeEach(() => {
+  beforeEach(() => {
+    openmct = createOpenMct();
 
-        openmct = createOpenMct();
+    let couchPlugin = openmct.plugins.CouchDB(testPath);
+    openmct.install(couchPlugin);
 
-        let couchPlugin = openmct.plugins.CouchDB(testPath);
-        openmct.install(couchPlugin);
+    openmct.install(
+      new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
+        selector: {
+          model: {
+            type: 'plan'
+          }
+        }
+      })
+    );
 
-        openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
-            "selector": {
-                "model": {
-                    "type": "plan"
-                }
-            }
-        }));
+    spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(
+      Promise.resolve([
+        {
+          identifier: {
+            key: '1',
+            namespace: 'mct'
+          }
+        },
+        {
+          identifier: {
+            key: '2',
+            namespace: 'mct'
+          }
+        }
+      ])
+    );
 
-        spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(Promise.resolve([
-            {
-                identifier: {
-                    key: "1",
-                    namespace: "mct"
-                }
-            },
-            {
-                identifier: {
-                    key: "2",
-                    namespace: "mct"
-                }
-            }
-        ]));
-
-        spyOn(couchPlugin.couchProvider, "get").and.callFake((id) => {
-            return Promise.resolve({
-                identifier: id
-            });
-        });
-
-        return new Promise((resolve) => {
-            openmct.once('start', resolve);
-            openmct.startHeadless();
-        }).then(() => {
-            composition = openmct.composition.get({identifier});
-        });
+    spyOn(couchPlugin.couchProvider, 'get').and.callFake((id) => {
+      return Promise.resolve({
+        identifier: id
+      });
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    return new Promise((resolve) => {
+      openmct.once('start', resolve);
+      openmct.startHeadless();
+    }).then(() => {
+      composition = openmct.composition.get({ identifier });
     });
+  });
 
-    it('provides a folder to hold plans', () => {
-        return openmct.objects.get(identifier).then((object) => {
-            expect(object).toEqual({
-                identifier,
-                type: 'folder',
-                name: 'CouchDB Documents',
-                location: 'ROOT'
-            });
-        });
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('provides a folder to hold plans', () => {
+    return openmct.objects.get(identifier).then((object) => {
+      expect(object).toEqual({
+        identifier,
+        type: 'folder',
+        name: 'CouchDB Documents',
+        location: 'ROOT'
+      });
     });
+  });
 
-    it('provides composition for couch search folders', () => {
-        return composition.load().then((objects) => {
-            expect(objects.length).toEqual(2);
-        });
+  it('provides composition for couch search folders', () => {
+    return composition.load().then((objects) => {
+      expect(objects.length).toEqual(2);
     });
-
+  });
 });

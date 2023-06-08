@@ -33,25 +33,25 @@
  */
 
 export default {
-    mobile: function (agent) {
-        return agent.isMobile();
-    },
-    phone: function (agent) {
-        return agent.isPhone();
-    },
-    tablet: function (agent) {
-        return agent.isTablet();
-    },
-    desktop: function (agent) {
-        return !agent.isMobile();
-    },
-    portrait: function (agent) {
-        return agent.isPortrait();
-    },
-    landscape: function (agent) {
-        return agent.isLandscape();
-    },
-    touch: function (agent) {
-        return agent.isTouch();
-    }
+  mobile: function (agent) {
+    return agent.isMobile();
+  },
+  phone: function (agent) {
+    return agent.isPhone();
+  },
+  tablet: function (agent) {
+    return agent.isTablet();
+  },
+  desktop: function (agent) {
+    return !agent.isMobile();
+  },
+  portrait: function (agent) {
+    return agent.isPortrait();
+  },
+  landscape: function (agent) {
+    return agent.isLandscape();
+  },
+  touch: function (agent) {
+    return agent.isTouch();
+  }
 };

@@ -23,9 +23,8 @@
 import MCTChartSeriesElement from './MCTChartSeriesElement';
 
 export default class MCTChartLineLinear extends MCTChartSeriesElement {
-    addPoint(point, start) {
-        this.buffer[start] = point.x;
-        this.buffer[start + 1] = point.y;
-    }
+  addPoint(point, start) {
+    this.buffer[start] = point.x;
+    this.buffer[start + 1] = point.y;
+  }
 }
-

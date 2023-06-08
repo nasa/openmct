@@ -21,84 +21,84 @@
  *****************************************************************************/
 
 export default class LocalStorageObjectProvider {
-    constructor(spaceKey = 'mct') {
-        this.localStorage = window.localStorage;
-        this.spaceKey = spaceKey;
-        this.initializeSpace(spaceKey);
+  constructor(spaceKey = 'mct') {
+    this.localStorage = window.localStorage;
+    this.spaceKey = spaceKey;
+    this.initializeSpace(spaceKey);
+  }
+
+  get(identifier) {
+    if (this.getSpaceAsObject()[identifier.key] !== undefined) {
+      const persistedModel = this.getSpaceAsObject()[identifier.key];
+      const domainObject = {
+        identifier,
+        ...persistedModel
+      };
+
+      return Promise.resolve(domainObject);
+    } else {
+      return Promise.resolve(undefined);
     }
+  }
 
-    get(identifier) {
-        if (this.getSpaceAsObject()[identifier.key] !== undefined) {
-            const persistedModel = this.getSpaceAsObject()[identifier.key];
-            const domainObject = {
-                identifier,
-                ...persistedModel
-            };
+  getAllObjects() {
+    return this.getSpaceAsObject();
+  }
 
-            return Promise.resolve(domainObject);
-        } else {
-            return Promise.resolve(undefined);
-        }
+  create(object) {
+    return this.persistObject(object);
+  }
+
+  update(object) {
+    return this.persistObject(object);
+  }
+
+  /**
+   * @private
+   */
+  persistObject(domainObject) {
+    let space = this.getSpaceAsObject();
+    space[domainObject.identifier.key] = domainObject;
+
+    this.persistSpace(space);
+
+    return Promise.resolve(true);
+  }
+
+  /**
+   * @private
+   */
+  persistSpace(space) {
+    this.localStorage[this.spaceKey] = JSON.stringify(space);
+  }
+
+  /**
+   * @private
+   */
+  getSpace() {
+    return this.localStorage[this.spaceKey];
+  }
+
+  /**
+   * @private
+   */
+  getSpaceAsObject() {
+    return JSON.parse(this.getSpace());
+  }
+
+  /**
+   * @private
+   */
+  initializeSpace() {
+    if (this.isEmpty()) {
+      this.localStorage[this.spaceKey] = JSON.stringify({});
     }
+  }
 
-    getAllObjects() {
-        return this.getSpaceAsObject();
-    }
-
-    create(object) {
-        return this.persistObject(object);
-    }
-
-    update(object) {
-        return this.persistObject(object);
-    }
-
-    /**
-     * @private
-     */
-    persistObject(domainObject) {
-        let space = this.getSpaceAsObject();
-        space[domainObject.identifier.key] = domainObject;
-
-        this.persistSpace(space);
-
-        return Promise.resolve(true);
-    }
-
-    /**
-     * @private
-     */
-    persistSpace(space) {
-        this.localStorage[this.spaceKey] = JSON.stringify(space);
-    }
-
-    /**
-     * @private
-     */
-    getSpace() {
-        return this.localStorage[this.spaceKey];
-    }
-
-    /**
-     * @private
-     */
-    getSpaceAsObject() {
-        return JSON.parse(this.getSpace());
-    }
-
-    /**
-     * @private
-     */
-    initializeSpace() {
-        if (this.isEmpty()) {
-            this.localStorage[this.spaceKey] = JSON.stringify({});
-        }
-    }
-
-    /**
-     * @private
-     */
-    isEmpty() {
-        return this.getSpace() === undefined;
-    }
+  /**
+   * @private
+   */
+  isEmpty() {
+    return this.getSpace() === undefined;
+  }
 }

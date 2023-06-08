@@ -10,17 +10,17 @@ export const NOTEBOOK_BASE_INSTALLED = '_NOTEBOOK_BASE_FUNCTIONALITY_INSTALLED';
 
 // these only deals with constants, figured this could skip going into a utils file
 export function isNotebookOrAnnotationType(domainObject) {
-    return (isNotebookType(domainObject) || isAnnotationType(domainObject));
+  return isNotebookType(domainObject) || isAnnotationType(domainObject);
 }
 
 export function isNotebookType(domainObject) {
-    return [NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE].includes(domainObject.type);
+  return [NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE].includes(domainObject.type);
 }
 
 export function isAnnotationType(domainObject) {
-    return [ANNOTATION_TYPE].includes(domainObject.type);
+  return [ANNOTATION_TYPE].includes(domainObject.type);
 }
 
 export function isNotebookViewType(view) {
-    return [NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_VIEW_TYPE].includes(view);
+  return [NOTEBOOK_VIEW_TYPE, RESTRICTED_NOTEBOOK_VIEW_TYPE].includes(view);
 }

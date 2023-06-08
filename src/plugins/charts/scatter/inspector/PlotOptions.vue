@@ -20,45 +20,45 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div>
+  <div>
     <div v-if="canEdit">
-        <plot-options-edit />
+      <plot-options-edit />
     </div>
     <div v-else>
-        <plot-options-browse />
+      <plot-options-browse />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
-import PlotOptionsBrowse from "./PlotOptionsBrowse.vue";
-import PlotOptionsEdit from "./PlotOptionsEdit.vue";
+import PlotOptionsBrowse from './PlotOptionsBrowse.vue';
+import PlotOptionsEdit from './PlotOptionsEdit.vue';
 export default {
-    components: {
-        PlotOptionsBrowse,
-        PlotOptionsEdit
-    },
-    inject: ['openmct', 'domainObject'],
-    data() {
-        return {
-            isEditing: this.openmct.editor.isEditing()
-        };
-    },
-    computed: {
-        canEdit() {
-            return this.isEditing && !this.domainObject.locked;
-        }
-    },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.setEditState);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.setEditState);
-    },
-    methods: {
-        setEditState(isEditing) {
-            this.isEditing = isEditing;
-        }
+  components: {
+    PlotOptionsBrowse,
+    PlotOptionsEdit
+  },
+  inject: ['openmct', 'domainObject'],
+  data() {
+    return {
+      isEditing: this.openmct.editor.isEditing()
+    };
+  },
+  computed: {
+    canEdit() {
+      return this.isEditing && !this.domainObject.locked;
     }
+  },
+  mounted() {
+    this.openmct.editor.on('isEditing', this.setEditState);
+  },
+  beforeDestroy() {
+    this.openmct.editor.off('isEditing', this.setEditState);
+  },
+  methods: {
+    setEditState(isEditing) {
+      this.isEditing = isEditing;
+    }
+  }
 };
 </script>

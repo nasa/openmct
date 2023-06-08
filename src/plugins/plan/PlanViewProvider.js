@@ -24,57 +24,57 @@ import Plan from './components/Plan.vue';
 import Vue from 'vue';
 
 export default function PlanViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: 'plan.view',
-        name: 'Plan',
-        cssClass: 'icon-plan',
-        canView(domainObject) {
-            return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
-        },
+  return {
+    key: 'plan.view',
+    name: 'Plan',
+    cssClass: 'icon-plan',
+    canView(domainObject) {
+      return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
+    },
 
-        canEdit(domainObject) {
-            return domainObject.type === 'gantt-chart';
-        },
+    canEdit(domainObject) {
+      return domainObject.type === 'gantt-chart';
+    },
 
-        view: function (domainObject, objectPath) {
-            let component;
+    view: function (domainObject, objectPath) {
+      let component;
 
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
 
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Plan
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact,
-                                    isChildObject: isCompact
-                                }
-                            };
-                        },
-                        template: '<plan :options="options"></plan>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+          component = new Vue({
+            el: element,
+            components: {
+              Plan
+            },
+            provide: {
+              openmct,
+              domainObject,
+              path: objectPath
+            },
+            data() {
+              return {
+                options: {
+                  compact: isCompact,
+                  isChildObject: isCompact
                 }
-            };
+              };
+            },
+            template: '<plan :options="options"></plan>'
+          });
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

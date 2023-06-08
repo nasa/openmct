@@ -25,6 +25,6 @@
 // await page.addInitScript({ path: path.join(__dirname, 'useSnowTheme.js') });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.Snow());
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.Snow());
 });

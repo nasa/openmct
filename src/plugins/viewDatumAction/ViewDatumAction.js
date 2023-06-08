@@ -24,51 +24,51 @@ import MetadataListView from './components/MetadataList.vue';
 import Vue from 'vue';
 
 export default class ViewDatumAction {
-    constructor(openmct) {
-        this.name = 'View Full Datum';
-        this.key = 'viewDatumAction';
-        this.description = 'View full value of datum received';
-        this.cssClass = 'icon-object';
+  constructor(openmct) {
+    this.name = 'View Full Datum';
+    this.key = 'viewDatumAction';
+    this.description = 'View full value of datum received';
+    this.cssClass = 'icon-object';
 
-        this._openmct = openmct;
+    this._openmct = openmct;
+  }
+  invoke(objectPath, view) {
+    let viewContext = view.getViewContext && view.getViewContext();
+    const row = viewContext.row;
+    let attributes = row.getDatum && row.getDatum();
+    let component = new Vue({
+      components: {
+        MetadataListView
+      },
+      provide: {
+        name: this.name,
+        attributes
+      },
+      template: '<MetadataListView />'
+    });
+
+    this._openmct.overlays.overlay({
+      element: component.$mount().$el,
+      size: 'large',
+      dismissable: true,
+      onDestroy: () => {
+        component.$destroy();
+      }
+    });
+  }
+  appliesTo(objectPath, view = {}) {
+    let viewContext = (view.getViewContext && view.getViewContext()) || {};
+    const row = viewContext.row;
+    if (!row) {
+      return false;
     }
-    invoke(objectPath, view) {
-        let viewContext = view.getViewContext && view.getViewContext();
-        const row = viewContext.row;
-        let attributes = row.getDatum && row.getDatum();
-        let component = new Vue ({
-            components: {
-                MetadataListView
-            },
-            provide: {
-                name: this.name,
-                attributes
-            },
-            template: '<MetadataListView />'
-        });
 
-        this._openmct.overlays.overlay({
-            element: component.$mount().$el,
-            size: 'large',
-            dismissable: true,
-            onDestroy: () => {
-                component.$destroy();
-            }
-        });
+    let datum = row.getDatum;
+    let enabled = row.viewDatumAction;
+    if (enabled && datum) {
+      return true;
     }
-    appliesTo(objectPath, view = {}) {
-        let viewContext = (view.getViewContext && view.getViewContext()) || {};
-        const row = viewContext.row;
-        if (!row) {
-            return false;
-        }
 
-        let datum = row.getDatum;
-        let enabled = row.viewDatumAction;
-        if (enabled && datum) {
-            return true;
-        }
-
-        return false;
-    }
+    return false;
+  }
 }
