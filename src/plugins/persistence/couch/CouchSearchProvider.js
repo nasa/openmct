@@ -27,7 +27,7 @@
 // If the above namespace is ever resolved, we can fold this search provider
 // back into the object provider.
 
-const BATCH_ANNOTATION_DEBOUNCE_MS = 500;
+const BATCH_ANNOTATION_DEBOUNCE_MS = 100;
 
 class CouchSearchProvider {
   #bulkPromise;
@@ -142,13 +142,12 @@ class CouchSearchProvider {
       this.#bulkPromise = this.#deferBatchAnnotationSearch();
     }
 
-    try {
-      const returnedData = await this.#bulkPromise;
-      // TODO: find the latest annotation for given key
-      return returnedData;
-    } catch (error) {
-      console.error(error);
-    }
+    const returnedData = await this.#bulkPromise;
+    // only return data that matches the keystring
+    const filteredByKeyString = returnedData.filter((foundAnnotation) => {
+      return foundAnnotation.targets[keyString];
+    });
+    return filteredByKeyString;
   }
 
   searchForTags(tagsArray, abortSignal) {
