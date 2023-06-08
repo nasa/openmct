@@ -137,7 +137,6 @@ class CouchSearchProvider {
 
   async searchForAnnotations(keyString, abortSignal) {
     this.#batchIds.push({ keyString, abortSignal });
-    console.debug(`🔍 Searching for annotations with key: ${keyString}`);
     if (!this.#bulkPromise) {
       this.#bulkPromise = this.#deferBatchAnnotationSearch();
     }
