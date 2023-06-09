@@ -32,78 +32,80 @@
 </template>
 
 <script>
-import { getValidatedData } from '../plan/util';
-import ListView from '../../ui/components/List/ListView.vue';
-import { getPreciseDuration } from '../../utils/duration';
-import { SORT_ORDER_OPTIONS } from './constants';
-import _ from 'lodash';
-import moment from 'moment';
-import { v4 as uuid } from 'uuid';
+import { getValidatedData } from "../plan/util";
+import ListView from "../../ui/components/List/ListView.vue";
+import { getPreciseDuration } from "../../utils/duration";
+import { SORT_ORDER_OPTIONS } from "./constants";
+import _ from "lodash";
+import moment from "moment";
+import { v4 as uuid } from "uuid";
 
 const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
+const TIME_FORMAT = "YYYY-MM-DD HH:mm:ss:SSS";
 const headerItems = [
-    {
-        defaultDirection: true,
-        isSortable: true,
-        property: 'start',
-        name: 'Start Time',
-        format: function (value, object, key, openmct) {
-            const clock = openmct.time.clock();
-            if (clock && clock.formatTime) {
-                return clock.formatTime(value);
-            } else {
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
-            }
-        }
-    }, {
-        defaultDirection: true,
-        isSortable: true,
-        property: 'end',
-        name: 'End Time',
-        format: function (value, object, key, openmct) {
-            const clock = openmct.time.clock();
-            if (clock && clock.formatTime) {
-                return clock.formatTime(value);
-            } else {
-                return `${moment.utc(value).format(TIME_FORMAT)}Z`;
-            }
-        }
-    }, {
-        defaultDirection: false,
-        property: 'duration',
-        name: 'Time To/From',
-        format: function (value) {
-            let result;
-            if (value < 0) {
-                result = `-${getPreciseDuration(Math.abs(value))}`;
-            } else if (value > 0) {
-                result = `+${getPreciseDuration(value)}`;
-            } else {
-                result = 'Now';
-            }
-
-      return result;
-    }
+  {
+    defaultDirection: true,
+    isSortable: true,
+    property: "start",
+    name: "Start Time",
+    format: function (value, object, key, openmct) {
+      const clock = openmct.time.clock();
+      if (clock && clock.formatTime) {
+        return clock.formatTime(value);
+      } else {
+        return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+      }
+    },
   },
   {
     defaultDirection: true,
-    property: 'name',
-    name: 'Activity'
-  }
+    isSortable: true,
+    property: "end",
+    name: "End Time",
+    format: function (value, object, key, openmct) {
+      const clock = openmct.time.clock();
+      if (clock && clock.formatTime) {
+        return clock.formatTime(value);
+      } else {
+        return `${moment.utc(value).format(TIME_FORMAT)}Z`;
+      }
+    },
+  },
+  {
+    defaultDirection: false,
+    property: "duration",
+    name: "Time To/From",
+    format: function (value) {
+      let result;
+      if (value < 0) {
+        result = `-${getPreciseDuration(Math.abs(value))}`;
+      } else if (value > 0) {
+        result = `+${getPreciseDuration(value)}`;
+      } else {
+        result = "Now";
+      }
+
+      return result;
+    },
+  },
+  {
+    defaultDirection: true,
+    property: "name",
+    name: "Activity",
+  },
 ];
 
 const defaultSort = {
-  property: 'start',
-  defaultDirection: true
+  property: "start",
+  defaultDirection: true,
 };
 
 export default {
   components: {
-    ListView
+    ListView,
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition'],
+  inject: ["openmct", "domainObject", "path", "composition"],
   data() {
     this.planObjects = [];
 
@@ -112,24 +114,26 @@ export default {
       height: 0,
       planActivities: [],
       headerItems: headerItems,
-      defaultSort: defaultSort
+      defaultSort: defaultSort,
     };
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
-    this.openmct.time.on('clock', this.setViewFromClock);
+    this.timestamp =
+      this.openmct.time.clock()?.currentValue() ||
+      this.openmct.time.bounds()?.start;
+    this.openmct.time.on("clock", this.setViewFromClock);
 
     this.getPlanDataAndSetConfig(this.domainObject);
 
     this.unlisten = this.openmct.objects.observe(
       this.domainObject,
-      'selectFile',
+      "selectFile",
       this.planFileUpdated
     );
     this.unlistenConfig = this.openmct.objects.observe(
       this.domainObject,
-      'configuration',
+      "configuration",
       this.setViewFromConfig
     );
     this.removeStatusListener = this.openmct.status.observe(
@@ -139,15 +143,19 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.openmct.time.on('bounds', this.updateTimestamp);
-    this.openmct.editor.on('isEditing', this.setEditState);
+    this.openmct.time.on("bounds", this.updateTimestamp);
+    this.openmct.editor.on("isEditing", this.setEditState);
 
     this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
-    this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
+    this.$el.parentElement.addEventListener(
+      "scroll",
+      this.deferAutoScroll,
+      true
+    );
 
     if (this.composition) {
-      this.composition.on('add', this.addToComposition);
-      this.composition.on('remove', this.removeItem);
+      this.composition.on("add", this.addToComposition);
+      this.composition.on("remove", this.removeItem);
       this.composition.load();
     }
 
@@ -166,154 +174,181 @@ export default {
       this.removeStatusListener();
     }
 
-    this.openmct.editor.off('isEditing', this.setEditState);
-    this.openmct.time.off('bounds', this.updateTimestamp);
-    this.openmct.time.off('clock', this.setViewFromClock);
+    this.openmct.editor.off("isEditing", this.setEditState);
+    this.openmct.time.off("bounds", this.updateTimestamp);
+    this.openmct.time.off("clock", this.setViewFromClock);
 
-    this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
+    this.$el.parentElement.removeEventListener(
+      "scroll",
+      this.deferAutoScroll,
+      true
+    );
     if (this.clearAutoScrollDisabledTimer) {
       clearTimeout(this.clearAutoScrollDisabledTimer);
     }
 
-        if (this.composition) {
-            this.composition.off('add', this.addToComposition);
-            this.composition.off('remove', this.removeItem);
-        }
+    if (this.composition) {
+      this.composition.off("add", this.addToComposition);
+      this.composition.off("remove", this.removeItem);
+    }
+  },
+  methods: {
+    planFileUpdated(selectFile) {
+      this.getPlanData({
+        selectFile,
+        sourceMap: this.domainObject.sourceMap,
+      });
     },
-    methods: {
-        planFileUpdated(selectFile) {
-            this.getPlanData({
-                selectFile,
-                sourceMap: this.domainObject.sourceMap
-            });
-        },
-        getPlanDataAndSetConfig(mutatedObject) {
-            this.getPlanData(mutatedObject);
-            this.setViewFromConfig(mutatedObject.configuration);
-        },
-        setViewFromConfig(configuration) {
-            if (this.isEditing) {
-                this.filterValue = configuration.filter;
-                this.hideAll = false;
-                this.listActivities();
-            } else {
+    getPlanDataAndSetConfig(mutatedObject) {
+      this.getPlanData(mutatedObject);
+      this.setViewFromConfig(mutatedObject.configuration);
+    },
+    setViewFromConfig(configuration) {
+      if (this.isEditing) {
+        this.filterValue = configuration.filter;
+        this.hideAll = false;
+        this.listActivities();
+      } else {
+        this.filterValue = configuration.filter;
+        this.setSort();
+        this.setViewBounds();
+        this.listActivities();
+      }
+    },
+    updateTimestamp(bounds, isTick) {
+      if (isTick === true && this.openmct.time.clock() !== undefined) {
+        this.updateTimeStampAndListActivities(
+          this.openmct.time.clock().currentValue()
+        );
+      } else if (isTick === false && this.openmct.time.clock() === undefined) {
+        // set the start time for fixed time using the selected bounds start
+        this.updateTimeStampAndListActivities(bounds.start);
+      }
+    },
+    setViewFromClock(newClock) {
+      this.filterValue = this.domainObject.configuration.filter;
+      this.isFixedTime = newClock === undefined;
+      if (this.isFixedTime) {
+        this.hideAll = false;
+        this.updateTimeStampAndListActivities(
+          this.openmct.time.bounds()?.start
+        );
+      } else {
+        this.updateTimeStampAndListActivities(
+          this.openmct.time.clock().currentValue()
+        );
+      }
+    },
+    addItem(domainObject) {
+      this.planObjects = [domainObject];
+      this.resetPlanData();
+      if (domainObject.type === "plan") {
+        this.getPlanDataAndSetConfig({
+          ...this.domainObject,
+          selectFile: domainObject.selectFile,
+          sourceMap: domainObject.sourceMap,
+        });
+      }
+    },
+    addToComposition(telemetryObject) {
+      if (this.planObjects.length > 0) {
+        this.confirmReplacePlan(telemetryObject);
+      } else {
+        this.addItem(telemetryObject);
+      }
+    },
+    confirmReplacePlan(telemetryObject) {
+      const dialog = this.openmct.overlays.dialog({
+        iconClass: "alert",
+        message:
+          "This action will replace the current plan. Do you want to continue?",
+        buttons: [
+          {
+            label: "Ok",
+            emphasis: true,
+            callback: () => {
+              const oldTelemetryObject = this.planObjects[0];
+              this.removeFromComposition(oldTelemetryObject);
+              this.addItem(telemetryObject);
+              dialog.dismiss();
+            },
+          },
+          {
+            label: "Cancel",
+            callback: () => {
+              this.removeFromComposition(telemetryObject);
+              dialog.dismiss();
+            },
+          },
+        ],
+      });
+    },
+    removeFromComposition(telemetryObject) {
+      this.composition.remove(telemetryObject);
+    },
+    removeItem() {
+      this.planObjects = [];
+      this.resetPlanData();
+    },
+    resetPlanData() {
+      this.planData = {};
+    },
+    getPlanData(domainObject) {
+      this.planData = getValidatedData(domainObject);
+    },
+    setViewBounds() {
+      const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
+      const currentEventsIndex =
+        this.domainObject.configuration.currentEventsIndex;
+      const futureEventsIndex =
+        this.domainObject.configuration.futureEventsIndex;
+      const pastEventsDuration =
+        this.domainObject.configuration.pastEventsDuration;
+      const pastEventsDurationIndex =
+        this.domainObject.configuration.pastEventsDurationIndex;
+      const futureEventsDuration =
+        this.domainObject.configuration.futureEventsDuration;
+      const futureEventsDurationIndex =
+        this.domainObject.configuration.futureEventsDurationIndex;
 
-                this.filterValue = configuration.filter;
-                this.setSort();
-                this.setViewBounds();
-                this.listActivities();
-            }
-        },
-        updateTimestamp(bounds, isTick) {
-            if (isTick === true && this.openmct.time.clock() !== undefined) {
-                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-            } else if (isTick === false && this.openmct.time.clock() === undefined) {
-                // set the start time for fixed time using the selected bounds start
-                this.updateTimeStampAndListActivities(bounds.start);
-            }
-        },
-        setViewFromClock(newClock) {
-            this.filterValue = this.domainObject.configuration.filter;
-            this.isFixedTime = newClock === undefined;
-            if (this.isFixedTime) {
-                this.hideAll = false;
-                this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
-            } else {
-                this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-            }
-        },
-        addItem(domainObject) {
-            this.planObjects = [domainObject];
-            this.resetPlanData();
-            if (domainObject.type === 'plan') {
-                this.getPlanDataAndSetConfig({
-                    ...this.domainObject,
-                    selectFile: domainObject.selectFile,
-                    sourceMap: domainObject.sourceMap
-                });
-            }
-        },
-        addToComposition(telemetryObject) {
-            if (this.planObjects.length > 0) {
-                this.confirmReplacePlan(telemetryObject);
-            } else {
-                this.addItem(telemetryObject);
-            }
-        },
-        confirmReplacePlan(telemetryObject) {
-            const dialog = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: 'This action will replace the current plan. Do you want to continue?',
-                buttons: [
-                    {
-                        label: 'Ok',
-                        emphasis: true,
-                        callback: () => {
-                            const oldTelemetryObject = this.planObjects[0];
-                            this.removeFromComposition(oldTelemetryObject);
-                            this.addItem(telemetryObject);
-                            dialog.dismiss();
-                        }
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => {
-                            this.removeFromComposition(telemetryObject);
-                            dialog.dismiss();
-                        }
-                    }
-                ]
-            });
-        },
-        removeFromComposition(telemetryObject) {
-            this.composition.remove(telemetryObject);
-        },
-        removeItem() {
-            this.planObjects = [];
-            this.resetPlanData();
-        },
-        resetPlanData() {
-            this.planData = {};
-        },
-        getPlanData(domainObject) {
-            this.planData = getValidatedData(domainObject);
-        },
-        setViewBounds() {
-            const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
-            const currentEventsIndex = this.domainObject.configuration.currentEventsIndex;
-            const futureEventsIndex = this.domainObject.configuration.futureEventsIndex;
-            const pastEventsDuration = this.domainObject.configuration.pastEventsDuration;
-            const pastEventsDurationIndex = this.domainObject.configuration.pastEventsDurationIndex;
-            const futureEventsDuration = this.domainObject.configuration.futureEventsDuration;
-            const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
-
-            if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-                this.viewBounds = undefined;
-                this.hideAll = true;
+      if (
+        pastEventsIndex === 0 &&
+        futureEventsIndex === 0 &&
+        currentEventsIndex === 0
+      ) {
+        this.viewBounds = undefined;
+        this.hideAll = true;
 
         return;
       }
 
       this.hideAll = false;
 
-            if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
-                this.viewBounds = undefined;
+      if (
+        pastEventsIndex === 1 &&
+        futureEventsIndex === 1 &&
+        currentEventsIndex === 1
+      ) {
+        this.viewBounds = undefined;
 
         return;
       }
 
-            this.viewBounds = {};
+      this.viewBounds = {};
 
-            if (pastEventsIndex !== 1) {
-                const pastDurationInMS = this.getDurationInMilliSeconds(pastEventsDuration, pastEventsDurationIndex);
-                this.viewBounds.pastEnd = (timestamp) => {
-                    if (pastEventsIndex === 2) {
-                        return timestamp - pastDurationInMS;
-                    } else if (pastEventsIndex === 0) {
-                        return timestamp + 1;
-                    }
-                };
-            }
+      if (pastEventsIndex !== 1) {
+        const pastDurationInMS = this.getDurationInMilliSeconds(
+          pastEventsDuration,
+          pastEventsDurationIndex
+        );
+        this.viewBounds.pastEnd = (timestamp) => {
+          if (pastEventsIndex === 2) {
+            return timestamp - pastDurationInMS;
+          } else if (pastEventsIndex === 0) {
+            return timestamp + 1;
+          }
+        };
+      }
 
       if (futureEventsIndex !== 1) {
         const futureDurationInMS = this.getDurationInMilliSeconds(
@@ -356,27 +391,34 @@ export default {
     updateTimeStampAndListActivities(time) {
       this.timestamp = time;
 
-            this.listActivities();
-        },
-        filterActivities(activity, index) {
-            if (this.isEditing) {
-                return true;
-            }
+      this.listActivities();
+    },
+    filterActivities(activity, index) {
+      if (this.isEditing) {
+        return true;
+      }
 
-            const hasFilterMatch = this.filterByName(activity.name);
-            if (hasFilterMatch === false || this.hideAll === true) {
-                return false;
-            }
+      const hasFilterMatch = this.filterByName(activity.name);
+      if (hasFilterMatch === false || this.hideAll === true) {
+        return false;
+      }
 
-            //current event or future start event or past end event
-            const isCurrent = (this.timestamp >= activity.start && this.timestamp <= activity.end);
-            const isPast = (this.timestamp > activity.end && (this.viewBounds?.pastEnd === undefined || activity.end >= this.viewBounds?.pastEnd(this.timestamp)));
-            const isFuture = (this.timestamp < activity.start && (this.viewBounds?.futureStart === undefined || activity.start <= this.viewBounds?.futureStart(this.timestamp)));
+      //current event or future start event or past end event
+      const isCurrent =
+        this.timestamp >= activity.start && this.timestamp <= activity.end;
+      const isPast =
+        this.timestamp > activity.end &&
+        (this.viewBounds?.pastEnd === undefined ||
+          activity.end >= this.viewBounds?.pastEnd(this.timestamp));
+      const isFuture =
+        this.timestamp < activity.start &&
+        (this.viewBounds?.futureStart === undefined ||
+          activity.start <= this.viewBounds?.futureStart(this.timestamp));
 
       return isCurrent || isPast || isFuture;
     },
     filterByName(name) {
-      const filters = this.filterValue.split(',');
+      const filters = this.filterValue.split(",");
 
       return filters.some((search) => {
         const normalized = search.trim().toLowerCase();
@@ -389,17 +431,20 @@ export default {
       let firstCurrentActivityIndex = -1;
       let currentActivitiesCount = 0;
       const styledActivities = activities.map((activity, index) => {
-        if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-          activity.cssClass = '--is-current';
+        if (
+          this.timestamp >= activity.start &&
+          this.timestamp <= activity.end
+        ) {
+          activity.cssClass = "--is-current";
           if (firstCurrentActivityIndex < 0) {
             firstCurrentActivityIndex = index;
           }
 
           currentActivitiesCount = currentActivitiesCount + 1;
         } else if (this.timestamp < activity.start) {
-          activity.cssClass = '--is-future';
+          activity.cssClass = "--is-future";
         } else {
-          activity.cssClass = '--is-past';
+          activity.cssClass = "--is-past";
         }
 
         if (!activity.key) {
@@ -440,10 +485,12 @@ export default {
         }
 
         const scrollOffset =
-          this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
+          this.currentActivitiesCount > 0
+            ? Math.floor(this.currentActivitiesCount / 2)
+            : 0;
         this.$el.parentElement.scrollTo({
           top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
-          behavior: 'smooth'
+          behavior: "smooth",
         });
         this.autoScrolled = false;
       } else {
@@ -470,12 +517,13 @@ export default {
       }, SCROLL_TIMEOUT);
     },
     setSort() {
-      const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
+      const sortOrder =
+        SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
       const property = sortOrder.property;
-      const direction = sortOrder.direction.toLowerCase() === 'asc';
+      const direction = sortOrder.direction.toLowerCase() === "asc";
       this.defaultSort = {
         property,
-        defaultDirection: direction
+        defaultDirection: direction,
       };
     },
     sortByStartTime(a, b) {
@@ -490,7 +538,7 @@ export default {
     setEditState(isEditing) {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
-    }
-  }
+    },
+  },
 };
 </script>
