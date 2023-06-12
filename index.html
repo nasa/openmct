@@ -103,8 +103,7 @@
     const TWO_HOURS = ONE_HOUR * 2;
     const ONE_DAY = ONE_HOUR * 24;
 
-    //openmct.install(openmct.plugins.LocalStorage());
-    openmct.install(openmct.plugins.CouchDB("http://localhost:5984/openmct"));
+    openmct.install(openmct.plugins.LocalStorage());
 
     openmct.install(openmct.plugins.example.Generator());
     openmct.install(openmct.plugins.example.EventGeneratorPlugin());
