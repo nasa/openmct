@@ -81,18 +81,18 @@
         @start-resizing="onStartResizing"
         @end-resizing="onEndResizing"
       >
+      <template v-slot:controls>
         <button
-          slot="controls"
           class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
           title="Collapse all tree items"
           @click="handleTreeReset"
         ></button>
         <button
-          slot="controls"
           class="c-icon-button l-shell__sync-tree-button icon-target"
           title="Show selected item in tree"
           @click="handleSyncTreeNavigation"
         ></button>
+        </template>
         <multipane type="vertical">
           <pane>
             <mct-tree
@@ -109,14 +109,15 @@
               @openAndScrollTo="openAndScrollTo($event)"
               @setClearButtonDisabled="setClearButtonDisabled"
             />
+            <template v-slot:controls>
             <button
-              slot="controls"
               class="c-icon-button icon-clear-data"
               aria-label="Clear Recently Viewed"
               title="Clear Recently Viewed"
               :disabled="disableClearButton"
               @click="handleClearRecentObjects"
             ></button>
+            </template>
           </pane>
         </multipane>
       </pane>

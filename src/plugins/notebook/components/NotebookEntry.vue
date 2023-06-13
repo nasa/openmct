@@ -61,12 +61,12 @@
         </template>
         <template v-else-if="!isLocked">
           <div
+            v-bind.prop="formattedText"
             :id="entry.id"
             class="c-ne__text c-ne__input"
             aria-label="Notebook Entry Input"
             tabindex="-1"
             :contenteditable="canEdit"
-            v-bind.prop="formattedText"
             @mouseover="checkEditability($event)"
             @mouseleave="canEdit = true"
             @mousedown="preventFocusIfNotSelected($event)"
@@ -80,11 +80,11 @@
 
         <template v-else>
           <div
+            v-bind.prop="formattedText"
             :id="entry.id"
             class="c-ne__text"
             contenteditable="false"
             tabindex="0"
-            v-bind.prop="formattedText"
           ></div>
         </template>
 
