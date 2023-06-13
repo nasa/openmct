@@ -76,6 +76,9 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  * @constructor
  */
 export default class AnnotationAPI extends EventEmitter {
+  /** @type {Map<ANNOTATION_TYPES, Array<(a, b) => boolean >>} */
+  #targetComparatorMap;
+
   /**
    * @param {OpenMCT} openmct
    */
@@ -84,6 +87,7 @@ export default class AnnotationAPI extends EventEmitter {
     this.openmct = openmct;
     this.availableTags = {};
     this.namespaceToSaveAnnotations = '';
+    this.#targetComparatorMap = new Map();
 
     this.ANNOTATION_TYPES = ANNOTATION_TYPES;
     this.ANNOTATION_TYPE = ANNOTATION_TYPE;
@@ -246,15 +250,16 @@ export default class AnnotationAPI extends EventEmitter {
   /**
    * @method getAnnotations
    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations. For example, a telemetry object identifier.
+   * @param {AbortSignal} abortSignal - An abort signal to cancel the search
    * @returns {DomainObject[]} Returns an array of annotations that match the search query
    */
-  async getAnnotations(domainObjectIdentifier) {
+  async getAnnotations(domainObjectIdentifier, abortSignal = null) {
     const keyStringQuery = this.openmct.objects.makeKeyString(domainObjectIdentifier);
     const searchResults = (
       await Promise.all(
         this.openmct.objects.search(
           keyStringQuery,
-          null,
+          abortSignal,
           this.openmct.objects.SEARCH_TYPES.ANNOTATIONS
         )
       )
@@ -384,7 +389,8 @@ export default class AnnotationAPI extends EventEmitter {
     const combinedResults = [];
     results.forEach((currentAnnotation) => {
       const existingAnnotation = combinedResults.find((annotationToFind) => {
-        return _.isEqual(currentAnnotation.targets, annotationToFind.targets);
+        const { annotationType, targets } = currentAnnotation;
+        return this.areAnnotationTargetsEqual(annotationType, targets, annotationToFind.targets);
       });
       if (!existingAnnotation) {
         combinedResults.push(currentAnnotation);
@@ -459,5 +465,36 @@ export default class AnnotationAPI extends EventEmitter {
     const breakApartSeparateTargets = this.#breakApartSeparateTargets(resultsWithValidPath);
 
     return breakApartSeparateTargets;
+  }
+
+  /**
+   * Adds a comparator function for a given annotation type.
+   * The comparator functions will be used to determine if two annotations
+   * have the same target.
+   * @param {ANNOTATION_TYPES} annotationType
+   * @param {(t1, t2) => boolean} comparator
+   */
+  addTargetComparator(annotationType, comparator) {
+    const comparatorList = this.#targetComparatorMap.get(annotationType) ?? [];
+    comparatorList.push(comparator);
+    this.#targetComparatorMap.set(annotationType, comparatorList);
+  }
+
+  /**
+   * Compare two sets of targets to see if they are equal. First checks if
+   * any targets comparators evaluate to true, then falls back to a deep
+   * equality check.
+   * @param {ANNOTATION_TYPES} annotationType
+   * @param {*} targets
+   * @param {*} otherTargets
+   * @returns true if the targets are equal, false otherwise
+   */
+  areAnnotationTargetsEqual(annotationType, targets, otherTargets) {
+    const targetComparatorList = this.#targetComparatorMap.get(annotationType);
+    return (
+      (targetComparatorList?.length &&
+        targetComparatorList.some((targetComparator) => targetComparator(targets, otherTargets))) ||
+      _.isEqual(targets, otherTargets)
+    );
   }
 }
