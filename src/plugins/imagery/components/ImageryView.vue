@@ -306,8 +306,7 @@ export default {
       imagePanned: false,
       forceShowThumbnails: false,
       animateThumbScroll: false,
-      imageryAnnotations: {},
-      lastLocalAnnotationCreation: 0
+      imageryAnnotations: {}
     };
   },
   computed: {
