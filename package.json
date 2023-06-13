@@ -6,7 +6,7 @@
     "@babel/eslint-parser": "7.21.8",
     "@braintree/sanitize-url": "6.0.2",
     "@deploysentinel/playwright": "0.3.4",
-    "@percy/cli": "1.24.2",
+    "@percy/cli": "1.26.0",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.32.3",
     "@types/eventemitter3": "1.2.0",
