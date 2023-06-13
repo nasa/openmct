@@ -93,6 +93,7 @@
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
             @annotationMarqueed="handlePauseButton(true)"
+            @annotationsChanged="loadAnnotations"
           />
         </div>
       </div>
@@ -714,11 +715,6 @@ export default {
     this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
     this.loadVisibleLayers();
     this.loadAnnotations();
-    this.unobserveAnnotationLastCreated = this.openmct.objects.observe(
-      this.domainObject,
-      'annotationLastCreated',
-      this.checkForNewAnnotations
-    );
 
     this.openmct.selection.on('change', this.updateSelection);
   },
@@ -755,10 +751,6 @@ export default {
         this.openmct.objects.destroyMutable(imageAnnotation);
       });
     });
-
-    if (this.unobserveAnnotationLastCreated) {
-      this.unobserveAnnotationLastCreated();
-    }
 
     this.openmct.selection.off('change', this.updateSelection);
   },
@@ -799,7 +791,8 @@ export default {
 
       const incomingSelectedAnnotation = selection?.[0]?.[0]?.context?.annotations?.[0];
       console.debug(`📲 incoming search selections`, incomingSelectedAnnotation);
-      // TODO: for incoming search results, we should:
+      // TODO in https://github.com/nasa/openmct/issues/6731
+      // For incoming search results, we should:
       // 1. set the the time bounds to match the search result
       // 2. search the imageHistory for the image that matches the time of the search result
       // 3. using the index from the above, "click" on the image to select it
@@ -894,17 +887,18 @@ export default {
         });
       }
     },
-    async loadAnnotations() {
+    async loadAnnotations(existingAnnotations) {
       if (!this.openmct.annotation.getAvailableTags().length) {
         // don't bother loading annotations if there are no tags
         return;
       }
-
-      this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
-
-      const foundAnnotations = await this.openmct.annotation.getAnnotations(
-        this.domainObject.identifier
-      );
+      let foundAnnotations = existingAnnotations;
+      if (!foundAnnotations) {
+        // attempt to load
+        foundAnnotations = await this.openmct.annotation.getAnnotations(
+          this.domainObject.identifier
+        );
+      }
       foundAnnotations.forEach((foundAnnotation) => {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const timeForAnnotation = foundAnnotation.targets[targetId].time;
@@ -926,11 +920,6 @@ export default {
           annotationArray.push(mutableAnnotation);
         }
       });
-    },
-    checkForNewAnnotations() {
-      if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
-        this.loadAnnotations();
-      }
     },
     persistVisibleLayers() {
       if (

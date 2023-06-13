@@ -101,7 +101,7 @@ export default {
     },
     onAnnotationChange(annotations) {
       this.selectedAnnotations = annotations;
-      this.buildAnnotationIndex();
+      this.$emit('annotationsChanged', annotations);
     },
     updateSelection(selection) {
       const selectionContext = selection?.[0]?.[0]?.context?.item;
