@@ -21,10 +21,10 @@
 -->
 <template>
   <swim-lane :is-nested="isNested" :status="status">
-    <template slot="label">
+    <template v-slot:label>
       {{ heading }}
     </template>
-    <template slot="object">
+    <template v-slot:object>
       <svg :height="height" :width="width">
         <symbol id="activity-bar-bg" :height="rowHeight" width="2" preserveAspectRatio="none">
           <rect x="0" y="0" width="100%" height="100%" fill="currentColor" />
