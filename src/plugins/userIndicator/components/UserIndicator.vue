@@ -67,7 +67,6 @@ export default {
                 this.promptForRoleSelection();
             }
 
-            // todo confirm status role
             this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
 
         },
