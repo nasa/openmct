@@ -15,7 +15,7 @@ module.exports = merge(common, {
   mode: 'production',
   resolve: {
     alias: {
-      vue: '@vue/compat'
+      vue: "@vue/compat"
     }
   },
   plugins: [

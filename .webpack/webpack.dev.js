@@ -27,7 +27,7 @@ module.exports = merge(common, {
   },
   resolve: {
     alias: {
-      vue: path.join(projectRootDir, 'node_modules/vue/dist/vue.js')
+      vue: "@vue/compat"
     }
   },
   plugins: [
