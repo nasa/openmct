@@ -58,8 +58,7 @@ const STATUSES = [{
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
-    constructor(openmct, {defaultStatusRole, statusRoles} = {
-        defaultStatusRole: undefined,
+    constructor(openmct, {statusRoles} = {
         statusRoles: []
     }) {
         super();
@@ -73,9 +72,7 @@ export default class ExampleUserProvider extends EventEmitter {
             status: STATUSES[0]
         }));
         this.pollQuestion = undefined;
-        // this.defaultStatusRole = defaultStatusRole;
         this.statusRoles = statusRoles;
-        this.selectedStatusRole = defaultStatusRole;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
         this.loginPromise = undefined;
@@ -123,9 +120,10 @@ export default class ExampleUserProvider extends EventEmitter {
         return this.user.getRoles();
     }
 
-    getStatusRoleForCurrentUser() {
+    getStatusRoleForCurrentUser(role) {
+        const matchedRole = this.statusRoleValues.find(x => x.role === role);
 
-        return Promise.resolve(this.selectedStatusRole);
+        return Promise.resolve(matchedRole?.status);
     }
 
     getAllStatusRoles() {
