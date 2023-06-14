@@ -59,15 +59,13 @@ export default {
             this.role = this.openmct.user.getActiveRole();
             this.loggedIn = this.openmct.user.isLoggedIn();
         },
-        async fetchOrPromptForRole() {
+        fetchOrPromptForRole() {
             const UserAPI = this.openmct.user;
             const activeRole = UserAPI.getActiveRole();
-            this.selectedRole = activeRole;
+            this.role = activeRole;
             if (!activeRole) {
                 this.promptForRoleSelection();
             }
-
-            this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
 
         },
         promptForRoleSelection() {
@@ -82,9 +80,9 @@ export default {
                 iconClass: 'info',
                 title: 'Select Role',
                 message: 'Please select your role for operator status.',
-                currentSelection: this.selectedRole,
+                currentSelection: this.role,
                 onChange: (event) => {
-                    this.selectedRole = event.target.value;
+                    this.role = event.target.value;
                 },
                 buttons: [
                     {
@@ -92,8 +90,8 @@ export default {
                         emphasis: true,
                         callback: () => {
                             dialog.dismiss();
-                            //TODO: introduce a notification of success
-                            this.updateRole(this.selectedRole);
+                            this.updateRole(this.role);
+                            this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
                         }
                     }
                 ]

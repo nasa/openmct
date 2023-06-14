@@ -230,7 +230,9 @@ export default class StatusAPI extends EventEmitter {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getStatusRoleForCurrentUser) {
-            return provider.getStatusRoleForCurrentUser();
+            const activeRole = this.#userAPI.getActiveRole();
+
+            return provider.getStatusRoleForCurrentUser(activeRole);
         } else {
             this.#userAPI.error("User provider cannot provide role status for this user");
         }
@@ -244,7 +246,7 @@ export default class StatusAPI extends EventEmitter {
         const provider = this.#userAPI.getProvider();
 
         if (provider.getStatusRoleForCurrentUser) {
-            const activeStatusRole = await this.#userAPI.getProvider().getStatusRoleForCurrentUser();
+            const activeStatusRole = await this.#userAPI.getActiveRole()
             const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
 
             return canProvideStatus;

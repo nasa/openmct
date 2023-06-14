@@ -137,7 +137,7 @@ export default {
         subscribeToPollQuestion() {
             this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
-        setStatus({role, status}) {
+        setStatus({status}) {
             status = this.applyStyling(status);
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
