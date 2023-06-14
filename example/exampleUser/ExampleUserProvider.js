@@ -68,7 +68,10 @@ export default class ExampleUserProvider extends EventEmitter {
         this.user = undefined;
         this.loggedIn = false;
         this.autoLoginUser = undefined;
-        this.status = STATUSES[0];
+        this.statusRoleValues = statusRoles.map(x => ({
+            role: x,
+            status: STATUSES[0]
+        }));
         this.pollQuestion = undefined;
         // this.defaultStatusRole = defaultStatusRole;
         this.statusRoles = statusRoles;
@@ -109,13 +112,13 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
-    getActiveRole() {
-        if (!this.loggedIn) {
-            Promise.resolve(undefined);
-        }
+    // getActiveRole() {
+    //     if (!this.loggedIn) {
+    //         Promise.resolve(undefined);
+    //     }
 
-        return Promise.resolve(this.selectedStatusRole);
-    }
+    //     return Promise.resolve(this.selectedStatusRole);
+    // }
     getPossibleRoles() {
         return this.user.getRoles();
     }
@@ -130,7 +133,9 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getStatusForRole(role) {
-        return Promise.resolve(this.status);
+        const statusForRole = this.statusRoleValues.find(x => x.role === role);
+
+        return Promise.resolve(statusForRole?.status);
     }
 
     async getDefaultStatusForRole(role) {
@@ -141,7 +146,8 @@ export default class ExampleUserProvider extends EventEmitter {
 
     setStatusForRole(role, status) {
         status.timestamp = Date.now();
-        this.status = status;
+        const matchingIndex = this.statusRoleValues.findIndex(x => x.role === role);
+        this.statusRoleValues[matchingIndex].status = status;
         this.emit('statusChange', {
             role,
             status
