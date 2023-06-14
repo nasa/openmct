@@ -151,11 +151,11 @@ export default class StatusAPI extends EventEmitter {
      * @param {Status} status The status to set for the provided role
      * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
      */
-    async setStatusForRole(role, status) {
+    setStatusForRole(_role, status) {
         const provider = this.#userAPI.getProvider();
 
         if (provider.setStatusForRole) {
-            const activeRole = await provider.getActiveRole();
+            const activeRole = this.#userAPI.getActiveRole();
             if (!provider.canProvideStatusForRole(activeRole)) {
                 return false;
             }
