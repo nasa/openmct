@@ -333,7 +333,7 @@ export default class PlotSeries extends Model {
     if (!this.unsubscribeLimits) {
       this.unsubscribeLimits = this.openmct.telemetry.subscribeToLimits(
         this.domainObject,
-        this.limitsUpdated
+        this.limitsUpdated.bind(this)
       );
     }
     this.limitsUpdated(limitsResponse);
