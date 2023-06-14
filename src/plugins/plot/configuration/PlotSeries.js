@@ -340,7 +340,6 @@ export default class PlotSeries extends Model {
   }
 
   limitsUpdated(limitsResponse) {
-    console.log('Subscription update', limitsResponse);
     if (limitsResponse) {
       this.limits = limitsResponse;
     } else {
