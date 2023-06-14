@@ -64,11 +64,10 @@ export default {
             const activeRole = UserAPI.getActiveRole();
             this.selectedRole = activeRole;
             if (!activeRole) {
-                // trigger role selection modal
                 this.promptForRoleSelection();
             }
-            // todo confirm status role
 
+            // todo confirm status role
             this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
 
         },

@@ -155,11 +155,16 @@ export default {
             return this.allStatuses.find(possibleMatch => possibleMatch.key === statusKey);
         },
         async changeStatus() {
+            if (!this.openmct.user.canProvideStatusForRole()) {
+                this.openmct.notifications.error('User role is ineligible to provide operator status')
+
+                return;
+            }
+
             if (this.selectedStatus !== undefined) {
                 const statusObject = this.findStatusByKey(this.selectedStatus);
 
-                const result = await this.openmct.user.status.setStatusForRole(this.role, statusObject);
-
+                const result = await this.openmct.user.status.setStatusForRole(this.selectedRole, statusObject);
                 if (result === true) {
                     this.openmct.notifications.info("Successfully set operator status");
                 } else {
