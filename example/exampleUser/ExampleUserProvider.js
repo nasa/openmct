@@ -94,8 +94,8 @@ export default class ExampleUserProvider extends EventEmitter {
         return this.loginPromise;
     }
 
-    canProvideStatusForRole() {
-        return Promise.resolve(true);
+    canProvideStatusForRole(role) {
+        return this.statusRoles.includes(role);
     }
 
     canSetPollQuestion() {
@@ -114,8 +114,12 @@ export default class ExampleUserProvider extends EventEmitter {
             Promise.resolve(undefined);
         }
 
-        return Promise.resolve(this.user.getRoles())
+        return Promise.resolve(this.selectedStatusRole);
     }
+    getPossibleRoles() {
+        return this.user.getRoles();
+    }
+
     getStatusRoleForCurrentUser() {
 
         return Promise.resolve(this.selectedStatusRole);
@@ -182,7 +186,7 @@ export default class ExampleUserProvider extends EventEmitter {
         // for testing purposes, this will skip the form, this wouldn't be used in
         // a normal authentication process
         if (this.autoLoginUser) {
-            this.user = new this.ExampleUser(id, this.autoLoginUser, ['example-role']);
+            this.user = new this.ExampleUser(id, this.autoLoginUser, ['test-role-1', 'test-role-2', 'test-role-3', 'test-role-4']);
             this.loggedIn = true;
 
             return Promise.resolve();

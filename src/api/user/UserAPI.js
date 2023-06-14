@@ -115,7 +115,6 @@ class UserAPI extends EventEmitter {
         }
 
         return sessionStorageValue;
-
     }
     setActiveRole(role) {
         SessionPersistance.setActiveRole(role);
@@ -125,9 +124,15 @@ class UserAPI extends EventEmitter {
      * Will return if a role can provide a operator status response
      * @memberof module:openmct.UserApi#
      * @returns {Boolean}
-     */
-    canProvideStatusForRole(roleId) {
-        return true;
+    */
+    canProvideStatusForRole() {
+        if (!this || !this.hasProvider()) {
+            return Promise.resolve(undefined);
+        }
+
+        const activeRole = this.getActiveRole();
+
+        return this._provider.canProvideStatusForRole?.(activeRole);
     }
 
     /**
