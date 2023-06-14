@@ -24,7 +24,7 @@
     <label :for="uid">
       <div class="c-labeled-input__label">{{ options.label }}</div>
     </label>
-    <input :id="uid" :type="options.type" :value="options.value" v-bind="options.attrs" />
+    <input v-bind="options.attrs" :id="uid" :type="options.type" :value="options.value" />
   </div>
 </template>
 
@@ -55,7 +55,7 @@ export default {
       this.$el.addEventListener('change', this.onChange);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.options.type === 'number') {
       this.$el.removeEventListener('input', this.onInput);
     } else {

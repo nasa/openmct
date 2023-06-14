@@ -235,9 +235,8 @@
       <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
         <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
-          <template v-for="(title, key) in headers">
+          <template v-for="(title, key) in headers" :key="key">
             <th
-              :key="key"
               :style="{
                 width: configuredColumnWidths[key] + 'px',
                 'max-width': configuredColumnWidths[key] + 'px'
@@ -510,7 +509,7 @@ export default {
 
     this.table.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.table.off('object-added', this.addObject);
     this.table.off('object-removed', this.removeObject);
     this.table.off('historical-rows-processed', this.checkForMarkedRows);

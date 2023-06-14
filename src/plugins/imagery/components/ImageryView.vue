@@ -176,7 +176,7 @@
           :selected="focusedImageIndex === index && isPaused"
           :real-time="!isFixed"
           :viewable-area="focusedImageIndex === index ? viewableArea : null"
-          @click.native="thumbnailClicked(index)"
+          @click="thumbnailClicked(index)"
         />
       </div>
 
@@ -690,7 +690,7 @@ export default {
     this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
     this.loadVisibleLayers();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
 

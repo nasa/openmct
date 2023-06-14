@@ -30,7 +30,7 @@
         :bottom="keyString !== undefined"
         :type="'start'"
         :offset="offsets.start"
-        @focus.native="$event.target.select()"
+        @focus="$event.target.select()"
         @hide="hideAllTimePopups"
         @update="timePopUpdate"
       />
@@ -66,7 +66,7 @@
         :bottom="keyString !== undefined"
         :type="'end'"
         :offset="offsets.end"
-        @focus.native="$event.target.select()"
+        @focus="$event.target.select()"
         @hide="hideAllTimePopups"
         @update="timePopUpdate"
       />
@@ -163,7 +163,7 @@ export default {
     this.openmct.time.on('timeSystem', this.setTimeSystem);
     this.setTimeContext();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off('timeSystem', this.setTimeSystem);
     this.stopFollowingTime();
   },
