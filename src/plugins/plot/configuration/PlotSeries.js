@@ -141,6 +141,10 @@ export default class PlotSeries extends Model {
       this.unsubscribe();
     }
 
+    if (this.unsubscribeLimits) {
+      this.unsubscribeLimits();
+    }
+
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }
@@ -320,8 +324,23 @@ export default class PlotSeries extends Model {
   async load(options) {
     await this.fetch(options);
     this.emit('load');
+    this.loadLimits();
+  }
+
+  async loadLimits() {
     const limitsResponse = await this.limitDefinition.limits();
     this.limits = [];
+    if (!this.unsubscribeLimits) {
+      this.unsubscribeLimits = this.openmct.telemetry.subscribeToLimits(
+        this.domainObject,
+        this.limitsUpdated
+      );
+    }
+    this.limitsUpdated(limitsResponse);
+  }
+
+  limitsUpdated(limitsResponse) {
+    console.log('Subscription update', limitsResponse);
     if (limitsResponse) {
       this.limits = limitsResponse;
     }

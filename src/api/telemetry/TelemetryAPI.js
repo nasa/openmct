@@ -490,6 +490,62 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Subscribe to limits for a specific domain object.
+   * The callback will be called whenever data is received from a
+   * limit provider.
+   *
+   * @method subscribeToLimits
+   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+   * @param {module:openmct.DomainObject} domainObject the object
+   *        which has associated limits
+   * @param {Function} callback the callback to invoke with new data, as
+   *        it becomes available
+   * @returns {Function} a function which may be called to terminate
+   *          the subscription
+   */
+  subscribeToLimits(domainObject, callback) {
+    if (domainObject.type === 'unknown') {
+      return () => {};
+    }
+
+    const provider = this.#findLimitEvaluator(domainObject);
+
+    if (!this.limitsSubscribeCache) {
+      this.limitsSubscribeCache = {};
+    }
+
+    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    let subscriber = this.limitsSubscribeCache[keyString];
+
+    if (!subscriber) {
+      subscriber = this.limitsSubscribeCache[keyString] = {
+        callbacks: [callback]
+      };
+      if (provider && provider.subscribeToLimits) {
+        subscriber.unsubscribe = provider.subscribeToLimits(domainObject, function (value) {
+          subscriber.callbacks.forEach(function (cb) {
+            cb(value);
+          });
+        });
+      } else {
+        subscriber.unsubscribe = function () {};
+      }
+    } else {
+      subscriber.callbacks.push(callback);
+    }
+
+    return function unsubscribe() {
+      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+      if (subscriber.callbacks.length === 0) {
+        subscriber.unsubscribe();
+        delete this.limitsSubscribeCache[keyString];
+      }
+    }.bind(this);
+  }
+
+  /**
    * Request telemetry staleness for a domain object.
    *
    * @method isStale
