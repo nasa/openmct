@@ -156,7 +156,7 @@ export default {
         },
         async changeStatus() {
             if (!this.openmct.user.canProvideStatusForRole()) {
-                this.openmct.notifications.error('User role is ineligible to provide operator status')
+                this.openmct.notifications.error('Selected role is ineligible to provide operator status');
 
                 return;
             }
