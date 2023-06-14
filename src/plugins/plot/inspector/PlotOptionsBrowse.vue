@@ -173,7 +173,7 @@ export default {
 
     this.loaded = true;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {

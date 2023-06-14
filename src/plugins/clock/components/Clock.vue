@@ -87,7 +87,7 @@ export default {
   mounted() {
     this.unlisten = ticker.listen(this.tick);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unlisten) {
       this.unlisten();
     }

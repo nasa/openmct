@@ -136,7 +136,7 @@ export default {
     this.objectCssClass = type.definition.cssClass;
     this.openmct.editor.on('isEditing', this.toggleIsEditing);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.toggleIsEditing);
   },
   methods: {

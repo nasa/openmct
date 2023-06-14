@@ -127,7 +127,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     await this.updateSelection(this.openmct.selection.get());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.annotation.off('targetDomainObjectAnnotated', this.loadAnnotationForTargetObject);
     this.openmct.selection.off('change', this.updateSelection);
     const unobserveEntryFunctions = Object.values(this.unobserveEntries);

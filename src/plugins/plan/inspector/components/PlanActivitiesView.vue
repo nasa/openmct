@@ -64,7 +64,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.openmct.time.on('timeSystem', this.setFormatters);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     this.openmct.time.off('timeSystem', this.setFormatters);
   },

@@ -68,7 +68,7 @@ export default {
     this.telemetryCollection.on('clear', this.dataCleared);
     this.telemetryCollection.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unsubscribe) {
       this.unsubscribe();
       delete this.unsubscribe;

@@ -99,7 +99,7 @@ export default {
 
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
   },
   methods: {

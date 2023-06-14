@@ -76,7 +76,7 @@ export default {
       timeOptions: this.domainObject.configuration.timeOptions
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);

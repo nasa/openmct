@@ -24,7 +24,7 @@
 export default {
   inject: ['openmct'],
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
   },
   mounted() {

@@ -93,7 +93,7 @@ export default {
     });
     this.registerListeners();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.plotResizeObserver) {
       this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
       clearTimeout(this.resizeTimer);

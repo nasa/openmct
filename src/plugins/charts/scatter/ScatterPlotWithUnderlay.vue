@@ -106,7 +106,7 @@ export default {
 
     this.$refs.plot.on('plotly_relayout', this.zoom);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.$refs.plot && this.$refs.plot.off) {
       this.$refs.plot.off('plotly_relayout', this.zoom);
     }

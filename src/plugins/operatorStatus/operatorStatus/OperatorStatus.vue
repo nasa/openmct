@@ -80,7 +80,7 @@ export default {
       };
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.user.status.off('statusChange', this.setStatus);
     this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
   },

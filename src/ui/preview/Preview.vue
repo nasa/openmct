@@ -83,7 +83,7 @@ export default {
 
     this.setView(this.viewProviders[0]);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.stopListeningStyles) {
       this.stopListeningStyles();
     }

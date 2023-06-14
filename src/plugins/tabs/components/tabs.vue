@@ -161,7 +161,7 @@ export default {
     document.addEventListener('dragstart', this.dragstart);
     document.addEventListener('dragend', this.dragend);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.persistCurrentTabIndex(this.currentTabIndex);
   },
   destroyed() {

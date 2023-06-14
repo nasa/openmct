@@ -137,7 +137,7 @@ export default {
     this.openmct.time.on('timeSystem', this.setTimeSystem);
     this.openmct.time.on('clock', this.setViewFromClock);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
   },

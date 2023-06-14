@@ -76,7 +76,7 @@ export default {
     this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
     this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
   },
   methods: {

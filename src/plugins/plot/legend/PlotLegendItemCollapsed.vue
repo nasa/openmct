@@ -135,7 +135,7 @@ export default {
     this.subscribeToStaleness(this.seriesObject.domainObject);
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {

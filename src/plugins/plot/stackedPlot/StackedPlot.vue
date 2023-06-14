@@ -133,7 +133,7 @@ export default {
       };
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   mounted() {

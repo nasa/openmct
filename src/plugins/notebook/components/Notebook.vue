@@ -323,7 +323,7 @@ export default {
       this.filterAndSortEntries
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unlisten) {
       this.unlisten();
     }

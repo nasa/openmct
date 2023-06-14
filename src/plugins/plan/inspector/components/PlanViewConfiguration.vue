@@ -94,7 +94,7 @@ export default {
     this.openmct.editor.on('isEditing', this.setIsEditing);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setIsEditing);
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
   },

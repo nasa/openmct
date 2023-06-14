@@ -114,7 +114,7 @@ export default {
       this.updateGlobalFilters
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addChildren);
     this.composition.off('remove', this.removeChildren);
     this.unobserve();

@@ -288,7 +288,7 @@ export default {
       this.urlWhitelist = this.entryUrlWhitelist;
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.embedsWrapperResizeObserver) {
       this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
     }

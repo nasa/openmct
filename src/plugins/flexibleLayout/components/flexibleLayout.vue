@@ -34,7 +34,9 @@
         'c-fl--rows': rowsLayout === true
       }"
     >
-      <template v-for="(container, index) in containers">
+      <template v-for="(container, index) in containers"
+          :key="`component-${container.id}`"
+      >
         <drop-hint
           v-if="index === 0 && containers.length > 1"
           :key="`hint-top-${container.id}`"
@@ -45,7 +47,6 @@
         />
 
         <container-component
-          :key="`component-${container.id}`"
           class="c-fl__container"
           :index="index"
           :container="container"
@@ -174,7 +175,7 @@ export default {
     this.composition.on('add', this.addFrame);
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('remove', this.removeChildObject);
     this.composition.off('add', this.addFrame);
   },

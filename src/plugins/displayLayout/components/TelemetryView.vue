@@ -234,7 +234,7 @@ export default {
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeStatusListener();
 
     if (this.removeSelectable) {

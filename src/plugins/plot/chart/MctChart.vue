@@ -215,7 +215,7 @@ export default {
     this.config.series.forEach(this.onSeriesAdd, this);
     this.$emit('chartLoaded');
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   methods: {

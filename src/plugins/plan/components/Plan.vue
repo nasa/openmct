@@ -154,7 +154,7 @@ export default {
     );
     this.loadComposition();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.resizeTimer);
     this.stopFollowingTimeContext();
     if (this.unlisten) {

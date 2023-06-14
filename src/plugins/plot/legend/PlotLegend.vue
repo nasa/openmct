@@ -150,7 +150,7 @@ export default {
 
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.objectComposition) {
       this.objectComposition.off('add', this.addTelemetryObject);
       this.objectComposition.off('remove', this.removeTelemetryObject);

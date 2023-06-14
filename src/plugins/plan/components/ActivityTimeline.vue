@@ -39,7 +39,9 @@
             transform="translate(-0.5, 0)"
           />
         </symbol>
-        <template v-for="(activity, index) in activities">
+        <template v-for="(activity, index) in activities"
+            :key="`g-${activity.clipPathId}`"
+        >
           <template v-if="clipActivityNames === true">
             <clipPath :id="activity.clipPathId" :key="activity.clipPathId">
               <rect
@@ -49,9 +51,9 @@
                 :height="rowHeight"
               />
             </clipPath>
-          </template>
+          </template
+          >
           <g
-            :key="`g-${activity.clipPathId}`"
             class="c-plan__activity activity-bounds"
             @click="setSelectionForActivity(activity, $event)"
           >

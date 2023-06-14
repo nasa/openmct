@@ -86,7 +86,7 @@ export default {
 
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.imageryStripResizeObserver) {
       this.imageryStripResizeObserver.disconnect();
     }
