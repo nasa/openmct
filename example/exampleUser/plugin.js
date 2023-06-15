@@ -23,18 +23,14 @@
 import ExampleUserProvider from './ExampleUserProvider';
 const AUTO_LOGIN_USER = 'guest';
 const STATUS_ROLES = ['test-role-1', 'test-role-2', 'test-role-3'];
-const DEFAULT_STATUS_ROLE = STATUS_ROLES[2];
 
-export default function ExampleUserPlugin({autoLoginUser, statusRoles, defaultStatusRole} = {
+export default function ExampleUserPlugin({autoLoginUser, statusRoles} = {
     autoLoginUser: AUTO_LOGIN_USER,
-    statusRoles: STATUS_ROLES,
-    defaultStatusRole: DEFAULT_STATUS_ROLE
+    statusRoles: STATUS_ROLES
 }) {
     return function install(openmct) {
-        const defaultStatusRoleOrFirstItem = statusRoles.includes(defaultStatusRole) ? defaultStatusRole : statusRoles[0];
         const userProvider = new ExampleUserProvider(openmct, {
-            statusRoles,
-            defaultStatusRole: defaultStatusRoleOrFirstItem
+            statusRoles
         });
 
         if (autoLoginUser !== undefined) {
