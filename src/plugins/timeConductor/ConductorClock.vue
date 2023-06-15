@@ -62,23 +62,23 @@ export default {
     },
     mounted: function () {
         this.loadClocks(this.configuration.menuOptions);
-        this.setOffsets();
+        // this.setOffsets();
         this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
     },
     destroyed: function () {
         this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
     },
     methods: {
-        setOffsets() {
-            if (!this.openmct.time.getClockOffsets()) {
-                const activeClock = this.getActiveClock();
-                const clockConfig = this.getMatchingConfig({
-                    clock: activeClock.key
-                });
+        // setOffsets() {
+        //     if (!this.openmct.time.getClockOffsets()) {
+        //         const activeClock = this.getActiveClock();
+        //         const clockConfig = this.getMatchingConfig({
+        //             clock: activeClock.key
+        //         });
 
-                this.openmct.time.setClockOffsets(clockConfig.clockOffsets);
-            }
-        },
+        //         this.openmct.time.setClockOffsets(clockConfig.clockOffsets);
+        //     }
+        // },
         showClocksMenu() {
             const elementBoundingClientRect = this.$refs.clockButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
@@ -114,7 +114,7 @@ export default {
             const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
             option.offsets = offsets;
 
-            this.$emit('updated', option);
+            this.$emit('clockUpdated', option);
         },
         getMatchingConfig(options) {
             const matchers = {

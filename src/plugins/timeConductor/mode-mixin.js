@@ -12,28 +12,29 @@ export default {
     },
     methods: {
         loadModes() {
-            this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata.bind(this));
+            this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata);
         },
         loadClocks(menuOptions) {
-            const clocks = menuOptions
-                .map(menuOption => menuOption.clock)
-                .filter(isDefinedAndUnique)
-                .map(this.getClock.bind(this));
+            let clocks;
 
-            this.clocks = clocks.map(this.getClockMetadata.bind(this));
+            if (menuOptions) {
+                clocks = menuOptions
+                    .map(menuOption => menuOption.clock)
+                    .filter(isDefinedAndUnique)
+                    .map(this.getClock);
+            }
+
+            this.clocks = clocks.map(this.getClockMetadata);
 
             function isDefinedAndUnique(key, index, array) {
                 return key !== undefined && array.indexOf(key) === index;
             }
         },
         getActiveClock() {
-            let activeClock = this.openmct.time.getClock();
-            if (activeClock !== undefined) {
-                //Create copy of active clock so the time API does not get reactified.
-                activeClock = Object.create(activeClock);
-            }
+            const activeClock = this.openmct.time.getClock();
 
-            return activeClock;
+            //Create copy of active clock so the time API does not get reactified.
+            return Object.create(activeClock);
         },
         getClock(key) {
             return this.openmct.time.getAllClocks().find(clock => clock.key === key);
@@ -71,6 +72,7 @@ export default {
             return modeOptions;
         },
         getClockMetadata(clock) {
+            console.log('mode metadata clock', clock);
             const key = clock.key;
             const clockOptions = {
                 key,
@@ -81,7 +83,6 @@ export default {
                 onItemClicked: () => this.setClock(key)
             };
 
-            // console.log(clockOptions)
             return clockOptions;
         }
     }

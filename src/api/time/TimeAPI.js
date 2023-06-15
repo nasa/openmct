@@ -111,15 +111,7 @@ class TimeAPI extends GlobalTimeContext {
      * @param {Clock} clock
      */
     addClock(clock) {
-        const hasActiveClock = Boolean(this.activeClock);
-
         this.clocks.set(clock.key, clock);
-
-        // if no active clocks, automatically set the first installed clock
-        // to always have a ticking time source
-        if (!hasActiveClock) {
-            this.setClock(clock.key);
-        }
     }
 
     /**
@@ -153,10 +145,10 @@ class TimeAPI extends GlobalTimeContext {
         if (clockKey) {
             timeContext.setClock(clockKey, value);
         } else {
-            timeContext.stopClock();
+            // timeContext.stopClock();
             //upstream clock was active, but now we don't have one
             if (upstreamClock) {
-                timeContext.emit('clockChanged', timeContext.activeClock);
+                // timeContext.emit('clockChanged', timeContext.activeClock);
             }
 
             timeContext.setBounds(value);
@@ -202,6 +194,7 @@ class TimeAPI extends GlobalTimeContext {
         }
 
         let viewTimeContext = this.getIndependentContext(viewKey);
+
         if (!viewTimeContext) {
             // If the context doesn't exist yet, create it.
             viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);

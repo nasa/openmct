@@ -49,7 +49,7 @@ class IndependentTimeContext extends TimeContext {
         this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
     }
 
-    bounds(newBounds) {
+    bounds() {
         if (this.upstreamTimeContext) {
             return this.upstreamTimeContext.bounds(...arguments);
         } else {
@@ -57,7 +57,23 @@ class IndependentTimeContext extends TimeContext {
         }
     }
 
-    tick(timestamp) {
+    getBounds() {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.getBounds();
+        } else {
+            return super.getBounds();
+        }
+    }
+
+    setBounds() {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.setBounds(...arguments);
+        } else {
+            return super.setBounds(...arguments);
+        }
+    }
+
+    tick() {
         if (this.upstreamTimeContext) {
             return this.upstreamTimeContext.tick(...arguments);
         } else {
@@ -65,7 +81,7 @@ class IndependentTimeContext extends TimeContext {
         }
     }
 
-    clockOffsets(offsets) {
+    clockOffsets() {
         if (this.upstreamTimeContext) {
             return this.upstreamTimeContext.clockOffsets(...arguments);
         } else {
@@ -73,11 +89,27 @@ class IndependentTimeContext extends TimeContext {
         }
     }
 
+    getClockOffsets() {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.getClockOffsets();
+        } else {
+            return super.getClockOffsets();
+        }
+    }
+
+    setClockOffsets() {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.setClockOffsets(...arguments);
+        } else {
+            return super.setClockOffsets(...arguments);
+        }
+    }
+
     stopClock() {
         if (this.upstreamTimeContext) {
-            this.upstreamTimeContext.stopClock();
+            // this.upstreamTimeContext.stopClock();
         } else {
-            super.stopClock();
+            // super.stopClock();
         }
     }
 

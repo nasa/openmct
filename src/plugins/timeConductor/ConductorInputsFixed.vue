@@ -142,13 +142,13 @@ export default {
             }).formatter;
         },
         setBoundsFromView(bounds) {
-            this.$emit('updated', {
+            this.$emit('boundsUpdated', {
                 start: bounds.start,
                 end: bounds.end
             });
         },
         dismiss() {
-            this.$emit('dismiss');
+            this.$emit('dismissInputsFixed');
         }
     }
 };
