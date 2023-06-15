@@ -74,7 +74,6 @@ export default {
         return {
             allRoles: [],
             role: '--',
-            selectedRole: '',
             pollQuestionUpdated: '--',
             currentPollQuestion: DEFAULT_POLL_QUESTION,
             selectedStatus: undefined,
@@ -164,7 +163,7 @@ export default {
             if (this.selectedStatus !== undefined) {
                 const statusObject = this.findStatusByKey(this.selectedStatus);
 
-                const result = await this.openmct.user.status.setStatusForRole(this.selectedRole, statusObject);
+                const result = await this.openmct.user.status.setStatusForRole(statusObject);
                 if (result === true) {
                     this.openmct.notifications.info("Successfully set operator status");
                 } else {
