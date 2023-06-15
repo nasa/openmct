@@ -56,7 +56,7 @@ export default {
         };
     },
     mounted: function () {
-        this.loadModes(this.configuration.menuOptions);
+        this.loadModes();
     },
     methods: {
         showModesMenu() {
@@ -73,7 +73,7 @@ export default {
         },
         setMode(modeKey) {
             this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-            this.$emit('updated', modeKey);
+            this.$emit('modeUpdated', modeKey);
         }
     }
 };

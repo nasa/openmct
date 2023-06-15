@@ -125,13 +125,6 @@ const SIMPLE_CONTENT_TYPES = [
 ];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
 
-const SupportedViewTypes = [
-    'plot-stacked',
-    'plot-overlay',
-    'bar-graph.view',
-    'time-strip.view'
-];
-
 export default {
     components: {
         ObjectView,

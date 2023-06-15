@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import raf from '@/utils/raf';
+import debounce from '@/utils/debounce';
 
 export default {
     data() {
@@ -31,37 +32,56 @@ export default {
         };
     },
     mounted() {
-        this.positionBox = raf(this.positionBox);
+        this.positionBox = debounce(raf(this.positionBox), 250);
         this.timeConductorOptionsHolder = this.$el;
         this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+    },
+    beforeDestroy() {
+        this.clearPopup();
     },
     methods: {
         initializePopup() {
             this.conductorPopup = this.$refs.conductorPopup.$el;
+            document.body.appendChild(this.conductorPopup); // remove from container as it (and it's ancestors) have overflow:hidden
             this.$nextTick(() => {
                 window.addEventListener('resize', this.positionBox);
                 document.addEventListener('click', this.handleClickAway);
                 this.positionBox();
             });
         },
-        showPopup() {
-            if (this.conductorPopup) {
-                return;
-            }
+        showPopup(clickEvent) {
+            const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
 
-            this.showConductorPopup = true;
+            // no current popup, itc toggled
+            if (!this.conductorPopup && !isToggle) {
+                this.showConductorPopup = true;
+            }
         },
-        handleClickAway(clickAwayEvent) {
-            if (this.canClose(clickAwayEvent)) {
-                clickAwayEvent.stopPropagation();
+        handleClickAway(clickEvent) {
+            const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
+
+            if (!isToggle && this.canClose(clickEvent)) {
+                clickEvent.stopPropagation();
                 this.clearPopup();
             }
         },
         positionBox() {
-            let timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+            if (!this.conductorPopup) {
+                return;
+            }
+
+            const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+            const topHalf = timeConductorOptionsBox.top < (window.innerHeight / 2);
+            const padding = 5;
+
             this.positionX = timeConductorOptionsBox.left;
-            //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            this.positionY = timeConductorOptionsBox.top;
+
+            if (topHalf) {
+                this.positionY = timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
+            } else {
+                this.positionY = timeConductorOptionsBox.top - padding;
+            }
+
             const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 
             const popupRight = this.positionX + this.conductorPopup.clientWidth;
@@ -71,6 +91,14 @@ export default {
             this.positionY = this.positionY - offsetTop;
         },
         clearPopup() {
+            if (!this.conductorPopup) {
+                return;
+            }
+
+            if (this.conductorPopup.parentNode === document.body) {
+                document.body.removeChild(this.conductorPopup);
+            }
+
             this.showConductorPopup = false;
             this.conductorPopup = null;
 

@@ -533,19 +533,20 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.path);
+            console.log('PLOT time context', this.timeContext);
             this.followTimeContext();
 
         },
         followTimeContext() {
             this.updateDisplayBounds(this.timeContext.bounds());
-            this.timeContext.on('clock', this.updateRealTime);
-            this.timeContext.on('bounds', this.updateDisplayBounds);
+            this.timeContext.on('clockChanged', this.updateRealTime);
+            this.timeContext.on('boundsChanged', this.updateDisplayBounds);
             this.synchronized(true);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off("clock", this.updateRealTime);
-                this.timeContext.off("bounds", this.updateDisplayBounds);
+                this.timeContext.off("clockChanged", this.updateRealTime);
+                this.timeContext.off("boundsChanged", this.updateDisplayBounds);
             }
         },
         getConfig() {

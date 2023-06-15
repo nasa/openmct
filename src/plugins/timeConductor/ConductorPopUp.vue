@@ -17,26 +17,26 @@
             class="c-button--compact c-conductor__mode-select"
             :mode="timeOptionMode"
             :button-css-class="'c-button--compact'"
-            @modeChanged="saveIndependentMode"
+            @independentModeUpdated="saveIndependentMode"
         />
         <ConductorMode
             v-else
             class="c-conductor__mode-select"
             :button-css-class="'c-icon-button'"
-            @updated="saveMode"
+            @modeUpdated="saveMode"
         />
         <IndependentClock
             v-if="isIndependent"
             class="c-conductor__mode-select"
+            :clock="timeOptionClock"
             :button-css-class="'c-icon-button'"
-            @updated="saveClock"
+            @independentClockUpdated="saveIndependentClock"
         />
         <ConductorClock
             v-else
             class="c-conductor__mode-select"
-            :clock="timeOptionClock"
             :button-css-class="'c-icon-button'"
-            @updated="saveClock"
+            @clockUpdated="saveClock"
         />
         <!-- TODO: Time system and history must work even with ITC later -->
         <ConductorTimeSystem
@@ -58,15 +58,15 @@
         v-if="isFixed"
         :input-bounds="bounds"
         :object-path="objectPath"
-        @updated="saveFixedBounds"
-        @dismiss="dismiss"
+        @boundsUpdated="saveFixedBounds"
+        @dismissInputsFixed="dismiss"
     />
     <conductor-inputs-realtime
         v-else
         :input-bounds="bounds"
         :object-path="objectPath"
-        @updated="saveClockOffsets"
-        @dismiss="dismiss"
+        @offsetsUpdated="saveClockOffsets"
+        @dismissInputsRealtime="dismiss"
     />
 </div>
 </template>
@@ -107,10 +107,14 @@ export default {
             type: Number,
             required: true
         },
-        // positionY: {
-        //     type: Number,
-        //     required: true
-        // },
+        positionY: {
+            type: Number,
+            required: true
+        },
+        isFixed: {
+            type: Boolean,
+            required: true
+        },
         isIndependent: {
             type: Boolean,
             default() {
@@ -139,26 +143,30 @@ export default {
     data() {
         const bounds = this.openmct.time.getBounds();
         const timeSystem = this.openmct.time.getTimeSystem();
-        const isFixed = this.openmct.time.isFixed();
+        // const isFixed = this.openmct.time.isFixed();
 
         return {
             timeSystem,
             bounds: {
                 start: bounds.start,
                 end: bounds.end
-            },
-            isFixed
+            }
         };
     },
     computed: {
         position() {
-            return {
+            const position = {
                 left: `${this.positionX}px`
-                // top: `${this.positionY}px`
             };
+
+            if (this.isIndependent) {
+                position.top = `${this.positionY}px`;
+            }
+
+            return position;
         },
         timeOffsets() {
-            return this.isFixed || !this.timeContext ? undefined : this.timeContext.getClockOffsets();
+            return this.isFixed ? this.openmct.time.getBounds() : this.openmct.time.getClockOffsets();
         },
         timeMode() {
             return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
@@ -202,6 +210,7 @@ export default {
             }
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            console.log('time context conductor popup', this.timeContext);
 
             this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
             this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
@@ -211,7 +220,7 @@ export default {
             this.setBounds(this.timeContext.getBounds());
         },
         stopFollowingTimeContext() {
-            console.log('stop');
+            console.log('conductorpopup stop following context');
             this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
             this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
             this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
@@ -219,20 +228,23 @@ export default {
         setViewFromClock() {
             this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
         },
-        setBounds() {
-            this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
+        setBounds(bounds, isTick) {
+            if (this.isFixed || !isTick) {
+                this.bounds = bounds;
+                console.log('cpop set bounds', this.timeContext, this.bounds);
+            }
         },
-        setMode() {
-            this.isFixed = this.timeContext ? this.timeContext.isFixed() : this.openmct.time.isFixed();
+        setMode(mode) {
+            // this.isFixed = mode === FIXED_MODE_KEY;
         },
         saveFixedBounds(bounds) {
             this.$emit('fixedBoundsUpdated', bounds);
         },
-        saveClock(clock) {
-            this.$emit('clockUpdated', clock);
-        },
         saveClockOffsets(offsets) {
             this.$emit('clockOffsetsUpdated', offsets);
+        },
+        saveClock(clockOptions) {
+            this.$emit('clockUpdated', clockOptions);
         },
         saveMode(mode) {
             this.$emit('modeUpdated', mode);
@@ -240,8 +252,8 @@ export default {
         saveIndependentMode(mode) {
             this.$emit('independentModeUpdated', mode);
         },
-        saveIndependentClock(clock) {
-            this.$emit('independentClockUpdated', clock);
+        saveIndependentClock(clockKey) {
+            this.$emit('independentClockUpdated', clockKey);
         },
         dismiss() {
             this.$emit('dismiss');

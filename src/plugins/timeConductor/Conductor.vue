@@ -66,6 +66,7 @@
         :bottom="false"
         :position-x="positionX"
         :position-y="positionY"
+        :is-fixed="isFixed"
         @popupLoaded="initializePopup"
         @modeUpdated="saveMode"
         @clockUpdated="saveClock"
@@ -78,7 +79,7 @@
 
 <script>
 import _ from 'lodash';
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from "./ConductorInputsFixed.vue";
@@ -211,8 +212,7 @@ export default {
             this.isUTCBased = timeSystem.isUTCBased;
         },
         setMode(mode) {
-            this.mode = mode;
-            this.isFixed = this.openmct.time.isFixed();
+            this.isFixed = mode === FIXED_MODE_KEY;
         },
         setViewFromBounds(bounds) {
             this.formattedBounds.start = this.timeFormatter.format(bounds.start);

@@ -135,7 +135,6 @@ export default {
     watch: {
         inputBounds: {
             handler(newBounds) {
-                console.log('new bounds', newBounds)
                 this.handleNewBounds(newBounds);
             },
             deep: true

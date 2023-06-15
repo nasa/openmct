@@ -50,7 +50,7 @@ export default {
     inject: ['openmct'],
     props: {
         mode: {
-            type: Object,
+            type: String,
             default() {
                 return undefined;
             }
@@ -63,35 +63,25 @@ export default {
         }
     },
     data: function () {
-        let mode = FIXED_MODE_KEY;
-        if (this.mode?.key !== FIXED_MODE_KEY) {
-            mode = REALTIME_MODE_KEY;
-        }
-
         return {
-            selectedMode: this.getModeMetadata(mode),
+            selectedMode: this.getModeMetadata(this.mode),
             modes: []
         };
     },
     watch: {
         mode: {
-            deep: true,
             handler(newMode) {
-                if (newMode) {
-                    this.setMode(newMode.key === FIXED_MODE_KEY ? undefined : newMode);
-                }
+                this.setViewFromMode(newMode);
             }
         },
         enabled(newValue, oldValue) {
             if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
-                this.setMode(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
+                this.setViewFromMode(this.mode);
             }
         }
     },
     mounted: function () {
-        if (this.mode) {
-            this.setMode(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
-        }
+        this.loadModes();
     },
     methods: {
         showModesMenu() {
@@ -124,32 +114,15 @@ export default {
 
             return menuOptions;
         },
-        setMode(key) {
-            const matchingOptions = this.getMenuOptions().filter(option => option.clock === key);
-            const clock = matchingOptions.length && matchingOptions[0].clock ? Object.assign({}, matchingOptions[0], { key: matchingOptions[0].clock }) : undefined;
-            this.selectedMode = this.getModeMetadata(clock);
+        setViewFromMode(mode) {
+            this.selectedMode = this.getModeMetadata(mode);
+        },
+        setMode(mode) {
+            console.log('set mode');
+            this.setViewFromMode(mode);
 
-            if (this.mode) {
-                this.$emit(TIME_CONTEXT_EVENTS.modeChanged, { key });
-            }
+            this.$emit('independentModeUpdated', mode);
         }
-        // setMode(clock) {
-        //     const menuOptions = this.getMenuOptions();
-        //     this.loadModes(menuOptions);
-        //     //retain the mode chosen by the user
-        //     if (this.mode) {
-        //         let found = this.modes.find(mode => mode.key === this.selectedMode.key);
-
-        //         if (!found) {
-        //             found = this.modes.find(mode => mode.key === clock && clock.key);
-        //             this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
-        //         } else if (this.mode.key !== this.selectedMode.key) {
-        //             this.setMode(this.selectedMode.key);
-        //         }
-        //     } else {
-        //         this.setMode(this.getModeMetadata(clock).key);
-        //     }
-        // }
     }
 };
 </script>

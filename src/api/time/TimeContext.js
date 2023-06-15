@@ -283,6 +283,7 @@ class TimeContext extends EventEmitter {
      * bounds.
      */
     stopClock() {
+        console.log('stop clock');
         this.#warnMethodDeprecated('"stopClock"');
 
         if (this.activeClock) {
@@ -462,6 +463,7 @@ class TimeContext extends EventEmitter {
      * @method bounds
      */
     setBounds(newBounds) {
+        // console.log('set bounds', newBounds);
         const validationResult = this.validateBounds(newBounds);
         if (validationResult.valid !== true) {
             throw new Error(validationResult.message);
@@ -560,7 +562,7 @@ class TimeContext extends EventEmitter {
      * @return {Mode} the currently active mode;
      */
     setMode(mode) {
-        console.log('setmode');
+        // console.log('setmode');
         if (!mode || mode === this.mode) {
             return;
         }
@@ -611,7 +613,7 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     setClockOffsets(offsets) {
-        console.log('set clock offsets timecontext', offsets);
+        // console.log('set clock offsets timecontext', offsets);
         const validationResult = this.validateOffsets(offsets);
         if (validationResult.valid !== true) {
             throw new Error(validationResult.message);

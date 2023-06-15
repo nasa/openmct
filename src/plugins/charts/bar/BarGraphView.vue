@@ -103,11 +103,11 @@ export default {
 
         },
         followTimeContext() {
-            this.timeContext.on('bounds', this.refreshData);
+            this.timeContext.on('boundsChanged', this.refreshData);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', this.refreshData);
+                this.timeContext.off('boundsChanged', this.refreshData);
             }
         },
         addToComposition(telemetryObject) {

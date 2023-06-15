@@ -34,7 +34,7 @@
             ]"
             @click.prevent.stop="showClocksMenu"
         >
-            <span class="c-button__label">{{ selectedClockname }}</span>
+            <span class="c-button__label">{{ selectedClock.name }}</span>
         </button>
     </div>
 </div>
@@ -50,11 +50,9 @@ export default {
     inject: ['openmct'],
     props: {
         clock: {
-            deep: true,
-            handler(newClock) {
-                if (newClock) {
-                    this.setViewFromClock(newClock.key === FIXED_MODE_KEY ? undefined : newClock);
-                }
+            type: String,
+            default() {
+                return undefined;
             }
         },
         enabled: {
@@ -73,22 +71,27 @@ export default {
         };
     },
     watch: {
+        clock(newClock, oldClock) {
+            this.setViewFromClock(newClock);
+        },
         enabled(newValue, oldValue) {
             if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
-                this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
+                this.setViewFromClock(this.clock);
             }
         }
     },
+    beforeDestroy() {
+        this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+    },
     mounted: function () {
-        if (this.mode) {
-            this.setViewFromClock(this.mode.key === FIXED_MODE_KEY ? undefined : this.mode);
-        }
+        this.loadClocks(this.getMenuOptions());
+        this.setViewFromClock(this.clock);
 
         this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
     },
     methods: {
         showClocksMenu() {
-            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
+            const elementBoundingClientRect = this.$refs.clockMenuButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
@@ -99,40 +102,32 @@ export default {
             this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
         },
         getMenuOptions() {
-            let menuOptions = [{
-                name: 'Fixed Timespan',
-                timeSystem: 'utc'
-            }];
             let currentGlobalClock = this.getActiveClock();
-            if (currentGlobalClock !== undefined) {
+
             //Create copy of active clock so the time API does not get reactified.
-                currentGlobalClock = Object.assign({}, {
-                    name: currentGlobalClock.name,
-                    clock: currentGlobalClock.key,
-                    timeSystem: this.openmct.time.timeSystem().key
-                });
+            currentGlobalClock = Object.assign({}, {
+                name: currentGlobalClock.name,
+                clock: currentGlobalClock.key,
+                timeSystem: this.openmct.time.timeSystem().key
+            });
 
-                menuOptions.push(currentGlobalClock);
-            }
-
-            return menuOptions;
+            return [currentGlobalClock];
         },
-        setViewFromClock(clock) {
-            const menuOptions = this.getMenuOptions();
-            this.loadModesAndClocks(menuOptions);
-            //retain the mode chosen by the user
-            if (this.mode) {
-                let found = this.modes.find(mode => mode.key === this.selectedMode.key);
+        setClock(clockKey) {
+            this.setViewFromClock(clockKey);
 
-                if (!found) {
-                    found = this.modes.find(mode => mode.key === clock && clock.key);
-                    this.setMode(found ? this.getModeMetadata(clock).key : this.getModeMetadata().key);
-                } else if (this.mode.key !== this.selectedMode.key) {
-                    this.setMode(this.selectedMode.key);
-                }
-            } else {
-                this.setMode(this.getModeMetadata(clock).key);
+            this.$emit('independentClockUpdated', clockKey);
+        },
+        setViewFromClock(clockOrKey) {
+            let clock = clockOrKey;
+
+            if (!clock.key) {
+                clock = this.getClock(clockOrKey);
             }
+
+            // if global clock changes, reload and pull it
+            this.loadModes(this.getMenuOptions());
+            this.selectedClock = this.getClockMetadata(clock);
         }
     }
 };

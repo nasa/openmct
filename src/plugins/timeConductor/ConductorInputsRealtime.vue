@@ -228,13 +228,13 @@ export default {
             let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
             let endOffset = this.durationFormatter.parse(this.offsets.end);
 
-            this.$emit('updated', {
+            this.$emit('offsetsUpdated', {
                 start: startOffset,
                 end: endOffset
             });
         },
         dismiss() {
-            this.$emit('dismiss');
+            this.$emit('dismissInputsRealtime');
         },
         copy(object) {
             return JSON.parse(JSON.stringify(object));
