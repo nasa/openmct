@@ -655,6 +655,9 @@ export default {
       }
     }
   },
+  created() {
+    this.abortController = new AbortController();
+  },
   async mounted() {
     eventHelpers.extend(this);
     this.focusedImageWrapper = this.$refs.focusedImageWrapper;
@@ -718,6 +721,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
   },
   beforeDestroy() {
+    this.abortController.abort();
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
 
@@ -895,7 +899,8 @@ export default {
       if (!foundAnnotations) {
         // attempt to load
         foundAnnotations = await this.openmct.annotation.getAnnotations(
-          this.domainObject.identifier
+          this.domainObject.identifier,
+          this.abortController.signal
         );
       }
       foundAnnotations.forEach((foundAnnotation) => {
