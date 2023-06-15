@@ -151,7 +151,7 @@ export default class StatusAPI extends EventEmitter {
      * @param {Status} status The status to set for the provided role
      * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
      */
-    setStatusForRole(_role, status) {
+    setStatusForRole(status) {
         const provider = this.#userAPI.getProvider();
 
         if (provider.setStatusForRole) {
