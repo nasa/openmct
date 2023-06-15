@@ -139,7 +139,7 @@ export default {
     );
     this.initializeViewActions();
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
 
     this.composition.off('add', this.addItem);

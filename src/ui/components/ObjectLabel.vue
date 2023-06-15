@@ -91,7 +91,7 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
     this.previewAction = new PreviewAction(this.openmct);
   },
-  destroyed() {
+  unmounted() {
     this.removeStatusListener();
   },
   methods: {

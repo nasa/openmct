@@ -128,7 +128,7 @@ export default {
 
     this.stalenessSubscription = {};
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
     this.composition.off('add', this.addLadTable);
     this.composition.off('remove', this.removeLadTable);

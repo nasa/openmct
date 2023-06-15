@@ -30,7 +30,7 @@ export default {
       }
     });
   },
-  destroyed() {
+  unmounted() {
     this.$el.removeEventListener('contextMenu', this.showContextMenu);
   },
   methods: {
@@ -59,7 +59,7 @@ export default {
       this.contextClickActive = true;
       this.$emit('context-click-active', true);
     },
-    onContextMenuDestroyed() {
+    onContextMenuunmounted() {
       this.contextClickActive = false;
       this.$emit('context-click-active', false);
     }

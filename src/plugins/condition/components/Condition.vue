@@ -270,7 +270,7 @@ export default {
       return false;
     }
   },
-  destroyed() {
+  unmounted() {
     this.destroy();
   },
   mounted() {

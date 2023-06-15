@@ -85,7 +85,7 @@ export default {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
-  destroyed() {
+  unmounted() {
     this.previewAction.off('isVisible', this.togglePreviewState);
   },
   methods: {

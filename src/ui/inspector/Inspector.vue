@@ -55,7 +55,7 @@ export default {
   mounted() {
     this.openmct.selection.on('change', this.setSelection);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.selection.off('change', this.setSelection);
   },
   methods: {

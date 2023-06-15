@@ -229,7 +229,7 @@ export default {
       return this.styleableFontItems.length && this.allowEditing;
     }
   },
-  destroyed() {
+  unmounted() {
     this.removeListeners();
     this.openmct.editor.off('isEditing', this.setEditState);
     this.stylesManager.off('styleSelected', this.applyStyleToSelection);

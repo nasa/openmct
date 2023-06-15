@@ -87,7 +87,7 @@ export default {
 
     this.composition.load();
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.destroy();
     this.openmct.editor.off('isEditing', this.toggleEdit);
 

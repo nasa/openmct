@@ -114,7 +114,7 @@ export default {
       return classes;
     }
   },
-  destroyed() {
+  unmounted() {
     this.clear();
     if (this.releaseEditModeHandler) {
       this.releaseEditModeHandler();

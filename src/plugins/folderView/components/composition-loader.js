@@ -23,7 +23,7 @@ export default {
     this.composition.on('remove', this.remove);
     this.composition.load();
   },
-  destroyed() {
+  unmounted() {
     if (!this.composition) {
       return;
     }

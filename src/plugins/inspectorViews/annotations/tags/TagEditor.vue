@@ -113,7 +113,7 @@ export default {
   mounted() {
     this.annotationsChanged();
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener('click', this.tagCanceled);
   },
   methods: {

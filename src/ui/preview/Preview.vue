@@ -97,7 +97,7 @@ export default {
       this.actionCollection.destroy();
     }
   },
-  destroyed() {
+  unmounted() {
     if (!this.existingView) {
       this.view.destroy();
     } else if (this.existingViewElement) {

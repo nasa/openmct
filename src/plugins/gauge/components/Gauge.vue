@@ -534,7 +534,7 @@ export default {
     this.openmct.time.on('bounds', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
   },
-  destroyed() {
+  unmounted() {
     this.composition.off('add', this.addedToComposition);
     this.composition.off('remove', this.removeTelemetryObject);
 
