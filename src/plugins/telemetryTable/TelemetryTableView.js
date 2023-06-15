@@ -37,7 +37,7 @@ export default class TelemetryTableView {
   }
 
   destroy(element) {
-    this.component.$destroy();
+    //this.component.$destroy();
     this.component = undefined;
   }
 

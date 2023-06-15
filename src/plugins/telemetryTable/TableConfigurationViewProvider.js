@@ -65,7 +65,7 @@ export default function TableConfigurationViewProvider(openmct) {
         },
         destroy: function () {
           if (component) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
 

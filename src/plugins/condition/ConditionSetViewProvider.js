@@ -73,7 +73,7 @@ export default class ConditionSetViewProvider {
         component.isEditing = isEditing;
       },
       destroy: () => {
-        component.$destroy();
+        //component.$destroy();
         component = undefined;
       }
     };

@@ -64,7 +64,7 @@ export default class LadTableSetView {
   }
 
   destroy(element) {
-    this.component.$destroy();
+    //this.component.$destroy();
     this.component = undefined;
   }
 }

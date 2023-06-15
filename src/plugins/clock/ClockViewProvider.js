@@ -50,7 +50,7 @@ export default function ClockViewProvider(openmct) {
           });
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

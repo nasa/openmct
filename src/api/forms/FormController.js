@@ -93,7 +93,7 @@ export default class FormControl {
         return rowComponent;
       },
       destroy() {
-        rowComponent.$destroy();
+        //rowComponent.$destroy();
       }
     };
   }

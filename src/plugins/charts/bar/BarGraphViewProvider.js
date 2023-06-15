@@ -70,7 +70,7 @@ export default function BarGraphViewProvider(openmct) {
           });
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         },
         onClearData() {

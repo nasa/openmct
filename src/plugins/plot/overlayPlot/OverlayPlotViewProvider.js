@@ -76,7 +76,7 @@ export default function OverlayPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

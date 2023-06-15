@@ -204,7 +204,7 @@ xdescribe('GrandSearch', () => {
   afterEach(() => {
     openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
     openmct.router.path = originalRouterPath;
-    grandSearchComponent.$destroy();
+    //grandSearchComponent.$destroy();
     document.body.removeChild(parent);
 
     return resetApplicationState(openmct);

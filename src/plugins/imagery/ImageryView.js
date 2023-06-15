@@ -75,7 +75,7 @@ export default class ImageryView {
   }
 
   destroy() {
-    this.component.$destroy();
+    //this.component.$destroy();
     this.component = undefined;
   }
 

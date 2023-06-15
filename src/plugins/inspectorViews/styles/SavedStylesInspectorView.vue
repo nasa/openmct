@@ -46,7 +46,7 @@ export default {
     updateSelection(selection) {
       if (selection.length > 0 && selection[0].length > 0) {
         if (this.component) {
-          this.component.$destroy();
+          //this.component.$destroy();
           this.component = undefined;
           this.$el.innerHTML = '';
         }

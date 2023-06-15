@@ -55,7 +55,7 @@ export default function GaugeViewProvider(openmct) {
           });
         },
         destroy: function (element) {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

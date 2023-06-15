@@ -69,7 +69,7 @@ define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutCompo
             component.isEditing = isEditing;
           },
           destroy: function (element) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         };

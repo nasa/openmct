@@ -69,7 +69,7 @@ describe('The Compass component', () => {
   });
 
   afterAll(() => {
-    app.$destroy();
+    //app.$destroy();
   });
 
   describe('when a heading value and cameraAngleOfView exists on the image', () => {

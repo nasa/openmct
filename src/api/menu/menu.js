@@ -54,7 +54,7 @@ class Menu extends EventEmitter {
     this.emit('destroy');
     document.body.removeChild(this.component.$el);
     document.removeEventListener('click', this.dismiss);
-    this.component.$destroy();
+    //this.component.$destroy();
   }
 
   show() {

@@ -59,7 +59,7 @@ export default function TimeListInspectorViewProvider(openmct) {
         },
         destroy: function () {
           if (component) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         }

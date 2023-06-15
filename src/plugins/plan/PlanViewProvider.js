@@ -71,7 +71,7 @@ export default function PlanViewProvider(openmct) {
           });
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

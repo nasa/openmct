@@ -256,7 +256,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-      component.$destroy();
+      //component.$destroy();
     });
 
     it('does not include the output label when the flag is disabled', () => {

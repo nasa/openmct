@@ -49,7 +49,7 @@ export default function HyperlinkProvider(openmct) {
           });
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

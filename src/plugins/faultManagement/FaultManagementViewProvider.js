@@ -61,7 +61,7 @@ export default class FaultManagementViewProvider {
           return;
         }
 
-        component.$destroy();
+        //component.$destroy();
         component = undefined;
       }
     };

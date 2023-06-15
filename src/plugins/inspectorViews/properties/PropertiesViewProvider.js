@@ -51,7 +51,7 @@ export default function PropertiesViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

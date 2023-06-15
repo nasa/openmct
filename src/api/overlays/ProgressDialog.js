@@ -45,7 +45,7 @@ class ProgressDialog extends Overlay {
     });
 
     this.once('destroy', () => {
-      component.$destroy();
+      //component.$destroy();
     });
   }
 

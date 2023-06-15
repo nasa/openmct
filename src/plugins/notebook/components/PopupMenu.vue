@@ -77,7 +77,7 @@ export default {
     },
     hideMenuItems() {
       document.body.removeChild(this.menuItems.$el);
-      this.menuItems.$destroy();
+      //this.menuItems.$destroy();
       this.menuItems = null;
       document.removeEventListener('click', this.hideMenuItems);
 

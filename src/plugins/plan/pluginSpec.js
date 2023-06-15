@@ -281,9 +281,9 @@ describe('the plugin', function () {
       });
     });
 
-    afterEach(() => {
-      component.$destroy();
-    });
+    // afterEach(() => {
+    //   component.$destroy();
+    // });
 
     it('provides an inspector view with the version information if available', () => {
       componentObject = component.$root.$children[0];

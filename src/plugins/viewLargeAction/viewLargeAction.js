@@ -68,7 +68,7 @@ export default class ViewLargeAction {
       size: 'large',
       autoHide: false,
       onDestroy: () => {
-        this.preview.$destroy();
+        //this.preview.$destroy();
         this.preview = undefined;
         delete this.preview;
         view.onPreviewModeChange?.();

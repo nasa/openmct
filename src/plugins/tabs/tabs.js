@@ -60,7 +60,7 @@ define(['./components/tabs.vue', 'vue'], function (TabsComponent, Vue) {
             component.isEditing = editMode;
           },
           destroy: function (element) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         };

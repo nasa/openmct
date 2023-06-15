@@ -329,7 +329,7 @@ describe('The Object API', () => {
     });
 
     afterEach(() => {
-      mutable.$destroy();
+      //mutable.$destroy();
     });
 
     it('mutates the original object', () => {
@@ -391,7 +391,7 @@ describe('The Object API', () => {
       });
 
       afterEach(() => {
-        mutableSecondInstance.$destroy();
+        //mutableSecondInstance.$destroy();
       });
 
       it('to stay synchronized when mutated', function () {

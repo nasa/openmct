@@ -26,7 +26,7 @@ class Dialog extends Overlay {
     });
 
     this.once('destroy', () => {
-      component.$destroy();
+      //component.$destroy();
     });
   }
 }

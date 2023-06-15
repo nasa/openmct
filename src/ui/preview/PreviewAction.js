@@ -76,7 +76,7 @@ export default class PreviewAction extends EventEmitter {
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
-        preview.$destroy();
+        //preview.$destroy();
         this.emit('isVisible', false);
       }
     });

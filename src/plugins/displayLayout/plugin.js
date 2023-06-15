@@ -95,7 +95,7 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    this.component.$destroy();
+    //this.component.$destroy();
     this.component = undefined;
   }
 }

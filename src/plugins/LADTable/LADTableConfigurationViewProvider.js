@@ -57,7 +57,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
         },
         destroy() {
           if (component) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         }

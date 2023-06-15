@@ -56,7 +56,7 @@ export default function TimelineViewProvider(openmct) {
           });
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

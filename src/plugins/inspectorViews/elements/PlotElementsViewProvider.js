@@ -58,7 +58,7 @@ export default function PlotElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

@@ -46,7 +46,7 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
         },
         destroy: function () {
           if (component) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         }

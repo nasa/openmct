@@ -325,7 +325,7 @@ export default class ObjectAPI {
    */
   destroyMutable(domainObject) {
     if (domainObject.isMutable) {
-      return domainObject.$destroy();
+      //return domainObject.$destroy();
     } else {
       throw new Error('Attempted to destroy non-mutable domain object');
     }
@@ -675,7 +675,7 @@ export default class ObjectAPI {
       let mutable = this.toMutable(domainObject);
       mutable.$observe(path, callback);
 
-      return () => mutable.$destroy();
+      //return () => mutable.$destroy();
     }
   }
 

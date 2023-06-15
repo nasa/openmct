@@ -77,7 +77,7 @@ export default function StackedPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

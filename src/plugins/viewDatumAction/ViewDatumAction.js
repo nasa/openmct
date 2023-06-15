@@ -52,7 +52,7 @@ export default class ViewDatumAction {
       size: 'large',
       dismissable: true,
       onDestroy: () => {
-        component.$destroy();
+        //component.$destroy();
       }
     });
   }

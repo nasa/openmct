@@ -196,7 +196,7 @@ export default class FormsAPI {
     function onFormAction(callback) {
       return () => {
         formElement.remove();
-        vm.$destroy();
+        //vm.$destroy();
 
         if (callback) {
           callback(changes);

@@ -58,7 +58,7 @@ export default function GanttChartInspectorViewProvider(openmct) {
         },
         destroy: function () {
           if (component) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         }

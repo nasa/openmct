@@ -84,7 +84,7 @@ export default function StylesInspectorViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
+          //component.$destroy();
           component = undefined;
         }
       };

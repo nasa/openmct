@@ -68,7 +68,7 @@ export default class NotebookViewProvider {
         });
       },
       destroy() {
-        component.$destroy();
+        //component.$destroy();
       }
     };
   }

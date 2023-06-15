@@ -53,7 +53,7 @@ define(['./components/GridView.vue', './constants.js', 'vue'], function (
             });
           },
           destroy: function (element) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         };

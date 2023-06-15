@@ -61,7 +61,7 @@ class AlphanumericFormatView {
   }
 
   destroy() {
-    this.component.$destroy();
+    //this.component.$destroy();
     this.component = undefined;
   }
 }

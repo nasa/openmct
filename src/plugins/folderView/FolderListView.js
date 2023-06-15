@@ -55,7 +55,7 @@ define(['./components/ListView.vue', './constants.js', 'vue', 'moment'], functio
             });
           },
           destroy: function (element) {
-            component.$destroy();
+            //component.$destroy();
             component = undefined;
           }
         };
