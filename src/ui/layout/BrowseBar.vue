@@ -179,7 +179,8 @@ export default {
       });
     },
     hasParent() {
-      return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return false;
+      // return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
     },
     parentUrl() {
       const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -240,7 +241,6 @@ export default {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
