@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Conductor from './Conductor.vue';
+import { markRaw } from 'vue';
 
 function isTruthy(a) {
   return Boolean(a);
@@ -100,16 +101,17 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-  openmct.layout.conductorComponent = Object.create({
+  const conductorApp = {
     components: {
       Conductor
     },
-    template: '<conductor></conductor>',
     provide: {
       openmct: openmct,
       configuration: configuration
-    }
-  });
+    },
+    template: '<conductor />',
+  };
+  openmct.layout.conductorComponent = markRaw(conductorApp);
 }
 
 export default function (config) {
