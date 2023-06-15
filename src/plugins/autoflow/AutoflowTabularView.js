@@ -84,7 +84,7 @@ define([
         rowCount: 'reflow'
       },
       template: autoflowTemplate,
-      destroyed: function () {
+      unmounted: function () {
         controller.destroy();
 
         if (interval) {

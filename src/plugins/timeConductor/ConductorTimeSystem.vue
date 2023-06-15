@@ -50,7 +50,7 @@ export default {
     this.openmct.time.on('timeSystem', this.setViewFromTimeSystem);
     this.openmct.time.on('clock', this.setViewFromClock);
   },
-  destroyed: function () {
+  unmounted: function () {
     this.openmct.time.off('timeSystem', this.setViewFromTimeSystem);
     this.openmct.time.on('clock', this.setViewFromClock);
   },

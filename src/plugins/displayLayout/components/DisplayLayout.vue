@@ -225,7 +225,7 @@ export default {
 
     this.watchDisplayResize();
   },
-  destroyed: function () {
+  unmounted: function () {
     this.openmct.selection.off('change', this.setSelection);
     this.composition.off('add', this.addChild);
     this.composition.off('remove', this.removeChild);
