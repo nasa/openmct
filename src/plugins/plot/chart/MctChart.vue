@@ -135,27 +135,42 @@ export default {
     };
   },
   watch: {
-    highlights() {
-      this.scheduleDraw();
+    highlights: {
+      handler() {
+        this.scheduleDraw();
+      }, 
+      deep: true
     },
-    annotatedPoints() {
-      this.scheduleDraw();
+    annotatedPoints: {
+      handler() {
+        this.scheduleDraw();
+      },
+      deep: true
     },
-    annotationSelections() {
-      this.scheduleDraw();
+    annotationSelections: {
+      handler() {
+        this.scheduleDraw();
+      },
+      deep: true
     },
-    rectangles() {
-      this.scheduleDraw();
+    rectangles: {
+      handler() {
+        this.scheduleDraw();
+      },
+      deep: true
     },
     showLimitLineLabels() {
       this.updateLimitLines();
     },
-    hiddenYAxisIds() {
-      this.hiddenYAxisIds.forEach((id) => {
-        this.resetYOffsetAndSeriesDataForYAxis(id);
-        this.updateLimitLines();
-      });
-      this.scheduleDraw();
+    hiddenYAxisIds: {
+      handler() {
+        this.hiddenYAxisIds.forEach((id) => {
+          this.resetYOffsetAndSeriesDataForYAxis(id);
+          this.updateLimitLines();
+        });
+        this.scheduleDraw();
+      },
+      deep: true
     }
   },
   mounted() {

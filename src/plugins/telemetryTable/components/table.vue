@@ -433,7 +433,8 @@ export default {
             this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
           }
         }
-      }
+      },
+      deep: true
     },
     paused: {
       handler(newVal) {

@@ -61,8 +61,11 @@ export default {
     };
   },
   watch: {
-    imageHistory(newHistory, oldHistory) {
-      this.updatePlotImagery();
+    imageHistory: {
+      handler(newHistory, oldHistory) {
+        this.updatePlotImagery();
+      },
+      deep: true
     }
   },
   mounted() {

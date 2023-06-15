@@ -248,11 +248,17 @@ export default {
     mainTreeHeight() {
       this.updateVisibleItems();
     },
-    focusedItems() {
-      this.updateVisibleItems();
+    focusedItems: {
+      handler(val, oldVal) {
+          this.updateVisibleItems();
+      },
+      deep: true
     },
-    openTreeItems() {
-      this.setSavedOpenItems();
+    openTreeItems: {
+      handler(val, oldVal) {
+          this.setSavedOpenItems();
+      },
+      deep: true
     }
   },
   async mounted() {

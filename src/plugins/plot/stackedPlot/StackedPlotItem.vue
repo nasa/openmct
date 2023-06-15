@@ -104,9 +104,13 @@ export default {
       },
       deep: true
     },
-    staleObjects() {
-      this.isStale = this.staleObjects.length > 0;
-      this.updateComponentProp('isStale', this.isStale);
+    staleObjects: 
+    {
+      handler() {
+        this.isStale = this.staleObjects.length > 0;
+        this.updateComponentProp('isStale', this.isStale);
+      },
+      deep: true
     }
   },
   mounted() {
@@ -123,7 +127,7 @@ export default {
     }
 
     if (this.component) {
-      this.component.$destroy();
+      //this.component.$destroy();
     }
 
     this.destroyStalenessListeners();
@@ -152,7 +156,7 @@ export default {
       this.destroyStalenessListeners();
 
       if (this.component) {
-        this.component.$destroy();
+        //this.component.$destroy();
         this.component = null;
         this.$el.innerHTML = '';
       }

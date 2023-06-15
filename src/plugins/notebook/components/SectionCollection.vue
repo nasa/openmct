@@ -78,10 +78,13 @@ export default {
     }
   },
   watch: {
-    sections() {
-      if (!this.containsSection(this.selectedSectionId)) {
-        this.selectSection(this.sections[0].id);
-      }
+    sections: {
+      handler(val, oldVal) {
+        if (!this.containsSection(this.selectedSectionId)) {
+          this.selectSection(this.sections[0].id);
+        }
+      },
+      deep: true
     }
   },
   methods: {
