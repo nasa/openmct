@@ -68,7 +68,8 @@ const config = {
       testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
       kdbush: path.join(projectRootDir, 'node_modules/kdbush/kdbush.min.js'),
-      utils: path.join(projectRootDir, 'src/utils')
+      utils: path.join(projectRootDir, 'src/utils'),
+      vue: path.join(projectRootDir, 'node_modules/@vue/compat/dist/vue.cjs.js'),
     }
   },
   plugins: [
@@ -76,7 +77,8 @@ const config = {
       __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
-      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+      __VUE_PROD_DEVTOOLS__: true
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({
@@ -125,6 +127,7 @@ const config = {
         loader: 'vue-loader',
         options: {
           compilerOptions: {
+            whitespace: 'preserve',
             compatConfig: {
               MODE: 2
             }

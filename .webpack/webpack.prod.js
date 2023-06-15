@@ -13,11 +13,6 @@ const projectRootDir = path.resolve(__dirname, '..');
 
 module.exports = merge(common, {
   mode: 'production',
-  resolve: {
-    alias: {
-      vue: "@vue/compat"
-    }
-  },
   plugins: [
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '""'
