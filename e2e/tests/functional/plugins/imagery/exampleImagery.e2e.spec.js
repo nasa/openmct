@@ -306,6 +306,10 @@ test.describe('Example Imagery in Display Layout', () => {
      * - should NOT toggle checkbox and layer visibity for the first image view in display
      */
     test('Toggle layer visibility by clicking on label', async ({ page }) => {
+        test.info().annotations.push({
+          type: 'issue',
+          description: 'https://github.com/nasa/openmct/issues/6709'
+        });
         await createImageryView(page);
         await page.goto(displayLayout.url);
 
