@@ -339,6 +339,9 @@ export default {
       this.cursorGuide = newCursorGuide;
     }
   },
+  created() {
+    this.abortController = new AbortController();
+  },
   mounted() {
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
@@ -398,6 +401,7 @@ export default {
     this.loaded = true;
   },
   beforeDestroy() {
+    this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
@@ -621,7 +625,8 @@ export default {
       await Promise.all(
         this.seriesModels.map(async (seriesModel) => {
           const seriesAnnotations = await this.openmct.annotation.getAnnotations(
-            seriesModel.model.identifier
+            seriesModel.model.identifier,
+            this.abortController.signal
           );
           rawAnnotationsForPlot.push(...seriesAnnotations);
         })
@@ -1524,7 +1529,11 @@ export default {
         this.endMarquee();
       }
 
-      this.loadAnnotations();
+      this.loadAnnotations().catch((err) => {
+        if (err.name !== 'AbortError') {
+          throw err;
+        }
+      });
     },
 
     zoom(zoomDirection, zoomFactor) {
