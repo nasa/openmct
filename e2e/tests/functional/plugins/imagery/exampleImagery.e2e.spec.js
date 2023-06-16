@@ -185,24 +185,7 @@ test.describe('Example Imagery in Display Layout', () => {
     displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
     await page.goto(displayLayout.url);
 
-    /* Create Sine Wave Generator with minimum Image Load Delay */
-    // Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Example Imagery
-    await page.click('li[role="menuitem"]:has-text("Example Imagery")');
-
-    // Clear and set Image load delay to minimum value
-    await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('5000');
-
-    // Click text=OK
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle' }),
-      page.click('button:has-text("OK")'),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
+    await createImageryView(page);
 
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(
       'Unnamed Example Imagery'
@@ -315,8 +298,46 @@ test.describe('Example Imagery in Display Layout', () => {
     await page.locator('div[title="Resize object height"] > input').click();
     await page.locator('div[title="Resize object height"] > input').fill('100');
 
-    expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+    await expect(thumbsWrapperLocator).toBeVisible();
     await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
+  });
+
+  /**
+   * Toggle layer visibility checkbox by clicking on checkbox label
+   * - should toggle checkbox and layer visibility for that image view
+   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   */
+  test('Toggle layer visibility by clicking on label', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6709'
+    });
+    await createImageryView(page);
+    await page.goto(displayLayout.url);
+
+    const imageElements = page.locator('.c-imagery__main-image-wrapper');
+
+    await expect(imageElements).toHaveCount(2);
+
+    const imageOne = page.locator('.c-imagery__main-image-wrapper').nth(0);
+    const imageTwo = page.locator('.c-imagery__main-image-wrapper').nth(1);
+    const imageOneWrapper = imageOne.locator('.image-wrapper');
+    const imageTwoWrapper = imageTwo.locator('.image-wrapper');
+
+    await imageTwo.hover();
+
+    await imageTwo.locator('button[title="Layers"]').click();
+
+    const imageTwoLayersMenuContent = imageTwo.locator('button[title="Layers"] + div');
+    const imageTwoLayersToggleLabel = imageTwoLayersMenuContent.locator('label').last();
+
+    await imageTwoLayersToggleLabel.click();
+
+    const imageOneLayers = imageOneWrapper.locator('.layer-image');
+    const imageTwoLayers = imageTwoWrapper.locator('.layer-image');
+
+    await expect(imageOneLayers).toHaveCount(0);
+    await expect(imageTwoLayers).toHaveCount(1);
   });
 });
 
@@ -818,4 +839,27 @@ async function resetImageryPanAndZoom(page) {
 
   await panZoomResetBtn.click();
   await waitForAnimations(backgroundImage);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function createImageryView(page) {
+  // Click the Create button
+  await page.click('button:has-text("Create")');
+
+  // Click text=Example Imagery
+  await page.click('li[role="menuitem"]:has-text("Example Imagery")');
+
+  // Clear and set Image load delay to minimum value
+  await page.locator('input[type="number"]').fill('');
+  await page.locator('input[type="number"]').fill('5000');
+
+  // Click text=OK
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'networkidle' }),
+    page.click('button:has-text("OK")'),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
 }
