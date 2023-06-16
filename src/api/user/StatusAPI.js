@@ -140,9 +140,9 @@ export default class StatusAPI extends EventEmitter {
         const provider = this.#userAPI.getProvider();
 
         if (provider.canProvideStatusForRole) {
-            return provider.canProvideStatusForRole(role);
+            return Promise.resolve(provider.canProvideStatusForRole(role));
         } else {
-            return false;
+            return Promise.resolve(false);
         }
     }
 
@@ -218,23 +218,6 @@ export default class StatusAPI extends EventEmitter {
             return provider.getAllStatusRoles();
         } else {
             this.#userAPI.error("User provider cannot provide all status roles");
-        }
-    }
-
-    /**
-     * The status role of the current user. A user may have multiple roles, but will only have one role
-     * that provides status at any time.
-     * @returns {Promise<import("./UserAPI").Role>} the role for which the current user can provide status.
-     */
-    getStatusRoleForCurrentUser() {
-        const provider = this.#userAPI.getProvider();
-
-        if (provider.getStatusRoleForCurrentUser) {
-            const activeRole = this.#userAPI.getActiveRole();
-
-            return provider.getStatusRoleForCurrentUser(activeRole);
-        } else {
-            this.#userAPI.error("User provider cannot provide role status for this user");
         }
     }
 

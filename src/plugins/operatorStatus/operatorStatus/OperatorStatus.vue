@@ -94,11 +94,12 @@ export default {
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
     },
     async mounted() {
+        console.log('mounted')
         this.unsubscribe = [];
         await this.fetchUser();
         this.fetchPossibleStatusesForUser();
         this.fetchCurrentPoll();
-        this.fetchMyStatus();
+        await this.fetchMyStatus();
         this.subscribeToMyStatus();
         this.subscribeToPollQuestion();
     },
@@ -123,8 +124,8 @@ export default {
             this.indicator.text(pollQuestion?.question || '');
         },
         async fetchMyStatus() {
-            const activeStatusRole = await this.openmct.user.status.getStatusRoleForCurrentUser();
-            const status = await this.openmct.user.status.getStatusForRole(activeStatusRole);
+            const activeRole = await this.openmct.user.getActiveRole();
+            const status = await this.openmct.user.status.getStatusForRole(activeRole);
 
             if (status !== undefined) {
                 this.setStatus({status});

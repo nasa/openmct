@@ -77,5 +77,4 @@ export default class StatusUserProvider extends UserProvider {
     /**
      * @returns {Promise<import("./UserAPI").Role>} the active status role for the currently logged in user
      */
-    async getStatusRoleForCurrentUser() {}
 }
