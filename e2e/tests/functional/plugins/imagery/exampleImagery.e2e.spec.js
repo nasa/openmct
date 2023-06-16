@@ -313,14 +313,14 @@ test.describe('Example Imagery in Display Layout', () => {
         await createImageryView(page);
         await page.goto(displayLayout.url);
 
-        const imageElements = await page.locator('.c-imagery__main-image-wrapper');
+        const imageElements = page.locator('.c-imagery__main-image-wrapper');
 
         await expect(imageElements).toHaveCount(2);
 
-        const imageOne = await page.locator('.c-imagery__main-image-wrapper').nth(0);
-        const imageTwo = await page.locator('.c-imagery__main-image-wrapper').nth(1);
-        const imageOneWrapper = await imageOne.locator('.image-wrapper');
-        const imageTwoWrapper = await imageTwo.locator('.image-wrapper');
+        const imageOne = page.locator('.c-imagery__main-image-wrapper').nth(0);
+        const imageTwo = page.locator('.c-imagery__main-image-wrapper').nth(1);
+        const imageOneWrapper = imageOne.locator('.image-wrapper');
+        const imageTwoWrapper = imageTwo.locator('.image-wrapper');
 
         await imageTwo.hover();
 
@@ -328,13 +328,13 @@ test.describe('Example Imagery in Display Layout', () => {
             .locator('button[title="Layers"]')
             .click();
 
-        const imageTwoLayersMenuContent = await imageTwo.locator('button[title="Layers"] + div');
-        const imageTwoLayersToggleLabel = await imageTwoLayersMenuContent.locator('label').last();
+        const imageTwoLayersMenuContent = imageTwo.locator('button[title="Layers"] + div');
+        const imageTwoLayersToggleLabel = imageTwoLayersMenuContent.locator('label').last();
 
         await imageTwoLayersToggleLabel.click();
 
-        const imageOneLayers = await imageOneWrapper.locator('.layer-image');
-        const imageTwoLayers = await imageTwoWrapper.locator('.layer-image');
+        const imageOneLayers = imageOneWrapper.locator('.layer-image');
+        const imageTwoLayers = imageTwoWrapper.locator('.layer-image');
 
         await expect(imageOneLayers).toHaveCount(0);
         await expect(imageTwoLayers).toHaveCount(1);
