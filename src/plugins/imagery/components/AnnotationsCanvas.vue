@@ -75,9 +75,9 @@ export default {
     this.context = this.canvas.getContext('2d');
 
     // adjust canvas size for retina displays
-    const scale = window.devicePixelRatio;
-    this.canvas.width = Math.floor(this.canvas.width * scale);
-    this.canvas.height = Math.floor(this.canvas.height * scale);
+    const pixelScale = window.devicePixelRatio;
+    this.canvas.width = Math.floor(this.canvas.width * pixelScale);
+    this.canvas.height = Math.floor(this.canvas.height * pixelScale);
 
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     this.openmct.selection.on('change', this.updateSelection);
@@ -94,11 +94,12 @@ export default {
         this.annotationsIndex = new Flatbush(this.imageryAnnotations.length);
         this.imageryAnnotations.forEach((annotation) => {
           const annotationRectangle = annotation.targets[this.keyString].rectangle;
+          const annotationRectangelForPixelDepth = this.transformRectangleWithPixelDensity(annotationRectangle);
           const indexNumber = this.annotationsIndex.add(
-            annotationRectangle.x,
-            annotationRectangle.y,
-            annotationRectangle.x + annotationRectangle.width,
-            annotationRectangle.y + annotationRectangle.height
+            annotationRectangelForPixelDepth.x,
+            annotationRectangelForPixelDepth.y,
+            annotationRectangelForPixelDepth.x + annotationRectangelForPixelDepth.width,
+            annotationRectangelForPixelDepth.y + annotationRectangelForPixelDepth.height
           );
           this.indexToAnnotationMap[indexNumber] = annotation;
         });
@@ -158,6 +159,26 @@ export default {
 
       this.mouseDown = true;
       this.selectedAnnotations = [];
+    },
+    transformRectangleWithPixelDensity(rectangle) {
+      const pixelScale = window.devicePixelRatio;
+      const transformedRectangle = {
+        x: rectangle.x * pixelScale,
+        y: rectangle.y * pixelScale,
+        width: rectangle.width * pixelScale,
+        height: rectangle.height * pixelScale
+      };
+      return transformedRectangle;
+    },
+    transformRectangleWithoutPixelDensity(rectangle) {
+      const pixelScale = window.devicePixelRatio;
+      const transformedRectangle = {
+        x: rectangle.x / pixelScale,
+        y: rectangle.y / pixelScale,
+        width: rectangle.width / pixelScale,
+        height: rectangle.height / pixelScale
+      };
+      return transformedRectangle;
     },
     drawRectInCanvas(rectangle, fillStyle, strokeStyle) {
       this.context.beginPath();
@@ -257,13 +278,16 @@ export default {
       const targetDomainObjects = {};
       targetDomainObjects[this.keyString] = this.domainObject;
       const targetDetails = {};
+      const rectangleFromCanvas = {
+        x: this.newAnnotationRectangle.x,
+        y: this.newAnnotationRectangle.y,
+        width: this.newAnnotationRectangle.width,
+        height: this.newAnnotationRectangle.height
+      };
+      const rectangleWithoutPixelScale =
+        this.transformRectangleWithoutPixelDensity(rectangleFromCanvas);
       targetDetails[this.keyString] = {
-        rectangle: {
-          x: this.newAnnotationRectangle.x,
-          y: this.newAnnotationRectangle.y,
-          width: this.newAnnotationRectangle.width,
-          height: this.newAnnotationRectangle.height
-        },
+        rectangle: rectangleWithoutPixelScale,
         time: this.image.time
       };
       this.selectImageAnnotations({
@@ -358,15 +382,18 @@ export default {
     drawAnnotations() {
       this.clearCanvas();
       this.imageryAnnotations.forEach((annotation) => {
+        const rectangleForPixelDensity = this.transformRectangleWithPixelDensity(
+          annotation.targets[this.keyString].rectangle
+        );
         if (this.isSelectedAnnotation(annotation)) {
           this.drawRectInCanvas(
-            annotation.targets[this.keyString].rectangle,
+            rectangleForPixelDensity,
             SELECTED_ANNOTATION_FILL_STYLE,
             SELECTED_ANNOTATION_STROKE_COLOR
           );
         } else {
           this.drawRectInCanvas(
-            annotation.targets[this.keyString].rectangle,
+            rectangleForPixelDensity,
             EXISTING_ANNOTATION_FILL_STYLE,
             EXISTING_ANNOTATION_STROKE_STYLE
           );
