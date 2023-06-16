@@ -37,12 +37,10 @@ import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration';
 import { SORT_ORDER_OPTIONS } from './constants';
 import _ from 'lodash';
-import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 const ROW_HEIGHT = 30;
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
 const headerItems = [
   {
     defaultDirection: true,
@@ -50,12 +48,9 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct) {
-      const clock = openmct.time.clock();
-      if (clock && clock.formatTime) {
-        return clock.formatTime(value);
-      } else {
-        return `${moment.utc(value).format(TIME_FORMAT)}Z`;
-      }
+      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+      return timeFormatter.format(value);
     }
   },
   {
@@ -64,12 +59,9 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct) {
-      const clock = openmct.time.clock();
-      if (clock && clock.formatTime) {
-        return clock.formatTime(value);
-      } else {
-        return `${moment.utc(value).format(TIME_FORMAT)}Z`;
-      }
+      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+      return timeFormatter.format(value);
     }
   },
   {
