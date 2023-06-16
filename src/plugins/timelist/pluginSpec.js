@@ -211,6 +211,8 @@ describe('the plugin', function () {
     });
 
     it('displays activity details', (done) => {
+      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       Vue.nextTick(() => {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
@@ -218,12 +220,8 @@ describe('the plugin', function () {
         expect(itemValues[3].innerHTML.trim()).toEqual(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
         );
-        expect(itemValues[0].innerHTML.trim()).toEqual(
-          `${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
-        );
-        expect(itemValues[1].innerHTML.trim()).toEqual(
-          `${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
-        );
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(twoHoursPast));
+        expect(itemValues[1].innerHTML.trim()).toEqual(timeFormatter.format(oneHourPast));
 
         done();
       });
