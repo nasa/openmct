@@ -94,7 +94,8 @@ export default {
         this.annotationsIndex = new Flatbush(this.imageryAnnotations.length);
         this.imageryAnnotations.forEach((annotation) => {
           const annotationRectangle = annotation.targets[this.keyString].rectangle;
-          const annotationRectangelForPixelDepth = this.transformRectangleWithPixelDensity(annotationRectangle);
+          const annotationRectangelForPixelDepth =
+            this.transformRectangleWithPixelDensity(annotationRectangle);
           const indexNumber = this.annotationsIndex.add(
             annotationRectangelForPixelDepth.x,
             annotationRectangelForPixelDepth.y,
