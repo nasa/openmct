@@ -219,10 +219,8 @@ describe('the plugin', function () {
         expect(itemValues[3].innerHTML.trim()).toEqual(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
         );
-        expect(itemValues[0].innerHTML.trim()).toEqual(
-          timeFormatter.format(twoHoursPast));
-        expect(itemValues[1].innerHTML.trim()).toEqual(
-          timeFormatter.format(oneHourPast));
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(twoHoursPast));
+        expect(itemValues[1].innerHTML.trim()).toEqual(timeFormatter.format(oneHourPast));
 
         done();
       });
