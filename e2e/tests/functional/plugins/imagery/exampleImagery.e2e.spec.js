@@ -296,7 +296,7 @@ test.describe('Example Imagery in Display Layout', () => {
     await page.locator('div[title="Resize object height"] > input').click();
     await page.locator('div[title="Resize object height"] > input').fill('100');
 
-        expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+        expect(thumbsWrapperLocator).toBeVisible();
         await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
     });
 
