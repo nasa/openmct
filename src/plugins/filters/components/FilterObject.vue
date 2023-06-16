@@ -63,8 +63,11 @@
           :filter-field="metadatum"
           :use-global="persistedFilters.useGlobal"
           :persisted-filters="updatedFilters[metadatum.key]"
-          @filterSelected="updateFiltersWithSelectedValue"
+          label="Specific Filter"
+          @filterSelected="updateMultipleFiltersWithSelectedValue"
           @filterTextValueChanged="updateFiltersWithTextValue"
+          @filterSingleSelected="updateSingleSelection"
+          @clearFilters="clearFilters"
         />
       </ul>
     </div>
@@ -140,7 +143,7 @@ export default {
     toggleExpanded() {
       this.expanded = !this.expanded;
     },
-    updateFiltersWithSelectedValue(key, comparator, valueName, value) {
+    updateMultipleFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
 
       if (filterValue[comparator]) {
@@ -159,6 +162,10 @@ export default {
 
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
+    clearFilters(key) {
+      this.$set(this.updatedFilters, key, {});
+      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+    },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
         this.$set(this.updatedFilters, key, {});
@@ -166,6 +173,10 @@ export default {
         this.$set(this.updatedFilters[key], comparator, value);
       }
 
+      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+    },
+    updateSingleSelection(key, comparator, value) {
+      this.$set(this.updatedFilters[key], comparator, [value]);
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     useGlobalFilter(checked) {
