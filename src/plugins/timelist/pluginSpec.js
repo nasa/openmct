@@ -24,7 +24,6 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TimelistPlugin from './plugin';
 import { TIMELIST_TYPE } from './constants';
 import Vue from 'vue';
-import moment from 'moment';
 import EventEmitter from 'EventEmitter';
 
 const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
@@ -220,8 +219,10 @@ describe('the plugin', function () {
         expect(itemValues[3].innerHTML.trim()).toEqual(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
         );
-        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(twoHoursPast));
-        expect(itemValues[1].innerHTML.trim()).toEqual(timeFormatter.format(oneHourPast));
+        expect(itemValues[0].innerHTML.trim()).toEqual(
+          timeFormatter.format(twoHoursPast));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(oneHourPast));
 
         done();
       });
