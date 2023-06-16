@@ -109,13 +109,6 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
-    // getActiveRole() {
-    //     if (!this.loggedIn) {
-    //         Promise.resolve(undefined);
-    //     }
-
-    //     return Promise.resolve(this.selectedStatusRole);
-    // }
     getPossibleRoles() {
         return this.user.getRoles();
     }
