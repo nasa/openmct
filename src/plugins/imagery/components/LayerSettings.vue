@@ -25,23 +25,18 @@
     @click="handleClose"
   >
     <div class="c-checkbox-list js-checkbox-menu c-menu--to-left c-menu--has-close-btn">
-        <ul
-            @click="$event.stopPropagation()"
-        >
-            <li
-                v-for="(layer, index) in layers"
-                :key="index"
-            >
-                <label>
-                    <input
-                        :checked="layer.visible"
-                        type="checkbox"
-                        @change="toggleLayerVisibility(index)"
-                    >
-                    {{ layer.name }}
-                </label>
-            </li>
-        </ul>
+      <ul @click="$event.stopPropagation()">
+        <li v-for="(layer, index) in layers" :key="index">
+          <label>
+            <input
+              :checked="layer.visible"
+              type="checkbox"
+              @change="toggleLayerVisibility(index)"
+            />
+            {{ layer.name }}
+          </label>
+        </li>
+      </ul>
     </div>
 
     <button class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"></button>

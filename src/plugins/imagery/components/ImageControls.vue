@@ -125,62 +125,62 @@ export default {
       const showCursorZoomOut = this.metaPressed && this.shiftPressed;
       const modifierKeyPressed = Boolean(this.metaPressed || this.shiftPressed || this.altPressed);
 
-            return {
-                isPannable,
-                showCursorZoomIn,
-                showCursorZoomOut,
-                modifierKeyPressed
-            };
-        }
+      return {
+        isPannable,
+        showCursorZoomIn,
+        showCursorZoomOut,
+        modifierKeyPressed
+      };
+    }
+  },
+  watch: {
+    imageUrl(newUrl, oldUrl) {
+      // reset image pan/zoom if newUrl only if not locked
+      if (newUrl && !this.panZoomLocked) {
+        this.handleResetImage();
+      }
     },
-    watch: {
-        imageUrl(newUrl, oldUrl) {
-            // reset image pan/zoom if newUrl only if not locked
-            if (newUrl && !this.panZoomLocked) {
-                this.handleResetImage();
-            }
-        },
-        cursorStates(states) {
-            this.$emit('cursorsUpdated', states);
-        }
+    cursorStates(states) {
+      this.$emit('cursorsUpdated', states);
+    }
+  },
+  mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
+    this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
+  },
+  methods: {
+    handleResetImage() {
+      this.$emit('resetImage');
     },
-    mounted() {
-        document.addEventListener('keydown', this.handleKeyDown);
-        document.addEventListener('keyup', this.handleKeyUp);
-        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
+    handleUpdatePanZoom(options) {
+      this.$emit('panZoomUpdated', options);
     },
-    beforeDestroy() {
-        document.removeEventListener('keydown', this.handleKeyDown);
-        document.removeEventListener('keyup', this.handleKeyUp);
+    toggleZoomLock() {
+      this.panZoomLocked = !this.panZoomLocked;
     },
-    methods: {
-        handleResetImage() {
-            this.$emit('resetImage');
-        },
-        handleUpdatePanZoom(options) {
-            this.$emit('panZoomUpdated', options);
-        },
-        toggleZoomLock() {
-            this.panZoomLocked = !this.panZoomLocked;
-        },
-        notifyFiltersChanged() {
-            this.$emit('filtersUpdated', this.filters);
-        },
-        handleResetFilters() {
-            this.filters = { ...DEFAULT_FILTER_VALUES };
-            this.notifyFiltersChanged();
-        },
-        limitZoomRange(factor) {
-            return Math.min(Math.max(ZOOM_LIMITS_MIN_DEFAULT, factor), ZOOM_LIMITS_MAX_DEFAULT);
-        },
-        // used to increment the zoom without knowledge of current level
-        processZoom(increment, userCoordX, userCoordY) {
-            const newFactor = this.limitZoomRange(this.zoomFactor + increment);
-            this.zoomImage(newFactor, userCoordX, userCoordY);
-        },
-        zoomImage(newScaleFactor, screenClientX, screenClientY) {
-            if (!(newScaleFactor || Number.isInteger(newScaleFactor))) {
-                console.error('Scale factor provided is invalid');
+    notifyFiltersChanged() {
+      this.$emit('filtersUpdated', this.filters);
+    },
+    handleResetFilters() {
+      this.filters = { ...DEFAULT_FILTER_VALUES };
+      this.notifyFiltersChanged();
+    },
+    limitZoomRange(factor) {
+      return Math.min(Math.max(ZOOM_LIMITS_MIN_DEFAULT, factor), ZOOM_LIMITS_MAX_DEFAULT);
+    },
+    // used to increment the zoom without knowledge of current level
+    processZoom(increment, userCoordX, userCoordY) {
+      const newFactor = this.limitZoomRange(this.zoomFactor + increment);
+      this.zoomImage(newFactor, userCoordX, userCoordY);
+    },
+    zoomImage(newScaleFactor, screenClientX, screenClientY) {
+      if (!(newScaleFactor || Number.isInteger(newScaleFactor))) {
+        console.error('Scale factor provided is invalid');
 
         return;
       }
