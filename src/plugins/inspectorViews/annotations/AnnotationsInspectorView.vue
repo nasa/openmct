@@ -41,7 +41,6 @@
 
 <script>
 import TagEditor from './tags/TagEditor.vue';
-import _ from 'lodash';
 
 export default {
   components: {
@@ -123,6 +122,7 @@ export default {
     }
   },
   async mounted() {
+    this.abortController = null;
     this.openmct.annotation.on('targetDomainObjectAnnotated', this.loadAnnotationForTargetObject);
     this.openmct.selection.on('change', this.updateSelection);
     await this.updateSelection(this.openmct.selection.get());
@@ -190,20 +190,34 @@ export default {
       }
     },
     async loadAnnotationForTargetObject(target) {
-      const targetID = this.openmct.objects.makeKeyString(target.identifier);
-      const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(
-        target.identifier
-      );
-      const filteredAnnotationsForSelection = allAnnotationsForTarget.filter((annotation) => {
-        const matchingTargetID = Object.keys(annotation.targets).filter((loadedTargetID) => {
-          return targetID === loadedTargetID;
-        });
-        const fetchedTargetDetails = annotation.targets[matchingTargetID];
-        const selectedTargetDetails = this.targetDetails[matchingTargetID];
+      // If the user changes targets while annotations are loading,
+      // abort the previous request.
+      if (this.abortController !== null) {
+        this.abortController.abort();
+      }
 
-        return _.isEqual(fetchedTargetDetails, selectedTargetDetails);
-      });
-      this.loadNewAnnotations(filteredAnnotationsForSelection);
+      this.abortController = new AbortController();
+
+      try {
+        const allAnnotationsForTarget = await this.openmct.annotation.getAnnotations(
+          target.identifier,
+          this.abortController.signal
+        );
+        const filteredAnnotationsForSelection = allAnnotationsForTarget.filter((annotation) =>
+          this.openmct.annotation.areAnnotationTargetsEqual(
+            this.annotationType,
+            this.targetDetails,
+            annotation.targets
+          )
+        );
+        this.loadNewAnnotations(filteredAnnotationsForSelection);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          throw err;
+        }
+      } finally {
+        this.abortController = null;
+      }
     }
   }
 };
