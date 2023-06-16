@@ -95,7 +95,7 @@ export default {
         this.imageryAnnotations.forEach((annotation) => {
           const annotationRectangle = annotation.targets[this.keyString].rectangle;
           const annotationRectangelForPixelDepth =
-            this.transformRectangleWithPixelDensity(annotationRectangle);
+            this.transformRectangleToPixelDense(annotationRectangle);
           const indexNumber = this.annotationsIndex.add(
             annotationRectangelForPixelDepth.x,
             annotationRectangelForPixelDepth.y,
@@ -161,7 +161,7 @@ export default {
       this.mouseDown = true;
       this.selectedAnnotations = [];
     },
-    transformRectangleWithPixelDensity(rectangle) {
+    transformRectangleToPixelDense(rectangle) {
       const pixelScale = window.devicePixelRatio;
       const transformedRectangle = {
         x: rectangle.x * pixelScale,
@@ -171,7 +171,7 @@ export default {
       };
       return transformedRectangle;
     },
-    transformRectangleWithoutPixelDensity(rectangle) {
+    transformRectangleFromPixelDense(rectangle) {
       const pixelScale = window.devicePixelRatio;
       const transformedRectangle = {
         x: rectangle.x / pixelScale,
@@ -285,8 +285,7 @@ export default {
         width: this.newAnnotationRectangle.width,
         height: this.newAnnotationRectangle.height
       };
-      const rectangleWithoutPixelScale =
-        this.transformRectangleWithoutPixelDensity(rectangleFromCanvas);
+      const rectangleWithoutPixelScale = this.transformRectangleFromPixelDense(rectangleFromCanvas);
       targetDetails[this.keyString] = {
         rectangle: rectangleWithoutPixelScale,
         time: this.image.time
@@ -383,7 +382,7 @@ export default {
     drawAnnotations() {
       this.clearCanvas();
       this.imageryAnnotations.forEach((annotation) => {
-        const rectangleForPixelDensity = this.transformRectangleWithPixelDensity(
+        const rectangleForPixelDensity = this.transformRectangleToPixelDense(
           annotation.targets[this.keyString].rectangle
         );
         if (this.isSelectedAnnotation(annotation)) {
