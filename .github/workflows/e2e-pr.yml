@@ -1,4 +1,4 @@
-name: "e2e-pr"
+name: 'e2e-pr'
 on:
   workflow_dispatch:
   pull_request:
@@ -66,3 +66,20 @@ jobs:
               repo: "openmct",
               body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
+      - name: Remove pr:e2e label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove 'pr:e2e' label: ${error.message}`);
+            }

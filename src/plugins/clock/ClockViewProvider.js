@@ -24,36 +24,36 @@ import Clock from './components/Clock.vue';
 import Vue from 'vue';
 
 export default function ClockViewProvider(openmct) {
-    return {
-        key: 'clock.view',
-        name: 'Clock',
-        cssClass: 'icon-clock',
-        canView(domainObject) {
-            return domainObject.type === 'clock';
+  return {
+    key: 'clock.view',
+    name: 'Clock',
+    cssClass: 'icon-clock',
+    canView(domainObject) {
+      return domainObject.type === 'clock';
+    },
+
+    view: function (domainObject) {
+      let component;
+
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              Clock
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: '<clock />'
+          });
         },
-
-        view: function (domainObject) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Clock
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: '<clock />'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

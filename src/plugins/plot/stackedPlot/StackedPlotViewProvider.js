@@ -24,63 +24,63 @@ import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
 
 export default function StackedPlotViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: 'plot-stacked',
-        name: 'Stacked Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
-        },
+  return {
+    key: 'plot-stacked',
+    name: 'Stacked Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.stacked';
+    },
 
-        canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
-        },
+    canEdit(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.stacked';
+    },
 
-        view: function (domainObject, objectPath) {
-            let component;
+    view: function (domainObject, objectPath) {
+      let component;
 
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
 
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            StackedPlot
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
-                    });
-                },
-                getViewContext() {
-                    if (!component) {
-                        return {};
-                    }
-
-                    return component.$refs.plotComponent.getViewContext();
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+          component = new Vue({
+            el: element,
+            components: {
+              StackedPlot
+            },
+            provide: {
+              openmct,
+              domainObject,
+              path: objectPath
+            },
+            data() {
+              return {
+                options: {
+                  compact: isCompact
                 }
-            };
+              };
+            },
+            template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
+          });
+        },
+        getViewContext() {
+          if (!component) {
+            return {};
+          }
+
+          return component.$refs.plotComponent.getViewContext();
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

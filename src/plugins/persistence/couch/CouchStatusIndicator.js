@@ -39,50 +39,50 @@
 
 /** @type {IndicatorState} */
 export const CONNECTED = {
-    statusClass: "s-status-on",
-    text: "CouchDB is connected",
-    description: "CouchDB is online and accepting requests."
+  statusClass: 's-status-on',
+  text: 'CouchDB is connected',
+  description: 'CouchDB is online and accepting requests.'
 };
 /** @type {IndicatorState} */
 export const PENDING = {
-    statusClass: "s-status-warning-lo",
-    text: "Attempting to connect to CouchDB...",
-    description: "Checking status of CouchDB, please stand by..."
+  statusClass: 's-status-warning-lo',
+  text: 'Attempting to connect to CouchDB...',
+  description: 'Checking status of CouchDB, please stand by...'
 };
 /** @type {IndicatorState} */
 export const DISCONNECTED = {
-    statusClass: "s-status-warning-hi",
-    text: "CouchDB is offline",
-    description: "CouchDB is offline and unavailable for requests."
+  statusClass: 's-status-warning-hi',
+  text: 'CouchDB is offline',
+  description: 'CouchDB is offline and unavailable for requests.'
 };
 /** @type {IndicatorState} */
 export const UNKNOWN = {
-    statusClass: "s-status-info",
-    text: "CouchDB connectivity unknown",
-    description: "CouchDB is in an unknown state of connectivity."
+  statusClass: 's-status-info',
+  text: 'CouchDB connectivity unknown',
+  description: 'CouchDB is in an unknown state of connectivity.'
 };
 
 export default class CouchStatusIndicator {
-    constructor(simpleIndicator) {
-        this.indicator = simpleIndicator;
-        this.#setDefaults();
-    }
+  constructor(simpleIndicator) {
+    this.indicator = simpleIndicator;
+    this.#setDefaults();
+  }
 
-    /**
-     * Set the default values for the indicator.
-     * @private
-     */
-    #setDefaults() {
-        this.setIndicatorToState(PENDING);
-    }
+  /**
+   * Set the default values for the indicator.
+   * @private
+   */
+  #setDefaults() {
+    this.setIndicatorToState(PENDING);
+  }
 
-    /**
-     * Set the indicator to the given state.
-     * @param {IndicatorState} state
-     */
-    setIndicatorToState(state) {
-        this.indicator.text(state.text);
-        this.indicator.description(state.description);
-        this.indicator.statusClass(state.statusClass);
-    }
+  /**
+   * Set the indicator to the given state.
+   * @param {IndicatorState} state
+   */
+  setIndicatorToState(state) {
+    this.indicator.text(state.text);
+    this.indicator.description(state.description);
+    this.indicator.statusClass(state.statusClass);
+  }
 }

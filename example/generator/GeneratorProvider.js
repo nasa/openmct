@@ -20,87 +20,84 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './WorkerInterface'
-], function (
-    WorkerInterface
-) {
+define(['./WorkerInterface'], function (WorkerInterface) {
+  var REQUEST_DEFAULTS = {
+    amplitude: 1,
+    period: 10,
+    offset: 0,
+    dataRateInHz: 1,
+    randomness: 0,
+    phase: 0,
+    loadDelay: 0,
+    infinityValues: false
+  };
 
-    var REQUEST_DEFAULTS = {
-        amplitude: 1,
-        period: 10,
-        offset: 0,
-        dataRateInHz: 1,
-        randomness: 0,
-        phase: 0,
-        loadDelay: 0,
-        infinityValues: false
-    };
+  function GeneratorProvider(openmct, StalenessProvider) {
+    this.openmct = openmct;
+    this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
+  }
 
-    function GeneratorProvider(openmct, StalenessProvider) {
-        this.openmct = openmct;
-        this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
-    }
+  GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
+    return domainObject.type === 'generator';
+  };
 
-    GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
-        return domainObject.type === 'generator';
-    };
+  GeneratorProvider.prototype.supportsRequest = GeneratorProvider.prototype.supportsSubscribe =
+    GeneratorProvider.prototype.canProvideTelemetry;
 
-    GeneratorProvider.prototype.supportsRequest =
-        GeneratorProvider.prototype.supportsSubscribe =
-            GeneratorProvider.prototype.canProvideTelemetry;
+  GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+    var props = [
+      'amplitude',
+      'period',
+      'offset',
+      'dataRateInHz',
+      'randomness',
+      'phase',
+      'loadDelay',
+      'infinityValues'
+    ];
 
-    GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
-        var props = [
-            'amplitude',
-            'period',
-            'offset',
-            'dataRateInHz',
-            'randomness',
-            'phase',
-            'loadDelay',
-            'infinityValues'
-        ];
+    request = request || {};
 
-        request = request || {};
+    var workerRequest = {};
 
-        var workerRequest = {};
+    props.forEach(function (prop) {
+      if (
+        domainObject.telemetry &&
+        Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)
+      ) {
+        workerRequest[prop] = domainObject.telemetry[prop];
+      }
 
-        props.forEach(function (prop) {
-            if (domainObject.telemetry && Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)) {
-                workerRequest[prop] = domainObject.telemetry[prop];
-            }
+      if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
+        workerRequest[prop] = request[prop];
+      }
 
-            if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
-                workerRequest[prop] = request[prop];
-            }
+      if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
+        workerRequest[prop] = REQUEST_DEFAULTS[prop];
+      }
 
-            if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
-                workerRequest[prop] = REQUEST_DEFAULTS[prop];
-            }
+      workerRequest[prop] = Number(workerRequest[prop]);
+    });
 
-            workerRequest[prop] = Number(workerRequest[prop]);
-        });
+    workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    workerRequest.name = domainObject.name;
 
-        workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
-        workerRequest.name = domainObject.name;
+    return workerRequest;
+  };
 
-        return workerRequest;
-    };
+  GeneratorProvider.prototype.request = function (domainObject, request) {
+    var workerRequest = this.makeWorkerRequest(domainObject, request);
+    workerRequest.start = request.start;
+    workerRequest.end = request.end;
 
-    GeneratorProvider.prototype.request = function (domainObject, request) {
-        var workerRequest = this.makeWorkerRequest(domainObject, request);
-        workerRequest.start = request.start;
-        workerRequest.end = request.end;
+    return this.workerInterface.request(workerRequest);
+  };
 
-        return this.workerInterface.request(workerRequest);
-    };
+  GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+    var workerRequest = this.makeWorkerRequest(domainObject, {});
 
-    GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-        var workerRequest = this.makeWorkerRequest(domainObject, {});
+    return this.workerInterface.subscribe(workerRequest, callback);
+  };
 
-        return this.workerInterface.subscribe(workerRequest, callback);
-    };
-
-    return GeneratorProvider;
+  return GeneratorProvider;
 });

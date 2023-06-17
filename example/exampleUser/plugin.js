@@ -33,10 +33,10 @@ export default function ExampleUserPlugin({autoLoginUser, statusRoles} = {
             statusRoles
         });
 
-        if (autoLoginUser !== undefined) {
-            userProvider.autoLogin(autoLoginUser);
-        }
+    if (autoLoginUser !== undefined) {
+      userProvider.autoLogin(autoLoginUser);
+    }
 
-        openmct.user.setProvider(userProvider);
-    };
+    openmct.user.setProvider(userProvider);
+  };
 }

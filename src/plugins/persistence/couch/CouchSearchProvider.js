@@ -27,100 +27,158 @@
 // If the above namespace is ever resolved, we can fold this search provider
 // back into the object provider.
 
+const BATCH_ANNOTATION_DEBOUNCE_MS = 100;
+
 class CouchSearchProvider {
-    constructor(couchObjectProvider) {
-        this.couchObjectProvider = couchObjectProvider;
-        this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.TAGS];
-    }
+  #bulkPromise;
+  #batchIds;
+  #lastAbortSignal;
 
-    supportsSearchType(searchType) {
-        return this.supportedSearchTypes.includes(searchType);
-    }
+  constructor(couchObjectProvider) {
+    this.couchObjectProvider = couchObjectProvider;
+    this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+    this.supportedSearchTypes = [
+      this.searchTypes.OBJECTS,
+      this.searchTypes.ANNOTATIONS,
+      this.searchTypes.TAGS
+    ];
+    this.#batchIds = [];
+    this.#bulkPromise = null;
+  }
 
-    search(query, abortSignal, searchType) {
-        if (searchType === this.searchTypes.OBJECTS) {
-            return this.searchForObjects(query, abortSignal);
-        } else if (searchType === this.searchTypes.ANNOTATIONS) {
-            return this.searchForAnnotations(query, abortSignal);
-        } else if (searchType === this.searchTypes.TAGS) {
-            return this.searchForTags(query, abortSignal);
-        } else {
-            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+  supportsSearchType(searchType) {
+    return this.supportedSearchTypes.includes(searchType);
+  }
+
+  search(query, abortSignal, searchType) {
+    if (searchType === this.searchTypes.OBJECTS) {
+      return this.searchForObjects(query, abortSignal);
+    } else if (searchType === this.searchTypes.ANNOTATIONS) {
+      return this.searchForAnnotations(query, abortSignal);
+    } else if (searchType === this.searchTypes.TAGS) {
+      return this.searchForTags(query, abortSignal);
+    } else {
+      throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+    }
+  }
+
+  searchForObjects(query, abortSignal) {
+    const filter = {
+      selector: {
+        model: {
+          name: {
+            $regex: `(?i)${query}`
+          }
         }
-    }
+      }
+    };
 
-    searchForObjects(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
-                }
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
+
+  async #deferBatchAnnotationSearch() {
+    // We until the next event loop cycle to "collect" all of the get
+    // requests triggered in this iteration of the event loop
+    await this.#waitForDebounce();
+    const batchIdsToSearch = [...this.#batchIds];
+    this.#clearBatch();
+    return this.#bulkAnnotationSearch(batchIdsToSearch);
+  }
+
+  #clearBatch() {
+    this.#batchIds = [];
+    this.#bulkPromise = undefined;
+  }
+
+  #waitForDebounce() {
+    let timeoutID;
+    clearTimeout(timeoutID);
+
+    return new Promise((resolve) => {
+      timeoutID = setTimeout(() => {
+        resolve();
+      }, BATCH_ANNOTATION_DEBOUNCE_MS);
+    });
+  }
+
+  #bulkAnnotationSearch(batchIdsToSearch) {
+    const filter = {
+      selector: {
+        $and: [
+          {
+            'model.type': {
+              $eq: 'annotation'
             }
-        };
-
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
-    searchForAnnotations(keyString, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model": {
-                            "targets": {
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
-            }
-        };
-        filter.selector.$and[0].model.targets[keyString] = {
-            "$exists": true
-        };
-
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
-    searchForTags(tagsArray, abortSignal) {
-        if (!tagsArray || !tagsArray.length) {
-            return [];
+          },
+          {
+            $or: []
+          }
+        ]
+      }
+    };
+    let lastAbortSignal = null;
+    // TODO: should remove duplicates from batchIds
+    batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
+      const modelFilter = {
+        model: {
+          targets: {}
         }
+      };
+      modelFilter.model.targets[keyString] = {
+        $exists: true
+      };
 
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model.tags": {
-                            "$elemMatch": {
-                                "$or": [
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
-            }
-        };
-        tagsArray.forEach(tag => {
-            filter.selector.$and[0]["model.tags"].$elemMatch.$or.push({
-                "$eq": `${tag}`
-            });
-        });
+      filter.selector.$and[1].$or.push(modelFilter);
+      lastAbortSignal = abortSignal;
+    });
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    return this.couchObjectProvider.getObjectsByFilter(filter, lastAbortSignal);
+  }
+
+  async searchForAnnotations(keyString, abortSignal) {
+    this.#batchIds.push({ keyString, abortSignal });
+    if (!this.#bulkPromise) {
+      this.#bulkPromise = this.#deferBatchAnnotationSearch();
     }
 
+    const returnedData = await this.#bulkPromise;
+    // only return data that matches the keystring
+    const filteredByKeyString = returnedData.filter((foundAnnotation) => {
+      return foundAnnotation.targets[keyString];
+    });
+    return filteredByKeyString;
+  }
+
+  searchForTags(tagsArray, abortSignal) {
+    if (!tagsArray || !tagsArray.length) {
+      return [];
+    }
+
+    const filter = {
+      selector: {
+        $and: [
+          {
+            'model.tags': {
+              $elemMatch: {
+                $or: []
+              }
+            }
+          },
+          {
+            'model.type': {
+              $eq: 'annotation'
+            }
+          }
+        ]
+      }
+    };
+    tagsArray.forEach((tag) => {
+      filter.selector.$and[0]['model.tags'].$elemMatch.$or.push({
+        $eq: `${tag}`
+      });
+    });
+
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
 }
 export default CouchSearchProvider;

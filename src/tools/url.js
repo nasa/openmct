@@ -25,39 +25,39 @@
  */
 
 function getUrlParams(openmct, customUrlParams = {}) {
-    let urlParams = openmct.router.getParams();
-    Object.entries(customUrlParams).forEach((urlParam) => {
-        const [key, value] = urlParam;
-        urlParams[key] = value;
-    });
+  let urlParams = openmct.router.getParams();
+  Object.entries(customUrlParams).forEach((urlParam) => {
+    const [key, value] = urlParam;
+    urlParams[key] = value;
+  });
 
-    if (urlParams['tc.mode'] === 'fixed') {
-        delete urlParams['tc.startDelta'];
-        delete urlParams['tc.endDelta'];
-    } else if (urlParams['tc.mode'] === 'local') {
-        delete urlParams['tc.startBound'];
-        delete urlParams['tc.endBound'];
-    }
+  if (urlParams['tc.mode'] === 'fixed') {
+    delete urlParams['tc.startDelta'];
+    delete urlParams['tc.endDelta'];
+  } else if (urlParams['tc.mode'] === 'local') {
+    delete urlParams['tc.startBound'];
+    delete urlParams['tc.endBound'];
+  }
 
-    return urlParams;
+  return urlParams;
 }
 
 export function paramsToArray(openmct, customUrlParams = {}) {
-    // parse urlParams from an object to an array.
-    let urlParams = getUrlParams(openmct, customUrlParams);
-    let newTabParams = [];
-    for (let key in urlParams) {
-        if ({}.hasOwnProperty.call(urlParams, key)) {
-            let param = `${key}=${urlParams[key]}`;
-            newTabParams.push(param);
-        }
+  // parse urlParams from an object to an array.
+  let urlParams = getUrlParams(openmct, customUrlParams);
+  let newTabParams = [];
+  for (let key in urlParams) {
+    if ({}.hasOwnProperty.call(urlParams, key)) {
+      let param = `${key}=${urlParams[key]}`;
+      newTabParams.push(param);
     }
+  }
 
-    return newTabParams;
+  return newTabParams;
 }
 
 export function identifierToString(openmct, objectPath) {
-    return '#/browse/' + openmct.objects.getRelativePath(objectPath);
+  return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
 /**
@@ -67,12 +67,12 @@ export function identifierToString(openmct, objectPath) {
  * @returns {string} url
  */
 export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
-    let url = identifierToString(openmct, objectPath);
+  let url = identifierToString(openmct, objectPath);
 
-    let urlParams = paramsToArray(openmct, customUrlParams);
-    if (urlParams.length) {
-        url += '?' + urlParams.join('&');
-    }
+  let urlParams = paramsToArray(openmct, customUrlParams);
+  if (urlParams.length) {
+    url += '?' + urlParams.join('&');
+  }
 
-    return url;
+  return url;
 }

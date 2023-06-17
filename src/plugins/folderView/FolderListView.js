@@ -20,56 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/ListView.vue',
-    './constants.js',
-    'vue',
-    'moment'
-], function (
-    ListViewComponent,
-    constants,
-    Vue,
-    Moment
+define(['./components/ListView.vue', './constants.js', 'vue', 'moment'], function (
+  ListViewComponent,
+  constants,
+  Vue,
+  Moment
 ) {
-    function FolderListView(openmct) {
-        const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+  function FolderListView(openmct) {
+    const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+
+    return {
+      key: 'list-view',
+      name: 'List View',
+      cssClass: 'icon-list-view',
+      canView: function (domainObject) {
+        return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+      },
+      view: function (domainObject) {
+        let component;
 
         return {
-            key: 'list-view',
-            name: 'List View',
-            cssClass: 'icon-list-view',
-            canView: function (domainObject) {
-                return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
-            },
-            view: function (domainObject) {
-                let component;
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                listViewComponent: ListViewComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                Moment
-                            },
-                            template: '<list-view-component></list-view-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
+          show: function (element) {
+            component = new Vue({
+              el: element,
+              components: {
+                listViewComponent: ListViewComponent.default
+              },
+              provide: {
+                openmct,
+                domainObject,
+                Moment
+              },
+              template: '<list-view-component></list-view-component>'
+            });
+          },
+          destroy: function (element) {
+            component.$destroy();
+            component = undefined;
+          }
         };
-    }
+      },
+      priority: function () {
+        return 1;
+      }
+    };
+  }
 
-    return FolderListView;
+  return FolderListView;
 });

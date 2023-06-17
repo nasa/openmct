@@ -21,58 +21,58 @@
  *****************************************************************************/
 
 function inSelectionPath(openmct, domainObject) {
-    const domainObjectIdentifier = domainObject.identifier;
+  const domainObjectIdentifier = domainObject.identifier;
 
-    return openmct.selection.get().some(selectionPath => {
-        return selectionPath.some(objectInPath => {
-            const objectInPathIdentifier = objectInPath.context.item.identifier;
+  return openmct.selection.get().some((selectionPath) => {
+    return selectionPath.some((objectInPath) => {
+      const objectInPathIdentifier = objectInPath.context.item.identifier;
 
-            return openmct.objects.areIdsEqual(objectInPathIdentifier, domainObjectIdentifier);
-        });
+      return openmct.objects.areIdsEqual(objectInPathIdentifier, domainObjectIdentifier);
     });
+  });
 }
 
 export default class ClearDataAction {
-    constructor(openmct, appliesToObjects) {
-        this.name = 'Clear Data for Object';
-        this.key = 'clear-data-action';
-        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
-        this.cssClass = 'icon-clear-data';
+  constructor(openmct, appliesToObjects) {
+    this.name = 'Clear Data for Object';
+    this.key = 'clear-data-action';
+    this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
+    this.cssClass = 'icon-clear-data';
 
-        this._openmct = openmct;
-        this._appliesToObjects = appliesToObjects;
+    this._openmct = openmct;
+    this._appliesToObjects = appliesToObjects;
+  }
+  invoke(objectPath) {
+    let domainObject = null;
+    if (objectPath) {
+      domainObject = objectPath[0];
     }
-    invoke(objectPath) {
-        let domainObject = null;
-        if (objectPath) {
-            domainObject = objectPath[0];
-        }
 
-        this._openmct.objectViews.emit('clearData', domainObject);
+    this._openmct.objectViews.emit('clearData', domainObject);
+  }
+  appliesTo(objectPath) {
+    if (!objectPath) {
+      return false;
     }
-    appliesTo(objectPath) {
-        if (!objectPath) {
-            return false;
-        }
 
-        const contextualDomainObject = objectPath[0];
-        // first check to see if this action applies to this sort of object at all
-        const appliesToThisObject = this._appliesToObjects.some(type => {
-            return contextualDomainObject.type === type;
-        });
-        if (!appliesToThisObject) {
-            // we've selected something not applicable
-            return false;
-        }
-
-        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject);
-        if (objectInSelectionPath) {
-            return true;
-        } else {
-            // if this it doesn't match up, check to see if we're in a composition (i.e., layout)
-            const routerPath = this._openmct.router.path[0];
-
-            return routerPath.type === 'layout';
-        }
+    const contextualDomainObject = objectPath[0];
+    // first check to see if this action applies to this sort of object at all
+    const appliesToThisObject = this._appliesToObjects.some((type) => {
+      return contextualDomainObject.type === type;
+    });
+    if (!appliesToThisObject) {
+      // we've selected something not applicable
+      return false;
     }
+
+    const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject);
+    if (objectInSelectionPath) {
+      return true;
+    } else {
+      // if this it doesn't match up, check to see if we're in a composition (i.e., layout)
+      const routerPath = this._openmct.router.path[0];
+
+      return routerPath.type === 'layout';
+    }
+  }
 }

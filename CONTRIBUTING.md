@@ -18,13 +18,13 @@ The short version:
    for review.)
 4. Respond to any discussion. When the reviewer decides it's ready, they
    will merge back `master` and fill out their own check list.
-5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
+5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.
 
 ## Contribution Process
 
 Open MCT uses git for software version control, and for branching and
 merging. The central repository is at
-https://github.com/nasa/openmct.git.
+<https://github.com/nasa/openmct.git>.
 
 ### Roles
 
@@ -116,6 +116,7 @@ the pull request containing the reviewer checklist (from below) and complete
 the merge back to the master branch.
 
 Additionally:
+
 * Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, [create one](https://github.com/nasa/openmct/issues/new/choose).
 * Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
@@ -132,25 +133,26 @@ changes.
 
 ### Code Standards
 
-JavaScript sources in Open MCT must satisfy the ESLint rules defined in 
-this repository. This is verified by the command line build.
+JavaScript sources in Open MCT must satisfy the [ESLint](https://eslint.org/) rules defined in
+this repository. [Prettier](https://prettier.io/) is used in conjunction with ESLint to enforce code style
+via automated formatting. These are verified by the command line build.
 
 #### Code Guidelines
 
 The following guidelines are provided for anyone contributing source code to the Open MCT project:
 
-1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
+1. Write clean code. Here’s a good summary - <https://github.com/ryanmcdermott/clean-code-javascript>.
 1. Include JSDoc for any exposed API (e.g. public methods, classes).
 1. Include non-JSDoc comments as-needed for explaining private variables,
-   methods, or algorithms when they are non-obvious. Otherwise code 
+   methods, or algorithms when they are non-obvious. Otherwise code
    should be self-documenting.
 1. Classes and Vue components should use camel case, first letter capitalized
    (e.g. SomeClassName).
 1. Methods, variables, fields, events, and function names should use camelCase,
    first letter lower-case (e.g. someVariableName).
 1. Source files that export functions should use camelCase, first letter lower-case (eg. testTools.js)
-1. Constants (variables or fields which are meant to be declared and 
-   initialized statically, and never changed) should use only capital 
+1. Constants (variables or fields which are meant to be declared and
+   initialized statically, and never changed) should use only capital
    letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `const`s
 1. File names should be the name of the exported class, plus a .js extension
    (e.g. SomeClassName.js).
@@ -159,21 +161,25 @@ The following guidelines are provided for anyone contributing source code to the
    (e.g. as arguments to a forEach call). Anonymous functions should always be arrow functions.
 1. Named functions are preferred over functions assigned to variables.
    eg.
+
    ```JavaScript
    function renameObject(object, newName) {
        Object.name = newName;
    }
    ```
+
    is preferable to
+
    ```JavaScript
    const rename = (object, newName) => {
        Object.name = newName;
    }
    ```
+
 1. Avoid deep nesting (especially of functions), except where necessary
    (e.g. due to closure scope).
 1. End with a single new-line character.
-1. Always use ES6 `Class`es and inheritance rather than the pre-ES6 prototypal 
+1. Always use ES6 `Class`es and inheritance rather than the pre-ES6 prototypal
    pattern.
 1. Within a given function's scope, do not mix declarations and imperative
    code, and  present these in the following order:
@@ -182,19 +188,24 @@ The following guidelines are provided for anyone contributing source code to the
    * Finally, the returned value. A single return statement at the end of the function should be used, except where an early return would improve code clarity.
 1. Avoid the use of "magic" values.
    eg.
+
    ```JavaScript
    const UNAUTHORIZED = 401;
    if (responseCode === UNAUTHORIZED)
    ```
+
    is preferable to
+
    ```JavaScript
    if (responseCode === 401)
    ```
+
 1. Use the ternary operator only for simple cases such as variable assignment. Nested ternaries should be avoided in all cases.
 1. Unit Test specs should reside alongside the source code they test, not in a separate directory.
 1. Organize code by feature, not by type.
    eg.
-   ```
+
+   ```txt
    - telemetryTable
        - row
            TableRow.js
@@ -206,8 +217,10 @@ The following guidelines are provided for anyone contributing source code to the
        plugin.js
        pluginSpec.js
    ```
+
    is preferable to
-   ```
+
+   ```txt
    - telemetryTable
        - components
            TableRow.vue
@@ -219,6 +232,7 @@ The following guidelines are provided for anyone contributing source code to the
        plugin.js
        pluginSpec.js
    ```
+
 Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
 
@@ -257,7 +271,7 @@ these standards.
 
 ## Issue Reporting
 
-Issues are tracked at https://github.com/nasa/openmct/issues.
+Issues are tracked at <https://github.com/nasa/openmct/issues>.
 
 Issue severity is categorized as follows (in ascending order):
 

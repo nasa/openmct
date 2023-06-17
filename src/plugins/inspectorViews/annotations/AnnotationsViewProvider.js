@@ -24,45 +24,45 @@ import Annotations from './AnnotationsInspectorView.vue';
 import Vue from 'vue';
 
 export default function AnnotationsViewProvider(openmct) {
-    return {
-        key: 'annotationsView',
-        name: 'Annotations',
-        canView: function (selection) {
-            const availableTags = openmct.annotation.getAvailableTags();
+  return {
+    key: 'annotationsView',
+    name: 'Annotations',
+    canView: function (selection) {
+      const availableTags = openmct.annotation.getAvailableTags();
 
-            if (availableTags.length < 1) {
-                return false;
-            }
+      if (availableTags.length < 1) {
+        return false;
+      }
 
-            return selection.length;
+      return selection.length;
+    },
+    view: function (selection) {
+      let component;
+
+      const domainObject = selection?.[0]?.[0]?.context?.item;
+
+      return {
+        show: function (el) {
+          component = new Vue({
+            el,
+            components: {
+              Annotations
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: `<Annotations />`
+          });
         },
-        view: function (selection) {
-            let component;
-
-            const domainObject = selection?.[0]?.[0]?.context?.item;
-
-            return {
-                show: function (el) {
-                    component = new Vue({
-                        el,
-                        components: {
-                            Annotations
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: `<Annotations />`
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.DEFAULT;
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        priority: function () {
+          return openmct.priority.DEFAULT;
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

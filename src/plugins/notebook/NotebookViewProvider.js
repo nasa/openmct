@@ -25,51 +25,51 @@ import Notebook from './components/Notebook.vue';
 import Agent from '@/utils/agent/Agent';
 
 export default class NotebookViewProvider {
-    constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
-        this.openmct = openmct;
-        this.key = key;
-        this.name = `${name} View`;
-        this.type = type;
-        this.cssClass = cssClass;
-        this.snapshotContainer = snapshotContainer;
-        this.entryUrlWhitelist = entryUrlWhitelist;
-    }
+  constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
+    this.openmct = openmct;
+    this.key = key;
+    this.name = `${name} View`;
+    this.type = type;
+    this.cssClass = cssClass;
+    this.snapshotContainer = snapshotContainer;
+    this.entryUrlWhitelist = entryUrlWhitelist;
+  }
 
-    canView(domainObject) {
-        return domainObject.type === this.type;
-    }
+  canView(domainObject) {
+    return domainObject.type === this.type;
+  }
 
-    view(domainObject) {
-        let component;
-        let openmct = this.openmct;
-        let snapshotContainer = this.snapshotContainer;
-        let agent = new Agent(window);
-        let entryUrlWhitelist = this.entryUrlWhitelist;
+  view(domainObject) {
+    let component;
+    let openmct = this.openmct;
+    let snapshotContainer = this.snapshotContainer;
+    let agent = new Agent(window);
+    let entryUrlWhitelist = this.entryUrlWhitelist;
 
-        return {
-            show(container) {
-                component = new Vue({
-                    el: container,
-                    components: {
-                        Notebook
-                    },
-                    provide: {
-                        openmct,
-                        snapshotContainer,
-                        agent,
-                        entryUrlWhitelist
-                    },
-                    data() {
-                        return {
-                            domainObject
-                        };
-                    },
-                    template: '<Notebook :domain-object="domainObject"></Notebook>'
-                });
-            },
-            destroy() {
-                component.$destroy();
-            }
-        };
-    }
+    return {
+      show(container) {
+        component = new Vue({
+          el: container,
+          components: {
+            Notebook
+          },
+          provide: {
+            openmct,
+            snapshotContainer,
+            agent,
+            entryUrlWhitelist
+          },
+          data() {
+            return {
+              domainObject
+            };
+          },
+          template: '<Notebook :domain-object="domainObject"></Notebook>'
+        });
+      },
+      destroy() {
+        component.$destroy();
+      }
+    };
+  }
 }
