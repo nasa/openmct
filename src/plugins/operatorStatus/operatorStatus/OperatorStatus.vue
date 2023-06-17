@@ -94,7 +94,6 @@ export default {
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
     },
     async mounted() {
-        console.log('mounted')
         this.unsubscribe = [];
         await this.fetchUser();
         this.fetchPossibleStatusesForUser();
