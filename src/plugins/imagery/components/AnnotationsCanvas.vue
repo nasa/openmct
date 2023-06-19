@@ -60,14 +60,33 @@ export default {
       keyString: null,
       context: null,
       canvas: null,
-      annotationsIndex: null,
       selectedAnnotations: [],
       indexToAnnotationMap: {}
     };
   },
-  watch: {
-    imageryAnnotations() {
-      this.buildAnnotationIndex();
+  computed: {
+    annotationsIndex() {
+      if (this.imageryAnnotations.length) {
+        // create a flatbush index for the annotations
+        const builtAnnotationsIndex = new Flatbush(this.imageryAnnotations.length);
+        this.imageryAnnotations.forEach((annotation) => {
+          const annotationRectangle = annotation.targets[this.keyString].rectangle;
+          const annotationRectangleForPixelDepth =
+            this.transformRectangleToPixelDense(annotationRectangle);
+          const indexNumber = builtAnnotationsIndex.add(
+            annotationRectangleForPixelDepth.x,
+            annotationRectangleForPixelDepth.y,
+            annotationRectangleForPixelDepth.x + annotationRectangleForPixelDepth.width,
+            annotationRectangleForPixelDepth.y + annotationRectangleForPixelDepth.height
+          );
+          this.indexToAnnotationMap[indexNumber] = annotation;
+        });
+        builtAnnotationsIndex.finish();
+
+        return builtAnnotationsIndex;
+      } else {
+        return null;
+      }
     }
   },
   mounted() {
@@ -81,34 +100,13 @@ export default {
 
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     this.openmct.selection.on('change', this.updateSelection);
-    this.buildAnnotationIndex();
+    this.drawAnnotations();
   },
   beforeDestroy() {
     this.openmct.selection.off('change', this.updateSelection);
     document.body.removeEventListener('click', this.cancelSelection);
   },
   methods: {
-    buildAnnotationIndex() {
-      if (this.imageryAnnotations.length) {
-        // create a flatbush index for the annotations
-        this.annotationsIndex = new Flatbush(this.imageryAnnotations.length);
-        this.imageryAnnotations.forEach((annotation) => {
-          const annotationRectangle = annotation.targets[this.keyString].rectangle;
-          const annotationRectangelForPixelDepth =
-            this.transformRectangleToPixelDense(annotationRectangle);
-          const indexNumber = this.annotationsIndex.add(
-            annotationRectangelForPixelDepth.x,
-            annotationRectangelForPixelDepth.y,
-            annotationRectangelForPixelDepth.x + annotationRectangelForPixelDepth.width,
-            annotationRectangelForPixelDepth.y + annotationRectangelForPixelDepth.height
-          );
-          this.indexToAnnotationMap[indexNumber] = annotation;
-        });
-        this.annotationsIndex.finish();
-
-        this.drawAnnotations();
-      }
-    },
     onAnnotationChange(annotations) {
       this.selectedAnnotations = annotations;
       this.$emit('annotationsChanged', annotations);
@@ -161,6 +159,11 @@ export default {
       this.mouseDown = true;
       this.selectedAnnotations = [];
     },
+    /**
+     * Given a rectangle, returns a rectangle that conforms to the pixel density of the device
+     * @param {Object} rectangle without pixel density applied
+     * @returns {Object} transformed rectangle with pixel density applied
+     */
     transformRectangleToPixelDense(rectangle) {
       const pixelScale = window.devicePixelRatio;
       const transformedRectangle = {
@@ -171,6 +174,11 @@ export default {
       };
       return transformedRectangle;
     },
+    /**
+     * Given a rectangle, returns a rectangle that is independent of the pixel density of the device
+     * @param {Object} rectangle with pixel density applied
+     * @returns {Object} transformed rectangle without pixel density applied
+     */
     transformRectangleFromPixelDense(rectangle) {
       const pixelScale = window.devicePixelRatio;
       const transformedRectangle = {

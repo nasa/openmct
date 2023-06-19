@@ -791,15 +791,6 @@ export default {
         // wrong type of selection
         return;
       }
-
-      const incomingSelectedAnnotation = selection?.[0]?.[0]?.context?.annotations?.[0];
-      console.debug(`📲 incoming search selections`, incomingSelectedAnnotation);
-      // TODO in https://github.com/nasa/openmct/issues/6731
-      // For incoming search results, we should:
-      // 1. set the the time bounds to match the search result
-      // 2. search the imageHistory for the image that matches the time of the search result
-      // 3. using the index from the above, "click" on the image to select it
-      // 4. pass to the annotation canvas layer the selected annotation
     },
     expand() {
       // check for modifier keys so it doesnt interfere with the layout
