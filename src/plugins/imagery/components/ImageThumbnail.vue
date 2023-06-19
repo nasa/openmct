@@ -138,7 +138,9 @@ export default {
       };
     },
     showAnnotationIndicator() {
-      return this.imageryAnnotations?.length > 0;
+      return this.imageryAnnotations.some((annotation) => {
+        return !annotation._deleted;
+      });
     }
   },
   methods: {

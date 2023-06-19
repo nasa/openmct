@@ -317,7 +317,9 @@ export default {
         const resultIndicies = this.annotationsIndex.search(x, y, x, y);
         resultIndicies.forEach((resultIndex) => {
           const foundAnnotation = this.indexToAnnotationMap[resultIndex];
-
+          if (foundAnnotation._deleted) {
+            return;
+          }
           nearbyAnnotations.push(foundAnnotation);
         });
         //show annotations if some were found
@@ -390,6 +392,9 @@ export default {
     drawAnnotations() {
       this.clearCanvas();
       this.imageryAnnotations.forEach((annotation) => {
+        if (annotation._deleted) {
+          return;
+        }
         const rectangleForPixelDensity = this.transformRectangleToPixelDense(
           annotation.targets[this.keyString].rectangle
         );
