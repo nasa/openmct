@@ -90,4 +90,5 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:e2
+              core.warning(`Failed to remove 'pr:e2e' label: ${error.message}`);
+            }
