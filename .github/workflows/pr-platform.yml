@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-${{ matrix.node_version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ matrix.node_version }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node_version }}-
 
