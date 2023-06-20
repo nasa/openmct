@@ -1000,7 +1000,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.focusedImageTimestamp = undefined;
+      this.$emit('update:focusedImageTimestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;
