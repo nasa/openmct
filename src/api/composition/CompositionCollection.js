@@ -56,10 +56,10 @@
  */
 export default class CompositionCollection {
   domainObject;
-  #provider;
-  #publicAPI;
-  #listeners;
-  #mutables;
+  provider;
+  publicAPI;
+  listeners;
+  mutables;
   /**
    * @constructor
    * @param {DomainObject} domainObject the domain object
@@ -72,11 +72,11 @@ export default class CompositionCollection {
   constructor(domainObject, provider, publicAPI) {
     this.domainObject = domainObject;
     /** @type {import('./CompositionProvider').default} */
-    this.#provider = provider;
+    this.provider = provider;
     /** @type {OpenMCT} */
-    this.#publicAPI = publicAPI;
+    this.publicAPI = publicAPI;
     /** @type {ListenerMap} */
-    this.#listeners = {
+    this.listeners = {
       add: [],
       remove: [],
       load: [],
@@ -84,13 +84,13 @@ export default class CompositionCollection {
     };
     this.onProviderAdd = this.#onProviderAdd.bind(this);
     this.onProviderRemove = this.#onProviderRemove.bind(this);
-    this.#mutables = {};
+    this.mutables = {};
 
     if (this.domainObject.isMutable) {
       this.returnMutables = true;
       let unobserve = this.domainObject.$on('$_destroy', () => {
-        Object.values(this.#mutables).forEach((mutable) => {
-          this.#publicAPI.objects.destroyMutable(mutable);
+        Object.values(this.mutables).forEach((mutable) => {
+          this.publicAPI.objects.destroyMutable(mutable);
         });
         unobserve();
       });
@@ -105,25 +105,25 @@ export default class CompositionCollection {
    * @param {any} [context] to use when invoking callback, optional.
    */
   on(event, callback, context) {
-    if (!this.#listeners[event]) {
+    if (!this.listeners[event]) {
       throw new Error('Event not supported by composition: ' + event);
     }
 
-    if (this.#provider.on && this.#provider.off) {
+    if (this.provider.on && this.provider.off) {
       if (event === 'add') {
-        this.#provider.on(this.domainObject, 'add', this.onProviderAdd, this);
+        this.provider.on(this.domainObject, 'add', this.onProviderAdd, this);
       }
 
       if (event === 'remove') {
-        this.#provider.on(this.domainObject, 'remove', this.onProviderRemove, this);
+        this.provider.on(this.domainObject, 'remove', this.onProviderRemove, this);
       }
 
       if (event === 'reorder') {
-        this.#provider.on(this.domainObject, 'reorder', this.#onProviderReorder, this);
+        this.provider.on(this.domainObject, 'reorder', this.#onProviderReorder, this);
       }
     }
 
-    this.#listeners[event].push({
+    this.listeners[event].push({
       callback: callback,
       context: context
     });
@@ -137,11 +137,11 @@ export default class CompositionCollection {
    * @param {any} [context]
    */
   off(event, callback, context) {
-    if (!this.#listeners[event]) {
+    if (!this.listeners[event]) {
       throw new Error('Event not supported by composition: ' + event);
     }
 
-    const index = this.#listeners[event].findIndex((l) => {
+    const index = this.listeners[event].findIndex((l) => {
       return l.callback === callback && l.context === context;
     });
 
@@ -149,19 +149,19 @@ export default class CompositionCollection {
       throw new Error('Tried to remove a listener that does not exist');
     }
 
-    this.#listeners[event].splice(index, 1);
-    if (this.#listeners[event].length === 0) {
+    this.listeners[event].splice(index, 1);
+    if (this.listeners[event].length === 0) {
       this._destroy();
 
       // Remove provider listener if this is the last callback to
       // be removed.
-      if (this.#provider.off && this.#provider.on) {
+      if (this.provider.off && this.provider.on) {
         if (event === 'add') {
-          this.#provider.off(this.domainObject, 'add', this.onProviderAdd, this);
+          this.provider.off(this.domainObject, 'add', this.onProviderAdd, this);
         } else if (event === 'remove') {
-          this.#provider.off(this.domainObject, 'remove', this.onProviderRemove, this);
+          this.provider.off(this.domainObject, 'remove', this.onProviderRemove, this);
         } else if (event === 'reorder') {
-          this.#provider.off(this.domainObject, 'reorder', this.#onProviderReorder, this);
+          this.provider.off(this.domainObject, 'reorder', this.#onProviderReorder, this);
         }
       }
     }
@@ -181,17 +181,17 @@ export default class CompositionCollection {
    */
   add(child, skipMutate) {
     if (!skipMutate) {
-      if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
+      if (!this.publicAPI.composition.checkPolicy(this.domainObject, child)) {
         throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
       }
 
-      this.#provider.add(this.domainObject, child.identifier);
+      this.provider.add(this.domainObject, child.identifier);
     } else {
-      if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
-        let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
+      if (this.returnMutables && this.publicAPI.objects.supportsMutation(child.identifier)) {
+        let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
 
-        child = this.#publicAPI.objects.toMutable(child);
-        this.#mutables[keyString] = child;
+        child = this.publicAPI.objects.toMutable(child);
+        this.mutables[keyString] = child;
       }
 
       this.#emit('add', child);
@@ -208,9 +208,9 @@ export default class CompositionCollection {
    */
   async load(abortSignal) {
     this.#cleanUpMutables();
-    const children = await this.#provider.load(this.domainObject);
+    const children = await this.provider.load(this.domainObject);
     const childObjects = await Promise.all(
-      children.map((c) => this.#publicAPI.objects.get(c, abortSignal))
+      children.map((c) => this.publicAPI.objects.get(c, abortSignal))
     );
     childObjects.forEach((c) => this.add(c, true));
     this.#emit('load');
@@ -233,13 +233,13 @@ export default class CompositionCollection {
    */
   remove(child, skipMutate) {
     if (!skipMutate) {
-      this.#provider.remove(this.domainObject, child.identifier);
+      this.provider.remove(this.domainObject, child.identifier);
     } else {
       if (this.returnMutables) {
-        let keyString = this.#publicAPI.objects.makeKeyString(child);
-        if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
-          this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
-          delete this.#mutables[keyString];
+        let keyString = this.publicAPI.objects.makeKeyString(child);
+        if (this.mutables[keyString] !== undefined && this.mutables[keyString].isMutable) {
+          this.publicAPI.objects.destroyMutable(this.mutables[keyString]);
+          delete this.mutables[keyString];
         }
       }
 
@@ -257,7 +257,7 @@ export default class CompositionCollection {
    * @name remove
    */
   reorder(oldIndex, newIndex, _skipMutate) {
-    this.#provider.reorder(this.domainObject, oldIndex, newIndex);
+    this.provider.reorder(this.domainObject, oldIndex, newIndex);
   }
   /**
    * Destroy mutationListener
@@ -284,7 +284,7 @@ export default class CompositionCollection {
    * @returns {DomainObject}
    */
   #onProviderAdd(childId) {
-    return this.#publicAPI.objects.get(childId).then(
+    return this.publicAPI.objects.get(childId).then(
       function (child) {
         this.add(child, true);
 
@@ -309,7 +309,7 @@ export default class CompositionCollection {
    * @param {...args.<any>} payload
    */
   #emit(event, ...payload) {
-    this.#listeners[event].forEach(function (l) {
+    this.listeners[event].forEach(function (l) {
       if (l.context) {
         l.callback.apply(l.context, payload);
       } else {
@@ -323,8 +323,8 @@ export default class CompositionCollection {
    * @private
    */
   #cleanUpMutables() {
-    Object.values(this.#mutables).forEach((mutable) => {
-      this.#publicAPI.objects.destroyMutable(mutable);
+    Object.values(this.mutables).forEach((mutable) => {
+      this.publicAPI.objects.destroyMutable(mutable);
     });
   }
 }
