@@ -16,8 +16,8 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - 16
-          - 18
+          - lts/gallium
+          - lts/hydrogen
         architecture:
           - x64
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
