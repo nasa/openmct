@@ -122,11 +122,11 @@ export default {
   mounted() {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
-    this.clickedPlotAnnotation = this.clickedPlotAnnotation.bind(this);
+    this.fireAnnotationSelection = this.fireAnnotationSelection.bind(this);
   },
   destroyed() {
     this.previewAction.off('isVisible', this.togglePreviewState);
-    this.openmct.selection.off('change', this.clickedPlotAnnotation);
+    this.openmct.selection.off('change', this.fireAnnotationSelection);
   },
   methods: {
     clickedResult(event) {
@@ -139,18 +139,15 @@ export default {
         if (!this.openmct.router.isNavigatedObject(objectPath)) {
           // if we're not on the correct page, navigate to the object,
           // then wait for the selection event to fire before issuing a new selection
-          if (
-            this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL ||
-            this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL
-          ) {
-            this.openmct.selection.on('change', this.clickedPlotAnnotation);
+          if (this.result.annotationType) {
+            this.openmct.selection.on('change', this.fireAnnotationSelection);
           }
 
           this.openmct.router.navigate(resultUrl);
         } else {
           // if this is the navigated object, then we are already on the correct page
           // and just need to issue the selection event
-          this.clickedPlotAnnotation();
+          this.fireAnnotationSelection();
         }
       }
     },
@@ -159,8 +156,8 @@ export default {
         this.previewAction.invoke(objectPath);
       }
     },
-    clickedPlotAnnotation() {
-      this.openmct.selection.off('change', this.clickedPlotAnnotation);
+    fireAnnotationSelection() {
+      this.openmct.selection.off('change', this.fireAnnotationSelection);
 
       const targetDetails = {};
       const targetDomainObjects = {};
@@ -176,11 +173,11 @@ export default {
           element: this.$el,
           context: {
             item: this.result.targetModels[0],
-            type: 'plot-annotation-search-result',
+            type: 'annotation-search-result',
             targetDetails,
             targetDomainObjects,
             annotations: [this.result],
-            annotationType: this.openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+            annotationType: this.result.annotationType,
             onAnnotationChange: () => {}
           }
         }

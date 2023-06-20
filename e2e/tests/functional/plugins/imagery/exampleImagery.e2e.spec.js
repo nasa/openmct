@@ -30,6 +30,7 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
+const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
@@ -44,7 +45,7 @@ test.describe('Example Imagery Object', () => {
 
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -72,11 +73,11 @@ test.describe('Example Imagery Object', () => {
   test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
     const deltaYStep = 100; //equivalent to 1x zoom
 
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
 
     // zoom in
     await page.mouse.wheel(0, deltaYStep * 2);
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
     const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -129,6 +130,36 @@ test.describe('Example Imagery Object', () => {
     await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
     const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
+  });
+
+  test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+    const canvas = page.locator('canvas');
+    await canvas.hover({ trial: true });
+
+    const canvasBoundingBox = await canvas.boundingBox();
+    const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
+    const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
+
+    await Promise.all(tagHotkey.map((x) => page.keyboard.down(x)));
+    await page.mouse.down();
+    // steps not working for me here
+    await page.mouse.move(canvasCenterX - 20, canvasCenterY - 20);
+    await page.mouse.move(canvasCenterX - 100, canvasCenterY - 100);
+    await page.mouse.up();
+    await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
+
+    //Wait for canvas to stablize.
+    await canvas.hover({ trial: true });
+
+    // add some tags
+    await page.getByText('Annotations').click();
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Driving').click();
+
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Science').click();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
@@ -713,7 +744,6 @@ async function panZoomAndAssertImageProperties(page) {
 async function mouseZoomOnImageAndAssert(page, factor = 2) {
   // Zoom in
   const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-  await page.locator(backgroundImageSelector).hover({ trial: true });
   const deltaYStep = 100; // equivalent to 1x zoom
   await page.mouse.wheel(0, deltaYStep * factor);
   const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -724,7 +754,7 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
   await page.mouse.move(imageCenterX, imageCenterY);
 
   // Wait for zoom animation to finish
-  await page.locator(backgroundImageSelector).hover({ trial: true });
+  await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
   const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
 
   if (factor > 0) {
