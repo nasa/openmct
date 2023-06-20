@@ -72,7 +72,6 @@ export default {
             return modeOptions;
         },
         getClockMetadata(clock) {
-            console.log('mode metadata clock', clock);
             const key = clock.key;
             const clockOptions = {
                 key,

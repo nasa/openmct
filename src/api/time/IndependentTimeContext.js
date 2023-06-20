@@ -343,6 +343,7 @@ class IndependentTimeContext extends TimeContext {
      */
     refreshContext(viewKey) {
         const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+
         if (viewKey && key === viewKey) {
             return;
         }
@@ -355,6 +356,7 @@ class IndependentTimeContext extends TimeContext {
 
         // Emit bounds so that views that are changing context get the upstream bounds
         this.emit('bounds', this.bounds());
+        this.emit('boundsChanged', this.getBounds());
     }
 
     hasOwnContext() {
@@ -392,6 +394,7 @@ class IndependentTimeContext extends TimeContext {
      */
     removeIndependentContext(viewKey) {
         const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+
         if (viewKey && key === viewKey) {
             //this is necessary as the upstream context gets reassigned after this
             this.stopFollowingTimeContext();
@@ -417,7 +420,8 @@ class IndependentTimeContext extends TimeContext {
             this.followTimeContext();
 
             // Emit bounds so that views that are changing context get the upstream bounds
-            this.emit('bounds', this.bounds());
+            this.emit('bounds', this.getBounds());
+            this.emit('boundsChanged', this.getBounds());
             // now that the view's context is set, tell others to check theirs in case they were following this view's context.
             this.globalTimeContext.emit('refreshContext', viewKey);
         }

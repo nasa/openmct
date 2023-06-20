@@ -119,7 +119,6 @@ export default function (config) {
             const firstClock = config.menuOptions.find(option => option.clock);
 
             if (firstClock) {
-                console.log('firstclock', firstClock);
                 openmct.time.setClock(firstClock.clock, firstClock.clockOffsets);
             }
 

@@ -288,7 +288,7 @@ export default {
             seriesModels: [],
             legend: {},
             pending: 0,
-            isRealTime: this.openmct.time.clock() !== undefined,
+            isRealTime: this.openmct.time.isRealTime(),
             loaded: false,
             isTimeOutOfSync: false,
             isFrozenOnMouseDown: false,
@@ -369,7 +369,7 @@ export default {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         eventHelpers.extend(this);
-        this.updateRealTime = this.updateRealTime.bind(this);
+        this.updateMode = this.updateMode.bind(this);
         this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
         this.setTimeContext = this.setTimeContext.bind(this);
 
@@ -533,19 +533,19 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.path);
-            console.log('PLOT time context', this.timeContext);
+            console.log('time context mctplot', this.timeContext, this.path);
             this.followTimeContext();
 
         },
         followTimeContext() {
-            this.updateDisplayBounds(this.timeContext.bounds());
-            this.timeContext.on('clockChanged', this.updateRealTime);
+            this.updateDisplayBounds(this.timeContext.getBounds());
+            this.timeContext.on('modeChanged', this.updateMode);
             this.timeContext.on('boundsChanged', this.updateDisplayBounds);
             this.synchronized(true);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off("clockChanged", this.updateRealTime);
+                this.timeContext.off("clockChanged", this.updateMode);
                 this.timeContext.off("boundsChanged", this.updateDisplayBounds);
             }
         },
@@ -754,8 +754,8 @@ export default {
             const displayRange = series.getDisplayRange(xKey);
             this.config.xAxis.set('range', displayRange);
         },
-        updateRealTime(clock) {
-            this.isRealTime = clock !== undefined;
+        updateMode() {
+            this.isRealTime = this.timeContext.isRealTime();
         },
 
         /**
@@ -816,13 +816,13 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
-            const isLocalClock = this.timeContext.clock();
+            const isRealTime = this.timeContext.isRealTime();
 
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
                 this.isTimeOutOfSync = value !== true;
 
-                const isUnsynced = isLocalClock && !value;
+                const isUnsynced = isRealTime && !value;
                 this.setStatus(isUnsynced);
             }
 

@@ -4,10 +4,6 @@
     :class="modeClass"
     :style="position"
     @click.stop
-    @keydown.enter.prevent
-    @keyup.enter.prevent="submit"
-    @keydown.esc.prevent
-    @keyup.esc.prevent="hide"
 >
     <div
         class="c-tc-input-popup__options"
@@ -210,7 +206,6 @@ export default {
             }
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            console.log('time context conductor popup', this.timeContext);
 
             this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
             this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
@@ -220,18 +215,18 @@ export default {
             this.setBounds(this.timeContext.getBounds());
         },
         stopFollowingTimeContext() {
-            console.log('conductorpopup stop following context');
             this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
             this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
             this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
         },
         setViewFromClock() {
-            this.bounds = this.timeContext ? this.timeContext.getBounds() : this.openmct.time.getBounds();
+            this.bounds = this.isFixed ? this.timeContext.getBounds() : this.openmct.time.getClockOffsets();
+            console.log('set view from clock popup', this.bounds);
         },
         setBounds(bounds, isTick) {
             if (this.isFixed || !isTick) {
+                console.log('set bounds popup', bounds);
                 this.bounds = bounds;
-                console.log('cpop set bounds', this.timeContext, this.bounds);
             }
         },
         setMode(mode) {
