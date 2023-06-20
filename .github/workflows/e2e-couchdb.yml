@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 'lts/gallium'
+          node-version: 'lts/hydrogen'
 
       - name: Cache NPM dependencies
         uses: actions/cache@v3
@@ -23,7 +23,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       
-      - run: npx playwright@1.32.3 install
       - run: npm install
 
       - name: Login to DockerHub
@@ -31,6 +30,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - run: npx playwright@1.32.3 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
