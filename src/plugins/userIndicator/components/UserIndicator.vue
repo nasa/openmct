@@ -38,7 +38,8 @@ export default {
             userName: undefined,
             role: undefined,
             loggedIn: false,
-            roleChannelProvider: undefined
+            roleChannelProvider: undefined,
+            inputRoleSelection: undefined
         };
     },
 
@@ -82,7 +83,7 @@ export default {
                 message: 'Please select your role for operator status.',
                 currentSelection: this.role,
                 onChange: (event) => {
-                    this.role = event.target.value;
+                    this.inputRoleSelection = event.target.value;
                 },
                 buttons: [
                     {
@@ -90,7 +91,7 @@ export default {
                         emphasis: true,
                         callback: () => {
                             dialog.dismiss();
-                            this.updateRole(this.role);
+                            this.updateRole(this.inputRoleSelection);
                             this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
                         }
                     }
