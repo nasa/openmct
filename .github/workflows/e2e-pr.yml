@@ -28,7 +28,16 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: 'lts/hydrogen'
+      
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            
       - run: npx playwright@1.32.3 install
       - run: npx playwright install chrome-beta
       - run: npm install
@@ -81,5 +90,4 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:e2e' label: ${error.message}`);
-            }
+              core.warning(`Failed to remove 'pr:e2
