@@ -67,8 +67,8 @@ export default class ExampleUserProvider extends EventEmitter {
         this.user = undefined;
         this.loggedIn = false;
         this.autoLoginUser = undefined;
-        this.statusRoleValues = statusRoles.map(x => ({
-            role: x,
+        this.statusRoleValues = statusRoles.map(role => ({
+            role: role,
             status: STATUSES[0]
         }));
         this.pollQuestion = undefined;
@@ -183,7 +183,7 @@ export default class ExampleUserProvider extends EventEmitter {
         // for testing purposes, this will skip the form, this wouldn't be used in
         // a normal authentication process
         if (this.autoLoginUser) {
-            this.user = new this.ExampleUser(id, this.autoLoginUser, ['test-role-1', 'test-role-2', 'test-role-3', 'test-role-4']);
+            this.user = new this.ExampleUser(id, this.autoLoginUser, ['flight', 'driver', 'observer']);
             this.loggedIn = true;
 
             return Promise.resolve();

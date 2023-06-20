@@ -22,7 +22,7 @@
 
 import ExampleUserProvider from './ExampleUserProvider';
 const AUTO_LOGIN_USER = 'guest';
-const STATUS_ROLES = ['test-role-1', 'test-role-2', 'test-role-3'];
+const STATUS_ROLES = ['flight', 'driver'];
 
 export default function ExampleUserPlugin({autoLoginUser, statusRoles} = {
     autoLoginUser: AUTO_LOGIN_USER,

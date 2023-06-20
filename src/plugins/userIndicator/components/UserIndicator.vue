@@ -71,9 +71,9 @@ export default {
         },
         promptForRoleSelection() {
             const allRoles = this.openmct.user.getPossibleRoles();
-            const selectionOptions = allRoles.map(x => ({
-                key: x,
-                name: x
+            const selectionOptions = allRoles.map(role => ({
+                key: role,
+                name: role
             })).filter(this.openmct.user.canProvideStatusForRole);
 
             const dialog = this.openmct.overlays.selection({
