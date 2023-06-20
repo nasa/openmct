@@ -114,7 +114,7 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getStatusRoleForCurrentUser(role) {
-        const matchedRole = this.statusRoleValues.find(x => x.role === role);
+        const matchedRole = this.statusRoleValues.find(statusRole => statusRole.role === role);
 
         return Promise.resolve(matchedRole?.status);
     }
@@ -124,7 +124,7 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getStatusForRole(role) {
-        const statusForRole = this.statusRoleValues.find(x => x.role === role);
+        const statusForRole = this.statusRoleValues.find(statusRole => statusRole.role === role);
 
         return Promise.resolve(statusForRole?.status);
     }
@@ -137,7 +137,7 @@ export default class ExampleUserProvider extends EventEmitter {
 
     setStatusForRole(role, status) {
         status.timestamp = Date.now();
-        const matchingIndex = this.statusRoleValues.findIndex(x => x.role === role);
+        const matchingIndex = this.statusRoleValues.findIndex(statusRole => statusRole.role === role);
         this.statusRoleValues[matchingIndex].status = status;
         this.emit('statusChange', {
             role,
