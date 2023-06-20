@@ -37,6 +37,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node_version }}-
 
-      - run: npm install
+      - run: npm install --cache ~/.npm --prefer-offline
       - run: npm test
       - run: npm run lint -- --quiet
