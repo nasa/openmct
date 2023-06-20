@@ -145,10 +145,10 @@ class TimeAPI extends GlobalTimeContext {
         if (clockKey) {
             timeContext.setClock(clockKey, value);
         } else {
-            // timeContext.stopClock();
+            timeContext.stopClock();
             //upstream clock was active, but now we don't have one
             if (upstreamClock) {
-                // timeContext.emit('clockChanged', timeContext.activeClock);
+                timeContext.emit('clockChanged', timeContext.activeClock);
             }
 
             timeContext.setBounds(value);
@@ -196,6 +196,7 @@ class TimeAPI extends GlobalTimeContext {
         let viewTimeContext = this.getIndependentContext(viewKey);
 
         if (!viewTimeContext) {
+            console.log('no view context for viewKey', viewKey, this.openmct.objects.getRelativePath(objectPath));
             // If the context doesn't exist yet, create it.
             viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
             this.independentContexts.set(viewKey, viewTimeContext);
@@ -203,6 +204,8 @@ class TimeAPI extends GlobalTimeContext {
             // If it already exists, compare the objectPath to see if it needs to be updated.
             const currentPath = this.openmct.objects.getRelativePath(viewTimeContext.objectPath);
             const newPath = this.openmct.objects.getRelativePath(objectPath);
+
+            console.log('view context exists, paths match?', !(currentPath !== newPath), currentPath, newPath, 'view key: ', viewKey);
 
             if (currentPath !== newPath) {
                 // If the path has changed, update the context.

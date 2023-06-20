@@ -137,7 +137,6 @@ export default {
         };
     },
     mounted() {
-        console.log('conductor mounted');
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
 

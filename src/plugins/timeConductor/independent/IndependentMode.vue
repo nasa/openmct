@@ -118,7 +118,6 @@ export default {
             this.selectedMode = this.getModeMetadata(mode);
         },
         setMode(mode) {
-            console.log('set mode');
             this.setViewFromMode(mode);
 
             this.$emit('independentModeUpdated', mode);

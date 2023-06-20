@@ -71,11 +71,11 @@ export default {
         }
     },
     data() {
-        let timeSystem = this.openmct.time.getTimeSystem();
+        const timeSystem = this.openmct.time.getTimeSystem();
         // let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-        let bounds = this.bounds || this.openmct.time.getBounds();
-
+        const timeFormatter = this.getFormatter(timeSystem.timeFormat);
+        let bounds = this.inputBounds || this.openmct.time.getBounds();
+        console.log('fixed input bounds', this.inputBounds);
         return {
             timeSystem: timeSystem,
             // durationFormatter,
@@ -110,7 +110,6 @@ export default {
         }
     },
     mounted() {
-        console.log('conductor inputs fixed mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
@@ -157,6 +156,7 @@ export default {
             }).formatter;
         },
         setBoundsFromView(bounds) {
+            console.log('conductor fixed bounds set bounds from view', bounds);
             this.$emit('boundsUpdated', {
                 start: bounds.start,
                 end: bounds.end

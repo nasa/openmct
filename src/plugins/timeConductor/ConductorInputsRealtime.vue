@@ -134,7 +134,6 @@ export default {
         }
     },
     mounted() {
-        console.log('conductor inputs realtime mounted');
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
         this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
@@ -172,7 +171,6 @@ export default {
         setTimeContext() {
             this.stopFollowingTime();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            console.log('time context', this.timeContext);
             this.followTime();
         },
         handleNewBounds(bounds, isTick) {
@@ -183,7 +181,6 @@ export default {
             }
         },
         setViewFromOffsets(offsets) {
-            console.log('offsets', offsets);
             if (offsets) {
                 this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
                 this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));

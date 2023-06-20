@@ -67,7 +67,7 @@
             >
                 <independent-time-conductor
                     :domain-object="domainObject"
-                    :object-path="[domainObject]"
+                    :object-path="objectPath"
                 />
             </div>
             <NotebookMenuSwitcher

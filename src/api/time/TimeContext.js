@@ -463,7 +463,6 @@ class TimeContext extends EventEmitter {
      * @method bounds
      */
     setBounds(newBounds) {
-        // console.log('set bounds', newBounds);
         const validationResult = this.validateBounds(newBounds);
         if (validationResult.valid !== true) {
             throw new Error(validationResult.message);
@@ -562,7 +561,6 @@ class TimeContext extends EventEmitter {
      * @return {Mode} the currently active mode;
      */
     setMode(mode) {
-        // console.log('setmode');
         if (!mode || mode === this.mode) {
             return;
         }
@@ -613,7 +611,6 @@ class TimeContext extends EventEmitter {
      * @returns {ClockOffsets}
      */
     setClockOffsets(offsets) {
-        // console.log('set clock offsets timecontext', offsets);
         const validationResult = this.validateOffsets(offsets);
         if (validationResult.valid !== true) {
             throw new Error(validationResult.message);

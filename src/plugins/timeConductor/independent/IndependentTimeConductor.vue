@@ -115,7 +115,6 @@ export default {
         const clockOffsets = this.openmct.time.getClockOffsets();
         const clock = this.openmct.time.getClock().key;
         const mode = this.openmct.time.getMode();
-        console.log('clock', clock.key, 'clockOffsets', clockOffsets, 'config', this.domainObject.configuration);
         const timeOptions = this.domainObject.configuration.timeOptions ?? {
             clockOffsets,
             fixedOffsets
@@ -130,7 +129,6 @@ export default {
         }
 
         const isFixed = timeOptions.mode === FIXED_MODE_KEY;
-        console.log('time options in data', structuredClone(timeOptions));
 
         return {
             timeOptions,
@@ -194,7 +192,6 @@ export default {
     },
     mounted() {
         this.initialize();
-        console.log('itc mounted', this.timeOptions);
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -210,7 +207,6 @@ export default {
             }
         },
         toggleIndependentTC() {
-            console.log('toggle independetn itc');
             this.independentTCEnabled = !this.independentTCEnabled;
 
             if (this.independentTCEnabled) {
@@ -229,7 +225,6 @@ export default {
             }
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            console.log('set timeContext', this.timeContext);
             this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setTimeOptionsClock);
             this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
         },
@@ -238,7 +233,6 @@ export default {
             this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
         },
         setTimeOptionsClock(clock) {
-            console.log('settimeoptionsclock', clock);
             this.setTimeOptionsOffsets();
             this.timeOptions.clock = clock.key;
         },
@@ -264,7 +258,6 @@ export default {
             this.updateTimeOptions(newOptions);
         },
         saveMode(mode) {
-            console.log('savemode', mode);
             this.isFixed = mode === FIXED_MODE_KEY;
             const newOptions = this.updateTimeOptionProperty({
                 mode: mode
@@ -280,7 +273,6 @@ export default {
             this.updateTimeOptions(newOptions);
         },
         updateTimeOptions(options) {
-            console.log('update time options', options);
             this.timeOptions = options;
 
             this.registerIndependentTimeOffsets();
@@ -288,13 +280,9 @@ export default {
             this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', this.timeOptions);
         },
         registerIndependentTimeOffsets() {
-            // if (!this.timeOptions.mode) {
-            //     return;
-            // }
-
             const timeContext = this.openmct.time.getIndependentContext(this.keyString);
             let offsets;
-            console.log(this.isFixed, this.timeOptions);
+
             if (this.isFixed) {
                 offsets = this.timeOptions.fixedOffsets;
             } else {
