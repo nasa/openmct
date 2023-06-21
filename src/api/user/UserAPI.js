@@ -135,7 +135,7 @@ class UserAPI extends EventEmitter {
      * @returns {Boolean}
     */
     canProvideStatusForRole() {
-        if (!this || !this.hasProvider()) {
+        if (!this.hasProvider()) {
             return null;
         }
 

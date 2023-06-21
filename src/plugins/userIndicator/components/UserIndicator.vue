@@ -75,7 +75,7 @@ export default {
                 .map(role => ({
                     key: role,
                     name: role
-                })).filter(this.openmct.user.canProvideStatusForRole);
+                }));
 
             const dialog = this.openmct.overlays.selection({
                 selectionOptions,
