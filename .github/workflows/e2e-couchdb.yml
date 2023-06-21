@@ -7,15 +7,33 @@ on:
       - opened
 jobs:
   e2e-couchdb:
-    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }} || ${{ github.event.action == 'opened' }}
+    if: github.event.label.name == 'pr:e2e:couchdb' || github.event.action == 'opened' && github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 'lts/gallium'
+          node-version: 'lts/hydrogen'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
+      - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
       - run: npx playwright@1.32.3 install
-      - run: npm install
+
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
@@ -23,26 +41,31 @@ jobs:
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
           bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+
       - name: Run CouchDB Tests and publish to deploysentinel
         env:
           DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }}
         run: npm run test:e2e:couchdb
+
       - name: Publish Results to Codecov.io
         env:
           SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
         run: npm run cov:e2e:full:publish
+
       - name: Archive test results
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
+
       - name: Archive html test results
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
+
       - name: Remove pr:e2e:couchdb label (if present)
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
+        if: always()
         uses: actions/github-script@v6
         with:
           script: |
@@ -56,5 +79,5 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
             }
