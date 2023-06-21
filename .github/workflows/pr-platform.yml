@@ -7,7 +7,7 @@ on:
       - opened
 
 jobs:
-  e2e-full:
+  pr-platform:
     if: ${{ github.event.label.name == 'pr:platform' }} || ( ${{ github.event.action == 'opened' }} && ${{ github.actor == 'dependabot[bot]' }} )  
     runs-on: ${{ matrix.os }}
     strategy:
@@ -53,7 +53,7 @@ jobs:
         with:
           script: |
             const { owner, repo, number } = context.issue;
-            const labelToRemove = 'pr:e2e:couchdb';
+            const labelToRemove = 'pr:platform';
             try {
               await github.rest.issues.removeLabel({
                 owner,
@@ -62,5 +62,5 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+              core.warning(`Failed to remove 'pr:platform' label: ${error.message}`);
             }
