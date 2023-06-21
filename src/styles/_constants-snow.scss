@@ -165,6 +165,22 @@ $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.4;
 $borderMissing: 1px dashed $colorAlert !important;
 
+@mixin browseFrameBorder() {
+  border: $browseFrameBorder;
+  border-radius: $controlCr;
+  background: red;
+  &:after{
+    display: block;
+    content: "";
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    border-top: 3px solid blue;
+    border-right: 3px solid blue;
+  }
+}
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
@@ -399,6 +415,7 @@ $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid o
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
+$colorGaugeNeedle: rgba(0, 95, 136);
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 // Time Strip and Lists

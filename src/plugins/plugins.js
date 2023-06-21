@@ -59,6 +59,7 @@ define([
   './conditionWidget/plugin',
   './themes/espresso',
   './themes/snow',
+  './themes/diy',
   './URLTimeSettingsSynchronizer/plugin',
   './notificationIndicator/plugin',
   './newFolderAction/plugin',
@@ -123,6 +124,7 @@ define([
   ConditionWidgetPlugin,
   Espresso,
   Snow,
+  DIY,
   URLTimeSettingsSynchronizer,
   NotificationIndicator,
   NewFolderAction,
@@ -208,6 +210,7 @@ define([
   plugins.WebPage = WebPagePlugin.default;
   plugins.Espresso = Espresso.default;
   plugins.Snow = Snow.default;
+  plugins.Diy = DIY.default;
   plugins.Condition = ConditionPlugin.default;
   plugins.ConditionWidget = ConditionWidgetPlugin.default;
   plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;

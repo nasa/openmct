@@ -1,6 +1,10 @@
 .c-so-view {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  &__container{
+    display: contents;
+  }
 
   /*************************** HEADER */
   &__header {
@@ -27,12 +31,16 @@
 
   &:not(.c-so-view--no-frame) {
     border: $browseFrameBorder;
-    padding: 0 $interiorMarginSm;
+    @include browseFrameBorder;
+    //padding: 0 $interiorMarginSm;
 
     .is-editing & {
       background: rgba($colorBodyBg, 0.8);
     }
   }
+
+
+
 
   /*************************** FRAME CONTROLS */
   &__frame-controls {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/************************************************** ESPRESSO THEME CONSTANTS */
+/**************************************************DIY THEME CONSTANTS */
 
 // Fonts
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -157,30 +157,63 @@ $timeConductorActivePanBg: #226074;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
-$browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
+$browseFrameBorder: 1px solid rgb(89, 89, 89, .4); // Frames in Disp and Flex Layouts when frame is showing
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
+$browseFrameCornerColor: 3px solid rgb(0,150,215); //Color used for the corners of frames
 
-@mixin browseFrameBorder() {
-  border: $browseFrameBorder;
+@mixin browseFrameBorder() { // Used on main object container, only does top left and right
+  border-image: radial-gradient(circle, #575757, #6c6c6c, #818181, #979797, #aeaeae);
+  border-style: solid;
+  padding: 10px;
+  // &:after{
+  //   display: block;
+  //   content: "";
+  //   width: 20px;
+  //   height: 20px;
+  //   position: absolute;
+  //   top: -8px;
+  //   right: -8px;
+  //   border-radius: $controlCr;
+  //   border-top: $browseFrameCornerColor;
+  //   border-right: $browseFrameCornerColor;
+  //   box-shadow: 7px -7px 12px 0px rgb(148, 148, 148, .4);
+  // }
+
+  // &:before{
+  //   display: block; 
+  //   content: "";
+  //   width: 20px;
+  //   height: 20px;
+  //   position: absolute;
+  //   top: -8px;
+  //   left: -8px;
+  //   border-radius: $controlCr;
+  //   border-top: $browseFrameCornerColor;
+  //   border-left: $browseFrameCornerColor;
+  //   box-shadow: -7px -7px 12px 0px rgb(148, 148, 148, .4);
+  // }
+  background:
+    linear-gradient(to right, rgb(0,150,215) 4px, transparent 4px) 0 0,
+    linear-gradient(to right, rgb(0,150,215) 4px, transparent 4px) 0 100%,
+    linear-gradient(to left, rgb(0,150,215) 4px, transparent 4px) 100% 0,
+    linear-gradient(to left, rgb(0,150,215) 4px, transparent 4px) 100% 100%,
+    linear-gradient(to bottom, rgb(0,150,215) 4px, transparent 4px) 0 0,
+    linear-gradient(to bottom, rgb(0,150,215) 4px, transparent 4px) 100% 0,
+    linear-gradient(to top, rgb(0,150,215) 4px, transparent 4px) 0 100%,
+    linear-gradient(to top, rgb(0,150,215) 4px, transparent 4px) 100% 100%;
+
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
   border-radius: $controlCr;
-  background: red;
-  &:after{
-    display: block;
-    content: "";
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    border-top: 3px solid blue;
-    border-right: 3px solid blue;
-  }
+  box-shadow: 0px 0px 20px 2px rgb(148, 148, 148, .2);
 }
+  
+
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
@@ -408,14 +441,15 @@ $legendTableHeadBg: $colorTabHeaderBg;
 $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Gauges
-$colorGaugeBg: pullForward($colorBodyBg, 5%); // Gauge radial area background, meter background
-$colorGaugeValue: rgba(#fff, 0.3); // Gauge value graphic (radial sweep, bar) color
+$colorGaugeBase:  rgba(0, 95, 136);
+$colorGaugeBg: rgba($colorGaugeBase, .2); // Gauge radial area background, meter background
+$colorGaugeValue: rgba(0, 107, 153); // Gauge value graphic (radial sweep, bar) color
 $colorGaugeTextValue: #fff; // Radial gauge text value
-$colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid on value bar
+$colorGaugeMeterTextValue: #fff; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.4);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
-$colorGaugeNeedle: rgba(0, 95, 136);
+$colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 // Time Strip and Lists

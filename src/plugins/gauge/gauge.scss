@@ -84,7 +84,8 @@ $meterNeedleBorderRadius: 5px;
     fill: $colorGaugeValue;
   }
   &__needle-value {
-    fill: $colorGaugeValue;
+    fill: $colorGaugeNeedle;
+
   }
   &__current-value-text {
     fill: $colorGaugeTextValue;
@@ -125,7 +126,7 @@ $meterNeedleBorderRadius: 5px;
     // Filled area
     position: absolute;
     background: $colorGaugeValue;
-    z-index: 1;
+    // z-index: 3;
   }
 
   &__value-needle {

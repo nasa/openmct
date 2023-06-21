@@ -29,6 +29,8 @@
   display: flex;
   flex-flow: column nowrap;
   overflow: hidden;
+  background: rgb(27, 27, 27);
+
 
   &__drawer {
     background: $drawerBg;
@@ -273,7 +275,6 @@
     flex: 1 1 auto !important;
     height: 100%; // Chrome 73 overflow bug fix
     overflow: auto;
-
     > * + * {
       margin-top: $interiorMargin;
     }
