@@ -7,7 +7,7 @@ on:
       - opened
 jobs:
   e2e-couchdb:
-    if: github.event.label.name == 'pr:e2e' || ( github.event.action == 'opened' && github.actor == 'dependabot[bot]' )
+    if: github.event.label.name == 'pr:e2e' || github.event.action == 'opened' && github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
