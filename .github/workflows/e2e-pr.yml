@@ -53,28 +53,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: test-results
-      - name: Test success
-        if: ${{ success() }}
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: "nasa",
-              repo: "openmct",
-              body: 'Success ✅ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
-            })
-      - name: Test failure
-        if: ${{ failure() }}
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: "nasa",
-              repo: "openmct",
-              body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
-            })
+
       - name: Remove pr:e2e label (if present)
         if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e') }}
         uses: actions/github-script@v6
