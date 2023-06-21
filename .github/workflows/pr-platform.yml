@@ -2,9 +2,11 @@ name: 'pr-platform'
 on:
   workflow_dispatch:
   pull_request:
-    types:
-      - labeled
-      - opened
+    types: [opened]
+    branches:
+      - master
+  pull_request_target:
+    types: [labeled]
 
 jobs:
   pr-platform:
