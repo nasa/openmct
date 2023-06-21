@@ -8,7 +8,7 @@ on:
 
 jobs:
   pr-platform:
-    if: ${{ github.event.label.name == 'pr:platform' }}
+    if: ${{ github.event.label.name == 'pr:platform' }} || ${{ github.event.action == 'opened' }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     strategy:
