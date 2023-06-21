@@ -7,7 +7,7 @@ on:
       - opened
 jobs:
   e2e-full:
-    if: ${{ github.event.label.name == 'pr:e2e' }} || ( ${{ github.event.action == 'opened' }} && ${{ github.actor == 'dependabot[bot]' }} )  
+    if: github.event.label.name == 'pr:e2e' || ( github.event.action == 'opened' && github.actor == 'dependabot[bot]' )
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     strategy:
