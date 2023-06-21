@@ -90,6 +90,12 @@ class UserAPI extends EventEmitter {
             return this._provider.getCurrentUser();
         }
     }
+    /**
+     *  If a user provider is set, it will return an array of possible roles
+     *  that can be selected by the current user
+     *  @memberof module:openmct.UserAPI#
+     *  @returns {Array}
+     */
 
     getPossibleRoles() {
         if (!this.hasProvider()) {
@@ -100,22 +106,24 @@ class UserAPI extends EventEmitter {
 
     }
     /**
-     * If a user provider is set, it will return the active role Id
-     * @returns object
+     * If a user provider is set, it will return the active role or null
+     * @memberof module:openmct.UserAPI#
+     * @returns {string|null}
      */
     getActiveRole() {
         if (!this.hasProvider()) {
-            return Promise.resolve(undefined);
+            return null;
         }
 
         // get from session storage
         const sessionStorageValue = SessionPersistance.getActiveRole();
-        if (sessionStorageValue === 'undefined' || sessionStorageValue === undefined) {
-            return undefined;
-        }
 
         return sessionStorageValue;
-    }
+    }/**
+     * Set the active role in session storage
+     * @memberof module:openmct.UserAPI#
+     * @returns {undefined}
+     */
     setActiveRole(role) {
         SessionPersistance.setActiveRole(role);
     }

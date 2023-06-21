@@ -71,10 +71,11 @@ export default {
         },
         promptForRoleSelection() {
             const allRoles = this.openmct.user.getPossibleRoles();
-            const selectionOptions = allRoles.map(role => ({
-                key: role,
-                name: role
-            })).filter(this.openmct.user.canProvideStatusForRole);
+            const selectionOptions = allRoles
+                .map(role => ({
+                    key: role,
+                    name: role
+                })).filter(this.openmct.user.canProvideStatusForRole);
 
             const dialog = this.openmct.overlays.selection({
                 selectionOptions,
@@ -91,7 +92,8 @@ export default {
                         emphasis: true,
                         callback: () => {
                             dialog.dismiss();
-                            this.updateRole(this.inputRoleSelection);
+                            const inputValueOrDefault = this.inputRoleSelection || selectionOptions[0].key;
+                            this.updateRole(inputValueOrDefault);
                             this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
                         }
                     }

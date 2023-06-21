@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ExampleUserProvider from './ExampleUserProvider';
-const AUTO_LOGIN_USER = 'guest';
+const AUTO_LOGIN_USER = 'mct-user';
 const STATUS_ROLES = ['flight', 'driver'];
 
 export default function ExampleUserPlugin({autoLoginUser, statusRoles} = {
