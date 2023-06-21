@@ -89,6 +89,11 @@ export default {
       }
     }
   },
+  watch: {
+    imageryAnnotations() {
+      this.drawAnnotations();
+    }
+  },
   mounted() {
     this.canvas = this.$refs.canvas;
     this.context = this.canvas.getContext('2d');
