@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-    - name: Debug
-      run: |
-        echo "Event action: ${{ github.event.action }}"
-        echo "Event actor: ${{ github.actor }}"
-        echo "Event label: ${{ github.event.label.name }}"
+      - name: Debug
+        run: |
+          echo "Event action: ${{ github.event.action }}"
+          echo "Event actor: ${{ github.actor }}"
+          echo "Event label: ${{ github.event.label.name }}"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
