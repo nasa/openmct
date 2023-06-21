@@ -2,11 +2,13 @@ name: 'pr-platform'
 on:
   workflow_dispatch:
   pull_request:
-    types: [labeled]
+    types:
+      - labeled
+      - opened
 
 jobs:
   e2e-full:
-    if: ${{ github.event.label.name == 'pr:platform' }}
+    if: ${{ github.event.label.name == 'pr:platform' }} || ( ${{ github.event.action == 'opened' }} && ${{ github.actor == 'dependabot[bot]' }} )  
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -44,3 +46,21 @@ jobs:
       - run: npm test
       
       - run: npm run lint -- --quiet
+      
+      - name: Remove pr:platform label (if present)
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:platform') }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:couchdb';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+            }
