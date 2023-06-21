@@ -65,7 +65,7 @@ jobs:
           path: html-test-results
 
       - name: Remove pr:e2e:couchdb label (if present)
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') }}
+        if: always()
         uses: actions/github-script@v6
         with:
           script: |
@@ -79,5 +79,5 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:e2e:couchdb' label: ${error.message}`);
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
             }

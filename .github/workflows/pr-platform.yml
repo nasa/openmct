@@ -49,7 +49,7 @@ jobs:
       - run: npm run lint -- --quiet
       
       - name: Remove pr:platform label (if present)
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'pr:platform') }}
+        if: always()
         uses: actions/github-script@v6
         with:
           script: |
@@ -63,5 +63,5 @@ jobs:
                 name: labelToRemove
               });
             } catch (error) {
-              core.warning(`Failed to remove 'pr:platform' label: ${error.message}`);
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
             }
