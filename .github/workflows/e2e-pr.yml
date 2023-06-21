@@ -9,22 +9,13 @@ jobs:
   e2e-full:
     if: ${{ github.event.label.name == 'pr:e2e' }} || ( ${{ github.event.action == 'opened' }} && ${{ github.actor == 'dependabot[bot]' }} )  
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       matrix:
         os:
           - ubuntu-latest
           - windows-latest
     steps:
-      - name: Trigger Success
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: "nasa",
-              repo: "openmct",
-              body: 'Started e2e Run. Follow along: https://github.com/nasa/openmct/actions/runs/' + context.runId
-            })
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:

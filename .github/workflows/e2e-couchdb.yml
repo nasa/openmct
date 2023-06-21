@@ -9,6 +9,7 @@ jobs:
   e2e-couchdb:
     if: ${{ github.event.label.name == 'pr:e2e:couchdb' }} || ${{ github.event.action == 'opened' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
