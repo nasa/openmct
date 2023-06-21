@@ -2,11 +2,9 @@ name: 'e2e-pr'
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened]
-    branches:
-      - master
-  pull_request_target:
-    types: [labeled]
+    types:
+      - labeled
+      - opened
 jobs:
   e2e-full:
     if: ${{ github.event.label.name == 'pr:e2e' }} || ( ${{ github.event.action == 'opened' }} && ${{ github.actor == 'dependabot[bot]' }} )  

@@ -2,11 +2,9 @@ name: 'e2e-couchdb'
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened]
-    branches:
-      - master
-  pull_request_target:
-    types: [labeled]
+    types:
+      - labeled
+      - opened
 jobs:
   e2e-couchdb:
     if: ${{ github.event.label.name == 'pr:e2e:couchdb' }} || ${{ github.event.action == 'opened' }}
