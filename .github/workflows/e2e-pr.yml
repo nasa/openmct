@@ -18,10 +18,6 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
-      - name: Debug
-          run: echo "Label name is ${{ github.event.label.name }}"
-          run: echo "Event action is ${{ github.event.action }}"
-          run: echo "Actor is ${{ github.actor }}"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
