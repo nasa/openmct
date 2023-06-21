@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-table-wrapper" :class="tableClasses">
+  <div ref="root" class="c-table-wrapper" :class="tableClasses">
     <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar">
       <button
         v-if="allowExport"
@@ -202,12 +202,14 @@
       </div>
       <!-- Content table -->
       <div
+        ref="scrollable"
         class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w"
         :style="{ 'max-width': widthWithScroll }"
         @scroll="scroll"
       >
         <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
         <table
+          ref="contentTable"
           class="c-table__body c-telemetry-table__body js-telemetry-table__content"
           :style="{ height: totalHeight + 'px' }"
         >
@@ -232,7 +234,7 @@
         </table>
       </div>
       <!-- Sizing table -->
-      <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
+      <table ref="sizingTable" class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
         <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
           <template v-for="(title, key) in headers" :key="key">
@@ -276,6 +278,7 @@ import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './sizing-row.vue';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import { toRaw } from 'vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -466,7 +469,7 @@ export default {
   created() {
     this.filterChanged = _.debounce(this.filterChanged, 500);
   },
-  mounted() {
+  async mounted() {
     this.csvExporter = new CSVExporter();
     this.rowsAdded = _.throttle(this.rowsAdded, 200);
     this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
@@ -497,11 +500,12 @@ export default {
     this.openmct.time.on('bounds', this.boundsChanged);
 
     //Default sort
+    await this.$nextTick();
     this.sortOptions = this.table.tableRows.sortBy();
-    this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
-    this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
-    this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
-    this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
+    this.scrollable = this.$refs.scrollable;
+    this.contentTable = this.$refs.contentTable;
+    this.sizingTable = this.$refs.sizingTable;
+    this.headersHolderEl = this.$refs.headersHolderEl
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
@@ -630,16 +634,18 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.updateVisibleRows();
-      this.synchronizeScrollX();
+      this.$nextTick(() => {
+        this.updateVisibleRows();
+        this.synchronizeScrollX();
 
-      if (this.shouldSnapToBottom()) {
-        this.autoScroll = true;
-      } else {
-        // If user scrolls away from bottom, disable auto-scroll.
-        // Auto-scroll will be re-enabled if user scrolls to bottom again.
-        this.autoScroll = false;
-      }
+        if (this.shouldSnapToBottom()) {
+          this.autoScroll = true;
+        } else {
+          // If user scrolls away from bottom, disable auto-scroll.
+          // Auto-scroll will be re-enabled if user scrolls to bottom again.
+          this.autoScroll = false;
+        }
+      });
     },
     shouldSnapToBottom() {
       return (
@@ -651,7 +657,11 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
-      this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+      this.$nextTick(() => {
+        if (this.$refs.headersHolderEl && this.$refs.scrollable) {
+          this.$refs.headersHolderEl.scrollLeft = this.$refs.scrollable.scrollLeft;
+        }
+      });
     },
     filterChanged(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
@@ -703,11 +713,13 @@ export default {
      * Calculates height based on total number of rows, and sets table height.
      */
     setHeight() {
-      let tableRowsLength = this.table.tableRows.getRowsLength();
-      this.totalHeight = this.rowHeight * tableRowsLength - 1;
-      // Set element height directly to avoid having to wait for Vue to update DOM
-      // which causes subsequent scroll to use an out of date height.
-      this.contentTable.style.height = this.totalHeight + 'px';
+      this.$nextTick(() => {
+        let tableRowsLength = this.table.tableRows.getRowsLength();
+        this.totalHeight = this.rowHeight * tableRowsLength - 1;
+        // Set element height directly to avoid having to wait for Vue to update DOM
+        // which causes subsequent scroll to use an out of date height.
+        this.contentTable.style.height = this.totalHeight + 'px';
+      });
     },
     exportAsCSV(data) {
       const headerKeys = Object.keys(this.headers);
@@ -813,7 +825,7 @@ export default {
       this.isDropTargetActive = isActive;
     },
     pollForResize() {
-      let el = this.$el;
+      let el = this.$refs.root;
       let width = el.clientWidth;
       let height = el.clientHeight;
       let scrollTop = this.scrollable.scrollTop;
@@ -951,11 +963,11 @@ export default {
           this.markedRows.splice(1);
         }
 
-        let lastRowToBeMarked = this.visibleRows[rowIndex];
+        const lastRowToBeMarked = this.visibleRows[rowIndex];
 
-        let allRows = this.table.tableRows.getRows();
-        let firstRowIndex = allRows.indexOf(this.markedRows[0]);
-        let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+        const allRows = this.table.tableRows.getRows();
+        const firstRowIndex = allRows.indexOf(toRaw(this.markedRows[0]));
+        const lastRowIndex = allRows.indexOf(toRaw(lastRowToBeMarked));
 
         //supports backward selection
         if (lastRowIndex < firstRowIndex) {
