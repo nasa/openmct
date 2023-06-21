@@ -28,10 +28,6 @@ jobs:
     
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
     steps:
-      - name: Debug
-        run: echo "Label name is ${{ github.event.label.name }}"
-        run: echo "Event action is ${{ github.event.action }}"
-        run: echo "Actor is ${{ github.actor }}"
       - uses: actions/checkout@v3
       
       - name: Setup node
