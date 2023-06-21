@@ -72,7 +72,6 @@ export default {
     },
     data() {
         return {
-            allRoles: [],
             role: '--',
             pollQuestionUpdated: '--',
             currentPollQuestion: DEFAULT_POLL_QUESTION,
@@ -87,11 +86,15 @@ export default {
                 left: `${this.positionX}px`,
                 top: `${this.positionY}px`
             };
+        },
+        canProvideStatusForRole() {
+            return this.openmct.user.canProvideStatusForRole(this.role);
         }
     },
     beforeDestroy() {
         this.openmct.user.status.off('statusChange', this.setStatus);
         this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
+        this.openmct.user.off('roleChanged', this.fetchMyStatus);
     },
     async mounted() {
         this.unsubscribe = [];
@@ -101,6 +104,7 @@ export default {
         await this.fetchMyStatus();
         this.subscribeToMyStatus();
         this.subscribeToPollQuestion();
+        this.subscribeToRoleChange();
     },
     methods: {
 
@@ -124,8 +128,16 @@ export default {
         },
         async fetchMyStatus() {
             const activeRole = await this.openmct.user.getActiveRole();
-            const status = await this.openmct.user.status.getStatusForRole(activeRole);
+            this.role = activeRole;
+            // hide indicator for observer
+            if (!this.openmct.user.canProvideStatusForRole()) {
+                this.indicator.text('');
+                this.indicator.statusClass('hidden');
 
+                return;
+            }
+
+            const status = await this.openmct.user.status.getStatusForRole(activeRole);
             if (status !== undefined) {
                 this.setStatus({status});
             }
@@ -136,7 +148,11 @@ export default {
         subscribeToPollQuestion() {
             this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
         },
+        subscribeToRoleChange() {
+            this.openmct.user.on('roleChanged', this.fetchMyStatus);
+        },
         setStatus({status}) {
+            console.log('set Status firiging?')
             status = this.applyStyling(status);
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);

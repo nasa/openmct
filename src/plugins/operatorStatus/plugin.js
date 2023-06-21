@@ -30,14 +30,8 @@ export default function operatorStatusPlugin(configuration) {
     return function install(openmct) {
 
         if (openmct.user.hasProvider()) {
-            const activeRole = openmct.user.getActiveRole();
-            openmct.user.status.canProvideStatusForRole(activeRole).then(canProvideStatus => {
-                if (canProvideStatus) {
-                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
-
-                    operatorStatusIndicator.install();
-                }
-            });
+            const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
+            operatorStatusIndicator.install();
 
             openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
                 if (canSetPollQuestion) {

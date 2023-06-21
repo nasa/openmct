@@ -126,6 +126,7 @@ class UserAPI extends EventEmitter {
      */
     setActiveRole(role) {
         SessionPersistance.setActiveRole(role);
+        this.emit('roleChanged', role);
     }
 
     /**
