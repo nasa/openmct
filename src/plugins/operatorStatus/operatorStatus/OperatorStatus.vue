@@ -152,7 +152,6 @@ export default {
             this.openmct.user.on('roleChanged', this.fetchMyStatus);
         },
         setStatus({status}) {
-            console.log('set Status firiging?')
             status = this.applyStyling(status);
             this.selectedStatus = status.key;
             this.indicator.iconClass(status.iconClassPoll);
