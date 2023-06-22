@@ -33,12 +33,15 @@
           <span class="is-status__indicator" :title="`This item is ${status}`"></span>
         </div>
         <span
+          ref="objectName"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
           :contenteditable="isPersistable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
+          @mouseover.ctrl="showToolTip"
+          @mouseleave="hideToolTip"
         >
           {{ domainObject.name }}
         </span>
@@ -127,6 +130,7 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 const PLACEHOLDER_OBJECT = {};
 
@@ -135,6 +139,7 @@ export default {
     NotebookMenuSwitcher,
     ViewSwitcher
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     actionCollection: {
@@ -383,6 +388,9 @@ export default {
     },
     setStatus(status) {
       this.status = status;
+    },
+    async showToolTip() {
+      this.buildToolTip(await this.getObjectPath(), 'below', 'objectName');
     }
   }
 };

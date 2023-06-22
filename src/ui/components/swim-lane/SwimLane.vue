@@ -21,7 +21,13 @@
 -->
 
 <template>
-  <div class="u-contents" :class="[{ 'c-swimlane': !isNested }, statusClass]">
+  <div
+    ref="swimLane"
+    class="u-contents"
+    :class="[{ 'c-swimlane': !isNested }, statusClass]"
+    @mouseover.ctrl="showToolTip"
+    @mouseleave="hideToolTip"
+  >
     <div
       v-if="hideLabel === false"
       class="c-swimlane__lane-label c-object-label"
@@ -47,7 +53,11 @@
 </template>
 
 <script>
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+
 export default {
+  mixins: [tooltipHelpers],
+  inject: ['openmct'],
   props: {
     iconClass: {
       type: String,
@@ -96,6 +106,10 @@ export default {
       default() {
         return 0;
       }
+    },
+    domainObject: {
+      type: Object,
+      default: undefined
     }
   },
   computed: {
@@ -117,6 +131,11 @@ export default {
 
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    }
+  },
+  methods: {
+    async showToolTip() {
+      this.buildToolTip(await this.getObjectPath(), 'below', 'swimLane');
     }
   }
 };

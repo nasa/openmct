@@ -22,7 +22,13 @@
 <template>
   <div class="c-gauge__wrapper js-gauge-wrapper" :class="gaugeClasses" :title="gaugeTitle">
     <template v-if="typeDial">
-      <svg class="c-gauge c-dial" viewBox="0 0 10 10">
+      <svg
+        ref="gauge"
+        class="c-gauge c-dial"
+        viewBox="0 0 10 10"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
+      >
         <g class="c-dial__masks">
           <mask id="gaugeValueMask">
             <path
@@ -325,13 +331,14 @@
 <script>
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
   name: 'Gauge',
-  mixins: [stalenessMixin],
+  mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject', 'composition'],
   data() {
     let gaugeController = this.domainObject.configuration.gaugeController;
@@ -730,6 +737,9 @@ export default {
     },
     valToPercentMeter(vValue) {
       return this.round(((this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow)) * 100, 2);
+    },
+    async showToolTip() {
+      this.buildToolTip(await this.getTelemetryPath(), 'center', 'gauge');
     }
   }
 };

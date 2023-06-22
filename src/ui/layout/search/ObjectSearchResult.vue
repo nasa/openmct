@@ -33,11 +33,14 @@
       :aria-label="`${resultName} ${resultType} result`"
     >
       <div
+        ref="resultName"
         class="c-gsearch-result__title"
         :name="resultName"
         draggable="true"
         @dragstart="dragStart"
         @click="clickedResult"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
       >
         {{ resultName }}
       </div>
@@ -54,12 +57,14 @@
 import ObjectPath from '../../components/ObjectPath.vue';
 import identifierToString from '../../../tools/url';
 import PreviewAction from '../../preview/PreviewAction';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
   name: 'ObjectSearchResult',
   components: {
     ObjectPath
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     result: {
@@ -124,6 +129,9 @@ export default {
 
       event.dataTransfer.setData('openmct/domain-object-path', serializedPath);
       event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.result);
+    },
+    async showToolTip() {
+      this.buildToolTip(await this.getObjectPath(this.result.identifier), 'below', 'resultName');
     }
   }
 };

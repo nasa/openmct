@@ -1,0 +1,12 @@
+.l-tooltip-wrapper {
+  @include themedButton();
+  background: $colorBodyBg;
+  color: $colorBodyFg;
+  border: 2px solid $colorInteriorBorder;
+  display: inline-block;
+  max-width: 200px;
+  border-radius: 3px;
+  position: absolute;
+  padding: 5px 8px;
+  z-index: 60;
+}

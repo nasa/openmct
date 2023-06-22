@@ -33,7 +33,14 @@
       <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }">
       </span>
       <span class="is-status__indicator" title="This item is missing or suspect"></span>
-      <span class="plot-series-name">{{ name }}</span>
+      <span
+        ref="seriesName"
+        class="plot-series-name"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
+      >
+        {{ name }}
+      </span>
     </td>
 
     <td v-if="showTimestampWhenExpanded">
@@ -72,9 +79,10 @@ import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
 import eventHelpers from '@/plugins/plot/lib/eventHelpers';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import configStore from '../configuration/ConfigStore';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
-  mixins: [stalenessMixin],
+  mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject'],
   props: {
     seriesObject: {
@@ -205,6 +213,13 @@ export default {
       this.$emit('legendHoverChanged', {
         seriesKey: this.hover ? this.seriesObject.keyString : ''
       });
+    },
+    async showToolTip() {
+      this.buildToolTip(
+        await this.getTelemetryPath(this.seriesObject.domainObject.identifier),
+        'below',
+        'seriesName'
+      );
     }
   }
 };

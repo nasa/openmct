@@ -32,11 +32,14 @@
     ></div>
     <div class="c-recentobjects-listitem__body">
       <span
+        ref="recentObjectName"
         class="c-recentobjects-listitem__title"
         :name="domainObject.name"
         draggable="true"
         @dragstart="dragStart"
         @click.prevent="clickedRecent"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
       >
         {{ domainObject.name }}
       </span>
@@ -62,12 +65,14 @@
 <script>
 import ObjectPath from '../components/ObjectPath.vue';
 import PreviewAction from '../preview/PreviewAction';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 export default {
   name: 'RecentObjectsListItem',
   components: {
     ObjectPath
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     domainObject: {
@@ -132,6 +137,9 @@ export default {
     },
     openAndScrollTo(navigationPath) {
       this.$emit('openAndScrollTo', navigationPath);
+    },
+    async showToolTip() {
+      this.buildToolTip(await this.getObjectPath(), 'below', 'recentObjectName');
     }
   }
 };
