@@ -43,8 +43,11 @@
         :key="metadatum.key"
         :filter-field="metadatum"
         :persisted-filters="updatedFilters[metadatum.key]"
+        label="Global Filter"
         @filterSelected="updateFiltersWithSelectedValue"
         @filterTextValueChanged="updateFiltersWithTextValue"
+        @filterSingleSelected="updateSingleSelection"
+        @clearFilters="clearFilters"
       />
     </ul>
   </li>
@@ -97,6 +100,10 @@ export default {
     toggleExpanded() {
       this.expanded = !this.expanded;
     },
+    clearFilters(key) {
+      this.$set(this.updatedFilters, key, {});
+      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+    },
     updateFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
 
@@ -114,6 +121,10 @@ export default {
         this.$set(this.updatedFilters[key], comparator, [valueName]);
       }
 
+      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+    },
+    updateSingleSelection(key, comparator, value) {
+      this.$set(this.updatedFilters[key], comparator, [value]);
       this.$emit('persistGlobalFilters', key, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {

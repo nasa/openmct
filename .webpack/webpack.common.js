@@ -67,7 +67,6 @@ const config = {
       MCT: path.join(projectRootDir, 'src/MCT'),
       testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
-      kdbush: path.join(projectRootDir, 'node_modules/kdbush/kdbush.min.js'),
       utils: path.join(projectRootDir, 'src/utils')
     }
   },
