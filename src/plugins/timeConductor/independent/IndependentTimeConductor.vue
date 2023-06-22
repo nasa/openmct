@@ -297,10 +297,13 @@ export default {
                 this.unregisterIndependentTime = this.openmct.time.addIndependentContext(
                     this.keyString,
                     offsets,
-                    this.isFixed ? undefined : this.timeOptions.clock
+                    this.isFixed ? undefined : this.timeOptions.clock,
+                    this.timeOptions.mode
                 );
             } else {
+                timeContext.setMode(this.timeOptions.mode);
                 if (timeContext.isFixed()) {
+                    //TODO: Do we need to stopClock here? I think technically we should never stop the clock, ever
                     timeContext.stopClock();
                     timeContext.setBounds(offsets);
                 } else {

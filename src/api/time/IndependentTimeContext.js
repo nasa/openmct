@@ -28,7 +28,6 @@ import { TIME_CONTEXT_EVENTS } from './constants';
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
-    #copy;
 
     constructor(openmct, globalTimeContext, objectPath) {
         super();
@@ -300,6 +299,10 @@ class IndependentTimeContext extends TimeContext {
         this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
 
         return this.mode;
+    }
+
+    #copy(object) {
+        return JSON.parse(JSON.stringify(object));
     }
 
     /**
