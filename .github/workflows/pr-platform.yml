@@ -2,12 +2,15 @@ name: 'pr-platform'
 on:
   workflow_dispatch:
   pull_request:
-    types: [labeled]
+    types:
+      - labeled
+      - opened
 
 jobs:
-  e2e-full:
-    if: ${{ github.event.label.name == 'pr:platform' }}
+  pr-platform:
+    if: github.event.label.name == 'pr:platform' || github.event.action == 'opened' && github.actor == 'dependabot[bot]'
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -16,18 +19,49 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - 16
-          - 18
+          - lts/gallium
+          - lts/hydrogen
         architecture:
           - x64
+    
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
           architecture: ${{ matrix.architecture }}
-      - run: npm install
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node_version }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node_version }}-
+
+      - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
+      
       - run: npm test
+      
       - run: npm run lint -- --quiet
+      
+      - name: Remove pr:platform label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:platform';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }
