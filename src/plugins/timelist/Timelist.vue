@@ -364,6 +364,12 @@ export default {
         return false;
       }
 
+      const inBounds = 
+        activity.start >= this.openmct.time.bounds()?.start &&
+        activity.end <= this.openmct.time.bounds()?.end;
+      if (!inBounds) {
+        return false;
+      }
       //current event or future start event or past end event
       const isCurrent = this.timestamp >= activity.start && this.timestamp <= activity.end;
       const isPast =
@@ -443,7 +449,7 @@ export default {
 
         const scrollOffset =
           this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
-        this.$el.parentElement.scrollTo({
+        this.$el.parentElement?.scrollTo({
           top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
           behavior: 'smooth'
         });
