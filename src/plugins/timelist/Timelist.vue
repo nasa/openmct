@@ -364,12 +364,15 @@ export default {
         return false;
       }
 
-      const inBounds = 
-        activity.start >= this.openmct.time.bounds()?.start &&
+      const startInBounds = 
+        activity.start >= this.openmct.time.bounds()?.start && 
+        activity.start <= this.openmct.time.bounds()?.end;
+      const endInBounds = 
+        activity.end >= this.openmct.time.bounds()?.start && 
         activity.end <= this.openmct.time.bounds()?.end;
-      if (!inBounds) {
-        return false;
-      }
+        if (!(startInBounds || endInBounds)) {
+          return false;
+        }
       //current event or future start event or past end event
       const isCurrent = this.timestamp >= activity.start && this.timestamp <= activity.end;
       const isPast =
