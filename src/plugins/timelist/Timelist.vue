@@ -41,7 +41,6 @@ import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const CURRENT_CSS_SUFFIX = '--is-current';
 const PAST_CSS_SUFFIX = '--is-past';
 const FUTURE_CSS_SUFFIX = '--is-future';
