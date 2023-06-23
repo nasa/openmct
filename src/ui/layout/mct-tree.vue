@@ -327,7 +327,7 @@ export default {
     async openTreeItem(parentItem) {
       const parentPath = parentItem.navigationPath;
       const abortSignal = this.startItemLoad(parentPath);
-      
+
       // pass in abort signal when functional
       const childrenItems = await this.loadAndBuildTreeItemsFor(
         parentItem.object.identifier,

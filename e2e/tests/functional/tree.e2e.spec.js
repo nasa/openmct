@@ -174,6 +174,47 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
+  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+    page,
+    openmctConfig
+  }) => {
+    const { myItemsFolderName } = openmctConfig;
+    let requestWasAborted = false;
+
+    page.on('requestfailed', (request) => {
+      // check if the request was aborted
+      console.log('request error text', request.failure().errorText);
+      if (request.failure().errorText === 'net::ERR_ABORTED') {
+        requestWasAborted = true;
+      }
+    });
+
+    const fooData = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Foo'
+    });
+
+    // Intercept and delay request
+    const delayInMs = 500;
+
+    await page.route('**', async (route, request) => {
+      console.log('request ', request.url(), request.url().endsWith(fooData.uuid));
+      await new Promise((resolve) => setTimeout(resolve, delayInMs));
+
+      route.continue();
+    });
+
+    // Quickly Expand/close the root folder
+    const mainTree = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const treeItem = mainTree.getByRole('treeitem', {
+      myItemsFolderName
+    });
+    await treeItem.locator('.c-disclosure-triangle').dblclick({ delay: 400 });
+
+    expect(requestWasAborted).toBe(true);
+  });
 });
 
 /**
