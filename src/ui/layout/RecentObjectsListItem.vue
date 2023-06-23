@@ -34,7 +34,7 @@
       <span
         class="c-recentobjects-listitem__title"
         :name="domainObject.name"
-        draggable="true"
+        :draggable="true"
         @dragstart="dragStart"
         @click.prevent="clickedRecent"
       >
@@ -45,7 +45,6 @@
         class="c-recentobjects-listitem__object-path"
         :read-only="false"
         :domain-object="domainObject"
-        :show-original-path="false"
         :object-path="objectPath"
       />
     </div>

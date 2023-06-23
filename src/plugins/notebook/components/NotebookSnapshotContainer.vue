@@ -43,7 +43,7 @@
       <span
         v-for="snapshot in snapshots"
         :key="snapshot.embedObject.id"
-        draggable="true"
+        :draggable="true"
         @dragstart="startEmbedDrag(snapshot, $event)"
       >
         <NotebookEmbed

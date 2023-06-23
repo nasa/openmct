@@ -22,7 +22,7 @@
 
 <template>
   <li
-    draggable="true"
+    :draggable="true"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
     @dragover.prevent

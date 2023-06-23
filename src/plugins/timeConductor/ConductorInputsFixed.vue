@@ -30,7 +30,7 @@
         class="c-input--datetime"
         type="text"
         autocorrect="off"
-        spellcheck="false"
+        :spellcheck="false"
         @change="
           validateAllBounds('startDate');
           submitForm();
@@ -54,7 +54,7 @@
         class="c-input--datetime"
         type="text"
         autocorrect="off"
-        spellcheck="false"
+        :spellcheck="false"
         @change="
           validateAllBounds('endDate');
           submitForm();

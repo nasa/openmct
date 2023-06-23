@@ -32,7 +32,7 @@
             type="range"
             min="0"
             max="500"
-            draggable="true"
+            :draggable="true"
             @dragstart.stop.prevent
             @change="notifyFiltersChanged"
             @input="notifyFiltersChanged"
@@ -44,7 +44,7 @@
             type="range"
             min="0"
             max="500"
-            draggable="true"
+            :draggable="true"
             @dragstart.stop.prevent
             @change="notifyFiltersChanged"
             @input="notifyFiltersChanged"
