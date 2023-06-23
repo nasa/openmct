@@ -135,7 +135,6 @@ class UserAPI extends EventEmitter {
     if (!this.hasProvider()) {
       return null;
     }
-
     const activeRole = this.getActiveRole();
 
     return this._provider.canProvideStatusForRole?.(activeRole);

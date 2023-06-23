@@ -265,4 +265,87 @@ describe('The Annotation API', () => {
       expect(results.length).toEqual(0);
     });
   });
+
+  describe('Target Comparators', () => {
+    let targets;
+    let otherTargets;
+    let comparator;
+
+    beforeEach(() => {
+      targets = {
+        fooTarget: {
+          foo: 42
+        }
+      };
+      otherTargets = {
+        fooTarget: {
+          bar: 42
+        }
+      };
+      comparator = (t1, t2) => t1.fooTarget.foo === t2.fooTarget.bar;
+    });
+  });
+
+    it('can add a comparator function', () => {
+      const notebookAnnotationType = openmct.annotation.ANNOTATION_TYPES.NOTEBOOK;
+      expect(
+        openmct.annotation.areAnnotationTargetsEqual(notebookAnnotationType, targets, otherTargets)
+      ).toBeFalse(); // without a comparator, these should NOT be equal
+      // Register a comparator function for the notebook annotation type
+      openmct.annotation.addTargetComparator(notebookAnnotationType, comparator);
+      expect(
+        openmct.annotation.areAnnotationTargetsEqual(notebookAnnotationType, targets, otherTargets)
+      ).toBeTrue(); // the comparator should make these equal
+    });
+    it('can create a tag', async () => {
+      const annotationObject = await openmct.annotation.create(tagCreationArguments);
+      expect(annotationObject).toBeDefined();
+      expect(annotationObject.type).toEqual('annotation');
+      expect(annotationObject.tags).toContain('aWonderfulTag');
+    });
+    it('can delete a tag', async () => {
+      const annotationObject = await openmct.annotation.create(tagCreationArguments);
+      expect(annotationObject).toBeDefined();
+      openmct.annotation.deleteAnnotations([annotationObject]);
+      expect(annotationObject._deleted).toBeTrue();
+    });
+    it('can remove all tags', async () => {
+      const annotationObject = await openmct.annotation.create(tagCreationArguments);
+      expect(annotationObject).toBeDefined();
+      expect(() => {
+        openmct.annotation.deleteAnnotations([annotationObject]);
+      }).not.toThrow();
+      expect(annotationObject._deleted).toBeTrue();
+    });
+    it('can add/delete/add a tag', async () => {
+      let annotationObject = await openmct.annotation.create(tagCreationArguments);
+      expect(annotationObject).toBeDefined();
+      expect(annotationObject.type).toEqual('annotation');
+      expect(annotationObject.tags).toContain('aWonderfulTag');
+      openmct.annotation.deleteAnnotations([annotationObject]);
+      expect(annotationObject._deleted).toBeTrue();
+      annotationObject = await openmct.annotation.create(tagCreationArguments);
+      expect(annotationObject).toBeDefined();
+      expect(annotationObject.type).toEqual('annotation');
+      expect(annotationObject.tags).toContain('aWonderfulTag');
+      expect(annotationObject._deleted).toBeFalse();
+    });
+  });
+
+    it('falls back to deep equality check if no comparator functions', () => {
+      const annotationTypeWithoutComparator = openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL;
+      const areEqual = openmct.annotation.areAnnotationTargetsEqual(
+        annotationTypeWithoutComparator,
+        targets,
+        targets
+      );
+      const areNotEqual = openmct.annotation.areAnnotationTargetsEqual(
+        annotationTypeWithoutComparator,
+        targets,
+        otherTargets
+      );
+      expect(areEqual).toBeTrue();
+      expect(areNotEqual).toBeFalse();
+    });
+  });
 });
