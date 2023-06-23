@@ -183,13 +183,12 @@ test.describe('Main Tree', () => {
 
     page.on('requestfailed', (request) => {
       // check if the request was aborted
-      console.log('request error text', request.failure().errorText);
       if (request.failure().errorText === 'net::ERR_ABORTED') {
         requestWasAborted = true;
       }
     });
 
-    const fooData = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Foo'
     });
@@ -198,9 +197,7 @@ test.describe('Main Tree', () => {
     const delayInMs = 500;
 
     await page.route('**', async (route, request) => {
-      console.log('request ', request.url(), request.url().endsWith(fooData.uuid));
       await new Promise((resolve) => setTimeout(resolve, delayInMs));
-
       route.continue();
     });
 

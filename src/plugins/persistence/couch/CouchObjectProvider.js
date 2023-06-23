@@ -224,7 +224,7 @@ class CouchObjectProvider {
       if (response === null) {
         this.indicator.setIndicatorToState(DISCONNECTED);
 
-        if (!error.name === 'AbortError') {
+        if (error.name !== 'AbortError') {
           console.error(error.message);
         }
 
@@ -233,7 +233,7 @@ class CouchObjectProvider {
         if (body?.model && isNotebookOrAnnotationType(body.model)) {
           // warn since we handle conflicts for notebooks
           console.warn(error.message);
-        } else if (!error.name === 'AbortError') {
+        } else if (error.name !== 'AbortError') {
           console.error(error.message);
         }
 
