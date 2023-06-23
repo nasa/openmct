@@ -164,7 +164,7 @@ export default {
     this.openmct.time.off('bounds', this.updateTimestamp);
     this.openmct.time.off('clock', this.setViewFromClock);
 
-    this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
+    this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
     if (this.clearAutoScrollDisabledTimer) {
       clearTimeout(this.clearAutoScrollDisabledTimer);
     }
