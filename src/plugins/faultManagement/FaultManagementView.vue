@@ -53,7 +53,7 @@ export default {
       } else if (type === FAULT_MANAGEMENT_ALARMS) {
         this.faultsList.forEach((faultValue, i) => {
           if (fault.id === faultValue.id) {
-            this.$set(this.faultsList, i, fault);
+            this.faultsList[i] = fault;
           }
         });
       }

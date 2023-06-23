@@ -878,8 +878,8 @@ export default {
         const fontSize = hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC;
         const font = hasConsolidatedFont ? styles[0].font : NON_SPECIFIC;
 
-        this.$set(this.consolidatedFontStyle, 'fontSize', fontSize);
-        this.$set(this.consolidatedFontStyle, 'font', font);
+        this.consolidatedFontStyle['fontSize'] = fontSize;
+        this.consolidatedFontStyle['font'] = font;
       }
     },
     getFontStyle(selectionPath) {
@@ -934,7 +934,7 @@ export default {
       }
 
       // sync vue component on font update
-      this.$set(this.consolidatedFontStyle, property, value);
+      this.consolidatedFontStyle[property] = value;
     },
     isLayoutObject(selectionPath) {
       const layoutItemType =

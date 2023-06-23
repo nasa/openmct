@@ -217,7 +217,7 @@ export default {
         currentHistory.length = this.MAX_RECORDS_LENGTH;
       }
 
-      this.$set(this[this.currentHistory], key, currentHistory);
+      this[this.currentHistory][key] = currentHistory;
       this.persistHistoryToLocalStorage();
     },
     selectTimespan(timespan) {
