@@ -181,9 +181,14 @@ export default {
     },
     toggleHover(hover) {
       this.hover = hover;
-      this.$emit('legendHoverChanged', {
-        seriesKey: this.hover ? this.seriesObject.keyString : ''
-      });
+      this.$emit(
+        'legendHoverChanged',
+        this.hover
+          ? {
+              seriesKey: this.seriesObject.keyString
+            }
+          : undefined
+      );
     }
   }
 };

@@ -27,7 +27,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
   >
     <plot-legend
-      v-if="compositionObjectsConfigLoaded"
+      v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
       @legendHoverChanged="legendHoverChanged"
@@ -46,6 +46,7 @@
         :cursor-guide="cursorGuide"
         :show-limit-line-labels="showLimitLineLabels"
         :parent-y-tick-width="maxTickWidth"
+        :hide-legend="showLegendsForChildren === false"
         @plotYTickWidth="onYTickWidthChange"
         @loadingUpdated="loadingUpdated"
         @cursorGuide="onCursorGuideChange"
@@ -66,6 +67,7 @@ import ColorPalette from '@/ui/color/ColorPalette';
 import PlotLegend from '../legend/PlotLegend.vue';
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
   components: {
@@ -96,6 +98,7 @@ export default {
       colorPalette: new ColorPalette(),
       compositionObjectsConfigLoaded: false,
       position: 'top',
+      showLegendsForChildren: true,
       expanded: false
     };
   },
@@ -137,6 +140,7 @@ export default {
     this.destroy();
   },
   mounted() {
+    eventHelpers.extend(this);
     //We only need to initialize the stacked plot config for legend properties
     const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     this.config = this.getConfig(configId);
@@ -183,11 +187,21 @@ export default {
 
           return this.configLoaded[id] === true;
         });
+      if (this.compositionObjectsConfigLoaded) {
+        this.listenTo(
+          this.config.legend,
+          'change:showLegendsForChildren',
+          this.updateShowLegendsForChildren,
+          this
+        );
+      }
     },
     destroy() {
       this.composition.off('add', this.addChild);
       this.composition.off('remove', this.removeChild);
       this.composition.off('reorder', this.compositionReorder);
+
+      this.stopListening();
     },
 
     addChild(child) {
@@ -304,6 +318,9 @@ export default {
     },
     updatePosition(position) {
       this.position = position;
+    },
+    updateShowLegendsForChildren(showLegendsForChildren) {
+      this.showLegendsForChildren = showLegendsForChildren;
     },
     updateReady(ready) {
       this.configReady = ready;
