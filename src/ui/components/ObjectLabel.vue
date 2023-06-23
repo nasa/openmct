@@ -26,6 +26,7 @@
     :draggable="true"
     @dragstart="dragStart"
     @click="navigateOrPreview"
+    ref="root"
   >
     <div class="c-tree__item__type-icon c-object-label__type-icon" :class="typeClass">
       <span class="is-status__indicator" :title="`This item is ${status}`"></span>

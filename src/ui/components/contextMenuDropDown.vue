@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-so-view__context-actions c-disclosure-button" @click="showContextMenu"></div>
+  <div class="c-so-view__context-actions c-disclosure-button" @click="showContextMenu" ref="root"></div>
 </template>
 
 <script>

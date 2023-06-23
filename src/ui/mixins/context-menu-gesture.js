@@ -1,3 +1,6 @@
+import * as Emitter from "tiny-emitter";
+const emitter = new Emitter();
+
 export default {
   inject: ['openmct'],
   props: {
@@ -15,7 +18,10 @@ export default {
   },
   mounted() {
     //TODO: touch support
-    this.$el.addEventListener('contextmenu', this.showContextMenu);
+    this.$nextTick(() => {
+      this.$refs.root.addEventListener('contextmenu', this.showContextMenu);
+    });
+      
 
     function updateObject(oldObject, newObject) {
       Object.assign(oldObject, newObject);
@@ -23,15 +29,16 @@ export default {
 
     this.objectPath.forEach((object) => {
       if (object) {
-        this.$once(
-          'hook:destroyed',
-          this.openmct.objects.observe(object, '*', updateObject.bind(this, object))
+        const unobserve = this.openmct.objects.observe(object, '*', updateObject.bind(this, object));
+        emitter.once(
+          'hook:unmounted',
+          unobserve
         );
       }
     });
   },
-  unmounted() {
-    this.$el.removeEventListener('contextMenu', this.showContextMenu);
+  beforeUnmount() {
+    this.$refs.root.removeEventListener('contextMenu', this.showContextMenu);
   },
   methods: {
     showContextMenu(event) {
@@ -57,11 +64,11 @@ export default {
       );
       this.openmct.menus.showMenu(event.clientX, event.clientY, menuItems, menuOptions);
       this.contextClickActive = true;
-      this.$emit('context-click-active', true);
+      emitter.emit('context-click-active', true);
     },
     onContextMenuunmounted() {
       this.contextClickActive = false;
-      this.$emit('context-click-active', false);
+      emitter.emit('context-click-active', false);
     }
   }
 };

@@ -174,6 +174,7 @@
 </template>
 
 <script>
+import EventEmitter from 'EventEmitter';
 import eventHelpers from './lib/eventHelpers';
 import LinearScale from './LinearScale';
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
@@ -188,6 +189,7 @@ import _ from 'lodash';
 
 const OFFSET_THRESHOLD = 10;
 const AXES_PADDING = 20;
+const emitter = new EventEmitter();
 
 export default {
   components: {
@@ -371,7 +373,7 @@ export default {
       );
     }
 
-    this.$emit('configLoaded', true);
+    emitter.emit('configLoaded', true);
 
     this.listenTo(this.config.series, 'add', this.addSeries, this);
     this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -389,7 +391,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', this.loadAnnotations);
+    emitter.on('loadingComplete', this.loadAnnotations);
     this.openmct.selection.on('change', this.updateSelection);
     this.setTimeContext();
 
@@ -456,7 +458,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', () => {
+          emitter.once('loadingComplete', () => {
             resolve();
           });
         } else {
@@ -707,12 +709,12 @@ export default {
       this.pending -= 1;
       this.updateLoading();
       if (this.pending === 0) {
-        this.$emit('loadingComplete');
+        emitter.emit('loadingComplete');
       }
     },
 
     updateLoading() {
-      this.$emit('loadingUpdated', this.pending > 0);
+      emitter.emit('loadingUpdated', this.pending > 0);
     },
 
     updateFiltersAndResubscribe(updatedFilters) {
@@ -1035,7 +1037,7 @@ export default {
           .reduce((previous, current) => {
             return previous + current.tickWidth;
           }, 0);
-        this.$emit(
+        emitter.emit(
           'plotYTickWidth',
           {
             hasMultipleLeftAxes: this.hasMultipleLeftAxes,
@@ -1149,7 +1151,7 @@ export default {
           });
       }
 
-      this.$emit('highlights', this.highlights);
+      emitter.emit('highlights', this.highlights);
     },
 
     untrackMousePosition() {
@@ -1189,7 +1191,7 @@ export default {
 
       if (this.isMouseClick() && event.shiftKey) {
         this.lockHighlightPoint = !this.lockHighlightPoint;
-        this.$emit('lockHighlightPoint', this.lockHighlightPoint);
+        emitter.emit('lockHighlightPoint', this.lockHighlightPoint);
       }
 
       if (this.pan) {
@@ -1890,7 +1892,7 @@ export default {
       this.openmct.objectViews.off('clearData', this.clearData);
     },
     updateStatus(status) {
-      this.$emit('statusUpdated', status);
+      emitter.emit('statusUpdated', status);
     },
     handleWindowResize() {
       const { plotWrapper } = this.$parent.$refs;
@@ -1908,11 +1910,11 @@ export default {
     },
     toggleCursorGuide() {
       this.cursorGuide = !this.cursorGuide;
-      this.$emit('cursorGuide', this.cursorGuide);
+      emitter.emit('cursorGuide', this.cursorGuide);
     },
     toggleGridLines() {
       this.gridLines = !this.gridLines;
-      this.$emit('gridLines', this.gridLines);
+      emitter.emit('gridLines', this.gridLines);
     }
   }
 };
