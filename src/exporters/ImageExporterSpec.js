@@ -24,35 +24,35 @@ import ImageExporter from './ImageExporter';
 import { createOpenMct, resetApplicationState } from '../utils/testing';
 
 describe('The Image Exporter', () => {
-    let openmct;
-    let imageExporter;
+  let openmct;
+  let imageExporter;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  describe('basic instatation', () => {
+    it('can be instatiated', () => {
+      imageExporter = new ImageExporter(openmct);
+
+      expect(imageExporter).not.toEqual(null);
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('can render an element to a blob', async () => {
+      const mockHeadElement = document.createElement('h1');
+      const mockTextNode = document.createTextNode('foo bar');
+      mockHeadElement.appendChild(mockTextNode);
+      document.body.appendChild(mockHeadElement);
+      imageExporter = new ImageExporter(openmct);
+      const returnedBlob = await imageExporter.renderElement(document.body, {
+        imageType: 'png'
+      });
+      expect(returnedBlob).not.toEqual(null);
+      expect(returnedBlob.blob).not.toEqual(null);
+      expect(returnedBlob.blob).toBeInstanceOf(Blob);
     });
-
-    describe("basic instatation", () => {
-        it("can be instatiated", () => {
-            imageExporter = new ImageExporter(openmct);
-
-            expect(imageExporter).not.toEqual(null);
-        });
-        it("can render an element to a blob", async () => {
-            const mockHeadElement = document.createElement("h1");
-            const mockTextNode = document.createTextNode('foo bar');
-            mockHeadElement.appendChild(mockTextNode);
-            document.body.appendChild(mockHeadElement);
-            imageExporter = new ImageExporter(openmct);
-            const returnedBlob = await imageExporter.renderElement(document.body, {
-                imageType: 'png'
-            });
-            expect(returnedBlob).not.toEqual(null);
-            expect(returnedBlob.blob).not.toEqual(null);
-            expect(returnedBlob.blob).toBeInstanceOf(Blob);
-        });
-    });
+  });
 });

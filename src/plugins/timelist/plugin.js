@@ -22,37 +22,37 @@
 
 import TimelistViewProvider from './TimelistViewProvider';
 import { TIMELIST_TYPE } from './constants';
-import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProvider";
-import TimelistCompositionPolicy from "@/plugins/timelist/TimelistCompositionPolicy";
+import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider';
+import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType(TIMELIST_TYPE, {
-            name: 'Time List',
-            key: TIMELIST_TYPE,
-            description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
-            creatable: true,
-            cssClass: 'icon-timelist',
-            initialize: function (domainObject) {
-                domainObject.configuration = {
-                    sortOrderIndex: 0,
-                    futureEventsIndex: 1,
-                    futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
-                    currentEventsIndex: 1,
-                    currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
-                    pastEventsIndex: 1,
-                    pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
-                    filter: ''
-                };
-                domainObject.composition = [];
-            }
-        });
-        openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
-        openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
-
-    };
+  return function install(openmct) {
+    openmct.types.addType(TIMELIST_TYPE, {
+      name: 'Time List',
+      key: TIMELIST_TYPE,
+      description:
+        'A configurable, time-ordered list view of activities for a compatible mission plan file.',
+      creatable: true,
+      cssClass: 'icon-timelist',
+      initialize: function (domainObject) {
+        domainObject.configuration = {
+          sortOrderIndex: 0,
+          futureEventsIndex: 1,
+          futureEventsDurationIndex: 0,
+          futureEventsDuration: 20,
+          currentEventsIndex: 1,
+          currentEventsDurationIndex: 0,
+          currentEventsDuration: 20,
+          pastEventsIndex: 1,
+          pastEventsDurationIndex: 0,
+          pastEventsDuration: 20,
+          filter: ''
+        };
+        domainObject.composition = [];
+      }
+    });
+    openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
+    openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
+  };
 }

@@ -22,7 +22,7 @@
 import NewFolderAction from './newFolderAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new NewFolderAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new NewFolderAction(openmct));
+  };
 }

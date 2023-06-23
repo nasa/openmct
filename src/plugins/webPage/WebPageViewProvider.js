@@ -24,38 +24,38 @@ import WebPageComponent from './components/WebPage.vue';
 import Vue from 'vue';
 
 export default function WebPage(openmct) {
-    return {
-        key: 'webPage',
-        name: 'Web Page',
-        cssClass: 'icon-page',
-        canView: function (domainObject) {
-            return domainObject.type === 'webPage';
-        },
-        view: function (domainObject) {
-            let component;
+  return {
+    key: 'webPage',
+    name: 'Web Page',
+    cssClass: 'icon-page',
+    canView: function (domainObject) {
+      return domainObject.type === 'webPage';
+    },
+    view: function (domainObject) {
+      let component;
 
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            WebPageComponent: WebPageComponent
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: '<web-page-component></web-page-component>'
-                    });
-                },
-                destroy: function (element) {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              WebPageComponent: WebPageComponent
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: '<web-page-component></web-page-component>'
+          });
         },
-        priority: function () {
-            return 1;
+        destroy: function (element) {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    },
+    priority: function () {
+      return 1;
+    }
+  };
 }

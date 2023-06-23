@@ -23,8 +23,8 @@ import PreviewAction from './PreviewAction.js';
 import ViewHistoricalDataAction from './ViewHistoricalDataAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new PreviewAction(openmct));
-        openmct.actions.register(new ViewHistoricalDataAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new PreviewAction(openmct));
+    openmct.actions.register(new ViewHistoricalDataAction(openmct));
+  };
 }

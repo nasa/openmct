@@ -21,24 +21,24 @@
  *****************************************************************************/
 
 function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
-    let remoteClockLoaded = false;
+  let remoteClockLoaded = false;
 
-    return {
-        appliesTo: () => {
-            // Get the activeClock from the Global Time Context
-            const { activeClock } = openmct.time;
+  return {
+    appliesTo: () => {
+      // Get the activeClock from the Global Time Context
+      const { activeClock } = openmct.time;
 
-            return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
-        },
-        invoke: async (request) => {
-            const { start, end } = await waitForBounds();
-            remoteClockLoaded = true;
-            request.start = start;
-            request.end = end;
+      return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
+    },
+    invoke: async (request) => {
+      const { start, end } = await waitForBounds();
+      remoteClockLoaded = true;
+      request.start = start;
+      request.end = end;
 
-            return request;
-        }
-    };
+      return request;
+    }
+  };
 }
 
 export default remoteClockRequestInterceptor;

@@ -21,47 +21,43 @@
 -->
 
 <template>
-<div class="form-control select-field">
+  <div class="form-control select-field">
     <select
-        v-model="selected"
-        required="model.required"
-        name="mctControl"
-        :aria-label="model.ariaLabel || model.name"
-        @change="onChange($event)"
+      v-model="selected"
+      required="model.required"
+      name="mctControl"
+      :aria-label="model.ariaLabel || model.name"
+      @change="onChange($event)"
     >
-        <option
-            v-for="option in model.options"
-            :key="option.name"
-            :value="option.value"
-        >
-            {{ option.name }}
-        </option>
+      <option v-for="option in model.options" :key="option.name" :value="option.value">
+        {{ option.name }}
+      </option>
     </select>
-</div>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            selected: this.model.value
-        };
-    },
-    methods: {
-        onChange() {
-            const data = {
-                model: this.model,
-                value: this.selected
-            };
-
-            this.$emit('onChange', data);
-        }
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      selected: this.model.value
+    };
+  },
+  methods: {
+    onChange() {
+      const data = {
+        model: this.model,
+        value: this.selected
+      };
+
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

@@ -20,60 +20,63 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<td
-    :title="formattedValue"
-    @click="selectCell($event.currentTarget, columnKey)"
->
+  <td :title="formattedValue" @click="selectCell($event.currentTarget, columnKey)">
     {{ formattedValue }}
-</td>
+  </td>
 </template>
 
 <script>
 export default {
-    inject: ['openmct'],
-    props: {
-        row: {
-            type: Object,
-            required: true
-        },
-        columnKey: {
-            type: String,
-            required: true
-        },
-        objectPath: {
-            type: Array,
-            required: true
-        }
+  inject: ['openmct'],
+  props: {
+    row: {
+      type: Object,
+      required: true
     },
-    computed: {
-        formattedValue() {
-            return this.row.getFormattedValue(this.columnKey);
-        },
-        isSelectable() {
-            let column = this.row.columns[this.columnKey];
-
-            return column && column.selectable;
-        }
+    columnKey: {
+      type: String,
+      required: true
     },
-    methods: {
-        selectCell(element, columnKey) {
-            if (this.isSelectable) {
-                this.openmct.selection.select([{
-                    element: element,
-                    context: {
-                        type: 'table-cell',
-                        row: this.row.objectKeyString,
-                        column: columnKey
-                    }
-                }, {
-                    element: this.openmct.layout.$refs.browseObject.$el,
-                    context: {
-                        item: this.objectPath[0]
-                    }
-                }], false);
-                event.stopPropagation();
-            }
-        }
+    objectPath: {
+      type: Array,
+      required: true
     }
+  },
+  computed: {
+    formattedValue() {
+      return this.row.getFormattedValue(this.columnKey);
+    },
+    isSelectable() {
+      let column = this.row.columns[this.columnKey];
+
+      return column && column.selectable;
+    }
+  },
+  methods: {
+    selectCell(element, columnKey) {
+      if (this.isSelectable) {
+        this.openmct.selection.select(
+          [
+            {
+              element: element,
+              context: {
+                type: 'table-cell',
+                row: this.row.objectKeyString,
+                column: columnKey
+              }
+            },
+            {
+              element: this.openmct.layout.$refs.browseObject.$el,
+              context: {
+                item: this.objectPath[0]
+              }
+            }
+          ],
+          false
+        );
+        event.stopPropagation();
+      }
+    }
+  }
 };
 </script>

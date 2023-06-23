@@ -21,129 +21,122 @@
 -->
 
 <template>
-<span class="form-control shell">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <input
-            id="fileElem"
-            ref="fileInput"
-            type="file"
-            :accept="acceptableFileTypes"
-            style="display:none"
-        >
-        <button
-            id="fileSelect"
-            class="c-button"
-            @click="selectFile"
-        >
-            {{ name }}
-        </button>
-        <button
-            v-if="removable"
-            class="c-button icon-trash"
-            title="Remove file"
-            @click="removeFile"
-        ></button>
+  <span class="form-control shell">
+    <span class="field control" :class="model.cssClass">
+      <input
+        id="fileElem"
+        ref="fileInput"
+        type="file"
+        :accept="acceptableFileTypes"
+        style="display: none"
+      />
+      <button id="fileSelect" class="c-button" @click="selectFile">
+        {{ name }}
+      </button>
+      <button
+        v-if="removable"
+        class="c-button icon-trash"
+        title="Remove file"
+        @click="removeFile"
+      ></button>
     </span>
-</span>
+  </span>
 </template>
 
 <script>
 export default {
-    inject: ['openmct'],
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            fileInfo: undefined
-        };
-    },
-    computed: {
-        name() {
-            const fileInfo = this.fileInfo || this.model.value;
-
-            return fileInfo && fileInfo.name || this.model.text;
-        },
-        removable() {
-            return (this.fileInfo || this.model.value) && this.model.removable;
-        },
-        acceptableFileTypes() {
-            if (this.model.type) {
-                return this.model.type;
-            }
-
-            return 'application/json';
-        }
-    },
-    mounted() {
-        this.$refs.fileInput.addEventListener("change", this.handleFiles, false);
-    },
-    methods: {
-        handleFiles() {
-            const fileList = this.$refs.fileInput.files;
-            const file = fileList[0];
-
-            if (this.acceptableFileTypes === 'application/json') {
-                this.readFile(file);
-            } else {
-                this.handleRawFile(file);
-            }
-        },
-        readFile(file) {
-            const self = this;
-            const fileReader = new FileReader();
-            const fileInfo = {};
-            fileInfo.name = file.name;
-            fileReader.onload = function (event) {
-                fileInfo.body = event.target.result;
-                self.fileInfo = fileInfo;
-
-                const data = {
-                    model: self.model,
-                    value: fileInfo
-                };
-                self.$emit('onChange', data);
-            };
-
-            fileReader.onerror = function (error) {
-                console.error('fileReader error', error);
-            };
-
-            fileReader.readAsText(file);
-        },
-        handleRawFile(file) {
-            const fileInfo = {
-                name: file.name,
-                body: file
-            };
-
-            this.fileInfo = Object.assign({}, fileInfo);
-
-            const data = {
-                model: this.model,
-                value: fileInfo
-            };
-
-            this.$emit('onChange', data);
-        },
-        selectFile() {
-            this.$refs.fileInput.click();
-        },
-        removeFile() {
-            this.model.value = undefined;
-            this.fileInfo = undefined;
-            const data = {
-                model: this.model,
-                value: undefined
-            };
-            this.$emit('onChange', data);
-        }
+  inject: ['openmct'],
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      fileInfo: undefined
+    };
+  },
+  computed: {
+    name() {
+      const fileInfo = this.fileInfo || this.model.value;
+
+      return (fileInfo && fileInfo.name) || this.model.text;
+    },
+    removable() {
+      return (this.fileInfo || this.model.value) && this.model.removable;
+    },
+    acceptableFileTypes() {
+      if (this.model.type) {
+        return this.model.type;
+      }
+
+      return 'application/json';
+    }
+  },
+  mounted() {
+    this.$refs.fileInput.addEventListener('change', this.handleFiles, false);
+  },
+  methods: {
+    handleFiles() {
+      const fileList = this.$refs.fileInput.files;
+      const file = fileList[0];
+
+      if (this.acceptableFileTypes === 'application/json') {
+        this.readFile(file);
+      } else {
+        this.handleRawFile(file);
+      }
+    },
+    readFile(file) {
+      const self = this;
+      const fileReader = new FileReader();
+      const fileInfo = {};
+      fileInfo.name = file.name;
+      fileReader.onload = function (event) {
+        fileInfo.body = event.target.result;
+        self.fileInfo = fileInfo;
+
+        const data = {
+          model: self.model,
+          value: fileInfo
+        };
+        self.$emit('onChange', data);
+      };
+
+      fileReader.onerror = function (error) {
+        console.error('fileReader error', error);
+      };
+
+      fileReader.readAsText(file);
+    },
+    handleRawFile(file) {
+      const fileInfo = {
+        name: file.name,
+        body: file
+      };
+
+      this.fileInfo = Object.assign({}, fileInfo);
+
+      const data = {
+        model: this.model,
+        value: fileInfo
+      };
+
+      this.$emit('onChange', data);
+    },
+    selectFile() {
+      this.$refs.fileInput.click();
+    },
+    removeFile() {
+      this.model.value = undefined;
+      this.fileInfo = undefined;
+      const data = {
+        model: this.model,
+        value: undefined
+      };
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

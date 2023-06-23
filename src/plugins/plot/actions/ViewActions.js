@@ -19,39 +19,36 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {isPlotView} from "@/plugins/plot/actions/utils";
+import { isPlotView } from '@/plugins/plot/actions/utils';
 
 const exportPNG = {
-    name: 'Export as PNG',
-    key: 'export-as-png',
-    description: 'Export This View\'s Data as PNG',
-    cssClass: 'icon-download',
-    group: 'view',
-    invoke(objectPath, view) {
-        view.getViewContext().exportPNG();
-    }
+  name: 'Export as PNG',
+  key: 'export-as-png',
+  description: "Export This View's Data as PNG",
+  cssClass: 'icon-download',
+  group: 'view',
+  invoke(objectPath, view) {
+    view.getViewContext().exportPNG();
+  }
 };
 
 const exportJPG = {
-    name: 'Export as JPG',
-    key: 'export-as-jpg',
-    description: 'Export This View\'s Data as JPG',
-    cssClass: 'icon-download',
-    group: 'view',
-    invoke(objectPath, view) {
-        view.getViewContext().exportJPG();
-    }
+  name: 'Export as JPG',
+  key: 'export-as-jpg',
+  description: "Export This View's Data as JPG",
+  cssClass: 'icon-download',
+  group: 'view',
+  invoke(objectPath, view) {
+    view.getViewContext().exportJPG();
+  }
 };
 
-const viewActions = [
-    exportPNG,
-    exportJPG
-];
+const viewActions = [exportPNG, exportJPG];
 
-viewActions.forEach(action => {
-    action.appliesTo = (objectPath, view = {}) => {
-        return isPlotView(view);
-    };
+viewActions.forEach((action) => {
+  action.appliesTo = (objectPath, view = {}) => {
+    return isPlotView(view);
+  };
 });
 
 export default viewActions;

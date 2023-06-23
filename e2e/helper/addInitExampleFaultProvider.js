@@ -23,6 +23,6 @@
 // This should be used to install the Example Fault Provider, this will also install the FaultManagementPlugin (neither of which are installed by default).
 
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.example.ExampleFaultSource());
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.example.ExampleFaultSource());
 });

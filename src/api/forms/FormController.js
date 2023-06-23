@@ -13,88 +13,88 @@ import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
 import Vue from 'vue';
 
 export const DEFAULT_CONTROLS_MAP = {
-    'autocomplete': AutoCompleteField,
-    'checkbox': CheckBoxField,
-    'composite': ClockDisplayFormatField,
-    'datetime': Datetime,
-    'file-input': FileInput,
-    'locator': Locator,
-    'numberfield': NumberField,
-    'select': SelectField,
-    'textarea': TextAreaField,
-    'textfield': TextField,
-    'toggleSwitch': ToggleSwitchField
+  autocomplete: AutoCompleteField,
+  checkbox: CheckBoxField,
+  composite: ClockDisplayFormatField,
+  datetime: Datetime,
+  'file-input': FileInput,
+  locator: Locator,
+  numberfield: NumberField,
+  select: SelectField,
+  textarea: TextAreaField,
+  textfield: TextField,
+  toggleSwitch: ToggleSwitchField
 };
 
 export default class FormControl {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.controls = {};
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.controls = {};
 
-        this._addDefaultFormControls();
+    this._addDefaultFormControls();
+  }
+
+  addControl(controlName, controlViewProvider) {
+    const control = this.controls[controlName];
+    if (control) {
+      console.warn(`Error: provided form control '${controlName}', already exists`);
+
+      return;
     }
 
-    addControl(controlName, controlViewProvider) {
-        const control = this.controls[controlName];
-        if (control) {
-            console.warn(`Error: provided form control '${controlName}', already exists`);
+    this.controls[controlName] = controlViewProvider;
+  }
 
-            return;
-        }
-
-        this.controls[controlName] = controlViewProvider;
+  getControl(controlName) {
+    const control = this.controls[controlName];
+    if (!control) {
+      console.error(`Error: form control '${controlName}', does not exist`);
     }
 
-    getControl(controlName) {
-        const control = this.controls[controlName];
-        if (!control) {
-            console.error(`Error: form control '${controlName}', does not exist`);
-        }
+    return control;
+  }
 
-        return control;
-    }
+  /**
+   * @private
+   */
+  _addDefaultFormControls() {
+    Object.keys(DEFAULT_CONTROLS_MAP).forEach((control) => {
+      const controlViewProvider = this._getControlViewProvider(control);
+      this.addControl(control, controlViewProvider);
+    });
+  }
 
-    /**
-     * @private
-     */
-    _addDefaultFormControls() {
-        Object.keys(DEFAULT_CONTROLS_MAP).forEach(control => {
-            const controlViewProvider = this._getControlViewProvider(control);
-            this.addControl(control, controlViewProvider);
+  /**
+   * @private
+   */
+  _getControlViewProvider(control) {
+    const self = this;
+    let rowComponent;
+
+    return {
+      show(element, model, onChange) {
+        rowComponent = new Vue({
+          el: element,
+          components: {
+            FormControlComponent: DEFAULT_CONTROLS_MAP[control]
+          },
+          provide: {
+            openmct: self.openmct
+          },
+          data() {
+            return {
+              model,
+              onChange
+            };
+          },
+          template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
         });
-    }
 
-    /**
-     * @private
-     */
-    _getControlViewProvider(control) {
-        const self = this;
-        let rowComponent;
-
-        return {
-            show(element, model, onChange) {
-                rowComponent = new Vue({
-                    el: element,
-                    components: {
-                        FormControlComponent: DEFAULT_CONTROLS_MAP[control]
-                    },
-                    provide: {
-                        openmct: self.openmct
-                    },
-                    data() {
-                        return {
-                            model,
-                            onChange
-                        };
-                    },
-                    template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
-                });
-
-                return rowComponent;
-            },
-            destroy() {
-                rowComponent.$destroy();
-            }
-        };
-    }
+        return rowComponent;
+      },
+      destroy() {
+        rowComponent.$destroy();
+      }
+    };
+  }
 }

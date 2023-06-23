@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 /**
-     * A color palette stores a set of colors and allows for different
-     * methods of color allocation.
-     *
-     * @constructor
-     */
+ * A color palette stores a set of colors and allows for different
+ * methods of color allocation.
+ *
+ * @constructor
+ */
 import { isDefaultColor, COLOR_PALETTE } from './ColorHelper';
 import Color from './Color';
 
@@ -36,44 +36,44 @@ import Color from './Color';
  * @constructor
  */
 function ColorPalette() {
-    const allColors = this.allColors = COLOR_PALETTE.map(function (color) {
-        return new Color(color);
-    });
-    this.colorGroups = [[], [], []];
-    for (let i = 0; i < allColors.length; i++) {
-        this.colorGroups[i % 3].push(allColors[i]);
-    }
+  const allColors = (this.allColors = COLOR_PALETTE.map(function (color) {
+    return new Color(color);
+  }));
+  this.colorGroups = [[], [], []];
+  for (let i = 0; i < allColors.length; i++) {
+    this.colorGroups[i % 3].push(allColors[i]);
+  }
 
-    this.reset();
+  this.reset();
 }
 
 /**
  *
  */
 ColorPalette.prototype.groups = function () {
-    return this.colorGroups;
+  return this.colorGroups;
 };
 
 ColorPalette.prototype.reset = function () {
-    this.availableColors = this.allColors.slice();
+  this.availableColors = this.allColors.slice();
 };
 
 ColorPalette.prototype.remove = function (color) {
-    this.availableColors = this.availableColors.filter(function (c) {
-        return !c.equalTo(color);
-    });
+  this.availableColors = this.availableColors.filter(function (c) {
+    return !c.equalTo(color);
+  });
 };
 
 ColorPalette.prototype.return = function (color) {
-    if (isDefaultColor(color)) {
-        this.availableColors.unshift(color);
-    }
+  if (isDefaultColor(color)) {
+    this.availableColors.unshift(color);
+  }
 };
 
 ColorPalette.prototype.getByHexString = function (hexString) {
-    const color = Color.fromHexString(hexString);
+  const color = Color.fromHexString(hexString);
 
-    return color;
+  return color;
 };
 
 /**
@@ -81,12 +81,12 @@ ColorPalette.prototype.getByHexString = function (hexString) {
  * have been allocated, it will wrap around.
  */
 ColorPalette.prototype.getNextColor = function () {
-    if (!this.availableColors.length) {
-        console.warn('Color Palette empty, reusing colors!');
-        this.reset();
-    }
+  if (!this.availableColors.length) {
+    console.warn('Color Palette empty, reusing colors!');
+    this.reset();
+  }
 
-    return this.availableColors.shift();
+  return this.availableColors.shift();
 };
 
 export default ColorPalette;

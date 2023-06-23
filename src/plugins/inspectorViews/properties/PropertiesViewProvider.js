@@ -24,37 +24,37 @@ import Properties from './Properties.vue';
 import Vue from 'vue';
 
 export default function PropertiesViewProvider(openmct) {
-    return {
-        key: 'propertiesView',
-        name: 'Properties',
-        glyph: 'icon-info',
-        canView: function (selection) {
-            return selection.length > 0;
-        },
-        view: function (selection) {
-            let component;
+  return {
+    key: 'propertiesView',
+    name: 'Properties',
+    glyph: 'icon-info',
+    canView: function (selection) {
+      return selection.length > 0;
+    },
+    view: function (selection) {
+      let component;
 
-            return {
-                show: function (el) {
-                    component = new Vue({
-                        el,
-                        components: {
-                            Properties
-                        },
-                        provide: {
-                            openmct
-                        },
-                        template: `<Properties />`
-                    });
-                },
-                priority: function () {
-                    return openmct.priority.DEFAULT;
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+      return {
+        show: function (el) {
+          component = new Vue({
+            el,
+            components: {
+              Properties
+            },
+            provide: {
+              openmct
+            },
+            template: `<Properties />`
+          });
+        },
+        priority: function () {
+          return openmct.priority.DEFAULT;
+        },
+        destroy: function () {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    }
+  };
 }

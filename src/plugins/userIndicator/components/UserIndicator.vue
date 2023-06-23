@@ -21,96 +21,93 @@
 -->
 
 <template>
-<div class="c-indicator icon-person c-indicator--clickable">
+  <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
-        {{ role ? `${userName}: ${role}` : userName }}
-        <button @click="promptForRoleSelection">Change Role</button>
+      {{ role ? `${userName}: ${role}` : userName }}
+      <button @click="promptForRoleSelection">Change Role</button>
     </span>
-</div>
+  </div>
 </template>
 
 <script>
 import RoleChannelProvider from '../../../api/user/RoleChannel';
 export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            userName: undefined,
-            role: undefined,
-            loggedIn: false,
-            roleChannelProvider: undefined,
-            inputRoleSelection: undefined
-        };
-    },
+  inject: ['openmct'],
+  data() {
+    return {
+      userName: undefined,
+      role: undefined,
+      loggedIn: false,
+      roleChannelProvider: undefined,
+      inputRoleSelection: undefined
+    };
+  },
 
-    async mounted() {
-        this.getUserInfo();
-        this.roleChannelProvider = new RoleChannelProvider(this.openmct);
-        this.roleChannelProvider.createRoleChannel();
-        this.roleChannelProvider.subscribeToRole(this.setRoleSelection);
-        await this.fetchOrPromptForRole();
+  async mounted() {
+    this.getUserInfo();
+    this.roleChannelProvider = new RoleChannelProvider(this.openmct);
+    this.roleChannelProvider.createRoleChannel();
+    this.roleChannelProvider.subscribeToRole(this.setRoleSelection);
+    await this.fetchOrPromptForRole();
+  },
+  beforeDestroy() {
+    this.roleChannelProvider.unsubscribeToRole();
+  },
+  methods: {
+    async getUserInfo() {
+      const user = await this.openmct.user.getCurrentUser();
+      this.userName = user.getName();
+      this.role = this.openmct.user.getActiveRole();
+      this.loggedIn = this.openmct.user.isLoggedIn();
     },
-    beforeDestroy() {
-        this.roleChannelProvider.unsubscribeToRole();
+    fetchOrPromptForRole() {
+      const UserAPI = this.openmct.user;
+      const activeRole = UserAPI.getActiveRole();
+      this.role = activeRole;
+      if (!activeRole) {
+        this.promptForRoleSelection();
+      }
     },
-    methods: {
-        async getUserInfo() {
-            const user = await this.openmct.user.getCurrentUser();
-            this.userName = user.getName();
-            this.role = this.openmct.user.getActiveRole();
-            this.loggedIn = this.openmct.user.isLoggedIn();
+    promptForRoleSelection() {
+      const allRoles = this.openmct.user.getPossibleRoles();
+      const selectionOptions = allRoles.map((role) => ({
+        key: role,
+        name: role
+      }));
+
+      const dialog = this.openmct.overlays.selection({
+        selectionOptions,
+        iconClass: 'info',
+        title: 'Select Role',
+        message: 'Please select your role for operator status.',
+        currentSelection: this.role,
+        onChange: (event) => {
+          this.inputRoleSelection = event.target.value;
         },
-        fetchOrPromptForRole() {
-            const UserAPI = this.openmct.user;
-            const activeRole = UserAPI.getActiveRole();
-            this.role = activeRole;
-            if (!activeRole) {
-                this.promptForRoleSelection();
+        buttons: [
+          {
+            label: 'Select',
+            emphasis: true,
+            callback: () => {
+              dialog.dismiss();
+              const inputValueOrDefault = this.inputRoleSelection || selectionOptions[0].key;
+              this.updateRole(inputValueOrDefault);
+              this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
             }
+          }
+        ]
+      });
+    },
+    setRoleSelection(role) {
+      this.role = role;
+    },
 
-        },
-        promptForRoleSelection() {
-            const allRoles = this.openmct.user.getPossibleRoles();
-            const selectionOptions = allRoles
-                .map(role => ({
-                    key: role,
-                    name: role
-                }));
-
-            const dialog = this.openmct.overlays.selection({
-                selectionOptions,
-                iconClass: 'info',
-                title: 'Select Role',
-                message: 'Please select your role for operator status.',
-                currentSelection: this.role,
-                onChange: (event) => {
-                    this.inputRoleSelection = event.target.value;
-                },
-                buttons: [
-                    {
-                        label: 'Select',
-                        emphasis: true,
-                        callback: () => {
-                            dialog.dismiss();
-                            const inputValueOrDefault = this.inputRoleSelection || selectionOptions[0].key;
-                            this.updateRole(inputValueOrDefault);
-                            this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
-                        }
-                    }
-                ]
-            });
-        },
-        setRoleSelection(role) {
-            this.role = role;
-        },
-
-        updateRole(role) {
-            this.setRoleSelection(role);
-            this.openmct.user.setActiveRole(role);
-            // update other tabs through broadcast channel
-            this.roleChannelProvider.broadcastNewRole(role);
-        }
-
+    updateRole(role) {
+      this.setRoleSelection(role);
+      this.openmct.user.setActiveRole(role);
+      // update other tabs through broadcast channel
+      this.roleChannelProvider.broadcastNewRole(role);
     }
+  }
 };
 </script>

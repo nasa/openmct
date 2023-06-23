@@ -21,19 +21,16 @@
 -->
 
 <template>
-<span class="form-control shell">
-    <span
-        class="field control"
-        :class="model.cssClass"
-    >
-        <ToggleSwitch
-            id="switchId"
-            :checked="isChecked"
-            :name="model.name"
-            @change="toggleCheckBox"
-        />
+  <span class="form-control shell">
+    <span class="field control" :class="model.cssClass">
+      <ToggleSwitch
+        id="switchId"
+        :checked="isChecked"
+        :name="model.name"
+        @change="toggleCheckBox"
+      />
     </span>
-</span>
+  </span>
 </template>
 
 <script>
@@ -43,21 +40,21 @@ import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 import { v4 as uuid } from 'uuid';
 
 export default {
-    components: {
-        ToggleSwitch
-    },
-    mixins: [toggleMixin],
-    props: {
-        model: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            switchId: `toggleSwitch-${uuid}`,
-            isChecked: this.model.value
-        };
+  components: {
+    ToggleSwitch
+  },
+  mixins: [toggleMixin],
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
+  },
+  data() {
+    return {
+      switchId: `toggleSwitch-${uuid}`,
+      isChecked: this.model.value
+    };
+  }
 };
 </script>

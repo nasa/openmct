@@ -27,19 +27,18 @@ import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
  * @returns {function} The plugin install function
  */
 export default function operatorStatusPlugin(configuration) {
-    return function install(openmct) {
+  return function install(openmct) {
+    if (openmct.user.hasProvider()) {
+      const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
+      operatorStatusIndicator.install();
 
-        if (openmct.user.hasProvider()) {
-            const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
-            operatorStatusIndicator.install();
+      openmct.user.status.canSetPollQuestion().then((canSetPollQuestion) => {
+        if (canSetPollQuestion) {
+          const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
 
-            openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
-                if (canSetPollQuestion) {
-                    const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
-
-                    pollQuestionIndicator.install();
-                }
-            });
+          pollQuestionIndicator.install();
         }
-    };
+      });
+    }
+  };
 }
