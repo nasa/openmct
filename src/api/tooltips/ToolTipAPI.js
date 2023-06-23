@@ -1,9 +1,8 @@
 import Tooltip from './ToolTip';
 
 /**
- * The TooltipAPI is responsible for pre-pending templates to
- * the body of the document, which is useful for displaying templates
- * which need to block the full screen.
+ * The TooltipAPI is responsible for adding custom tooltips to
+ * the desired elements on the screen
  *
  * @memberof api/tooltips
  * @constructor
@@ -30,12 +29,10 @@ class TooltipAPI {
   /**
    * A description of option properties that can be passed into the overlay
    * @typedef options
-   * @property {object} element DOMElement that is to be inserted/shown on the overlay
-   * @property {string} size preferred size of the overlay (large, small, fit)
-   * @property {array} buttons optional button objects with label and callback properties
-   * @property {function} onDestroy callback to be called when overlay is destroyed
-   * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
-   * from overlay. Unless set to false, all overlays will be dismissable by default.
+   * @property {string} tooltipText text to show in the tooltip
+   * @property {string} tooltipLocation location to show the tooltip relative to the parentElement
+   *  (above, below, right, left, center)
+   * @property {HTMLElement} parentElement reference to the DOM node we're adding the tooltip to
    */
   tooltip(options) {
     let tooltip = new Tooltip(options);

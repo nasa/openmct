@@ -542,8 +542,10 @@ export default class ObjectAPI {
 
   /**
    * Return path of telemetry objects in the object composition
-   * @param {string} identifier the identifier for the domain object to query for
-   * @returns {Array} relative url for object
+   * @param {object} identifier the identifier for the domain object to query for
+   * @param {object} [telemetryIdentifier] the specific identifier for the telemetry
+   *  to look for in the composition, uses first object in composition otherwise
+   * @returns {Array} path of telemetry object in object composition
    */
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
