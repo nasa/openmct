@@ -22,6 +22,7 @@
 
 import GlobalTimeContext from "./GlobalTimeContext";
 import IndependentTimeContext from "@/api/time/IndependentTimeContext";
+import {FIXED_MODE_KEY, REALTIME_MODE_KEY} from "@/api/time/constants";
 
 /**
 * The public API for setting and querying the temporal state of the
@@ -143,8 +144,11 @@ class TimeAPI extends GlobalTimeContext {
         timeContext.resetContext();
 
         if (clockKey) {
+            timeContext.setMode(REALTIME_MODE_KEY);
             timeContext.setClock(clockKey, value);
         } else {
+            timeContext.setMode(FIXED_MODE_KEY);
+            //TODO: Should the clock be stopped here?
             timeContext.stopClock();
             //upstream clock was active, but now we don't have one
             if (upstreamClock) {
