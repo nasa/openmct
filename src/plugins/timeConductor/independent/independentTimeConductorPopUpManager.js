@@ -59,10 +59,8 @@ export default {
             }
         },
         handleClickAway(clickEvent) {
-            const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
-
-            if (!isToggle && this.canClose(clickEvent)) {
-                clickEvent.stopPropagation();
+            if (this.canClose(clickEvent)) {
+                // clickEvent.stopPropagation();
                 this.clearPopup();
             }
         },
@@ -108,9 +106,11 @@ export default {
         },
         canClose(clickAwayEvent) {
             const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
+            const isPopupOrChild = clickAwayEvent.target.closest('.c-tc-input-popup') !== null;
+            const isTimeConductor = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
+            const isToggle = clickAwayEvent.target.classList.contains('c-toggle-switch__slider');
 
-            return !isChildMenu && !isPopupElementItem;
+            return !isTimeConductor && !isChildMenu && !isToggle && !isPopupOrChild;
         }
     }
 };

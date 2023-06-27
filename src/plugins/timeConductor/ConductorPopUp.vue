@@ -3,7 +3,6 @@
     class="c-tc-input-popup"
     :class="modeClass"
     :style="position"
-    @click.stop
 >
     <div
         class="c-tc-input-popup__options"
