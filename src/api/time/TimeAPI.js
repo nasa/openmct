@@ -135,10 +135,10 @@ class TimeAPI extends GlobalTimeContext {
      */
     addIndependentContext(key, value, clockKey) {
         let timeContext = this.getIndependentContext(key);
-        let upstreamClock;
-        if (timeContext.upstreamTimeContext) {
-            upstreamClock = timeContext.upstreamTimeContext.getClock();
-        }
+        // let upstreamClock;
+        // if (timeContext.upstreamTimeContext) {
+        //     upstreamClock = timeContext.upstreamTimeContext.getClock();
+        // }
 
         //stop following upstream time context since the view has it's own
         timeContext.resetContext();
@@ -149,11 +149,11 @@ class TimeAPI extends GlobalTimeContext {
         } else {
             timeContext.setMode(FIXED_MODE_KEY);
             //TODO: Should the clock be stopped here?
-            timeContext.stopClock();
+            // timeContext.stopClock();
             //upstream clock was active, but now we don't have one
-            if (upstreamClock) {
-                timeContext.emit('clockChanged', timeContext.activeClock);
-            }
+            // if (upstreamClock) {
+            //     // timeContext.emit('clockChanged', timeContext.activeClock);
+            // }
 
             timeContext.setBounds(value);
         }

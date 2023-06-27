@@ -26,7 +26,7 @@ export default {
     data() {
         return {
             showConductorPopup: false,
-            positionX: 0,
+            positionX: -10000, // prevents initial flash after appending to body element
             positionY: 0,
             conductorPopup: null
         };
@@ -43,6 +43,7 @@ export default {
         initializePopup() {
             this.conductorPopup = this.$refs.conductorPopup.$el;
             document.body.appendChild(this.conductorPopup); // remove from container as it (and it's ancestors) have overflow:hidden
+
             this.$nextTick(() => {
                 window.addEventListener('resize', this.positionBox);
                 document.addEventListener('click', this.handleClickAway);
