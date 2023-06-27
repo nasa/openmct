@@ -104,14 +104,22 @@ export default {
   },
   computed: {
     plotLegendPositionClass() {
+      if (this.showLegendsForChildren) {
+        return '';
+      }
+
       return `plot-legend-${this.position}`;
     },
     plotLegendExpandedStateClass() {
-      if (this.expanded) {
-        return 'plot-legend-expanded';
-      } else {
-        return 'plot-legend-collapsed';
+      let legendExpandedStateClass = '';
+
+      if (this.showLegendsForChildren !== true && this.expanded) {
+        legendExpandedStateClass = 'plot-legend-expanded';
+      } else if (this.showLegendsForChildren !== true && !this.expanded) {
+        legendExpandedStateClass = 'plot-legend-collapsed';
       }
+
+      return legendExpandedStateClass;
     },
     /**
      * Returns the maximum width of the left and right y axes ticks of this stacked plots children
