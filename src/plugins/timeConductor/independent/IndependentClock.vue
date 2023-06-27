@@ -43,7 +43,7 @@
 <script>
 import toggleMixin from '../../../ui/mixins/toggle-mixin';
 import modeMixin from '../mode-mixin';
-import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants'
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 
 export default {
     mixins: [toggleMixin, modeMixin],

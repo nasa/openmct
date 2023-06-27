@@ -220,11 +220,9 @@ export default {
         },
         setViewFromClock() {
             this.bounds = this.isFixed ? this.timeContext.getBounds() : this.openmct.time.getClockOffsets();
-            console.log('set view from clock popup', this.bounds);
         },
         setBounds(bounds, isTick) {
             if (this.isFixed || !isTick) {
-                console.log('set bounds popup', bounds);
                 this.bounds = bounds;
             }
         },

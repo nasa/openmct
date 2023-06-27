@@ -75,7 +75,7 @@ export default {
         // let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         const timeFormatter = this.getFormatter(timeSystem.timeFormat);
         let bounds = this.inputBounds || this.openmct.time.getBounds();
-        console.log('fixed input bounds', this.inputBounds);
+
         return {
             timeSystem: timeSystem,
             // durationFormatter,
@@ -156,7 +156,6 @@ export default {
             }).formatter;
         },
         setBoundsFromView(bounds) {
-            console.log('conductor fixed bounds set bounds from view', bounds);
             this.$emit('boundsUpdated', {
                 start: bounds.start,
                 end: bounds.end
