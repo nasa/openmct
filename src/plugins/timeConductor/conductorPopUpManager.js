@@ -53,6 +53,10 @@ export default {
             this.showConductorPopup = true;
         },
         positionBox() {
+            if (this.conductorPopup) {
+                return;
+            }
+
             const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
             const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 

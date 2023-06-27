@@ -1,7 +1,7 @@
 <template>
 <div
     class="c-tc-input-popup"
-    :class="modeClass"
+    :class="popupClasses"
     :style="position"
 >
     <div
@@ -166,10 +166,12 @@ export default {
         timeMode() {
             return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
         },
-        modeClass() {
-            const value = this.bottom ? 'c-tc-input-popup--bottom' : '';
+        popupClasses() {
+            const value = this.bottom ? 'c-tc-input-popup--bottom ' : '';
+            const mode = this.isFixed ? 'fixed-mode' : 'realtime-mode';
+            const independentClass = this.isIndependent ? 'itc-popout ' : '';
 
-            return this.isFixed ? `${value} c-tc-input-popup--fixed-mode` : `${value} c-tc-input-popup--realtime-mode`;
+            return `${independentClass}${value}c-tc-input-popup--${mode}`;
         },
         timeOptionMode() {
             return this.timeOptions?.mode;
