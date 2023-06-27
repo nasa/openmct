@@ -28,7 +28,6 @@ import { TIME_CONTEXT_EVENTS } from './constants';
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
-
     constructor(openmct, globalTimeContext, objectPath) {
         super();
         this.openmct = openmct;
