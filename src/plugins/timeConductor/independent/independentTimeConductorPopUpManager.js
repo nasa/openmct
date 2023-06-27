@@ -53,8 +53,8 @@ export default {
         showPopup(clickEvent) {
             const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
 
-            // no current popup, itc toggled
-            if (!this.conductorPopup && !isToggle) {
+            // no current popup, itc toggled, something is emitting an dupe event with pointer id = -1, want to ignore those
+            if (!this.conductorPopup && !isToggle && clickEvent.pointerId !== -1) {
                 this.showConductorPopup = true;
             }
         },
