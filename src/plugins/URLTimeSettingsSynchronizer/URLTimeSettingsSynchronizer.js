@@ -117,7 +117,7 @@ export default class URLTimeSettingsSynchronizer {
             this.openmct.time.setMode('fixed');
         } else {
             const clock = this.openmct.time.getClock();
-            console.log('setting as realtime', clock?.key, timeParameters.mode);
+
             if (clock?.key !== timeParameters.mode) {
                 this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
             } else if (!this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)) {

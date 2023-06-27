@@ -531,9 +531,7 @@ export default {
         },
         setTimeContext() {
             this.stopFollowingTimeContext();
-
             this.timeContext = this.openmct.time.getContextForView(this.path);
-            console.log('time context mctplot', this.timeContext, this.path);
             this.followTimeContext();
 
         },
