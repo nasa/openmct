@@ -24,805 +24,880 @@
 
 /************************** GLYPHS */
 @mixin glyphBefore($unicode, $family: 'symbolsfont') {
-    &:before {
-        content: $unicode;
-        font-family: $family;
-    }
+  &:before {
+    content: $unicode;
+    font-family: $family;
+  }
 }
 
 @mixin glyphAfter($unicode, $family: 'symbolsfont') {
-    &:after {
-        content: $unicode;
-        font-family: $family;
-    }
+  &:after {
+    content: $unicode;
+    font-family: $family;
+  }
 }
 
 @mixin glyphBg($glyphUrl) {
-    background-image: $glyphUrl;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
+  background-image: $glyphUrl;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
-[class*="icon-"] {
-    &:before
-    {
-        -webkit-font-smoothing: antialiased;
-    }
+[class*='icon-'] {
+  &:before {
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 /************************** EFFECTS */
-@mixin flash($animName: flash, $dur: 500ms, $dir: alternate, $iter: 20, $prop: background, $valStart: rgba($colorOk, 1), $valEnd: rgba($colorOk, 0)) {
-    @keyframes #{$animName} {
-        0%   { #{$prop}: $valStart; }
-        100% {  #{$prop}: $valEnd; }
+@mixin flash(
+  $animName: flash,
+  $dur: 500ms,
+  $dir: alternate,
+  $iter: 20,
+  $prop: background,
+  $valStart: rgba($colorOk, 1),
+  $valEnd: rgba($colorOk, 0)
+) {
+  @keyframes #{$animName} {
+    0% {
+      #{$prop}: $valStart;
     }
-    animation-name: $animName;
-    animation-duration: $dur;
-    animation-direction: $dir;
-    animation-iteration-count: $iter;
-    animation-timing-function: ease-out;
+    100% {
+      #{$prop}: $valEnd;
+    }
+  }
+  animation-name: $animName;
+  animation-duration: $dur;
+  animation-direction: $dir;
+  animation-iteration-count: $iter;
+  animation-timing-function: ease-out;
 }
 
 @mixin mixedBg() {
-    $c1: nth($mixedSettingBg, 1);
-    $c2: nth($mixedSettingBg, 2);
-    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
-    @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+  $c1: nth($mixedSettingBg, 1);
+  $c2: nth($mixedSettingBg, 2);
+  $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
+  @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
 }
-
 
 @mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
-    @keyframes #{$animName} {
-        0%   { opacity: $opacity0; }
-        100% { opacity: $opacity100; }
+  @keyframes #{$animName} {
+    0% {
+      opacity: $opacity0;
     }
-    animation-name: $animName;
-    animation-duration: $dur;
-    animation-direction: alternate;
-    animation-iteration-count: $iteration;
-    animation-timing-function: ease-in-out;
+    100% {
+      opacity: $opacity100;
+    }
+  }
+  animation-name: $animName;
+  animation-duration: $dur;
+  animation-direction: alternate;
+  animation-iteration-count: $iteration;
+  animation-timing-function: ease-in-out;
 }
 
-@mixin pulseProp($animName: pulseProp, $dur: 500ms, $iter: 5, $prop: opacity, $valStart: 0, $valEnd: 1) {
-    @keyframes #{$animName} {
-        0%   { #{$prop}: $valStart; }
-        100% {  #{$prop}: $valEnd; }
+@mixin pulseProp(
+  $animName: pulseProp,
+  $dur: 500ms,
+  $iter: 5,
+  $prop: opacity,
+  $valStart: 0,
+  $valEnd: 1
+) {
+  @keyframes #{$animName} {
+    0% {
+      #{$prop}: $valStart;
     }
-    animation-name: $animName;
-    animation-duration: $dur;
-    animation-direction: alternate;
-    animation-iteration-count: $iter;
-    animation-timing-function: ease-in-out;
+    100% {
+      #{$prop}: $valEnd;
+    }
+  }
+  animation-name: $animName;
+  animation-duration: $dur;
+  animation-direction: alternate;
+  animation-iteration-count: $iter;
+  animation-timing-function: ease-in-out;
 }
 
 @mixin transition($prop: all, $dur: $transInTime, $timing: ease-in-out, $delay: 0ms) {
-    transition-property: $prop;
-    transition-duration: $dur;
-    transition-timing-function: $timing;
-    transition-delay: $delay;
+  transition-property: $prop;
+  transition-duration: $dur;
+  transition-timing-function: $timing;
+  transition-delay: $delay;
 }
 
 /************************** VISUALS */
 @mixin ancillaryIcon($d, $c) {
-    // Used for small icons used in combination with larger icons,
-    // like the link and alert icons in tree items.
-    color: $c;
-    font-size: $d;
-    line-height: $d;
-    height: $d;
-    width: $d;
+  // Used for small icons used in combination with larger icons,
+  // like the link and alert icons in tree items.
+  color: $c;
+  font-size: $d;
+  line-height: $d;
+  height: $d;
+  width: $d;
 }
 
 @mixin appearanceNone() {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
 
-    &:focus {
-        outline: none;
-    }
+  &:focus {
+    outline: none;
+  }
 }
 
 @mixin isAlias() {
-    &:after {
-        color:$colorIconAlias;
-        content: $glyph-icon-link;
-        display: block;
-        font-family: symbolsfont;
-        position: absolute;
-        text-shadow: rgba(black, 0.5) 0 1px 4px;
-        top: auto; left: 0; bottom: 10%; right: auto;
-        transform-origin: left bottom;
-        transform: scale(0.5);
-    }
+  &:after {
+    color: $colorIconAlias;
+    content: $glyph-icon-link;
+    display: block;
+    font-family: symbolsfont;
+    position: absolute;
+    text-shadow: rgba(black, 0.5) 0 1px 4px;
+    top: auto;
+    left: 0;
+    bottom: 10%;
+    right: auto;
+    transform-origin: left bottom;
+    transform: scale(0.5);
+  }
 }
 
 @mixin isStatus($absPos: false, $glyph: '', $color: $colorBodyFg) {
-    // Supports CSS classing as follows:
-    // is-status--missing, is-status--suspect, etc.
-    // Common styles to be applied to tree items, object labels, grid and list item views
+  // Supports CSS classing as follows:
+  // is-status--missing, is-status--suspect, etc.
+  // Common styles to be applied to tree items, object labels, grid and list item views
 
-    .is-status__indicator {
-        display: block ; // Set to display: none in status.scss
-        text-shadow: $colorBodyBg 0 0 2px;
-        font-family: symbolsfont;
+  .is-status__indicator {
+    display: block; // Set to display: none in status.scss
+    text-shadow: $colorBodyBg 0 0 2px;
+    font-family: symbolsfont;
 
-        @if $absPos {
-            position: absolute;
-            z-index: 3;
-        }
-
-        &:before {
-            color: $color;
-            content: $glyph;
-        }
+    @if $absPos {
+      position: absolute;
+      z-index: 3;
     }
+
+    &:before {
+      color: $color;
+      content: $glyph;
+    }
+  }
 }
 
 @mixin isStaleGlyph() {
-    content: $glyph-icon-stale;
-    display: block;
-    font-family: symbolsfont;
-    font-style: normal;
-    pointer-events: none;
+  content: $glyph-icon-stale;
+  display: block;
+  font-family: symbolsfont;
+  font-style: normal;
+  pointer-events: none;
 }
 
 @mixin isStaleHolder() {
-    // Applied to objects that frame content, like Display Layout frames, plots, etc.
-    border-radius: 3px;
-    border: 2px solid rgba($colorTelemStale, 0.8) !important;
+  // Applied to objects that frame content, like Display Layout frames, plots, etc.
+  border-radius: 3px;
+  border: 2px solid rgba($colorTelemStale, 0.8) !important;
 
-    &:before {
-        @include isStaleGlyph();
-        color: $colorTelemStale;
-        position: absolute;
-        bottom: 5px;
-        left: 3px;
-        width: 12px;
-        z-index: 10;
-    }
+  &:before {
+    @include isStaleGlyph();
+    color: $colorTelemStale;
+    position: absolute;
+    bottom: 5px;
+    left: 3px;
+    width: 12px;
+    z-index: 10;
+  }
 }
 
 @mixin isStaleElement() {
-    // Applied directly to values, like LAD Table cells, alphanumerics, plot legend items
-    background: $colorTelemStale !important;
-    color: $colorTelemStaleFg !important;
-    font-style: italic;
+  // Applied directly to values, like LAD Table cells, alphanumerics, plot legend items
+  background: $colorTelemStale !important;
+  color: $colorTelemStaleFg !important;
+  font-style: italic;
 }
 
 @mixin isLimit() {
-    &[class*='is-limit'] {
-        &:before {
-            display: inline-block;
-            font-family: symbolsfont;
-            margin-right: $interiorMarginSm;
-        }
+  &[class*='is-limit'] {
+    &:before {
+      display: inline-block;
+      font-family: symbolsfont;
+      margin-right: $interiorMarginSm;
     }
+  }
 
-    &.is-limit--lwr:before { content: $glyph-icon-arrow-down; }
-    &.is-limit--upr:before { content: $glyph-icon-arrow-up; }
+  &.is-limit--lwr:before {
+    content: $glyph-icon-arrow-down;
+  }
+  &.is-limit--upr:before {
+    content: $glyph-icon-arrow-up;
+  }
 
-    &.is-limit--purple { background: $colorLimitPurpleBg !important; color: $colorLimitPurpleFg !important; }
-    &.is-limit--red { background: $colorLimitRedBg !important; color: $colorLimitRedFg !important; }
-    &.is-limit--orange { background: $colorLimitOrangeBg !important; color: $colorLimitOrangeFg !important; }
-    &.is-limit--yellow { background: $colorLimitYellowBg !important; color: $colorLimitYellowFg !important; }
-    &.is-limit--cyan { background: $colorLimitCyanBg !important; color: $colorLimitCyanFg !important; }
+  &.is-limit--purple {
+    background: $colorLimitPurpleBg !important;
+    color: $colorLimitPurpleFg !important;
+  }
+  &.is-limit--red {
+    background: $colorLimitRedBg !important;
+    color: $colorLimitRedFg !important;
+  }
+  &.is-limit--orange {
+    background: $colorLimitOrangeBg !important;
+    color: $colorLimitOrangeFg !important;
+  }
+  &.is-limit--yellow {
+    background: $colorLimitYellowBg !important;
+    color: $colorLimitYellowFg !important;
+  }
+  &.is-limit--cyan {
+    background: $colorLimitCyanBg !important;
+    color: $colorLimitCyanFg !important;
+  }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
-    background-image: linear-gradient(-45deg,
-        rgba($c, $a) 25%, transparent 25%,
-        transparent 50%, rgba($c, $a) 50%,
-        rgba($c, $a) 75%, transparent 75%,
-        transparent 100%
-    ) repeat;
-    background-size: $d $d;
+  background-image: linear-gradient(
+      -45deg,
+      rgba($c, $a) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba($c, $a) 50%,
+      rgba($c, $a) 75%,
+      transparent 75%,
+      transparent 100%
+    )
+    repeat;
+  background-size: $d $d;
 }
 
 @mixin bgStripes($c: yellow, $a: 0.1, $bgsize: 5px, $angle: 90deg) {
-    background: linear-gradient($angle,
-        rgba($c, $a) 25%, transparent 25%,
-        transparent 50%, rgba($c, $a) 50%,
-        rgba($c, $a) 75%, transparent 75%,
-        transparent 100%
-    ) repeat;
-    background-size: $bgsize $bgsize;
+  background: linear-gradient(
+      $angle,
+      rgba($c, $a) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba($c, $a) 50%,
+      rgba($c, $a) 75%,
+      transparent 75%,
+      transparent 100%
+    )
+    repeat;
+  background-size: $bgsize $bgsize;
 }
 
 @mixin bgStripes2Color($c1, $c2, $bgSize, $angle: -45deg) {
-    background: linear-gradient(-45deg,
-            $c1 0%, $c1 25%,
-            $c2 25%, $c2 50%,
-            $c1 50%, $c1 75%,
-            $c2 75%, $c2 100%
-    ) repeat;
-    background-size: $bgSize;
+  background: linear-gradient(
+      -45deg,
+      $c1 0%,
+      $c1 25%,
+      $c2 25%,
+      $c2 50%,
+      $c1 50%,
+      $c1 75%,
+      $c2 75%,
+      $c2 100%
+    )
+    repeat;
+  background-size: $bgSize;
 }
 
 @mixin bgCheckerboard($c: $colorBodyFg, $opacity: 0.3, $size: 32px, $imp: false) {
-    $color: rgba($c, $opacity);
-    $bgPos: floor(math.div($size, 2));
+  $color: rgba($c, $opacity);
+  $bgPos: floor(math.div($size, 2));
 
-    $impStr: null;
-    @if $imp {
-        $impStr: !important;
-    }
+  $impStr: null;
+  @if $imp {
+    $impStr: !important;
+  }
 
-    background-image:
-        linear-gradient(45deg, $color 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, $color 75%),
-        linear-gradient(45deg, transparent 75%, $color 75%),
-        linear-gradient(45deg, $color 25%, transparent 25%) $impStr;
-    background-size: $size $size;
-    background-position:0 0, 0 0, -1*$bgPos -1*$bgPos, $bgPos $bgPos;
+  background-image: linear-gradient(45deg, $color 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, $color 75%),
+    linear-gradient(45deg, transparent 75%, $color 75%),
+    linear-gradient(45deg, $color 25%, transparent 25%) $impStr;
+  background-size: $size $size;
+  background-position: 0 0, 0 0, -1 * $bgPos -1 * $bgPos, $bgPos $bgPos;
 }
 
 @mixin disabled() {
-    opacity: $controlDisabledOpacity;
-    pointer-events: none !important;
-    cursor: default !important;
+  opacity: $controlDisabledOpacity;
+  pointer-events: none !important;
+  cursor: default !important;
 }
 
 @mixin grippy($c: rgba(black, 0.5), $dir: 'x') {
-    $deg: 90deg;
-    $bgSize: 3px 100%;
+  $deg: 90deg;
+  $bgSize: 3px 100%;
 
-    @if $dir != 'x' {
-        // Grippy texture runs 'vertically'
-        $deg: 0deg;
-        $bgSize: 100% 3px;
-    }
+  @if $dir != 'x' {
+    // Grippy texture runs 'vertically'
+    $deg: 0deg;
+    $bgSize: 100% 3px;
+  }
 
-    background: linear-gradient($deg,
-            $c 1px, transparent 1px,
-            transparent 100%
-    ) repeat;
-    background-size: $bgSize;
+  background: linear-gradient($deg, $c 1px, transparent 1px, transparent 100%) repeat;
+  background-size: $bgSize;
 }
 
 @mixin colorSwatch() {
-    border-radius: 30%;
-    border: 1px solid $colorBodyBg;
-    height: $plotSwatchD;
-    width: $plotSwatchD;
+  border-radius: 30%;
+  border: 1px solid $colorBodyBg;
+  height: $plotSwatchD;
+  width: $plotSwatchD;
 }
 
 @mixin dropDownArrowBg() {
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
-    background-repeat: no-repeat, no-repeat;
-    background-position: right .4em top 80%, 0 0;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{svgColorFromHex($colorSelectArw)}' d='M5 5l5-5H0z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat, no-repeat;
+  background-position: right 0.4em top 80%, 0 0;
 }
 
 @mixin noColor() {
-    // A "no fill/stroke" selection option. Used in palettes.
-    $c: red;
-    $s: 48%;
-    $e: 52%;
-    background-image: linear-gradient(-45deg,
-        transparent $s - 5%,
-        $c $s,
-        $c $e,
-        transparent $e + 5%
-    );
-    background-repeat: no-repeat;
-    background-size: contain;
+  // A "no fill/stroke" selection option. Used in palettes.
+  $c: red;
+  $s: 48%;
+  $e: 52%;
+  background-image: linear-gradient(-45deg, transparent $s - 5%, $c $s, $c $e, transparent $e + 5%);
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 @mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
-    $deg: 90deg;
-    @if ($repeatDir != 'x') {
-        $deg: 0deg;
-        $repeatDir: repeat-y;
-    } @else {
-        $repeatDir: repeat-x;
-    }
+  $deg: 90deg;
+  @if ($repeatDir != 'x') {
+    $deg: 0deg;
+    $repeatDir: repeat-y;
+  } @else {
+    $repeatDir: repeat-x;
+  }
 
-    background-image: linear-gradient($deg,
-            $c 1px, transparent 1px,
-            transparent 100%
-    );
-    background-repeat: $repeatDir;
+  background-image: linear-gradient($deg, $c 1px, transparent 1px, transparent 100%);
+  background-repeat: $repeatDir;
 }
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
-    border-radius: 2px;
-    box-sizing: border-box;
-    background-color: $bg;
+  border-radius: 2px;
+  box-sizing: border-box;
+  background-color: $bg;
 }
 
-@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
-    width: 0;
-    height: 0;
-    $slopedB: math.div($size, $ratio) solid transparent;
-    $straightB: $size solid $color;
-    @if $dir == "up" {
-        border-left: $slopedB;
-        border-right: $slopedB;
-        border-bottom: $straightB;
-    } @else if $dir == "right" {
-        border-top: $slopedB;
-        border-bottom: $slopedB;
-        border-left: $straightB;
-    } @else if $dir == "down" {
-        border-left: $slopedB;
-        border-right: $slopedB;
-        border-top: $straightB;
-    } @else {
-        border-top: $slopedB;
-        border-bottom: $slopedB;
-        border-right: $straightB;
-    }
+@mixin triangle($dir: 'left', $size: 5px, $ratio: 1, $color: red) {
+  width: 0;
+  height: 0;
+  $slopedB: math.div($size, $ratio) solid transparent;
+  $straightB: $size solid $color;
+  @if $dir == 'up' {
+    border-left: $slopedB;
+    border-right: $slopedB;
+    border-bottom: $straightB;
+  } @else if $dir == 'right' {
+    border-top: $slopedB;
+    border-bottom: $slopedB;
+    border-left: $straightB;
+  } @else if $dir == 'down' {
+    border-left: $slopedB;
+    border-right: $slopedB;
+    border-top: $straightB;
+  } @else {
+    border-top: $slopedB;
+    border-bottom: $slopedB;
+    border-right: $straightB;
+  }
 }
 
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
-    background-image: linear-gradient(-90deg,
-        rgba($c, $a) 0%, rgba($c, $a) 50%,
-        transparent 50%, transparent 100%
-    );
-    background-repeat: repeat;
-    background-size: $d $d;
+  background-image: linear-gradient(
+    -90deg,
+    rgba($c, $a) 0%,
+    rgba($c, $a) 50%,
+    transparent 50%,
+    transparent 100%
+  );
+  background-repeat: repeat;
+  background-size: $d $d;
 }
 
 /************************** LAYOUT */
 @mixin abs($m: 0) {
-    position: absolute;
-    top: $m; right: $m; bottom: $m; left: $m;
+  position: absolute;
+  top: $m;
+  right: $m;
+  bottom: $m;
+  left: $m;
 }
 
 @mixin propertiesHeader() {
-    border-radius: $smallCr;
-    background-color: $colorInspectorSectionHeaderBg;
-    color: $colorInspectorSectionHeaderFg;
-    font-weight: normal;
-    padding: $interiorMarginSm $interiorMargin;
-    text-transform: uppercase;
+  border-radius: $smallCr;
+  background-color: $colorInspectorSectionHeaderBg;
+  color: $colorInspectorSectionHeaderFg;
+  font-weight: normal;
+  padding: $interiorMarginSm $interiorMargin;
+  text-transform: uppercase;
 }
 
 @mixin modalFullScreen() {
-    // Optional modifier that makes a c-menu more mobile-friendly
-    position: fixed;
-    border-radius: 0;
-    top: 0; right: 0; bottom: 0; left: 0;
+  // Optional modifier that makes a c-menu more mobile-friendly
+  position: fixed;
+  border-radius: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 /************************** TEXT */
 @mixin ellipsize() {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @mixin reverseEllipsis() {
-    @include ellipsize();
-    direction: ltr;
-    unicode-bidi:bidi-override;
+  @include ellipsize();
+  direction: ltr;
+  unicode-bidi: bidi-override;
 }
 
 /************************** CONTROLS, BUTTONS, INPUTS */
 @mixin hover {
-    body.desktop & {
-        &:hover {
-            @content
-        }
+  body.desktop & {
+    &:hover {
+      @content;
     }
+  }
 }
 
 @mixin htmlInputReset() {
-    @include appearanceNone();
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    text-align: inherit;
+  @include appearanceNone();
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  text-align: inherit;
 
-    &:focus {
-        outline: 0;
-    }
+  &:focus {
+    outline: 0;
+  }
 }
 
 @mixin input-base() {
-    @include htmlInputReset();
-    border-radius: $controlCr;
+  @include htmlInputReset();
+  border-radius: $controlCr;
 
-    &.error {
-        background: $colorFormFieldErrorBg;
-        color: $colorFormFieldErrorFg;
-    }
+  &.error {
+    background: $colorFormFieldErrorBg;
+    color: $colorFormFieldErrorFg;
+  }
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: inset rgba(black, 0.5) 0 0 2px 1px) {
-    @include input-base();
-    background: $bg;
-    color: $fg;
-    box-shadow: $shdw;
+@mixin nice-input(
+  $bg: $colorInputBg,
+  $fg: $colorInputFg,
+  $shdw: inset rgba(black, 0.5) 0 0 2px 1px
+) {
+  @include input-base();
+  background: $bg;
+  color: $fg;
+  box-shadow: $shdw;
 }
 
 @mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
-    @include input-base();
-    background: $bg;
-    box-shadow: $shdwInput;
-    color: $fg;
+  @include input-base();
+  background: $bg;
+  box-shadow: $shdwInput;
+  color: $fg;
 
-    &:focus {
-        box-shadow: $shdwInputFoc;
-    }
+  &:focus {
+    box-shadow: $shdwInputFoc;
+  }
 
-    &::selection {
-        background: rgba($colorKeySelectedBg, 0.5);
-    }
+  &::selection {
+    background: rgba($colorKeySelectedBg, 0.5);
+  }
 }
 
 @mixin inlineInput() {
-    @include reactive-input($bg: transparent);
-    box-shadow: none;
-    display: block !important;
-    min-width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    overflow: hidden;
-    transition: all 250ms ease;
-    white-space: nowrap;
+  @include reactive-input($bg: transparent);
+  box-shadow: none;
+  display: block !important;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+  transition: all 250ms ease;
+  white-space: nowrap;
 
-    &:not(:focus) {
-        text-overflow: ellipsis;
-    }
+  &:not(:focus) {
+    text-overflow: ellipsis;
+  }
 }
 
 @mixin button($bg: $colorBtnBg, $fg: $colorBtnFg, $radius: $controlCr, $shdw: none) {
-    background: $bg;
-    color: $fg;
-    border-radius: $radius;
-    box-shadow: $shdw;
+  background: $bg;
+  color: $fg;
+  border-radius: $radius;
+  box-shadow: $shdw;
 }
 
 @mixin cControl() {
-    $fs: 1em;
-    @include userSelectNone();
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: $fs; // Remove effect on top and bottom padding
-    overflow: hidden;
+  $fs: 1em;
+  @include userSelectNone();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: $fs; // Remove effect on top and bottom padding
+  overflow: hidden;
 
-    &:before,
-    &:after {
-        font-family: symbolsfont;
-        display: block;
-        flex: 0 0 auto;
-    }
+  &:before,
+  &:after {
+    font-family: symbolsfont;
+    display: block;
+    flex: 0 0 auto;
+  }
 
-    &:before {
-        font-size: 0.9em;
-    }
+  &:before {
+    font-size: 0.9em;
+  }
 
-    &:after {
-        font-size: 0.8em;
-    }
+  &:after {
+    font-size: 0.8em;
+  }
 
-    [class*="__label"] {
-        @include ellipsize();
-        display: block;
-        font-size: $fs;
-    }
+  [class*='__label'] {
+    @include ellipsize();
+    display: block;
+    font-size: $fs;
+  }
 
-    &[class*='icon'] > [class*="__label"] {
-        // When button holds both an icon and a label, provide margin between them.
-        margin-left: $interiorMarginSm;
-    }
+  &[class*='icon'] > [class*='__label'] {
+    // When button holds both an icon and a label, provide margin between them.
+    margin-left: $interiorMarginSm;
+  }
 }
 
 @mixin cControlHov($styleConst: $shdwBtnHov) {
-    transition: box-shadow $transOutTime;
+  transition: box-shadow $transOutTime;
 
-    @include hover() {
-        transition: box-shadow $transInTime;
-        box-shadow: $styleConst !important;
-    }
+  @include hover() {
+    transition: box-shadow $transInTime;
+    box-shadow: $styleConst !important;
+  }
 }
 
 @mixin cButtonLayout() {
-    $pad: $interiorMargin;
-    padding: $pad floor($pad * 1.25);
+  $pad: $interiorMargin;
+  padding: $pad floor($pad * 1.25);
 
-    &:after,
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
+  &:after,
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
 
-    &[class*='--compact'] {
-        padding: floor(math.div($pad, 1.5)) $pad;
-    }
+  &[class*='--compact'] {
+    padding: floor(math.div($pad, 1.5)) $pad;
+  }
 }
 
 @mixin cButton() {
-    @include cControl();
-    @include themedButton();
-    @include cButtonLayout();
-    border-radius: $controlCr;
-    color: $colorBtnFg;
-    cursor: pointer;
+  @include cControl();
+  @include themedButton();
+  @include cButtonLayout();
+  border-radius: $controlCr;
+  color: $colorBtnFg;
+  cursor: pointer;
 
-    @include hover() {
-        filter: $filterHov;
-    }
+  @include hover() {
+    filter: $filterHov;
+  }
 
-    &[class*="--major"],
-    &[class*='is-active']{
-        background: $colorBtnMajorBg !important;
-        color: $colorBtnMajorFg !important;
-    }
+  &[class*='--major'],
+  &[class*='is-active'] {
+    background: $colorBtnMajorBg !important;
+    color: $colorBtnMajorFg !important;
+  }
 
-    &[class*='--caution'] {
-        background: $colorBtnCautionBg !important;
-        color: $colorBtnCautionFg !important;
-    }
+  &[class*='--caution'] {
+    background: $colorBtnCautionBg !important;
+    color: $colorBtnCautionFg !important;
+  }
 }
 
 @mixin cClickIcon() {
-    @include cControl();
-    @include cControlHov();
-    color: $colorBodyFg;
-    cursor: pointer;
-    padding: 4px; // Bigger hit area
-    opacity: 0.7;
-    transform-origin: center;
+  @include cControl();
+  @include cControlHov();
+  color: $colorBodyFg;
+  cursor: pointer;
+  padding: 4px; // Bigger hit area
+  opacity: 0.7;
+  transform-origin: center;
 
-    &[class*="--major"] {
-        color: $colorBtnMajorBg !important;
-        opacity: 0.8;
-    }
+  &[class*='--major'] {
+    color: $colorBtnMajorBg !important;
+    opacity: 0.8;
+  }
 
-    @include hover() {
-        transform: scale(1.1);
-        opacity: 1;
-    }
+  @include hover() {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
 @mixin cClickIconButtonLayout() {
-    $pLR: 5px;
-    $pTB: 5px;
-    padding: $pTB $pLR;
+  $pLR: 5px;
+  $pTB: 5px;
+  padding: $pTB $pLR;
 
-    &:before,
-    *:before {
-        // *:before handles any nested containers that may contain glyph elements
-        // Needed for c-togglebutton.
-        font-size: 1.15em;
-    }
+  &:before,
+  *:before {
+    // *:before handles any nested containers that may contain glyph elements
+    // Needed for c-togglebutton.
+    font-size: 1.15em;
+  }
 }
 
 @mixin cClickIconButton() {
-    // A clickable element that just includes the icon
-    // Background is displayed on hover
-    // Padding is included to facilitate a bigger hit area
-    // Make the icon bigger relative to its container
-    @include cControl();
-    @include cControlHov();
-    @include cClickIconButtonLayout();
-    background: none;
-    color: $colorClickIconButton;
-    box-shadow: none;
-    cursor: pointer;
-    border-radius: $controlCr;
+  // A clickable element that just includes the icon
+  // Background is displayed on hover
+  // Padding is included to facilitate a bigger hit area
+  // Make the icon bigger relative to its container
+  @include cControl();
+  @include cControlHov();
+  @include cClickIconButtonLayout();
+  background: none;
+  color: $colorClickIconButton;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: $controlCr;
 
-    &[class*="--major"] {
-        color: $colorBtnMajorBg !important;
-    }
+  &[class*='--major'] {
+    color: $colorBtnMajorBg !important;
+  }
 }
 
 @mixin cCtrlWrapper {
-    // Provides a wrapper around  buttons and other controls
-    // Contains control and provides positioning context for contained menu/palette.
-    // Wraps --menu elements, contains button and menu
-    overflow: visible;
+  // Provides a wrapper around  buttons and other controls
+  // Contains control and provides positioning context for contained menu/palette.
+  // Wraps --menu elements, contains button and menu
+  overflow: visible;
 
+  .c-menu {
+    // Default position of contained menu
+    top: 100%;
+    left: 0;
+  }
+
+  &[class*='--menus-up'] {
     .c-menu {
-        // Default position of contained menu
-        top: 100%; left: 0;
+      top: auto;
+      bottom: 100%;
     }
+  }
 
-    &[class*='--menus-up'] {
-        .c-menu {
-            top: auto; bottom: 100%;
-        }
+  &[class*='--menus-bottom'] {
+    .c-menu {
+      top: auto;
+      bottom: 100%;
     }
+  }
 
-    &[class*='--menus-bottom'] {
-        .c-menu {
-            top: auto; bottom: 100%;
-        }
+  &[class*='--menus-left'],
+  &[class*='menus-to-left'] {
+    .c-menu {
+      left: auto;
+      right: 0;
     }
-
-    &[class*='--menus-left'],
-    &[class*='menus-to-left'] {
-        .c-menu {
-            left: auto; right: 0;
-        }
-    }
+  }
 }
 
 @mixin cArrowButtonBase($colorBg: transparent, $colorFg: $colorBtnFg, $filterHov: $filterHov) {
-    // Copied from branch new-tree-refactor
+  // Copied from branch new-tree-refactor
 
-    background: $colorBg;
+  background: $colorBg;
 
+  &:before {
+    // Arrow shape
+    border-style: solid;
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center;
+  }
+
+  &:before {
+    border-color: $colorFg;
+  }
+
+  &--up,
+  &--prev {
     &:before {
-        // Arrow shape
-        border-style: solid;
-        content: '';
-        display: block;
-        position: absolute;
-        left: 50%; top: 50%;
-        transform-origin: center;
+      transform: translate(-30%, -50%) rotate(135deg);
     }
+  }
 
+  &--down,
+  &--next {
     &:before {
-        border-color: $colorFg;
+      transform: translate(-70%, -50%) rotate(-45deg);
     }
-
-    &--up, &--prev {
-        &:before {
-            transform: translate(-30%, -50%) rotate(135deg);
-        }
-    }
-
-    &--down, &--next {
-        &:before {
-            transform: translate(-70%, -50%) rotate(-45deg);
-        }
-    }
+  }
 }
 
 @mixin cArrowButtonSizing($dimOuter: 48px) {
-    height: $dimOuter;
-    width: $dimOuter;
-    $dimInner: floor($dimOuter * 0.6);
-    $borderW: floor($dimInner * 0.3);
-    $backOffsetW: floor($dimInner * 0.4);
+  height: $dimOuter;
+  width: $dimOuter;
+  $dimInner: floor($dimOuter * 0.6);
+  $borderW: floor($dimInner * 0.3);
+  $backOffsetW: floor($dimInner * 0.4);
 
-    &:before {
-        height: $dimInner;
-        width: $dimInner;
-    }
+  &:before {
+    height: $dimInner;
+    width: $dimInner;
+  }
 
-    &:before {
-        // Arrow shape
-        border-width: 0 $borderW $borderW 0;
-    }
+  &:before {
+    // Arrow shape
+    border-width: 0 $borderW $borderW 0;
+  }
 }
 
 @mixin cArrowButton() {
-    @include cArrowButtonBase();
-    @include cArrowButtonSizing();
+  @include cArrowButtonBase();
+  @include cArrowButtonSizing();
 }
 
 @mixin hasMenu() {
-    &:after {
-        content: $glyph-icon-arrow-down;
-        font-family: symbolsfont;
-        font-size: 0.7em;
-        margin-left: floor($interiorMarginSm * 0.8);
-        opacity: 0.5;
-    }
+  &:after {
+    content: $glyph-icon-arrow-down;
+    font-family: symbolsfont;
+    font-size: 0.7em;
+    margin-left: floor($interiorMarginSm * 0.8);
+    opacity: 0.5;
+  }
 }
 
 @mixin cSelect($bg, $fg, $arwClr, $shdw) {
-    $svgArwClr: str-slice(inspect($arwClr), 2, str-length(inspect($arwClr))); // Remove initial # in color value
-    background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;
-    color: $fg;
-    box-shadow: $shdw;
+  $svgArwClr: str-slice(
+    inspect($arwClr),
+    2,
+    str-length(inspect($arwClr))
+  ); // Remove initial # in color value
+  background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"),
+    $bg;
+  color: $fg;
+  box-shadow: $shdw;
 }
 
 @mixin smallerControlButtons() {
-    .c-click-icon,
-    .c-button,
-    .c-icon-button {
-        // Shrink buttons a bit when they appear in containers
-        font-size: 0.9em;
-        padding: 4px;
-    }
+  .c-click-icon,
+  .c-button,
+  .c-icon-button {
+    // Shrink buttons a bit when they appear in containers
+    font-size: 0.9em;
+    padding: 4px;
+  }
 }
 
 @mixin wrappedInput() {
-    // An input that is wrapped. Optionally includes a __label or icon element.
-    // Based on .c-search.
-    @include nice-input($shdw: $shdwInput);
-    display: flex;
-    align-items: center;
-    padding-left: 4px;
-    padding-right: 4px;
+  // An input that is wrapped. Optionally includes a __label or icon element.
+  // Based on .c-search.
+  @include nice-input($shdw: $shdwInput);
+  display: flex;
+  align-items: center;
+  padding-left: 4px;
+  padding-right: 4px;
 
-    &:before,
-    [class*='__label'] {
-        opacity: 0.5;
-    }
+  &:before,
+  [class*='__label'] {
+    opacity: 0.5;
+  }
 
+  &:before {
+    // Adds an icon. Content defined in class.
+    direction: rtl; // Aligns glyph to right-hand side of container, for transition
+    display: block;
+    font-family: symbolsfont;
+    flex: 0 0 auto;
+    overflow: hidden;
+    padding: 2px 0; // Prevents clipping
+    transition: width 250ms ease;
+    width: 1em;
+  }
+
+  &:hover {
+    box-shadow: inset rgba(black, 0.8) 0 0px 2px;
     &:before {
-        // Adds an icon. Content defined in class.
-        direction: rtl; // Aligns glyph to right-hand side of container, for transition
-        display: block;
-        font-family: symbolsfont;
-        flex: 0 0 auto;
-        overflow: hidden;
-        padding: 2px 0; // Prevents clipping
-        transition: width 250ms ease;
-        width: 1em;
+      opacity: 0.9;
     }
+  }
 
-    &:hover {
-        box-shadow: inset rgba(black, 0.8) 0 0px 2px;
-        &:before {
-            opacity: 0.9;
-        }
-    }
+  &--major {
+    padding: 4px;
+  }
 
-    &--major {
-        padding: 4px;
-    }
+  &__input,
+  input[type='text'],
+  input[type='search'],
+  input[type='number'] {
+    background: none !important;
+    box-shadow: none !important; // !important needed to override default for [input]
+    flex: 1 1 auto;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    min-width: 10px; // Must be set to allow input to collapse below browser min
+  }
 
-    &__input,
-    input[type='text'],
-    input[type='search'],
-    input[type='number'] {
-        background: none  !important;
-        box-shadow: none !important; // !important needed to override default for [input]
-        flex: 1 1 auto;
-        padding-left: 2px !important;
-        padding-right: 2px !important;
-        min-width: 10px; // Must be set to allow input to collapse below browser min
+  &.is-active {
+    &:before {
+      padding: 2px 0px;
+      width: 0px;
     }
-
-    &.is-active {
-        &:before {
-            padding: 2px 0px;
-            width: 0px;
-        }
-    }
+  }
 }
 
 /************************** MATH */
 @function percentToDecimal($p) {
-    @return $p / 100%;
+  @return $p / 100%;
 }
 
 @function decimalToPercent($d) {
-    @return percentage($d);
+  @return percentage($d);
 }
 
 /************************** UTILITIES */
 @mixin browserPrefix($prop, $val) {
-    #{$prop}: $val;
-    -ms-#{$prop}: $val;
-    -moz-#{$prop}: $val;
-    -webkit-#{$prop}: $val;
+  #{$prop}: $val;
+  -ms-#{$prop}: $val;
+  -moz-#{$prop}: $val;
+  -webkit-#{$prop}: $val;
 }
 
 @mixin userSelectNone() {
-    @include browserPrefix(user-select, none);
+  @include browserPrefix(user-select, none);
 }
 
 @mixin cursorGrab() {
-    cursor: grab;
-    cursor: -webkit-grab;
-    &:active {
-        cursor: grabbing;
-        cursor: -webkit-grabbing;
-    }
+  cursor: grab;
+  cursor: -webkit-grab;
+  &:active {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+  }
 }
 
 @function svgColorFromHex($hexColor) {
-    // Remove initial # in color value
-    @return str-slice(inspect($hexColor), 2, str-length(inspect($hexColor)));
+  // Remove initial # in color value
+  @return str-slice(inspect($hexColor), 2, str-length(inspect($hexColor)));
 }
 
 @mixin test($c: deeppink, $a: 0.3) {
-    background: rgba($c, $a) !important;
-    background-color: rgba($c, $a) !important;
+  background: rgba($c, $a) !important;
+  background-color: rgba($c, $a) !important;
 }
 
-
 @mixin sUnsynced {
-    $c: $colorPausedBg;
-    border: 1px solid $c;
+  $c: $colorPausedBg;
+  border: 1px solid $c;
 }

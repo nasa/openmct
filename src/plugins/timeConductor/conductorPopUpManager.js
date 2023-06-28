@@ -22,66 +22,66 @@
 import raf from '@/utils/raf';
 
 export default {
-    inject: ['openmct', 'configuration'],
-    data() {
-        return {
-            showConductorPopup: false,
-            positionX: 0,
-            positionY: 0,
-            conductorPopup: null
-        };
+  inject: ['openmct', 'configuration'],
+  data() {
+    return {
+      showConductorPopup: false,
+      positionX: 0,
+      positionY: 0,
+      conductorPopup: null
+    };
+  },
+  mounted() {
+    this.positionBox = raf(this.positionBox);
+    this.timeConductorOptionsHolder = this.$el;
+    this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+  },
+  methods: {
+    initializePopup() {
+      this.conductorPopup = this.$refs.conductorPopup.$el;
+      this.$nextTick(() => {
+        window.addEventListener('resize', this.positionBox);
+        document.addEventListener('click', this.handleClickAway);
+        this.positionBox();
+      });
     },
-    mounted() {
-        this.positionBox = raf(this.positionBox);
-        this.timeConductorOptionsHolder = this.$el;
-        this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+    showPopup() {
+      if (this.conductorPopup) {
+        return;
+      }
+
+      this.showConductorPopup = true;
     },
-    methods: {
-        initializePopup() {
-            this.conductorPopup = this.$refs.conductorPopup.$el;
-            this.$nextTick(() => {
-                window.addEventListener('resize', this.positionBox);
-                document.addEventListener('click', this.handleClickAway);
-                this.positionBox();
-            });
-        },
-        showPopup() {
-            if (this.conductorPopup) {
-                return;
-            }
+    positionBox() {
+      if (this.conductorPopup) {
+        return;
+      }
 
-            this.showConductorPopup = true;
-        },
-        positionBox() {
-            if (this.conductorPopup) {
-                return;
-            }
+      const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+      const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 
-            const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
-            const offsetTop = this.conductorPopup.getBoundingClientRect().height;
+      //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
+      this.positionY = timeConductorOptionsBox.top - offsetTop;
+      this.positionX = 0;
+    },
+    clearPopup() {
+      this.showConductorPopup = false;
+      this.conductorPopup = null;
 
-            //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
-            this.positionY = timeConductorOptionsBox.top - offsetTop;
-            this.positionX = 0;
-        },
-        clearPopup() {
-            this.showConductorPopup = false;
-            this.conductorPopup = null;
+      document.removeEventListener('click', this.handleClickAway);
+      window.removeEventListener('resize', this.positionBox);
+    },
+    handleClickAway(clickAwayEvent) {
+      if (this.canClose(clickAwayEvent)) {
+        clickAwayEvent.stopPropagation();
+        this.clearPopup();
+      }
+    },
+    canClose(clickAwayEvent) {
+      const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
+      const isPopupElementItem = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
 
-            document.removeEventListener('click', this.handleClickAway);
-            window.removeEventListener('resize', this.positionBox);
-        },
-        handleClickAway(clickAwayEvent) {
-            if (this.canClose(clickAwayEvent)) {
-                clickAwayEvent.stopPropagation();
-                this.clearPopup();
-            }
-        },
-        canClose(clickAwayEvent) {
-            const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupElementItem = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
-
-            return !isChildMenu && !isPopupElementItem;
-        }
+      return !isChildMenu && !isPopupElementItem;
     }
+  }
 };

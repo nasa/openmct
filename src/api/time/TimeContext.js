@@ -24,636 +24,639 @@ import EventEmitter from 'EventEmitter';
 import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY } from './constants';
 
 class TimeContext extends EventEmitter {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        //The Time System
-        this.timeSystems = new Map();
+    //The Time System
+    this.timeSystems = new Map();
 
-        this.system = undefined;
+    this.system = undefined;
 
-        this.clocks = new Map();
+    this.clocks = new Map();
 
-        this.boundsVal = {
-            start: undefined,
-            end: undefined
-        };
+    this.boundsVal = {
+      start: undefined,
+      end: undefined
+    };
 
-        this.activeClock = undefined;
-        this.offsets = undefined;
-        this.mode = undefined;
+    this.activeClock = undefined;
+    this.offsets = undefined;
+    this.mode = undefined;
 
-        this.tick = this.tick.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+
+  /**
+   * Get or set the time system of the TimeAPI.
+   * @param {TimeSystem | string} timeSystemOrKey
+   * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
+   * @fires module:openmct.TimeAPI~timeSystem
+   * @returns {TimeSystem} The currently applied time system
+   * @memberof module:openmct.TimeAPI#
+   * @method timeSystem
+   */
+  timeSystem(timeSystemOrKey, bounds) {
+    this.#warnMethodDeprecated('"timeSystem"', '"getTimeSystem" and "setTimeSystem"');
+
+    if (arguments.length >= 1) {
+      if (arguments.length === 1 && !this.activeClock) {
+        throw new Error('Must specify bounds when changing time system without an active clock.');
+      }
+
+      let timeSystem;
+
+      if (timeSystemOrKey === undefined) {
+        throw 'Please provide a time system';
+      }
+
+      if (typeof timeSystemOrKey === 'string') {
+        timeSystem = this.timeSystems.get(timeSystemOrKey);
+
+        if (timeSystem === undefined) {
+          throw (
+            'Unknown time system ' +
+            timeSystemOrKey +
+            ". Has it been registered with 'addTimeSystem'?"
+          );
+        }
+      } else if (typeof timeSystemOrKey === 'object') {
+        timeSystem = timeSystemOrKey;
+
+        if (!this.timeSystems.has(timeSystem.key)) {
+          throw (
+            'Unknown time system ' +
+            timeSystem.key +
+            ". Has it been registered with 'addTimeSystem'?"
+          );
+        }
+      } else {
+        throw 'Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key';
+      }
+
+      this.system = this.#copy(timeSystem);
+
+      /**
+       * The time system used by the time
+       * conductor has changed. A change in Time System will always be
+       * followed by a bounds event specifying new query bounds.
+       *
+       * @event module:openmct.TimeAPI~timeSystem
+       * @property {TimeSystem} The value of the currently applied
+       * Time System
+       * */
+      this.emit('timeSystem', this.#copy(this.system));
+      if (bounds) {
+        this.bounds(bounds);
+      }
     }
 
-    /**
-     * Get or set the time system of the TimeAPI.
-     * @param {TimeSystem | string} timeSystemOrKey
-     * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
-     * @fires module:openmct.TimeAPI~timeSystem
-     * @returns {TimeSystem} The currently applied time system
-     * @memberof module:openmct.TimeAPI#
-     * @method timeSystem
-     */
-    timeSystem(timeSystemOrKey, bounds) {
-        this.#warnMethodDeprecated('"timeSystem"', '"getTimeSystem" and "setTimeSystem"');
+    return this.system;
+  }
 
-        if (arguments.length >= 1) {
-            if (arguments.length === 1 && !this.activeClock) {
-                throw new Error(
-                    "Must specify bounds when changing time system without an active clock."
-                );
-            }
-
-            let timeSystem;
-
-            if (timeSystemOrKey === undefined) {
-                throw "Please provide a time system";
-            }
-
-            if (typeof timeSystemOrKey === 'string') {
-                timeSystem = this.timeSystems.get(timeSystemOrKey);
-
-                if (timeSystem === undefined) {
-                    throw "Unknown time system " + timeSystemOrKey + ". Has it been registered with 'addTimeSystem'?";
-                }
-            } else if (typeof timeSystemOrKey === 'object') {
-                timeSystem = timeSystemOrKey;
-
-                if (!this.timeSystems.has(timeSystem.key)) {
-                    throw "Unknown time system " + timeSystem.key + ". Has it been registered with 'addTimeSystem'?";
-                }
-            } else {
-                throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
-            }
-
-            this.system = this.#copy(timeSystem);
-
-            /**
-             * The time system used by the time
-             * conductor has changed. A change in Time System will always be
-             * followed by a bounds event specifying new query bounds.
-             *
-             * @event module:openmct.TimeAPI~timeSystem
-             * @property {TimeSystem} The value of the currently applied
-             * Time System
-             * */
-            this.emit('timeSystem', this.#copy(this.system));
-            if (bounds) {
-                this.bounds(bounds);
-            }
-
-        }
-
-        return this.system;
+  /**
+   * Clock offsets are used to calculate temporal bounds when the system is
+   * ticking on a clock source.
+   *
+   * @typedef {object} ValidationResult
+   * @property {boolean} valid Result of the validation - true or false.
+   * @property {string} message An error message if valid is false.
+   */
+  /**
+   * Validate the given bounds. This can be used for pre-validation of bounds,
+   * for example by views validating user inputs.
+   * @param {TimeBounds} bounds The start and end time of the conductor.
+   * @returns {ValidationResult} A validation error, or true if valid
+   * @memberof module:openmct.TimeAPI#
+   * @method validateBounds
+   */
+  validateBounds(bounds) {
+    if (
+      bounds.start === undefined ||
+      bounds.end === undefined ||
+      isNaN(bounds.start) ||
+      isNaN(bounds.end)
+    ) {
+      return {
+        valid: false,
+        message: 'Start and end must be specified as integer values'
+      };
+    } else if (bounds.start > bounds.end) {
+      return {
+        valid: false,
+        message: 'Specified start date exceeds end bound'
+      };
     }
 
-    /**
-     * Clock offsets are used to calculate temporal bounds when the system is
-     * ticking on a clock source.
-     *
-     * @typedef {object} ValidationResult
-     * @property {boolean} valid Result of the validation - true or false.
-     * @property {string} message An error message if valid is false.
-     */
-    /**
-     * Validate the given bounds. This can be used for pre-validation of bounds,
-     * for example by views validating user inputs.
-     * @param {TimeBounds} bounds The start and end time of the conductor.
-     * @returns {ValidationResult} A validation error, or true if valid
-     * @memberof module:openmct.TimeAPI#
-     * @method validateBounds
-     */
-    validateBounds(bounds) {
-        if ((bounds.start === undefined)
-            || (bounds.end === undefined)
-            || isNaN(bounds.start)
-            || isNaN(bounds.end)
-        ) {
-            return {
-                valid: false,
-                message: "Start and end must be specified as integer values"
-            };
-        } else if (bounds.start > bounds.end) {
-            return {
-                valid: false,
-                message: "Specified start date exceeds end bound"
-            };
-        }
+    return {
+      valid: true,
+      message: ''
+    };
+  }
 
-        return {
-            valid: true,
-            message: ''
-        };
+  /**
+   * Get or set the start and end time of the time conductor. Basic validation
+   * of bounds is performed.
+   *
+   * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
+   * @throws {Error} Validation error
+   * @fires module:openmct.TimeAPI~bounds
+   * @returns {module:openmct.TimeAPI~TimeConductorBounds}
+   * @memberof module:openmct.TimeAPI#
+   * @method bounds
+   */
+  bounds(newBounds) {
+    this.#warnMethodDeprecated('"bounds"', '"getBounds" and "setBounds"');
+
+    if (arguments.length > 0) {
+      const validationResult = this.validateBounds(newBounds);
+      if (validationResult.valid !== true) {
+        throw new Error(validationResult.message);
+      }
+
+      //Create a copy to avoid direct mutation of conductor bounds
+      this.boundsVal = this.#copy(newBounds);
+      /**
+       * The start time, end time, or both have been updated.
+       * @event bounds
+       * @memberof module:openmct.TimeAPI~
+       * @property {TimeConductorBounds} bounds The newly updated bounds
+       * @property {boolean} [tick] `true` if the bounds update was due to
+       * a "tick" event (ie. was an automatic update), false otherwise.
+       */
+      this.emit('bounds', this.boundsVal, false);
     }
 
-    /**
-     * Get or set the start and end time of the time conductor. Basic validation
-     * of bounds is performed.
-     *
-     * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
-     * @throws {Error} Validation error
-     * @fires module:openmct.TimeAPI~bounds
-     * @returns {module:openmct.TimeAPI~TimeConductorBounds}
-     * @memberof module:openmct.TimeAPI#
-     * @method bounds
-     */
-    bounds(newBounds) {
-        this.#warnMethodDeprecated('"bounds"', '"getBounds" and "setBounds"');
+    //Return a copy to prevent direct mutation of time conductor bounds.
+    return this.#copy(this.boundsVal);
+  }
 
-        if (arguments.length > 0) {
-            const validationResult = this.validateBounds(newBounds);
-            if (validationResult.valid !== true) {
-                throw new Error(validationResult.message);
-            }
-
-            //Create a copy to avoid direct mutation of conductor bounds
-            this.boundsVal = this.#copy(newBounds);
-            /**
-             * The start time, end time, or both have been updated.
-             * @event bounds
-             * @memberof module:openmct.TimeAPI~
-             * @property {TimeConductorBounds} bounds The newly updated bounds
-             * @property {boolean} [tick] `true` if the bounds update was due to
-             * a "tick" event (ie. was an automatic update), false otherwise.
-             */
-            this.emit('bounds', this.boundsVal, false);
-        }
-
-        //Return a copy to prevent direct mutation of time conductor bounds.
-        return this.#copy(this.boundsVal);
+  /**
+   * Validate the given offsets. This can be used for pre-validation of
+   * offsets, for example by views validating user inputs.
+   * @param {ClockOffsets} offsets The start and end offsets from a 'now' value.
+   * @returns { ValidationResult } A validation error, and true/false if valid or not
+   * @memberof module:openmct.TimeAPI#
+   * @method validateOffsets
+   */
+  validateOffsets(offsets) {
+    if (
+      offsets.start === undefined ||
+      offsets.end === undefined ||
+      isNaN(offsets.start) ||
+      isNaN(offsets.end)
+    ) {
+      return {
+        valid: false,
+        message: 'Start and end offsets must be specified as integer values'
+      };
+    } else if (offsets.start >= offsets.end) {
+      return {
+        valid: false,
+        message: 'Specified start offset must be < end offset'
+      };
     }
 
-    /**
-     * Validate the given offsets. This can be used for pre-validation of
-     * offsets, for example by views validating user inputs.
-     * @param {ClockOffsets} offsets The start and end offsets from a 'now' value.
-     * @returns { ValidationResult } A validation error, and true/false if valid or not
-     * @memberof module:openmct.TimeAPI#
-     * @method validateOffsets
-     */
-    validateOffsets(offsets) {
-        if ((offsets.start === undefined)
-            || (offsets.end === undefined)
-            || isNaN(offsets.start)
-            || isNaN(offsets.end)
-        ) {
-            return {
-                valid: false,
-                message: "Start and end offsets must be specified as integer values"
-            };
-        } else if (offsets.start >= offsets.end) {
-            return {
-                valid: false,
-                message: "Specified start offset must be < end offset"
-            };
-        }
+    return {
+      valid: true,
+      message: ''
+    };
+  }
 
-        return {
-            valid: true,
-            message: ''
-        };
+  /**
+   * @typedef {Object} TimeBounds
+   * @property {number} start The start time displayed by the time conductor
+   * in ms since epoch. Epoch determined by currently active time system
+   * @property {number} end The end time displayed by the time conductor in ms
+   * since epoch.
+   * @memberof module:openmct.TimeAPI~
+   */
+
+  /**
+   * Clock offsets are used to calculate temporal bounds when the system is
+   * ticking on a clock source.
+   *
+   * @typedef {object} ClockOffsets
+   * @property {number} start A time span relative to the current value of the
+   * ticking clock, from which start bounds will be calculated. This value must
+   * be < 0. When a clock is active, bounds will be calculated automatically
+   * based on the value provided by the clock, and the defined clock offsets.
+   * @property {number} end A time span relative to the current value of the
+   * ticking clock, from which end bounds will be calculated. This value must
+   * be >= 0.
+   */
+  /**
+   * Get or set the currently applied clock offsets. If no parameter is provided,
+   * the current value will be returned. If provided, the new value will be
+   * used as the new clock offsets.
+   * @param {ClockOffsets} offsets
+   * @returns {ClockOffsets}
+   */
+  clockOffsets(offsets) {
+    this.#warnMethodDeprecated('"clockOffsets"', '"getClockOffsets" and "setClockOffsets"');
+
+    if (arguments.length > 0) {
+      const validationResult = this.validateOffsets(offsets);
+      if (validationResult.valid !== true) {
+        throw new Error(validationResult.message);
+      }
+
+      this.offsets = offsets;
+
+      const currentValue = this.activeClock.currentValue();
+      const newBounds = {
+        start: currentValue + offsets.start,
+        end: currentValue + offsets.end
+      };
+
+      this.bounds(newBounds);
+
+      /**
+       * Event that is triggered when clock offsets change.
+       * @event clockOffsets
+       * @memberof module:openmct.TimeAPI~
+       * @property {ClockOffsets} clockOffsets The newly activated clock
+       * offsets.
+       */
+      this.emit('clockOffsets', offsets);
     }
 
-    /**
-     * @typedef {Object} TimeBounds
-     * @property {number} start The start time displayed by the time conductor
-     * in ms since epoch. Epoch determined by currently active time system
-     * @property {number} end The end time displayed by the time conductor in ms
-     * since epoch.
-     * @memberof module:openmct.TimeAPI~
-     */
+    return this.offsets;
+  }
 
-    /**
-     * Clock offsets are used to calculate temporal bounds when the system is
-     * ticking on a clock source.
-     *
-     * @typedef {object} ClockOffsets
-     * @property {number} start A time span relative to the current value of the
-     * ticking clock, from which start bounds will be calculated. This value must
-     * be < 0. When a clock is active, bounds will be calculated automatically
-     * based on the value provided by the clock, and the defined clock offsets.
-     * @property {number} end A time span relative to the current value of the
-     * ticking clock, from which end bounds will be calculated. This value must
-     * be >= 0.
-     */
-    /**
-     * Get or set the currently applied clock offsets. If no parameter is provided,
-     * the current value will be returned. If provided, the new value will be
-     * used as the new clock offsets.
-     * @param {ClockOffsets} offsets
-     * @returns {ClockOffsets}
-     */
-    clockOffsets(offsets) {
-        this.#warnMethodDeprecated('"clockOffsets"', '"getClockOffsets" and "setClockOffsets"');
+  /**
+   * Stop following the currently active clock. This will
+   * revert all views to showing a static time frame defined by the current
+   * bounds.
+   */
+  stopClock() {
+    console.log('stop clock');
+    this.#warnMethodDeprecated('"stopClock"');
 
-        if (arguments.length > 0) {
-
-            const validationResult = this.validateOffsets(offsets);
-            if (validationResult.valid !== true) {
-                throw new Error(validationResult.message);
-            }
-
-            this.offsets = offsets;
-
-            const currentValue = this.activeClock.currentValue();
-            const newBounds = {
-                start: currentValue + offsets.start,
-                end: currentValue + offsets.end
-            };
-
-            this.bounds(newBounds);
-
-            /**
-             * Event that is triggered when clock offsets change.
-             * @event clockOffsets
-             * @memberof module:openmct.TimeAPI~
-             * @property {ClockOffsets} clockOffsets The newly activated clock
-             * offsets.
-             */
-            this.emit("clockOffsets", offsets);
-        }
-
-        return this.offsets;
+    if (this.activeClock) {
+      this.clock(undefined, undefined);
     }
+  }
 
-    /**
-     * Stop following the currently active clock. This will
-     * revert all views to showing a static time frame defined by the current
-     * bounds.
-     */
-    stopClock() {
-        console.log('stop clock');
-        this.#warnMethodDeprecated('"stopClock"');
+  /**
+   * Set the active clock. Tick source will be immediately subscribed to
+   * and ticking will begin. Offsets from 'now' must also be provided. A clock
+   * can be unset by calling {@link stopClock}.
+   *
+   * @param {Clock || string} keyOrClock The clock to activate, or its key
+   * @param {ClockOffsets} offsets on each tick these will be used to calculate
+   * the start and end bounds. This maintains a sliding time window of a fixed
+   * width that automatically updates.
+   * @fires module:openmct.TimeAPI~clock
+   * @return {Clock} the currently active clock;
+   */
+  clock(keyOrClock, offsets) {
+    this.#warnMethodDeprecated('"clock"', '"getClock" and "setClock"');
 
-        if (this.activeClock) {
-            this.clock(undefined, undefined);
+    if (arguments.length === 2) {
+      let clock;
+
+      if (typeof keyOrClock === 'string') {
+        clock = this.clocks.get(keyOrClock);
+        if (clock === undefined) {
+          throw "Unknown clock '" + keyOrClock + "'. Has it been registered with 'addClock'?";
         }
-    }
-
-    /**
-     * Set the active clock. Tick source will be immediately subscribed to
-     * and ticking will begin. Offsets from 'now' must also be provided. A clock
-     * can be unset by calling {@link stopClock}.
-     *
-     * @param {Clock || string} keyOrClock The clock to activate, or its key
-     * @param {ClockOffsets} offsets on each tick these will be used to calculate
-     * the start and end bounds. This maintains a sliding time window of a fixed
-     * width that automatically updates.
-     * @fires module:openmct.TimeAPI~clock
-     * @return {Clock} the currently active clock;
-     */
-    clock(keyOrClock, offsets) {
-        this.#warnMethodDeprecated('"clock"', '"getClock" and "setClock"');
-
-        if (arguments.length === 2) {
-            let clock;
-
-            if (typeof keyOrClock === 'string') {
-                clock = this.clocks.get(keyOrClock);
-                if (clock === undefined) {
-                    throw "Unknown clock '" + keyOrClock + "'. Has it been registered with 'addClock'?";
-                }
-            } else if (typeof keyOrClock === 'object') {
-                clock = keyOrClock;
-                if (!this.clocks.has(clock.key)) {
-                    throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
-                }
-            }
-
-            const previousClock = this.activeClock;
-            if (previousClock !== undefined) {
-                previousClock.off("tick", this.tick);
-            }
-
-            this.activeClock = clock;
-
-            /**
-             * The active clock has changed. Clock can be unset by calling {@link stopClock}
-             * @event clock
-             * @memberof module:openmct.TimeAPI~
-             * @property {Clock} clock The newly activated clock, or undefined
-             * if the system is no longer following a clock source
-             */
-            this.emit("clock", this.activeClock);
-
-            if (this.activeClock !== undefined) {
-                this.clockOffsets(offsets);
-                this.activeClock.on("tick", this.tick);
-            }
-
-        } else if (arguments.length === 1) {
-            throw "When setting the clock, clock offsets must also be provided";
+      } else if (typeof keyOrClock === 'object') {
+        clock = keyOrClock;
+        if (!this.clocks.has(clock.key)) {
+          throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
         }
+      }
 
-        return this.activeClock;
-    }
+      const previousClock = this.activeClock;
+      if (previousClock !== undefined) {
+        previousClock.off('tick', this.tick);
+      }
 
-    /**
-     * Update bounds based on provided time and current offsets
-     * @param {number} timestamp A time from which bounds will be calculated
-     * using current offsets.
-     */
-    tick(timestamp) {
-        if (!this.activeClock) {
-            return;
-        }
+      this.activeClock = clock;
 
-        if (this.mode === REALTIME_MODE_KEY) {
-            const newBounds = {
-                start: timestamp + this.offsets.start,
-                end: timestamp + this.offsets.end
-            };
+      /**
+       * The active clock has changed. Clock can be unset by calling {@link stopClock}
+       * @event clock
+       * @memberof module:openmct.TimeAPI~
+       * @property {Clock} clock The newly activated clock, or undefined
+       * if the system is no longer following a clock source
+       */
+      this.emit('clock', this.activeClock);
 
-            this.boundsVal = newBounds;
-            // "bounds" will be deprecated in a future release
-            this.emit('bounds', this.boundsVal, true);
-            this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
-        }
-    }
-
-    /**
-     * Get the time system of the TimeAPI.
-     * @returns {TimeSystem} The currently applied time system
-     * @memberof module:openmct.TimeAPI#
-     * @method getTimeSystem
-     */
-    getTimeSystem() {
-        return this.system;
-    }
-
-    /**
-     * Set the time system of the TimeAPI.
-     * @param {TimeSystem | string} timeSystemOrKey
-     * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
-     * @fires module:openmct.TimeAPI~timeSystem
-     * @returns {TimeSystem} The currently applied time system
-     * @memberof module:openmct.TimeAPI#
-     * @method setTimeSystem
-     */
-    setTimeSystem(timeSystemOrKey, bounds) {
-        if (!this.isRealTime() && !bounds) {
-            throw new Error(
-                'Must specify bounds when changing time system without an active clock.'
-            );
-        }
-
-        if (timeSystemOrKey === undefined) {
-            throw 'Please provide a time system';
-        }
-
-        let timeSystem;
-
-        if (typeof timeSystemOrKey === 'string') {
-            timeSystem = this.timeSystems.get(timeSystemOrKey);
-
-            if (timeSystem === undefined) {
-                throw `Unknown time system ${timeSystemOrKey}. Has it been registered with 'addTimeSystem'?`;
-            }
-        } else if (typeof timeSystemOrKey === 'object') {
-            timeSystem = timeSystemOrKey;
-
-            if (!this.timeSystems.has(timeSystem.key)) {
-                throw `Unknown time system ${timeSystemOrKey.key}. Has it been registered with 'addTimeSystem'?`;
-            }
-        } else {
-            throw 'Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key';
-        }
-
-        this.system = this.#copy(timeSystem);
-        /**
-         * The time system used by the time
-         * conductor has changed. A change in Time System will always be
-         * followed by a bounds event specifying new query bounds.
-         *
-         * @event module:openmct.TimeAPI~timeSystem
-         * @property {TimeSystem} The value of the currently applied
-         * Time System
-         * */
-        this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.#copy(this.system));
-
-        if (bounds) {
-            this.setBounds(bounds);
-        }
-
-        return this.system;
-    }
-
-    /**
-     * Get the start and end time of the time conductor. Basic validation
-     * of bounds is performed.
-     * @returns {module:openmct.TimeAPI~TimeConductorBounds}
-     * @memberof module:openmct.TimeAPI#
-     * @method bounds
-     */
-    getBounds() {
-        //Return a copy to prevent direct mutation of time conductor bounds.
-        return this.#copy(this.boundsVal);
-    }
-
-    /**
-     * Set the start and end time of the time conductor. Basic validation
-     * of bounds is performed.
-     *
-     * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
-     * @throws {Error} Validation error
-     * @fires module:openmct.TimeAPI~bounds
-     * @returns {module:openmct.TimeAPI~TimeConductorBounds}
-     * @memberof module:openmct.TimeAPI#
-     * @method bounds
-     */
-    setBounds(newBounds) {
-        const validationResult = this.validateBounds(newBounds);
-        if (validationResult.valid !== true) {
-            throw new Error(validationResult.message);
-        }
-
-        //Create a copy to avoid direct mutation of conductor bounds
-        this.boundsVal = this.#copy(newBounds);
-        /**
-         * The start time, end time, or both have been updated.
-         * @event bounds
-         * @memberof module:openmct.TimeAPI~
-         * @property {TimeConductorBounds} bounds The newly updated bounds
-         * @property {boolean} [tick] `true` if the bounds update was due to
-         * a "tick" event (i.e. was an automatic update), false otherwise.
-         */
-        this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
-
-        //Return a copy to prevent direct mutation of time conductor bounds.
-        return this.#copy(this.boundsVal);
-    }
-
-    /**
-     * Get the active clock.
-     * @return {Clock} the currently active clock;
-     */
-    getClock() {
-        return this.activeClock;
-    }
-
-    /**
-     * Set the active clock. Tick source will be immediately subscribed to
-     * and the currently ticking will begin.
-     * Offsets from 'now', if provided, will be used to set realtime mode offsets
-     *
-     * @param {Clock || string} keyOrClock The clock to activate, or its key
-     * @param {ClockOffsets} offsets on each tick these will be used to calculate
-     * the start and end bounds when in realtime mode.
-     * This maintains a sliding time window of a fixed width that automatically updates.
-     * @fires module:openmct.TimeAPI~clock
-     * @return {Clock} the currently active clock;
-     */
-    setClock(keyOrClock, offsets) {
-        let clock;
-
-        if (typeof keyOrClock === 'string') {
-            clock = this.clocks.get(keyOrClock);
-            if (clock === undefined) {
-                throw `Unknown clock ${keyOrClock}. Has it been registered with 'addClock'?`;
-            }
-        } else if (typeof keyOrClock === 'object') {
-            clock = keyOrClock;
-            if (!this.clocks.has(clock.key)) {
-                throw `Unknown clock ${keyOrClock.key}. Has it been registered with 'addClock'?`;
-            }
-        }
-
-        // this.setMode(REALTIME_MODE_KEY);
-
-        const previousClock = this.activeClock;
-        if (previousClock) {
-            previousClock.off('tick', this.tick);
-        }
-
-        this.activeClock = clock;
+      if (this.activeClock !== undefined) {
+        this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
-
-        /**
-         * The active clock has changed.
-         * @event clock
-         * @memberof module:openmct.TimeAPI~
-         * @property {Clock} clock The newly activated clock, or undefined
-         * if the system is no longer following a clock source
-         */
-        this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
-
-        if (offsets !== undefined) {
-            this.setClockOffsets(offsets);
-        }
-
-        return this.activeClock;
+      }
+    } else if (arguments.length === 1) {
+      throw 'When setting the clock, clock offsets must also be provided';
     }
 
-    /**
-     * Get the current mode.
-     * @return {Mode} the current mode;
-     */
-    getMode() {
-        return this.mode;
+    return this.activeClock;
+  }
+
+  /**
+   * Update bounds based on provided time and current offsets
+   * @param {number} timestamp A time from which bounds will be calculated
+   * using current offsets.
+   */
+  tick(timestamp) {
+    if (!this.activeClock) {
+      return;
     }
 
+    if (this.mode === REALTIME_MODE_KEY) {
+      const newBounds = {
+        start: timestamp + this.offsets.start,
+        end: timestamp + this.offsets.end
+      };
+
+      this.boundsVal = newBounds;
+      // "bounds" will be deprecated in a future release
+      this.emit('bounds', this.boundsVal, true);
+      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
+    }
+  }
+
+  /**
+   * Get the time system of the TimeAPI.
+   * @returns {TimeSystem} The currently applied time system
+   * @memberof module:openmct.TimeAPI#
+   * @method getTimeSystem
+   */
+  getTimeSystem() {
+    return this.system;
+  }
+
+  /**
+   * Set the time system of the TimeAPI.
+   * @param {TimeSystem | string} timeSystemOrKey
+   * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
+   * @fires module:openmct.TimeAPI~timeSystem
+   * @returns {TimeSystem} The currently applied time system
+   * @memberof module:openmct.TimeAPI#
+   * @method setTimeSystem
+   */
+  setTimeSystem(timeSystemOrKey, bounds) {
+    if (!this.isRealTime() && !bounds) {
+      throw new Error('Must specify bounds when changing time system without an active clock.');
+    }
+
+    if (timeSystemOrKey === undefined) {
+      throw 'Please provide a time system';
+    }
+
+    let timeSystem;
+
+    if (typeof timeSystemOrKey === 'string') {
+      timeSystem = this.timeSystems.get(timeSystemOrKey);
+
+      if (timeSystem === undefined) {
+        throw `Unknown time system ${timeSystemOrKey}. Has it been registered with 'addTimeSystem'?`;
+      }
+    } else if (typeof timeSystemOrKey === 'object') {
+      timeSystem = timeSystemOrKey;
+
+      if (!this.timeSystems.has(timeSystem.key)) {
+        throw `Unknown time system ${timeSystemOrKey.key}. Has it been registered with 'addTimeSystem'?`;
+      }
+    } else {
+      throw 'Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key';
+    }
+
+    this.system = this.#copy(timeSystem);
     /**
-     * Set the mode to either fixed or realtime.
+     * The time system used by the time
+     * conductor has changed. A change in Time System will always be
+     * followed by a bounds event specifying new query bounds.
      *
-     * @param {Mode} mode The mode to activate
-     * @fires module:openmct.TimeAPI~clock
-     * @return {Mode} the currently active mode;
+     * @event module:openmct.TimeAPI~timeSystem
+     * @property {TimeSystem} The value of the currently applied
+     * Time System
+     * */
+    this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.#copy(this.system));
+
+    if (bounds) {
+      this.setBounds(bounds);
+    }
+
+    return this.system;
+  }
+
+  /**
+   * Get the start and end time of the time conductor. Basic validation
+   * of bounds is performed.
+   * @returns {module:openmct.TimeAPI~TimeConductorBounds}
+   * @memberof module:openmct.TimeAPI#
+   * @method bounds
+   */
+  getBounds() {
+    //Return a copy to prevent direct mutation of time conductor bounds.
+    return this.#copy(this.boundsVal);
+  }
+
+  /**
+   * Set the start and end time of the time conductor. Basic validation
+   * of bounds is performed.
+   *
+   * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
+   * @throws {Error} Validation error
+   * @fires module:openmct.TimeAPI~bounds
+   * @returns {module:openmct.TimeAPI~TimeConductorBounds}
+   * @memberof module:openmct.TimeAPI#
+   * @method bounds
+   */
+  setBounds(newBounds) {
+    const validationResult = this.validateBounds(newBounds);
+    if (validationResult.valid !== true) {
+      throw new Error(validationResult.message);
+    }
+
+    //Create a copy to avoid direct mutation of conductor bounds
+    this.boundsVal = this.#copy(newBounds);
+    /**
+     * The start time, end time, or both have been updated.
+     * @event bounds
+     * @memberof module:openmct.TimeAPI~
+     * @property {TimeConductorBounds} bounds The newly updated bounds
+     * @property {boolean} [tick] `true` if the bounds update was due to
+     * a "tick" event (i.e. was an automatic update), false otherwise.
      */
-    setMode(mode) {
-        if (!mode || mode === this.mode) {
-            return;
-        }
+    this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
 
-        this.mode = mode;
+    //Return a copy to prevent direct mutation of time conductor bounds.
+    return this.#copy(this.boundsVal);
+  }
 
-        /**
-         * The active clock has changed. Clock can be unset by calling {@link stopClock}
-         * @event clock
-         * @memberof module:openmct.TimeAPI~
-         * @property {Clock} clock The newly activated clock, or undefined
-         * if the system is no longer following a clock source
-         */
-        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+  /**
+   * Get the active clock.
+   * @return {Clock} the currently active clock;
+   */
+  getClock() {
+    return this.activeClock;
+  }
 
-        return this.mode;
+  /**
+   * Set the active clock. Tick source will be immediately subscribed to
+   * and the currently ticking will begin.
+   * Offsets from 'now', if provided, will be used to set realtime mode offsets
+   *
+   * @param {Clock || string} keyOrClock The clock to activate, or its key
+   * @param {ClockOffsets} offsets on each tick these will be used to calculate
+   * the start and end bounds when in realtime mode.
+   * This maintains a sliding time window of a fixed width that automatically updates.
+   * @fires module:openmct.TimeAPI~clock
+   * @return {Clock} the currently active clock;
+   */
+  setClock(keyOrClock, offsets) {
+    let clock;
+
+    if (typeof keyOrClock === 'string') {
+      clock = this.clocks.get(keyOrClock);
+      if (clock === undefined) {
+        throw `Unknown clock ${keyOrClock}. Has it been registered with 'addClock'?`;
+      }
+    } else if (typeof keyOrClock === 'object') {
+      clock = keyOrClock;
+      if (!this.clocks.has(clock.key)) {
+        throw `Unknown clock ${keyOrClock.key}. Has it been registered with 'addClock'?`;
+      }
     }
 
-    /**
-     * Checks if this time context is in realtime mode or not.
-     * @returns {boolean} true if this context is in real-time mode, false if not
-    */
-    isRealTime() {
-        return this.mode === MODES.realtime;
+    // this.setMode(REALTIME_MODE_KEY);
+
+    const previousClock = this.activeClock;
+    if (previousClock) {
+      previousClock.off('tick', this.tick);
     }
 
-    /**
-     * Checks if this time context is in fixed mode or not.
-     * @returns {boolean} true if this context is in fixed mode, false if not
-    */
-    isFixed() {
-        return this.mode === MODES.fixed;
-    }
+    this.activeClock = clock;
+    this.activeClock.on('tick', this.tick);
 
     /**
-     * Get the currently applied clock offsets.
-     * @returns {ClockOffsets}
+     * The active clock has changed.
+     * @event clock
+     * @memberof module:openmct.TimeAPI~
+     * @property {Clock} clock The newly activated clock, or undefined
+     * if the system is no longer following a clock source
      */
-    getClockOffsets() {
-        return this.offsets;
+    this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+
+    if (offsets !== undefined) {
+      this.setClockOffsets(offsets);
     }
+
+    return this.activeClock;
+  }
+
+  /**
+   * Get the current mode.
+   * @return {Mode} the current mode;
+   */
+  getMode() {
+    return this.mode;
+  }
+
+  /**
+   * Set the mode to either fixed or realtime.
+   *
+   * @param {Mode} mode The mode to activate
+   * @fires module:openmct.TimeAPI~clock
+   * @return {Mode} the currently active mode;
+   */
+  setMode(mode) {
+    if (!mode || mode === this.mode) {
+      return;
+    }
+
+    this.mode = mode;
 
     /**
-     * Set the currently applied clock offsets. If no parameter is provided,
-     * the current value will be returned. If provided, the new value will be
-     * used as the new clock offsets.
-     * @param {ClockOffsets} offsets
-     * @returns {ClockOffsets}
+     * The active clock has changed. Clock can be unset by calling {@link stopClock}
+     * @event clock
+     * @memberof module:openmct.TimeAPI~
+     * @property {Clock} clock The newly activated clock, or undefined
+     * if the system is no longer following a clock source
      */
-    setClockOffsets(offsets) {
-        const validationResult = this.validateOffsets(offsets);
-        if (validationResult.valid !== true) {
-            throw new Error(validationResult.message);
-        }
+    this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
 
-        this.offsets = this.#copy(offsets);
+    return this.mode;
+  }
 
-        const currentValue = this.activeClock.currentValue();
-        const newBounds = {
-            start: currentValue + offsets.start,
-            end: currentValue + offsets.end
-        };
+  /**
+   * Checks if this time context is in realtime mode or not.
+   * @returns {boolean} true if this context is in real-time mode, false if not
+   */
+  isRealTime() {
+    return this.mode === MODES.realtime;
+  }
 
-        this.setBounds(newBounds);
+  /**
+   * Checks if this time context is in fixed mode or not.
+   * @returns {boolean} true if this context is in fixed mode, false if not
+   */
+  isFixed() {
+    return this.mode === MODES.fixed;
+  }
 
-        /**
-         * Event that is triggered when clock offsets change.
-         * @event clockOffsets
-         * @memberof module:openmct.TimeAPI~
-         * @property {ClockOffsets} clockOffsets The newly activated clock
-         * offsets.
-         */
-        this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
+  /**
+   * Get the currently applied clock offsets.
+   * @returns {ClockOffsets}
+   */
+  getClockOffsets() {
+    return this.offsets;
+  }
 
-        return this.offsets;
+  /**
+   * Set the currently applied clock offsets. If no parameter is provided,
+   * the current value will be returned. If provided, the new value will be
+   * used as the new clock offsets.
+   * @param {ClockOffsets} offsets
+   * @returns {ClockOffsets}
+   */
+  setClockOffsets(offsets) {
+    const validationResult = this.validateOffsets(offsets);
+    if (validationResult.valid !== true) {
+      throw new Error(validationResult.message);
     }
 
-    #warnMethodDeprecated(method, newMethod) {
-        let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`;
+    this.offsets = this.#copy(offsets);
 
-        if (newMethod) {
-            message += ` Please use the ${newMethod} API method(s) instead.`;
-        }
+    const currentValue = this.activeClock.currentValue();
+    const newBounds = {
+      start: currentValue + offsets.start,
+      end: currentValue + offsets.end
+    };
 
-        // TODO: add docs and point to them in warning.
-        //  For more information and migration instructions, visit [link to documentation or migration guide].
+    this.setBounds(newBounds);
 
-        console.warn(message);
+    /**
+     * Event that is triggered when clock offsets change.
+     * @event clockOffsets
+     * @memberof module:openmct.TimeAPI~
+     * @property {ClockOffsets} clockOffsets The newly activated clock
+     * offsets.
+     */
+    this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
+
+    return this.offsets;
+  }
+
+  #warnMethodDeprecated(method, newMethod) {
+    let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`;
+
+    if (newMethod) {
+      message += ` Please use the ${newMethod} API method(s) instead.`;
     }
 
-    #copy(object) {
-        return JSON.parse(JSON.stringify(object));
-    }
+    // TODO: add docs and point to them in warning.
+    //  For more information and migration instructions, visit [link to documentation or migration guide].
+
+    console.warn(message);
+  }
+
+  #copy(object) {
+    return JSON.parse(JSON.stringify(object));
+  }
 }
 
 export default TimeContext;

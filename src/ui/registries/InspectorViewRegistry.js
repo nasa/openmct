@@ -30,70 +30,71 @@ const DEFAULT_VIEW_PRIORITY = 0;
  * @memberof module:openmct
  */
 export default class InspectorViewRegistry {
-    constructor() {
-        this.providers = {};
+  constructor() {
+    this.providers = {};
+  }
+
+  /**
+   *
+   * @param {object} selection the object to be viewed
+   * @returns {module:openmct.InspectorViewRegistry[]} any providers
+   *          which can provide views of this object
+   * @private for platform-internal use
+   */
+  get(selection) {
+    function byPriority(providerA, providerB) {
+      const priorityA = providerA.priority?.() ?? DEFAULT_VIEW_PRIORITY;
+      const priorityB = providerB.priority?.() ?? DEFAULT_VIEW_PRIORITY;
+
+      return priorityB - priorityA;
     }
 
-    /**
-     *
-     * @param {object} selection the object to be viewed
-     * @returns {module:openmct.InspectorViewRegistry[]} any providers
-     *          which can provide views of this object
-     * @private for platform-internal use
-     */
-    get(selection) {
-        function byPriority(providerA, providerB) {
-            const priorityA = providerA.priority?.() ?? DEFAULT_VIEW_PRIORITY;
-            const priorityB = providerB.priority?.() ?? DEFAULT_VIEW_PRIORITY;
+    return this.#getAllProviders()
+      .filter((provider) => provider.canView(selection))
+      .map((provider) => {
+        const view = provider.view(selection);
+        view.key = provider.key;
+        view.name = provider.name;
+        view.glyph = provider.glyph;
 
-            return priorityB - priorityA;
-        }
+        return view;
+      })
+      .sort(byPriority);
+  }
 
-        return this.#getAllProviders()
-            .filter(provider => provider.canView(selection))
-            .map(provider => {
-                const view = provider.view(selection);
-                view.key = provider.key;
-                view.name = provider.name;
-                view.glyph = provider.glyph;
+  /**
+   * Registers a new type of view.
+   *
+   * @param {module:openmct.InspectorViewRegistry} provider the provider for this view
+   * @method addProvider
+   * @memberof module:openmct.InspectorViewRegistry#
+   */
+  addProvider(provider) {
+    const key = provider.key;
+    const name = provider.name;
 
-                return view;
-            }).sort(byPriority);
+    if (key === undefined) {
+      throw "View providers must have a unique 'key' property defined";
     }
 
-    /**
-     * Registers a new type of view.
-     *
-     * @param {module:openmct.InspectorViewRegistry} provider the provider for this view
-     * @method addProvider
-     * @memberof module:openmct.InspectorViewRegistry#
-     */
-    addProvider(provider) {
-        const key = provider.key;
-        const name = provider.name;
-
-        if (key === undefined) {
-            throw "View providers must have a unique 'key' property defined";
-        }
-
-        if (name === undefined) {
-            throw "View providers must have a 'name' property defined";
-        }
-
-        if (this.providers[key] !== undefined) {
-            console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
-        }
-
-        this.providers[key] = provider;
+    if (name === undefined) {
+      throw "View providers must have a 'name' property defined";
     }
 
-    getByProviderKey(key) {
-        return this.providers[key];
+    if (this.providers[key] !== undefined) {
+      console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
     }
 
-    #getAllProviders() {
-        return Object.values(this.providers);
-    }
+    this.providers[key] = provider;
+  }
+
+  getByProviderKey(key) {
+    return this.providers[key];
+  }
+
+  #getAllProviders() {
+    return Object.values(this.providers);
+  }
 }
 
 /**

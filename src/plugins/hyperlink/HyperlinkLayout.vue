@@ -21,36 +21,34 @@
 -->
 
 <template>
-
-<a
+  <a
     class="c-hyperlink"
     :class="{
-        'c-hyperlink--button' : isButton
+      'c-hyperlink--button': isButton
     }"
     :target="domainObject.linkTarget"
     :href="url"
->
+  >
     <span class="c-hyperlink__label">{{ domainObject.displayText }}</span>
-</a>
-
+  </a>
 </template>
 
 <script>
-const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
 
 export default {
-    inject: ['domainObject'],
-    computed: {
-        isButton() {
-            if (this.domainObject.displayFormat === "link") {
-                return false;
-            }
+  inject: ['domainObject'],
+  computed: {
+    isButton() {
+      if (this.domainObject.displayFormat === 'link') {
+        return false;
+      }
 
-            return true;
-        },
-        url() {
-            return sanitizeUrl(this.domainObject.url);
-        }
+      return true;
+    },
+    url() {
+      return sanitizeUrl(this.domainObject.url);
     }
+  }
 };
 </script>

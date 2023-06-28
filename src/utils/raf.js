@@ -1,14 +1,14 @@
 export default function raf(callback) {
-    let rendering = false;
+  let rendering = false;
 
-    return () => {
-        if (!rendering) {
-            rendering = true;
+  return () => {
+    if (!rendering) {
+      rendering = true;
 
-            requestAnimationFrame(() => {
-                callback();
-                rendering = false;
-            });
-        }
-    };
+      requestAnimationFrame(() => {
+        callback();
+        rendering = false;
+      });
+    }
+  };
 }

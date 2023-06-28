@@ -22,9 +22,9 @@
 import Type from './Type';
 
 const UNKNOWN_TYPE = new Type({
-    key: "unknown",
-    name: "Unknown Type",
-    cssClass: "icon-object-unknown"
+  key: 'unknown',
+  name: 'Unknown Type',
+  cssClass: 'icon-object-unknown'
 });
 
 /**
@@ -46,60 +46,60 @@ const UNKNOWN_TYPE = new Type({
  * @memberof module:openmct
  */
 export default class TypeRegistry {
-    constructor() {
-        this.types = {};
-    }
-    /**
-     * Register a new object type.
-     *
-     * @param {string} typeKey a string identifier for this type
-     * @param {module:openmct.Type} type the type to add
-     * @method addType
-     * @memberof module:openmct.TypeRegistry#
-     */
-    addType(typeKey, typeDef) {
-        this.standardizeType(typeDef);
-        this.types[typeKey] = new Type(typeDef);
-    }
-    /**
-     * Takes a typeDef, standardizes it, and logs warnings about unsupported
-     * usage.
-     * @private
-     */
-    standardizeType(typeDef) {
-        if (Object.prototype.hasOwnProperty.call(typeDef, 'label')) {
-            if (!typeDef.name) {
-                typeDef.name = typeDef.label;
-            }
+  constructor() {
+    this.types = {};
+  }
+  /**
+   * Register a new object type.
+   *
+   * @param {string} typeKey a string identifier for this type
+   * @param {module:openmct.Type} type the type to add
+   * @method addType
+   * @memberof module:openmct.TypeRegistry#
+   */
+  addType(typeKey, typeDef) {
+    this.standardizeType(typeDef);
+    this.types[typeKey] = new Type(typeDef);
+  }
+  /**
+   * Takes a typeDef, standardizes it, and logs warnings about unsupported
+   * usage.
+   * @private
+   */
+  standardizeType(typeDef) {
+    if (Object.prototype.hasOwnProperty.call(typeDef, 'label')) {
+      if (!typeDef.name) {
+        typeDef.name = typeDef.label;
+      }
 
-            delete typeDef.label;
-        }
+      delete typeDef.label;
     }
-    /**
-     * List keys for all registered types.
-     * @method listKeys
-     * @memberof module:openmct.TypeRegistry#
-     * @returns {string[]} all registered type keys
-     */
-    listKeys() {
-        return Object.keys(this.types);
-    }
-    /**
-     * Retrieve a registered type by its key.
-     * @method get
-     * @param {string} typeKey the key for this type
-     * @memberof module:openmct.TypeRegistry#
-     * @returns {module:openmct.Type} the registered type
-     */
-    get(typeKey) {
-        return this.types[typeKey] || UNKNOWN_TYPE;
-    }
-    importLegacyTypes(types) {
-        types.filter((t) => this.get(t.key) === UNKNOWN_TYPE)
-            .forEach((type) => {
-                let def = Type.definitionFromLegacyDefinition(type);
-                this.addType(type.key, def);
-            });
-    }
+  }
+  /**
+   * List keys for all registered types.
+   * @method listKeys
+   * @memberof module:openmct.TypeRegistry#
+   * @returns {string[]} all registered type keys
+   */
+  listKeys() {
+    return Object.keys(this.types);
+  }
+  /**
+   * Retrieve a registered type by its key.
+   * @method get
+   * @param {string} typeKey the key for this type
+   * @memberof module:openmct.TypeRegistry#
+   * @returns {module:openmct.Type} the registered type
+   */
+  get(typeKey) {
+    return this.types[typeKey] || UNKNOWN_TYPE;
+  }
+  importLegacyTypes(types) {
+    types
+      .filter((t) => this.get(t.key) === UNKNOWN_TYPE)
+      .forEach((type) => {
+        let def = Type.definitionFromLegacyDefinition(type);
+        this.addType(type.key, def);
+      });
+  }
 }
-

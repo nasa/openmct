@@ -1,23 +1,23 @@
 .c-input--submit {
-    // Can't use display: none because some browsers will pretend the input doesn't exist, and enter won't work
-    visibility: none;
-    height: 0;
-    width: 0;
-    padding: 0;
+  // Can't use display: none because some browsers will pretend the input doesn't exist, and enter won't work
+  visibility: none;
+  height: 0;
+  width: 0;
+  padding: 0;
 }
 
 /*********************************************** CONDUCTOR LAYOUT */
 .c-conductor {
-    &__inputs {
-        display: flex;
-        flex: 0 0 auto;
+  &__inputs {
+    display: flex;
+    flex: 0 0 auto;
 
-        > * + * {
-            margin-left: $interiorMargin;
-        }
+    > * + * {
+      margin-left: $interiorMargin;
     }
+  }
 
-/*    &__time-bounds {
+  /*    &__time-bounds {
         display: grid;
         grid-column-gap: $interiorMargin;
         grid-row-gap: $interiorMargin;
@@ -46,91 +46,91 @@
         justify-content: flex-end;
     }*/
 
-    &__ticks {
-        flex: 1 1 auto;
+  &__ticks {
+    flex: 1 1 auto;
+  }
+
+  &__controls {
+    grid-area: tc-controls;
+    display: flex;
+    align-items: center;
+
+    > * + * {
+      margin-left: $interiorMargin;
+    }
+  }
+
+  &.is-fixed-mode {
+    .c-conductor-axis {
+      &__zoom-indicator {
+        border: 1px solid transparent;
+        display: none; // Hidden by default
+      }
     }
 
-    &__controls {
-        grid-area: tc-controls;
-        display: flex;
-        align-items: center;
-
-        > * + * {
-            margin-left: $interiorMargin;
+    &:not(.is-panning),
+    &:not(.is-zooming) {
+      .c-conductor-axis {
+        &:hover,
+        &:active {
+          cursor: col-resize;
         }
+      }
     }
 
-    &.is-fixed-mode {
-        .c-conductor-axis {
-            &__zoom-indicator {
-                border: 1px solid transparent;
-                display: none; // Hidden by default
-            }
-        }
-
-        &:not(.is-panning),
-        &:not(.is-zooming) {
-            .c-conductor-axis {
-                &:hover,
-                &:active {
-                    cursor: col-resize;
-                }
-            }
-        }
-
-        &.is-panning,
-        &.is-zooming {
-            .c-conductor-input input {
-                // Styles for inputs while zooming or panning
-                background: rgba($timeConductorActiveBg, 0.4);
-            }
-        }
-
-        &.alt-pressed {
-            .c-conductor-axis:hover {
-                // When alt is being pressed and user is hovering over the axis, set the cursor
-                @include cursorGrab();
-            }
-        }
-
-        &.is-panning {
-            .c-conductor-axis {
-                @include cursorGrab();
-                background-color: $timeConductorActivePanBg;
-                transition: $transIn;
-
-                svg text {
-                    stroke: $timeConductorActivePanBg;
-                    transition: $transIn;
-                }
-            }
-        }
-
-        &.is-zooming {
-            .c-conductor-axis__zoom-indicator {
-                display: block;
-                position: absolute;
-                background: rgba($timeConductorActiveBg, 0.4);
-                border-left-color: $timeConductorActiveBg;
-                border-right-color: $timeConductorActiveBg;
-                top: 0;
-                bottom: 0;
-            }
-        }
+    &.is-panning,
+    &.is-zooming {
+      .c-conductor-input input {
+        // Styles for inputs while zooming or panning
+        background: rgba($timeConductorActiveBg, 0.4);
+      }
     }
 
-    &.is-realtime-mode {
-        .c-conductor__time-bounds {
-            grid-template-columns: 20px auto 1fr auto auto;
-            grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-updated tc-end";
-        }
-
-        .c-conductor__end-fixed {
-            grid-area: tc-updated;
-        }
+    &.alt-pressed {
+      .c-conductor-axis:hover {
+        // When alt is being pressed and user is hovering over the axis, set the cursor
+        @include cursorGrab();
+      }
     }
 
- /*   body.phone.portrait & {
+    &.is-panning {
+      .c-conductor-axis {
+        @include cursorGrab();
+        background-color: $timeConductorActivePanBg;
+        transition: $transIn;
+
+        svg text {
+          stroke: $timeConductorActivePanBg;
+          transition: $transIn;
+        }
+      }
+    }
+
+    &.is-zooming {
+      .c-conductor-axis__zoom-indicator {
+        display: block;
+        position: absolute;
+        background: rgba($timeConductorActiveBg, 0.4);
+        border-left-color: $timeConductorActiveBg;
+        border-right-color: $timeConductorActiveBg;
+        top: 0;
+        bottom: 0;
+      }
+    }
+  }
+
+  &.is-realtime-mode {
+    .c-conductor__time-bounds {
+      grid-template-columns: 20px auto 1fr auto auto;
+      grid-template-areas: 'tc-mode-icon tc-start tc-ticks tc-updated tc-end';
+    }
+
+    .c-conductor__end-fixed {
+      grid-area: tc-updated;
+    }
+  }
+
+  /*   body.phone.portrait & {
         .c-conductor__time-bounds {
             grid-row-gap: $interiorMargin;
             grid-template-rows: auto auto;
@@ -185,422 +185,422 @@
 }
 
 .c-conductor-holder--compact {
-    //min-height: 22px;
-    flex: 0 1 auto;
-    overflow: hidden;
+  //min-height: 22px;
+  flex: 0 1 auto;
+  overflow: hidden;
 
-    .c-conductor {
-        &__inputs,
-        &__time-bounds {
-            display: flex;
-            flex: 0 1 auto;
-            overflow: hidden;
-        }
-
-        &__inputs {
-            > * + * {
-                margin-left: $interiorMarginSm;
-            }
-        }
+  .c-conductor {
+    &__inputs,
+    &__time-bounds {
+      display: flex;
+      flex: 0 1 auto;
+      overflow: hidden;
     }
 
-    .is-realtime-mode .c-conductor__end-fixed {
-        display: none !important;
+    &__inputs {
+      > * + * {
+        margin-left: $interiorMarginSm;
+      }
     }
+  }
+
+  .is-realtime-mode .c-conductor__end-fixed {
+    display: none !important;
+  }
 }
 
 .c-conductor-input {
-    color: $colorInputFg;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+  color: $colorInputFg;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
 
-    &:before {
-        // Realtime-mode clock icon symbol
-        margin-right: $interiorMarginSm;
-    }
+  &:before {
+    // Realtime-mode clock icon symbol
+    margin-right: $interiorMarginSm;
+  }
 
-    input:invalid {
-        background: rgba($colorFormInvalid, 0.5);
-    }
+  input:invalid {
+    background: rgba($colorFormInvalid, 0.5);
+  }
 }
 
 .is-realtime-mode {
-    .c-conductor__delta-button {
-        //@include themedButton($colorTimeRealtimeBg);
-        color: $colorTimeRealtimeFg;
+  .c-conductor__delta-button {
+    //@include themedButton($colorTimeRealtimeBg);
+    color: $colorTimeRealtimeFg;
+  }
+
+  .c-conductor-input {
+    &:before {
+      color: $colorTimeRealtimeFgSubtle;
     }
+  }
 
-    .c-conductor-input {
-        &:before {
-            color: $colorTimeRealtimeFgSubtle;
-        }
+  .c-conductor__end-fixed {
+    // Displays last RT update
+    color: $colorTimeRealtimeFgSubtle;
+
+    input {
+      // Remove input look
+      background: none;
+      box-shadow: none;
+      color: $colorTimeRealtimeFgSubtle;
+      pointer-events: none;
+
+      &[disabled] {
+        opacity: 1 !important;
+      }
     }
-
-    .c-conductor__end-fixed {
-        // Displays last RT update
-        color: $colorTimeRealtimeFgSubtle;
-
-        input {
-            // Remove input look
-            background: none;
-            box-shadow: none;
-            color: $colorTimeRealtimeFgSubtle;
-            pointer-events: none;
-
-            &[disabled] {
-                opacity: 1 !important;
-            }
-        }
-    }
+  }
 }
 
 .pr-tc-input-menu--start,
 .pr-tc-input-menu--end {
-    background: $colorBodyBg;
-    border-radius: $controlCr;
-    display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
-    grid-column-gap: 3px;
-    grid-row-gap: 4px;
-    align-items: start;
-    box-shadow: $shdwMenu;
-    padding: $interiorMarginLg;
-    position: absolute;
-    left: 8px;
-    bottom: 24px;
-    z-index: 99;
+  background: $colorBodyBg;
+  border-radius: $controlCr;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  grid-column-gap: 3px;
+  grid-row-gap: 4px;
+  align-items: start;
+  box-shadow: $shdwMenu;
+  padding: $interiorMarginLg;
+  position: absolute;
+  left: 8px;
+  bottom: 24px;
+  z-index: 99;
 
-    &[class*='--bottom'] {
-        bottom: auto;
-        top: 24px;
-    }
+  &[class*='--bottom'] {
+    bottom: auto;
+    top: 24px;
+  }
 }
 
 .pr-tc-input-menu {
-    &__options {
-        display: flex;
+  &__options {
+    display: flex;
 
-        > * + * {
-            margin-left: $interiorMargin;
-        }
+    > * + * {
+      margin-left: $interiorMargin;
     }
+  }
 
-    &__input-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
-        grid-column-gap: 3px;
-        grid-row-gap: $interiorMargin;
-        align-items: start;
-    }
+  &__input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+    grid-column-gap: 3px;
+    grid-row-gap: $interiorMargin;
+    align-items: start;
+  }
 }
 
 .l-shell__time-conductor .pr-tc-input-menu--end {
-    left: auto;
-    right: 0;
+  left: auto;
+  right: 0;
 }
 
 .pr-time-label {
-    font-size: 0.9em;
-    text-transform: uppercase;
+  font-size: 0.9em;
+  text-transform: uppercase;
 
-    &:before {
-        font-size: 0.8em;
-        margin-right: $interiorMarginSm;
-    }
+  &:before {
+    font-size: 0.8em;
+    margin-right: $interiorMarginSm;
+  }
 }
 
 .pr-time-input {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
+
+  input {
+    height: 22px;
+    line-height: 1em;
+    font-size: 1.25em;
+  }
+
+  &--date input {
+    width: 120px;
+  }
+
+  &--time input {
+    width: 70px;
+  }
+
+  &--buttons {
     > * + * {
-        margin-left: $interiorMarginSm;
+      margin-left: $interiorMargin;
     }
+  }
 
-    input {
-        height: 22px;
-        line-height: 1em;
-        font-size: 1.25em;
-    }
+  &__start-end-sep {
+    height: 100%;
+  }
 
-    &--date input {
-        width: 120px;
-    }
-
-    &--time input {
-        width: 70px;
-    }
-
-    &--buttons {
-        > * + * {
-            margin-left: $interiorMargin;
-        }
-    }
-
-    &__start-end-sep {
-        height: 100%;
-    }
-
-    &--input-and-button {
-        @include wrappedInput();
-    }
+  &--input-and-button {
+    @include wrappedInput();
+  }
 }
 
 /*********************************************** COMPACT TIME CONDUCTOR */
 .c-compact-tc,
 .c-tc-input-popup {
-    [class*='start-end-sep'] {
-        opacity: 0.5;
-    }
+  [class*='start-end-sep'] {
+    opacity: 0.5;
+  }
 }
 
 .c-compact-tc {
-    border-radius: $controlCr;
+  border-radius: $controlCr;
+  display: flex;
+  flex-direction: row;
+  flex: 0 1 auto;
+  overflow: hidden;
+  align-items: center;
+  padding: 2px $interiorMarginSm;
+
+  > * + * {
+    margin-left: $interiorMargin;
+  }
+
+  &__bounds,
+  &__bounds__value {
     display: flex;
-    flex-direction: row;
-    flex: 0 1 auto;
-    overflow: hidden;
     align-items: center;
-    padding: 2px $interiorMarginSm;
 
     > * + * {
-        margin-left: $interiorMargin;
+      margin-left: $interiorMargin;
     }
+  }
 
-    &__bounds,
-    &__bounds__value {
-        display: flex;
-        align-items: center;
+  &__bounds {
+    cursor: pointer;
+    flex: 0 1 auto;
+    overflow: hidden;
 
-        > * + * {
-            margin-left: $interiorMargin;
-        }
+    > * + * {
+      flex: 0 0 auto;
     }
+  }
 
-    &__bounds {
-        cursor: pointer;
-        flex: 0 1 auto;
-        overflow: hidden;
+  &__bounds__value {
+    @include ellipsize();
+    color: $colorTimeRealtimeFg;
+    flex: 0 1 auto;
 
-        > * + * {
-            flex: 0 0 auto;
-        }
+    &:before {
+      font-size: 0.85em;
+      margin-right: $interiorMarginSm;
     }
+  }
 
-    &__bounds__value {
-        @include ellipsize();
-        color: $colorTimeRealtimeFg;
-        flex: 0 1 auto;
+  &__current-update {
+    @include ellipsize();
+    flex: 0 1 auto;
+  }
 
-        &:before {
-            font-size: 0.85em;
-            margin-right: $interiorMarginSm;
-        }
-    }
+  .c-direction-indicator {
+    // Holds realtime-mode + and - symbols
+    font-size: 0.7em;
+  }
 
-    &__current-update {
-        @include ellipsize();
-        flex: 0 1 auto;
-    }
+  .c-toggle-switch,
+  .c-clock-symbol {
+    // Used in independent Time Conductor
+    flex: 0 0 auto;
+  }
 
-    .c-direction-indicator {
-        // Holds realtime-mode + and - symbols
-        font-size: 0.7em;
-    }
-
-    .c-toggle-switch,
+  .c-so-view & {
+    // Time Conductor in a Layout frame
     .c-clock-symbol {
-        // Used in independent Time Conductor
-        flex: 0 0 auto;
+      $h: 14px;
+      height: $h;
+      width: $h;
     }
 
-    .c-so-view & {
-        // Time Conductor in a Layout frame
-        .c-clock-symbol {
-            $h: 14px;
-            height: $h;
-            width: $h;
-        }
-
-        [class*='button'] {
-            $p: 0px;
-            padding: $p $p + 1;
-        }
+    [class*='button'] {
+      $p: 0px;
+      padding: $p $p + 1;
     }
+  }
 }
 
 .itc-popout.c-tc-input-popup {
-    &--fixed-mode {
-        background: $colorTimeFixedBg;
-        color: $colorTimeFixedFgSubtle;
+  &--fixed-mode {
+    background: $colorTimeFixedBg;
+    color: $colorTimeFixedFgSubtle;
 
-        em,
-        .pr-time-label:before {
-            color: $colorTimeFixedFg;
-        }
-
-        &__bounds__valuelue {
-            color: $colorTimeFixedFg;
-        }
-
-        &__time-value {
-            color: $colorTimeFixedFg;
-        }
-
-        [class*='c-button'] {
-            background: $colorTimeFixedBtnBg;
-            color: $colorTimeFixedBtnFg;
-
-            [class*='label'] {
-                color: $colorTimeRealtimeFg;
-            }
-        }
+    em,
+    .pr-time-label:before {
+      color: $colorTimeFixedFg;
     }
+
+    &__bounds__valuelue {
+      color: $colorTimeFixedFg;
+    }
+
+    &__time-value {
+      color: $colorTimeFixedFg;
+    }
+
+    [class*='c-button'] {
+      background: $colorTimeFixedBtnBg;
+      color: $colorTimeFixedBtnFg;
+
+      [class*='label'] {
+        color: $colorTimeRealtimeFg;
+      }
+    }
+  }
 }
 
 .is-fixed-mode.is-expanded {
-    &.c-compact-tc,
-    .c-tc-input-popup {
-        background: $colorTimeFixedBg;
-        color: $colorTimeFixedFgSubtle;
+  &.c-compact-tc,
+  .c-tc-input-popup {
+    background: $colorTimeFixedBg;
+    color: $colorTimeFixedFgSubtle;
 
-        em,
-        .pr-time-label:before {
-            color: $colorTimeFixedFg;
-        }
-
-        &__bounds__valuelue {
-            color: $colorTimeFixedFg;
-        }
-
-        &__time-value {
-            color: $colorTimeFixedFg;
-        }
-
-        [class*='c-button'] {
-            background: $colorTimeFixedBtnBg;
-            color: $colorTimeFixedBtnFg;
-
-            [class*='label'] {
-                color: $colorTimeRealtimeFg;
-            }
-        }
+    em,
+    .pr-time-label:before {
+      color: $colorTimeFixedFg;
     }
+
+    &__bounds__valuelue {
+      color: $colorTimeFixedFg;
+    }
+
+    &__time-value {
+      color: $colorTimeFixedFg;
+    }
+
+    [class*='c-button'] {
+      background: $colorTimeFixedBtnBg;
+      color: $colorTimeFixedBtnFg;
+
+      [class*='label'] {
+        color: $colorTimeRealtimeFg;
+      }
+    }
+  }
 }
 
 .itc-popout.c-tc-input-popup {
-    &--realtime-mode {
-        background: rgba($colorTimeRealtimeBg, 1);
-        color: $colorTimeRealtimeFgSubtle;
+  &--realtime-mode {
+    background: rgba($colorTimeRealtimeBg, 1);
+    color: $colorTimeRealtimeFgSubtle;
 
-        em,
-        .pr-time-label:before {
-            color: $colorTimeRealtimeFg;
-        }
-
-        &__bounds__valuelue {
-            color: $colorTimeRealtimeFg;
-        }
-
-        &__time-value {
-            color: $colorTimeRealtimeFg;
-        }
-
-        [class*='c-button'] {
-            background: $colorTimeRealtimeBtnBg;
-            color: $colorTimeRealtimeBtnFg;
-
-            [class*='label'] {
-                color: $colorTimeRealtimeFg;
-            }
-        }
+    em,
+    .pr-time-label:before {
+      color: $colorTimeRealtimeFg;
     }
+
+    &__bounds__valuelue {
+      color: $colorTimeRealtimeFg;
+    }
+
+    &__time-value {
+      color: $colorTimeRealtimeFg;
+    }
+
+    [class*='c-button'] {
+      background: $colorTimeRealtimeBtnBg;
+      color: $colorTimeRealtimeBtnFg;
+
+      [class*='label'] {
+        color: $colorTimeRealtimeFg;
+      }
+    }
+  }
 }
 
 .is-realtime-mode.is-expanded {
-    &.c-compact-tc,
-    .c-tc-input-popup {
-        background: rgba($colorTimeRealtimeBg, 1);
-        color: $colorTimeRealtimeFgSubtle;
+  &.c-compact-tc,
+  .c-tc-input-popup {
+    background: rgba($colorTimeRealtimeBg, 1);
+    color: $colorTimeRealtimeFgSubtle;
 
-        em,
-        .pr-time-label:before {
-            color: $colorTimeRealtimeFg;
-        }
-
-        &__bounds__valuelue {
-            color: $colorTimeRealtimeFg;
-        }
-
-        &__time-value {
-            color: $colorTimeRealtimeFg;
-        }
-
-        [class*='c-button'] {
-            background: $colorTimeRealtimeBtnBg;
-            color: $colorTimeRealtimeBtnFg;
-
-            [class*='label'] {
-                color: $colorTimeRealtimeFg;
-            }
-        }
+    em,
+    .pr-time-label:before {
+      color: $colorTimeRealtimeFg;
     }
+
+    &__bounds__valuelue {
+      color: $colorTimeRealtimeFg;
+    }
+
+    &__time-value {
+      color: $colorTimeRealtimeFg;
+    }
+
+    [class*='c-button'] {
+      background: $colorTimeRealtimeBtnBg;
+      color: $colorTimeRealtimeBtnFg;
+
+      [class*='label'] {
+        color: $colorTimeRealtimeFg;
+      }
+    }
+  }
 }
 
 .c-compact-tc {
-    &.l-shell__time-conductor {
-        // Main view
-        min-height: 24px;
-    }
+  &.l-shell__time-conductor {
+    // Main view
+    min-height: 24px;
+  }
 }
 
 /*********************************************** INPUTS POPUP DIALOG */
 .c-tc-input-popup {
-    @include menuOuter();
-    padding: $interiorMarginLg;
-    position: absolute;
-    width: min-content;
-    bottom: 35px;
+  @include menuOuter();
+  padding: $interiorMarginLg;
+  position: absolute;
+  width: min-content;
+  bottom: 35px;
+
+  > * + * {
+    margin-top: $interiorMarginLg;
+  }
+
+  &[class*='--bottom'] {
+    bottom: auto;
+    top: 35px;
+  }
+
+  &__options {
+    display: flex;
 
     > * + * {
-        margin-top: $interiorMarginLg;
+      margin-left: $interiorMargin;
     }
+  }
 
-    &[class*='--bottom'] {
-        bottom: auto;
-        top: 35px;
+  &--fixed-mode {
+    .c-tc-input-popup__input-grid {
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
     }
+  }
 
-    &__options {
-        display: flex;
-
-        > * + * {
-            margin-left: $interiorMargin;
-        }
+  &--realtime-mode {
+    .c-tc-input-popup__input-grid {
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
     }
+  }
 
-    &--fixed-mode {
-        .c-tc-input-popup__input-grid {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
-        }
-    }
-
-    &--realtime-mode {
-        .c-tc-input-popup__input-grid {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
-        }
-    }
-
-    &__input-grid {
-        display: grid;
-        grid-column-gap: 3px;
-        grid-row-gap: $interiorMargin;
-        align-items: start;
-    }
+  &__input-grid {
+    display: grid;
+    grid-column-gap: 3px;
+    grid-row-gap: $interiorMargin;
+    align-items: start;
+  }
 }

@@ -20,29 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 describe('UI Components', () => {
-    let openmct;
+  let openmct;
 
-    beforeEach(done => {
-        openmct = createOpenMct();
-        openmct.on('start', done);
-        openmct.startHeadless();
-    });
+  beforeEach((done) => {
+    openmct = createOpenMct();
+    openmct.on('start', done);
+    openmct.startHeadless();
+  });
 
-    afterEach(() => {
-        return resetApplicationState();
-    });
+  afterEach(() => {
+    return resetApplicationState();
+  });
 
-    it('are exposed to users', () => {
-        expect(openmct.components).toBeDefined();
-    });
+  it('are exposed to users', () => {
+    expect(openmct.components).toBeDefined();
+  });
 
-    it('exposes the object view', () => {
-        expect(openmct.components.ObjectView).toBeDefined();
-    });
+  it('exposes the object view', () => {
+    expect(openmct.components.ObjectView).toBeDefined();
+  });
 });

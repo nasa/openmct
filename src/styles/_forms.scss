@@ -20,315 +20,325 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @mixin validationState($sym, $c) {
-    @include glyphAfter($sym);
-    &:after {
-        color: $c;
-        margin-left: $interiorMargin;
-    }
+  @include glyphAfter($sym);
+  &:after {
+    color: $c;
+    margin-left: $interiorMargin;
+  }
 }
 
 .c-form {
-    color: $colorFormText;
+  color: $colorFormText;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: hidden;
+
+  > * + * {
+    margin-top: $interiorMarginLg !important;
+  }
+
+  &__top-bar,
+  &__bottom-bar {
+    flex: 0 0 auto;
+  }
+
+  &__contents {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    overflow: hidden;
+    overflow: auto;
+    padding-right: $interiorMargin;
+  }
 
-    > * + * {
-        margin-top: $interiorMarginLg !important;
+  &__section {
+    display: contents;
+  }
+
+  &__row {
+    display: flex;
+    padding: $formTBPad 0;
+    &:not(.first) {
+      border-top: 1px solid $colorFormLines;
     }
+    flex: 0 0 auto;
 
-    &__top-bar,
-    &__bottom-bar {
-        flex: 0 0 auto;
+    &.grows {
+      flex: 1 1 auto;
     }
+  }
 
-    &__contents {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        overflow: auto;
-        padding-right: $interiorMargin;
+  &__section-header {
+    border-radius: $basicCr;
+    background: $colorFormSectionHeaderBg;
+    color: $colorFormSectionHeaderFg;
+    flex: 0 0 auto;
+    font-size: inherit;
+    font-weight: normal;
+    margin: $interiorMargin 0;
+    padding: $formTBPad $formLRPad;
+    text-transform: uppercase;
+  }
+
+  &--sub-grid {
+    // 3 columns: <req> <label> <input/control>
+    display: grid;
+    grid-column-gap: $interiorMargin;
+    grid-template-columns: 20px max-content 1fr;
+    grid-row-gap: $interiorMargin;
+    margin-top: $interiorMarginLg;
+    width: max-content;
+
+    .c-form__row {
+      display: contents;
     }
-
-    &__section {
-        display: contents;
-    }
-
-    &__row {
-        display: flex;
-        padding: $formTBPad 0;
-        &:not(.first) { border-top: 1px solid $colorFormLines; }
-        flex: 0 0 auto;
-
-        &.grows {
-            flex: 1 1 auto;
-        }
-    }
-
-    &__section-header {
-        border-radius: $basicCr;
-        background: $colorFormSectionHeaderBg;
-        color: $colorFormSectionHeaderFg;
-        flex: 0 0 auto;
-        font-size: inherit;
-        font-weight: normal;
-        margin: $interiorMargin 0;
-        padding: $formTBPad $formLRPad;
-        text-transform: uppercase;
-    }
-
-    &--sub-grid {
-        // 3 columns: <req> <label> <input/control>
-        display: grid;
-        grid-column-gap: $interiorMargin;
-        grid-template-columns: 20px max-content 1fr;
-        grid-row-gap: $interiorMargin;
-        margin-top: $interiorMarginLg;
-        width: max-content;
-
-        .c-form__row {
-            display: contents;
-        }
-    }
+  }
 }
 
-
-
 .c-form-row {
-    align-items: start;
+  align-items: start;
 
-    &__label,
-    &__state-indicator {
-        flex: 0 0 auto;
-        padding: 2px 0;
+  &__label,
+  &__state-indicator {
+    flex: 0 0 auto;
+    padding: 2px 0;
+  }
+
+  &__label {
+    width: 30%;
+    min-width: 100px;
+    order: 1;
+  }
+
+  &__state-indicator {
+    order: 2;
+    width: 30px;
+    text-align: center;
+
+    &.invalid,
+    &.invalid.req {
+      @include validationState($glyph-icon-x, $colorFormInvalid);
     }
 
-    &__label {
-        width: 30%;
-        min-width: 100px;
-        order: 1;
+    &.valid,
+    &.valid.req {
+      @include validationState($glyph-icon-check, $colorFormValid);
     }
 
-    &__state-indicator {
-        order: 2;
-        width: 30px;
-        text-align: center;
-
-        &.invalid,
-        &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
-
-        &.valid,
-        &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
-
-        &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
+    &.req {
+      @include validationState($glyph-icon-asterisk, $colorFormRequired);
     }
+  }
 
-    &__controls {
-        flex: 1 1 auto;
-        order: 3;
-    }
+  &__controls {
+    flex: 1 1 auto;
+    order: 3;
+  }
 }
 
 .c-form-control {
-    &--locator > .c-tree {
-        height: 100%;
+  &--locator > .c-tree {
+    height: 100%;
+  }
+
+  &--clock-display-format-fields {
+    display: flex;
+
+    > * {
+      flex: 0 0 auto;
+      + * {
+        margin-left: $interiorMargin;
+      }
     }
+  }
 
-    &--clock-display-format-fields {
-        display: flex;
+  &--datetime {
+    $size: max-content;
+    display: grid;
+    grid-template-columns: repeat(5, $size);
+    grid-template-rows: $size;
+    grid-row-gap: 3px;
+    grid-column-gap: $interiorMargin;
+    align-items: stretch;
 
-        > * {
-            flex: 0 0 auto;
-            + * {
-                margin-left: $interiorMargin;
-            }
-        }
+    .hint {
+      align-self: center;
+      opacity: 0.7;
     }
-
-    &--datetime {
-        $size: max-content;
-        display: grid;
-        grid-template-columns: repeat(5, $size);
-        grid-template-rows: $size;
-        grid-row-gap: 3px;
-        grid-column-gap: $interiorMargin;
-        align-items: stretch;
-
-        .hint {
-            align-self: center;
-            opacity: 0.7;
-        }
-    }
+  }
 }
 
 .l-input-lg {
-    input[type=text],
-    input[type=search],
-    input[type=number],
-    textarea[type=text] {
-        width: 100%;
-    }
+  input[type='text'],
+  input[type='search'],
+  input[type='number'],
+  textarea[type='text'] {
+    width: 100%;
+  }
 }
 
 .l-input-sm {
-    input[type=text],
-    input[type=search],
-    input[type=number] {
-        width: 50px;
-    }
+  input[type='text'],
+  input[type='search'],
+  input[type='number'] {
+    width: 50px;
+  }
 }
 
 /***************************************************** LEGACY */
 .section-header {
-    border-radius: $basicCr;
-    color: lighten($colorBodyFg, 20%);
-    font-size: inherit;
-    margin: $interiorMargin 0;
-    padding: $formTBPad $formLRPad;
-    text-transform: uppercase;
-    .view-control {
-        display: inline-block;
-        margin-right: $interiorMargin;
-        width: 1em;
-        height: 1em;
-    }
+  border-radius: $basicCr;
+  color: lighten($colorBodyFg, 20%);
+  font-size: inherit;
+  margin: $interiorMargin 0;
+  padding: $formTBPad $formLRPad;
+  text-transform: uppercase;
+  .view-control {
+    display: inline-block;
+    margin-right: $interiorMargin;
+    width: 1em;
+    height: 1em;
+  }
 }
 
 .form {
-    color: $colorFormText;
-    height: 100%;
-    width: 100%;
+  color: $colorFormText;
+  height: 100%;
+  width: 100%;
 
-    .l-form-section {
-        margin-bottom: $interiorMarginLg * 2;
-        position: relative;
-        &.grows {
-            .l-section-body,
-            .form-row {
-                flex: 1 1 auto;
-                .wrapper {
-                    height: 100%;
-                }
-            }
+  .l-form-section {
+    margin-bottom: $interiorMarginLg * 2;
+    position: relative;
+    &.grows {
+      .l-section-body,
+      .form-row {
+        flex: 1 1 auto;
+        .wrapper {
+          height: 100%;
         }
+      }
+    }
+  }
+
+  .form-row {
+    $m: $interiorMargin;
+    box-sizing: border-box;
+    border-top: 1px solid $colorFormLines;
+    padding: $formTBPad 0;
+    position: relative;
+
+    &.first {
+      border-top: none;
     }
 
-    .form-row {
-        $m: $interiorMargin;
-        box-sizing: border-box;
-        border-top: 1px solid $colorFormLines;
-        padding: $formTBPad 0;
-        position: relative;
-
-        &.first {
-            border-top: none;
-        }
-
-        >.label,
-        >.controls {
-            box-sizing: border-box;
-            font-size: 0.8rem;
-        }
-
-        >.label {
-            // Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
-            min-width: 120px;
-            order: 1;
-            position: relative;
-            width: $formLabelW;
-        }
-
-        .value {
-            color: $colorInputFg;
-        }
-
-        .controls {
-            order: 9;
-            position: relative;
-            flex: 1 1 auto;
-
-            .l-composite-control {
-                &.l-checkbox {
-                    display: inline-block;
-                    line-height: $formRowCtrlsH;
-                    margin-right: 5px;
-                }
-            }
-
-            .l-input-lg { // LEGACY FORM SUPPORT
-                input[type=text],
-                input[type=search],
-                input[type=number] {
-                    width: 100%;
-                }
-            }
-
-            select {
-                margin-right: $interiorMargin;
-            }
-        }
-
-        .hint, .field-hints {  color: $colorFieldHint;  }
+    > .label,
+    > .controls {
+      box-sizing: border-box;
+      font-size: 0.8rem;
     }
+
+    > .label {
+      // Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
+      min-width: 120px;
+      order: 1;
+      position: relative;
+      width: $formLabelW;
+    }
+
+    .value {
+      color: $colorInputFg;
+    }
+
+    .controls {
+      order: 9;
+      position: relative;
+      flex: 1 1 auto;
+
+      .l-composite-control {
+        &.l-checkbox {
+          display: inline-block;
+          line-height: $formRowCtrlsH;
+          margin-right: 5px;
+        }
+      }
+
+      .l-input-lg {
+        // LEGACY FORM SUPPORT
+        input[type='text'],
+        input[type='search'],
+        input[type='number'] {
+          width: 100%;
+        }
+      }
+
+      select {
+        margin-right: $interiorMargin;
+      }
+    }
+
+    .hint,
+    .field-hints {
+      color: $colorFieldHint;
+    }
+  }
 }
 
 .selector-list {
-    // Displays tree view in dialogs
-    @include nice-input();
-    padding: $interiorMargin;
-    position: relative;
-    min-height: 0; // Chrome 73 overflow bug fix
-    height: 100%;
-    >.wrapper {
-        $p: $interiorMargin;
-        box-sizing: border-box;
-        overflow: auto;
-    }
+  // Displays tree view in dialogs
+  @include nice-input();
+  padding: $interiorMargin;
+  position: relative;
+  min-height: 0; // Chrome 73 overflow bug fix
+  height: 100%;
+  > .wrapper {
+    $p: $interiorMargin;
+    box-sizing: border-box;
+    overflow: auto;
+  }
 }
 
 .l-controls-first .form .form-row,
 .form .form-row.l-controls-first {
-    >.label,
-    >.controls {
-        line-height: inherit;
-        min-height: inherit;
-    }
-    >.label {
-        flex: 1 1 auto;
-        min-width: 0;
-        width: auto;
-        order: 2;
-    }
-    >.control,
-    >.controls {
-        flex: 0 0 auto;
-        margin-right: $interiorMargin;
-        order: 1;
-    }
+  > .label,
+  > .controls {
+    line-height: inherit;
+    min-height: inherit;
+  }
+  > .label {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    order: 2;
+  }
+  > .control,
+  > .controls {
+    flex: 0 0 auto;
+    margin-right: $interiorMargin;
+    order: 1;
+  }
 }
 
 .l-controls-under.l-flex-row {
-    // Change to use column layout
-    flex-direction: column;
-    .flex-elem {
-        margin-bottom: $interiorMarginLg;
-    }
+  // Change to use column layout
+  flex-direction: column;
+  .flex-elem {
+    margin-bottom: $interiorMarginLg;
+  }
 }
 
 .l-composite-control {
-    vertical-align: middle;
-    &:not(.l-inline) {
-        margin-bottom: $interiorMargin;
+  vertical-align: middle;
+  &:not(.l-inline) {
+    margin-bottom: $interiorMargin;
+  }
+  &.l-inline {
+    display: inline-block;
+  }
+  &.l-checkbox {
+    .composite-control-label {
+      line-height: 18px;
     }
-    &.l-inline {
-        display: inline-block;
-    }
-    &.l-checkbox {
-        .composite-control-label {
-            line-height: 18px;
-        }
-    }
+  }
 }
 
 /********* COMPACT FORM */
@@ -339,113 +349,113 @@
 
 .l-compact-form .tree ul li,
 .l-compact-form ul li {
-    padding: 2px 0;
+  padding: 2px 0;
 }
 
-
 .l-compact-form {
-    $h: $btnStdH;
-    $labelW: 40%;
-    $minW: $labelW;
-    ul {
-        li {
-            display: flex;
-            align-items: stretch;
-            padding: $interiorMargin 0;
+  $h: $btnStdH;
+  $labelW: 40%;
+  $minW: $labelW;
+  ul {
+    li {
+      display: flex;
+      align-items: stretch;
+      padding: $interiorMargin 0;
 
-            label,
-            .control {
-                display: flex;
-            }
-            label {
-                line-height: $h;
-                width: $labelW;
-            }
-            .controls {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: flex-start;
-                flex-grow: 1;
-                margin-left: $interiorMargin;
-                min-height: $h;
-                line-height: $h;
-                input[type="text"],
-                input[type="search"],
-                input[type="number"],
-                button,
-                select {
-                    min-height: $h;
-                }
-
-                > * + * {
-                    margin-left: $interiorMarginSm;
-                }
-            }
-
-            &.connects-to-previous {
-                padding-top: 0;
-            }
-
-            &.section-header {
-                margin-top: $interiorMarginLg;
-                border-top: 1px solid $colorFormLines;
-            }
-
-            &.controls-first {
-                .control {
-                    flex-grow: 0;
-                    margin-right: $interiorMargin;
-                    min-width: 0;
-                    order: 1;
-                    width: auto;
-                }
-                label {
-                    flex-grow: 1;
-                    order: 2;
-                    width: auto;
-                }
-            }
-            &.controls-under {
-                display: block;
-                .control, label {
-                    display: block;
-                    width: auto;
-                }
-
-                ul li {
-                    border-top: none !important;
-                    padding: 0;
-                }
-            }
+      label,
+      .control {
+        display: flex;
+      }
+      label {
+        line-height: $h;
+        width: $labelW;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        flex-grow: 1;
+        margin-left: $interiorMargin;
+        min-height: $h;
+        line-height: $h;
+        input[type='text'],
+        input[type='search'],
+        input[type='number'],
+        button,
+        select {
+          min-height: $h;
         }
+
+        > * + * {
+          margin-left: $interiorMarginSm;
+        }
+      }
+
+      &.connects-to-previous {
+        padding-top: 0;
+      }
+
+      &.section-header {
+        margin-top: $interiorMarginLg;
+        border-top: 1px solid $colorFormLines;
+      }
+
+      &.controls-first {
+        .control {
+          flex-grow: 0;
+          margin-right: $interiorMargin;
+          min-width: 0;
+          order: 1;
+          width: auto;
+        }
+        label {
+          flex-grow: 1;
+          order: 2;
+          width: auto;
+        }
+      }
+      &.controls-under {
+        display: block;
+        .control,
+        label {
+          display: block;
+          width: auto;
+        }
+
+        ul li {
+          border-top: none !important;
+          padding: 0;
+        }
+      }
     }
+  }
 }
 
 /******** VALIDATION */
 .form-error {
-    // Block element that visually flags an error and contains a message
-    background-color: $colorFormFieldErrorBg;
-    color: $colorFormFieldErrorFg;
-    border-radius: $basicCr;
-    display: block;
-    padding: 1px 6px;
-    &:before {
-        content: $glyph-icon-alert-triangle;
-        display: inline-block;
-        font-family: symbolsfont;
-        margin-right: $interiorMarginSm;
-    }
+  // Block element that visually flags an error and contains a message
+  background-color: $colorFormFieldErrorBg;
+  color: $colorFormFieldErrorFg;
+  border-radius: $basicCr;
+  display: block;
+  padding: 1px 6px;
+  &:before {
+    content: $glyph-icon-alert-triangle;
+    display: inline-block;
+    font-family: symbolsfont;
+    margin-right: $interiorMarginSm;
+  }
 }
 
 body.desktop .form-row > .label {
-    &:after {
-        position: absolute;
-        right: $interiorMargin;
-        height: 100%;
-        line-height: 200%;
-    }
+  &:after {
+    position: absolute;
+    right: $interiorMargin;
+    height: 100%;
+    line-height: 200%;
+  }
 }
 
 .req {
-    color: $colorFormRequired;
+  color: $colorFormRequired;
 }

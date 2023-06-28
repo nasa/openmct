@@ -17,37 +17,39 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
+  <div
     v-if="activeModel.message"
     class="c-message-banner"
     role="alert"
     :aria-live="activeModel.severity === 'error' ? 'assertive' : 'polite'"
     :class="[
-        activeModel.severity,
-        {
-            'minimized': activeModel.minimized,
-            'new': !activeModel.minimized
-        }]"
+      activeModel.severity,
+      {
+        minimized: activeModel.minimized,
+        new: !activeModel.minimized
+      }
+    ]"
     @click="maximize()"
->
+  >
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
     <span
-        v-if="haslink"
-        class="c-message-banner__message"
-        :class="[haslink ? getLinkProps.cssClass : '']"
-    >{{ getLinkProps.text }}</span>
+      v-if="haslink"
+      class="c-message-banner__message"
+      :class="[haslink ? getLinkProps.cssClass : '']"
+      >{{ getLinkProps.text }}</span
+    >
 
     <progress-bar
-        v-if="activeModel.progressPerc !== undefined"
-        class="c-message-banner__progress-bar"
-        :model="activeModel"
+      v-if="activeModel.progressPerc !== undefined"
+      class="c-message-banner__progress-bar"
+      :model="activeModel"
     />
     <button
-        class="c-message-banner__close-button c-click-icon icon-x-in-circle"
-        aria-label="Dismiss"
-        @click.stop="dismiss()"
+      class="c-message-banner__close-button c-click-icon icon-x-in-circle"
+      aria-label="Dismiss"
+      @click.stop="dismiss()"
     ></button>
-</div>
+  </div>
 </template>
 
 <script>
@@ -56,141 +58,139 @@ import ProgressBar from '../../components/ProgressBar.vue';
 let activeNotification = undefined;
 let maximizedDialog = undefined;
 let minimizeButton = {
-    label: 'Dismiss',
-    callback: dismissMaximizedDialog
+  label: 'Dismiss',
+  callback: dismissMaximizedDialog
 };
 
 function dismissMaximizedDialog() {
-    if (maximizedDialog) {
-        maximizedDialog.dismiss();
-        maximizedDialog = undefined;
-    }
+  if (maximizedDialog) {
+    maximizedDialog.dismiss();
+    maximizedDialog = undefined;
+  }
 }
 
 function updateMaxProgressBar(progressPerc, progressText) {
-    if (maximizedDialog) {
-        maximizedDialog.updateProgress(progressPerc, progressText);
+  if (maximizedDialog) {
+    maximizedDialog.updateProgress(progressPerc, progressText);
 
-        if (progressPerc >= 100) {
-            dismissMaximizedDialog();
-        }
+    if (progressPerc >= 100) {
+      dismissMaximizedDialog();
     }
+  }
 }
 
 export default {
-    components: {
-        ProgressBar: ProgressBar
+  components: {
+    ProgressBar: ProgressBar
+  },
+  inject: ['openmct'],
+  data() {
+    return {
+      activeModel: {
+        message: undefined,
+        progressPerc: undefined,
+        progressText: undefined,
+        minimized: undefined,
+        options: undefined
+      }
+    };
+  },
+  computed: {
+    haslink() {
+      const options = this.activeModel.options;
+
+      return options && options.link;
     },
-    inject: ['openmct'],
-    data() {
-        return {
-            activeModel: {
-                message: undefined,
-                progressPerc: undefined,
-                progressText: undefined,
-                minimized: undefined,
-                options: undefined
-            }
-        };
+    getLinkProps() {
+      return this.activeModel.options.link;
     },
-    computed: {
-        haslink() {
-            const options = this.activeModel.options;
-
-            return options && options.link;
-        },
-        getLinkProps() {
-            return this.activeModel.options.link;
-        },
-        progressWidth() {
-            return {
-                width: this.activeModel.progress + '%'
-            };
-        }
-    },
-    mounted() {
-        this.openmct.notifications.on('notification', this.showNotification);
-        this.openmct.notifications.on('dismiss-all', this.clearModel);
-    },
-    methods: {
-        showNotification(notification) {
-            if (activeNotification) {
-                activeNotification.off('progress', this.updateProgress);
-                activeNotification.off('minimized', this.minimized);
-                activeNotification.off('destroy', this.destroyActiveNotification);
-            }
-
-            activeNotification = notification;
-            this.clearModel();
-            this.applyModel(notification.model);
-
-            activeNotification.once('destroy', this.destroyActiveNotification);
-            activeNotification.on('progress', this.updateProgress);
-            activeNotification.on('minimized', this.minimized);
-        },
-        isEqual(modelA, modelB) {
-            return modelA.message === modelB.message
-                    && modelA.timestamp === modelB.timestamp;
-        },
-        applyModel(model) {
-            Object.keys(model).forEach((key) => this.activeModel[key] = model[key]);
-        },
-        clearModel() {
-            Object.keys(this.activeModel).forEach((key) => this.activeModel[key] = undefined);
-        },
-        updateProgress(progressPerc, progressText) {
-            this.activeModel.progressPerc = progressPerc;
-            this.activeModel.progressText = progressText;
-        },
-        destroyActiveNotification() {
-            this.clearModel();
-            activeNotification.off('destroy', this.destroyActiveNotification);
-            activeNotification = undefined;
-        },
-        dismiss() {
-            if (activeNotification.model.severity === 'info') {
-                activeNotification.dismiss();
-            } else {
-                this.openmct.notifications._minimize(activeNotification);
-            }
-        },
-        minimized() {
-            this.activeModel.minimized = true;
-            activeNotification.off('progress', this.updateProgress);
-            activeNotification.off('minimized', this.minimized);
-
-            activeNotification.off('progress', updateMaxProgressBar);
-            activeNotification.off('minimized', dismissMaximizedDialog);
-            activeNotification.off('destroy', dismissMaximizedDialog);
-        },
-        maximize() {
-            if (this.haslink) {
-                const linkProps = this.getLinkProps;
-                linkProps.onClick();
-
-                activeNotification.dismiss();
-
-                return;
-            }
-
-            if (this.activeModel.progressPerc !== undefined) {
-                maximizedDialog = this.openmct.overlays.progressDialog({
-                    buttons: [minimizeButton],
-                    ...this.activeModel
-                });
-
-                activeNotification.on('progress', updateMaxProgressBar);
-                activeNotification.on('minimized', dismissMaximizedDialog);
-                activeNotification.on('destroy', dismissMaximizedDialog);
-
-            } else {
-                maximizedDialog = this.openmct.overlays.dialog({
-                    iconClass: this.activeModel.severity,
-                    buttons: [minimizeButton],
-                    ...this.activeModel
-                });
-            }
-        }
+    progressWidth() {
+      return {
+        width: this.activeModel.progress + '%'
+      };
     }
+  },
+  mounted() {
+    this.openmct.notifications.on('notification', this.showNotification);
+    this.openmct.notifications.on('dismiss-all', this.clearModel);
+  },
+  methods: {
+    showNotification(notification) {
+      if (activeNotification) {
+        activeNotification.off('progress', this.updateProgress);
+        activeNotification.off('minimized', this.minimized);
+        activeNotification.off('destroy', this.destroyActiveNotification);
+      }
+
+      activeNotification = notification;
+      this.clearModel();
+      this.applyModel(notification.model);
+
+      activeNotification.once('destroy', this.destroyActiveNotification);
+      activeNotification.on('progress', this.updateProgress);
+      activeNotification.on('minimized', this.minimized);
+    },
+    isEqual(modelA, modelB) {
+      return modelA.message === modelB.message && modelA.timestamp === modelB.timestamp;
+    },
+    applyModel(model) {
+      Object.keys(model).forEach((key) => (this.activeModel[key] = model[key]));
+    },
+    clearModel() {
+      Object.keys(this.activeModel).forEach((key) => (this.activeModel[key] = undefined));
+    },
+    updateProgress(progressPerc, progressText) {
+      this.activeModel.progressPerc = progressPerc;
+      this.activeModel.progressText = progressText;
+    },
+    destroyActiveNotification() {
+      this.clearModel();
+      activeNotification.off('destroy', this.destroyActiveNotification);
+      activeNotification = undefined;
+    },
+    dismiss() {
+      if (activeNotification.model.severity === 'info') {
+        activeNotification.dismiss();
+      } else {
+        this.openmct.notifications._minimize(activeNotification);
+      }
+    },
+    minimized() {
+      this.activeModel.minimized = true;
+      activeNotification.off('progress', this.updateProgress);
+      activeNotification.off('minimized', this.minimized);
+
+      activeNotification.off('progress', updateMaxProgressBar);
+      activeNotification.off('minimized', dismissMaximizedDialog);
+      activeNotification.off('destroy', dismissMaximizedDialog);
+    },
+    maximize() {
+      if (this.haslink) {
+        const linkProps = this.getLinkProps;
+        linkProps.onClick();
+
+        activeNotification.dismiss();
+
+        return;
+      }
+
+      if (this.activeModel.progressPerc !== undefined) {
+        maximizedDialog = this.openmct.overlays.progressDialog({
+          buttons: [minimizeButton],
+          ...this.activeModel
+        });
+
+        activeNotification.on('progress', updateMaxProgressBar);
+        activeNotification.on('minimized', dismissMaximizedDialog);
+        activeNotification.on('destroy', dismissMaximizedDialog);
+      } else {
+        maximizedDialog = this.openmct.overlays.dialog({
+          iconClass: this.activeModel.severity,
+          buttons: [minimizeButton],
+          ...this.activeModel
+        });
+      }
+    }
+  }
 };
 </script>

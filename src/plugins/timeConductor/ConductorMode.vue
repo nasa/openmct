@@ -20,23 +20,17 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
-    ref="modeButton"
-    class="c-tc-input-popup__options"
->
+  <div ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button
-            class="c-button--menu c-button--compact js-mode-button"
-            :class="[
-                buttonCssClass,
-                selectedMode.cssClass
-            ]"
-            @click.prevent.stop="showModesMenu"
-        >
-            <span class="c-button__label">{{ selectedMode.name }}</span>
-        </button>
+      <button
+        class="c-button--menu c-button--compact js-mode-button"
+        :class="[buttonCssClass, selectedMode.cssClass]"
+        @click.prevent.stop="showModesMenu"
+      >
+        <span class="c-button__label">{{ selectedMode.name }}</span>
+      </button>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -45,36 +39,36 @@ import modeMixin from './mode-mixin';
 const TEST_IDS = true;
 
 export default {
-    mixins: [modeMixin],
-    inject: ['openmct', 'configuration'],
-    data: function () {
-        const mode = this.openmct.time.getMode();
+  mixins: [modeMixin],
+  inject: ['openmct', 'configuration'],
+  data: function () {
+    const mode = this.openmct.time.getMode();
 
-        return {
-            selectedMode: this.getModeMetadata(mode, TEST_IDS),
-            modes: []
-        };
+    return {
+      selectedMode: this.getModeMetadata(mode, TEST_IDS),
+      modes: []
+    };
+  },
+  mounted: function () {
+    this.loadModes();
+  },
+  methods: {
+    showModesMenu() {
+      const elementBoundingClientRect = this.$refs.modeButton.getBoundingClientRect();
+      const x = elementBoundingClientRect.x;
+      const y = elementBoundingClientRect.y;
+
+      const menuOptions = {
+        menuClass: 'c-conductor__mode-menu',
+        placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+      };
+
+      this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    mounted: function () {
-        this.loadModes();
-    },
-    methods: {
-        showModesMenu() {
-            const elementBoundingClientRect = this.$refs.modeButton.getBoundingClientRect();
-            const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y;
-
-            const menuOptions = {
-                menuClass: 'c-conductor__mode-menu',
-                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
-            };
-
-            this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
-        },
-        setMode(modeKey) {
-            this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-            this.$emit('modeUpdated', modeKey);
-        }
+    setMode(modeKey) {
+      this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
+      this.$emit('modeUpdated', modeKey);
     }
+  }
 };
 </script>

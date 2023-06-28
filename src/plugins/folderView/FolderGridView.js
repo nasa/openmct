@@ -20,53 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/GridView.vue',
-    './constants.js',
-    'vue'
-], function (
-    GridViewComponent,
-    constants,
-    Vue
+define(['./components/GridView.vue', './constants.js', 'vue'], function (
+  GridViewComponent,
+  constants,
+  Vue
 ) {
-    function FolderGridView(openmct) {
-        const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+  function FolderGridView(openmct) {
+    const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+
+    return {
+      key: 'grid',
+      name: 'Grid View',
+      cssClass: 'icon-thumbs-strip',
+      canView: function (domainObject) {
+        return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+      },
+      view: function (domainObject) {
+        let component;
 
         return {
-            key: 'grid',
-            name: 'Grid View',
-            cssClass: 'icon-thumbs-strip',
-            canView: function (domainObject) {
-                return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
-            },
-            view: function (domainObject) {
-                let component;
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                gridViewComponent: GridViewComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject
-                            },
-                            template: '<grid-view-component></grid-view-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
+          show: function (element) {
+            component = new Vue({
+              el: element,
+              components: {
+                gridViewComponent: GridViewComponent.default
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<grid-view-component></grid-view-component>'
+            });
+          },
+          destroy: function (element) {
+            component.$destroy();
+            component = undefined;
+          }
         };
-    }
+      },
+      priority: function () {
+        return 1;
+      }
+    };
+  }
 
-    return FolderGridView;
+  return FolderGridView;
 });

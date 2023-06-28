@@ -21,82 +21,72 @@
 -->
 
 <template>
-<div class="c-fault-mgmt__toolbar">
+  <div class="c-fault-mgmt__toolbar">
     <button
-        class="c-icon-button icon-check"
-        title="Acknowledge selected faults"
-        :disabled="disableAcknowledge"
-        @click="acknowledgeSelected"
+      class="c-icon-button icon-check"
+      title="Acknowledge selected faults"
+      :disabled="disableAcknowledge"
+      @click="acknowledgeSelected"
     >
-        <div
-            title="Acknowledge selected faults"
-            class="c-icon-button__label"
-        >
-            Acknowledge
-        </div>
+      <div title="Acknowledge selected faults" class="c-icon-button__label">Acknowledge</div>
     </button>
 
     <button
-        class="c-icon-button icon-timer"
-        title="Shelve selected faults"
-        :disabled="disableShelve"
-        @click="shelveSelected"
+      class="c-icon-button icon-timer"
+      title="Shelve selected faults"
+      :disabled="disableShelve"
+      @click="shelveSelected"
     >
-        <div
-            title="Shelve selected items"
-            class="c-icon-button__label"
-        >
-            Shelve
-        </div>
+      <div title="Shelve selected items" class="c-icon-button__label">Shelve</div>
     </button>
-</div>
+  </div>
 </template>
 
 <script>
 export default {
-    inject: ['openmct', 'domainObject'],
-    props: {
-        selectedFaults: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
-    data() {
-        return {
-            disableAcknowledge: true,
-            disableShelve: true
-        };
-    },
-    watch: {
-        selectedFaults(newSelectedFaults) {
-            const selectedfaults = Object.values(newSelectedFaults);
-
-            let disableAcknowledge = true;
-            let disableShelve = true;
-
-            selectedfaults.forEach(fault => {
-                if (!fault.shelved) {
-                    disableShelve = false;
-                }
-
-                if (!fault.acknowledged) {
-                    disableAcknowledge = false;
-                }
-            });
-
-            this.disableAcknowledge = disableAcknowledge;
-            this.disableShelve = disableShelve;
-        }
-    },
-    methods: {
-        acknowledgeSelected() {
-            this.$emit('acknowledgeSelected');
-        },
-        shelveSelected() {
-            this.$emit('shelveSelected');
-        }
+  inject: ['openmct', 'domainObject'],
+  props: {
+    selectedFaults: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
+  },
+  data() {
+    return {
+      disableAcknowledge: true,
+      disableShelve: true
+    };
+  },
+  watch: {
+    selectedFaults(newSelectedFaults) {
+      const selectedfaults = Object.values(newSelectedFaults);
+
+      let disableAcknowledge = true;
+      let disableShelve = true;
+
+      selectedfaults.forEach((fault) => {
+        if (!fault.shelved) {
+          disableShelve = false;
+        }
+
+        if (!fault.acknowledged) {
+          disableAcknowledge = false;
+        }
+      });
+
+      this.disableAcknowledge = disableAcknowledge;
+      this.disableShelve = disableShelve;
+    }
+  },
+  methods: {
+    acknowledgeSelected() {
+      this.$emit('acknowledgeSelected');
+    },
+    shelveSelected() {
+      this.$emit('shelveSelected');
+    }
+  }
 };
 </script>

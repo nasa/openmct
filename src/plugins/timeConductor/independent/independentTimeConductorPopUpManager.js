@@ -23,94 +23,95 @@ import raf from '@/utils/raf';
 import debounce from '@/utils/debounce';
 
 export default {
-    data() {
-        return {
-            showConductorPopup: false,
-            positionX: -10000, // prevents initial flash after appending to body element
-            positionY: 0,
-            conductorPopup: null
-        };
+  data() {
+    return {
+      showConductorPopup: false,
+      positionX: -10000, // prevents initial flash after appending to body element
+      positionY: 0,
+      conductorPopup: null
+    };
+  },
+  mounted() {
+    this.positionBox = debounce(raf(this.positionBox), 250);
+    this.timeConductorOptionsHolder = this.$el;
+    this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+  },
+  beforeDestroy() {
+    this.clearPopup();
+  },
+  methods: {
+    initializePopup() {
+      this.conductorPopup = this.$refs.conductorPopup.$el;
+      document.body.appendChild(this.conductorPopup); // remove from container as it (and it's ancestors) have overflow:hidden
+
+      this.$nextTick(() => {
+        window.addEventListener('resize', this.positionBox);
+        document.addEventListener('click', this.handleClickAway);
+        this.positionBox();
+      });
     },
-    mounted() {
-        this.positionBox = debounce(raf(this.positionBox), 250);
-        this.timeConductorOptionsHolder = this.$el;
-        this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
+    showPopup(clickEvent) {
+      const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
+
+      // no current popup, itc toggled, something is emitting an dupe event with pointer id = -1, want to ignore those
+      if (!this.conductorPopup && !isToggle && clickEvent.pointerId !== -1) {
+        this.showConductorPopup = true;
+      }
     },
-    beforeDestroy() {
+    handleClickAway(clickEvent) {
+      if (this.canClose(clickEvent)) {
+        // clickEvent.stopPropagation();
         this.clearPopup();
+      }
     },
-    methods: {
-        initializePopup() {
-            this.conductorPopup = this.$refs.conductorPopup.$el;
-            document.body.appendChild(this.conductorPopup); // remove from container as it (and it's ancestors) have overflow:hidden
+    positionBox() {
+      if (!this.conductorPopup) {
+        return;
+      }
 
-            this.$nextTick(() => {
-                window.addEventListener('resize', this.positionBox);
-                document.addEventListener('click', this.handleClickAway);
-                this.positionBox();
-            });
-        },
-        showPopup(clickEvent) {
-            const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
+      const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
+      const topHalf = timeConductorOptionsBox.top < window.innerHeight / 2;
+      const padding = 5;
 
-            // no current popup, itc toggled, something is emitting an dupe event with pointer id = -1, want to ignore those
-            if (!this.conductorPopup && !isToggle && clickEvent.pointerId !== -1) {
-                this.showConductorPopup = true;
-            }
-        },
-        handleClickAway(clickEvent) {
-            if (this.canClose(clickEvent)) {
-                // clickEvent.stopPropagation();
-                this.clearPopup();
-            }
-        },
-        positionBox() {
-            if (!this.conductorPopup) {
-                return;
-            }
+      this.positionX = timeConductorOptionsBox.left;
 
-            const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
-            const topHalf = timeConductorOptionsBox.top < (window.innerHeight / 2);
-            const padding = 5;
+      if (topHalf) {
+        this.positionY =
+          timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
+      } else {
+        this.positionY = timeConductorOptionsBox.top - padding;
+      }
 
-            this.positionX = timeConductorOptionsBox.left;
+      const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 
-            if (topHalf) {
-                this.positionY = timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
-            } else {
-                this.positionY = timeConductorOptionsBox.top - padding;
-            }
+      const popupRight = this.positionX + this.conductorPopup.clientWidth;
+      const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
 
-            const offsetTop = this.conductorPopup.getBoundingClientRect().height;
+      this.positionX = this.positionX + offsetLeft;
+      this.positionY = this.positionY - offsetTop;
+    },
+    clearPopup() {
+      if (!this.conductorPopup) {
+        return;
+      }
 
-            const popupRight = this.positionX + this.conductorPopup.clientWidth;
-            const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
+      if (this.conductorPopup.parentNode === document.body) {
+        document.body.removeChild(this.conductorPopup);
+      }
 
-            this.positionX = this.positionX + offsetLeft;
-            this.positionY = this.positionY - offsetTop;
-        },
-        clearPopup() {
-            if (!this.conductorPopup) {
-                return;
-            }
+      this.showConductorPopup = false;
+      this.conductorPopup = null;
 
-            if (this.conductorPopup.parentNode === document.body) {
-                document.body.removeChild(this.conductorPopup);
-            }
+      document.removeEventListener('click', this.handleClickAway);
+      window.removeEventListener('resize', this.positionBox);
+    },
+    canClose(clickAwayEvent) {
+      const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
+      const isPopupOrChild = clickAwayEvent.target.closest('.c-tc-input-popup') !== null;
+      const isTimeConductor = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
+      const isToggle = clickAwayEvent.target.classList.contains('c-toggle-switch__slider');
 
-            this.showConductorPopup = false;
-            this.conductorPopup = null;
-
-            document.removeEventListener('click', this.handleClickAway);
-            window.removeEventListener('resize', this.positionBox);
-        },
-        canClose(clickAwayEvent) {
-            const isChildMenu = clickAwayEvent.target.closest('.c-menu') !== null;
-            const isPopupOrChild = clickAwayEvent.target.closest('.c-tc-input-popup') !== null;
-            const isTimeConductor = this.timeConductorOptionsHolder.contains(clickAwayEvent.target);
-            const isToggle = clickAwayEvent.target.classList.contains('c-toggle-switch__slider');
-
-            return !isTimeConductor && !isChildMenu && !isToggle && !isPopupOrChild;
-        }
+      return !isTimeConductor && !isChildMenu && !isToggle && !isPopupOrChild;
     }
+  }
 };

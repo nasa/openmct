@@ -23,7 +23,7 @@
 import ViewDatumAction from './ViewDatumAction.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        openmct.actions.register(new ViewDatumAction(openmct));
-    };
+  return function install(openmct) {
+    openmct.actions.register(new ViewDatumAction(openmct));
+  };
 }

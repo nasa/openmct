@@ -24,9 +24,8 @@ import MCTChartSeriesElement from './MCTChartSeriesElement';
 
 // TODO: Is this needed? This is identical to MCTChartLineLinear. Why is it a different class?
 export default class MCTChartPointSet extends MCTChartSeriesElement {
-    addPoint(point, start) {
-        this.buffer[start] = point.x;
-        this.buffer[start + 1] = point.y;
-    }
+  addPoint(point, start) {
+    this.buffer[start] = point.x;
+    this.buffer[start + 1] = point.y;
+  }
 }
-

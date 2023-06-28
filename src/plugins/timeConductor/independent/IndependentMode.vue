@@ -20,24 +20,17 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-
-<div
-    ref="modeMenuButton"
-    class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
->
+  <div ref="modeMenuButton" class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button
-            class="c-icon-button c-button--menu js-mode-button"
-            :class="[
-                buttonCssClass,
-                selectedMode.cssClass
-            ]"
-            @click.prevent.stop="showModesMenu"
-        >
-            <span class="c-button__label">{{ selectedMode.name }}</span>
-        </button>
+      <button
+        class="c-icon-button c-button--menu js-mode-button"
+        :class="[buttonCssClass, selectedMode.cssClass]"
+        @click.prevent.stop="showModesMenu"
+      >
+        <span class="c-button__label">{{ selectedMode.name }}</span>
+      </button>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -45,82 +38,87 @@ import toggleMixin from '../../../ui/mixins/toggle-mixin';
 import modeMixin from '../mode-mixin';
 
 export default {
-    mixins: [toggleMixin, modeMixin],
-    inject: ['openmct'],
-    props: {
-        mode: {
-            type: String,
-            default() {
-                return undefined;
-            }
-        },
-        enabled: {
-            type: Boolean,
-            default() {
-                return false;
-            }
-        }
+  mixins: [toggleMixin, modeMixin],
+  inject: ['openmct'],
+  props: {
+    mode: {
+      type: String,
+      default() {
+        return undefined;
+      }
     },
-    data: function () {
-        return {
-            selectedMode: this.getModeMetadata(this.mode),
-            modes: []
-        };
-    },
-    watch: {
-        mode: {
-            handler(newMode) {
-                this.setViewFromMode(newMode);
-            }
-        },
-        enabled(newValue, oldValue) {
-            if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
-                this.setViewFromMode(this.mode);
-            }
-        }
-    },
-    mounted: function () {
-        this.loadModes();
-    },
-    methods: {
-        showModesMenu() {
-            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
-            const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
-
-            const menuOptions = {
-                menuClass: 'c-conductor__mode-menu',
-                placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
-            };
-            this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
-        },
-        getMenuOptions() {
-            let menuOptions = [{
-                name: 'Fixed Timespan',
-                timeSystem: 'utc'
-            }];
-            let currentGlobalClock = this.getActiveClock();
-            if (currentGlobalClock !== undefined) {
-            //Create copy of active clock so the time API does not get reactified.
-                currentGlobalClock = Object.assign({}, {
-                    name: currentGlobalClock.name,
-                    clock: currentGlobalClock.key,
-                    timeSystem: this.openmct.time.timeSystem().key
-                });
-
-                menuOptions.push(currentGlobalClock);
-            }
-
-            return menuOptions;
-        },
-        setViewFromMode(mode) {
-            this.selectedMode = this.getModeMetadata(mode);
-        },
-        setMode(mode) {
-            this.setViewFromMode(mode);
-
-            this.$emit('independentModeUpdated', mode);
-        }
+    enabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
+  },
+  data: function () {
+    return {
+      selectedMode: this.getModeMetadata(this.mode),
+      modes: []
+    };
+  },
+  watch: {
+    mode: {
+      handler(newMode) {
+        this.setViewFromMode(newMode);
+      }
+    },
+    enabled(newValue, oldValue) {
+      if (newValue !== undefined && newValue !== oldValue && newValue === true) {
+        this.setViewFromMode(this.mode);
+      }
+    }
+  },
+  mounted: function () {
+    this.loadModes();
+  },
+  methods: {
+    showModesMenu() {
+      const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
+      const x = elementBoundingClientRect.x;
+      const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
+
+      const menuOptions = {
+        menuClass: 'c-conductor__mode-menu',
+        placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
+      };
+      this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
+    },
+    getMenuOptions() {
+      let menuOptions = [
+        {
+          name: 'Fixed Timespan',
+          timeSystem: 'utc'
+        }
+      ];
+      let currentGlobalClock = this.getActiveClock();
+      if (currentGlobalClock !== undefined) {
+        //Create copy of active clock so the time API does not get reactified.
+        currentGlobalClock = Object.assign(
+          {},
+          {
+            name: currentGlobalClock.name,
+            clock: currentGlobalClock.key,
+            timeSystem: this.openmct.time.timeSystem().key
+          }
+        );
+
+        menuOptions.push(currentGlobalClock);
+      }
+
+      return menuOptions;
+    },
+    setViewFromMode(mode) {
+      this.selectedMode = this.getModeMetadata(mode);
+    },
+    setMode(mode) {
+      this.setViewFromMode(mode);
+
+      this.$emit('independentModeUpdated', mode);
+    }
+  }
 };
 </script>

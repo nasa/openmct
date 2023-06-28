@@ -21,56 +21,50 @@
 -->
 
 <template>
-<div :class="compositeCssClass">
-    <FormRow
-        :css-class="item.cssClass"
-        :first="first"
-        :row="row"
-        @onChange="onChange"
-    />
+  <div :class="compositeCssClass">
+    <FormRow :css-class="item.cssClass" :first="first" :row="row" @onChange="onChange" />
     <span class="composite-control-label">
-        {{ item.name }}
+      {{ item.name }}
     </span>
-</div>
+  </div>
 </template>
 
 <script>
-
 export default {
-    components: {
-        FormRow: () => import('@/api/forms/components/FormRow.vue')
+  components: {
+    FormRow: () => import('@/api/forms/components/FormRow.vue')
+  },
+  props: {
+    item: {
+      type: Object,
+      required: true
     },
-    props: {
-        item: {
-            type: Object,
-            required: true
-        },
-        first: {
-            type: Boolean,
-            required: true
-        },
-        value: {
-            type: String,
-            default() {
-                return '';
-            }
-        }
+    first: {
+      type: Boolean,
+      required: true
     },
-    computed: {
-        compositeCssClass() {
-            return `l-composite-control l-${this.item.control}`;
-        },
-        row() {
-            const row = this.item;
-            row.value = JSON.parse(this.value);
-
-            return row;
-        }
-    },
-    methods: {
-        onChange(data) {
-            this.$emit('onChange', data);
-        }
+    value: {
+      type: String,
+      default() {
+        return '';
+      }
     }
+  },
+  computed: {
+    compositeCssClass() {
+      return `l-composite-control l-${this.item.control}`;
+    },
+    row() {
+      const row = this.item;
+      row.value = JSON.parse(this.value);
+
+      return row;
+    }
+  },
+  methods: {
+    onChange(data) {
+      this.$emit('onChange', data);
+    }
+  }
 };
 </script>

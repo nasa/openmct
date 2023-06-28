@@ -20,127 +20,126 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
+  <div
     v-if="selectedTimeSystem.name"
     ref="timeSystemButton"
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
->
+  >
     <button
-        class="c-button--menu c-button--compact c-time-system-button"
-        :class="[
-            buttonCssClass
-        ]"
-        @click.prevent.stop="showTimeSystemMenu"
+      class="c-button--menu c-button--compact c-time-system-button"
+      :class="[buttonCssClass]"
+      @click.prevent.stop="showTimeSystemMenu"
     >
-        {{ selectedTimeSystem.name }}
+      {{ selectedTimeSystem.name }}
     </button>
-</div>
+  </div>
 </template>
 
 <script>
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
-    inject: ['openmct', 'configuration'],
-    props: {
-        buttonCssClass: {
-            type: String,
-            required: false,
-            default() {
-                return '';
-            }
-        }
-    },
-    data: function () {
-        let activeClock = this.openmct.time.getClock();
-
-        return {
-            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())),
-            timeSystems: this.getValidTimesystemsForClock(activeClock)
-        };
-    },
-    mounted: function () {
-        this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
-        this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
-    },
-    destroyed: function () {
-        this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
-        this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
-    },
-    methods: {
-        showTimeSystemMenu() {
-            const elementBoundingClientRect = this.$refs.timeSystemButton.getBoundingClientRect();
-            const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y;
-
-            const menuOptions = {
-                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
-            };
-
-            this.openmct.menus.showMenu(x, y, this.timeSystems, menuOptions);
-        },
-        getValidTimesystemsForClock(clock) {
-            return this.configuration.menuOptions
-                .filter(menuOption => menuOption.clock === (clock && clock.key))
-                .map(menuOption => {
-                    const timeSystem = JSON.parse(JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem)));
-                    timeSystem.onItemClicked = () => this.setTimeSystemFromView(timeSystem);
-
-                    return timeSystem;
-                });
-        },
-        setTimeSystemFromView(timeSystem) {
-            if (timeSystem.key !== this.selectedTimeSystem.key) {
-                let activeClock = this.openmct.time.getClock();
-                let configuration = this.getMatchingConfig({
-                    clock: activeClock && activeClock.key,
-                    timeSystem: timeSystem.key
-                });
-                if (activeClock === undefined) {
-                    let bounds;
-
-                    if (this.selectedTimeSystem.isUTCBased && timeSystem.isUTCBased) {
-                        bounds = this.openmct.time.getBounds();
-                    } else {
-                        bounds = configuration.bounds;
-                    }
-
-                    this.openmct.time.setTimeSystem(timeSystem.key, bounds);
-                } else {
-                    this.openmct.time.setTimeSystem(timeSystem.key);
-                    this.openmct.time.setClockOffsets(configuration.clockOffsets);
-                }
-            }
-        },
-
-        getMatchingConfig(options) {
-            const matchers = {
-                clock(config) {
-                    return options.clock === config.clock;
-                },
-                timeSystem(config) {
-                    return options.timeSystem === config.timeSystem;
-                }
-            };
-
-            function configMatches(config) {
-                return Object.keys(options).reduce((match, option) => {
-                    return match && matchers[option](config);
-                }, true);
-            }
-
-            return this.configuration.menuOptions.filter(configMatches)[0];
-        },
-
-        setViewFromTimeSystem(timeSystem) {
-            this.selectedTimeSystem = timeSystem;
-        },
-
-        setViewFromClock(clock) {
-            let activeClock = this.openmct.time.getClock();
-            this.timeSystems = this.getValidTimesystemsForClock(activeClock);
-        }
+  inject: ['openmct', 'configuration'],
+  props: {
+    buttonCssClass: {
+      type: String,
+      required: false,
+      default() {
+        return '';
+      }
     }
+  },
+  data: function () {
+    let activeClock = this.openmct.time.getClock();
 
+    return {
+      selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())),
+      timeSystems: this.getValidTimesystemsForClock(activeClock)
+    };
+  },
+  mounted: function () {
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+  },
+  destroyed: function () {
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+  },
+  methods: {
+    showTimeSystemMenu() {
+      const elementBoundingClientRect = this.$refs.timeSystemButton.getBoundingClientRect();
+      const x = elementBoundingClientRect.x;
+      const y = elementBoundingClientRect.y;
+
+      const menuOptions = {
+        placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+      };
+
+      this.openmct.menus.showMenu(x, y, this.timeSystems, menuOptions);
+    },
+    getValidTimesystemsForClock(clock) {
+      return this.configuration.menuOptions
+        .filter((menuOption) => menuOption.clock === (clock && clock.key))
+        .map((menuOption) => {
+          const timeSystem = JSON.parse(
+            JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem))
+          );
+          timeSystem.onItemClicked = () => this.setTimeSystemFromView(timeSystem);
+
+          return timeSystem;
+        });
+    },
+    setTimeSystemFromView(timeSystem) {
+      if (timeSystem.key !== this.selectedTimeSystem.key) {
+        let activeClock = this.openmct.time.getClock();
+        let configuration = this.getMatchingConfig({
+          clock: activeClock && activeClock.key,
+          timeSystem: timeSystem.key
+        });
+        if (activeClock === undefined) {
+          let bounds;
+
+          if (this.selectedTimeSystem.isUTCBased && timeSystem.isUTCBased) {
+            bounds = this.openmct.time.getBounds();
+          } else {
+            bounds = configuration.bounds;
+          }
+
+          this.openmct.time.setTimeSystem(timeSystem.key, bounds);
+        } else {
+          this.openmct.time.setTimeSystem(timeSystem.key);
+          this.openmct.time.setClockOffsets(configuration.clockOffsets);
+        }
+      }
+    },
+
+    getMatchingConfig(options) {
+      const matchers = {
+        clock(config) {
+          return options.clock === config.clock;
+        },
+        timeSystem(config) {
+          return options.timeSystem === config.timeSystem;
+        }
+      };
+
+      function configMatches(config) {
+        return Object.keys(options).reduce((match, option) => {
+          return match && matchers[option](config);
+        }, true);
+      }
+
+      return this.configuration.menuOptions.filter(configMatches)[0];
+    },
+
+    setViewFromTimeSystem(timeSystem) {
+      this.selectedTimeSystem = timeSystem;
+    },
+
+    setViewFromClock(clock) {
+      let activeClock = this.openmct.time.getClock();
+      this.timeSystems = this.getValidTimesystemsForClock(activeClock);
+    }
+  }
 };
 </script>

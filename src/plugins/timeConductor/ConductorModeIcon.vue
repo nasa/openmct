@@ -20,19 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="c-clock-symbol">
-    <svg
-        class="c-clock-symbol__outer"
-        viewBox="0 0 16 16"
-    >
-        <path
-            d="M6 0L3 0C1.34315 0 0 1.34315 0 3V13C0 14.6569 1.34315 16 3 16H6V13H3V3H6V0Z"
-        />
-        <path
-            d="M10 13H13V3H10V0H13C14.6569 0 16 1.34315 16 3V13C16 14.6569 14.6569 16 13 16H10V13Z"
-        />
+  <div class="c-clock-symbol">
+    <svg class="c-clock-symbol__outer" viewBox="0 0 16 16">
+      <path d="M6 0L3 0C1.34315 0 0 1.34315 0 3V13C0 14.6569 1.34315 16 3 16H6V13H3V3H6V0Z" />
+      <path
+        d="M10 13H13V3H10V0H13C14.6569 0 16 1.34315 16 3V13C16 14.6569 14.6569 16 13 16H10V13Z"
+      />
     </svg>
     <div class="hand-little"></div>
     <div class="hand-big"></div>
-</div>
+  </div>
 </template>

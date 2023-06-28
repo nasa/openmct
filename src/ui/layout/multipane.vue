@@ -20,27 +20,27 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
+  <div
     class="l-multipane"
     :class="{
-        'l-multipane--vertical': type === 'vertical',
-        'l-multipane--horizontal': type === 'horizontal'
+      'l-multipane--vertical': type === 'vertical',
+      'l-multipane--horizontal': type === 'horizontal'
     }"
->
+  >
     <slot></slot>
-</div>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        type: {
-            type: String,
-            required: true,
-            validator: function (value) {
-                return ['vertical', 'horizontal'].indexOf(value) !== -1;
-            }
-        }
+  props: {
+    type: {
+      type: String,
+      required: true,
+      validator: function (value) {
+        return ['vertical', 'horizontal'].indexOf(value) !== -1;
+      }
     }
+  }
 };
 </script>

@@ -27,6 +27,6 @@ const NOTEBOOK_NAME = 'Notebook';
 const URL_WHITELIST = ['google.com'];
 
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.Notebook(NOTEBOOK_NAME, URL_WHITELIST));
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.Notebook(NOTEBOOK_NAME, URL_WHITELIST));
 });

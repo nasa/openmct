@@ -21,34 +21,33 @@
 -->
 
 <template>
-<div class="c-indicator icon-person c-indicator--clickable">
+  <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
-        {{ userName }}
+      {{ userName }}
     </span>
-</div>
+  </div>
 </template>
 
 <script>
-
 export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            userName: undefined,
-            loggedIn: false
-        };
-    },
+  inject: ['openmct'],
+  data() {
+    return {
+      userName: undefined,
+      loggedIn: false
+    };
+  },
 
-    mounted() {
-        this.getUserInfo();
-    },
-    methods: {
-        getUserInfo() {
-            this.openmct.user.getCurrentUser().then((user) => {
-                this.userName = user.getName();
-                this.loggedIn = this.openmct.user.isLoggedIn();
-            });
-        }
+  mounted() {
+    this.getUserInfo();
+  },
+  methods: {
+    getUserInfo() {
+      this.openmct.user.getCurrentUser().then((user) => {
+        this.userName = user.getName();
+        this.loggedIn = this.openmct.user.isLoggedIn();
+      });
     }
+  }
 };
 </script>

@@ -22,28 +22,28 @@
 import CreateAction from '@/plugins/formActions/CreateAction';
 
 export default class NewFolderAction {
-    constructor(openmct) {
-        this.type = 'folder';
-        this.name = 'Add New Folder';
-        this.key = 'newFolder';
-        this.description = 'Create a new folder';
-        this.cssClass = 'icon-folder-new';
-        this.group = "action";
-        this.priority = 9;
+  constructor(openmct) {
+    this.type = 'folder';
+    this.name = 'Add New Folder';
+    this.key = 'newFolder';
+    this.description = 'Create a new folder';
+    this.cssClass = 'icon-folder-new';
+    this.group = 'action';
+    this.priority = 9;
 
-        this._openmct = openmct;
-    }
+    this._openmct = openmct;
+  }
 
-    invoke(objectPath) {
-        const parentDomainObject = objectPath[0];
-        const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
-        createAction.invoke();
-    }
+  invoke(objectPath) {
+    const parentDomainObject = objectPath[0];
+    const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
+    createAction.invoke();
+  }
 
-    appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-        let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
+  appliesTo(objectPath) {
+    let domainObject = objectPath[0];
+    let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
 
-        return domainObject.type === this.type && isPersistable;
-    }
+    return domainObject.type === this.type && isPersistable;
+  }
 }
