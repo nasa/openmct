@@ -339,7 +339,6 @@ class IndependentTimeContext extends TimeContext {
    */
   refreshContext(viewKey) {
     const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
-
     if (viewKey && key === viewKey) {
       return;
     }
@@ -390,7 +389,6 @@ class IndependentTimeContext extends TimeContext {
    */
   removeIndependentContext(viewKey) {
     const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
-
     if (viewKey && key === viewKey) {
       //this is necessary as the upstream context gets reassigned after this
       this.stopFollowingTimeContext();

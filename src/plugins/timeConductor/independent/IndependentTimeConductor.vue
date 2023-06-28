@@ -155,7 +155,6 @@ export default {
     domainObject: {
       handler(domainObject) {
         const key = this.openmct.objects.makeKeyString(domainObject.identifier);
-
         if (key !== this.keyString) {
           //domain object has changed
           this.destroyIndependentTime();

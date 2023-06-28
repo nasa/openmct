@@ -83,7 +83,7 @@ export default {
     isEnabledXKeyToggle() {
       const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.seriesModel;
       const isFrozen = this.xAxis.get('frozen');
-      const inRealTimeMode = this.openmct.time.getClock();
+      const inRealTimeMode = this.openmct.time.isRealTime();
 
       return isSinglePlot && !isFrozen && !inRealTimeMode;
     },

@@ -22,7 +22,7 @@
 <template>
   <div>
     <div
-      v-if="supportsIndependentTime && false"
+      v-if="supportsIndependentTime"
       class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
       <independent-time-conductor :domain-object="domainObject" :object-path="path" />

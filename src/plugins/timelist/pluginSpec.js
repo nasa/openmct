@@ -219,10 +219,10 @@ describe('the plugin', function () {
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
         );
         expect(itemValues[0].innerHTML.trim()).toEqual(
-          `${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
+          `${moment(twoHoursPast).format('YYYY-MM-DD HH:mm:ss')}Z`
         );
         expect(itemValues[1].innerHTML.trim()).toEqual(
-          `${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`
+          `${moment(oneHourPast).format('YYYY-MM-DD HH:mm:ss')}Z`
         );
 
         done();

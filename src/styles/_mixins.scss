@@ -600,27 +600,24 @@
 }
 
 @mixin cButton() {
-  @include cControl();
-  @include themedButton();
-  @include cButtonLayout();
-  border-radius: $controlCr;
-  color: $colorBtnFg;
-  cursor: pointer;
+    @include cControl();
+    @include cControlHov();
+    @include themedButton();
+    @include cButtonLayout();
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    cursor: pointer;
 
-  @include hover() {
-    filter: $filterHov;
-  }
+    &[class*="--major"],
+    &[class*='is-active']{
+        background: $colorBtnMajorBg !important;
+        color: $colorBtnMajorFg !important;
+    }
 
-  &[class*='--major'],
-  &[class*='is-active'] {
-    background: $colorBtnMajorBg !important;
-    color: $colorBtnMajorFg !important;
-  }
-
-  &[class*='--caution'] {
-    background: $colorBtnCautionBg !important;
-    color: $colorBtnCautionFg !important;
-  }
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg !important;
+        color: $colorBtnCautionFg !important;
+    }
 }
 
 @mixin cClickIcon() {

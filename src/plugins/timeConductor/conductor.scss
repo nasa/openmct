@@ -23,21 +23,21 @@
         grid-row-gap: $interiorMargin;
         align-items: center;
 
-        // Default: fixed mode, desktop
-        grid-template-rows: 1fr;
-        grid-template-columns: 20px auto 1fr auto;
-        grid-template-areas: "tc-mode-icon tc-start tc-ticks tc-end";
-    }
+    // Default: fixed mode, desktop
+    grid-template-rows: 1fr;
+    grid-template-columns: 20px auto 1fr auto;
+    grid-template-areas: 'tc-mode-icon tc-start tc-ticks tc-end';
+  }
 
-    &__mode-icon {
-        grid-area: tc-mode-icon;
-    }
+  &__mode-icon {
+    grid-area: tc-mode-icon;
+  }
 
-    &__start-fixed,
-    &__start-delta {
-        grid-area: tc-start;
-        display: flex;
-    }
+  &__start-fixed,
+  &__start-delta {
+    grid-area: tc-start;
+    display: flex;
+  }
 
     &__end-fixed,
     &__end-delta {
