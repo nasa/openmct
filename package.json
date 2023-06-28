@@ -55,7 +55,7 @@
     "painterro": "1.2.78",
     "playwright-core": "1.32.3",
     "plotly.js-basic-dist": "2.20.0",
-    "plotly.js-gl2d-dist": "2.20.0",
+    "plotly.js-gl2d-dist": "2.24.2",
     "prettier": "2.8.7",
     "printj": "1.3.1",
     "resolve-url-loader": "5.0.0",
