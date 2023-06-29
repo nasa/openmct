@@ -29,7 +29,7 @@ export default function WebPage(openmct) {
     name: 'Web Page',
     cssClass: 'icon-page',
     canView: function (domainObject) {
-      return domainObject.type === 'webPage';
+      return domainObject.type === 'webPage' || domainObject.type === 'ttt-report';
     },
     view: function (domainObject) {
       let component;
