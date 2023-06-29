@@ -1,10 +1,10 @@
-import utils from 'objectUtils';
+import { v4 as uuid } from 'uuid';
 
 export default function (folderName, couchPlugin, searchFilter) {
   return function install(openmct) {
     const couchProvider = couchPlugin.couchProvider;
-    const folderNameString = utils.makeKeyString(folderName || 'CouchDB Documents');
-    const couchSearchName = `couch-search-${folderNameString}`;
+    const couchSearchId = uuid();
+    const couchSearchName = `couch-search-${couchSearchId}`;
 
     openmct.objects.addRoot({
       namespace: couchSearchName,
