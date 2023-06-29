@@ -22,7 +22,11 @@
 <template>
   <span
     :class="[controlClass, { 'c-disclosure-triangle--expanded': value }, { 'is-enabled': enabled }]"
+    tabindex="0"
+    role="button"
+    :aria-expanded="value ? 'true' : 'false'"
     @click="handleClick"
+    @keydown.enter="handleClick"
   ></span>
 </template>
 
