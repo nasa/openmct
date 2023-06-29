@@ -30,6 +30,7 @@
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
+      class="js-stacked-plot-legend"
       @legendHoverChanged="legendHoverChanged"
       @expanded="updateExpanded"
       @position="updatePosition"
@@ -152,6 +153,7 @@ export default {
     //We only need to initialize the stacked plot config for legend properties
     const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     this.config = this.getConfig(configId);
+    this.showLegendsForChildren = this.config.legend.get('showLegendsForChildren');
 
     this.loaded = true;
     this.imageExporter = new ImageExporter(this.openmct);
