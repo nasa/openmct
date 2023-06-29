@@ -88,6 +88,13 @@
             :image="focusedImage"
             :sized-image-dimensions="sizedImageDimensions"
           />
+          <AnnotationsCanvas
+            v-if="shouldDisplayAnnotations"
+            :image="focusedImage"
+            :imagery-annotations="imageryAnnotations[focusedImage.time]"
+            @annotationMarqueed="handlePauseButton(true)"
+            @annotationsChanged="loadAnnotations"
+          />
         </div>
       </div>
 
@@ -173,6 +180,7 @@
           :key="`${image.thumbnailUrl || image.url}-${image.time}-${index}`"
           :image="image"
           :active="focusedImageIndex === index"
+          :imagery-annotations="imageryAnnotations[image.time]"
           :selected="focusedImageIndex === index && isPaused"
           :real-time="!isFixed"
           :viewable-area="focusedImageIndex === index ? viewableArea : null"
@@ -200,6 +208,7 @@ import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from '../../imagery/mixins/imageryData';
+import AnnotationsCanvas from './AnnotationsCanvas.vue';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -232,7 +241,8 @@ export default {
   components: {
     Compass,
     ImageControls,
-    ImageThumbnail
+    ImageThumbnail,
+    AnnotationsCanvas
   },
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
@@ -295,7 +305,8 @@ export default {
       animateZoom: true,
       imagePanned: false,
       forceShowThumbnails: false,
-      animateThumbScroll: false
+      animateThumbScroll: false,
+      imageryAnnotations: {}
     };
   },
   computed: {
@@ -424,6 +435,19 @@ export default {
       }
 
       return result;
+    },
+    shouldDisplayAnnotations() {
+      const imageHeightAndWidth = this.sizedImageHeight !== 0 && this.sizedImageWidth !== 0;
+      const display =
+        this.focusedImage !== undefined &&
+        this.focusedImageNaturalAspectRatio !== undefined &&
+        this.imageContainerWidth !== undefined &&
+        this.imageContainerHeight !== undefined &&
+        imageHeightAndWidth &&
+        this.zoomFactor === 1 &&
+        this.imagePanned !== true;
+
+      return display;
     },
     shouldDisplayCompass() {
       const imageHeightAndWidth = this.sizedImageHeight !== 0 && this.sizedImageWidth !== 0;
@@ -631,6 +655,9 @@ export default {
       }
     }
   },
+  created() {
+    this.abortController = new AbortController();
+  },
   async mounted() {
     eventHelpers.extend(this);
     this.focusedImageWrapper = this.$refs.focusedImageWrapper;
@@ -689,8 +716,12 @@ export default {
 
     this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
     this.loadVisibleLayers();
+    this.loadAnnotations();
+
+    this.openmct.selection.on('change', this.updateSelection);
   },
   beforeUnmount() {
+    this.abortController.abort();
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
 
@@ -716,6 +747,15 @@ export default {
     }
 
     this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+
+    Object.keys(this.imageryAnnotations).forEach((time) => {
+      const imageAnnotationsForTime = this.imageryAnnotations[time];
+      imageAnnotationsForTime.forEach((imageAnnotation) => {
+        this.openmct.objects.destroyMutable(imageAnnotation);
+      });
+    });
+
+    this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
     calculateViewHeight() {
@@ -741,6 +781,15 @@ export default {
       if (this.timeContext) {
         this.timeContext.off('timeSystem', this.trackDuration);
         this.timeContext.off('clock', this.trackDuration);
+      }
+    },
+    updateSelection(selection) {
+      const selectionType = selection?.[0]?.[0]?.context?.type;
+      const validSelectionTypes = ['annotation-search-result'];
+
+      if (!validSelectionTypes.includes(selectionType)) {
+        // wrong type of selection
+        return;
       }
     },
     expand() {
@@ -831,6 +880,41 @@ export default {
           layer.visible = false;
         });
       }
+    },
+    async loadAnnotations(existingAnnotations) {
+      if (!this.openmct.annotation.getAvailableTags().length) {
+        // don't bother loading annotations if there are no tags
+        return;
+      }
+      let foundAnnotations = existingAnnotations;
+      if (!foundAnnotations) {
+        // attempt to load
+        foundAnnotations = await this.openmct.annotation.getAnnotations(
+          this.domainObject.identifier,
+          this.abortController.signal
+        );
+      }
+      foundAnnotations.forEach((foundAnnotation) => {
+        const targetId = Object.keys(foundAnnotation.targets)[0];
+        const timeForAnnotation = foundAnnotation.targets[targetId].time;
+        if (!this.imageryAnnotations[timeForAnnotation]) {
+          this.$set(this.imageryAnnotations, timeForAnnotation, []);
+        }
+
+        const annotationExtant = this.imageryAnnotations[timeForAnnotation].some(
+          (existingAnnotation) => {
+            return this.openmct.objects.areIdsEqual(
+              existingAnnotation.identifier,
+              foundAnnotation.identifier
+            );
+          }
+        );
+        if (!annotationExtant) {
+          const annotationArray = this.imageryAnnotations[timeForAnnotation];
+          const mutableAnnotation = this.openmct.objects.toMutable(foundAnnotation);
+          annotationArray.push(mutableAnnotation);
+        }
+      });
     },
     persistVisibleLayers() {
       if (
@@ -979,7 +1063,9 @@ export default {
       }
 
       await Vue.nextTick();
-      this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+      if (this.$refs.thumbsWrapper) {
+        this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+      }
     },
     scrollHandler() {
       if (this.isPaused) {

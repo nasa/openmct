@@ -41,8 +41,10 @@ import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
-const ROW_HEIGHT = 30;
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
+const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const CURRENT_CSS_SUFFIX = '--is-current';
+const PAST_CSS_SUFFIX = '--is-past';
+const FUTURE_CSS_SUFFIX = '--is-future';
 const headerItems = [
   {
     defaultDirection: true,
@@ -79,9 +81,9 @@ const headerItems = [
     format: function (value) {
       let result;
       if (value < 0) {
-        result = `-${getPreciseDuration(Math.abs(value))}`;
+        result = `+${getPreciseDuration(Math.abs(value), true)}`;
       } else if (value > 0) {
-        result = `+${getPreciseDuration(value)}`;
+        result = `-${getPreciseDuration(value, true)}`;
       } else {
         result = 'Now';
       }
@@ -360,11 +362,12 @@ export default {
       groups.forEach((key) => {
         activities = activities.concat(this.planData[key]);
       });
-      activities = activities.filter(this.filterActivities);
+      // filter activities first, then sort by start time
+      activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
       activities = this.applyStyles(activities);
-      this.setScrollTop();
-      // sort by start time
-      this.planActivities = activities.sort(this.sortByStartTime);
+      this.planActivities = activities;
+      //We need to wait for the next tick since we need the height of the row from the DOM
+      this.$nextTick(this.setScrollTop);
     },
     updateTimeStampAndListActivities(time) {
       this.timestamp = time;
@@ -410,30 +413,41 @@ export default {
     },
     applyStyles(activities) {
       let firstCurrentActivityIndex = -1;
+      let activityClosestToNowIndex = -1;
       let currentActivitiesCount = 0;
       const styledActivities = activities.map((activity, index) => {
         if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-          activity.cssClass = '--is-current';
+          activity.cssClass = CURRENT_CSS_SUFFIX;
           if (firstCurrentActivityIndex < 0) {
             firstCurrentActivityIndex = index;
           }
 
           currentActivitiesCount = currentActivitiesCount + 1;
         } else if (this.timestamp < activity.start) {
-          activity.cssClass = '--is-future';
+          activity.cssClass = FUTURE_CSS_SUFFIX;
+          //the index of the first activity that's greater than the current timestamp
+          if (activityClosestToNowIndex < 0) {
+            activityClosestToNowIndex = index;
+          }
         } else {
-          activity.cssClass = '--is-past';
+          activity.cssClass = PAST_CSS_SUFFIX;
         }
 
         if (!activity.key) {
           activity.key = uuid();
         }
 
-        activity.duration = activity.start - this.timestamp;
+        if (activity.start < this.timestamp) {
+          //if the activity start time has passed, display the time to the end of the activity
+          activity.duration = activity.end - this.timestamp;
+        } else {
+          activity.duration = activity.start - this.timestamp;
+        }
 
         return activity;
       });
 
+      this.activityClosestToNowIndex = activityClosestToNowIndex;
       this.firstCurrentActivityIndex = firstCurrentActivityIndex;
       this.currentActivitiesCount = currentActivitiesCount;
 
@@ -451,13 +465,22 @@ export default {
       }
 
       this.firstCurrentActivityIndex = -1;
+      this.activityClosestToNowIndex = -1;
       this.currentActivitiesCount = 0;
       this.$el.parentElement?.scrollTo({ top: 0 });
       this.autoScrolled = false;
     },
     setScrollTop() {
-      //scroll to somewhere mid-way of the current activities
-      if (this.firstCurrentActivityIndex > -1) {
+      //The view isn't ready yet
+      if (!this.$el.parentElement) {
+        return;
+      }
+
+      const row = this.$el.querySelector('.js-list-item');
+      if (row && this.firstCurrentActivityIndex > -1) {
+        // scroll to somewhere mid-way of the current activities
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
         if (this.canAutoScroll() === false) {
           return;
         }
@@ -469,7 +492,22 @@ export default {
           behavior: 'smooth'
         });
         this.autoScrolled = false;
+      } else if (row && this.activityClosestToNowIndex > -1) {
+        // scroll to somewhere close to 'now'
+
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
+        if (this.canAutoScroll() === false) {
+          return;
+        }
+
+        this.$el.parentElement.scrollTo({
+          top: ROW_HEIGHT * (this.activityClosestToNowIndex - 1),
+          behavior: 'smooth'
+        });
+        this.autoScrolled = false;
       } else {
+        // scroll to the top
         this.resetScroll();
       }
     },
