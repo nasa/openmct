@@ -1,18 +1,18 @@
+import utils from 'objectUtils';
+
 export default function (folderName, couchPlugin, searchFilter) {
   return function install(openmct) {
     const couchProvider = couchPlugin.couchProvider;
-    const couchSearchName = `couch-search-${folderName || 'CouchDB Documents'}`;
+    const folderNameString = utils.parseKeyString(folderName || 'CouchDB Documents');
+    const couchSearchName = `couch-search-${folderNameString}`;
 
     openmct.objects.addRoot({
       namespace: couchSearchName,
       key: couchSearchName
     });
-    console.log('adding', couchSearchName);
 
     openmct.objects.addProvider(couchSearchName, {
       get(identifier) {
-        console.log(couchSearchName, identifier);
-
         if (identifier.key !== couchSearchName) {
           return undefined;
         } else {
