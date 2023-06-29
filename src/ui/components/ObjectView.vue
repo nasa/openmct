@@ -35,19 +35,19 @@
 import _ from 'lodash';
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
-import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+// import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'scatter-plot.view',
-  'time-strip.view'
-];
+// const SupportedViewTypes = [
+//   'plot-stacked',
+//   'plot-overlay',
+//   'bar-graph.view',
+//   'scatter-plot.view',
+//   'time-strip.view'
+// ];
 export default {
   components: {
-    IndependentTimeConductor
+    // IndependentTimeConductor
   },
   mixins: [stalenessMixin],
   inject: ['openmct'],

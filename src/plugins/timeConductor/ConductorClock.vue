@@ -12,10 +12,7 @@ code licensed under additional open source * licenses. See the Open Source Licen
 available * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-  <div
-    v-if="readOnly === false"
-    ref="clockButton" class="c-tc-input-popup__options"
-  >
+  <div v-if="readOnly === false" ref="clockButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-button--menu c-button--compact js-clock-button"

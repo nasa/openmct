@@ -55,7 +55,7 @@ export default {
     objectPath: {
       type: Array,
       default() {
-          return [];
+        return [];
       }
     },
     readOnly: {

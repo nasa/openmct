@@ -220,7 +220,10 @@ export default class URLTimeSettingsSynchronizer {
       isValid = true;
     }
 
-    if (isValid && (mode.toLowerCase() === FIXED_MODE_KEY || mode.toLowerCase() === REALTIME_MODE_KEY)) {
+    if (
+      isValid &&
+      (mode.toLowerCase() === FIXED_MODE_KEY || mode.toLowerCase() === REALTIME_MODE_KEY)
+    ) {
       isValid = true;
     }
 

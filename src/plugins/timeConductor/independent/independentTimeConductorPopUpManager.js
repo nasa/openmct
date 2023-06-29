@@ -76,7 +76,8 @@ export default {
       const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
 
       if (topHalf) {
-        this.positionY = timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
+        this.positionY =
+          timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
       } else {
         this.positionY = timeConductorOptionsBox.top - padding;
       }

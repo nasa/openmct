@@ -135,7 +135,7 @@ class TimeAPI extends GlobalTimeContext {
    */
   addIndependentContext(key, value, clockKey) {
     let timeContext = this.getIndependentContext(key);
-        
+
     //stop following upstream time context since the view has it's own
     timeContext.resetContext();
 
