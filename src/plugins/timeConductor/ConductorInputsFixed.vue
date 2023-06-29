@@ -40,8 +40,6 @@ import TimePopupFixed from './timePopupFixed.vue';
 import _ from 'lodash';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
-// const DEFAULT_DURATION_FORMATTER = 'duration';
-
 export default {
   components: {
     TimePopupFixed
@@ -55,10 +53,10 @@ export default {
       }
     },
     objectPath: {
-        type: Array,
-        default() {
-            return [];
-        }
+      type: Array,
+      default() {
+          return [];
+      }
     },
     readOnly: {
       type: Boolean,
@@ -75,13 +73,11 @@ export default {
   },
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
-    // let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
     const timeFormatter = this.getFormatter(timeSystem.timeFormat);
     let bounds = this.inputBounds || this.openmct.time.getBounds();
 
     return {
-      timeSystem: timeSystem,
-      // durationFormatter,
+      timeSystem,
       timeFormatter,
       bounds: {
         start: bounds.start,
@@ -149,8 +145,6 @@ export default {
     setTimeSystem(timeSystem) {
       this.timeSystem = timeSystem;
       this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      // this.durationFormatter = this.getFormatter(
-      //     timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
       this.isUTCBased = timeSystem.isUTCBased;
     },
     getFormatter(key) {

@@ -215,7 +215,6 @@ export default {
         this.destroyIndependentTime();
       }
 
-      this.$emit('stateChanged', this.independentTCEnabled); // no longer use this, but may be used elsewhere
       this.openmct.objects.mutate(
         this.domainObject,
         'configuration.useIndependentTime',

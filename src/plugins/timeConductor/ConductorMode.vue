@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="modeButton" class="c-tc-input-popup__options">
+  <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-button--menu c-button--compact js-mode-button"
@@ -30,6 +30,9 @@
         <span class="c-button__label">{{ selectedMode.name }}</span>
       </button>
     </div>
+  </div>
+  <div v-else class="c-compact-tc__mode">
+    <div class="c-compact-tc__mode__value">{{ selectedMode.name }}</div>
   </div>
 </template>
 
@@ -41,6 +44,14 @@ const TEST_IDS = true;
 export default {
   mixins: [modeMixin],
   inject: ['openmct', 'configuration'],
+  props: {
+    readOnly: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    }
+  },
   data: function () {
     const mode = this.openmct.time.getMode();
 

@@ -87,30 +87,6 @@ export default {
       };
       this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    getMenuOptions() {
-      let menuOptions = [
-        {
-          name: 'Fixed Timespan',
-          timeSystem: 'utc'
-        }
-      ];
-      let currentGlobalClock = this.getActiveClock();
-      if (currentGlobalClock !== undefined) {
-        //Create copy of active clock so the time API does not get reactified.
-        currentGlobalClock = Object.assign(
-          {},
-          {
-            name: currentGlobalClock.name,
-            clock: currentGlobalClock.key,
-            timeSystem: this.openmct.time.timeSystem().key
-          }
-        );
-
-        menuOptions.push(currentGlobalClock);
-      }
-
-      return menuOptions;
-    },
     setViewFromMode(mode) {
       this.selectedMode = this.getModeMetadata(mode);
     },

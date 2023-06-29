@@ -60,7 +60,6 @@ export default {
       const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
       const offsetTop = this.conductorPopup.getBoundingClientRect().height;
 
-      //TODO: PositionY should be calculated to be top or bottom based on the location of the conductor options
       this.positionY = timeConductorOptionsBox.top - offsetTop;
       this.positionX = 0;
     },

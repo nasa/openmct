@@ -53,14 +53,13 @@ export default {
     showPopup(clickEvent) {
       const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
 
-      // no current popup, itc toggled, something is emitting an dupe event with pointer id = -1, want to ignore those
+      // no current popup, itc toggled, something is emitting a dupe event with pointer id = -1, want to ignore those
       if (!this.conductorPopup && !isToggle && clickEvent.pointerId !== -1) {
         this.showConductorPopup = true;
       }
     },
     handleClickAway(clickEvent) {
       if (this.canClose(clickEvent)) {
-        // clickEvent.stopPropagation();
         this.clearPopup();
       }
     },
@@ -72,22 +71,17 @@ export default {
       const timeConductorOptionsBox = this.timeConductorOptionsHolder.getBoundingClientRect();
       const topHalf = timeConductorOptionsBox.top < window.innerHeight / 2;
       const padding = 5;
-
-      this.positionX = timeConductorOptionsBox.left;
+      const offsetTop = this.conductorPopup.getBoundingClientRect().height;
+      const popupRight = timeConductorOptionsBox.left + this.conductorPopup.clientWidth;
+      const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
 
       if (topHalf) {
-        this.positionY =
-          timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
+        this.positionY = timeConductorOptionsBox.bottom + this.conductorPopup.clientHeight + padding;
       } else {
         this.positionY = timeConductorOptionsBox.top - padding;
       }
 
-      const offsetTop = this.conductorPopup.getBoundingClientRect().height;
-
-      const popupRight = this.positionX + this.conductorPopup.clientWidth;
-      const offsetLeft = Math.min(window.innerWidth - popupRight, 0);
-
-      this.positionX = this.positionX + offsetLeft;
+      this.positionX = timeConductorOptionsBox.left + offsetLeft;
       this.positionY = this.positionY - offsetTop;
     },
     clearPopup() {

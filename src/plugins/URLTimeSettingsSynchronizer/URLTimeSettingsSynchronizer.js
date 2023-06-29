@@ -28,7 +28,7 @@ const SEARCH_END_BOUND = 'tc.endBound';
 const SEARCH_START_DELTA = 'tc.startDelta';
 const SEARCH_END_DELTA = 'tc.endDelta';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
 
 export default class URLTimeSettingsSynchronizer {
   constructor(openmct) {
@@ -114,7 +114,7 @@ export default class URLTimeSettingsSynchronizer {
         this.openmct.time.setBounds(timeParameters.bounds);
       }
 
-      this.openmct.time.setMode('fixed');
+      this.openmct.time.setMode(FIXED_MODE_KEY);
     } else {
       const clock = this.openmct.time.getClock();
 
@@ -126,7 +126,7 @@ export default class URLTimeSettingsSynchronizer {
         this.openmct.time.setClockOffsets(timeParameters.clockOffsets);
       }
 
-      this.openmct.time.setMode('realtime');
+      this.openmct.time.setMode(REALTIME_MODE_KEY);
 
       if (timeSystem?.key !== timeParameters.timeSystem) {
         this.openmct.time.setTimeSystem(timeParameters.timeSystem);
@@ -170,7 +170,6 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.getTimeSystem().key);
-    // this.openmct.router.setAllSearchParams(searchParams);
     this.openmct.router.updateParams(searchParams);
   }
 
@@ -221,12 +220,8 @@ export default class URLTimeSettingsSynchronizer {
       isValid = true;
     }
 
-    if (isValid) {
-      if (mode.toLowerCase() === FIXED_MODE_KEY) {
-        isValid = true;
-      } else {
-        isValid = this.openmct.time.clocks.get(mode) !== undefined;
-      }
+    if (isValid && (mode.toLowerCase() === FIXED_MODE_KEY || mode.toLowerCase() === REALTIME_MODE_KEY)) {
+      isValid = true;
     }
 
     return isValid;

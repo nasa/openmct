@@ -32,9 +32,7 @@
     style="overflow: visible"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <div class="c-compact-tc__mode">
-      <div class="c-compact-tc__mode__value">{{ mode }}</div>
-    </div>
+    <conductor-mode :read-only="true" />
     <conductor-clock :read-only="true" />
     <conductor-time-system :read-only="true" />
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
@@ -79,6 +77,7 @@ import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import ConductorClock from './ConductorClock.vue';
+import ConductorMode from './ConductorMode.vue';
 import conductorPopUpManager from './conductorPopUpManager';
 import ConductorPopUp from './ConductorPopUp.vue';
 
@@ -88,6 +87,7 @@ export default {
   components: {
     ConductorTimeSystem,
     ConductorClock,
+    ConductorMode,
     ConductorInputsRealtime,
     ConductorInputsFixed,
     ConductorAxis,
@@ -149,7 +149,6 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
-    // this.openmct.time.on('clockChanged', this.setViewFromClock);
   },
   beforeDestroy() {
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -158,7 +157,6 @@ export default {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
-    // this.openmct.time.off('clockChanged', this.setViewFromClock);
   },
   methods: {
     handleNewBounds(bounds, isTick) {

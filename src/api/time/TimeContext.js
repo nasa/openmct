@@ -516,8 +516,6 @@ class TimeContext extends EventEmitter {
       }
     }
 
-    // this.setMode(REALTIME_MODE_KEY);
-
     const previousClock = this.activeClock;
     if (previousClock) {
       previousClock.off('tick', this.tick);
