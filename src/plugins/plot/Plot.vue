@@ -166,6 +166,14 @@ export default {
       }
     }
   },
+  watch: {
+    gridLines(newGridLines) {
+      this.gridLines = newGridLines;
+    },
+    cursorGuide(newCursorGuide) {
+      this.cursorGuide = newCursorGuide;
+    }
+  },
   mounted() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);

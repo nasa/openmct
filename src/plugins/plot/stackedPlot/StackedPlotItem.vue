@@ -194,9 +194,9 @@ export default {
         },
         template: `
                   <Plot ref="plotComponent" v-if="!isMissing"
-                      :init-grid-lines="gridLines"
+                      :grid-lines="gridLines"
                       :hide-legend="hideLegend"
-                      :init-cursor-guide="cursorGuide"
+                      :cursor-guide="cursorGuide"
                       :parent-limit-line-labels="limitLineLabels"
                       :options="options"
                       :parent-y-tick-width="parentYTickWidth"
