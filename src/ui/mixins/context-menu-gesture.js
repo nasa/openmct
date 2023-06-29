@@ -1,4 +1,4 @@
-import * as Emitter from "tiny-emitter";
+import * as Emitter from 'tiny-emitter';
 const emitter = new Emitter();
 
 export default {
@@ -21,7 +21,6 @@ export default {
     this.$nextTick(() => {
       this.$refs.root.addEventListener('contextmenu', this.showContextMenu);
     });
-      
 
     function updateObject(oldObject, newObject) {
       Object.assign(oldObject, newObject);
@@ -29,11 +28,12 @@ export default {
 
     this.objectPath.forEach((object) => {
       if (object) {
-        const unobserve = this.openmct.objects.observe(object, '*', updateObject.bind(this, object));
-        emitter.once(
-          'hook:unmounted',
-          unobserve
+        const unobserve = this.openmct.objects.observe(
+          object,
+          '*',
+          updateObject.bind(this, object)
         );
+        emitter.once('hook:unmounted', unobserve);
       }
     });
   },

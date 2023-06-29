@@ -109,7 +109,7 @@ function mountComponent(openmct, configuration) {
       openmct: openmct,
       configuration: configuration
     },
-    template: '<conductor />',
+    template: '<conductor />'
   };
   openmct.layout.conductorComponent = markRaw(conductorApp);
 }

@@ -138,7 +138,7 @@ export default {
     highlights: {
       handler() {
         this.scheduleDraw();
-      }, 
+      },
       deep: true
     },
     annotatedPoints: {

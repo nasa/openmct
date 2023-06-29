@@ -43,9 +43,7 @@
     />
 
     <div class="c-fl-container__frames-holder">
-      <template v-for="(frame, i) in frames"
-          :key="frame.id"
-      >
+      <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
           :frame="frame"

@@ -104,8 +104,7 @@ export default {
       },
       deep: true
     },
-    staleObjects: 
-    {
+    staleObjects: {
       handler() {
         this.isStale = this.staleObjects.length > 0;
         this.updateComponentProp('isStale', this.isStale);

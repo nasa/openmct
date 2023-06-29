@@ -878,8 +878,8 @@ export default {
         const fontSize = hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC;
         const font = hasConsolidatedFont ? styles[0].font : NON_SPECIFIC;
 
-        this.consolidatedFontStyle['fontSize'] = fontSize;
-        this.consolidatedFontStyle['font'] = font;
+        this.consolidatedFontStyle.fontSize = fontSize;
+        this.consolidatedFontStyle.font = font;
       }
     },
     getFontStyle(selectionPath) {

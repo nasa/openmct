@@ -174,10 +174,10 @@ export default {
       deep: true
     },
     sections: {
-        handler(newSections, oldSections) {
-          if (!newSections.length) {
-            this.addSection();
-          }
+      handler(newSections, oldSections) {
+        if (!newSections.length) {
+          this.addSection();
+        }
       },
       deep: true
     }

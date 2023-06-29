@@ -33,11 +33,8 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="ladTable in ladTableObjects"
-          :key="ladTable.key" 
-        >
-          <tr 
-          class="c-table__group-header js-lad-table-set__table-headers">
+        <template v-for="ladTable in ladTableObjects" :key="ladTable.key">
+          <tr class="c-table__group-header js-lad-table-set__table-headers">
             <td colspan="10">
               {{ ladTable.domainObject.name }}
             </td>

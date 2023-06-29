@@ -21,6 +21,7 @@
 -->
 <template>
   <a
+    ref="root"
     class="l-grid-view__item c-grid-item js-folder-child"
     :class="[
       {
@@ -31,7 +32,6 @@
       statusClass
     ]"
     @click="navigate($event)"
-    ref="root"
   >
     <div
       class="c-grid-item__type-icon"

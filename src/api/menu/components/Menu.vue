@@ -22,11 +22,8 @@
 <template>
   <div class="c-menu" :class="options.menuClass">
     <ul v-if="options.actions.length && options.actions[0].length" role="menu">
-      <template v-for="(actionGroups, index) in options.actions"
-        :key="index"
-      >
-        <div 
-          role="group">
+      <template v-for="(actionGroups, index) in options.actions" :key="index">
+        <div role="group">
           <li
             v-for="action in actionGroups"
             :key="action.name"

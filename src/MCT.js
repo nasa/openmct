@@ -362,13 +362,13 @@ define([
 
     if (!isHeadlessMode) {
       const appLayout = Vue.createApp({
-          components: {
-              Layout: Layout.default
-          },
-          provide: {
-              openmct: this
-          },
-          template: '<Layout ref="layout"></Layout>'
+        components: {
+          Layout: Layout.default
+        },
+        provide: {
+          openmct: this
+        },
+        template: '<Layout ref="layout"></Layout>'
       });
       appLayout.mount(domElement);
       this.layout = appLayout._instance.refs.layout;

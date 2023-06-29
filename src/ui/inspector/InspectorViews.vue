@@ -67,9 +67,9 @@ export default {
       }
     },
     showViewsForTab() {
-      this.visibleViews = this.selectedTab 
-      ? this.selectedViews.filter((view) => view.key === this.selectedTab.key)
-      : [];
+      this.visibleViews = this.selectedTab
+        ? this.selectedViews.filter((view) => view.key === this.selectedTab.key)
+        : [];
 
       this.visibleViews.forEach((visibleView) => {
         let viewContainer = document.createElement('div');

@@ -34,9 +34,7 @@
         'c-fl--rows': rowsLayout === true
       }"
     >
-      <template v-for="(container, index) in containers"
-          :key="`component-${container.id}`"
-      >
+      <template v-for="(container, index) in containers" :key="`component-${container.id}`">
         <drop-hint
           v-if="index === 0 && containers.length > 1"
           :key="`hint-top-${container.id}`"

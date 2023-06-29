@@ -250,13 +250,13 @@ export default {
     },
     focusedItems: {
       handler(val, oldVal) {
-          this.updateVisibleItems();
+        this.updateVisibleItems();
       },
       deep: true
     },
     openTreeItems: {
       handler(val, oldVal) {
-          this.setSavedOpenItems();
+        this.setSavedOpenItems();
       },
       deep: true
     }

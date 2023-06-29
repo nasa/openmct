@@ -234,7 +234,11 @@
         </table>
       </div>
       <!-- Sizing table -->
-      <table ref="sizingTable" class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
+      <table
+        ref="sizingTable"
+        class="c-telemetry-table__sizing js-telemetry-table__sizing"
+        :style="sizingTableWidth"
+      >
         <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
           <template v-for="(title, key) in headers" :key="key">
@@ -505,7 +509,7 @@ export default {
     this.scrollable = this.$refs.scrollable;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
-    this.headersHolderEl = this.$refs.headersHolderEl
+    this.headersHolderEl = this.$refs.headersHolderEl;
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();

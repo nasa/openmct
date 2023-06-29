@@ -24,14 +24,14 @@
   <div ref="plan" class="c-plan c-timeline-holder">
     <template v-if="viewBounds && !options.compact">
       <swim-lane>
-        <template v-slot:label>{{ timeSystem.name }}</template>
-        <template v-slot:object>
-        <timeline-axis
-          :bounds="viewBounds"
-          :time-system="timeSystem"
-          :content-height="height"
-          :rendering-engine="renderingEngine"
-        />
+        <template #label>{{ timeSystem.name }}</template>
+        <template #object>
+          <timeline-axis
+            :bounds="viewBounds"
+            :time-system="timeSystem"
+            :content-height="height"
+            :rendering-engine="renderingEngine"
+          />
         </template>
       </swim-lane>
     </template>

@@ -21,12 +21,12 @@
 -->
 <template>
   <tr
+    ref="root"
     class="c-list-item js-folder-child"
     :class="{
       'is-alias': item.isAlias === true
     }"
     @click="navigate"
-    ref="root"
   >
     <td class="c-list-item__name">
       <a ref="objectLink" class="c-object-label" :class="[statusClass]" @click="navigate">

@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     handleClick(event) {
-      this.$emit('click', event)
+      this.$emit('click', event);
     },
     imageLoadCompleted() {
       if (!this.$refs.img) {
