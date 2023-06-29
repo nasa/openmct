@@ -54,6 +54,12 @@ export default {
         return undefined;
       }
     },
+    objectPath: {
+        type: Array,
+        default() {
+            return [];
+        }
+    },
     readOnly: {
       type: Boolean,
       default() {

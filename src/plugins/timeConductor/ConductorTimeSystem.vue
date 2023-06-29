@@ -21,7 +21,7 @@
 -->
 <template>
   <div
-    v-if="selectedTimeSystem.name"
+    v-if="selectedTimeSystem.name && readOnly === false"
     ref="timeSystemButton"
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
   >
@@ -32,6 +32,9 @@
     >
       {{ selectedTimeSystem.name }}
     </button>
+  </div>
+  <div v-else class="c-compact-tc__time-system">
+    <div class="c-compact-tc__time-system__value">{{ selectedTimeSystem.name }}</div>
   </div>
 </template>
 
@@ -46,6 +49,12 @@ export default {
       required: false,
       default() {
         return '';
+      }
+    },
+    readOnly: {
+      type: Boolean,
+      default() {
+        return false;
       }
     }
   },

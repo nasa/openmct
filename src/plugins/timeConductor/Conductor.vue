@@ -32,7 +32,11 @@
     style="overflow: visible"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <!-- TODO - NEED TO ADD MODE, CLOCK AND TIMESYSTEM VIEW ONLY INFORMATION HERE -->
+    <div class="c-compact-tc__mode">
+      <div class="c-compact-tc__mode__value">{{ mode }}</div>
+    </div>
+    <conductor-clock :read-only="true" />
+    <conductor-time-system :read-only="true" />
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
     <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
     <conductor-axis
@@ -68,11 +72,13 @@
 
 <script>
 import _ from 'lodash';
-import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
+import ConductorTimeSystem from './ConductorTimeSystem.vue';
+import ConductorClock from './ConductorClock.vue';
 import conductorPopUpManager from './conductorPopUpManager';
 import ConductorPopUp from './ConductorPopUp.vue';
 
@@ -80,6 +86,8 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
   components: {
+    ConductorTimeSystem,
+    ConductorClock,
     ConductorInputsRealtime,
     ConductorInputsFixed,
     ConductorAxis,
@@ -126,6 +134,11 @@ export default {
       isPanning: false,
       isZooming: false
     };
+  },
+  computed: {
+    mode() {
+      return this.isFixed ? `${FIXED_MODE_KEY} Timespan` : REALTIME_MODE_KEY;
+    }
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyDown);

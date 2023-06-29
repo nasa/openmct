@@ -12,7 +12,10 @@ code licensed under additional open source * licenses. See the Open Source Licen
 available * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-  <div ref="clockButton" class="c-tc-input-popup__options">
+  <div
+    v-if="readOnly === false"
+    ref="clockButton" class="c-tc-input-popup__options"
+  >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-button--menu c-button--compact js-clock-button"
@@ -22,6 +25,9 @@ available * at runtime from the About dialog for additional information.
         <span class="c-button__label">{{ selectedClock.name }}</span>
       </button>
     </div>
+  </div>
+  <div v-else class="c-compact-tc__clock">
+    <div class="c-compact-tc__clock__value">{{ selectedClock.name }}</div>
   </div>
 </template>
 
@@ -38,6 +44,14 @@ export default {
       default: undefined
     }
   },
+  props: {
+    readOnly: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    }
+  },
   data: function () {
     const activeClock = this.getActiveClock();
 
@@ -48,23 +62,12 @@ export default {
   },
   mounted: function () {
     this.loadClocks(this.configuration.menuOptions);
-    // this.setOffsets();
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   destroyed: function () {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   methods: {
-    // setOffsets() {
-    //     if (!this.openmct.time.getClockOffsets()) {
-    //         const activeClock = this.getActiveClock();
-    //         const clockConfig = this.getMatchingConfig({
-    //             clock: activeClock.key
-    //         });
-
-    //         this.openmct.time.setClockOffsets(clockConfig.clockOffsets);
-    //     }
-    // },
     showClocksMenu() {
       const elementBoundingClientRect = this.$refs.clockButton.getBoundingClientRect();
       const x = elementBoundingClientRect.x;

@@ -21,12 +21,12 @@
 -->
 <template>
   <div>
-    <div
-      v-if="supportsIndependentTime"
+    <!-- <div
+      v-if="supportsIndependentTime && false"
       class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
       <independent-time-conductor :domain-object="domainObject" :object-path="path" />
-    </div>
+    </div> -->
     <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
   </div>
 </template>
@@ -94,11 +94,11 @@ export default {
     font() {
       return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
     },
-    supportsIndependentTime() {
-      const viewKey = this.getViewKey();
+    // supportsIndependentTime() {
+    //   const viewKey = this.getViewKey();
 
-      return this.domainObject && SupportedViewTypes.includes(viewKey);
-    },
+    //   return this.domainObject && SupportedViewTypes.includes(viewKey);
+    // },
     viewClasses() {
       let classes;
 

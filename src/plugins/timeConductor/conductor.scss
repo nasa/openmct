@@ -373,8 +373,8 @@
     margin-left: $interiorMargin;
   }
 
-  &__bounds,
-  &__bounds__value {
+  &__bounds, &__time-system, &__clock, &__mode,
+  &__bounds__value, &__time-system__value, &__clock__value, &__mode__value {
     display: flex;
     align-items: center;
 
@@ -383,7 +383,7 @@
     }
   }
 
-  &__bounds {
+  &__bounds, &__time-system, &__clock, &__mode {
     cursor: pointer;
     flex: 0 1 auto;
     overflow: hidden;
@@ -391,6 +391,20 @@
     > * + * {
       flex: 0 0 auto;
     }
+  }
+
+  &__time-system__value, &__clock__value, &__mode__value {
+    text-transform: uppercase;
+    color: #FFF;
+  }
+
+  &__clock__value, &__mode__value {
+    padding-right: $interiorMargin;
+    border-right: 1px solid #FFF;
+  }
+
+  &__time-system {
+    margin-right: $interiorMarginLg;
   }
 
   &__bounds__value {
