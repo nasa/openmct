@@ -11,8 +11,12 @@ export default function (folderName, couchPlugin, searchFilter) {
       key: couchSearchName
     });
 
+    console.log('added root', couchSearchName);
+
     openmct.objects.addProvider(couchSearchName, {
       get(identifier) {
+        console.log('looking for provider', identifier, couchSearchName);
+
         if (identifier.key !== couchSearchName) {
           return undefined;
         } else {
