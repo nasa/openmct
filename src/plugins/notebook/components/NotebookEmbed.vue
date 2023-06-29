@@ -258,7 +258,6 @@ export default {
         this.embed.bounds.start !== bounds.start || this.embed.bounds.end !== bounds.end;
       const isFixedTimespanMode = !this.openmct.time.clock();
 
-      this.openmct.time.stopClock();
       let message = '';
       if (isTimeBoundChanged) {
         this.openmct.time.bounds({

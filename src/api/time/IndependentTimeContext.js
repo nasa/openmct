@@ -103,14 +103,6 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
-  stopClock() {
-    if (this.upstreamTimeContext) {
-      // this.upstreamTimeContext.stopClock();
-    } else {
-      // super.stopClock();
-    }
-  }
-
   timeOfInterest(newTOI) {
     return this.globalTimeContext.timeOfInterest(...arguments);
   }
@@ -131,8 +123,7 @@ class IndependentTimeContext extends TimeContext {
 
   /**
    * Set the active clock. Tick source will be immediately subscribed to
-   * and ticking will begin. Offsets from 'now' must also be provided. A clock
-   * can be unset by calling {@link stopClock}.
+   * and ticking will begin. Offsets from 'now' must also be provided.
    *
    * @param {Clock || string} keyOrClock The clock to activate, or its key
    * @param {ClockOffsets} offsets on each tick these will be used to calculate
@@ -169,7 +160,7 @@ class IndependentTimeContext extends TimeContext {
       this.activeClock = clock;
 
       /**
-       * The active clock has changed. Clock can be unset by calling {@link stopClock}
+       * The active clock has changed.
        * @event clock
        * @memberof module:openmct.TimeAPI~
        * @property {Clock} clock The newly activated clock, or undefined
@@ -288,7 +279,7 @@ class IndependentTimeContext extends TimeContext {
     this.mode = mode;
 
     /**
-     * The active clock has changed. Clock can be unset by calling {@link stopClock}
+     * The active clock has changed.
      * @event clock
      * @memberof module:openmct.TimeAPI~
      * @property {Clock} clock The newly activated clock, or undefined

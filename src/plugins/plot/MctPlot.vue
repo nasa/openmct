@@ -1865,7 +1865,6 @@ export default {
     },
 
     synchronizeTimeConductor() {
-      this.timeContext.stopClock();
       const range = this.config.xAxis.get('displayRange');
       this.timeContext.bounds({
         start: range.min,

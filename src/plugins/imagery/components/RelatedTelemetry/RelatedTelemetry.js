@@ -112,7 +112,6 @@ export default class RelatedTelemetry {
           start: this._openmct.time.bounds().start,
           end: this._parseTime(datum)
         };
-        ephemeralContext.stopClock();
         ephemeralContext.bounds(newBounds);
 
         const options = {

@@ -289,18 +289,12 @@ class TimeContext extends EventEmitter {
    * bounds.
    */
   stopClock() {
-    console.log('stop clock');
     this.#warnMethodDeprecated('"stopClock"');
-
-    if (this.activeClock) {
-      this.clock(undefined, undefined);
-    }
   }
 
   /**
    * Set the active clock. Tick source will be immediately subscribed to
-   * and ticking will begin. Offsets from 'now' must also be provided. A clock
-   * can be unset by calling {@link stopClock}.
+   * and ticking will begin. Offsets from 'now' must also be provided.
    *
    * @param {Clock || string} keyOrClock The clock to activate, or its key
    * @param {ClockOffsets} offsets on each tick these will be used to calculate
@@ -335,7 +329,7 @@ class TimeContext extends EventEmitter {
       this.activeClock = clock;
 
       /**
-       * The active clock has changed. Clock can be unset by calling {@link stopClock}
+       * The active clock has changed.
        * @event clock
        * @memberof module:openmct.TimeAPI~
        * @property {Clock} clock The newly activated clock, or undefined
@@ -571,7 +565,7 @@ class TimeContext extends EventEmitter {
     this.mode = mode;
 
     /**
-     * The active clock has changed. Clock can be unset by calling {@link stopClock}
+     * The active clock has changed.
      * @event clock
      * @memberof module:openmct.TimeAPI~
      * @property {Clock} clock The newly activated clock, or undefined

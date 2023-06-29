@@ -307,8 +307,6 @@ export default {
         timeContext.setMode(this.timeOptions.mode);
 
         if (timeContext.isFixed()) {
-          //TODO: Do we need to stopClock here? I think technically we should never stop the clock, ever
-          // timeContext.stopClock();
           timeContext.setBounds(offsets);
         } else {
           timeContext.setClock(this.timeOptions.clock, offsets);
