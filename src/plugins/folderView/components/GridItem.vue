@@ -30,7 +30,8 @@
       },
       statusClass
     ]"
-    @click="navigate"
+    @click="navigate($event)"
+    ref="root"
   >
     <div
       class="c-grid-item__type-icon"
@@ -69,7 +70,7 @@ export default {
     }
   },
   methods: {
-    navigate() {
+    navigate(event) {
       this.openmct.router.navigate(this.objectLink);
     }
   }

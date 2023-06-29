@@ -675,7 +675,7 @@ export default class ObjectAPI {
       let mutable = this.toMutable(domainObject);
       mutable.$observe(path, callback);
 
-      //return () => mutable.$destroy();
+      return () => mutable.$destroy();
     }
   }
 

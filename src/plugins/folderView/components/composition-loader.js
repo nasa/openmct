@@ -23,11 +23,10 @@ export default {
     this.composition.on('remove', this.remove);
     this.composition.load();
   },
-  unmounted() {
+  beforeUnmount() {
     if (!this.composition) {
       return;
     }
-
     this.composition.off('add', this.add);
     this.composition.off('remove', this.remove);
   },

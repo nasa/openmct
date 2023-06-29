@@ -40,8 +40,7 @@ define(['./components/GridView.vue', './constants.js', 'vue'], function (
 
         return {
           show: function (element) {
-            component = new Vue({
-              el: element,
+            component = Vue.createApp({
               components: {
                 gridViewComponent: GridViewComponent.default
               },
@@ -50,7 +49,7 @@ define(['./components/GridView.vue', './constants.js', 'vue'], function (
                 domainObject
               },
               template: '<grid-view-component></grid-view-component>'
-            });
+            }).mount(element);
           },
           destroy: function (element) {
             //component.$destroy();

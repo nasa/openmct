@@ -338,7 +338,7 @@ define([
    * @param {HTMLElement} [domElement] the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  MCT.prototype.start = function (domElement = document.body.firstElementChild, isHeadlessMode = false) {
+  MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
     if (this.types.get('layout') === undefined) {
       this.install(
         this.plugins.DisplayLayout({

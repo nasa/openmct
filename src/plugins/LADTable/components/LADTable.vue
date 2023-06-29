@@ -50,6 +50,7 @@
 
 <script>
 import Vue from 'vue';
+import { toRaw } from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -230,7 +231,7 @@ export default {
       };
     },
     toggleFixedLayout() {
-      const config = structuredClone(this.configuration);
+      const config = structuredClone(toRaw(this.configuration));
 
       config.isFixedLayout = !this.configuration.isFixedLayout;
       this.ladTableConfiguration.updateConfiguration(config);
