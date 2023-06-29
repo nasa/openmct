@@ -7,9 +7,12 @@ export default function (folderName, couchPlugin, searchFilter) {
       namespace: couchSearchName,
       key: couchSearchName
     });
+    console.log('adding', couchSearchName);
 
     openmct.objects.addProvider(couchSearchName, {
       get(identifier) {
+        console.log(couchSearchName, identifier);
+
         if (identifier.key !== couchSearchName) {
           return undefined;
         } else {
