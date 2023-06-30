@@ -141,7 +141,7 @@
       <!-- Headers table -->
       <div
         v-show="!hideHeaders"
-        ref="headersTable"
+        ref="headersHolderEl"
         class="c-telemetry-table__headers-w js-table__headers-w"
         :style="{ 'max-width': widthWithScroll }"
       >
@@ -473,7 +473,7 @@ export default {
   created() {
     this.filterChanged = _.debounce(this.filterChanged, 500);
   },
-  async mounted() {
+  mounted() {
     this.csvExporter = new CSVExporter();
     this.rowsAdded = _.throttle(this.rowsAdded, 200);
     this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
@@ -500,17 +500,17 @@ export default {
     this.table.tableRows.on('remove', this.rowsRemoved);
     this.table.tableRows.on('sort', this.updateVisibleRows);
     this.table.tableRows.on('filter', this.updateVisibleRows);
-
+    
+    this.table.configuration.on('change', this.updateConfiguration);
+    
     this.openmct.time.on('bounds', this.boundsChanged);
 
     //Default sort
-    await this.$nextTick();
     this.sortOptions = this.table.tableRows.sortBy();
     this.scrollable = this.$refs.scrollable;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
     this.headersHolderEl = this.$refs.headersHolderEl;
-    this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
     this.pollForResize();
@@ -638,7 +638,6 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.$nextTick(() => {
         this.updateVisibleRows();
         this.synchronizeScrollX();
 
@@ -649,7 +648,6 @@ export default {
           // Auto-scroll will be re-enabled if user scrolls to bottom again.
           this.autoScroll = false;
         }
-      });
     },
     shouldSnapToBottom() {
       return (
@@ -661,11 +659,9 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
-      this.$nextTick(() => {
-        if (this.$refs.headersHolderEl && this.$refs.scrollable) {
-          this.$refs.headersHolderEl.scrollLeft = this.$refs.scrollable.scrollLeft;
+        if (this.$refs.headersHolderEl && this.scrollable) {
+          this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
         }
-      });
     },
     filterChanged(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
@@ -970,8 +966,8 @@ export default {
         const lastRowToBeMarked = this.visibleRows[rowIndex];
 
         const allRows = this.table.tableRows.getRows();
-        const firstRowIndex = allRows.indexOf(toRaw(this.markedRows[0]));
-        const lastRowIndex = allRows.indexOf(toRaw(lastRowToBeMarked));
+        let firstRowIndex = allRows.indexOf(toRaw(this.markedRows[0]));
+        let lastRowIndex = allRows.indexOf(toRaw(lastRowToBeMarked));
 
         //supports backward selection
         if (lastRowIndex < firstRowIndex) {
