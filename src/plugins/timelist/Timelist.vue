@@ -358,6 +358,19 @@ export default {
 
       this.listActivities();
     },
+    isActivityInBounds(activity) {
+      const startInBounds =
+        activity.start >= this.openmct.time.bounds()?.start &&
+        activity.start <= this.openmct.time.bounds()?.end;
+      const endInBounds =
+        activity.end >= this.openmct.time.bounds()?.start &&
+        activity.end <= this.openmct.time.bounds()?.end;
+      const middleInBounds =
+        activity.start <= this.openmct.time.bounds()?.start &&
+        activity.end >= this.openmct.time.bounds()?.end;
+
+      return startInBounds || endInBounds || middleInBounds;
+    },
     filterActivities(activity, index) {
       if (this.isEditing) {
         return true;
@@ -368,13 +381,7 @@ export default {
         return false;
       }
 
-      const startInBounds =
-        activity.start >= this.openmct.time.bounds()?.start &&
-        activity.start <= this.openmct.time.bounds()?.end;
-      const endInBounds =
-        activity.end >= this.openmct.time.bounds()?.start &&
-        activity.end <= this.openmct.time.bounds()?.end;
-      if (!(startInBounds || endInBounds)) {
+      if (!this.isActivityInBounds(activity)) {
         return false;
       }
       //current event or future start event or past end event
