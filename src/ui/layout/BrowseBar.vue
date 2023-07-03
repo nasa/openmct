@@ -127,6 +127,7 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import { toRaw } from 'vue';
 
 const PLACEHOLDER_OBJECT = {};
 
@@ -179,8 +180,7 @@ export default {
       });
     },
     hasParent() {
-      return false;
-      // return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return toRaw(this.domainObject) !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
     },
     parentUrl() {
       const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);

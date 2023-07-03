@@ -293,7 +293,7 @@ export default {
     this.destroyMutables();
   },
   methods: {
-    async initialize() {
+    initialize() {
       this.observers = {};
       this.mutables = {};
       this.isLoading = true;
@@ -301,7 +301,8 @@ export default {
       this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
       this.treeResizeObserver.observe(this.$el);
 
-      await this.calculateHeights();
+      // need to wait for the first tick to get the height of the tree
+      this.$nextTick().then(this.calculateHeights);
 
       return;
     },
