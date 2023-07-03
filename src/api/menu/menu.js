@@ -22,7 +22,7 @@
 import EventEmitter from 'EventEmitter';
 import MenuComponent from './components/Menu.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
-import Vue from 'vue';
+import { createApp, h } from 'vue';
 
 export const MENU_PLACEMENT = {
   TOP: 'top',
@@ -52,50 +52,72 @@ class Menu extends EventEmitter {
 
   dismiss() {
     this.emit('destroy');
-    document.body.removeChild(this.component.$el);
+    if (this.app) {
+      this.app.unmount();
+      this.component = null;
+      this.app = null;
+    }
     document.removeEventListener('click', this.dismiss);
-    //this.component.$destroy();
-  }
-
-  show() {
-    this.component.$mount();
-    document.body.appendChild(this.component.$el);
-
-    let position = this._calculatePopupPosition(this.component.$el);
-
-    this.component.$el.style.left = `${position.x}px`;
-    this.component.$el.style.top = `${position.y}px`;
-
-    document.addEventListener('click', this.dismiss);
   }
 
   showMenu() {
-    this.component = new Vue({
-      components: {
-        MenuComponent
+    if (this.app) {
+      return;
+    }
+    this.app = createApp({
+      render() {
+        return h(MenuComponent);
       },
       provide: {
         options: this.options
       },
-      template: '<menu-component />'
+      // TODO: Remove this exception upon full migration to Vue 3
+      // https://v3-migration.vuejs.org/breaking-changes/render-function-api.html#render-function-argument
+      compatConfig: {
+        RENDER_FUNCTION: false
+      }
     });
+
+    this.component = this.app.mount(document.createElement('div'));
 
     this.show();
   }
 
   showSuperMenu() {
-    this.component = new Vue({
-      components: {
-        SuperMenuComponent
+    this.app = createApp({
+      data() {
+        return {
+          top: '0px',
+          left: '0px'
+        };
+      },
+      render() {
+        return h(SuperMenuComponent);
       },
       provide: {
         options: this.options
       },
-      template: '<super-menu-component />'
+      // TODO: Remove this exception upon full migration to Vue 3
+      // https://v3-migration.vuejs.org/breaking-changes/render-function-api.html#render-function-argument
+      compatConfig: {
+        RENDER_FUNCTION: false
+      }
     });
+
+    this.component = this.app.mount(document.createElement('div'));
 
     this.show();
   }
+
+  show() {
+    document.body.appendChild(this.component.$el);
+    let position = this._calculatePopupPosition(this.component.$el);
+
+    this.component.top = `${position.y}px`;
+    this.component.left = `${position.x}px`;
+    document.addEventListener('click', this.dismiss);
+  }
+
 
   /**
    * @private

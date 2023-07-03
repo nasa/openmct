@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-menu" :class="[options.menuClass, 'c-super-menu']">
+  <div class="c-menu" :class="[options.menuClass, 'c-super-menu']" :style="styleObject">
     <ul
       v-if="options.actions.length && options.actions[0].length"
       role="menu"
@@ -34,7 +34,7 @@
             role="menuitem"
             :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
-            :data-testid="action.testId || false"
+            :data-testid="action.testId || null"
             @click="action.onItemClicked"
             @mouseover="toggleItemDescription(action)"
             @mouseleave="toggleItemDescription()"
@@ -59,7 +59,7 @@
         role="menuitem"
         :class="action.cssClass"
         :title="action.description"
-        :data-testid="action.testId || false"
+        :data-testid="action.testId || null"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"
         @mouseleave="toggleItemDescription()"
@@ -80,9 +80,10 @@
     </div>
   </div>
 </template>
-
 <script>
+import popupMenuMixin from '../mixins/popupMenuMixin';
 export default {
+  mixins: [popupMenuMixin],
   inject: ['options'],
   data: function () {
     return {
