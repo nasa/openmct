@@ -10,7 +10,7 @@
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.32.3",
     "@types/eventemitter3": "1.2.0",
-    "@types/jasmine": "4.3.4",
+    "@types/jasmine": "4.3.5",
     "@types/lodash": "4.14.192",
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "6.1.1",
