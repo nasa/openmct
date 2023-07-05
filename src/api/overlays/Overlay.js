@@ -28,7 +28,7 @@ class Overlay extends EventEmitter {
     this.autoHide = autoHide;
     this.dismissable = dismissable !== false;
 
-    this.component = new Vue({
+    this.app = Vue.createApp({
       components: {
         OverlayComponent: OverlayComponent
       },
@@ -53,7 +53,7 @@ class Overlay extends EventEmitter {
   dismiss() {
     this.emit('destroy');
     document.body.removeChild(this.container);
-    //this.component.$destroy();
+    this.app.unmount();
   }
 
   //Ensures that any callers are notified that the overlay is dismissed
@@ -67,7 +67,7 @@ class Overlay extends EventEmitter {
    **/
   show() {
     document.body.appendChild(this.container);
-    this.container.appendChild(this.component.$mount().$el);
+    this.component = this.app.mount(this.container);
   }
 }
 

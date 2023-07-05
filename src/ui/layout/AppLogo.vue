@@ -35,18 +35,23 @@ export default {
       this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
     }
   },
+  unmounted() {
+    this.app.unmount();
+  },
   methods: {
     launchAbout() {
-      let vm = new Vue({
+      const element = document.createElement('div');
+      this.app = Vue.createApp({
         components: { AboutDialog },
         provide: {
           openmct: this.openmct
         },
         template: '<about-dialog></about-dialog>'
-      }).$mount();
+      });
 
+      const component = this.app.mount(element);
       this.openmct.overlays.overlay({
-        element: vm.$el,
+        element,
         size: 'large'
       });
     }

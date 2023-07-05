@@ -37,11 +37,12 @@ export default function GaugeViewProvider(openmct) {
       }
     },
     view: function (domainObject) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               GaugeComponent
@@ -53,10 +54,12 @@ export default function GaugeViewProvider(openmct) {
             },
             template: '<gauge-component></gauge-component>'
           });
+          component = app.mount(element);
         },
         destroy: function (element) {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     },

@@ -16,11 +16,12 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
       return object && object.type === SCATTER_PLOT_KEY;
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               PlotOptions
@@ -31,14 +32,16 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
             },
             template: '<plot-options></plot-options>'
           });
+          component = app.mount(element);
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (component) {
-            //component.$destroy();
-            component = undefined;
+            app.unmount();
+            component = null;
+            app = null;
           }
         }
       };

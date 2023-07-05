@@ -31,13 +31,14 @@ define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
         return domainObject && supportedObjectTypesArray.some((type) => domainObject.type === type);
       },
       view: function (selection) {
-        let component;
+        let app = null;
+        let component = null;
 
         const domainObject = selection?.[0]?.[0]?.context?.item;
 
         return {
           show: function (element) {
-            component = new Vue({
+            app = Vue.createApp({
               el: element,
               components: {
                 FiltersView: FiltersView.default
@@ -47,6 +48,7 @@ define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
               },
               template: '<filters-view></filters-view>'
             });
+            component = app.mount(element);
           },
           showTab: function (isEditing) {
             if (isEditing) {
@@ -65,8 +67,9 @@ define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
           },
           destroy: function () {
             if (component) {
-              //component.$destroy();
-              component = undefined;
+              app.unmount();
+              component = null;
+              app = null;
             }
           }
         };

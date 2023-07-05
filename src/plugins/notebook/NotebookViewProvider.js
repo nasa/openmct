@@ -40,6 +40,7 @@ export default class NotebookViewProvider {
   }
 
   view(domainObject) {
+    let app;
     let component;
     let openmct = this.openmct;
     let snapshotContainer = this.snapshotContainer;
@@ -48,7 +49,7 @@ export default class NotebookViewProvider {
 
     return {
       show(container) {
-        component = new Vue({
+        app = Vue.createApp({
           el: container,
           components: {
             Notebook
@@ -66,9 +67,12 @@ export default class NotebookViewProvider {
           },
           template: '<Notebook :domain-object="domainObject"></Notebook>'
         });
+        component = app.mount(container);
       },
       destroy() {
-        //component.$destroy();
+        app.unmount();
+        component = null;
+        app = null;
       }
     };
   }

@@ -237,7 +237,8 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        let component = new Vue({
+        const element = document.createElement('div');
+        let app = Vue.createApp({
           components: {
             SwimLane
           },
@@ -251,8 +252,9 @@ export default {
           },
           template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
         });
+        let component = app.mount(element);
 
-        this.$refs.imageryHolder.appendChild(component.$mount().$el);
+        this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
         imageryContainer.style.maxWidth = `${containerWidth}px`;

@@ -29,13 +29,14 @@ export default class LadTableSetView {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this.app = null;
+    this.component = null;
   }
 
   show(element) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
-    this.component = new Vue({
+    this.app = Vue.createApp({
       el: element,
       components: {
         LadTableSet
@@ -53,6 +54,7 @@ export default class LadTableSetView {
       },
       template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
     });
+    this.component = this.app.mount(element);
   }
 
   getViewContext() {
@@ -64,7 +66,8 @@ export default class LadTableSetView {
   }
 
   destroy(element) {
-    //this.component.$destroy();
-    this.component = undefined;
+    this.app.unmount();
+    this.component = null;
+    this.app = null;
   }
 }

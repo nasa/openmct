@@ -156,7 +156,7 @@ export default class FormsAPI {
       formCancel = onFormAction(reject);
     });
 
-    const vm = new Vue({
+    const app = Vue.createApp({
       components: { FormProperties },
       provide: {
         openmct: self.openmct
@@ -171,10 +171,12 @@ export default class FormsAPI {
       },
       template:
         '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
-    }).$mount();
+    });
 
-    const formElement = vm.$el;
+    const formElement = document.createElement('div');
     element.append(formElement);
+
+    app.mount(formElement);
 
     function onFormPropertyChange(data) {
       if (onChange) {
@@ -196,7 +198,7 @@ export default class FormsAPI {
     function onFormAction(callback) {
       return () => {
         formElement.remove();
-        //vm.$destroy();
+        app.unmount();
 
         if (callback) {
           callback(changes);

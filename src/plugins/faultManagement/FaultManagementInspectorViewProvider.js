@@ -41,11 +41,12 @@ export default function FaultManagementInspectorViewProvider(openmct) {
       return object && object.type === FAULT_MANAGEMENT_TYPE;
     },
     view: (selection) => {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               FaultManagementInspector
@@ -55,14 +56,16 @@ export default function FaultManagementInspectorViewProvider(openmct) {
             },
             template: '<FaultManagementInspector></FaultManagementInspector>'
           });
+          component = app.mount(element);
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (component) {
-            //component.$destroy();
-            component = undefined;
+            app.unmount();
+            component = null;
+            app = null;
           }
         }
       };

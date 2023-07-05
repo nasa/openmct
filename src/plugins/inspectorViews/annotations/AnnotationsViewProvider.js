@@ -37,13 +37,14 @@ export default function AnnotationsViewProvider(openmct) {
       return selection.length;
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
         show: function (el) {
-          component = new Vue({
+          app = Vue.createApp({
             el,
             components: {
               Annotations
@@ -54,13 +55,15 @@ export default function AnnotationsViewProvider(openmct) {
             },
             template: `<Annotations />`
           });
+          component = app.mount(el);
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

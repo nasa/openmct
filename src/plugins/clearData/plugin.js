@@ -32,7 +32,10 @@ define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], fu
 
     return function install(openmct) {
       if (installIndicator) {
-        let component = new Vue({
+        const element = document.createElement('div');
+        document.body.appendChild(element);
+
+        const app = Vue.createApp({
           components: {
             GlobalClearIndicator: GlobaClearIndicator.default
           },
@@ -41,9 +44,10 @@ define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], fu
           },
           template: '<GlobalClearIndicator></GlobalClearIndicator>'
         });
+        const component = app.mount(element);
 
         let indicator = {
-          element: component.$mount().$el,
+          element: component.$el,
           key: 'global-clear-indicator',
           priority: openmct.priority.DEFAULT
         };

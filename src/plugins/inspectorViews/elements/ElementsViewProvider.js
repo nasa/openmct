@@ -34,13 +34,14 @@ export default function ElementsViewProvider(openmct) {
       return hasValidSelection && !isOverlayPlot;
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
         show: function (el) {
-          component = new Vue({
+          app = Vue.createApp({
             el,
             components: {
               ElementsPool
@@ -51,6 +52,7 @@ export default function ElementsViewProvider(openmct) {
             },
             template: `<ElementsPool />`
           });
+          component = app.mount(el);
         },
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
@@ -61,8 +63,9 @@ export default function ElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

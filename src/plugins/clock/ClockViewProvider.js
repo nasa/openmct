@@ -33,11 +33,12 @@ export default function ClockViewProvider(openmct) {
     },
 
     view: function (domainObject) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               Clock
@@ -48,10 +49,12 @@ export default function ClockViewProvider(openmct) {
             },
             template: '<clock />'
           });
+          component = app.mount(element);
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

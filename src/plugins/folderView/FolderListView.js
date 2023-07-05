@@ -37,11 +37,12 @@ define(['./components/ListView.vue', './constants.js', 'vue', 'moment'], functio
         return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
       },
       view: function (domainObject) {
-        let component;
+        let app = null;
+        let component = null;
 
         return {
           show: function (element) {
-            component = new Vue({
+            app = Vue.createApp({
               el: element,
               components: {
                 listViewComponent: ListViewComponent.default
@@ -53,10 +54,12 @@ define(['./components/ListView.vue', './constants.js', 'vue', 'moment'], functio
               },
               template: '<list-view-component></list-view-component>'
             });
+            component = app.mount(element);
           },
           destroy: function (element) {
-            //component.$destroy();
-            component = undefined;
+            app.unmount();
+            component = null;
+            app = null;
           }
         };
       },

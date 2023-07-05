@@ -4,7 +4,9 @@ import Vue from 'vue';
 
 class Dialog extends Overlay {
   constructor({ iconClass, message, title, hint, timestamp, ...options }) {
-    let component = new Vue({
+    let element = document.createElement('div');
+    document.body.appendChild(element);
+    let app = Vue.createApp({
       components: {
         DialogComponent: DialogComponent
       },
@@ -16,7 +18,8 @@ class Dialog extends Overlay {
         timestamp
       },
       template: '<dialog-component></dialog-component>'
-    }).$mount();
+    });
+    let component = app.mount(element);
 
     super({
       element: component.$el,
@@ -26,7 +29,8 @@ class Dialog extends Overlay {
     });
 
     this.once('destroy', () => {
-      //component.$destroy();
+      app.unmount();
+      document.body.removeChild(element);
     });
   }
 }

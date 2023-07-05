@@ -44,12 +44,13 @@ export default function BarGraphViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               BarGraphView
@@ -68,10 +69,12 @@ export default function BarGraphViewProvider(openmct) {
             },
             template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
           });
+          component = app.mount(element);
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         },
         onClearData() {
           component.$refs.graphComponent.refreshData();

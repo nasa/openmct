@@ -37,11 +37,12 @@ export default function LADTableConfigurationViewProvider(openmct) {
       return object?.type === 'LadTable' || object?.type === 'LadTableSet';
     },
     view(selection) {
+      let app;
       let component;
 
       return {
         show(element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               LADTableConfiguration: LADTableConfigurationComponent
@@ -51,14 +52,16 @@ export default function LADTableConfigurationViewProvider(openmct) {
             },
             template: '<LADTableConfiguration />'
           });
+          component = app.mount(element);
         },
         priority() {
           return 1;
         },
         destroy() {
-          if (component) {
-            //component.$destroy();
-            component = undefined;
+          if (app) {
+            app.unmount();
+            component = null;
+            app = null;
           }
         }
       };

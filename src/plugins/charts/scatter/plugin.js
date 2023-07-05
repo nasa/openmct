@@ -100,7 +100,7 @@ export default function () {
   function getScatterPlotFormControl(openmct) {
     return {
       show(element, model, onChange) {
-        const rowComponent = new Vue({
+        const app = Vue.createApp({
           el: element,
           components: {
             ScatterPlotForm
@@ -116,6 +116,7 @@ export default function () {
           },
           template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
         });
+        const rowComponent = app.mount(element);
 
         return rowComponent;
       }

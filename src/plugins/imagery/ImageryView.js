@@ -12,7 +12,8 @@ export default class ImageryView {
     this.domainObject = domainObject;
     this.objectPath = objectPath;
     this.options = options;
-    this.component = undefined;
+    this.app = null;
+    this.component = null;
   }
 
   show(element, isEditing, viewOptions) {
@@ -23,7 +24,7 @@ export default class ImageryView {
       alternateObjectPath = viewOptions.objectPath;
     }
 
-    this.component = new Vue({
+    this.app = Vue.createApp({
       el: element,
       components: {
         'imagery-view': ImageryViewComponent
@@ -43,6 +44,7 @@ export default class ImageryView {
       template:
         '<imagery-view :focused-image-timestamp="focusedImageTimestamp" @update:focusedImageTimestamp="value => focusedImageTimestamp = value" ref="ImageryContainer"></imagery-view>'
     });
+    this.component = this.app.mount(element);
   }
 
   getViewContext() {
@@ -75,8 +77,9 @@ export default class ImageryView {
   }
 
   destroy() {
-    //this.component.$destroy();
-    this.component = undefined;
+    this.app.unmount();
+    this.component = null;
+    this.app = null;
   }
 
   _getInstance() {

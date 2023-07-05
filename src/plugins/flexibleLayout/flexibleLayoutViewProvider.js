@@ -33,11 +33,12 @@ define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutCompo
         return domainObject.type === 'flexible-layout';
       },
       view: function (domainObject, objectPath) {
-        let component;
+        let app = null;
+        let component = null;
 
         return {
           show: function (element, isEditing) {
-            component = new Vue({
+            app = Vue.createApp({
               el: element,
               components: {
                 FlexibleLayoutComponent: FlexibleLayoutComponent.default
@@ -55,6 +56,7 @@ define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutCompo
               template:
                 '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
             });
+            component = app.mount(element);
           },
           getSelectionContext: function () {
             return {
@@ -69,8 +71,9 @@ define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutCompo
             component.isEditing = isEditing;
           },
           destroy: function (element) {
-            //component.$destroy();
-            component = undefined;
+            app.unmount();
+            component = null;
+            app = null;
           }
         };
       },

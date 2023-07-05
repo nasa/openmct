@@ -93,7 +93,10 @@ export default function ClockPlugin(options) {
     openmct.objectViews.addProvider(new ClockViewProvider(openmct));
 
     if (options && options.enableClockIndicator === true) {
-      const clockIndicator = new Vue({
+      const element = document.createElement('div');
+      document.body.appendChild(element);
+
+      const app = Vue.createApp({
         components: {
           ClockIndicator
         },
@@ -107,8 +110,9 @@ export default function ClockPlugin(options) {
         },
         template: '<ClockIndicator :indicator-format="indicatorFormat" />'
       });
+      const clockIndicator = app.mount(element);
       const indicator = {
-        element: clockIndicator.$mount().$el,
+        element: clockIndicator.$el,
         key: 'clock-indicator',
         priority: openmct.priority.LOW
       };

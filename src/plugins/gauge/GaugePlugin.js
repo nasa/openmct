@@ -169,7 +169,7 @@ export default function () {
   function getGaugeFormController(openmct) {
     return {
       show(element, model, onChange) {
-        const rowComponent = new Vue({
+        const app = Vue.createApp({
           el: element,
           components: {
             GaugeFormController
@@ -185,6 +185,7 @@ export default function () {
           },
           template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
         });
+        const rowComponent = app.mount(element);
 
         return rowComponent;
       }

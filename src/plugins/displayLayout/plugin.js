@@ -38,11 +38,12 @@ class DisplayLayoutView {
     this.objectPath = objectPath;
     this.options = options;
 
-    this.component = undefined;
+    this.component = null;
+    this.app = null;
   }
 
   show(container, isEditing) {
-    this.component = new Vue({
+    this.app = Vue.createApp({
       el: container,
       components: {
         DisplayLayout
@@ -63,6 +64,8 @@ class DisplayLayoutView {
       template:
         '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
     });
+
+    this.component = this.app.mount(container);
   }
 
   getViewContext() {
@@ -95,8 +98,9 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    //this.component.$destroy();
-    this.component = undefined;
+    this.app.unmount();
+    this.component = null;
+    this.app = null;
   }
 }
 

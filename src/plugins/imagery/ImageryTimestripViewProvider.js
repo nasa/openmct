@@ -48,11 +48,12 @@ export default function ImageryTimestripViewProvider(openmct) {
       );
     },
     view: function (domainObject, objectPath) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               ImageryTimeView
@@ -64,11 +65,13 @@ export default function ImageryTimestripViewProvider(openmct) {
             },
             template: '<imagery-time-view></imagery-time-view>'
           });
+          component = app.mount(element);
         },
 
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         },
 
         getComponent() {

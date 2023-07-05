@@ -46,12 +46,13 @@ export default class ConditionSetViewProvider {
   }
 
   view(domainObject, objectPath) {
-    let component;
+    let app = null;
+    let component = null;
     const openmct = this.openmct;
 
     return {
       show: (container, isEditing) => {
-        component = new Vue({
+        app = Vue.createApp({
           el: container,
           components: {
             ConditionSet
@@ -68,13 +69,15 @@ export default class ConditionSetViewProvider {
           },
           template: '<condition-set :isEditing="isEditing"></condition-set>'
         });
+        component = app.mount(container);
       },
       onEditModeChange: (isEditing) => {
         component.isEditing = isEditing;
       },
       destroy: () => {
-        //component.$destroy();
-        component = undefined;
+        app.unmount();
+        component = null;
+        app = null;
       }
     };
   }

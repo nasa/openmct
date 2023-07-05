@@ -69,11 +69,12 @@ export default class FormControl {
    */
   _getControlViewProvider(control) {
     const self = this;
-    let rowComponent;
+    let rowComponent = null;
+    let app = null;
 
     return {
       show(element, model, onChange) {
-        rowComponent = new Vue({
+        app = Vue.createApp({
           el: element,
           components: {
             FormControlComponent: DEFAULT_CONTROLS_MAP[control]
@@ -89,11 +90,16 @@ export default class FormControl {
           },
           template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
         });
+        rowComponent = app.mount(element);
 
         return rowComponent;
       },
       destroy() {
-        //rowComponent.$destroy();
+        if(app) {
+          app.unmount();
+          rowComponent = null;
+          app = null;
+        }
       }
     };
   }

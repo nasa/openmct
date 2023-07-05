@@ -32,11 +32,12 @@ export default function WebPage(openmct) {
       return domainObject.type === 'webPage';
     },
     view: function (domainObject) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               WebPageComponent: WebPageComponent
@@ -47,10 +48,12 @@ export default function WebPage(openmct) {
             },
             template: '<web-page-component></web-page-component>'
           });
+          component = app.mount(element);
         },
         destroy: function (element) {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     },

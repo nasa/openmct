@@ -63,11 +63,12 @@ export default function StylesInspectorViewProvider(openmct) {
       );
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (el) {
-          component = new Vue({
+          app = Vue.createApp({
             el,
             components: {
               StylesInspectorView
@@ -79,13 +80,15 @@ export default function StylesInspectorViewProvider(openmct) {
             },
             template: `<StylesInspectorView />`
           });
+          component = app.mount(el);
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

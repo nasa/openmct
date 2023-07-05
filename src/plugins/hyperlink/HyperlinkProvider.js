@@ -33,11 +33,12 @@ export default function HyperlinkProvider(openmct) {
     },
 
     view: function (domainObject) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               HyperlinkLayout
@@ -47,10 +48,12 @@ export default function HyperlinkProvider(openmct) {
             },
             template: '<hyperlink-layout></hyperlink-layout>'
           });
+          component = app.mount(element);
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

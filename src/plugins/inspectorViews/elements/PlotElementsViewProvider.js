@@ -31,13 +31,14 @@ export default function PlotElementsViewProvider(openmct) {
       return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
         show: function (el) {
-          component = new Vue({
+          app = Vue.createApp({
             el,
             components: {
               PlotElementsPool
@@ -48,6 +49,7 @@ export default function PlotElementsViewProvider(openmct) {
             },
             template: `<PlotElementsPool />`
           });
+          component = app.mount(el);
         },
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
@@ -58,8 +60,9 @@ export default function PlotElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

@@ -16,11 +16,12 @@ export default function BarGraphInspectorViewProvider(openmct) {
       return object && object.type === BAR_GRAPH_KEY;
     },
     view: function (selection) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               BarGraphOptions
@@ -31,14 +32,16 @@ export default function BarGraphInspectorViewProvider(openmct) {
             },
             template: '<bar-graph-options></bar-graph-options>'
           });
+          component = app.mount(element);
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (component) {
-            //component.$destroy();
-            component = undefined;
+            app.unmount();
+            component = null;
+            app = null;
           }
         }
       };

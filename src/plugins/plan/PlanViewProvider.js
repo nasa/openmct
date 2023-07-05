@@ -43,13 +43,14 @@ export default function PlanViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
 
-          component = new Vue({
+          app = Vue.createApp({
             el: element,
             components: {
               Plan
@@ -69,10 +70,12 @@ export default function PlanViewProvider(openmct) {
             },
             template: '<plan :options="options"></plan>'
           });
+          component = app.mount(element);
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

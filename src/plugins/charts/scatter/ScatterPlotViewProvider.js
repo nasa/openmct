@@ -44,12 +44,13 @@ export default function ScatterPlotViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let app = null;
+      let component = null;
 
       return {
         show: function (element) {
-          let isCompact = isCompactView(objectPath);
-          component = new Vue({
+          const isCompact = isCompactView(objectPath);
+          app = Vue.createApp({
             el: element,
             components: {
               ScatterPlotView
@@ -68,10 +69,12 @@ export default function ScatterPlotViewProvider(openmct) {
             },
             template: '<scatter-plot-view :options="options"></scatter-plot-view>'
           });
+          component = app.mount(element);
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          app.unmount();
+          component = null;
+          app = null;
         }
       };
     }

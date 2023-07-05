@@ -29,11 +29,12 @@ class AlphanumericFormatView {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this.app = null
+    this.component = null;
   }
 
   show(element) {
-    this.component = new Vue({
+    this.app = Vue.createApp({
       el: element,
       name: 'AlphanumericFormat',
       components: {
@@ -46,6 +47,7 @@ class AlphanumericFormatView {
       },
       template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
     });
+    this.component = this.app.mount(element);
   }
 
   getViewContext() {
@@ -61,8 +63,9 @@ class AlphanumericFormatView {
   }
 
   destroy() {
-    //this.component.$destroy();
-    this.component = undefined;
+    this.app.unmount();
+    this.component = null;
+    this.app = null;
   }
 }
 

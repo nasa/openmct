@@ -33,10 +33,11 @@ export default function PropertiesViewProvider(openmct) {
     },
     view: function (selection) {
       let component;
+      let app;
 
       return {
         show: function (el) {
-          component = new Vue({
+          app = Vue.createApp({
             el,
             components: {
               Properties
@@ -46,12 +47,13 @@ export default function PropertiesViewProvider(openmct) {
             },
             template: `<Properties />`
           });
+          component = app.mount(el);
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          //component.$destroy();
+          app.unmount();
           component = undefined;
         }
       };
