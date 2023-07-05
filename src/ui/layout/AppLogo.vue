@@ -52,7 +52,10 @@ export default {
       const component = this.app.mount(element);
       this.openmct.overlays.overlay({
         element,
-        size: 'large'
+        size: 'large',
+        onDestroy: () => {
+          this.app.unmount();
+        }
       });
     }
   }
