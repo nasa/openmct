@@ -41,6 +41,7 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
+import raf from 'utils/raf';
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -84,6 +85,7 @@ export default {
     }
   },
   mounted() {
+    this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
   },
   beforeDestroy() {

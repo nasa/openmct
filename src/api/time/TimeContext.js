@@ -374,7 +374,7 @@ class TimeContext extends EventEmitter {
   }
 
   /**
-   * Get the time system of the TimeAPI.
+   * Get the timestamp of the current clock
    * @returns {number} current timestamp of current clock regardless of mode
    * @memberof module:openmct.TimeAPI#
    * @method now

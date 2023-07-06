@@ -30,6 +30,7 @@
 
 <script>
 import moment from 'moment';
+import raf from 'utils/raf';
 
 export default {
   inject: ['openmct'],
@@ -45,6 +46,7 @@ export default {
     };
   },
   mounted() {
+    this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
   },
   beforeDestroy() {
