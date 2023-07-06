@@ -90,9 +90,12 @@ export default {
     }
   },
   watch: {
-    imageryAnnotations() {
-      this.drawAnnotations();
-    }
+    imageryAnnotations: {
+      handler() {
+        this.drawAnnotations();
+      },
+      deep: true
+    } 
   },
   mounted() {
     this.canvas = this.$refs.canvas;
@@ -107,7 +110,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.drawAnnotations();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     document.body.removeEventListener('click', this.cancelSelection);
   },
