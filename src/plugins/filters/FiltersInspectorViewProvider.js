@@ -56,6 +56,10 @@ define([
                         });
                     },
                     showTab: function (isEditing) {
+                        if (isEditing) {
+                            return true;
+                        }
+
                         const hasPersistedFilters = Boolean(domainObject?.configuration?.filters);
                         const hasGlobalFilters = Boolean(domainObject?.configuration?.globalFilters);
 
