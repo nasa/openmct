@@ -34,6 +34,8 @@ class TimeContext extends EventEmitter {
 
     this.clocks = new Map();
 
+    this.currentTimestamp = null;
+
     this.boundsVal = {
       start: undefined,
       end: undefined
@@ -354,9 +356,9 @@ class TimeContext extends EventEmitter {
    * using current offsets.
    */
   tick(timestamp) {
-    if (!this.activeClock) {
-      return;
-    }
+    // always emit the timestamp
+    this.currentTimestamp = timestamp;
+    this.emit('tick', timestamp);
 
     if (this.mode === REALTIME_MODE_KEY) {
       const newBounds = {
@@ -369,6 +371,17 @@ class TimeContext extends EventEmitter {
       this.emit('bounds', this.boundsVal, true);
       this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
     }
+  }
+
+  /**
+   * Get the time system of the TimeAPI.
+   * @returns {number} current timestamp of current clock regardless of mode
+   * @memberof module:openmct.TimeAPI#
+   * @method now
+   */
+
+  now() {
+    return this.currentTimestamp;
   }
 
   /**

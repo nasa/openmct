@@ -150,7 +150,7 @@ export async function addNotebookEntry(
     return;
   }
 
-  const date = Date.now();
+  const date = openmct.time.now();
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
   const embeds = embed ? [embed] : [];
