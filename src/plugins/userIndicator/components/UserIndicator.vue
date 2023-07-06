@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import RoleChannelProvider from '../../../api/user/RoleChannel';
+import RoleChannel from '../../../api/user/RoleChannel';
 export default {
   inject: ['openmct'],
   data() {
@@ -38,20 +38,20 @@ export default {
       userName: undefined,
       role: undefined,
       loggedIn: false,
-      roleChannelProvider: undefined,
+      roleChannel: undefined,
       inputRoleSelection: undefined
     };
   },
 
   async mounted() {
     this.getUserInfo();
-    this.roleChannelProvider = new RoleChannelProvider(this.openmct);
-    this.roleChannelProvider.createRoleChannel();
-    this.roleChannelProvider.subscribeToRole(this.setRoleSelection);
+    this.roleChannel = new RoleChannel(this.openmct);
+    this.roleChannel.createRoleChannel();
+    this.roleChannel.subscribeToRole(this.setRoleSelection);
     await this.fetchOrPromptForRole();
   },
   beforeDestroy() {
-    this.roleChannelProvider.unsubscribeToRole();
+    this.roleChannel.unsubscribeToRole();
   },
   methods: {
     async getUserInfo() {
@@ -106,7 +106,7 @@ export default {
       this.setRoleSelection(role);
       this.openmct.user.setActiveRole(role);
       // update other tabs through broadcast channel
-      this.roleChannelProvider.broadcastNewRole(role);
+      this.roleChannel.broadcastNewRole(role);
     }
   }
 };
