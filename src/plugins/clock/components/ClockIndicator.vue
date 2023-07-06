@@ -30,7 +30,6 @@
 
 <script>
 import moment from 'moment';
-import ticker from 'utils/clock/Ticker';
 
 export default {
   inject: ['openmct'],
@@ -46,16 +45,16 @@ export default {
     };
   },
   mounted() {
-    this.unlisten = ticker.listen(this.tick);
+    this.openmct.time.on('tick', this.tick);
   },
   beforeDestroy() {
-    if (this.unlisten) {
-      this.unlisten();
-    }
+    this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {
-      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
+      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
+        this.openmct.time.getTimeSystem().name
+      }`;
     }
   }
 };
