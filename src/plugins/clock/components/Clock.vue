@@ -41,7 +41,6 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
-import ticker from 'utils/clock/Ticker';
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -85,12 +84,10 @@ export default {
     }
   },
   mounted() {
-    this.unlisten = ticker.listen(this.tick);
+    this.openmct.time.on('tick', this.tick);
   },
   beforeDestroy() {
-    if (this.unlisten) {
-      this.unlisten();
-    }
+    this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {

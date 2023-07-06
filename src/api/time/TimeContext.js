@@ -34,7 +34,7 @@ class TimeContext extends EventEmitter {
 
     this.clocks = new Map();
 
-    this.currentTimestamp = null;
+    this.timestamp = null;
 
     this.boundsVal = {
       start: undefined,
@@ -357,7 +357,7 @@ class TimeContext extends EventEmitter {
    */
   tick(timestamp) {
     // always emit the timestamp
-    this.currentTimestamp = timestamp;
+    this.timestamp = timestamp;
     this.emit('tick', timestamp);
 
     if (this.mode === REALTIME_MODE_KEY) {
@@ -381,7 +381,7 @@ class TimeContext extends EventEmitter {
    */
 
   now() {
-    return this.currentTimestamp;
+    return this.timestamp;
   }
 
   /**
