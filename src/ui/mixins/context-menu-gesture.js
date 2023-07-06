@@ -1,4 +1,5 @@
 import * as Emitter from 'tiny-emitter';
+import { toRaw } from 'vue';
 const emitter = new Emitter();
 
 export default {
@@ -23,7 +24,9 @@ export default {
     });
 
     function updateObject(oldObject, newObject) {
-      Object.assign(oldObject, newObject);
+      const rawNewObject = toRaw(newObject);
+      const rawOldObject = toRaw(oldObject);
+      Object.assign(rawOldObject, rawNewObject);
     }
 
     this.objectPath.forEach((object) => {
