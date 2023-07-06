@@ -92,14 +92,14 @@ class UserAPI extends EventEmitter {
    *  that can be selected by the current user
    *  @memberof module:openmct.UserAPI#
    *  @returns {Array}
+   *  @throws Will throw an error if no user provider is set
    */
 
   getPossibleRoles() {
     if (!this.hasProvider()) {
-      return Promise.resolve(undefined);
-    } else {
-      return this._provider.getPossibleRoles();
+      this.error(NO_PROVIDER_ERROR);
     }
+    return this._provider.getPossibleRoles();
   }
   /**
    * If a user provider is set, it will return the active role or null
