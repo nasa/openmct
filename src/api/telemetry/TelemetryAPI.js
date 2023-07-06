@@ -490,7 +490,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Subscribe to limits for a specific domain object.
+   * Subscribe to run-time changes in configured telemetry limits for a specific domain object.
    * The callback will be called whenever data is received from a
    * limit provider.
    *
