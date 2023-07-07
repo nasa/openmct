@@ -306,13 +306,22 @@ export default {
     this.getSearchResults = debounce(this.getSearchResults, 500);
     this.syncUrlWithPageAndSection = debounce(this.syncUrlWithPageAndSection, 100);
   },
-  async mounted() {
-    await this.loadAnnotations();
+  async created() {
+    this.transaction = null;
+    this.abortController = new AbortController();
+    try {
+      await this.loadAnnotations();
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        throw err;
+      }
+    }
+  },
+  mounted() {
     this.formatSidebar();
     this.setSectionAndPageFromUrl();
 
     this.openmct.selection.on('change', this.updateSelection);
-    this.transaction = null;
 
     window.addEventListener('orientationchange', this.formatSidebar);
     window.addEventListener('hashchange', this.setSectionAndPageFromUrl);
@@ -324,6 +333,7 @@ export default {
     );
   },
   beforeDestroy() {
+    this.abortController.abort();
     if (this.unlisten) {
       this.unlisten();
     }
@@ -387,8 +397,10 @@ export default {
       this.lastLocalAnnotationCreation = this.domainObject.annotationLastCreated ?? 0;
 
       const foundAnnotations = await this.openmct.annotation.getAnnotations(
-        this.domainObject.identifier
+        this.domainObject.identifier,
+        this.abortController.signal
       );
+
       foundAnnotations.forEach((foundAnnotation) => {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const entryId = foundAnnotation.targets[targetId].entryId;
@@ -425,7 +437,11 @@ export default {
           : [...filteredPageEntriesByTime].reverse();
 
       if (this.lastLocalAnnotationCreation < this.domainObject.annotationLastCreated) {
-        this.loadAnnotations();
+        this.loadAnnotations().catch((err) => {
+          if (err.name !== 'AbortError') {
+            throw err;
+          }
+        });
       }
     },
     changeSelectedSection({ sectionId, pageId }) {
