@@ -23,5 +23,5 @@
 export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
 export const NO_PROVIDER_ERROR = 'No user provider has been set.';
 
-export const SESSION_STORAGE_KEY = 'USER_ROLE';
-export const BROADCAST_CHANNEL_NAME = 'USER_ROLE';
+export const SESSION_STORAGE_KEY = 'ACTIVE_USER_ROLE';
+export const ACTIVE_ROLE_BROADCAST_CHANNEL_NAME = 'ActiveRoleChannel';

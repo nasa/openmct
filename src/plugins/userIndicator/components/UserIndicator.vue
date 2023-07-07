@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import RoleChannel from '../../../api/user/RoleChannel';
+import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer';
 export default {
   inject: ['openmct'],
   data() {
@@ -45,13 +45,12 @@ export default {
 
   async mounted() {
     this.getUserInfo();
-    this.roleChannel = new RoleChannel(this.openmct);
-    this.roleChannel.createRoleChannel();
-    this.roleChannel.subscribeToRole(this.setRoleSelection);
+    this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
+    this.roleChannel.subscribeToRoleChanges(this.setRoleSelection);
     await this.fetchOrPromptForRole();
   },
   beforeDestroy() {
-    this.roleChannel.unsubscribeToRole();
+    this.roleChannel.unsubscribeFromRoleChanges(this.setRoleSelection);
   },
   methods: {
     async getUserInfo() {
