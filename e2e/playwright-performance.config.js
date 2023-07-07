@@ -25,9 +25,8 @@ const config = {
     trace: 'on-first-retry',
     video: 'off',
     launchOptions: {
-      args: [
-          '--js-flags=--expose-gc'
-      ]}
+      args: ['--js-flags=--expose-gc']
+    }
   },
   projects: [
     {
