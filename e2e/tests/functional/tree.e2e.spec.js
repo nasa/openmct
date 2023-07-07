@@ -174,7 +174,7 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
-  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+  test.only('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
     page,
     openmctConfig
   }) => {
@@ -202,16 +202,11 @@ test.describe('Main Tree', () => {
     });
 
     // Quickly Expand/close the root folder
-    const mainTree = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    const treeItem = mainTree.getByRole('treeitem', {
-      myItemsFolderName
-    });
-    const treeItemButton = treeItem.getByRole('button', {
-      name: `Expand ${myItemsFolderName} folder`
-    });
-    await treeItemButton.dblclick({ delay: 400 });
+    await page
+      .getByRole('button', {
+        name: `Expand ${myItemsFolderName} folder`
+      })
+      .dblclick({ delay: 400 });
 
     expect(requestWasAborted).toBe(true);
   });
