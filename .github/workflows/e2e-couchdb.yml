@@ -11,7 +11,7 @@ on:
     - cron: '0 0 * * *'
 jobs:
   e2e-couchdb:
-    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'opened'
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
