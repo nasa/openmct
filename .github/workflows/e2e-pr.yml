@@ -1,13 +1,17 @@
 name: 'e2e-pr'
 on:
+  push:
+    branches: master
   workflow_dispatch:
   pull_request:
     types:
       - labeled
       - opened
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   e2e-full:
-    if: github.event.label.name == 'pr:e2e' || github.event.action == 'opened' && github.actor == 'dependabot[bot]'
+    if: github.event.label.name == 'pr:e2e' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'opened'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     strategy:
