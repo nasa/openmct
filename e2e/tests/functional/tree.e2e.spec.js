@@ -26,7 +26,7 @@ const {
   openObjectTreeContextMenu
 } = require('../../appActions.js');
 
-test.describe.only('Main Tree', () => {
+test.describe('Main Tree', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
