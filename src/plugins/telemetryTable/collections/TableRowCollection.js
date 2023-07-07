@@ -99,9 +99,9 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       const lastExistingRow = this.rows[this.rows.length - 1];
 
       if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow) === lastIncomingRow) {
-        this.insertRows(sortedRows, true);
+        this.insertOrUpdateRows(sortedRows, true);
       } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow) === lastExistingRow) {
-        this.insertRows(sortedRows, false);
+        this.insertOrUpdateRows(sortedRows, false);
       } else {
         this.mergeSortedRows(sortedRows);
       }
@@ -142,7 +142,7 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       return sortedRows;
     }
 
-    insertRows(rowsToAdd, addToBeginning) {
+    insertOrUpdateRows(rowsToAdd, addToBeginning) {
       rowsToAdd.forEach((row) => {
         if (this.inPlaceUpdate(row)) {
           this.updateRowInPlace(row);
