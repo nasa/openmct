@@ -128,8 +128,6 @@ export default {
   },
   data() {
     return {
-      //Don't think we need this as it appears to be stacked plot specific
-      // hideExportButtons: false
       loading: false,
       status: '',
       staleObjects: [],

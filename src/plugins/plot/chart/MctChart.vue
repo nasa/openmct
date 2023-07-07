@@ -725,9 +725,7 @@ export default {
       });
     },
     showLabels(seriesKey) {
-      return (
-        this.showLimitLineLabels?.seriesKey && this.showLimitLineLabels.seriesKey === seriesKey
-      );
+      return this.showLimitLineLabels?.seriesKey === seriesKey;
     },
     getLimitElement(limit) {
       let point = {
