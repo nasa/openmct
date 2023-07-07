@@ -26,7 +26,7 @@ const {
   openObjectTreeContextMenu
 } = require('../../appActions.js');
 
-test.describe('Main Tree', () => {
+test.describe.only('Main Tree', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -208,7 +208,10 @@ test.describe('Main Tree', () => {
     const treeItem = mainTree.getByRole('treeitem', {
       myItemsFolderName
     });
-    await treeItem.locator('.c-disclosure-triangle').dblclick({ delay: 400 });
+    const treeItemButton = treeItem.getByRole('button', {
+      name: `Expand ${myItemsFolderName} folder`
+    });
+    await treeItemButton.dblclick({ delay: 400 });
 
     expect(requestWasAborted).toBe(true);
   });
