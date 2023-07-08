@@ -164,6 +164,7 @@ $filterItemHoverFg: brightness(0.9);
 $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.4;
 $borderMissing: 1px dashed $colorAlert !important;
+$browseFrameCornerColor: 0px solid rgb(0,150,215);
 
 @mixin browseFrameBorder() {
   border: $browseFrameBorder;
@@ -323,6 +324,8 @@ $colorTabFg: pullForward($colorTabBg, 60%);
 $colorTabCurrentBg: $colorBodyFg; //pullForward($colorTabBg, 10%);
 $colorTabCurrentFg: $colorBodyBg; //pullForward($colorTabFg, 10%);
 $colorTabsBaseline: $colorTabCurrentBg;
+$colorTabCurrentGlow: rgba(white, 0.0);
+
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
@@ -532,3 +535,4 @@ $scrollContainer: rgba(102, 102, 102, 0.1);
 @mixin themedButton($c: $colorBtnBg) {
   background: $c;
 }
+

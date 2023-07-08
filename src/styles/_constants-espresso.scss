@@ -164,22 +164,24 @@ $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
+$browseFrameCornerColor: 0px solid rgb(0,150,215);
 
 @mixin browseFrameBorder() {
   border: $browseFrameBorder;
   border-radius: $controlCr;
-  background: red;
-  &:after{
-    display: block;
-    content: "";
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    border-top: 3px solid blue;
-    border-right: 3px solid blue;
-  }
+
+  // &:after{
+  //   display: block;
+  //   content: "";
+  //   width: 20px;
+  //   height: 20px;
+  //   position: absolute;
+  //   top: -8px;
+  //   right: -8px;
+  //   border-top: 3px solid blue;
+  //   border-right: 3px solid blue;
+  // }
+  
 }
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
@@ -323,6 +325,7 @@ $colorTabFg: pullForward($colorBodyFg, 0%);
 $colorTabCurrentBg: pullForward($colorTabBg, 10%);
 $colorTabCurrentFg: pullForward($colorTabFg, 20%);
 $colorTabsBaseline: $colorTabCurrentBg;
+$colorTabCurrentGlow: rgba(white, 0.0);
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
