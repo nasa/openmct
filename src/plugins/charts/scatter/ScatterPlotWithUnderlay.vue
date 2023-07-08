@@ -87,7 +87,10 @@ export default {
   watch: {
     data: {
       immediate: false,
-      handler: 'updateData'
+      handler() {
+        this.updateData();
+      },
+      deep: true
     }
   },
   mounted() {

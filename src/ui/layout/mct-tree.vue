@@ -398,12 +398,12 @@ export default {
         this.abortItemLoad(path);
       }
 
-      this.$set(this.treeItemLoading, path, new AbortController());
+      this.treeItemLoading[path] = new AbortController();
 
       return this.treeItemLoading[path].signal;
     },
     endItemLoad(path) {
-      this.$set(this.treeItemLoading, path, undefined);
+      this.treeItemLoading[path] = undefined;
       delete this.treeItemLoading[path];
     },
     abortItemLoad(path) {

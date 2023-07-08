@@ -151,7 +151,7 @@ export default {
           filterValue[comparator].push(valueName);
         } else {
           if (filterValue[comparator].length === 1) {
-            this.$set(this.updatedFilters, key, {});
+            this.updatedFilters[key] = {};
           } else {
             filterValue[comparator] = filterValue[comparator].filter((v) => v !== valueName);
           }
