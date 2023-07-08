@@ -45,7 +45,7 @@ export default function TableConfigurationViewProvider(openmct) {
       return {
         show: function (element) {
           tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-          const { vNode, destroy } = mount({
+          const { destroy } = mount({
             el: element,
             components: {
               TableConfiguration: TableConfigurationComponent

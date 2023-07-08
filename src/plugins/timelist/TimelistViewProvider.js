@@ -42,7 +42,7 @@ export default function TimelistViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { vNode, destroy } = mount({
+          const { destroy } = mount({
             el: element,
             components: {
               Timelist
