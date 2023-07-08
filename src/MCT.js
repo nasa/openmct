@@ -366,7 +366,7 @@ define([
           Layout: Layout.default
         },
         provide: {
-          openmct: this
+          openmct: Vue.markRaw(this)
         },
         template: '<Layout ref="layout"></Layout>'
       });
