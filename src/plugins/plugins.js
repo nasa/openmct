@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<<<<<<< HEAD
 import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin.js';
 import EventGeneratorPlugin from '../../example/eventGenerator/plugin.js';
 import ExampleTags from '../../example/exampleTags/plugin.js';
@@ -86,7 +85,6 @@ import UTCTimeSystem from './utcTimeSystem/plugin.js';
 import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
-=======
 define([
   'lodash',
   './utcTimeSystem/plugin',
@@ -221,7 +219,6 @@ define([
   InspectorDataVisualization
 ) {
   const plugins = {};
->>>>>>> 728852503 (initial theme plugin setup, changes to layout frames)
 
 const plugins = {};
 

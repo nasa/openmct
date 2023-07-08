@@ -351,11 +351,13 @@ $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
-$colorTabBg: pullForward($colorBodyBg, 5%);
-$colorTabFg: pullForward($colorBodyFg, 0%);
-$colorTabCurrentBg: pullForward($colorTabBg, 10%);
+$colorTabBg: rgba(0, 150, 215, .31);
+$colorTabFg: pullForward($colorBodyFgEm, 0%);
+$colorTabCurrentBg: rgba(0, 150, 215, .53);
 $colorTabCurrentFg: pullForward($colorTabFg, 20%);
 $colorTabsBaseline: $colorTabCurrentBg;
+$colorTabCurrentGlow: rgba(white, 0.6);
+
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
@@ -442,7 +444,7 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Gauges
 $colorGaugeBase:  rgba(0, 95, 136);
-$colorGaugeBg: rgba($colorGaugeBase, .2); // Gauge radial area background, meter background
+$colorGaugeBg: rgba($colorGaugeBase, .4); // Gauge radial area background, meter background
 $colorGaugeValue: rgba(0, 107, 153); // Gauge value graphic (radial sweep, bar) color
 $colorGaugeTextValue: #fff; // Radial gauge text value
 $colorGaugeMeterTextValue: #fff; // Meter text value, overlaid on value bar
