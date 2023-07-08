@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import StackedPlot from './StackedPlot.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function StackedPlotViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -43,13 +43,14 @@ export default function StackedPlotViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
+      let component = null;
 
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
 
-          component = new Vue({
+          const { vNode, destroy } = mount({
             el: element,
             components: {
               StackedPlot
@@ -67,7 +68,12 @@ export default function StackedPlotViewProvider(openmct) {
               };
             },
             template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
+          }, {
+            app: openmct.app,
+            element
           });
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
         getViewContext() {
           if (!component) {
@@ -77,8 +83,9 @@ export default function StackedPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

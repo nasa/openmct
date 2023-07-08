@@ -1,6 +1,6 @@
 import ImageryViewComponent from './components/ImageryView.vue';
 
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
   fadeOutDelayTime: '0s',
@@ -12,8 +12,8 @@ export default class ImageryView {
     this.domainObject = domainObject;
     this.objectPath = objectPath;
     this.options = options;
-    this.app = null;
     this.component = null;
+    this._destroy = null;
   }
 
   show(element, isEditing, viewOptions) {
@@ -24,7 +24,7 @@ export default class ImageryView {
       alternateObjectPath = viewOptions.objectPath;
     }
 
-    this.app = Vue.createApp({
+    const { vNode, destroy } = mount({
       el: element,
       components: {
         'imagery-view': ImageryViewComponent
@@ -43,8 +43,12 @@ export default class ImageryView {
       },
       template:
         '<imagery-view :focused-image-timestamp="focusedImageTimestamp" @update:focusedImageTimestamp="value => focusedImageTimestamp = value" ref="ImageryContainer"></imagery-view>'
+    }, {
+      app: this.openmct.app,
+      element
     });
-    this.component = this.app.mount(element);
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
   }
 
   getViewContext() {
@@ -77,9 +81,9 @@ export default class ImageryView {
   }
 
   destroy() {
-    this.app.unmount();
-    this.component = null;
-    this.app = null;
+    if(this._destroy) {
+      this._destroy();
+    }
   }
 
   _getInstance() {

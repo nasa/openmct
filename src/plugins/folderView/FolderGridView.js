@@ -19,49 +19,48 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import GridViewComponent from './components/GridView.vue';
+import { ALLOWED_FOLDER_TYPES } from './constants.js';
+import mount from 'utils/mount';
 
-define(['./components/GridView.vue', './constants.js', 'vue'], function (
-  GridViewComponent,
-  constants,
-  Vue
-) {
-  function FolderGridView(openmct) {
-    const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+export default class FolderGridView {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = 'grid';
+    this.name = 'Grid View';
+    this.cssClass = 'icon-thumbs-strip';
+  }
+  canView(domainObject) {
+    return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+  }
 
+  view(domainObject) {
     return {
-      key: 'grid',
-      name: 'Grid View',
-      cssClass: 'icon-thumbs-strip',
-      canView: function (domainObject) {
-        return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
-      },
-      view: function (domainObject) {
-        let component;
-
-        return {
-          show: function (element) {
-            component = Vue.createApp({
-              components: {
-                gridViewComponent: GridViewComponent.default
-              },
-              provide: {
-                openmct,
-                domainObject
-              },
-              template: '<grid-view-component></grid-view-component>'
-            }).mount(element);
+      show: (element) => {
+        const { destroy } = mount({
+          components: {
+            GridViewComponent
           },
-          destroy: function (element) {
-            //component.$destroy();
-            component = undefined;
-          }
-        };
+          provide: {
+            openmct: this.openmct,
+            domainObject
+          },
+          template: '<GridViewComponent></GridViewComponent>'
+        }, {
+          app: this.openmct.app,
+          element
+        });
+        this._destroy = destroy;
       },
-      priority: function () {
-        return 1;
+      destroy: () => {
+        if(this._destroy) {
+          this._destroy();
+        }
       }
     };
   }
 
-  return FolderGridView;
-});
+  priority() {
+    return 1;
+  }
+};

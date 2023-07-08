@@ -22,7 +22,7 @@
 
 import TimelistPropertiesView from './TimelistPropertiesView.vue';
 import { TIMELIST_TYPE } from '../constants';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function TimeListInspectorViewProvider(openmct) {
   return {
@@ -38,11 +38,11 @@ export default function TimeListInspectorViewProvider(openmct) {
       return context && context.item && context.item.type === TIMELIST_TYPE;
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          const { destroy } = mount({
             el: element,
             components: {
               TimelistPropertiesView: TimelistPropertiesView
@@ -52,15 +52,18 @@ export default function TimeListInspectorViewProvider(openmct) {
               domainObject: selection[0][0].context.item
             },
             template: '<timelist-properties-view></timelist-properties-view>'
+          }, {
+            app: openmct.app,
+            element
           });
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            //component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

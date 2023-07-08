@@ -22,7 +22,9 @@
 import EventEmitter from 'EventEmitter';
 import MenuComponent from './components/Menu.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
-import { createApp, h } from 'vue';
+import { h } from 'vue';
+import mount from 'utils/mount';
+
 
 export const MENU_PLACEMENT = {
   TOP: 'top',
@@ -52,19 +54,18 @@ class Menu extends EventEmitter {
 
   dismiss() {
     this.emit('destroy');
-    if (this.app) {
-      this.app.unmount();
-      this.component = null;
-      this.app = null;
+    if (this.destroy) {
+      this.destroy();
+      this.destroy = null;
     }
     document.removeEventListener('click', this.dismiss);
   }
 
   showMenu() {
-    if (this.app) {
+    if (this.destroy) {
       return;
     }
-    this.app = createApp({
+    const { vNode, destroy } = mount({
       render() {
         return h(MenuComponent);
       },
@@ -78,13 +79,14 @@ class Menu extends EventEmitter {
       }
     });
 
-    this.component = this.app.mount(document.createElement('div'));
+    this.el = vNode.el;
+    this.destroy = destroy;
 
     this.show();
   }
 
   showSuperMenu() {
-    this.app = createApp({
+    const { vNode, destroy } = mount({
       data() {
         return {
           top: '0px',
@@ -104,107 +106,15 @@ class Menu extends EventEmitter {
       }
     });
 
-    this.component = this.app.mount(document.createElement('div'));
+    this.el = vNode.el;
+    this.destroy = destroy;
 
     this.show();
   }
 
   show() {
-    document.body.appendChild(this.component.$el);
-    let position = this._calculatePopupPosition(this.component.$el);
-
-    this.component.top = `${position.y}px`;
-    this.component.left = `${position.x}px`;
+    document.body.appendChild(this.el);
     document.addEventListener('click', this.dismiss);
-  }
-
-
-  /**
-   * @private
-   */
-  _calculatePopupPosition(menuElement) {
-    let menuDimensions = menuElement.getBoundingClientRect();
-
-    if (!this.options.placement) {
-      this.options.placement = MENU_PLACEMENT.BOTTOM_RIGHT;
-    }
-
-    const menuPosition = this._getMenuPositionBasedOnPlacement(menuDimensions);
-
-    return this._preventMenuOverflow(menuPosition, menuDimensions);
-  }
-
-  /**
-   * @private
-   */
-  _getMenuPositionBasedOnPlacement(menuDimensions) {
-    let eventPosX = this.options.x;
-    let eventPosY = this.options.y;
-
-    // Adjust popup menu based on placement
-    switch (this.options.placement) {
-      case MENU_PLACEMENT.TOP:
-        eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-        eventPosY = this.options.y - menuDimensions.height;
-        break;
-      case MENU_PLACEMENT.BOTTOM:
-        eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-        break;
-      case MENU_PLACEMENT.LEFT:
-        eventPosX = this.options.x - menuDimensions.width;
-        eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-        break;
-      case MENU_PLACEMENT.RIGHT:
-        eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-        break;
-      case MENU_PLACEMENT.TOP_LEFT:
-        eventPosX = this.options.x - menuDimensions.width;
-        eventPosY = this.options.y - menuDimensions.height;
-        break;
-      case MENU_PLACEMENT.TOP_RIGHT:
-        eventPosY = this.options.y - menuDimensions.height;
-        break;
-      case MENU_PLACEMENT.BOTTOM_LEFT:
-        eventPosX = this.options.x - menuDimensions.width;
-        break;
-      case MENU_PLACEMENT.BOTTOM_RIGHT:
-        break;
-    }
-
-    return {
-      x: eventPosX,
-      y: eventPosY
-    };
-  }
-
-  /**
-   * @private
-   */
-  _preventMenuOverflow(menuPosition, menuDimensions) {
-    let { x: eventPosX, y: eventPosY } = menuPosition;
-    let overflowX = eventPosX + menuDimensions.width - document.body.clientWidth;
-    let overflowY = eventPosY + menuDimensions.height - document.body.clientHeight;
-
-    if (overflowX > 0) {
-      eventPosX = eventPosX - overflowX;
-    }
-
-    if (overflowY > 0) {
-      eventPosY = eventPosY - overflowY;
-    }
-
-    if (eventPosX < 0) {
-      eventPosX = 0;
-    }
-
-    if (eventPosY < 0) {
-      eventPosY = 0;
-    }
-
-    return {
-      x: eventPosX,
-      y: eventPosY
-    };
   }
 }
 

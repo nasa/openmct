@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import Properties from './Properties.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function PropertiesViewProvider(openmct) {
   return {
@@ -32,13 +32,12 @@ export default function PropertiesViewProvider(openmct) {
       return selection.length > 0;
     },
     view: function (selection) {
-      let component;
-      let app;
+      let _destroy = null;
 
       return {
-        show: function (el) {
-          app = Vue.createApp({
-            el,
+        show: function (element) {
+          const { destroy } = mount({
+            el: element,
             components: {
               Properties
             },
@@ -46,15 +45,19 @@ export default function PropertiesViewProvider(openmct) {
               openmct
             },
             template: `<Properties />`
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(el);
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          app.unmount();
-          component = undefined;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

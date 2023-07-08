@@ -43,7 +43,7 @@
 import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct', 'snapshotContainer'],
@@ -90,7 +90,7 @@ export default {
       drawerElement.innerHTML = '<div></div>';
       const divElement = document.querySelector('.l-shell__drawer div');
 
-      this.component = new Vue({
+      mount({
         el: divElement,
         components: {
           SnapshotContainerComponent
@@ -106,7 +106,10 @@ export default {
         },
         template:
           '<SnapshotContainerComponent :toggleSnapshot="toggleSnapshot"></SnapshotContainerComponent>'
-      }).$mount();
+      }, {
+        app: openmct.app,
+        element: divElement
+      });
     },
     updateSnapshotIndicatorTitle() {
       const snapshotCount = this.snapshotContainer.getSnapshots().length;

@@ -20,68 +20,78 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./components/flexibleLayout.vue', 'vue'], function (FlexibleLayoutComponent, Vue) {
-  function FlexibleLayoutViewProvider(openmct) {
-    return {
-      key: 'flexible-layout',
-      name: 'FlexibleLayout',
-      cssClass: 'icon-layout-view',
-      canView: function (domainObject) {
-        return domainObject.type === 'flexible-layout';
-      },
-      canEdit: function (domainObject) {
-        return domainObject.type === 'flexible-layout';
-      },
-      view: function (domainObject, objectPath) {
-        let app = null;
-        let component = null;
+import mount from 'utils/mount';
+import FlexibleLayoutComponent from './components/flexibleLayout.vue';
 
-        return {
-          show: function (element, isEditing) {
-            app = Vue.createApp({
-              el: element,
-              components: {
-                FlexibleLayoutComponent: FlexibleLayoutComponent.default
-              },
-              provide: {
-                openmct,
-                objectPath,
-                layoutObject: domainObject
-              },
-              data() {
-                return {
-                  isEditing: isEditing
-                };
-              },
-              template:
-                '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
-            });
-            component = app.mount(element);
+const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
+export default class FlexibleLayoutViewProvider {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = FLEXIBLE_LAYOUT_KEY;
+    this.name = 'Flexible Layout';
+    this.cssClass = 'icon-layout-view';
+    this.destroy = null;
+  }
+
+  canView(domainObject) {
+    return domainObject.type === FLEXIBLE_LAYOUT_KEY;
+  }
+
+  canEdit(domainObject) {
+    return domainObject.type === FLEXIBLE_LAYOUT_KEY;
+  }
+
+  view(domainObject, objectPath) {
+    let _destroy = null;
+    let component = null;
+
+    return {
+      show: function (element, isEditing) {
+        const { vNode, destroy } = mount({
+          el: element,
+          components: {
+            FlexibleLayoutComponent
           },
-          getSelectionContext: function () {
+          provide: {
+            openmct,
+            objectPath,
+            layoutObject: domainObject
+          },
+          data() {
             return {
-              item: domainObject,
-              addContainer: component.$refs.flexibleLayout.addContainer,
-              deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-              deleteFrame: component.$refs.flexibleLayout.deleteFrame,
-              type: 'flexible-layout'
+              isEditing: isEditing
             };
           },
-          onEditModeChange: function (isEditing) {
-            component.isEditing = isEditing;
-          },
-          destroy: function (element) {
-            app.unmount();
-            component = null;
-            app = null;
-          }
+          template:
+            '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
+        }, {
+          app: openmct.app,
+          element
+        });
+        component = vNode.componentInstance;
+        _destroy = destroy;
+      },
+      getSelectionContext: function () {
+        return {
+          item: domainObject,
+          addContainer: component.$refs.flexibleLayout.addContainer,
+          deleteContainer: component.$refs.flexibleLayout.deleteContainer,
+          deleteFrame: component.$refs.flexibleLayout.deleteFrame,
+          type: 'flexible-layout'
         };
       },
-      priority: function () {
-        return 1;
+      onEditModeChange: function (isEditing) {
+        component.isEditing = isEditing;
+      },
+      destroy: function (element) {
+        if(_destroy) {
+          _destroy();
+          component = null;
+        }
       }
     };
   }
-
-  return FlexibleLayoutViewProvider;
-});
+  priority() {
+    return 1;
+  }
+};

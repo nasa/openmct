@@ -26,10 +26,9 @@ import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
-
 import objectUtils from 'objectUtils';
-
 import Vue from 'vue';
+import mount from 'utils/mount';
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -43,7 +42,7 @@ class DisplayLayoutView {
   }
 
   show(container, isEditing) {
-    this.app = Vue.createApp({
+    const { vNode, destroy } = mount({
       el: container,
       components: {
         DisplayLayout
@@ -63,9 +62,12 @@ class DisplayLayoutView {
       },
       template:
         '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
+    }, {
+      app: this.openmct.app,
+      element: container
     });
-
-    this.component = this.app.mount(container);
+    this._destroy = destroy;
+    this.component = vNode.componentInstance;
   }
 
   getViewContext() {
@@ -98,9 +100,9 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    this.app.unmount();
-    this.component = null;
-    this.app = null;
+    if(this._destroy) {
+      this._destroy();
+    }
   }
 }
 

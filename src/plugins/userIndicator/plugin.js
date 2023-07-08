@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createApp } from 'vue';
+import mount from 'utils/mount';
 import UserIndicator from './components/UserIndicator.vue';
 
 export default function UserIndicatorPlugin() {
   function addIndicator(openmct) {
-    const userIndicator = createApp({
+    const { vNode } = mount({
       components: {
         UserIndicator
       },
@@ -33,14 +33,13 @@ export default function UserIndicatorPlugin() {
         openmct: openmct
       },
       template: '<UserIndicator />'
+    }, {
+      app: openmct.app
     });
-
-    const userIndicatorMountElement = document.createElement('div');
-    userIndicator.mount(userIndicatorMountElement);
 
     openmct.indicators.add({
       key: 'user-indicator',
-      element: userIndicatorMountElement,
+      element: vNode.el,
       priority: openmct.priority.HIGH
     });
   }

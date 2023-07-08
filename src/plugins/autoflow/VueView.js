@@ -20,15 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['vue'], function (Vue) {
-  function VueView(options) {
-    const vm = new Vue(options);
-    this.show = function (container) {
-      container.appendChild(vm.$mount().$el);
+import mount from 'utils/mount';
+export default function() {
+  return function VueView(options) {
+    const { vNode, destroy } = mount(options);
+
+    this.show = function(container) {
+      container.appendChild(vNode.el);
     };
 
-    this.destroy = vm.$destroy.bind(vm);
+    this.destroy = destroy;
   }
-
-  return VueView;
-});
+}

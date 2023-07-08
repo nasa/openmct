@@ -27,7 +27,7 @@ define(['./flexibleLayoutViewProvider', './utils/container', './toolbarProvider'
 ) {
   return function plugin() {
     return function install(openmct) {
-      openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
+      openmct.objectViews.addProvider(new FlexibleLayoutViewProvider.default(openmct));
 
       openmct.types.addType('flexible-layout', {
         name: 'Flexible Layout',

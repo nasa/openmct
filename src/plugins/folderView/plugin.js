@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import FolderGridView from "./FolderGridView";
+import FolderListView from "./FolderListView";
 
-define(['./FolderGridView', './FolderListView'], function (FolderGridView, FolderListView) {
-  return function plugin() {
+export default function() {
     return function install(openmct) {
       openmct.types.addType('folder', {
         name: 'Folder',
@@ -37,6 +38,5 @@ define(['./FolderGridView', './FolderListView'], function (FolderGridView, Folde
 
       openmct.objectViews.addProvider(new FolderGridView(openmct));
       openmct.objectViews.addProvider(new FolderListView(openmct));
-    };
   };
-});
+}

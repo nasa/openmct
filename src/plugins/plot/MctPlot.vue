@@ -396,11 +396,12 @@ export default {
     this.openmct.objectViews.on('clearData', this.clearData);
     emitter.on('loadingComplete', this.loadAnnotations);
     this.openmct.selection.on('change', this.updateSelection);
-    this.setTimeContext();
-
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
-
-    this.loaded = true;
+    
+    this.$nextTick(() => {
+      this.setTimeContext();
+      this.loaded = true;
+    });
   },
   beforeUnmount() {
     this.abortController.abort();

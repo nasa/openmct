@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import MetadataListView from './components/MetadataList.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class ViewDatumAction {
   constructor(openmct) {
@@ -36,7 +36,7 @@ export default class ViewDatumAction {
     let viewContext = view.getViewContext && view.getViewContext();
     const row = viewContext.row;
     let attributes = row.getDatum && row.getDatum();
-    let component = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         MetadataListView
       },
@@ -45,15 +45,15 @@ export default class ViewDatumAction {
         attributes
       },
       template: '<MetadataListView />'
+    }, {
+      app: this._openmct.app
     });
 
     this._openmct.overlays.overlay({
-      element: component.$mount().$el,
+      element: vNode.el,
       size: 'large',
       dismissable: true,
-      onDestroy: () => {
-        //component.$destroy();
-      }
+      onDestroy: destroy
     });
   }
   appliesTo(objectPath, view = {}) {

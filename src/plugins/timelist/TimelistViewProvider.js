@@ -22,7 +22,7 @@
 
 import Timelist from './Timelist.vue';
 import { TIMELIST_TYPE } from './constants';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function TimelistViewProvider(openmct) {
   return {
@@ -38,11 +38,11 @@ export default function TimelistViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          const { vNode, destroy } = mount({
             el: element,
             components: {
               Timelist
@@ -54,11 +54,16 @@ export default function TimelistViewProvider(openmct) {
               composition: openmct.composition.get(domainObject)
             },
             template: '<timelist></timelist>'
+          }, {
+            app: openmct.app,
+            element
           });
+          _destroy = destroy;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

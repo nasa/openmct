@@ -19,35 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ClearDataAction from './ClearDataAction';
+import GlobalClearIndicator from './components/globalClearIndicator.vue';
+import mount from 'utils/mount';
 
-define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], function (
-  GlobaClearIndicator,
-  ClearDataAction,
-  Vue
-) {
-  return function plugin(appliesToObjects, options = { indicator: true }) {
+export default function plugin(appliesToObjects, options = { indicator: true }) {
     let installIndicator = options.indicator;
 
     appliesToObjects = appliesToObjects || [];
 
     return function install(openmct) {
       if (installIndicator) {
-        const element = document.createElement('div');
-        document.body.appendChild(element);
-
-        const app = Vue.createApp({
+        const { vNode } = mount({
           components: {
-            GlobalClearIndicator: GlobaClearIndicator.default
+            GlobalClearIndicator
           },
           provide: {
             openmct
           },
           template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        });
-        const component = app.mount(element);
+        },{
+          app: openmct.app,
+          element: document.createElement('div')
+        })
 
         let indicator = {
-          element: component.$el,
+          element: vNode.el,
           key: 'global-clear-indicator',
           priority: openmct.priority.DEFAULT
         };
@@ -55,7 +52,6 @@ define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], fu
         openmct.indicators.add(indicator);
       }
 
-      openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
+      openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
     };
-  };
-});
+  }

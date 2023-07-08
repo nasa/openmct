@@ -26,15 +26,14 @@
 
 <script>
 import SavedStylesView from './SavedStylesView.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct', 'stylesManager'],
   data() {
     return {
       selection: [],
-      app: null,
-      component: null
+      destroy: null
     };
   },
   mounted() {
@@ -47,16 +46,14 @@ export default {
   methods: {
     updateSelection(selection) {
       if (selection.length > 0 && selection[0].length > 0) {
-        if (this.app) {
-          this.app.unmount();
-          this.app = null;
-          this.component = null;
+        if (this.destroy) {
+          this.destroy();
           this.$el.innerHTML = '';
         }
 
         let viewContainer = document.createElement('div');
         this.$el.append(viewContainer);
-        this.app = Vue.createApp({
+        const { destroy } = mount({
           el: viewContainer,
           components: {
             SavedStylesView
@@ -67,8 +64,11 @@ export default {
             stylesManager: this.stylesManager
           },
           template: '<saved-styles-view />'
+        }, {
+          app: this.openmct.app,
+          element: viewContainer
         });
-        this.component = app.mount(viewContainer);
+        this.destroy = destroy;
       }
     }
   }

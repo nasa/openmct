@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 import Preview from '@/ui/preview/Preview.vue';
-
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class ViewLargeAction {
   constructor(openmct) {
@@ -35,6 +34,8 @@ export default class ViewLargeAction {
     this.name = 'Large View';
     this.priority = 1;
     this.showInStatusBar = true;
+    this.destroy = null;
+    this.preview = null;
   }
 
   invoke(objectPath, view) {
@@ -68,16 +69,15 @@ export default class ViewLargeAction {
       size: 'large',
       autoHide: false,
       onDestroy: () => {
-        //this.preview.$destroy();
-        this.preview = undefined;
-        delete this.preview;
+        this.destroy();
+        this.preview = null;
         view.onPreviewModeChange?.();
       }
     });
   }
 
   _getPreview(objectPath, view) {
-    this.preview = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         Preview
       },
@@ -91,8 +91,12 @@ export default class ViewLargeAction {
         };
       },
       template: '<Preview :existing-view="view"></Preview>'
+    }, {
+      app: this.openmct.app
     });
+    this.preview = vNode.componentInstance;
+    this.destroy = destroy;
 
-    return this.preview.$mount().$el;
+    return this.preview.$el;
   }
 }

@@ -22,7 +22,7 @@
 
 import FaultManagementView from './FaultManagementView.vue';
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class FaultManagementViewProvider {
   constructor(openmct) {
@@ -39,13 +39,11 @@ export default class FaultManagementViewProvider {
   }
 
   view(domainObject) {
-    let app = null;
-    let component = null;
     const openmct = this.openmct;
 
     return {
       show: (element) => {
-        app = Vue.createApp({
+        const { destroy } = mount({
           el: element,
           components: {
             FaultManagementView
@@ -55,17 +53,16 @@ export default class FaultManagementViewProvider {
             domainObject
           },
           template: '<FaultManagementView></FaultManagementView>'
+        }, {
+          app: openmct.app,
+          element
         });
-        component = app.mount(element);
+        _destroy = destroy;
       },
       destroy: () => {
-        if (!component) {
-          return;
+        if(_destroy) {
+          _destroy();
         }
-
-        app.unmount();
-        component = null;
-        app = null;
       }
     };
   }

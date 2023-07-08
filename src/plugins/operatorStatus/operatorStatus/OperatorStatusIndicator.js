@@ -19,15 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
-
+import mount from 'utils/mount';
 import AbstractStatusIndicator from '../AbstractStatusIndicator';
 import OperatorStatusComponent from './OperatorStatus.vue';
 
 export default class OperatorStatusIndicator extends AbstractStatusIndicator {
   createPopupComponent() {
     const indicator = this.getIndicator();
-    const popupElement = new Vue({
+    const { vNode } = mount({
       components: {
         OperatorStatus: OperatorStatusComponent
       },
@@ -43,9 +42,11 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
         };
       },
       template: '<operator-status :positionX="positionX" :positionY="positionY" />'
-    }).$mount();
+    }, {
+      app: this.openmct.app
+    });
 
-    return popupElement;
+    return vNode.el;
   }
 
   createIndicator() {

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ElementsPool from './ElementsPool.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function ElementsViewProvider(openmct) {
   return {
@@ -34,15 +34,13 @@ export default function ElementsViewProvider(openmct) {
       return hasValidSelection && !isOverlayPlot;
     },
     view: function (selection) {
-      let app = null;
-      let component = null;
-
+      let _destroy = null;
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
-        show: function (el) {
-          app = Vue.createApp({
-            el,
+        show: function (element) {
+          const { destroy } = mount({
+            el: element,
             components: {
               ElementsPool
             },
@@ -51,8 +49,11 @@ export default function ElementsViewProvider(openmct) {
               domainObject
             },
             template: `<ElementsPool />`
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(el);
+          _destroy = destroy;
         },
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
@@ -63,9 +64,9 @@ export default function ElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          app.unmount();
-          component = null;
-          app = null;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

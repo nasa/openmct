@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import HyperlinkLayout from './HyperlinkLayout.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function HyperlinkProvider(openmct) {
   return {
@@ -33,12 +33,11 @@ export default function HyperlinkProvider(openmct) {
     },
 
     view: function (domainObject) {
-      let app = null;
-      let component = null;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               HyperlinkLayout
@@ -47,13 +46,16 @@ export default function HyperlinkProvider(openmct) {
               domainObject
             },
             template: '<hyperlink-layout></hyperlink-layout>'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
         destroy: function () {
-          app.unmount();
-          component = null;
-          app = null;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

@@ -11,7 +11,7 @@ import TextField from './components/controls/TextField.vue';
 import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
 
 import Vue from 'vue';
-
+import mount from 'utils/mount';
 export const DEFAULT_CONTROLS_MAP = {
   autocomplete: AutoCompleteField,
   checkbox: CheckBoxField,
@@ -69,12 +69,11 @@ export default class FormControl {
    */
   _getControlViewProvider(control) {
     const self = this;
-    let rowComponent = null;
-    let app = null;
+    let _destroy = null;
 
     return {
       show(element, model, onChange) {
-        app = Vue.createApp({
+        const { vNode, destroy } = mount({
           el: element,
           components: {
             FormControlComponent: DEFAULT_CONTROLS_MAP[control]
@@ -89,16 +88,17 @@ export default class FormControl {
             };
           },
           template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
+        }, {
+          element,
+          app: self.openmct.app
         });
-        rowComponent = app.mount(element);
+        _destroy = destroy;
 
-        return rowComponent;
+        return vNode;
       },
       destroy() {
-        if(app) {
-          app.unmount();
-          rowComponent = null;
-          app = null;
+        if (_destroy) {
+          _destroy();
         }
       }
     };

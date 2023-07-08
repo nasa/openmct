@@ -20,62 +20,64 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
-  function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
+import mount from 'utils/mount';
+import FiltersView from './components/FiltersView.vue';
+
+const FILTERS_INSPECTOR_KEY = 'filters-inspector';
+export default class FiltersInspectorViewProvider {
+  constructor(openmct, supportedObjectTypesArray) {
+    this.openmct = openmct;
+    this.supportedObjectTypesArray = supportedObjectTypesArray;
+    this.key = FILTERS_INSPECTOR_KEY;
+    this.name = 'Filters';
+  }
+  canView(selection) {
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
+    return domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type);
+  }
+  view(selection) {
+    let _destroy = null;
+
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
     return {
-      key: 'filters-inspector',
-      name: 'Filters',
-      canView: function (selection) {
-        const domainObject = selection?.[0]?.[0]?.context?.item;
-
-        return domainObject && supportedObjectTypesArray.some((type) => domainObject.type === type);
+      show: function (element) {
+        const { destroy } = mount({
+          el: element,
+          components: {
+            FiltersView
+          },
+          provide: {
+            openmct
+          },
+          template: '<filters-view></filters-view>'
+        }, {
+          app: openmct.app,
+          element
+        });
+        _destroy = destroy;
       },
-      view: function (selection) {
-        let app = null;
-        let component = null;
+      showTab: function (isEditing) {
+        if (isEditing) {
+          return true;
+        }
 
-        const domainObject = selection?.[0]?.[0]?.context?.item;
+        const metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadataWithFilters = metadata
+          ? metadata.valueMetadatas.filter((value) => value.filters)
+          : [];
 
-        return {
-          show: function (element) {
-            app = Vue.createApp({
-              el: element,
-              components: {
-                FiltersView: FiltersView.default
-              },
-              provide: {
-                openmct
-              },
-              template: '<filters-view></filters-view>'
-            });
-            component = app.mount(element);
-          },
-          showTab: function (isEditing) {
-            if (isEditing) {
-              return true;
-            }
-
-            const metadata = openmct.telemetry.getMetadata(domainObject);
-            const metadataWithFilters = metadata
-              ? metadata.valueMetadatas.filter((value) => value.filters)
-              : [];
-
-            return metadataWithFilters.length;
-          },
-          priority: function () {
-            return openmct.priority.DEFAULT;
-          },
-          destroy: function () {
-            if (component) {
-              app.unmount();
-              component = null;
-              app = null;
-            }
-          }
-        };
+        return metadataWithFilters.length;
+      },
+      priority: function () {
+        return openmct.priority.DEFAULT;
+      },
+      destroy: function () {
+        if (_destroy) {
+          _destroy();
+        }
       }
     };
   }
-
-  return FiltersInspectorViewProvider;
-});
+};

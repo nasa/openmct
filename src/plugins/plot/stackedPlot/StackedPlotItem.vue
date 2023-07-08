@@ -24,7 +24,7 @@
 </template>
 <script>
 import MctPlot from '../MctPlot.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import conditionalStylesMixin from './mixins/objectStyles-mixin';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import StalenessUtils from '@/utils/staleness';
@@ -125,8 +125,8 @@ export default {
       this.removeSelectable();
     }
 
-    if (this.component) {
-      //this.component.$destroy();
+    if (this._destroy) {
+      this._destroy();
     }
 
     this.destroyStalenessListeners();
@@ -154,8 +154,8 @@ export default {
 
       this.destroyStalenessListeners();
 
-      if (this.component) {
-        //this.component.$destroy();
+      if (this._destroy) {
+        this._destroy();
         this.component = null;
         this.$el.innerHTML = '';
       }
@@ -192,7 +192,7 @@ export default {
         this.composition.load();
       }
 
-      this.component = new Vue({
+      const { vNode } = mount({
         el: viewContainer,
         components: {
           MctPlot,
@@ -246,7 +246,10 @@ export default {
                           @statusUpdated="setStatus"
                           @loadingUpdated="loadingUpdated"/>
                   </div>`
+      }, {
+        app: this.openmct.app
       });
+      this.component = vNode.componentInstance;
 
       if (this.isEditing) {
         this.setSelection();

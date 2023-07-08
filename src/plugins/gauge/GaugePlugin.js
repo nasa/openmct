@@ -22,7 +22,7 @@
 
 import GaugeViewProvider from './GaugeViewProvider';
 import GaugeFormController from './components/GaugeFormController.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],
@@ -169,7 +169,7 @@ export default function () {
   function getGaugeFormController(openmct) {
     return {
       show(element, model, onChange) {
-        const app = Vue.createApp({
+        const { vNode } = mount({
           el: element,
           components: {
             GaugeFormController
@@ -184,10 +184,12 @@ export default function () {
             };
           },
           template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
+        }, {
+          app: openmct.app,
+          element
         });
-        const rowComponent = app.mount(element);
 
-        return rowComponent;
+        return vNode.componentInstance;
       }
     };
   }

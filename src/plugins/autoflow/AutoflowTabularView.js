@@ -109,7 +109,7 @@ define([
     });
   }
 
-  AutoflowTabularView.prototype = Object.create(VueView.prototype);
+  AutoflowTabularView.prototype = Object.create(VueView.default.prototype);
 
   return AutoflowTabularView;
 });

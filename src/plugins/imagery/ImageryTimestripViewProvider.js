@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ImageryTimeView from './components/ImageryTimeView.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function ImageryTimestripViewProvider(openmct) {
   const type = 'example.imagery.time-strip.view';
@@ -48,12 +48,11 @@ export default function ImageryTimestripViewProvider(openmct) {
       );
     },
     view: function (domainObject, objectPath) {
-      let app = null;
-      let component = null;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               ImageryTimeView
@@ -64,14 +63,17 @@ export default function ImageryTimestripViewProvider(openmct) {
               objectPath: objectPath
             },
             template: '<imagery-time-view></imagery-time-view>'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
 
         destroy: function () {
-          app.unmount();
-          component = null;
-          app = null;
+          if(_destroy) {
+            _destroy();
+          }
         },
 
         getComponent() {

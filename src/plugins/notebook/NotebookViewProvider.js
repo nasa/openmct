@@ -23,6 +23,7 @@
 import Vue from 'vue';
 import Notebook from './components/Notebook.vue';
 import Agent from '@/utils/agent/Agent';
+import mount from 'utils/mount';
 
 export default class NotebookViewProvider {
   constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
@@ -40,16 +41,15 @@ export default class NotebookViewProvider {
   }
 
   view(domainObject) {
-    let app;
-    let component;
     let openmct = this.openmct;
     let snapshotContainer = this.snapshotContainer;
     let agent = new Agent(window);
     let entryUrlWhitelist = this.entryUrlWhitelist;
-
+    let _destroy = null;
+    
     return {
       show(container) {
-        app = Vue.createApp({
+        const { destroy } = mount({
           el: container,
           components: {
             Notebook
@@ -66,13 +66,16 @@ export default class NotebookViewProvider {
             };
           },
           template: '<Notebook :domain-object="domainObject"></Notebook>'
+        }, {
+          app: openmct.app,
+          element: container
         });
-        component = app.mount(container);
+        _destroy = destroy;
       },
       destroy() {
-        app.unmount();
-        component = null;
-        app = null;
+        if(_destroy) {
+          _destroy();
+        }
       }
     };
   }

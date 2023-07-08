@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ConditionWidgetComponent from './components/ConditionWidget.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function ConditionWidget(openmct) {
   return {
@@ -35,12 +35,11 @@ export default function ConditionWidget(openmct) {
       return domainObject.type === 'conditionWidget';
     },
     view: function (domainObject) {
-      let app = null;
-      let component = null;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               ConditionWidgetComponent: ConditionWidgetComponent
@@ -50,13 +49,16 @@ export default function ConditionWidget(openmct) {
               domainObject
             },
             template: '<condition-widget-component></condition-widget-component>'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
-        destroy: function (element) {
-          app.unmount();
-          component = null;
-          app = null;
+        destroy: function () {
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     },

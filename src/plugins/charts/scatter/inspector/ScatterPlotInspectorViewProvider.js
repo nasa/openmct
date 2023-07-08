@@ -1,5 +1,5 @@
 import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import PlotOptions from './PlotOptions.vue';
 
 export default function ScatterPlotInspectorViewProvider(openmct) {
@@ -16,12 +16,10 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
       return object && object.type === SCATTER_PLOT_KEY;
     },
     view: function (selection) {
-      let app = null;
-      let component = null;
-
+      let _destroy = null;
       return {
         show: function (element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               PlotOptions
@@ -31,17 +29,18 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
               domainObject: selection[0][0].context.item
             },
             template: '<plot-options></plot-options>'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            app.unmount();
-            component = null;
-            app = null;
+          if(_destroy) {
+            _destroy();
           }
         }
       };

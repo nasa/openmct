@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import LADTableConfigurationComponent from './components/LADTableConfiguration.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function LADTableConfigurationViewProvider(openmct) {
   return {
@@ -37,12 +37,11 @@ export default function LADTableConfigurationViewProvider(openmct) {
       return object?.type === 'LadTable' || object?.type === 'LadTableSet';
     },
     view(selection) {
-      let app;
-      let component;
+      let _destroy = null;
 
       return {
         show(element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               LADTableConfiguration: LADTableConfigurationComponent
@@ -51,17 +50,18 @@ export default function LADTableConfigurationViewProvider(openmct) {
               openmct
             },
             template: '<LADTableConfiguration />'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
         priority() {
           return 1;
         },
         destroy() {
-          if (app) {
-            app.unmount();
-            component = null;
-            app = null;
+          if(_destroy) {
+            _destroy();
           }
         }
       };

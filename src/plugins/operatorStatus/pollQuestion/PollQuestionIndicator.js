@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import AbstractStatusIndicator from '../AbstractStatusIndicator';
 import PollQuestionComponent from './PollQuestion.vue';
@@ -27,7 +27,7 @@ import PollQuestionComponent from './PollQuestion.vue';
 export default class PollQuestionIndicator extends AbstractStatusIndicator {
   createPopupComponent() {
     const indicator = this.getIndicator();
-    const pollQuestionElement = new Vue({
+    const { vNode } = mount({
       components: {
         PollQuestion: PollQuestionComponent
       },
@@ -43,9 +43,11 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
         };
       },
       template: '<poll-question :positionX="positionX" :positionY="positionY" />'
-    }).$mount();
+    }, {
+      app: this.openmct.app
+    });
 
-    return pollQuestionElement;
+    return vNode.el;
   }
 
   createIndicator() {

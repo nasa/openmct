@@ -23,6 +23,7 @@
 import BarGraphView from './BarGraphView.vue';
 import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function BarGraphViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -44,13 +45,14 @@ export default function BarGraphViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let app = null;
+      let _destroy = null;
       let component = null;
 
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
-          app = Vue.createApp({
+
+          const { vNode, destroy } = mount({
             el: element,
             components: {
               BarGraphView
@@ -68,13 +70,15 @@ export default function BarGraphViewProvider(openmct) {
               };
             },
             template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
+          },{
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
         destroy: function () {
-          app.unmount();
-          component = null;
-          app = null;
+          _destroy();
         },
         onClearData() {
           component.$refs.graphComponent.refreshData();

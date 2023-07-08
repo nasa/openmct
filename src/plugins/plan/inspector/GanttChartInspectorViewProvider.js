@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function GanttChartInspectorViewProvider(openmct) {
   return {
@@ -37,11 +37,11 @@ export default function GanttChartInspectorViewProvider(openmct) {
       return domainObject?.type === 'gantt-chart';
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          const { destroy } = mount({
             el: element,
             components: {
               PlanViewConfiguration
@@ -51,15 +51,18 @@ export default function GanttChartInspectorViewProvider(openmct) {
               selection: selection
             },
             template: '<plan-view-configuration></plan-view-configuration>'
+          }, {
+            app: openmct.app,
+            element
           });
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            //component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ConditionSet from './components/ConditionSet.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 
@@ -46,19 +46,18 @@ export default class ConditionSetViewProvider {
   }
 
   view(domainObject, objectPath) {
-    let app = null;
+    let _destroy = null;
     let component = null;
-    const openmct = this.openmct;
 
     return {
       show: (container, isEditing) => {
-        app = Vue.createApp({
+        const { vNode, destroy } = mount({
           el: container,
           components: {
             ConditionSet
           },
           provide: {
-            openmct,
+            openmct: this.openmct,
             domainObject,
             objectPath
           },
@@ -68,16 +67,20 @@ export default class ConditionSetViewProvider {
             };
           },
           template: '<condition-set :isEditing="isEditing"></condition-set>'
+        }, {
+          app: this.openmct.app,
+          element: container
         });
-        component = app.mount(container);
+        _destroy = destroy;
+        component = vNode.componentInstance;
       },
       onEditModeChange: (isEditing) => {
         component.isEditing = isEditing;
       },
       destroy: () => {
-        app.unmount();
-        component = null;
-        app = null;
+        if(_destroy) {
+          _destroy();
+        }
       }
     };
   }

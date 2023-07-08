@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import GaugeComponent from './components/Gauge.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function GaugeViewProvider(openmct) {
   return {
@@ -37,12 +37,11 @@ export default function GaugeViewProvider(openmct) {
       }
     },
     view: function (domainObject) {
-      let app = null;
-      let component = null;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          app = Vue.createApp({
+          const { destroy } = mount({
             el: element,
             components: {
               GaugeComponent
@@ -53,13 +52,16 @@ export default function GaugeViewProvider(openmct) {
               composition: openmct.composition.get(domainObject)
             },
             template: '<gauge-component></gauge-component>'
+          }, {
+            app: openmct.app,
+            element
           });
-          component = app.mount(element);
+          _destroy = destroy;
         },
-        destroy: function (element) {
-          app.unmount();
-          component = null;
-          app = null;
+        destroy: function () {
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     },

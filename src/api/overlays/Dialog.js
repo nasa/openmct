@@ -1,12 +1,10 @@
 import DialogComponent from './components/DialogComponent.vue';
 import Overlay from './Overlay';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 class Dialog extends Overlay {
   constructor({ iconClass, message, title, hint, timestamp, ...options }) {
-    let element = document.createElement('div');
-    document.body.appendChild(element);
-    let app = Vue.createApp({
+    const { vNode, destroy } = mount({
       components: {
         DialogComponent: DialogComponent
       },
@@ -19,18 +17,16 @@ class Dialog extends Overlay {
       },
       template: '<dialog-component></dialog-component>'
     });
-    let component = app.mount(element);
 
     super({
-      element: component.$el,
+      element: vNode.el,
       size: 'fit',
       dismissable: false,
       ...options
     });
 
     this.once('destroy', () => {
-      app.unmount();
-      document.body.removeChild(element);
+      destroy();
     });
   }
 }

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import Preview from './Preview.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import EventEmitter from 'EventEmitter';
 
 export default class PreviewAction extends EventEmitter {
@@ -47,7 +47,7 @@ export default class PreviewAction extends EventEmitter {
   }
 
   invoke(objectPath, viewOptions) {
-    let preview = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         Preview
       },
@@ -61,11 +61,12 @@ export default class PreviewAction extends EventEmitter {
         };
       },
       template: '<Preview :view-options="viewOptions"></Preview>'
+    }, {
+      app: this._openmct.app
     });
-    preview.$mount();
 
     let overlay = this._openmct.overlays.overlay({
-      element: preview.$el,
+      element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
@@ -76,7 +77,7 @@ export default class PreviewAction extends EventEmitter {
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
-        //preview.$destroy();
+        destroy();
         this.emit('isVisible', false);
       }
     });

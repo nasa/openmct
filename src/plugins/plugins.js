@@ -196,7 +196,7 @@ define([
   plugins.DisplayLayout = DisplayLayoutPlugin.default;
   plugins.FaultManagement = FaultManagementPlugin.default;
   plugins.FormActions = FormActions;
-  plugins.FolderView = FolderView;
+  plugins.FolderView = FolderView.default;
   plugins.Tabs = Tabs;
   plugins.FlexibleLayout = FlexibleLayout;
   plugins.LADTable = LADTable.default;
@@ -204,7 +204,7 @@ define([
   plugins.ObjectMigration = ObjectMigration.default;
   plugins.GoToOriginalAction = GoToOriginalAction.default;
   plugins.OpenInNewTabAction = OpenInNewTabAction.default;
-  plugins.ClearData = ClearData;
+  plugins.ClearData = ClearData.default;
   plugins.WebPage = WebPagePlugin.default;
   plugins.Espresso = Espresso.default;
   plugins.Snow = Snow.default;

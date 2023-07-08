@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import Timer from './components/Timer.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function TimerViewProvider(openmct) {
   return {
@@ -33,11 +33,11 @@ export default function TimerViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
+          const { destroy } = mount({
             el: element,
             components: {
               Timer
@@ -53,11 +53,16 @@ export default function TimerViewProvider(openmct) {
               };
             },
             template: '<timer :domain-object="domainObject" />'
+          }, {
+            app: openmct.app,
+            element
           });
+          _destroy = destroy;
         },
         destroy: function () {
-          //component.$destroy();
-          component = undefined;
+          if(_destroy) {
+            _destroy();
+          }
         }
       };
     }

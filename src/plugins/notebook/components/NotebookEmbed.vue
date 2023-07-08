@@ -49,7 +49,7 @@ import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import objectPathToUrl from '@/tools/url';
-
+import mount from 'utils/mount';
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
 
@@ -189,13 +189,15 @@ export default {
       }
     },
     annotateSnapshot() {
-      const annotateVue = new Vue({
+      const { vNode, destroy } = mount({
         template: '<div id="snap-annotation"></div>'
-      }).$mount();
+      }, {
+        app: this.openmct.app,
+      });
 
-      const painterroInstance = new PainterroInstance(annotateVue.$el);
+      const painterroInstance = new PainterroInstance(vNode.el);
       const annotateOverlay = this.openmct.overlays.overlay({
-        element: annotateVue.$el,
+        element: vNode.el,
         size: 'large',
         dismissable: false,
         buttons: [
@@ -219,9 +221,7 @@ export default {
             }
           }
         ],
-        onDestroy: () => {
-          annotateVue.$destroy(true);
-        }
+        onDestroy: destroy
       });
 
       painterroInstance.intialize();
@@ -322,7 +322,7 @@ export default {
     openSnapshotOverlay(src) {
       const self = this;
 
-      this.snapshot = new Vue({
+      const { vNode, destroy } = mount({
         data: () => {
           return {
             createdOn: this.createdOn,
@@ -337,11 +337,14 @@ export default {
           exportImage: self.exportImage
         },
         template: SnapshotTemplate
-      }).$mount();
+      }, {
+        app: this.openmct.app
+      });
 
+      this.snapshot = vNode.componentInstance;
       this.snapshotOverlay = this.openmct.overlays.overlay({
-        element: this.snapshot.$el,
-        onDestroy: () => this.snapshot.$destroy(true),
+        element: vNode.el,
+        onDestroy: destroy,
         size: 'large',
         autoHide: false,
         dismissable: true,

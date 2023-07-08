@@ -29,7 +29,7 @@
 <script>
 import * as d3Scale from 'd3-scale';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import imageryData from '../../imagery/mixins/imageryData';
 import PreviewAction from '@/ui/preview/PreviewAction';
 import _ from 'lodash';
@@ -237,8 +237,7 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        const element = document.createElement('div');
-        let app = Vue.createApp({
+        const { vNode } = mount({
           components: {
             SwimLane
           },
@@ -251,9 +250,11 @@ export default {
             };
           },
           template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
+        }, {
+          app: this.openmct.app
         });
-        let component = app.mount(element);
 
+        const component = vNode.componentInstance;
         this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
