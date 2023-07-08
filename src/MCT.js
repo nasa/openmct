@@ -372,6 +372,7 @@ define([
       });
       appLayout.mount(domElement);
       this.layout = appLayout._instance.refs.layout;
+      this.app = appLayout;
       Browse(this);
     }
 
