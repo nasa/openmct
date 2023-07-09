@@ -21,7 +21,7 @@
 -->
 <template>
   <div
-    v-if="notifications.length === 0 ? showNotificationsOverlay : notifications.length > 0"
+    v-if="notifications.length > 0 || showNotificationsOverlay"
     class="c-indicator c-indicator--clickable icon-bell"
     :class="[severityClass]"
   >
@@ -79,7 +79,7 @@ export default {
       this.showNotificationsOverlay = flag;
     },
     updateNotifications() {
-      this.notifications = this.openmct.notifications.notifications;
+      this.notifications = [...this.openmct.notifications.notifications];
       this.highest = this.openmct.notifications.highest;
     },
     notificationsCountMessage(count) {
