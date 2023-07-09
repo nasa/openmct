@@ -559,7 +559,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.seriesModels, index, series);
+      this.seriesModels[index] = series;
       this.listenTo(
         series,
         'change:xKey',

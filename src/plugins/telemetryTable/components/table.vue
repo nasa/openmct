@@ -930,7 +930,7 @@ export default {
 
       let markedRow = this.visibleRows[rowIndex];
 
-      this.$set(markedRow, 'marked', true);
+      markedRow.marked = true;
       this.pause();
 
       if (this.marking.disableMultiSelect) {
@@ -978,7 +978,7 @@ export default {
 
         for (let i = firstRowIndex; i <= lastRowIndex; i++) {
           let row = allRows[i];
-          this.$set(row, 'marked', true);
+          row.marked = true;
 
           if (row !== baseRow) {
             this.markedRows.push(row);
@@ -1020,13 +1020,13 @@ export default {
       this.configuredColumnWidths = this.columnWidths;
 
       this.visibleRows.forEach((row, i) => {
-        this.$set(this.sizingRows, i, undefined);
+        this.sizingRows[i] = undefined;
         delete this.sizingRows[i];
       });
     },
     recalculateColumnWidths() {
       this.visibleRows.forEach((row, i) => {
-        this.$set(this.sizingRows, i, row);
+        this.sizingRows[i] = row;
       });
 
       this.configuredColumnWidths = {};
@@ -1040,12 +1040,12 @@ export default {
       this.$nextTick().then(this.calculateColumnWidths);
     },
     toggleRegex(key) {
-      this.$set(this.filters, key, '');
+      this.filters[key] = '';
 
       if (this.enableRegexSearch[key] === undefined) {
-        this.$set(this.enableRegexSearch, key, true);
+        this.enableRegexSearch[key] = true;
       } else {
-        this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]);
+        this.enableRegexSearch[key] = !this.enableRegexSearch[key];
       }
     },
     isCompleteRegex(string) {

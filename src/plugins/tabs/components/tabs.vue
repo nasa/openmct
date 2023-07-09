@@ -313,7 +313,7 @@ export default {
       let oldTabs = this.tabsList.slice();
 
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.tabsList, reorderEvent.newIndex, oldTabs[reorderEvent.oldIndex]);
+        this.tabsList[reorderEvent.newIndex] = oldTabs[reorderEvent.oldIndex];
       });
     },
     onDrop(e) {
@@ -360,7 +360,7 @@ export default {
       });
       let tab = this.tabsList[tabPos];
 
-      this.$set(tab, 'status', status);
+      tab.status = status;
     },
     isTabLoaded(tab) {
       if (this.internalDomainObject.keep_alive) {

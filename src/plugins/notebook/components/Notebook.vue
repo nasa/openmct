@@ -405,7 +405,7 @@ export default {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const entryId = foundAnnotation.targets[targetId].entryId;
         if (!this.notebookAnnotations[entryId]) {
-          this.$set(this.notebookAnnotations, entryId, []);
+          this.notebookAnnotations[entryId] = [];
         }
 
         const annotationExtant = this.notebookAnnotations[entryId].some((existingAnnotation) => {

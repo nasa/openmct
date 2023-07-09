@@ -154,7 +154,7 @@ export default {
       }
 
       for (let index = 0; index < tagsFromAnnotations.length; index += 1) {
-        this.$set(this.addedTags, index, tagsFromAnnotations[index]);
+        this.addedTags[index] = tagsFromAnnotations[index];
       }
     },
     addTag() {

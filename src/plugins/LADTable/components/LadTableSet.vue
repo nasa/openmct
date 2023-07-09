@@ -147,7 +147,7 @@ export default {
       ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
       ladTable.objectPath = [domainObject, ...this.objectPath];
 
-      this.$set(this.ladTelemetryObjects, ladTable.key, []);
+      this.ladTelemetryObjects[ladTable.key] = [];
       this.ladTableObjects.push(ladTable);
 
       let composition = this.openmct.composition.get(ladTable.domainObject);
@@ -201,7 +201,7 @@ export default {
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
         telemetryObjects.push(telemetryObject);
 
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
         this.stalenessSubscription[combinedKey] = {};
         this.stalenessSubscription[combinedKey].stalenessUtils = new StalenessUtils(
@@ -236,7 +236,7 @@ export default {
         this.unwatchStaleness(combinedKey);
 
         telemetryObjects.splice(index, 1);
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
       };
     },
     unwatchStaleness(combinedKey) {

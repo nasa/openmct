@@ -196,7 +196,7 @@ export default {
       config.series.forEach(this.addSeries, this);
     },
     addSeries(series) {
-      this.$set(this.seriesModels, this.seriesModels.length, series);
+      this.seriesModels[this.seriesModels.length] = series;
     },
 
     removeSeries(plotSeries) {

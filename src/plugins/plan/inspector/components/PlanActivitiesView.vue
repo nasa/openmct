@@ -117,7 +117,7 @@ export default {
             value: this.formatDuration(selectedActivity.end - selectedActivity.start)
           }
         };
-        this.$set(this.activities, index, activity);
+        this.activities[index] = activity;
       });
     },
     sortFn(a, b) {
@@ -193,7 +193,7 @@ export default {
         value: this.formatDuration(totalTime)
       };
 
-      this.$set(this.activities, 0, activity);
+      this.activities[0] = activity;
     },
     formatDuration(duration) {
       return getPreciseDuration(duration);

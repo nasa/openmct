@@ -192,7 +192,7 @@ export default {
     reorder(reorderPlan) {
       const oldItems = this.items.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+        this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
     },
     metadataHasUnits(valueMetadatas) {

@@ -136,21 +136,21 @@ export default {
       };
 
       if (metadataWithFilters.length) {
-        this.$set(this.children, keyString, childObject);
+        this.children[keyString] = childObject;
 
         metadataWithFilters.forEach((metadatum) => {
           if (!this.globalFilters[metadatum.key]) {
-            this.$set(this.globalFilters, metadatum.key, {});
+            this.globalFilters[metadatum.key] = {};
           }
 
           if (!this.globalMetadata[metadatum.key]) {
-            this.$set(this.globalMetadata, metadatum.key, metadatum);
+            this.globalMetadata[metadatum.key] = metadatum;
           }
 
           if (!hasFiltersWithKeyString) {
             if (!this.persistedFilters[keyString]) {
-              this.$set(this.persistedFilters, keyString, {});
-              this.$set(this.persistedFilters[keyString], 'useGlobal', true);
+              this.persistedFilters[keyString] = {};
+              this.persistedFilters[keyString].useGlobal = true;
               mutateFilters = true;
             }
 
@@ -239,10 +239,10 @@ export default {
           this.containsField(keyString, key)
         ) {
           if (!this.persistedFilters[keyString][key]) {
-            this.$set(this.persistedFilters[keyString], key, {});
+            this.persistedFilters[keyString][key] = {};
           }
 
-          this.$set(this.persistedFilters[keyString], key, filters[key]);
+          this.persistedFilters[keyString][key] = filters[key];
           mutateFilters = true;
         }
       });

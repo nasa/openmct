@@ -156,7 +156,7 @@ export default {
       }
 
       for (let index = 0; index < mutableAnnotations.length; index += 1) {
-        this.$set(this.loadedAnnotations, index, mutableAnnotations[index]);
+        this.loadedAnnotations[index] = mutableAnnotations[index];
       }
     },
     updateSelection(selection) {

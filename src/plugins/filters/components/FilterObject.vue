@@ -157,26 +157,26 @@ export default {
           }
         }
       } else {
-        this.$set(this.updatedFilters[key], comparator, [valueName]);
+        this.updatedFilters[key][comparator] = [valueName];
       }
 
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     clearFilters(key) {
-      this.$set(this.updatedFilters, key, {});
+      this.updatedFilters[key] = {};
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
-        this.$set(this.updatedFilters, key, {});
+        this.updatedFilters[key] = {};
       } else {
-        this.$set(this.updatedFilters[key], comparator, value);
+        this.updatedFilters[key][comparator] = value;
       }
 
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     updateSingleSelection(key, comparator, value) {
-      this.$set(this.updatedFilters[key], comparator, [value]);
+      this.updatedFilters[key][comparator] = [value];
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     useGlobalFilter(checked) {

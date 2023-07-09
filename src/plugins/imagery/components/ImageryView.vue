@@ -898,7 +898,7 @@ export default {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const timeForAnnotation = foundAnnotation.targets[targetId].time;
         if (!this.imageryAnnotations[timeForAnnotation]) {
-          this.$set(this.imageryAnnotations, timeForAnnotation, []);
+          this.imageryAnnotations[timeForAnnotation] = [];
         }
 
         const annotationExtant = this.imageryAnnotations[timeForAnnotation].some(
@@ -962,10 +962,10 @@ export default {
           let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
           if (!valuesOnTelemetry) {
-            this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
+            this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
           }
 
-          this.$set(this.focusedImageRelatedTelemetry, key, value);
+          this.focusedImageRelatedTelemetry[key] = value;
         }
       }
 
@@ -974,7 +974,7 @@ export default {
         const transformations = this.relatedTelemetry[key];
 
         if (transformations !== undefined) {
-          this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
+          this.imageHistory[this.focusedImageIndex][key] = transformations;
         }
       });
     },
@@ -988,7 +988,7 @@ export default {
         if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
           this.relatedTelemetry[key].subscribe((datum) => {
             let valueKey = this.relatedTelemetry[key].realtime.valueKey;
-            this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+            this.latestRelatedTelemetry[key] = datum[valueKey];
           });
         }
       });
