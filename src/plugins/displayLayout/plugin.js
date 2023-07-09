@@ -27,7 +27,6 @@ import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
 import objectUtils from 'objectUtils';
-import Vue from 'vue';
 import mount from 'utils/mount';
 
 class DisplayLayoutView {
