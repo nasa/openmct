@@ -301,6 +301,8 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
+    console.debug(`🍇 Start bounds changed to ${new Date(bounds.start)}`);
+    console.debug(`🍇 End bounds changed to ${new Date(bounds.end)}`);
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 

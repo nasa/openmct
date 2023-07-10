@@ -231,6 +231,9 @@ function getHistoricalProvider() {
       return domainObject.type === 'example.imagery' && options.strategy !== 'latest';
     },
     request: (domainObject, options) => {
+      console.debug(`🖼️  Generating historical data for ${domainObject.name}`, options);
+      console.debug(`🖼️  Start time is ${new Date(options.start)}`);
+      console.debug(`🖼️  End time is ${new Date(options.end)}`);
       const delay = getImageLoadDelay(domainObject);
       let start = options.start;
       const end = Math.min(options.end, Date.now());
