@@ -152,7 +152,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   @include bodyFont($fontBaseSize);
   // background-color: $colorBodyBg;
-  background-image: url('../ui/layout/assets/images/background.png');
+  background: $bodyBg;
   background-size: cover;
   color: $colorBodyFg;
 }
