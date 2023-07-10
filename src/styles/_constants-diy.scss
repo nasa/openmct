@@ -44,7 +44,8 @@ $bodyFont: $heroFont;
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
-  @return linear-gradient(lighten($c, 5%), $c);
+  // @return linear-gradient(lighten($c, 5%), $c);
+  @return radial-gradient(rgba($colorBodyBg, 1) , rgba($colorBodyBg, .6));
 }
 
 @function pullForward($val, $amt) {
@@ -64,11 +65,12 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: #393939;
+$colorBodyBg: rgba(57, 57, 57);
 $colorBodyFg: #aaaaaa;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
-$colorHeadBg: #262626;
+// $colorHeadBg: #262626;
+$colorHeadBg: rgba($colorBodyBg, .4);
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
@@ -238,7 +240,7 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, 10%);
+$colorBtnBg: pullForward($colorBodyBg, 20%);
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
 $shdwBtnHov: inset rgba(white, 10%) 0 0 0 100px;
 $colorBtnFg: pullForward($colorBodyFg, 10%);
@@ -276,7 +278,7 @@ $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
 // Menus
-$colorMenuBg: $colorBodyBg;
+$colorMenuBg: rgba($colorBodyBg, .2);
 $colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
 $filterMenu: brightness(1.4);
@@ -325,7 +327,7 @@ $colorInspectorBg: pullForward($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 20%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderBg: rgba($colorBodyBg, .75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
@@ -546,6 +548,7 @@ $scrollContainer: $colorBodyBg;
 }
 
 @mixin themedButton($c: $colorBtnBg) {
-  background: linear-gradient(pullForward($c, 5%), $c);
+  // background: radial-gradient(pullForward($c, 5%), $c);
+  background: radial-gradient(rgba($c, 1) , rgba($c, .6));
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
