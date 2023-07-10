@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from './components/PlanActivitiesView.vue';
+import PlanActivities from './components/PlanActivitiesView.vue';
 import mount from 'utils/mount';
 
 export default function ActivityInspectorViewProvider(openmct) {
@@ -41,28 +41,30 @@ export default function ActivityInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            name: 'PlanActivitiesView',
-            components: {
-              PlanActivitiesView
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlanActivities
+              },
+              provide: {
+                openmct,
+                selection
+              },
+              template: '<PlanActivities />'
             },
-            provide: {
-              openmct,
-              selection
-            },
-            template: '<plan-activities-view></plan-activities-view>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }
