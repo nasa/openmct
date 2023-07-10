@@ -174,7 +174,7 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
-  test.only('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
     page,
     openmctConfig
   }) => {
