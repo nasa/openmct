@@ -130,6 +130,9 @@ $filterHovSubtle: brightness(1.2) contrast(1.2);
 $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
+// Background Image 
+$bodyBg: $colorBodyBg;
+
 // Object labels
 $objectLabelTypeIconOpacity: 0.7;
 $objectLabelNameColorFg: lighten($colorBodyFg, 10%);
@@ -222,7 +225,6 @@ $borderMissing: 1px dashed $colorAlert !important;
 @mixin browseFrameBorder() {
   border: $browseFrameBorder;
   border-radius: $controlCr;
-  background: red;
   &:after{
     display: block;
     content: "";
@@ -463,6 +465,7 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 // Gauges
 $colorGaugeBg: pullForward($colorBodyBg, 5%); // Gauge radial area background, meter background
 $colorGaugeValue: rgba(#fff, 0.3); // Gauge value graphic (radial sweep, bar) color
+$colorGaugeValueShadow: rgba(#fff, 0);
 $colorGaugeTextValue: #fff; // Radial gauge text value
 $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFg; // Range text color

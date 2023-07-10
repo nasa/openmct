@@ -126,6 +126,7 @@ $meterNeedleBorderRadius: 5px;
     // Filled area
     position: absolute;
     background: $colorGaugeValue;
+    box-shadow: rgba($colorGaugeValueShadow, .5) 0px 0px 12px 0px;
     // z-index: 3;
   }
 
@@ -136,6 +137,7 @@ $meterNeedleBorderRadius: 5px;
       content: '';
       display: block;
       background: $colorGaugeValue;
+
     }
   }
 

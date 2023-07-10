@@ -86,6 +86,9 @@ $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
 $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
+// Background Image 
+$bodyBg: $colorBodyBg url('../ui/layout/assets/images/background.png');
+
 // Object labels
 $objectLabelTypeIconOpacity: 0.7;
 $objectLabelNameColorFg: lighten($colorBodyFg, 10%);
@@ -164,48 +167,23 @@ $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
-$browseFrameCornerColor: 3px solid rgb(0,150,215); //Color used for the corners of frames
+$browseFrameCornerColor:  rgb(0,150,215) 4px; //Color used for the corners of frames
 
-@mixin browseFrameBorder() { // Used on main object container, only does top left and right
+@mixin browseFrameBorder() { // Used on main object container to add highlighted corners to non-hidden frames.
   border-image: radial-gradient(circle, #575757, #6c6c6c, #818181, #979797, #aeaeae);
   border-style: solid;
   padding: 10px;
-  // &:after{
-  //   display: block;
-  //   content: "";
-  //   width: 20px;
-  //   height: 20px;
-  //   position: absolute;
-  //   top: -8px;
-  //   right: -8px;
-  //   border-radius: $controlCr;
-  //   border-top: $browseFrameCornerColor;
-  //   border-right: $browseFrameCornerColor;
-  //   box-shadow: 7px -7px 12px 0px rgb(148, 148, 148, .4);
-  // }
-
-  // &:before{
-  //   display: block; 
-  //   content: "";
-  //   width: 20px;
-  //   height: 20px;
-  //   position: absolute;
-  //   top: -8px;
-  //   left: -8px;
-  //   border-radius: $controlCr;
-  //   border-top: $browseFrameCornerColor;
-  //   border-left: $browseFrameCornerColor;
-  //   box-shadow: -7px -7px 12px 0px rgb(148, 148, 148, .4);
-  // }
+ 
+  // TODO: Make variables out of this. To add a glow, add another set of linear gradients with an opacity and larger pixel size.   
   background:
-    linear-gradient(to right, rgb(0,150,215) 4px, transparent 4px) 0 0,
-    linear-gradient(to right, rgb(0,150,215) 4px, transparent 4px) 0 100%,
-    linear-gradient(to left, rgb(0,150,215) 4px, transparent 4px) 100% 0,
-    linear-gradient(to left, rgb(0,150,215) 4px, transparent 4px) 100% 100%,
-    linear-gradient(to bottom, rgb(0,150,215) 4px, transparent 4px) 0 0,
-    linear-gradient(to bottom, rgb(0,150,215) 4px, transparent 4px) 100% 0,
-    linear-gradient(to top, rgb(0,150,215) 4px, transparent 4px) 0 100%,
-    linear-gradient(to top, rgb(0,150,215) 4px, transparent 4px) 100% 100%;
+    linear-gradient(to right, $browseFrameCornerColor, transparent 4px) 0 0,
+    linear-gradient(to right, $browseFrameCornerColor, transparent 4px) 0 100%,
+    linear-gradient(to left, $browseFrameCornerColor, transparent 4px) 100% 0,
+    linear-gradient(to left, $browseFrameCornerColor, transparent 4px) 100% 100%,
+    linear-gradient(to bottom, $browseFrameCornerColor, transparent 4px) 0 0,
+    linear-gradient(to bottom, $browseFrameCornerColor, transparent 4px) 100% 0,
+    linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 0 100%,
+    linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 100% 100%;
 
   background-repeat: no-repeat;
   background-size: 20px 20px;
@@ -446,6 +424,7 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 $colorGaugeBase:  rgba(0, 95, 136);
 $colorGaugeBg: rgba($colorGaugeBase, .4); // Gauge radial area background, meter background
 $colorGaugeValue: rgba(0, 107, 153); // Gauge value graphic (radial sweep, bar) color
+$colorGaugeValueShadow: rgba(255, 255, 255, .4);
 $colorGaugeTextValue: #fff; // Radial gauge text value
 $colorGaugeMeterTextValue: #fff; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFg; // Range text color
@@ -454,6 +433,7 @@ $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+
 // Time Strip and Lists
 $colorCurrentBg: rgba($colorStatusAlert, 0.3);
 $colorCurrentFg: pullForward($colorBodyFg, 20%);
@@ -545,6 +525,7 @@ $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
+
 @mixin discreteItem() {
   background: $colorDiscreteItemBg;
   border: none;
