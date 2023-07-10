@@ -1,6 +1,4 @@
-import * as Emitter from 'tiny-emitter';
 import { toRaw } from 'vue';
-const emitter = new Emitter();
 
 export default {
   inject: ['openmct'],
@@ -36,7 +34,7 @@ export default {
           '*',
           updateObject.bind(this, object)
         );
-        emitter.once('hook:unmounted', unobserve);
+        this.$once('hook:unmounted', unobserve);
       }
     });
   },
@@ -67,11 +65,11 @@ export default {
       );
       this.openmct.menus.showMenu(event.clientX, event.clientY, menuItems, menuOptions);
       this.contextClickActive = true;
-      emitter.emit('context-click-active', true);
+      this.$emit('context-click-active', true);
     },
     onContextMenuunmounted() {
       this.contextClickActive = false;
-      emitter.emit('context-click-active', false);
+      this.$emit('context-click-active', false);
     }
   }
 };
