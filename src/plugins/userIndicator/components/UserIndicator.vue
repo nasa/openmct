@@ -76,7 +76,7 @@ export default {
 
       const dialog = this.openmct.overlays.selection({
         selectionOptions,
-        iconClass: 'info',
+        iconClass: 'alert',
         title: 'Select Role',
         message: 'Please select your role for operator status.',
         currentSelection: this.role,
