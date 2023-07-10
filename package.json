@@ -24,7 +24,7 @@
     "eslint": "8.43.0",
     "eslint-plugin-compat": "4.1.4",
     "eslint-config-prettier": "8.8.0",
-    "eslint-plugin-playwright": "0.12.0",
+    "eslint-plugin-playwright": "0.15.3",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-vue": "9.15.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
