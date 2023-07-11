@@ -24,33 +24,32 @@ import UserIndicator from './components/UserIndicator.vue';
 import Vue from 'vue';
 
 export default function UserIndicatorPlugin() {
+  function addIndicator(openmct) {
+    const userIndicator = new Vue({
+      components: {
+        UserIndicator
+      },
+      provide: {
+        openmct: openmct
+      },
+      template: '<UserIndicator />'
+    });
 
-    function addIndicator(openmct) {
-        const userIndicator = new Vue ({
-            components: {
-                UserIndicator
-            },
-            provide: {
-                openmct: openmct
-            },
-            template: '<UserIndicator />'
-        });
+    openmct.indicators.add({
+      key: 'user-indicator',
+      element: userIndicator.$mount().$el,
+      priority: openmct.priority.HIGH
+    });
+  }
 
-        openmct.indicators.add({
-            key: 'user-indicator',
-            element: userIndicator.$mount().$el,
-            priority: openmct.priority.HIGH
-        });
+  return function install(openmct) {
+    if (openmct.user.hasProvider()) {
+      addIndicator(openmct);
+    } else {
+      // back up if user provider added after indicator installed
+      openmct.user.on('providerAdded', () => {
+        addIndicator(openmct);
+      });
     }
-
-    return function install(openmct) {
-        if (openmct.user.hasProvider()) {
-            addIndicator(openmct);
-        } else {
-            // back up if user provider added after indicator installed
-            openmct.user.on('providerAdded', () => {
-                addIndicator(openmct);
-            });
-        }
-    };
+  };
 }

@@ -120,33 +120,44 @@ const theme = 'espresso';
  *
  * @type {string}
  */
-const myItemsFolderName = "My Items";
+const myItemsFolderName = 'My Items';
 
 exports.test = test.extend({
-    // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
-    theme: [theme, { option: true }],
-    // eslint-disable-next-line no-shadow
-    page: async ({ page, theme }, use, testInfo) => {
-        // eslint-disable-next-line playwright/no-conditional-in-test
-        if (theme === 'snow') {
-            //inject snow theme
-            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
-        }
-
-        // Attach info about the currently running test and its project.
-        // This will be used by appActions to fill in the created
-        // domain object's notes.
-        page.testNotes = [
-            `${testInfo.titlePath.join('\n')}`,
-            `${testInfo.project.name}`
-        ].join('\n');
-
-        await use(page);
-    },
-    myItemsFolderName: [myItemsFolderName, { option: true }],
-    // eslint-disable-next-line no-shadow
-    openmctConfig: async ({ myItemsFolderName }, use) => {
-        await use({ myItemsFolderName });
+  // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
+  theme: [theme, { option: true }],
+  // eslint-disable-next-line no-shadow
+  page: async ({ page, theme }, use, testInfo) => {
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (theme === 'snow') {
+      //inject snow theme
+      await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
     }
+
+    // Attach info about the currently running test and its project.
+    // This will be used by appActions to fill in the created
+    // domain object's notes.
+    page.testNotes = [`${testInfo.titlePath.join('\n')}`, `${testInfo.project.name}`].join('\n');
+
+    await use(page);
+  },
+  myItemsFolderName: [myItemsFolderName, { option: true }],
+  // eslint-disable-next-line no-shadow
+  openmctConfig: async ({ myItemsFolderName }, use) => {
+    await use({ myItemsFolderName });
+  }
 });
 exports.expect = expect;
+
+/**
+ * Takes a readable stream and returns a string.
+ * @param {ReadableStream} readable - the readable stream
+ * @return {Promise<String>} the stringified stream
+ */
+exports.streamToString = async function (readable) {
+  let result = '';
+  for await (const chunk of readable) {
+    result += chunk;
+  }
+
+  return result;
+};

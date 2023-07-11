@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 const PRIORITIES = Object.freeze({
-    HIGH: 1000,
-    DEFAULT: 0,
-    LOW: -1000
+  HIGH: 1000,
+  DEFAULT: 0,
+  LOW: -1000
 });
 export default PRIORITIES;

@@ -27,168 +27,167 @@ import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 
 export default class CreateAction extends PropertiesAction {
-    #transaction;
+  #transaction;
 
-    constructor(openmct, type, parentDomainObject) {
-        super(openmct);
+  constructor(openmct, type, parentDomainObject) {
+    super(openmct);
 
-        this.type = type;
-        this.parentDomainObject = parentDomainObject;
-        this.#transaction = null;
+    this.type = type;
+    this.parentDomainObject = parentDomainObject;
+    this.#transaction = null;
+  }
+
+  invoke() {
+    this._showCreateForm(this.type);
+  }
+
+  /**
+   * @private
+   */
+  async _onSave(changes) {
+    let parentDomainObjectPath;
+
+    Object.entries(changes).forEach(([key, value]) => {
+      if (key === 'location') {
+        parentDomainObjectPath = value;
+
+        return;
+      }
+
+      const existingValue = this.domainObject[key];
+      if (!(existingValue instanceof Array) && typeof existingValue === 'object') {
+        value = _.merge(existingValue, value);
+      }
+
+      _.set(this.domainObject, key, value);
+    });
+
+    const parentDomainObject = this.openmct.objects.toMutable(parentDomainObjectPath[0]);
+
+    this.domainObject.modified = Date.now();
+    this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
+    this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;
+
+    // Show saving progress dialog
+    let dialog = this.openmct.overlays.progressDialog({
+      progressPerc: 'unknown',
+      message:
+        'Do not navigate away from this page or close this browser tab while this message is displayed.',
+      iconClass: 'info',
+      title: 'Saving'
+    });
+
+    try {
+      await this.openmct.objects.save(this.domainObject);
+      const compositionCollection = await this.openmct.composition.get(parentDomainObject);
+      compositionCollection.add(this.domainObject);
+      await this.saveTransaction();
+
+      this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
+
+      this.openmct.notifications.info('Save successful');
+    } catch (err) {
+      console.error(err);
+      this.openmct.notifications.error(`Error saving objects: ${err}`);
+    } finally {
+      this.openmct.objects.destroyMutable(parentDomainObject);
+      dialog.dismiss();
+    }
+  }
+
+  /**
+   * @private
+   */
+  _onCancel() {
+    this.#transaction.cancel().then(() => {
+      this.openmct.objects.endTransaction();
+      this.#transaction = null;
+    });
+  }
+
+  /**
+   * @private
+   */
+  async _navigateAndEdit(domainObject, parentDomainObjectpath) {
+    let objectPath;
+    let self = this;
+    if (parentDomainObjectpath) {
+      objectPath = parentDomainObjectpath && [domainObject].concat(parentDomainObjectpath);
+    } else {
+      objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
     }
 
-    invoke() {
-        this._showCreateForm(this.type);
+    const url =
+      '#/browse/' +
+      objectPath
+        .map((object) => object && this.openmct.objects.makeKeyString(object.identifier))
+        .reverse()
+        .join('/');
+
+    function editObject() {
+      const objectView = self.openmct.objectViews.get(domainObject, objectPath)[0];
+      const canEdit =
+        objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
+
+      if (canEdit) {
+        self.openmct.editor.edit();
+      }
     }
 
-    /**
-     * @private
-     */
-    async _onSave(changes) {
-        let parentDomainObjectPath;
+    this.openmct.router.once('afterNavigation', editObject);
 
-        Object.entries(changes).forEach(([key, value]) => {
-            if (key === 'location') {
-                parentDomainObjectPath = value;
+    this.openmct.router.navigate(url);
+  }
 
-                return;
-            }
+  /**
+   * @private
+   */
+  _showCreateForm(type) {
+    const typeDefinition = this.openmct.types.get(type);
+    const definition = typeDefinition.definition;
+    const domainObject = {
+      name: `Unnamed ${definition.name}`,
+      type,
+      identifier: {
+        key: uuid(),
+        namespace: this.parentDomainObject.identifier.namespace
+      }
+    };
 
-            const existingValue = this.domainObject[key];
-            if (!(existingValue instanceof Array) && (typeof existingValue === 'object')) {
-                value = _.merge(existingValue, value);
-            }
+    this.domainObject = this.openmct.objects.toMutable(domainObject);
 
-            _.set(this.domainObject, key, value);
-        });
-
-        const parentDomainObject = this.openmct.objects.toMutable(parentDomainObjectPath[0]);
-
-        // TODO REMOVE FOR OMM-RELEASE-5.0
-        if (!parentDomainObject.identifier.namespace && parentDomainObject.key) {
-            console.error(`parent namespace in key: ${parentDomainObject.key}`);
-        }
-
-        this.domainObject.modified = Date.now();
-        this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
-        this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;
-
-        // Show saving progress dialog
-        let dialog = this.openmct.overlays.progressDialog({
-            progressPerc: 'unknown',
-            message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
-            iconClass: 'info',
-            title: 'Saving'
-        });
-
-        try {
-            await this.openmct.objects.save(this.domainObject);
-            const compositionCollection = await this.openmct.composition.get(parentDomainObject);
-            compositionCollection.add(this.domainObject);
-            await this.saveTransaction();
-
-            this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
-
-            this.openmct.notifications.info('Save successful');
-        } catch (err) {
-            console.error(err);
-            this.openmct.notifications.error(`Error saving objects: ${err}`);
-        } finally {
-            this.openmct.objects.destroyMutable(parentDomainObject);
-            dialog.dismiss();
-        }
-
+    if (definition.initialize) {
+      definition.initialize(this.domainObject);
     }
 
-    /**
-     * @private
-     */
-    _onCancel() {
-        this.#transaction.cancel().then(() => {
-            this.openmct.objects.endTransaction();
-            this.#transaction = null;
-        });
+    const createWizard = new CreateWizard(this.openmct, this.domainObject, this.parentDomainObject);
+    const formStructure = createWizard.getFormStructure(true);
+    formStructure.title = 'Create a New ' + definition.name;
+
+    this.startTransaction();
+
+    this.openmct.forms
+      .showForm(formStructure)
+      .then(this._onSave.bind(this))
+      .catch(this._onCancel.bind(this))
+      .finally(() => {
+        this.openmct.objects.destroyMutable(this.domainObject);
+      });
+  }
+
+  startTransaction() {
+    if (!this.openmct.objects.isTransactionActive()) {
+      this.#transaction = this.openmct.objects.startTransaction();
+    }
+  }
+
+  async saveTransaction() {
+    if (!this.#transaction) {
+      return;
     }
 
-    /**
-     * @private
-     */
-    async _navigateAndEdit(domainObject, parentDomainObjectpath) {
-        let objectPath;
-        let self = this;
-        if (parentDomainObjectpath) {
-            objectPath = parentDomainObjectpath && [domainObject].concat(parentDomainObjectpath);
-        } else {
-            objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
-        }
-
-        const url = '#/browse/' + objectPath
-            .map(object => object && this.openmct.objects.makeKeyString(object.identifier))
-            .reverse()
-            .join('/');
-
-        function editObject() {
-            const objectView = self.openmct.objectViews.get(domainObject, objectPath)[0];
-            const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
-
-            if (canEdit) {
-                self.openmct.editor.edit();
-            }
-        }
-
-        this.openmct.router.once('afterNavigation', editObject);
-
-        this.openmct.router.navigate(url);
-    }
-
-    /**
-     * @private
-     */
-    _showCreateForm(type) {
-        const typeDefinition = this.openmct.types.get(type);
-        const definition = typeDefinition.definition;
-        const domainObject = {
-            name: `Unnamed ${definition.name}`,
-            type,
-            identifier: {
-                key: uuid(),
-                namespace: this.parentDomainObject.identifier.namespace
-            }
-        };
-
-        this.domainObject = this.openmct.objects.toMutable(domainObject);
-
-        if (definition.initialize) {
-            definition.initialize(this.domainObject);
-        }
-
-        const createWizard = new CreateWizard(this.openmct, this.domainObject, this.parentDomainObject);
-        const formStructure = createWizard.getFormStructure(true);
-        formStructure.title = 'Create a New ' + definition.name;
-
-        this.startTransaction();
-
-        this.openmct.forms.showForm(formStructure)
-            .then(this._onSave.bind(this))
-            .catch(this._onCancel.bind(this))
-            .finally(() => {
-                this.openmct.objects.destroyMutable(this.domainObject);
-            });
-    }
-
-    startTransaction() {
-        if (!this.openmct.objects.isTransactionActive()) {
-            this.#transaction = this.openmct.objects.startTransaction();
-        }
-    }
-
-    async saveTransaction() {
-        if (!this.#transaction) {
-            return;
-        }
-
-        await this.#transaction.commit();
-        this.openmct.objects.endTransaction();
-        this.#transaction = null;
-    }
+    await this.#transaction.commit();
+    this.openmct.objects.endTransaction();
+    this.#transaction = null;
+  }
 }

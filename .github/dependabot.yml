@@ -1,35 +1,38 @@
-
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"  
+      interval: 'weekly'
     open-pull-requests-limit: 10
     labels:
-      - "pr:e2e"
-      - "type:maintenance"
-      - "dependencies"
-      - "pr:daveit"
-      - "pr:platform"
+      - 'pr:daveit'
+      - 'pr:e2e'
+      - 'type:maintenance'
+      - 'dependencies'
+      - 'pr:platform'
     ignore:
       #We have to source the playwright container which is not detected by Dependabot
-      - dependency-name: "@playwright/test"
-      - dependency-name: "playwright-core"
+      - dependency-name: '@playwright/test'
+      - dependency-name: 'playwright-core'
       #Lots of noise in these type patch releases.
-      - dependency-name: "@babel/eslint-parser"
-        update-types: ["version-update:semver-patch"] 
-      - dependency-name: "eslint-plugin-vue"
-        update-types: ["version-update:semver-patch"]
-      - dependency-name: "babel-loader"
-        update-types: ["version-update:semver-patch"]
-      - dependency-name: "sinon"
-        update-types: ["version-update:semver-patch"]
-  - package-ecosystem: "github-actions"
-    directory: "/"
+      - dependency-name: '@babel/eslint-parser'
+        update-types: ['version-update:semver-patch']
+      - dependency-name: 'eslint-plugin-vue'
+        update-types: ['version-update:semver-patch']
+      - dependency-name: 'babel-loader'
+        update-types: ['version-update:semver-patch']
+      - dependency-name: 'sinon'
+        update-types: ['version-update:semver-patch']
+      - dependency-name: 'moment-timezone'
+        update-types: ['version-update:semver-patch']
+      - dependency-name: '@types/lodash'
+        update-types: ['version-update:semver-patch']
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"    
+      interval: 'daily'
     labels:
-      - "type:maintenance"
-      - "dependencies"
-      - "pr:daveit"
+      - 'pr:daveit'
+      - 'type:maintenance'
+      - 'dependencies'

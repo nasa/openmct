@@ -20,37 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './flexibleLayoutViewProvider',
-    './utils/container',
-    './toolbarProvider'
-], function (
-    FlexibleLayoutViewProvider,
-    Container,
-    ToolBarProvider
+define(['./flexibleLayoutViewProvider', './utils/container', './toolbarProvider'], function (
+  FlexibleLayoutViewProvider,
+  Container,
+  ToolBarProvider
 ) {
-    return function plugin() {
+  return function plugin() {
+    return function install(openmct) {
+      openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
 
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
+      openmct.types.addType('flexible-layout', {
+        name: 'Flexible Layout',
+        creatable: true,
+        description:
+          'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
+        cssClass: 'icon-flexible-layout',
+        initialize: function (domainObject) {
+          domainObject.configuration = {
+            containers: [new Container.default(50), new Container.default(50)],
+            rowsLayout: false
+          };
+          domainObject.composition = [];
+        }
+      });
 
-            openmct.types.addType('flexible-layout', {
-                name: "Flexible Layout",
-                creatable: true,
-                description: "A fluid, flexible layout canvas that can display multiple objects in rows or columns.",
-                cssClass: 'icon-flexible-layout',
-                initialize: function (domainObject) {
-                    domainObject.configuration = {
-                        containers: [new Container.default(50), new Container.default(50)],
-                        rowsLayout: false
-                    };
-                    domainObject.composition = [];
-                }
-            });
+      let toolbar = ToolBarProvider.default(openmct);
 
-            let toolbar = ToolBarProvider.default(openmct);
-
-            openmct.toolbars.addProvider(toolbar);
-        };
+      openmct.toolbars.addProvider(toolbar);
     };
+  };
 });

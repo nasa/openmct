@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 Collection of Visual Tests set to run with modified init scripts to inject plugins not otherwise available in the default contexts.
 
@@ -40,23 +40,23 @@ const path = require('path');
 const CUSTOM_NAME = 'CUSTOM_NAME';
 
 test.describe('Visual - addInit', () => {
-    test.use({
-        clockOptions: {
-            now: 0, //Set browser clock to UNIX Epoch
-            shouldAdvanceTime: false //Don't advance the clock
-        }
+  test.use({
+    clockOptions: {
+      now: 0, //Set browser clock to UNIX Epoch
+      shouldAdvanceTime: false //Don't advance the clock
+    }
+  });
+
+  test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
+    await page.addInitScript({
+      path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js')
     });
+    //Go to baseURL
+    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
 
-    test('Restricted Notebook is visually correct @addInit @unstable', async ({ page, theme }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js') });
-        //Go to baseURL
-        await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 
-        await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
-
-        // Take a snapshot of the newly created CUSTOM_NAME notebook
-        await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
-
-    });
+    // Take a snapshot of the newly created CUSTOM_NAME notebook
+    await percySnapshot(page, `Restricted Notebook with CUSTOM_NAME (theme: '${theme}')`);
+  });
 });

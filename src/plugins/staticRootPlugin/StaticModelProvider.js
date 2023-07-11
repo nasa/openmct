@@ -29,139 +29,171 @@
 import objectUtils from 'objectUtils';
 
 class StaticModelProvider {
-    constructor(importData, rootIdentifier) {
-        this.objectMap = {};
-        this.rewriteModel(importData, rootIdentifier);
+  constructor(importData, rootIdentifier) {
+    this.objectMap = {};
+    this.rewriteModel(importData, rootIdentifier);
+  }
+
+  /**
+   * Standard "Get".
+   */
+  get(identifier) {
+    const keyString = objectUtils.makeKeyString(identifier);
+    if (this.objectMap[keyString]) {
+      return this.objectMap[keyString];
     }
 
-    /**
-     * Standard "Get".
-     */
-    get(identifier) {
-        const keyString = objectUtils.makeKeyString(identifier);
-        if (this.objectMap[keyString]) {
-            return this.objectMap[keyString];
-        }
+    throw new Error(keyString + ' not found in import models.');
+  }
 
-        throw new Error(keyString + ' not found in import models.');
+  parseObjectLeaf(objectLeaf, idMap, newRootNamespace, oldRootNamespace) {
+    Object.keys(objectLeaf).forEach((nodeKey) => {
+      if (idMap.get(nodeKey)) {
+        const newIdentifier = objectUtils.makeKeyString({
+          namespace: newRootNamespace,
+          key: idMap.get(nodeKey)
+        });
+        objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
+        delete objectLeaf[nodeKey];
+        objectLeaf[newIdentifier] = this.parseTreeLeaf(
+          newIdentifier,
+          objectLeaf[newIdentifier],
+          idMap,
+          newRootNamespace,
+          oldRootNamespace
+        );
+      } else {
+        objectLeaf[nodeKey] = this.parseTreeLeaf(
+          nodeKey,
+          objectLeaf[nodeKey],
+          idMap,
+          newRootNamespace,
+          oldRootNamespace
+        );
+      }
+    });
+
+    return objectLeaf;
+  }
+
+  parseArrayLeaf(arrayLeaf, idMap, newRootNamespace, oldRootNamespace) {
+    return arrayLeaf.map((leafValue, index) =>
+      this.parseTreeLeaf(null, leafValue, idMap, newRootNamespace, oldRootNamespace)
+    );
+  }
+
+  parseBranchedLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace) {
+    if (Array.isArray(branchedLeafValue)) {
+      return this.parseArrayLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace);
+    } else {
+      return this.parseObjectLeaf(branchedLeafValue, idMap, newRootNamespace, oldRootNamespace);
+    }
+  }
+
+  parseTreeLeaf(leafKey, leafValue, idMap, newRootNamespace, oldRootNamespace) {
+    if (leafValue === null || leafValue === undefined) {
+      return leafValue;
     }
 
-    parseObjectLeaf(objectLeaf, idMap, namespace) {
-        Object.keys(objectLeaf).forEach((nodeKey) => {
-            if (idMap.get(nodeKey)) {
-                const newIdentifier = objectUtils.makeKeyString({
-                    namespace,
-                    key: idMap.get(nodeKey)
-                });
-                objectLeaf[newIdentifier] = { ...objectLeaf[nodeKey] };
-                delete objectLeaf[nodeKey];
-                objectLeaf[newIdentifier] = this.parseTreeLeaf(newIdentifier, objectLeaf[newIdentifier], idMap, namespace);
-            } else {
-                objectLeaf[nodeKey] = this.parseTreeLeaf(nodeKey, objectLeaf[nodeKey], idMap, namespace);
-            }
+    const hasChild = typeof leafValue === 'object';
+    if (hasChild) {
+      return this.parseBranchedLeaf(leafValue, idMap, newRootNamespace, oldRootNamespace);
+    }
+
+    if (leafKey === 'key') {
+      let mappedLeafValue;
+      if (oldRootNamespace) {
+        mappedLeafValue = idMap.get(
+          objectUtils.makeKeyString({
+            namespace: oldRootNamespace,
+            key: leafValue
+          })
+        );
+      } else {
+        mappedLeafValue = idMap.get(leafValue);
+      }
+
+      return mappedLeafValue ?? leafValue;
+    } else if (leafKey === 'namespace') {
+      // Only rewrite the namespace if it matches the old root namespace.
+      // This is to prevent rewriting namespaces of objects that are not
+      // children of the root object (e.g.: objects from a telemetry dictionary)
+      return leafValue === oldRootNamespace ? newRootNamespace : leafValue;
+    } else if (leafKey === 'location') {
+      const mappedLeafValue = idMap.get(leafValue);
+      if (!mappedLeafValue) {
+        return null;
+      }
+
+      const newLocationIdentifier = objectUtils.makeKeyString({
+        namespace: newRootNamespace,
+        key: mappedLeafValue
+      });
+
+      return newLocationIdentifier;
+    } else {
+      const mappedLeafValue = idMap.get(leafValue);
+      if (mappedLeafValue) {
+        const newIdentifier = objectUtils.makeKeyString({
+          namespace: newRootNamespace,
+          key: mappedLeafValue
         });
 
-        return objectLeaf;
+        return newIdentifier;
+      } else {
+        return leafValue;
+      }
     }
+  }
 
-    parseArrayLeaf(arrayLeaf, idMap, namespace) {
-        return arrayLeaf.map((leafValue, index) => this.parseTreeLeaf(
-            null, leafValue, idMap, namespace));
-    }
+  rewriteObjectIdentifiers(importData, rootIdentifier) {
+    const { namespace: oldRootNamespace } = objectUtils.parseKeyString(importData.rootId);
+    const { namespace: newRootNamespace } = rootIdentifier;
+    const idMap = new Map();
+    const objectTree = importData.openmct;
 
-    parseBranchedLeaf(branchedLeafValue, idMap, namespace) {
-        if (Array.isArray(branchedLeafValue)) {
-            return this.parseArrayLeaf(branchedLeafValue, idMap, namespace);
-        } else {
-            return this.parseObjectLeaf(branchedLeafValue, idMap, namespace);
-        }
-    }
+    Object.keys(objectTree).forEach((originalId, index) => {
+      let newId = index.toString();
+      if (originalId === importData.rootId) {
+        newId = rootIdentifier.key;
+      }
 
-    parseTreeLeaf(leafKey, leafValue, idMap, namespace) {
-        if (leafValue === null || leafValue === undefined) {
-            return leafValue;
-        }
+      idMap.set(originalId, newId);
+    });
 
-        const hasChild = typeof leafValue === 'object';
-        if (hasChild) {
-            return this.parseBranchedLeaf(leafValue, idMap, namespace);
-        }
+    const newTree = this.parseTreeLeaf(null, objectTree, idMap, newRootNamespace, oldRootNamespace);
 
-        if (leafKey === 'key') {
-            return idMap.get(leafValue);
-        } else if (leafKey === 'namespace') {
-            return namespace;
-        } else if (leafKey === 'location') {
-            if (idMap.get(leafValue)) {
-                const newLocationIdentifier = objectUtils.makeKeyString({
-                    namespace,
-                    key: idMap.get(leafValue)
-                });
+    return newTree;
+  }
 
-                return newLocationIdentifier;
-            }
+  /**
+   * Converts all objects in an object make from old format objects to new
+   * format objects.
+   */
+  convertToNewObjects(oldObjectMap) {
+    return Object.keys(oldObjectMap).reduce(function (newObjectMap, key) {
+      newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
 
-            return null;
-        } else if (idMap.get(leafValue)) {
-            const newIdentifier = objectUtils.makeKeyString({
-                namespace,
-                key: idMap.get(leafValue)
-            });
+      return newObjectMap;
+    }, {});
+  }
 
-            return newIdentifier;
-        } else {
-            return leafValue;
-        }
-    }
+  /* Set the root location correctly for a top-level object */
+  setRootLocation(objectMap, rootIdentifier) {
+    objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
 
-    rewriteObjectIdentifiers(importData, rootIdentifier) {
-        const namespace = rootIdentifier.namespace;
-        const idMap = new Map();
-        const objectTree = importData.openmct;
+    return objectMap;
+  }
 
-        Object.keys(objectTree).forEach((originalId, index) => {
-            let newId = index.toString();
-            if (originalId === importData.rootId) {
-                newId = rootIdentifier.key;
-            }
-
-            idMap.set(originalId, newId);
-        });
-
-        const newTree = this.parseTreeLeaf(null, objectTree, idMap, namespace);
-
-        return newTree;
-    }
-
-    /**
-     * Converts all objects in an object make from old format objects to new
-     * format objects.
-     */
-    convertToNewObjects(oldObjectMap) {
-        return Object.keys(oldObjectMap)
-            .reduce(function (newObjectMap, key) {
-                newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
-
-                return newObjectMap;
-            }, {});
-    }
-
-    /* Set the root location correctly for a top-level object */
-    setRootLocation(objectMap, rootIdentifier) {
-        objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
-
-        return objectMap;
-    }
-
-    /**
-     * Takes importData (as provided by the ImportExport plugin) and exposes
-     * an object provider to fetch those objects.
-     */
-    rewriteModel(importData, rootIdentifier) {
-        const oldFormatObjectMap = this.rewriteObjectIdentifiers(importData, rootIdentifier);
-        const newFormatObjectMap = this.convertToNewObjects(oldFormatObjectMap);
-        this.objectMap = this.setRootLocation(newFormatObjectMap, rootIdentifier);
-    }
+  /**
+   * Takes importData (as provided by the ImportExport plugin) and exposes
+   * an object provider to fetch those objects.
+   */
+  rewriteModel(importData, rootIdentifier) {
+    const oldFormatObjectMap = this.rewriteObjectIdentifiers(importData, rootIdentifier);
+    const newFormatObjectMap = this.convertToNewObjects(oldFormatObjectMap);
+    this.objectMap = this.setRootLocation(newFormatObjectMap, rootIdentifier);
+  }
 }
 
 export default StaticModelProvider;

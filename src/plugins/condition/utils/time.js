@@ -21,57 +21,57 @@
  *****************************************************************************/
 
 function updateLatestTimeStamp(timestamp, timeSystems) {
-    let latest = {};
+  let latest = {};
 
-    timeSystems.forEach(timeSystem => {
-        latest[timeSystem.key] = timestamp[timeSystem.key];
-    });
+  timeSystems.forEach((timeSystem) => {
+    latest[timeSystem.key] = timestamp[timeSystem.key];
+  });
 
-    return latest;
+  return latest;
 }
 
 export function getLatestTimestamp(
-    currentTimestamp,
-    compareTimestamp,
-    timeSystems,
-    currentTimeSystem
+  currentTimestamp,
+  compareTimestamp,
+  timeSystems,
+  currentTimeSystem
 ) {
-    let latest = { ...currentTimestamp };
-    const compare = { ...compareTimestamp };
-    const key = currentTimeSystem.key;
+  let latest = { ...currentTimestamp };
+  const compare = { ...compareTimestamp };
+  const key = currentTimeSystem.key;
 
-    if (!latest || !latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems);
-    }
+  if (!latest || !latest[key]) {
+    latest = updateLatestTimeStamp(compare, timeSystems);
+  }
 
-    if (compare[key] > latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems);
-    }
+  if (compare[key] > latest[key]) {
+    latest = updateLatestTimeStamp(compare, timeSystems);
+  }
 
-    return latest;
+  return latest;
 }
 
 export function checkIfOld(callback, timeout) {
-    let oldCheckTimer = setTimeout(() => {
+  let oldCheckTimer = setTimeout(() => {
+    clearTimeout(oldCheckTimer);
+    callback();
+  }, timeout);
+
+  return {
+    update: (data) => {
+      if (oldCheckTimer) {
         clearTimeout(oldCheckTimer);
-        callback();
-    }, timeout);
+      }
 
-    return {
-        update: (data) => {
-            if (oldCheckTimer) {
-                clearTimeout(oldCheckTimer);
-            }
-
-            oldCheckTimer = setTimeout(() => {
-                clearTimeout(oldCheckTimer);
-                callback(data);
-            }, timeout);
-        },
-        clear: () => {
-            if (oldCheckTimer) {
-                clearTimeout(oldCheckTimer);
-            }
-        }
-    };
+      oldCheckTimer = setTimeout(() => {
+        clearTimeout(oldCheckTimer);
+        callback(data);
+      }, timeout);
+    },
+    clear: () => {
+      if (oldCheckTimer) {
+        clearTimeout(oldCheckTimer);
+      }
+    }
+  };
 }

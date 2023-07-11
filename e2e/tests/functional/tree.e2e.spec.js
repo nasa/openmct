@@ -22,151 +22,158 @@
 
 const { test, expect } = require('../../pluginFixtures.js');
 const {
-    createDomainObjectWithDefaults,
-    openObjectTreeContextMenu
+  createDomainObjectWithDefaults,
+  openObjectTreeContextMenu
 } = require('../../appActions.js');
 
 test.describe('Main Tree', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/5975'
     });
 
-    test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({ page }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/5975'
-        });
-
-        const folder = await createDomainObjectWithDefaults(page, {
-            type: 'Folder'
-        });
-
-        await page.getByTitle('Show selected item in tree').click();
-
-        const clock = await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            parent: folder.uuid
-        });
-
-        await expandTreePaneItemByName(page, folder.name);
-        await assertTreeItemIsVisible(page, clock.name);
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
     });
 
-    test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({ page, openmctConfig }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/6391'
-        });
+    await page.getByTitle('Show selected item in tree').click();
 
-        const { myItemsFolderName } = openmctConfig;
-        const page2 = await page.context().newPage();
-
-        // Both pages: Go to baseURL
-        await Promise.all([
-            page.goto('./', { waitUntil: 'networkidle' }),
-            page2.goto('./', { waitUntil: 'networkidle' })
-        ]);
-
-        const page1Folder = await createDomainObjectWithDefaults(page, {
-            type: 'Folder'
-        });
-
-        await expandTreePaneItemByName(page2, myItemsFolderName);
-        await assertTreeItemIsVisible(page2, page1Folder.name);
+    const clock = await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      parent: folder.uuid
     });
 
-    test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({ page, openmctConfig }) => {
-        test.info().annotations.push({
-            type: 'issue',
-            description: 'https://github.com/nasa/openmct/issues/6391'
-        });
+    await expandTreePaneItemByName(page, folder.name);
+    await assertTreeItemIsVisible(page, clock.name);
+  });
 
-        const { myItemsFolderName } = openmctConfig;
-        const page2 = await page.context().newPage();
-
-        // Both pages: Go to baseURL
-        await Promise.all([
-            page.goto('./', { waitUntil: 'networkidle' }),
-            page2.goto('./', { waitUntil: 'networkidle' })
-        ]);
-
-        const page1Folder = await createDomainObjectWithDefaults(page, {
-            type: 'Folder'
-        });
-
-        await expandTreePaneItemByName(page2, myItemsFolderName);
-        await assertTreeItemIsVisible(page2, page1Folder.name);
+  test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({
+    page,
+    openmctConfig
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6391'
     });
 
-    test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
+    const { myItemsFolderName } = openmctConfig;
+    const page2 = await page.context().newPage();
 
-        await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: 'Foo'
-        });
+    // Both pages: Go to baseURL
+    await Promise.all([
+      page.goto('./', { waitUntil: 'networkidle' }),
+      page2.goto('./', { waitUntil: 'networkidle' })
+    ]);
 
-        await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: 'Bar'
-        });
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: 'Baz'
-        });
-
-        const clock1 = await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            name: 'aaa'
-        });
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            name: 'www'
-        });
-
-        // Expand the root folder
-        await expandTreePaneItemByName(page, myItemsFolderName);
-
-        await test.step("Reorders objects with the same tree depth", async () => {
-            await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
-            await renameObjectFromContextMenu(page, clock1.url, 'zzz');
-            await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
-        });
-
-        await test.step("Reorders links to objects as well as original objects", async () => {
-            await page.click('role=treeitem[name=/Bar/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
-            await page.click('role=treeitem[name=/Baz/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
-            await page.click('role=treeitem[name=/Foo/]');
-            await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-            await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
-            // Expand the unopened folders
-            await expandTreePaneItemByName(page, 'Bar');
-            await expandTreePaneItemByName(page, 'Baz');
-            await expandTreePaneItemByName(page, 'Foo');
-
-            await renameObjectFromContextMenu(page, clock1.url, '___');
-            await getAndAssertTreeItems(page,
-                [
-                    "___",
-                    "Bar",
-                    "___",
-                    "www",
-                    "Baz",
-                    "___",
-                    "www",
-                    "Foo",
-                    "___",
-                    "www",
-                    "www"
-                ]);
-        });
+    const page1Folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
     });
+
+    await expandTreePaneItemByName(page2, myItemsFolderName);
+    await assertTreeItemIsVisible(page2, page1Folder.name);
+  });
+
+  test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({
+    page,
+    openmctConfig
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6391'
+    });
+
+    const { myItemsFolderName } = openmctConfig;
+    const page2 = await page.context().newPage();
+
+    // Both pages: Go to baseURL
+    await Promise.all([
+      page.goto('./', { waitUntil: 'networkidle' }),
+      page2.goto('./', { waitUntil: 'networkidle' })
+    ]);
+
+    const page1Folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
+    });
+
+    await expandTreePaneItemByName(page2, myItemsFolderName);
+    await assertTreeItemIsVisible(page2, page1Folder.name);
+  });
+
+  test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Foo'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Bar'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Baz'
+    });
+
+    const clock1 = await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'aaa'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'www'
+    });
+
+    // Expand the root folder
+    await expandTreePaneItemByName(page, myItemsFolderName);
+
+    await test.step('Reorders objects with the same tree depth', async () => {
+      await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
+      await renameObjectFromContextMenu(page, clock1.url, 'zzz');
+      await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
+    });
+
+    await test.step('Reorders links to objects as well as original objects', async () => {
+      await page.click('role=treeitem[name=/Bar/]');
+      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+      await page.click('role=treeitem[name=/Baz/]');
+      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+      await page.click('role=treeitem[name=/Foo/]');
+      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
+      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+      // Expand the unopened folders
+      await expandTreePaneItemByName(page, 'Bar');
+      await expandTreePaneItemByName(page, 'Baz');
+      await expandTreePaneItemByName(page, 'Foo');
+
+      await renameObjectFromContextMenu(page, clock1.url, '___');
+      await getAndAssertTreeItems(page, [
+        '___',
+        'Bar',
+        '___',
+        'www',
+        'Baz',
+        '___',
+        'www',
+        'Foo',
+        '___',
+        'www',
+        'www'
+      ]);
+    });
+  });
 });
 
 /**
@@ -174,22 +181,22 @@ test.describe('Main Tree', () => {
  * @param {Array<string>} expected
  */
 async function getAndAssertTreeItems(page, expected) {
-    const treeItems = page.locator('[role="treeitem"]');
-    const allTexts = await treeItems.allInnerTexts();
-    // Get rid of root folder ('My Items') as its position will not change
-    allTexts.shift();
-    expect(allTexts).toEqual(expected);
+  const treeItems = page.locator('[role="treeitem"]');
+  const allTexts = await treeItems.allInnerTexts();
+  // Get rid of root folder ('My Items') as its position will not change
+  allTexts.shift();
+  expect(allTexts).toEqual(expected);
 }
 
 async function assertTreeItemIsVisible(page, name) {
-    const mainTree = page.getByRole('tree', {
-        name: 'Main Tree'
-    });
-    const treeItem = mainTree.getByRole('treeitem', {
-        name
-    });
+  const mainTree = page.getByRole('tree', {
+    name: 'Main Tree'
+  });
+  const treeItem = mainTree.getByRole('treeitem', {
+    name
+  });
 
-    await expect(treeItem).toBeVisible();
+  await expect(treeItem).toBeVisible();
 }
 
 /**
@@ -197,14 +204,14 @@ async function assertTreeItemIsVisible(page, name) {
  * @param {string} name
  */
 async function expandTreePaneItemByName(page, name) {
-    const mainTree = page.getByRole('tree', {
-        name: 'Main Tree'
-    });
-    const treeItem = mainTree.getByRole('treeitem', {
-        name,
-        expanded: false
-    });
-    await treeItem.locator('.c-disclosure-triangle').click();
+  const mainTree = page.getByRole('tree', {
+    name: 'Main Tree'
+  });
+  const treeItem = mainTree.getByRole('treeitem', {
+    name,
+    expanded: false
+  });
+  await treeItem.locator('.c-disclosure-triangle').click();
 }
 
 /**
@@ -214,10 +221,10 @@ async function expandTreePaneItemByName(page, name) {
  * @param {string} newName
  */
 async function renameObjectFromContextMenu(page, url, newName) {
-    await openObjectTreeContextMenu(page, url);
-    await page.click('li:text("Edit Properties")');
-    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-    await nameInput.fill("");
-    await nameInput.fill(newName);
-    await page.click('[aria-label="Save"]');
+  await openObjectTreeContextMenu(page, url);
+  await page.click('li:text("Edit Properties")');
+  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  await page.click('[aria-label="Save"]');
 }

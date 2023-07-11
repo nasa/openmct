@@ -35,30 +35,30 @@ const { createDomainObjectWithDefaults } = require('../../appActions.js');
 const { test, expect } = require('../../pluginFixtures.js');
 
 test('Generate Visual Test Data @localStorage', async ({ page, context }) => {
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
-    const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
+  //Go to baseURL
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const overlayPlot = await createDomainObjectWithDefaults(page, { type: 'Overlay Plot' });
 
-    // click create button
-    await page.locator('button:has-text("Create")').click();
+  // click create button
+  await page.locator('button:has-text("Create")').click();
 
-    // add sine wave generator with defaults
-    await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+  // add sine wave generator with defaults
+  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
-    //Add a 5000 ms Delay
-    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+  //Add a 5000 ms Delay
+  await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('button:has-text("OK")').click(),
-        //Wait for Save Banner to appear
-        page.waitForSelector('.c-message-banner__message')
-    ]);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.locator('button:has-text("OK")').click(),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
 
-    // focus the overlay plot
-    await page.goto(overlayPlot.url);
+  // focus the overlay plot
+  await page.goto(overlayPlot.url);
 
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
-    //Save localStorage for future test execution
-    await context.storageState({ path: './e2e/test-data/VisualTestData_storage.json' });
+  await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlot.name);
+  //Save localStorage for future test execution
+  await context.storageState({ path: './e2e/test-data/VisualTestData_storage.json' });
 });

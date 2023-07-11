@@ -24,44 +24,44 @@ import GaugeComponent from './components/Gauge.vue';
 import Vue from 'vue';
 
 export default function GaugeViewProvider(openmct) {
-    return {
-        key: 'gauge',
-        name: 'Gauge',
-        cssClass: 'icon-gauge',
-        canView: function (domainObject) {
-            return domainObject.type === 'gauge';
-        },
-        canEdit: function (domainObject) {
-            if (domainObject.type === 'gauge') {
-                return true;
-            }
-        },
-        view: function (domainObject) {
-            let component;
+  return {
+    key: 'gauge',
+    name: 'Gauge',
+    cssClass: 'icon-gauge',
+    canView: function (domainObject) {
+      return domainObject.type === 'gauge';
+    },
+    canEdit: function (domainObject) {
+      if (domainObject.type === 'gauge') {
+        return true;
+      }
+    },
+    view: function (domainObject) {
+      let component;
 
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            GaugeComponent
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            composition: openmct.composition.get(domainObject)
-                        },
-                        template: '<gauge-component></gauge-component>'
-                    });
-                },
-                destroy: function (element) {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+      return {
+        show: function (element) {
+          component = new Vue({
+            el: element,
+            components: {
+              GaugeComponent
+            },
+            provide: {
+              openmct,
+              domainObject,
+              composition: openmct.composition.get(domainObject)
+            },
+            template: '<gauge-component></gauge-component>'
+          });
         },
-        priority: function () {
-            return 1;
+        destroy: function (element) {
+          component.$destroy();
+          component = undefined;
         }
-    };
+      };
+    },
+    priority: function () {
+      return 1;
+    }
+  };
 }

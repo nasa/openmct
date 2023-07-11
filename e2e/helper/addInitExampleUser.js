@@ -22,6 +22,6 @@
 
 // This should be used to install the Example User
 document.addEventListener('DOMContentLoaded', () => {
-    const openmct = window.openmct;
-    openmct.install(openmct.plugins.example.ExampleUser());
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.example.ExampleUser());
 });

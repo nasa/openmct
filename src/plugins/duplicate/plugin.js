@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DuplicateAction from "./DuplicateAction";
+import DuplicateAction from './DuplicateAction';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new DuplicateAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new DuplicateAction(openmct));
+  };
 }

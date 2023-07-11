@@ -24,16 +24,16 @@ const { createPlanFromJSON } = require('../../../appActions');
 const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
 const { assertPlanActivities } = require('../../../helper/planningUtils');
 
-test.describe("Plan", () => {
-    let plan;
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-        plan = await createPlanFromJSON(page, {
-            json: testPlan1
-        });
+test.describe('Plan', () => {
+  let plan;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    plan = await createPlanFromJSON(page, {
+      json: testPlan1
     });
+  });
 
-    test("Displays all plan events", async ({ page }) => {
-        await assertPlanActivities(page, testPlan1, plan.url);
-    });
+  test('Displays all plan events', async ({ page }) => {
+    await assertPlanActivities(page, testPlan1, plan.url);
+  });
 });
