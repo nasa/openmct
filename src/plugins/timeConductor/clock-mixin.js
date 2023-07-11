@@ -1,5 +1,3 @@
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
-
 export default {
   props: {
     buttonCssClass: {

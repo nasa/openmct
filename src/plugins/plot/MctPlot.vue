@@ -532,7 +532,7 @@ export default {
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('clockChanged', this.updateMode);
+        this.timeContext.off('modeChanged', this.updateMode);
         this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },
