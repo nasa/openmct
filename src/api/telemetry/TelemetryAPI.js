@@ -220,7 +220,7 @@ export default class TelemetryAPI {
     }
 
     if (!Object.hasOwn(options, 'domain')) {
-      options.domain = this.openmct.time.timeSystem().key;
+      options.domain = this.openmct.time.getTimeSystem().key;
     }
 
     if (!Object.hasOwn(options, 'timeContext')) {

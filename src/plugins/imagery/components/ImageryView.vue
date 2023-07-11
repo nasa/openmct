@@ -255,7 +255,7 @@ export default {
     }
   },
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -377,9 +377,9 @@ export default {
     canTrackDuration() {
       let hasClock;
       if (this.timeContext) {
-        hasClock = this.timeContext.clock();
+        hasClock = this.timeContext.getClock();
       } else {
-        hasClock = this.openmct.time.clock();
+        hasClock = this.openmct.time.getClock();
       }
 
       return hasClock && this.timeSystem.isUTCBased;
@@ -533,9 +533,9 @@ export default {
     isFixed() {
       let clock;
       if (this.timeContext) {
-        clock = this.timeContext.clock();
+        clock = this.timeContext.getClock();
       } else {
-        clock = this.openmct.time.clock();
+        clock = this.openmct.time.getClock();
       }
 
       return clock === undefined;

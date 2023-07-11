@@ -78,7 +78,7 @@ export default class TelemetryCollection extends EventEmitter {
       this._error(LOADED_ERROR);
     }
 
-    this._setTimeSystem(this.options.timeContext.timeSystem());
+    this._setTimeSystem(this.options.timeContext.getTimeSystem());
     this.lastBounds = this.options.timeContext.bounds();
 
     this._watchBounds();
