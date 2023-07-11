@@ -203,6 +203,12 @@ export default class TelemetryAPI {
    * @returns {TelemetryRequestOptions} the options, with defaults filled in
    */
   standardizeRequestOptions(options = {}) {
+    console.debug(
+      `🍧 standardizing request options for start of ${new Date(
+        options.timeContext?.getBounds().start
+      )} and end of ${new Date(options.timeContext?.getBounds().end)}}`,
+      options
+    );
     if (!Object.hasOwn(options, 'start')) {
       if (options.timeContext?.getBounds()) {
         options.start = options.timeContext.getBounds().start;
@@ -221,10 +227,6 @@ export default class TelemetryAPI {
 
     if (!Object.hasOwn(options, 'domain')) {
       options.domain = this.openmct.time.getTimeSystem().key;
-    }
-
-    if (!Object.hasOwn(options, 'timeContext')) {
-      options.timeContext = this.openmct.time;
     }
 
     return options;

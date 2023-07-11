@@ -24,13 +24,14 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 const IMAGE_HINT_KEY = 'image';
 const IMAGE_THUMBNAIL_HINT_KEY = 'thumbnail';
 const IMAGE_DOWNLOAD_NAME_HINT_KEY = 'imageDownloadName';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
   mounted() {
     // listen
-    this.boundsChange = this.boundsChange.bind(this);
-    this.timeSystemChange = this.timeSystemChange.bind(this);
+    this.boundsChanged = this.boundsChanged.bind(this);
+    this.timeSystemChanged = this.timeSystemChanged.bind(this);
     this.setDataTimeContext = this.setDataTimeContext.bind(this);
     this.openmct.objectViews.on('clearData', this.dataCleared);
 
@@ -59,6 +60,9 @@ export default {
     this.timeKey = this.timeSystem.key;
     this.timeFormatter = this.getFormatter(this.timeKey);
     this.setDataTimeContext();
+    setTimeout(() => {
+      this.loadTelemetry();
+    }, 200);
   },
   beforeDestroy() {
     if (this.unsubscribe) {
@@ -103,14 +107,13 @@ export default {
     setDataTimeContext() {
       this.stopFollowingDataTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-      this.timeContext.on('bounds', this.boundsChange);
-      this.boundsChange(this.timeContext.getBounds());
-      this.timeContext.on('timeSystem', this.timeSystemChange);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsChanged);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.timeSystemChanged);
     },
     stopFollowingDataTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.boundsChange);
-        this.timeContext.off('timeSystem', this.timeSystemChange);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsChanged);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.timeSystemChanged);
       }
     },
     formatImageUrl(datum) {
@@ -153,10 +156,7 @@ export default {
 
       return this.timeFormatter.parse(datum);
     },
-    boundsChange(bounds, isTick) {
-      if (isTick) {
-        return;
-      }
+    loadTelemetry() {
       console.debug(`👺 Context for imagery view is `, this.timeContext);
       console.debug(
         `👺 Start time is ${new Date(
@@ -172,10 +172,15 @@ export default {
       this.telemetryCollection.on('remove', this.dataRemoved);
       this.telemetryCollection.on('clear', this.dataCleared);
       this.telemetryCollection.load();
+    },
+    boundsChanged(bounds, isTick) {
+      if (isTick) {
+        return;
+      }
 
       this.bounds = bounds; // setting bounds for ImageryView watcher
     },
-    timeSystemChange() {
+    timeSystemChanged() {
       this.timeSystem = this.timeContext.timeSystem();
       this.timeKey = this.timeSystem.key;
       this.timeFormatter = this.getFormatter(this.timeKey);
