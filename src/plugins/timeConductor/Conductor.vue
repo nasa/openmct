@@ -32,7 +32,7 @@
     style="overflow: visible"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <conductor-mode :read-only="true" />
+    <conductor-mode :mode="mode" :read-only="true" />
     <conductor-clock :read-only="true" />
     <conductor-time-system :read-only="true" />
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />

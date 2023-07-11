@@ -184,6 +184,7 @@ class TimeContext extends EventEmitter {
        * a "tick" event (ie. was an automatic update), false otherwise.
        */
       this.emit('bounds', this.boundsVal, false);
+      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
     }
 
     //Return a copy to prevent direct mutation of time conductor bounds.

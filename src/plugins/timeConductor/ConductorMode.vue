@@ -45,6 +45,12 @@ export default {
   mixins: [modeMixin],
   inject: ['openmct', 'configuration'],
   props: {
+    mode: {
+      type: String,
+      default() {
+        return undefined;
+      }
+    },
     readOnly: {
       type: Boolean,
       default() {
@@ -59,6 +65,13 @@ export default {
       selectedMode: this.getModeMetadata(mode, TEST_IDS),
       modes: []
     };
+  },
+  watch: {
+    mode: {
+      handler(newMode) {
+        this.setViewFromMode(newMode);
+      }
+    }
   },
   mounted: function () {
     this.loadModes();
@@ -76,9 +89,13 @@ export default {
 
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setMode(modeKey) {
-      this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-      this.$emit('modeUpdated', modeKey);
+    setViewFromMode(mode) {
+      this.selectedMode = this.getModeMetadata(mode, TEST_IDS);
+    },
+    setMode(mode) {
+      this.setViewFromMode(mode);
+
+      this.$emit('modeUpdated', mode);
     }
   }
 };
