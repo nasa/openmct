@@ -24,7 +24,8 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         aria-label="Time Conductor History"
-        class="c-button--menu c-history-button icon-history"
+        class="c-button--menu c-button--compact c-history-button icon-history"
+        :class="buttonCssClass"
         @click.prevent.stop="showHistoryMenu"
       >
         <span class="c-button__label">History</span>
@@ -61,6 +62,13 @@ export default {
     mode: {
       type: String,
       required: true
+    },
+    buttonCssClass: {
+      type: String,
+      required: false,
+      default() {
+        return '';
+      }
     }
   },
   data() {
@@ -78,7 +86,7 @@ export default {
        */
       fixedHistory: {},
       presets: [],
-      isFixed: this.openmct.time.clock() === undefined
+      isFixed: this.openmct.time.getClock() === undefined
     };
   },
   computed: {
@@ -92,7 +100,7 @@ export default {
     },
     storageKey() {
       let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
-      if (!this.isFixed) {
+      if (this.openmct.time.isRealTime()) {
         key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
       }
 
@@ -103,8 +111,8 @@ export default {
     bounds: {
       handler() {
         // only for fixed time since we track offsets for realtime
-        if (this.isFixed) {
-          this.updateMode();
+        this.updateMode();
+        if (this.openmct.time.isFixed()) {
           this.addTimespan();
         }
       },
@@ -113,7 +121,9 @@ export default {
     offsets: {
       handler() {
         this.updateMode();
-        this.addTimespan();
+        if (this.openmct.time.isRealTime()) {
+          this.addTimespan();
+        }
       },
       deep: true
     },
@@ -137,7 +147,6 @@ export default {
   },
   methods: {
     updateMode() {
-      this.isFixed = this.openmct.time.clock() === undefined;
       this.getHistoryFromLocalStorage();
       this.initializeHistoryIfNoHistory();
     },
@@ -151,7 +160,7 @@ export default {
           descriptionDateFormat
         )} - ${this.formatTime(timespan.end, descriptionDateFormat)}`;
 
-        if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
+        if (this.timeSystem.isUTCBased && !this.openmct.time.isRealTime()) {
           name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`;
         } else {
           name = description;
@@ -201,10 +210,11 @@ export default {
     },
     addTimespan() {
       const key = this.timeSystem.key;
+      const isFixed = this.openmct.time.isFixed();
       let [...currentHistory] = this[this.currentHistory][key] || [];
       const timespan = {
-        start: this.isFixed ? this.bounds.start : this.offsets.start,
-        end: this.isFixed ? this.bounds.end : this.offsets.end
+        start: isFixed ? this.bounds.start : this.offsets.start,
+        end: isFixed ? this.bounds.end : this.offsets.end
       };
 
       // no dupes
@@ -221,10 +231,10 @@ export default {
       this.persistHistoryToLocalStorage();
     },
     selectTimespan(timespan) {
-      if (this.isFixed) {
-        this.openmct.time.bounds(timespan);
+      if (this.openmct.time.isFixed()) {
+        this.openmct.time.getBounds(timespan);
       } else {
-        this.openmct.time.clockOffsets(timespan);
+        this.openmct.time.getClockOffsets(timespan);
       }
     },
     selectPresetBounds(bounds) {
@@ -262,7 +272,7 @@ export default {
       let format = this.timeSystem.timeFormat;
       let isNegativeOffset = false;
 
-      if (!this.isFixed) {
+      if (!this.openmct.time.isFixed()) {
         if (time < 0) {
           isNegativeOffset = true;
         }

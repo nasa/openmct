@@ -118,11 +118,20 @@ export default function (config) {
     throwIfError(configResult);
 
     const defaults = config.menuOptions[0];
-    if (defaults.clock) {
-      openmct.time.clock(defaults.clock, defaults.clockOffsets);
-      openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+    const defaultClock = defaults.clock;
+
+    if (defaultClock) {
+      openmct.time.setClock(defaults.clock, defaults.clockOffsets);
+      openmct.time.setTimeSystem(defaults.timeSystem, openmct.time.getBounds());
     } else {
-      openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+      // always have an active clock, regardless of mode
+      const firstClock = config.menuOptions.find((option) => option.clock);
+
+      if (firstClock) {
+        openmct.time.setClock(firstClock.clock, firstClock.clockOffsets);
+      }
+
+      openmct.time.setTimeSystem(defaults.timeSystem, defaults.bounds);
     }
 
     openmct.on('start', function () {

@@ -585,30 +585,39 @@
   }
 }
 
-@mixin cButton() {
-  @include cControl();
-  @include cControlHov();
-  @include themedButton();
-  border-radius: $controlCr;
-  color: $colorBtnFg;
-  cursor: pointer;
-  padding: $interiorMargin floor($interiorMargin * 1.25);
+@mixin cButtonLayout() {
+  $pad: $interiorMargin;
+  padding: $pad floor($pad * 1.25);
 
   &:after,
   > * + * {
     margin-left: $interiorMarginSm;
   }
 
-  &[class*='--major'],
-  &[class*='is-active'] {
-    background: $colorBtnMajorBg;
-    color: $colorBtnMajorFg;
+  &[class*='--compact'] {
+    padding: floor(math.div($pad, 1.5)) $pad;
   }
+}
 
-  &[class*='--caution'] {
-    background: $colorBtnCautionBg !important;
-    color: $colorBtnCautionFg !important;
-  }
+@mixin cButton() {
+    @include cControl();
+    @include cControlHov();
+    @include themedButton();
+    @include cButtonLayout();
+    border-radius: $controlCr;
+    color: $colorBtnFg;
+    cursor: pointer;
+
+    &[class*="--major"],
+    &[class*='is-active']{
+        background: $colorBtnMajorBg !important;
+        color: $colorBtnMajorFg !important;
+    }
+
+    &[class*='--caution'] {
+        background: $colorBtnCautionBg !important;
+        color: $colorBtnCautionFg !important;
+    }
 }
 
 @mixin cClickIcon() {
@@ -640,7 +649,7 @@
   *:before {
     // *:before handles any nested containers that may contain glyph elements
     // Needed for c-togglebutton.
-    font-size: 1.25em;
+    font-size: 1.15em;
   }
 }
 

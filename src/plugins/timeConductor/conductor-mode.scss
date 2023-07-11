@@ -1,8 +1,7 @@
 .c-conductor__mode-menu {
   max-height: 80vh;
   max-width: 500px;
-  min-height: 250px;
-  z-index: 70;
+  min-height: 50px;
 
   [class*='__icon'] {
     filter: $colorKeyFilter;

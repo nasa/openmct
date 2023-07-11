@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext, { TIME_CONTEXT_EVENTS } from './TimeContext';
+import TimeContext from './TimeContext';
+import { TIME_CONTEXT_EVENTS } from './constants';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -46,7 +47,7 @@ class IndependentTimeContext extends TimeContext {
     this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
   }
 
-  bounds(newBounds) {
+  bounds() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.bounds(...arguments);
     } else {
@@ -54,7 +55,23 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
-  tick(timestamp) {
+  getBounds() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.getBounds();
+    } else {
+      return super.getBounds();
+    }
+  }
+
+  setBounds() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.setBounds(...arguments);
+    } else {
+      return super.setBounds(...arguments);
+    }
+  }
+
+  tick() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.tick(...arguments);
     } else {
@@ -62,7 +79,7 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
-  clockOffsets(offsets) {
+  clockOffsets() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.clockOffsets(...arguments);
     } else {
@@ -70,11 +87,19 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
-  stopClock() {
+  getClockOffsets() {
     if (this.upstreamTimeContext) {
-      this.upstreamTimeContext.stopClock();
+      return this.upstreamTimeContext.getClockOffsets();
     } else {
-      super.stopClock();
+      return super.getClockOffsets();
+    }
+  }
+
+  setClockOffsets() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.setClockOffsets(...arguments);
+    } else {
+      return super.setClockOffsets(...arguments);
     }
   }
 
@@ -87,9 +112,18 @@ class IndependentTimeContext extends TimeContext {
   }
 
   /**
+   * Get the time system of the TimeAPI.
+   * @returns {TimeSystem} The currently applied time system
+   * @memberof module:openmct.TimeAPI#
+   * @method getTimeSystem
+   */
+  getTimeSystem() {
+    return this.globalTimeContext.getTimeSystem();
+  }
+
+  /**
    * Set the active clock. Tick source will be immediately subscribed to
-   * and ticking will begin. Offsets from 'now' must also be provided. A clock
-   * can be unset by calling {@link stopClock}.
+   * and ticking will begin. Offsets from 'now' must also be provided.
    *
    * @param {Clock || string} keyOrClock The clock to activate, or its key
    * @param {ClockOffsets} offsets on each tick these will be used to calculate
@@ -126,7 +160,7 @@ class IndependentTimeContext extends TimeContext {
       this.activeClock = clock;
 
       /**
-       * The active clock has changed. Clock can be unset by calling {@link stopClock}
+       * The active clock has changed.
        * @event clock
        * @memberof module:openmct.TimeAPI~
        * @property {Clock} clock The newly activated clock, or undefined
@@ -146,13 +180,124 @@ class IndependentTimeContext extends TimeContext {
   }
 
   /**
+   * Get the active clock.
+   * @return {Clock} the currently active clock;
+   */
+  getClock() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.getClock();
+    }
+
+    return this.activeClock;
+  }
+
+  /**
+   * Set the active clock. Tick source will be immediately subscribed to
+   * and the currently ticking will begin.
+   * Offsets from 'now', if provided, will be used to set realtime mode offsets
+   *
+   * @param {Clock || string} keyOrClock The clock to activate, or its key
+   * @param {ClockOffsets} offsets on each tick these will be used to calculate
+   * the start and end bounds when in realtime mode.
+   * This maintains a sliding time window of a fixed width that automatically updates.
+   * @fires module:openmct.TimeAPI~clock
+   * @return {Clock} the currently active clock;
+   */
+  setClock(keyOrClock, offsets) {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.setClock(...arguments);
+    }
+
+    let clock;
+
+    if (typeof keyOrClock === 'string') {
+      clock = this.globalTimeContext.clocks.get(keyOrClock);
+      if (clock === undefined) {
+        throw `Unknown clock ${keyOrClock}. Has it been registered with 'addClock'?`;
+      }
+    } else if (typeof keyOrClock === 'object') {
+      clock = keyOrClock;
+      if (!this.globalTimeContext.clocks.has(clock.key)) {
+        throw `Unknown clock ${keyOrClock.key}. Has it been registered with 'addClock'?`;
+      }
+    }
+
+    // this.setMode(REALTIME_MODE_KEY);
+
+    const previousClock = this.activeClock;
+    if (previousClock) {
+      previousClock.off('tick', this.tick);
+    }
+
+    this.activeClock = clock;
+    this.activeClock.on('tick', this.tick);
+
+    /**
+     * The active clock has changed.
+     * @event clock
+     * @memberof module:openmct.TimeAPI~
+     * @property {Clock} clock The newly activated clock, or undefined
+     * if the system is no longer following a clock source
+     */
+    this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+
+    if (offsets !== undefined) {
+      this.setClockOffsets(offsets);
+    }
+
+    return this.activeClock;
+  }
+
+  /**
+   * Get the current mode.
+   * @return {Mode} the current mode;
+   */
+  getMode() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.getMode();
+    }
+
+    return this.mode;
+  }
+
+  /**
+   * Set the mode to either fixed or realtime.
+   *
+   * @param {Mode} mode The mode to activate
+   * @fires module:openmct.TimeAPI~clock
+   * @return {Mode} the currently active mode;
+   */
+  setMode(mode) {
+    if (!mode || mode === this.mode) {
+      return;
+    }
+
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.setMode(...arguments);
+    }
+
+    this.mode = mode;
+
+    /**
+     * The active clock has changed.
+     * @event clock
+     * @memberof module:openmct.TimeAPI~
+     * @property {Clock} clock The newly activated clock, or undefined
+     * if the system is no longer following a clock source
+     */
+    this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+
+    return this.mode;
+  }
+
+  /**
    * Causes this time context to follow another time context (either the global context, or another upstream time context)
    * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
    */
   followTimeContext() {
     this.stopFollowingTimeContext();
     if (this.upstreamTimeContext) {
-      TIME_CONTEXT_EVENTS.forEach((eventName) => {
+      Object.values(TIME_CONTEXT_EVENTS).forEach((eventName) => {
         const thisTimeContext = this;
         this.upstreamTimeContext.on(eventName, passthrough);
         this.unlisteners.push(() => {
@@ -197,6 +342,7 @@ class IndependentTimeContext extends TimeContext {
 
     // Emit bounds so that views that are changing context get the upstream bounds
     this.emit('bounds', this.bounds());
+    this.emit('boundsChanged', this.getBounds());
   }
 
   hasOwnContext() {
@@ -259,10 +405,15 @@ class IndependentTimeContext extends TimeContext {
       this.followTimeContext();
 
       // Emit bounds so that views that are changing context get the upstream bounds
-      this.emit('bounds', this.bounds());
+      this.emit('bounds', this.getBounds());
+      this.emit('boundsChanged', this.getBounds());
       // now that the view's context is set, tell others to check theirs in case they were following this view's context.
       this.globalTimeContext.emit('refreshContext', viewKey);
     }
+  }
+
+  #copy(object) {
+    return JSON.parse(JSON.stringify(object));
   }
 }
 

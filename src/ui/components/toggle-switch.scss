@@ -1,9 +1,28 @@
 @use 'sass:math';
 
-.c-toggle-switch {
-  $d: 12px;
-  $m: 2px;
+@mixin toggleSwitch($d: 12px, $m: 2px, $bg: $colorBtnBg) {
   $br: math.div($d, 1.5);
+
+  .c-toggle-switch__slider {
+    background: $bg;
+    border-radius: $br;
+    height: $d + ($m * 2);
+    width: $d * 2 + $m * 2;
+
+    &:before {
+      // Knob
+      border-radius: floor($br * 0.8);
+      box-shadow: rgba(black, 0.4) 0 0 2px;
+      height: $d;
+      width: $d;
+      top: $m;
+      left: $m;
+      right: auto;
+    }
+  }
+}
+
+.c-toggle-switch {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -18,6 +37,26 @@
     cursor: pointer;
     overflow: hidden;
     display: block;
+  }
+
+  &__slider {
+    // Sits within __switch
+    display: inline-block;
+    position: relative;
+
+    &:before {
+      // Knob
+      background: $colorBtnFg; // TODO: make discrete theme constants for these colors
+      content: '';
+      display: block;
+      position: absolute;
+      transition: transform 100ms ease-in-out;
+    }
+  }
+
+  &__label {
+    margin-left: $interiorMarginSm;
+    white-space: nowrap;
   }
 
   input {
@@ -35,34 +74,9 @@
     }
   }
 
-  &__slider {
-    // Sits within __switch
-    background: $colorBtnBg; // TODO: make discrete theme constants for these colors
-    border-radius: $br;
-    display: inline-block;
-    height: $d + ($m * 2);
-    position: relative;
-    width: $d * 2 + $m * 2;
+  @include toggleSwitch();
+}
 
-    &:before {
-      // Knob
-      background: $colorBtnFg; // TODO: make discrete theme constants for these colors
-      border-radius: floor($br * 0.8);
-      box-shadow: rgba(black, 0.4) 0 0 2px;
-      content: '';
-      display: block;
-      position: absolute;
-      height: $d;
-      width: $d;
-      top: $m;
-      left: $m;
-      right: auto;
-      transition: transform 100ms ease-in-out;
-    }
-  }
-
-  &__label {
-    margin-left: $interiorMarginSm;
-    white-space: nowrap;
-  }
+.c-toggle-switch--mini {
+  @include toggleSwitch($d: 9px, $m: 0px);
 }

@@ -20,10 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
+  <div ref="modeMenuButton" class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu c-button--compact js-mode-button"
+        class="c-icon-button c-button--menu js-mode-button"
         :class="[buttonCssClass, selectedMode.cssClass]"
         @click.prevent.stop="showModesMenu"
       >
@@ -31,21 +31,23 @@
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__mode">
-    <div class="c-compact-tc__mode__value">{{ selectedMode.name }}</div>
-  </div>
 </template>
 
 <script>
-import modeMixin from './mode-mixin';
-
-const TEST_IDS = true;
+import toggleMixin from '../../../ui/mixins/toggle-mixin';
+import modeMixin from '../mode-mixin';
 
 export default {
-  mixins: [modeMixin],
-  inject: ['openmct', 'configuration'],
+  mixins: [toggleMixin, modeMixin],
+  inject: ['openmct'],
   props: {
-    readOnly: {
+    mode: {
+      type: String,
+      default() {
+        return undefined;
+      }
+    },
+    enabled: {
       type: Boolean,
       default() {
         return false;
@@ -53,32 +55,45 @@ export default {
     }
   },
   data: function () {
-    const mode = this.openmct.time.getMode();
-
     return {
-      selectedMode: this.getModeMetadata(mode, TEST_IDS),
+      selectedMode: this.getModeMetadata(this.mode),
       modes: []
     };
+  },
+  watch: {
+    mode: {
+      handler(newMode) {
+        this.setViewFromMode(newMode);
+      }
+    },
+    enabled(newValue, oldValue) {
+      if (newValue !== undefined && newValue !== oldValue && newValue === true) {
+        this.setViewFromMode(this.mode);
+      }
+    }
   },
   mounted: function () {
     this.loadModes();
   },
   methods: {
     showModesMenu() {
-      const elementBoundingClientRect = this.$refs.modeButton.getBoundingClientRect();
+      const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
       const x = elementBoundingClientRect.x;
-      const y = elementBoundingClientRect.y;
+      const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
       const menuOptions = {
         menuClass: 'c-conductor__mode-menu',
-        placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+        placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
       };
-
-      this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
+      this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setMode(modeKey) {
-      this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-      this.$emit('modeUpdated', modeKey);
+    setViewFromMode(mode) {
+      this.selectedMode = this.getModeMetadata(mode);
+    },
+    setMode(mode) {
+      this.setViewFromMode(mode);
+
+      this.$emit('independentModeUpdated', mode);
     }
   }
 };

@@ -46,6 +46,15 @@
     </div>
 
     <div class="l-browse-bar__end">
+      <div
+        v-if="supportsIndependentTime"
+        class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+      >
+        <independent-time-conductor
+          :domain-object="domainObject"
+          :object-path="openmct.router.path"
+        />
+      </div>
       <ViewSwitcher v-if="!isEditing" :current-view="currentView" :views="views" />
       <!-- Action buttons -->
       <NotebookMenuSwitcher
@@ -127,11 +136,21 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
+const SupportedViewTypes = [
+  'plot-stacked',
+  'plot-overlay',
+  'bar-graph.view',
+  'time-strip.view',
+  'example.imagery'
+];
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
   components: {
+    IndependentTimeConductor,
     NotebookMenuSwitcher,
     ViewSwitcher
   },
@@ -221,6 +240,11 @@ export default {
       } else {
         return 'Unlocked for editing - click to lock.';
       }
+    },
+    supportsIndependentTime() {
+      const viewKey = this.getViewKey();
+
+      return this.domainObject && SupportedViewTypes.includes(viewKey);
     }
   },
   watch: {
@@ -294,6 +318,14 @@ export default {
     },
     edit() {
       this.openmct.editor.edit();
+    },
+    getViewKey() {
+      let viewKey = this.viewKey;
+      if (this.objectViewKey) {
+        viewKey = this.objectViewKey;
+      }
+
+      return viewKey;
     },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({

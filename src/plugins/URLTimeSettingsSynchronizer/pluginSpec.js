@@ -40,7 +40,6 @@ describe('The URLTimeSettingsSynchronizer', () => {
   });
 
   afterEach(() => {
-    openmct.time.stopClock();
     openmct.router.removeListener('change:hash', resolveFunction);
 
     appHolder = undefined;

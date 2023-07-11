@@ -50,6 +50,9 @@
           'has-complex-content': complexContent
         }"
       >
+        <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
+          <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
+        </div>
         <NotebookMenuSwitcher
           v-if="notebookEnabled"
           :domain-object="domainObject"
@@ -91,6 +94,7 @@
 <script>
 import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
@@ -98,7 +102,8 @@ const CSS_WIDTH_LESS_STR = '--width-less-than-';
 export default {
   components: {
     ObjectView,
-    NotebookMenuSwitcher
+    NotebookMenuSwitcher,
+    IndependentTimeConductor
   },
   inject: ['openmct'],
   props: {
@@ -144,6 +149,11 @@ export default {
   computed: {
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    supportsIndependentTime() {
+      // const viewKey = this.getViewKey();
+
+      return true; //this.domainObject && SupportedViewTypes.includes(viewKey);
     }
   },
   mounted() {
@@ -225,6 +235,14 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
+    },
+    getViewKey() {
+      let viewKey = this.this.$refs.objectView.viewKey;
+      if (this.objectViewKey) {
+        viewKey = this.objectViewKey;
+      }
+
+      return viewKey;
     }
   }
 };

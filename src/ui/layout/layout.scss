@@ -289,17 +289,6 @@
     flex: 1 1 auto !important;
   }
 
-  &__time-conductor {
-    border-top: 1px solid $colorInteriorBorder;
-    display: flex;
-    flex-direction: column;
-    padding-top: $interiorMargin;
-
-    > * + * {
-      margin-top: $interiorMargin;
-    }
-  }
-
   &__main {
     > .l-pane {
       padding: nth($shellPanePad, 1) 0;
@@ -383,10 +372,10 @@
   align-items: center;
   justify-content: space-between;
 
-  [class*='__'] {
-    // Removes extraneous horizontal white space
-    display: inline-flex;
-  }
+  //[class*="__"] {
+  //    // Removes extraneous horizontal white space
+  //    display: inline-flex;
+  //}
 
   > * + * {
     margin-left: $interiorMarginSm;

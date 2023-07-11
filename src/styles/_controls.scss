@@ -244,6 +244,12 @@ button {
   }
 }
 
+.c-not-button {
+  // Use within a holder that's clickable; use to indicate interactability
+  @include cButtonLayout();
+  cursor: pointer;
+}
+
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
 // Provides a downward arrow icon that when clicked displays additional options and/or info.
