@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import CouchDBSearchFolderPlugin from './plugin';
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
   let identifier = {
     namespace: 'couch-search-CouchDB-Documents',
     key: 'couch-search-CouchDB-Documents'
