@@ -32,7 +32,6 @@ export default {
     this.boundsChange = this.boundsChange.bind(this);
     this.timeSystemChange = this.timeSystemChange.bind(this);
     this.setDataTimeContext = this.setDataTimeContext.bind(this);
-    this.setDataTimeContext();
     this.openmct.objectViews.on('clearData', this.dataCleared);
 
     // Get metadata and formatters
@@ -59,14 +58,7 @@ export default {
     // initialize
     this.timeKey = this.timeSystem.key;
     this.timeFormatter = this.getFormatter(this.timeKey);
-
-    this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
-      timeContext: this.timeContext
-    });
-    this.telemetryCollection.on('add', this.dataAdded);
-    this.telemetryCollection.on('remove', this.dataRemoved);
-    this.telemetryCollection.on('clear', this.dataCleared);
-    this.telemetryCollection.load();
+    this.setDataTimeContext();
   },
   beforeDestroy() {
     if (this.unsubscribe) {
@@ -112,7 +104,7 @@ export default {
       this.stopFollowingDataTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('bounds', this.boundsChange);
-      this.boundsChange(this.timeContext.bounds());
+      this.boundsChange(this.timeContext.getBounds());
       this.timeContext.on('timeSystem', this.timeSystemChange);
     },
     stopFollowingDataTimeContext() {
@@ -165,6 +157,21 @@ export default {
       if (isTick) {
         return;
       }
+      console.debug(`👺 Context for imagery view is `, this.timeContext);
+      console.debug(
+        `👺 Start time is ${new Date(
+          this.timeContext.getBounds().start
+        )} and end time is ${new Date(this.timeContext.getBounds().end)}`,
+        this.timeContext.getBounds()
+      );
+
+      this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
+        timeContext: this.timeContext
+      });
+      this.telemetryCollection.on('add', this.dataAdded);
+      this.telemetryCollection.on('remove', this.dataRemoved);
+      this.telemetryCollection.on('clear', this.dataCleared);
+      this.telemetryCollection.load();
 
       this.bounds = bounds; // setting bounds for ImageryView watcher
     },

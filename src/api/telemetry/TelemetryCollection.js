@@ -60,8 +60,8 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-    this.unsubscribe = undefined;
     this.options = this.openmct.telemetry.standardizeRequestOptions(options);
+    this.unsubscribe = undefined;
     this.pageState = undefined;
     this.lastBounds = undefined;
     this.requestAbort = undefined;
@@ -79,8 +79,7 @@ export default class TelemetryCollection extends EventEmitter {
     }
 
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
-    this.lastBounds = this.options.timeContext.bounds();
-
+    this.lastBounds = this.options.timeContext.getBounds();
     this._watchBounds();
     this._watchTimeSystem();
 
@@ -301,8 +300,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
-    console.debug(`🍇 Start bounds changed to ${new Date(bounds.start)}`);
-    console.debug(`🍇 End bounds changed to ${new Date(bounds.end)}`);
+    console.debug(
+      `🍇 Start bounds changed to ${new Date(bounds.start)} and End bounds changed to ${new Date(
+        bounds.end
+      )}`
+    );
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -443,6 +445,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @todo handle subscriptions more granually
    */
   _reset() {
+    console.debug(`🍇 Resetting telemetry collection`);
     this.boundedTelemetry = [];
     this.futureBuffer = [];
 

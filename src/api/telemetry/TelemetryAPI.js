@@ -204,18 +204,18 @@ export default class TelemetryAPI {
    */
   standardizeRequestOptions(options = {}) {
     if (!Object.hasOwn(options, 'start')) {
-      if (options.timeContext?.bounds()) {
-        options.start = options.timeContext.bounds().start;
+      if (options.timeContext?.getBounds()) {
+        options.start = options.timeContext.getBounds().start;
       } else {
-        options.start = this.openmct.time.bounds().start;
+        options.start = this.openmct.time.getBounds().start;
       }
     }
 
     if (!Object.hasOwn(options, 'end')) {
-      if (options.timeContext?.bounds()) {
-        options.end = options.timeContext.bounds().end;
+      if (options.timeContext?.getBounds()) {
+        options.end = options.timeContext.getBounds().end;
       } else {
-        options.end = this.openmct.time.bounds().end;
+        options.end = this.openmct.time.getBounds().end;
       }
     }
 
