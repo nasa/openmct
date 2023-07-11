@@ -65,7 +65,7 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: rgba(57, 57, 57);
+$colorBodyBg: rgba(57, 57, 57, 1);
 $colorBodyFg: #aaaaaa;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
@@ -92,8 +92,8 @@ $colorSelectedFg: pullForward($colorBodyFg, 20%);
 $bodyBg: $colorBodyBg url('../ui/layout/assets/images/background.png');
 
 // Object labels
-$objectLabelTypeIconOpacity: 0.7;
-$objectLabelNameColorFg: lighten($colorBodyFg, 10%);
+$objectLabelTypeIconOpacity: 0.9;
+$objectLabelNameColorFg: $colorBodyFgEm;
 
 // Layout
 $shellMainPad: 4px 0;
@@ -278,7 +278,7 @@ $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
 // Menus
-$colorMenuBg: rgba($colorBodyBg, .1);
+$colorMenuBg: rgba($colorBodyBg, 0.6);
 $colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
 $filterMenu: brightness(1.4);
@@ -331,11 +331,11 @@ $colorInspectorSectionHeaderBg: rgba($colorBodyBg, .75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
-$colorTabBg: rgba(0, 150, 215, .31);
-$colorTabFg: pullForward($colorBodyFgEm, 0%);
-$colorTabCurrentBg: rgba(0, 150, 215, .53);
-$colorTabCurrentFg: pullForward($colorTabFg, 20%);
-$colorTabsBaseline: $colorTabCurrentBg;
+$colorTabBg: $colorBodyBg;
+$colorTabFg: $colorBodyFgEm;
+$colorTabCurrentBg: rgba($colorKey, .71);
+$colorTabCurrentFg: $colorBodyFgEm;
+$colorTabsBaseline: $colorBodyBg;
 $colorTabCurrentGlow: rgba(white, 0.6);
 
 
