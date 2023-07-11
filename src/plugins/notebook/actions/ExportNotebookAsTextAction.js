@@ -105,14 +105,16 @@ export default class ExportNotebookAsTextAction {
           if (changes.exportMetaData) {
             const createdTimestamp = entry.createdOn;
             const createdBy = this.getUserName(entry.createdBy);
+            const createdByRole = entry.createdByRole;
             const modifiedBy = this.getUserName(entry.modifiedBy);
+            const modifiedByRole = entry.modifiedByRole;
             const modifiedTimestamp = entry.modified ?? entry.created;
             notebookAsText += `Created on ${this.formatTimeStamp(
               createdTimestamp
-            )} by user ${createdBy}\n\n`;
+            )} by user ${createdBy}${createdByRole ? `: ${createdByRole}` : ''}\n\n`;
             notebookAsText += `Updated on ${this.formatTimeStamp(
               modifiedTimestamp
-            )} by user ${modifiedBy}\n\n`;
+            )} by user ${modifiedBy}${modifiedByRole ? `: ${modifiedByRole}` : ''}\n\n`;
           }
 
           if (changes.exportTags) {
