@@ -191,7 +191,7 @@ export default class URLTimeSettingsSynchronizer {
         isValid = this.areStartAndEndValid(timeParameters.clockOffsets);
       }
     }
-    console.log('are time params valid?', isValid);
+
     return isValid;
   }
 
