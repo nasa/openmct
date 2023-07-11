@@ -307,7 +307,7 @@ export default {
       this.handleSelection(this.openmct.selection.get());
     }
   },
-  detroyed() {
+  unmounted() {
     this.openmct.selection.off('change', this.handleSelection);
     this.openmct.editor.off('isEditing', this.handleEditing);
     this.removeListeners();
