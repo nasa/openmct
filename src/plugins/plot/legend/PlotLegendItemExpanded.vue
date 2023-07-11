@@ -131,7 +131,8 @@ export default {
         if (newHighlights.length === 0 || highlightedObject) {
           this.initialize(highlightedObject);
         }
-      }
+      },
+      deep: true
     }
   },
   mounted() {
