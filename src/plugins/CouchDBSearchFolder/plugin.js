@@ -1,9 +1,10 @@
-import { v4 as uuid } from 'uuid';
-
 export default function (folderName, couchPlugin, searchFilter) {
+  const DEFAULT_NAME = 'CouchDB Documents';
+
   return function install(openmct) {
     const couchProvider = couchPlugin.couchProvider;
-    const couchSearchId = uuid();
+    //replace any non-letter/non-number with a hyphen
+    const couchSearchId = (folderName || DEFAULT_NAME).replace(/[^a-zA-Z0-9]/g, '-');
     const couchSearchName = `couch-search-${couchSearchId}`;
 
     openmct.objects.addRoot({
@@ -19,7 +20,7 @@ export default function (folderName, couchPlugin, searchFilter) {
           return Promise.resolve({
             identifier,
             type: 'folder',
-            name: folderName || 'CouchDB Documents',
+            name: folderName || DEFAULT_NAME,
             location: 'ROOT'
           });
         }
