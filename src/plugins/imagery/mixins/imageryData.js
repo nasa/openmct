@@ -157,14 +157,6 @@ export default {
       return this.timeFormatter.parse(datum);
     },
     loadTelemetry() {
-      console.debug(`👺 Context for imagery view is `, this.timeContext);
-      console.debug(
-        `👺 Start time is ${new Date(
-          this.timeContext.getBounds().start
-        )} and end time is ${new Date(this.timeContext.getBounds().end)}`,
-        this.timeContext.getBounds()
-      );
-
       this.telemetryCollection = this.openmct.telemetry.requestCollection(this.domainObject, {
         timeContext: this.timeContext
       });

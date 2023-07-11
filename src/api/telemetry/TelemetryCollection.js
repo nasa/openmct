@@ -306,11 +306,6 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
-    console.debug(
-      `🍇 Start bounds changed to ${new Date(bounds.start)} and End bounds changed to ${new Date(
-        bounds.end
-      )}`
-    );
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -444,7 +439,6 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   _timeModeChanged() {
-    console.debug(`🍇 Time mode changed`);
     this._reset();
   }
 
@@ -456,7 +450,6 @@ export default class TelemetryCollection extends EventEmitter {
    * @todo handle subscriptions more granually
    */
   _reset() {
-    console.debug(`🍇 Resetting telemetry collection`);
     this.boundedTelemetry = [];
     this.futureBuffer = [];
 
