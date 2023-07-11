@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     mode() {
-      return this.isFixed ? `${FIXED_MODE_KEY} Timespan` : REALTIME_MODE_KEY;
+      return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
     }
   },
   mounted() {
@@ -213,8 +213,9 @@ export default {
       );
       this.isUTCBased = timeSystem.isUTCBased;
     },
-    setMode(mode) {
-      this.isFixed = mode === FIXED_MODE_KEY;
+    setMode() {
+      this.isFixed = this.openmct.time.isFixed();
+      console.log('set mode: fixed?', this.isFixed);
     },
     setViewFromBounds(bounds) {
       this.formattedBounds.start = this.timeFormatter.format(bounds.start);

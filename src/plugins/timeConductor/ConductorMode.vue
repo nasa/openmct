@@ -69,6 +69,7 @@ export default {
   watch: {
     mode: {
       handler(newMode) {
+        console.log('conductor mode, mode handler, new mode', newMode);
         this.setViewFromMode(newMode);
       }
     }
