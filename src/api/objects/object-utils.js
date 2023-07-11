@@ -52,10 +52,10 @@ define([], function () {
    */
   function parseKeyString(keyString) {
     if (isIdentifier(keyString)) {
-        // TODO REMOVE FOR OMM-RELEASE-5.0
-        if (!keyString.namespace && keyString.key.includes(':')) {
-            console.error(`smushed key: ${keyString.key}`);
-        }
+      // TODO REMOVE FOR OMM-RELEASE-5.0
+      if (!keyString.namespace && keyString.key.includes(':')) {
+        console.error(`smushed key: ${keyString.key}`);
+      }
 
       return keyString;
     }

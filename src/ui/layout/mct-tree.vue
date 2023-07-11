@@ -307,34 +307,34 @@ export default {
         return false;
       }
 
-            // will need to listen for root composition changes as well
-            this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
-        },
-        treeItemAction(parentItem, type) {
-            if (type === 'close') {
-                this.closeTreeItem(parentItem);
-            } else {
-                this.openTreeItem(parentItem);
-            }
-        },
-        targetedPathAnimationEnd() {
-            this.targetedPath = null;
-        },
-        treeItemSelection(item) {
-            this.selectedItem = item;
-            this.$emit('tree-item-selection', item);
-        },
-        async openTreeItem(parentItem) {
-            const parentPath = parentItem.navigationPath;
-            const abortSignal = this.startItemLoad(parentPath);
+      // will need to listen for root composition changes as well
+      this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
+    },
+    treeItemAction(parentItem, type) {
+      if (type === 'close') {
+        this.closeTreeItem(parentItem);
+      } else {
+        this.openTreeItem(parentItem);
+      }
+    },
+    targetedPathAnimationEnd() {
+      this.targetedPath = null;
+    },
+    treeItemSelection(item) {
+      this.selectedItem = item;
+      this.$emit('tree-item-selection', item);
+    },
+    async openTreeItem(parentItem) {
+      const parentPath = parentItem.navigationPath;
+      const abortSignal = this.startItemLoad(parentPath);
 
-            // pass in abort signal when functional
-            const childrenItems = await this.loadAndBuildTreeItemsFor(
-                parentItem.object.identifier,
-                parentItem.objectPath,
-                abortSignal
-            );
-            const parentIndex = this.treeItems.indexOf(parentItem);
+      // pass in abort signal when functional
+      const childrenItems = await this.loadAndBuildTreeItemsFor(
+        parentItem.object.identifier,
+        parentItem.objectPath,
+        abortSignal
+      );
+      const parentIndex = this.treeItems.indexOf(parentItem);
 
       // if it's not loading, it was aborted
       if (!this.isItemLoading(parentPath) || parentIndex === -1) {

@@ -246,11 +246,11 @@ export default class ObjectAPI {
 
         delete this.cache[keystring];
 
-            // suppress abort errors
-            if (error.name !== 'AbortError') {
-            console.warn(`Failed to retrieve ${keystring}:`, error);
-                result = this.applyGetInterceptors(identifier);
-            }
+        // suppress abort errors
+        if (error.name !== 'AbortError') {
+          console.warn(`Failed to retrieve ${keystring}:`, error);
+          result = this.applyGetInterceptors(identifier);
+        }
 
         return result;
       });
