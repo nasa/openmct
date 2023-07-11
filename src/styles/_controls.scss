@@ -29,8 +29,8 @@
   @if $shdwMenuInner != none {
     box-shadow: $shdwMenuInner, $shdwMenu;
   }
-  background: rgba($colorMenuBg, 0.6);
-  backdrop-filter: blur(20px);
+  background: $colorMenuBg;
+  backdrop-filter: blur($formRowCtrlsH);
   color: $colorMenuFg;
   text-shadow: $shdwMenuText;
   padding: $interiorMarginSm;
