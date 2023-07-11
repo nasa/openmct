@@ -50,12 +50,16 @@ const momentDurationFormatSetup = require('moment-duration-format');
 momentDurationFormatSetup(moment);
 
 export default {
-  inject: ['openmct', 'currentView', 'objectPath'],
+  inject: ['openmct', 'currentView'],
   props: {
     domainObject: {
       type: Object,
       required: true
-    }
+    },
+    objectPath: {
+      type: Array,
+      required: true
+    },
   },
   data() {
     return {

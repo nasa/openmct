@@ -44,15 +44,15 @@ export default function TimerViewProvider(openmct) {
             },
             provide: {
               openmct,
-              objectPath,
               currentView: this
             },
             data() {
               return {
-                domainObject
+                domainObject,
+                objectPath
               };
             },
-            template: '<timer :domain-object="domainObject" />'
+            template: '<timer :domain-object="domainObject" :object-path="objectPath" />'
           }, {
             app: openmct.app,
             element
