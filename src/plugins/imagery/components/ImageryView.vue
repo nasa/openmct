@@ -1111,7 +1111,7 @@ export default {
       window.clearInterval(this.durationTracker);
     },
     updateDuration() {
-      let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
+      let currentTime = this.timeContext.getClock() && this.timeContext.getClock().currentValue();
       if (currentTime === undefined) {
         this.numericDuration = currentTime;
       } else if (Number.isInteger(this.parsedSelectedTime)) {
