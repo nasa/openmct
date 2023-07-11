@@ -188,7 +188,7 @@ $browseFrameCornerColor:  rgb(0,150,215) 4px; //Color used for the corners of fr
     linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 100% 100%;
 
   background-repeat: no-repeat;
-  background-size: 20px 20px;
+  background-size: 35px 35px;
   border-radius: $controlCr;
   box-shadow: 0px 0px 20px 2px rgb(148, 148, 148, .2);
 }
@@ -240,7 +240,7 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, 20%);
+$colorBtnBg: pullForward($colorBodyBg, 15%);
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
 $shdwBtnHov: inset rgba(white, 10%) 0 0 0 100px;
 $colorBtnFg: pullForward($colorBodyFg, 10%);
