@@ -176,8 +176,6 @@ export default {
 
       const getProps = this.getProps;
       const isMissing = openmct.objects.isMissing(object);
-      let viewContainer = document.createElement('div');
-      this.$el.append(viewContainer);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object, (isStale) => {
@@ -193,7 +191,6 @@ export default {
       }
 
       const { vNode } = mount({
-        el: viewContainer,
         components: {
           MctPlot,
           ProgressBar
@@ -247,7 +244,8 @@ export default {
                           @loadingUpdated="loadingUpdated"/>
                   </div>`
       }, {
-        app: this.openmct.app
+        app: this.openmct.app,
+        element: this.$el
       });
       this.component = vNode.componentInstance;
 
