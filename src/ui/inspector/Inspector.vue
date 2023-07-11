@@ -55,11 +55,12 @@ export default {
   mounted() {
     this.openmct.selection.on('change', this.setSelection);
   },
-  unmounted() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.setSelection);
   },
   methods: {
     setSelection(selection) {
+      console.log('setSelection called', selection);
       this.selection = selection;
     },
     selectTab(tab) {

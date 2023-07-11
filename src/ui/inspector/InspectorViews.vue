@@ -40,13 +40,8 @@ export default {
     }
   },
   watch: {
-    selection: {
-      handler() {
-        this.updateSelectionViews();
-      },
-      deep: true
-    },
     selectedTab() {
+      this.updateSelectionViews();
       this.clearAndShowViewsForTab();
     }
   },
