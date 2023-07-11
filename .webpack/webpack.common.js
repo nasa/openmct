@@ -39,7 +39,8 @@ const config = {
     couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
     inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
     espressoTheme: './src/plugins/themes/espresso-theme.scss',
-    snowTheme: './src/plugins/themes/snow-theme.scss'
+    snowTheme: './src/plugins/themes/snow-theme.scss',
+    diyTheme: './src/plugins/themes/diy-theme.scss'
   },
   output: {
     globalObject: 'this',
