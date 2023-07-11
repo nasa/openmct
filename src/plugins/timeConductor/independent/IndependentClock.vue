@@ -96,7 +96,7 @@ export default {
         {
           name: currentGlobalClock.name,
           clock: currentGlobalClock.key,
-          timeSystem: this.openmct.time.timeSystem().key
+          timeSystem: this.openmct.time.getTimeSystem().key
         }
       );
 

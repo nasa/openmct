@@ -94,7 +94,7 @@ export default {
         option.timeSystem = configuration.timeSystem;
         option.bounds = configuration.bounds;
 
-        // this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
+        // this.openmct.time.setTimeSystem(configuration.timeSystem, configuration.bounds);
       }
 
       const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
