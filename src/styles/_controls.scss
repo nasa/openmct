@@ -29,7 +29,7 @@
   @if $shdwMenuInner != none {
     box-shadow: $shdwMenuInner, $shdwMenu;
   }
-  background: $colorMenuBg;
+  background: rgba($colorMenuBg, 0.6);
   backdrop-filter: blur(20px);
   color: $colorMenuFg;
   text-shadow: $shdwMenuText;
