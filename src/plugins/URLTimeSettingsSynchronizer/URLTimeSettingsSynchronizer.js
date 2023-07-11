@@ -191,7 +191,7 @@ export default class URLTimeSettingsSynchronizer {
         isValid = this.areStartAndEndValid(timeParameters.clockOffsets);
       }
     }
-
+    console.log('are time params valid?', isValid);
     return isValid;
   }
 
@@ -227,7 +227,7 @@ export default class URLTimeSettingsSynchronizer {
 
     if (
       isValid &&
-      (mode.toLowerCase() === FIXED_MODE_KEY || mode.toLowerCase() === REALTIME_MODE_KEY)
+      (mode.toLowerCase() === FIXED_MODE_KEY || this.openmct.time.clocks.get(mode) !== undefined)
     ) {
       isValid = true;
     }

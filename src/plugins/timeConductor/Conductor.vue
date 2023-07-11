@@ -215,7 +215,6 @@ export default {
     },
     setMode() {
       this.isFixed = this.openmct.time.isFixed();
-      console.log('set mode: fixed?', this.isFixed);
     },
     setViewFromBounds(bounds) {
       this.formattedBounds.start = this.timeFormatter.format(bounds.start);
