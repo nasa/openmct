@@ -37,7 +37,10 @@
           <span class="c-ne__created-date">{{ createdOnDate }}</span>
           <span class="c-ne__created-time">{{ createdOnTime }}</span>
           <span v-if="entry.createdBy" class="c-ne__creator">
-            <span class="icon-person"></span> {{ entry.createdBy }}
+            <span class="icon-person"></span>
+            {{
+              entry.createdByRole ? `${entry.createdBy}: ${entry.createdByRole}` : entry.createdBy
+            }}
           </span>
         </div>
         <span v-if="!readOnly && !isLocked" class="c-ne__local-controls--hidden">
@@ -433,10 +436,17 @@ export default {
       this.timestampAndUpdate();
     },
     async timestampAndUpdate() {
-      const user = await this.openmct.user.getCurrentUser();
-
+      const [user, activeRole] = await Promise.all([
+        this.openmct.user.getCurrentUser(),
+        this.openmct.user.getActiveRole?.()
+      ]);
       if (user === undefined) {
         this.entry.modifiedBy = UNKNOWN_USER;
+      } else {
+        this.entry.modifiedBy = user.getName();
+        if (activeRole) {
+          this.entry.modifiedByRole = activeRole;
+        }
       }
 
       this.entry.modified = Date.now();
