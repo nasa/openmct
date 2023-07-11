@@ -185,7 +185,7 @@ export default {
     endPan(bounds) {
       this.isPanning = false;
       if (bounds) {
-        this.openmct.time.bounds(bounds);
+        this.openmct.time.setBounds(bounds);
       }
     },
     zoom(bounds) {
@@ -200,7 +200,7 @@ export default {
     endZoom(bounds) {
       this.isZooming = false;
       if (bounds) {
-        this.openmct.time.bounds(bounds);
+        this.openmct.time.setBounds(bounds);
       } else {
         this.setViewFromBounds(this.bounds);
       }
@@ -228,7 +228,7 @@ export default {
       }).formatter;
     },
     saveFixedBounds(bounds) {
-      this.openmct.time.bounds(bounds);
+      this.openmct.time.setBounds(bounds);
     },
     saveClockOffsets(offsets) {
       this.openmct.time.setClockOffsets(offsets);
