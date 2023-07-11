@@ -474,8 +474,6 @@ export default class TelemetryCollection extends EventEmitter {
     this.options.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this._bounds, this);
   }
 
-
-
   /**
    * adds the _timeModeChanged callback to the 'modeChanged' timeAPI listener
    * @private
