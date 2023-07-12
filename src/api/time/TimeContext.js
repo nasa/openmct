@@ -104,7 +104,10 @@ class TimeContext extends EventEmitter {
        * @property {TimeSystem} The value of the currently applied
        * Time System
        * */
-      this.emit('timeSystem', this.#copy(this.system));
+      const system = this.#copy(this.system);
+      this.emit('timeSystem', system);
+      this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, system);
+
       if (bounds) {
         this.bounds(bounds);
       }
@@ -269,7 +272,9 @@ class TimeContext extends EventEmitter {
         end: currentValue + offsets.end
       };
 
-      this.bounds(newBounds);
+      if (this.isRealTime()) {
+        this.bounds(newBounds);
+      }
 
       /**
        * Event that is triggered when clock offsets change.
@@ -337,6 +342,7 @@ class TimeContext extends EventEmitter {
        * if the system is no longer following a clock source
        */
       this.emit('clock', this.activeClock);
+      this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
         this.clockOffsets(offsets);
@@ -620,7 +626,9 @@ class TimeContext extends EventEmitter {
       end: currentValue + offsets.end
     };
 
-    this.setBounds(newBounds);
+    if (this.isRealTime()) {
+      this.setBounds(newBounds);
+    }
 
     /**
      * Event that is triggered when clock offsets change.
