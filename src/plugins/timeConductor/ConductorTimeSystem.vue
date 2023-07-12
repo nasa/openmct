@@ -33,8 +33,8 @@
       {{ selectedTimeSystem.name }}
     </button>
   </div>
-  <div v-else class="c-compact-tc__time-system">
-    <div class="c-compact-tc__time-system__value">{{ selectedTimeSystem.name }}</div>
+  <div v-else class="c-compact-tc__setting-value u-fade-truncate" :title="selectedTimeSystem.name">
+    {{ selectedTimeSystem.name }}
   </div>
 </template>
 

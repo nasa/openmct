@@ -29,7 +29,6 @@
       { 'alt-pressed': altPressed },
       isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
-    style="overflow: visible"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <conductor-mode :mode="mode" :read-only="true" />
@@ -48,7 +47,6 @@
       @panAxis="pan"
       @zoomAxis="zoom"
     />
-    <div v-else class="u-flex-spreader"></div>
     <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 
     <conductor-pop-up

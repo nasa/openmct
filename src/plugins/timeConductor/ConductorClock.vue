@@ -23,8 +23,12 @@ available * at runtime from the About dialog for additional information.
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__clock">
-    <div class="c-compact-tc__clock__value">{{ selectedClock.name }}</div>
+  <div
+    v-else
+    class="c-compact-tc__setting-value u-fade-truncate"
+    :title="`Clock: ${selectedClock.name}`"
+  >
+    {{ selectedClock.name }}
   </div>
 </template>
 
