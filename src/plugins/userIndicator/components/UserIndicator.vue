@@ -67,8 +67,8 @@ export default {
         this.promptForRoleSelection();
       }
     },
-    promptForRoleSelection() {
-      const allRoles = this.openmct.user.getPossibleRoles();
+    async promptForRoleSelection() {
+      const allRoles = await this.openmct.user.getPossibleRoles();
       const selectionOptions = allRoles.map((role) => ({
         key: role,
         name: role
