@@ -32,7 +32,6 @@
   &:not(.c-so-view--no-frame) {
     border: $browseFrameBorder;
     @include browseFrameBorder;
-    //padding: 0 $interiorMarginSm;
 
     .is-editing & {
       background: rgba($colorBodyBg, 0.8);

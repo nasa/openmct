@@ -151,7 +151,9 @@ body {
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
   @include bodyFont($fontBaseSize);
-  background-color: $colorBodyBg;
+  // background-color: $colorBodyBg;
+  background: $bodyBg;
+  background-size: cover;
   color: $colorBodyFg;
 }
 

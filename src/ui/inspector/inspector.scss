@@ -52,7 +52,7 @@
         overflow: hidden;
 
         &:after {
-          background-image: linear-gradient(90deg, transparent 0%, rgba($colorTabBg, 1) 70%);
+          //background-image: linear-gradient(90deg, transparent 0%, rgba($colorTabBg, 1) 70%);
           content: '';
           display: block;
           position: absolute;

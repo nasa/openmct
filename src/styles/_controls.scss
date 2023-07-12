@@ -30,6 +30,7 @@
     box-shadow: $shdwMenuInner, $shdwMenu;
   }
   background: $colorMenuBg;
+  backdrop-filter: blur($formRowCtrlsH);
   color: $colorMenuFg;
   text-shadow: $shdwMenuText;
   padding: $interiorMarginSm;

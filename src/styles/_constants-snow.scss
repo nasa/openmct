@@ -86,6 +86,9 @@ $filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location it
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
+// Background Image 
+$bodyBg: $colorBodyBg; 
+
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
 $objectLabelNameColorFg: darken($colorBodyFg, 10%);
@@ -164,11 +167,11 @@ $filterItemHoverFg: brightness(0.9);
 $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.4;
 $borderMissing: 1px dashed $colorAlert !important;
+$browseFrameCornerColor: 0px solid rgb(0,150,215);
 
 @mixin browseFrameBorder() {
   border: $browseFrameBorder;
   border-radius: $controlCr;
-  background: red;
   &:after{
     display: block;
     content: "";
@@ -323,6 +326,8 @@ $colorTabFg: pullForward($colorTabBg, 60%);
 $colorTabCurrentBg: $colorBodyFg; //pullForward($colorTabBg, 10%);
 $colorTabCurrentFg: $colorBodyBg; //pullForward($colorTabFg, 10%);
 $colorTabsBaseline: $colorTabCurrentBg;
+$colorTabCurrentGlow: rgba(white, 0.0);
+
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
@@ -410,6 +415,7 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.4);
 // Gauges
 $colorGaugeBg: pullForward($colorBodyBg, 20%); // Gauge radial area background, meter background
 $colorGaugeValue: rgba(#000, 0.3); // Gauge value graphic (radial sweep, bar) color
+$colorGaugeValueShadow: rgba(#fff, 0);
 $colorGaugeTextValue: pullForward($colorBodyFg, 20%); // Radial gauge text value
 $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFg; // Range text color
@@ -532,3 +538,4 @@ $scrollContainer: rgba(102, 102, 102, 0.1);
 @mixin themedButton($c: $colorBtnBg) {
   background: $c;
 }
+
