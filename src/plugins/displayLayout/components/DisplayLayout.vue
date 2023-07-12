@@ -161,15 +161,13 @@ export default {
       selection: [],
       showGrid: true,
       viewContext: {},
-      gridDimensions: [0, 0]
+      gridDimensions: [0, 0],
+      layoutItems: this.domainObject.configuration.items
     };
   },
   computed: {
     gridSize() {
       return this.domainObject.configuration.layoutGrid.map(Number);
-    },
-    layoutItems() {
-      return this.domainObject.configuration.items;
     },
     selectedLayoutItems() {
       return this.layoutItems.filter((item) => {
@@ -222,6 +220,10 @@ export default {
     this.composition.on('remove', this.removeChild);
     this.composition.load();
     this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
+
+    this.openmct.objects.observe(this.domainObject, 'configuration.items', (items) => {
+      this.layoutItems = items;
+    });
 
     this.watchDisplayResize();
   },
