@@ -23,7 +23,7 @@
   <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu c-button--compact js-mode-button"
+        class="c-button--menu js-mode-button"
         :class="[buttonCssClass, selectedMode.cssClass]"
         @click.prevent.stop="showModesMenu"
       >
@@ -88,7 +88,7 @@ export default {
       const y = elementBoundingClientRect.y;
 
       const menuOptions = {
-        menuClass: 'c-conductor__mode-menu',
+        menuClass: 'c-conductor__mode-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.TOP_RIGHT
       };
 

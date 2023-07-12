@@ -589,9 +589,17 @@
   }
 }
 
+@function cButtonPadding($padding: $interiorMargin, $compact: false) {
+  @if $compact {
+    @return floor(math.div($padding, 1.5)) $padding;
+  } @else {
+    @return $padding floor($padding * 1.25);
+  }
+}
+
 @mixin cButtonLayout() {
   $pad: $interiorMargin;
-  padding: $pad floor($pad * 1.25);
+  padding: cButtonPadding($pad);
 
   &:after,
   > * + * {
@@ -599,7 +607,8 @@
   }
 
   &[class*='--compact'] {
-    padding: floor(math.div($pad, 1.5)) $pad;
+    //padding: floor(math.div($pad, 1.5)) $pad;
+    padding: cButtonPadding($pad, true);
   }
 }
 

@@ -675,12 +675,11 @@ select {
     flex-direction: column;
     justify-content: stretch;
 
-    .l-item-description {
-      &__name,
-      &__description {
-        margin-top: $interiorMarginLg;
-      }
+    > * + * {
+      margin-top: $interiorMarginLg;
+    }
 
+    .l-item-description {
       &__icon {
         min-height: 20%;
         margin: 10% 25%;
@@ -698,6 +697,29 @@ select {
     }
   }
 }
+
+.c-super-menu--sm {
+  // Small version of the super menu, used by the compact Time Conductor
+  //background: orange !important;
+  height: 120px;
+  width: 500px;
+
+  .c-super-menu__item-description {
+    [class*="__icon"] {
+      display: none !important;
+    }
+
+    [class*="__name"] {
+      margin-top: 0 !important;
+    }
+
+    [class*="__item-description"] {
+      min-width: 200px;
+    }
+
+  }
+}
+
 /******************************************************** CONTROL BARS */
 .c-control-bar {
   display: flex;

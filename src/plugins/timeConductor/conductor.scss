@@ -150,7 +150,6 @@
 
 .is-realtime-mode {
     .c-conductor__delta-button {
-        //@include themedButton($colorTimeRealtimeBg);
         color: $colorTimeRealtimeFg;
     }
 
@@ -249,7 +248,7 @@
     }
 
     &--date input {
-        width: 120px;
+        width: 85px;
     }
 
     &--time input {
@@ -268,6 +267,7 @@
 
     &--input-and-button {
         @include wrappedInput();
+        padding-right: unset;
     }
 }
 
@@ -284,7 +284,7 @@
     display: flex;
     flex: 0 1 auto;
     align-items: center;
-    padding: 2px $interiorMarginSm;
+    padding: 2px 0;
 
     &__setting-wrapper {
         display: contents;
@@ -314,13 +314,18 @@
     }
 
     .c-toggle-switch,
-    .c-clock-symbol {
+    .c-clock-symbol,
+    .c-conductor__mode-icon {
         // Used in independent Time Conductor
         flex: 0 0 auto;
     }
 
     .c-toggle-switch {
         margin-right: $interiorMarginSm;
+    }
+
+    .c-conductor__mode-icon {
+        margin-left: $interiorMargin;
     }
 
     .c-so-view & {
@@ -333,7 +338,7 @@
 
     [class*='button'] {
       $p: 0px;
-      padding: $p $p + 1;
+      padding: $p $p + 2;
     }
   }
 
@@ -430,8 +435,7 @@
             color: $colorTimeFixedFg;
         }
 
-        [class*='c-button'] {
-            background: $colorTimeFixedBtnBg;
+        [class*='c-button--'] {
             color: $colorTimeFixedBtnFg;
 
             [class*='label'] {
@@ -460,12 +464,22 @@
             color: $colorTimeFixedFg;
         }
 
-        [class*='c-button'] {
-            background: $colorTimeFixedBtnBg;
+        [class*='c-button--'] {
             color: $colorTimeFixedBtnFg;
 
             [class*='label'] {
                 color: $colorTimeRealtimeFg;
+            }
+        }
+    }
+
+    &.c-compact-tc {
+        @include hover {
+            $c: $colorTimeFixedHov;
+            background: $c;
+
+            [class*='u-fade-truncate']:after {
+                @include fadeTruncate($color: $c);
             }
         }
     }
@@ -489,8 +503,7 @@
             color: $colorTimeRealtimeFg;
         }
 
-        [class*='c-button'] {
-            background: $colorTimeRealtimeBtnBg;
+        [class*='c-button--'] {
             color: $colorTimeRealtimeBtnFg;
 
             [class*='label'] {
@@ -519,12 +532,22 @@
             color: $colorTimeRealtimeFg;
         }
 
-        [class*='c-button'] {
-            background: $colorTimeRealtimeBtnBg;
+        [class*='c-button--'] {
             color: $colorTimeRealtimeBtnFg;
 
             [class*='label'] {
                 color: $colorTimeRealtimeFg;
+            }
+        }
+    }
+
+    &.c-compact-tc {
+        @include hover {
+            $c: $colorTimeRealtimeHov;
+            background: $c;
+
+            [class*='u-fade-truncate']:after {
+                @include fadeTruncate($color: $c);
             }
         }
     }
@@ -559,6 +582,10 @@
 
         > * + * {
             margin-left: $interiorMargin;
+        }
+
+        .c-button--menu {
+            padding: cButtonPadding($compact: true);
         }
     }
 

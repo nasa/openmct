@@ -15,7 +15,7 @@ available * at runtime from the About dialog for additional information.
   <div v-if="readOnly === false" ref="clockButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu c-button--compact js-clock-button"
+        class="c-button--menu js-clock-button"
         :class="[buttonCssClass, selectedClock.cssClass]"
         @click.prevent.stop="showClocksMenu"
       >
@@ -75,7 +75,7 @@ export default {
       const y = elementBoundingClientRect.y;
 
       const menuOptions = {
-        menuClass: 'c-conductor__clock-menu',
+        menuClass: 'c-conductor__clock-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.TOP_RIGHT
       };
 

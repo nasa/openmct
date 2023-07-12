@@ -82,7 +82,7 @@ export default {
       const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
       const menuOptions = {
-        menuClass: 'c-conductor__clock-menu',
+        menuClass: 'c-conductor__clock-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
       };
       this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);

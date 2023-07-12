@@ -26,11 +26,11 @@
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
   >
     <button
-      class="c-button--menu c-button--compact c-time-system-button"
+      class="c-button--menu c-time-system-button"
       :class="[buttonCssClass]"
       @click.prevent.stop="showTimeSystemMenu"
     >
-      {{ selectedTimeSystem.name }}
+      <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
     </button>
   </div>
   <div v-else class="c-compact-tc__setting-value u-fade-truncate" :title="selectedTimeSystem.name">
