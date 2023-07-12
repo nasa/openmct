@@ -121,7 +121,7 @@ export default {
       timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
     );
     let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    let bounds = this.bounds || this.openmct.time.bounds();
+    let bounds = this.bounds || this.openmct.time.getBounds();
 
     return {
       timeFormatter,

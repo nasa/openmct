@@ -31,7 +31,7 @@
     ]"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <conductor-mode :read-only="true" />
+    <conductor-mode :mode="mode" :read-only="true" />
     <conductor-clock :read-only="true" />
     <conductor-time-system :read-only="true" />
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     mode() {
-      return this.isFixed ? `${FIXED_MODE_KEY} Timespan` : REALTIME_MODE_KEY;
+      return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
     }
   },
   mounted() {
@@ -183,7 +183,7 @@ export default {
     endPan(bounds) {
       this.isPanning = false;
       if (bounds) {
-        this.openmct.time.bounds(bounds);
+        this.openmct.time.setBounds(bounds);
       }
     },
     zoom(bounds) {
@@ -198,7 +198,7 @@ export default {
     endZoom(bounds) {
       this.isZooming = false;
       if (bounds) {
-        this.openmct.time.bounds(bounds);
+        this.openmct.time.setBounds(bounds);
       } else {
         this.setViewFromBounds(this.bounds);
       }
@@ -211,8 +211,8 @@ export default {
       );
       this.isUTCBased = timeSystem.isUTCBased;
     },
-    setMode(mode) {
-      this.isFixed = mode === FIXED_MODE_KEY;
+    setMode() {
+      this.isFixed = this.openmct.time.isFixed();
     },
     setViewFromBounds(bounds) {
       this.formattedBounds.start = this.timeFormatter.format(bounds.start);
@@ -226,7 +226,7 @@ export default {
       }).formatter;
     },
     saveFixedBounds(bounds) {
-      this.openmct.time.bounds(bounds);
+      this.openmct.time.setBounds(bounds);
     },
     saveClockOffsets(offsets) {
       this.openmct.time.setClockOffsets(offsets);

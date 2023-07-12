@@ -45,15 +45,17 @@ export default {
         this.positionBox();
       });
     },
-    showPopup() {
-      if (this.conductorPopup) {
+    showPopup(clickEvent) {
+      const isAxis = clickEvent.target.closest('.c-conductor-axis') !== null;
+
+      if (isAxis || this.conductorPopup) {
         return;
       }
 
       this.showConductorPopup = true;
     },
     positionBox() {
-      if (this.conductorPopup) {
+      if (!this.conductorPopup) {
         return;
       }
 

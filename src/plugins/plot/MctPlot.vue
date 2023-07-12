@@ -77,6 +77,7 @@
             <mct-chart
               :rectangles="rectangles"
               :highlights="highlights"
+              :show-limit-line-labels="limitLineLabels"
               :annotated-points="annotatedPoints"
               :annotation-selections="annotationSelections"
               :hidden-y-axis-ids="hiddenYAxisIds"
@@ -231,7 +232,7 @@ export default {
     limitLineLabels: {
       type: Object,
       default() {
-        return {};
+        return undefined;
       }
     },
     colorPalette: {
@@ -532,7 +533,7 @@ export default {
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('clockChanged', this.updateMode);
+        this.timeContext.off('modeChanged', this.updateMode);
         this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },

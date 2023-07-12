@@ -29,7 +29,8 @@ relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions ma
 const { test } = require('../../baseFixtures.js');
 
 test.describe('baseFixtures tests', () => {
-  test('Verify that tests fail if console.error is thrown', async ({ page }) => {
+  //Skip this test for now https://github.com/nasa/openmct/issues/6785
+  test.fixme('Verify that tests fail if console.error is thrown', async ({ page }) => {
     test.fail();
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });

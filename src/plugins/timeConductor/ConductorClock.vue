@@ -33,11 +33,11 @@ available * at runtime from the About dialog for additional information.
 </template>
 
 <script>
-import modeMixin from './mode-mixin';
+import clockMixin from './clock-mixin';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
-  mixins: [modeMixin],
+  mixins: [clockMixin],
   inject: {
     openmct: 'openmct',
     configuration: {
@@ -98,7 +98,7 @@ export default {
         option.timeSystem = configuration.timeSystem;
         option.bounds = configuration.bounds;
 
-        // this.openmct.time.timeSystem(configuration.timeSystem, configuration.bounds);
+        // this.openmct.time.setTimeSystem(configuration.timeSystem, configuration.bounds);
       }
 
       const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
@@ -125,7 +125,7 @@ export default {
       return this.configuration.menuOptions.filter(configMatches)[0];
     },
     setViewFromClock(clock) {
-      this.activeClock = clock;
+      this.selectedClock = this.getClockMetadata(clock);
     }
   }
 };

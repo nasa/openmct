@@ -183,7 +183,7 @@ class TimeAPI extends GlobalTimeContext {
       objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
     if (!viewKey) {
-      // Return the global time contex
+      // Return the global time context
       return this;
     }
 
