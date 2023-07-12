@@ -36,6 +36,13 @@ const config = {
         browserName: 'chromium',
         theme: 'snow'
       }
+    },
+    {
+      name: 'diy-theme', //Runs the same visual tests but with diy-theme
+      use: {
+        browserName: 'chromium',
+        theme: 'diy-theme'
+      }
     }
   ],
   reporter: [
