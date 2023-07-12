@@ -25,6 +25,8 @@
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
+$numericFont: $heroFont;
+
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
@@ -62,6 +64,11 @@ $bodyFont: $heroFont;
 @mixin themedButton($c: $colorBtnBg) {
   background: linear-gradient(pullForward($c, 5%), $c);
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin numericFont($size: 1em){
+  font-family: $numericFont;
+  font-size: $size;
 }
 
 // Functions

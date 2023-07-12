@@ -25,6 +25,7 @@
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
+$numericFont: $heroFont;
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
@@ -41,27 +42,9 @@ $bodyFont: $heroFont;
   font-size: $size;
 }
 
-@mixin discreteItem() {
-  background: $colorDiscreteItemBg;
-  border: 1px solid $colorInteriorBorder;
-  border-radius: $controlCr;
-
-  &--current-match {
-    background: $colorDiscreteItemCurrentBg;
-  }
-
-  .c-input-inline:hover {
-    background: $colorBodyBg;
-  }
-}
-
-@mixin discreteItemInnerElem() {
-  border: 1px solid $colorBodyBg;
-  border-radius: $controlCr;
-}
-
-@mixin themedButton($c: $colorBtnBg) {
-  background: $c;
+@mixin numericFont($size: 1em){
+  font-family: $numericFont;
+  font-size: $size;
 }
 
 // Functions
