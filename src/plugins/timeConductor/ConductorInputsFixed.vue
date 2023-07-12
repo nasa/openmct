@@ -28,10 +28,20 @@
     @update="setBoundsFromView"
     @dismiss="dismiss"
   />
-  <div v-else class="c-compact-tc__bounds">
-    <div class="c-compact-tc__bounds__value">{{ formattedBounds.start }}</div>
+  <div v-else class="c-compact-tc__setting-wrapper">
+    <div
+      class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
+      :title="`Start bounds: ${formattedBounds.start}`"
+    >
+      {{ formattedBounds.start }}
+    </div>
     <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
-    <div class="c-compact-tc__bounds__value">{{ formattedBounds.end }}</div>
+    <div
+      class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
+      :title="`End bounds: ${formattedBounds.end}`"
+    >
+      {{ formattedBounds.end }}
+    </div>
   </div>
 </template>
 

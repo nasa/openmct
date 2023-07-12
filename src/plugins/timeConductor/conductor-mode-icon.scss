@@ -112,6 +112,7 @@
     left: 50%;
     top: 50%;
     z-index: 2;
+
     &:before {
       background: $c;
       content: '';
@@ -120,18 +121,22 @@
       width: 100%;
       bottom: -1px;
     }
+
     &.hand-little {
       z-index: 2;
       animation-duration: 12s;
       transform: translate(-50%, -50%) rotate(120deg);
+
       &:before {
         height: ceil($handH * 0.6);
       }
     }
+
     &.hand-big {
       z-index: 1;
       animation-duration: 1s;
       transform: translate(-50%, -50%);
+
       &:before {
         height: $handH;
       }
@@ -142,13 +147,33 @@
   .is-realtime-mode &,
   .is-lad-mode & {
     $c: $colorTimeRealtimeFgSubtle;
+
     .c-clock-symbol__outer {
       // Brackets icon
       fill: $c;
     }
+
     div[class*='hand'] {
       animation-name: clock-hands;
+
       &:before {
+        background: $c;
+      }
+    }
+  }
+}
+
+// Contexts
+.c-so-view--no-frame {
+  .c-compact-tc:not(.is-expanded) {
+    .c-clock-symbol {
+      $c: $frameControlsColorFg;
+
+      &__outer {
+        fill: $c;
+      }
+
+      div[class*='hand']:before {
         background: $c;
       }
     }

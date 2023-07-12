@@ -453,6 +453,10 @@
   white-space: nowrap;
 }
 
+@mixin fadeTruncate($color: $colorBodyBg, $angle: 90deg) {
+  background-image: linear-gradient($angle, transparent 0%, $color 100%);
+}
+
 @mixin reverseEllipsis() {
   @include ellipsize();
   direction: ltr;

@@ -31,8 +31,12 @@
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__mode">
-    <div class="c-compact-tc__mode__value">{{ selectedMode.name }}</div>
+  <div
+    v-else
+    class="c-compact-tc__setting-value u-fade-truncate"
+    :title="`Mode: ${selectedMode.name}`"
+  >
+    {{ selectedMode.name }}
   </div>
 </template>
 
