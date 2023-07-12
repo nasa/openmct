@@ -23,9 +23,17 @@
 /**************************************************DIY THEME CONSTANTS */
 
 // Fonts
-$heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$headerFont: $heroFont;
-$bodyFont: $heroFont;
+// $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+// $headerFont: $heroFont;
+// $bodyFont: $heroFont;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap'); // Header font, Roboto Condensed. This is an alternative to the DIN Alt font, which is not available on Google Fonts. 
+@import url('https://fonts.googleapis.com/css2?family=Blinker&display=swap'); // Body Font, Blinker
+
+$heroFont: 'Teko', sans-serif;
+$headerFont: 'Cabin Condensed', sans-serif;
+$bodyFont: 'Blinker', sans-serif;
+
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
