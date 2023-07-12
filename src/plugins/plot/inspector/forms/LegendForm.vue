@@ -21,6 +21,16 @@
 -->
 <template>
   <div>
+    <li v-if="isStackedPlotObject" class="grid-row">
+      <div class="grid-cell label" title="Display legends per sub plot.">Show legend per plot</div>
+      <div class="grid-cell value">
+        <input
+          v-model="showLegendsForChildren"
+          type="checkbox"
+          @change="updateForm('showLegendsForChildren')"
+        />
+      </div>
+    </li>
     <li class="grid-row">
       <div
         class="grid-cell label"
@@ -128,7 +138,7 @@ import { coerce, objectPath, validate } from './formUtil';
 import _ from 'lodash';
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     legend: {
       type: Object,
@@ -148,8 +158,17 @@ export default {
       showMinimumWhenExpanded: '',
       showMaximumWhenExpanded: '',
       showUnitsWhenExpanded: '',
+      showLegendsForChildren: '',
       validation: {}
     };
+  },
+  computed: {
+    isStackedPlotObject() {
+      return this.path.find(
+        (pathObject, pathObjIndex) =>
+          pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked'
+      );
+    }
   },
   mounted() {
     this.initialize();
@@ -200,6 +219,11 @@ export default {
           modelProp: 'showUnitsWhenExpanded',
           coerce: Boolean,
           objectPath: 'configuration.legend.showUnitsWhenExpanded'
+        },
+        {
+          modelProp: 'showLegendsForChildren',
+          coerce: Boolean,
+          objectPath: 'configuration.legend.showLegendsForChildren'
         }
       ];
     },
@@ -213,6 +237,7 @@ export default {
       this.showMinimumWhenExpanded = this.legend.get('showMinimumWhenExpanded');
       this.showMaximumWhenExpanded = this.legend.get('showMaximumWhenExpanded');
       this.showUnitsWhenExpanded = this.legend.get('showUnitsWhenExpanded');
+      this.showLegendsForChildren = this.legend.get('showLegendsForChildren');
     },
     updateForm(formKey) {
       const newVal = this[formKey];

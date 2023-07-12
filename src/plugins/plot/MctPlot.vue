@@ -77,6 +77,7 @@
             <mct-chart
               :rectangles="rectangles"
               :highlights="highlights"
+              :show-limit-line-labels="limitLineLabels"
               :annotated-points="annotatedPoints"
               :annotation-selections="annotationSelections"
               :hidden-y-axis-ids="hiddenYAxisIds"
@@ -231,7 +232,7 @@ export default {
     limitLineLabels: {
       type: Object,
       default() {
-        return {};
+        return undefined;
       }
     },
     colorPalette: {
