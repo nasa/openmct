@@ -138,7 +138,7 @@ export default {
         domainObject,
         '*',
         function (newObject) {
-          this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
+          this.domainObjectsById[id].newObject = newObject;
           this.updateToolbarAfterMutation();
         }.bind(this)
       );
