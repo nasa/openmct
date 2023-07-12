@@ -94,7 +94,6 @@ export default function ClockPlugin(options) {
 
     if (options && options.enableClockIndicator === true) {
       const element = document.createElement('div');
-      document.body.appendChild(element);
 
       const { vNode } = mount({
         components: {
