@@ -28,6 +28,7 @@
 $heroFont: 'Teko', sans-serif;
 $headerFont: 'Michroma', sans-serif;
 $bodyFont: 'Chakra Petch', sans-serif;
+$numericFont: $heroFont;
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
@@ -43,6 +44,11 @@ $bodyFont: 'Chakra Petch', sans-serif;
 
 @mixin bodyFont($size: 1em) {
   font-family: $bodyFont;
+  font-size: $size;
+}
+
+@mixin numericFont($size: 1em){
+  font-family: $numericFont;
   font-size: $size;
 }
 

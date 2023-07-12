@@ -26,6 +26,8 @@
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
+$numericFont: $heroFont;
+
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
@@ -39,6 +41,11 @@ $bodyFont: $heroFont;
 
 @mixin bodyFont($size: 1em) {
   font-family: $bodyFont;
+  font-size: $size;
+}
+
+@mixin numericFont($size: 1em){
+  font-family: $numericFont;
   font-size: $size;
 }
 

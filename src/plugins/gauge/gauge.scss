@@ -89,7 +89,7 @@ $meterNeedleBorderRadius: 5px;
   }
   &__current-value-text {
     fill: $colorGaugeTextValue;
-    font-family: $heroFont;
+    font-family: $numericFont;
   }
 
   &__units-text,
@@ -161,7 +161,7 @@ $meterNeedleBorderRadius: 5px;
 
   &__current-value-text {
     fill: $colorGaugeTextValue;
-    font-family: $heroFont;
+    font-family: $numericFont;
   }
 
   .c-gauge__curval {
