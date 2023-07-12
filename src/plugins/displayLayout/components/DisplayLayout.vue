@@ -55,7 +55,7 @@
       :grid-size="gridSize"
       :init-select="initSelectIndex === index"
       :index="index"
-      :multi-select="selectedLayoutItems.length > 1"
+      :multi-select="selectedLayoutItems.length > 1 || null"
       :is-editing="isEditing"
       @contextClick="updateViewContext"
       @move="move"
