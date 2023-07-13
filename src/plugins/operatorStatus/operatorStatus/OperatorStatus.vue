@@ -117,7 +117,8 @@ export default {
     },
     async fetchMyStatus() {
       // hide indicator for observer
-      if (!this.openmct.user.canProvideStatusForRole()) {
+      const isStatusCapable = await this.openmct.user.canProvideStatusForRole();
+      if (!isStatusCapable) {
         this.indicator.text('');
         this.indicator.statusClass('hidden');
 
