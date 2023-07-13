@@ -53,8 +53,16 @@ export default {
     showPopup(clickEvent) {
       const isToggle = clickEvent.target.classList.contains('c-toggle-switch__slider');
 
-      // no current popup, itc toggled, something is emitting a dupe event with pointer id = -1, want to ignore those
-      if (!this.conductorPopup && !isToggle && clickEvent.pointerId !== -1) {
+      // no current popup,
+      // itc toggled,
+      // something is emitting a dupe event with pointer id = -1, want to ignore those
+      // itc is currently enabled
+      if (
+        !this.conductorPopup &&
+        !isToggle &&
+        clickEvent.pointerId !== -1 &&
+        this.independentTCEnabled
+      ) {
         this.showConductorPopup = true;
       }
     },
@@ -96,6 +104,7 @@ export default {
 
       this.showConductorPopup = false;
       this.conductorPopup = null;
+      this.positionX = -10000; // reset it off screan
 
       document.removeEventListener('click', this.handleClickAway);
       window.removeEventListener('resize', this.positionBox);
