@@ -73,6 +73,11 @@ export default {
         key: role,
         name: role
       }));
+      // automatically select role when a single option
+      if (selectionOptions.length === 1) {
+        this.updateRole(selectionOptions[0].key);
+        return;
+      }
 
       const dialog = this.openmct.overlays.selection({
         selectionOptions,
