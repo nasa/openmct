@@ -121,12 +121,6 @@ export default class ExampleUserProvider extends EventEmitter {
     return this.user.getRoles();
   }
 
-  getStatusRoleForCurrentUser(role) {
-    const matchedRole = this.statusRoleValues.find((statusRole) => statusRole.role === role);
-
-    return Promise.resolve(matchedRole?.status);
-  }
-
   getAllStatusRoles() {
     return Promise.resolve(this.statusRoles);
   }
