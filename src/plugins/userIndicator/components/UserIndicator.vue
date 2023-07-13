@@ -48,7 +48,7 @@ export default {
     await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
-    this.fetchOrPromptForRole();
+    await this.fetchOrPromptForRole();
   },
   beforeDestroy() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
