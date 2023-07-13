@@ -21,15 +21,16 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct started by `npm start` within the
-`./e2e/playwright-visual.config.js` file.
+This test suite is dedicated to tests which can quickly verify that any openmct installation is
+operable and that any type of testing can proceed.
 
-These should only use functional expect statements to verify assumptions about the state
-in a test and not for functional verification of correctness. Visual tests are not supposed
-to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
+Ideally, smoke tests should make zero assumptions about how and where they are run. This makes them
+more resilient to change and therefor a better indicator of failure. Smoke tests will also run quickly
+as they cover a very "thin surface" of functionality.
 
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests.
+When deciding between authoring new smoke tests or functional tests, ask yourself "would I feel
+comfortable running this test during a live mission?" Avoid creating or deleting Domain Objects.
+Make no assumptions about the order that elements appear in the DOM.
 */
 
 const { test, expect } = require('../../pluginFixtures');
