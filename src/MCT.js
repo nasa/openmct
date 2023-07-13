@@ -339,6 +339,13 @@ define([
    *        MCT; if undefined, MCT will be run in the body of the document
    */
   MCT.prototype.start = function (domElement = document.body.firstElementChild, isHeadlessMode = false) {
+    // Create element to mount Layout if it doesn't exist
+    if(domElement === null) {
+      domElement = document.createElement('div');
+      domElement.id = 'app';
+      document.body.appendChild(domElement);
+    }
+
     if (this.types.get('layout') === undefined) {
       this.install(
         this.plugins.DisplayLayout({
