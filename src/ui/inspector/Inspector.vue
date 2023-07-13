@@ -60,7 +60,6 @@ export default {
   },
   methods: {
     setSelection(selection) {
-      console.log('setSelection called', selection);
       this.selection = selection;
     },
     selectTab(tab) {
