@@ -243,6 +243,135 @@ describe('the plugin', () => {
       expect(requestMethod).toEqual('GET');
     });
   });
+  describe('batches persistence', () => {
+    let successfulMockPromise;
+    let partialFailureMockPromise;
+    let objectsToPersist;
+
+    beforeEach(() => {
+      successfulMockPromise = Promise.resolve({
+        json: () => {
+          return [
+            {
+              id: 'object-1',
+              ok: true
+            },
+            {
+              id: 'object-2',
+              ok: true
+            },
+            {
+              id: 'object-3',
+              ok: true
+            }
+          ];
+        }
+      });
+
+      partialFailureMockPromise = Promise.resolve({
+        json: () => {
+          return [
+            {
+              id: 'object-1',
+              ok: true
+            },
+            {
+              id: 'object-2',
+              ok: false
+            },
+            {
+              id: 'object-3',
+              ok: true
+            }
+          ];
+        }
+      });
+
+      objectsToPersist = [
+        {
+          identifier: {
+            namespace: '',
+            key: 'object-1'
+          },
+          name: 'object-1',
+          type: 'folder',
+          modified: 0
+        },
+        {
+          identifier: {
+            namespace: '',
+            key: 'object-2'
+          },
+          name: 'object-2',
+          type: 'folder',
+          modified: 0
+        },
+        {
+          identifier: {
+            namespace: '',
+            key: 'object-3'
+          },
+          name: 'object-3',
+          type: 'folder',
+          modified: 0
+        }
+      ];
+    });
+    it('for multiple simultaneous successful saves', async () => {
+      fetch.and.returnValue(successfulMockPromise);
+
+      await Promise.all(
+        objectsToPersist.map((objectToPersist) => openmct.objects.save(objectToPersist))
+      );
+
+      const requestUrl = fetch.calls.mostRecent().args[0];
+      const requestMethod = fetch.calls.mostRecent().args[1].method;
+      const requestBody = JSON.parse(fetch.calls.mostRecent().args[1].body);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(requestUrl.includes('_bulk_docs')).toBeTrue();
+      expect(requestMethod).toEqual('POST');
+      expect(
+        objectsToPersist.every(
+          (object, index) => object.identifier.key === requestBody.docs[index]._id
+        )
+      ).toBeTrue();
+    });
+    it('for multiple simultaneous saves with partial failure', async () => {
+      fetch.and.returnValue(partialFailureMockPromise);
+
+      let saveResults = await Promise.all(
+        objectsToPersist.map((objectToPersist) =>
+          openmct.objects
+            .save(objectToPersist)
+            .then(() => true)
+            .catch(() => false)
+        )
+      );
+      expect(saveResults[0]).toBeTrue();
+      expect(saveResults[1]).toBeFalse();
+      expect(saveResults[2]).toBeTrue();
+    });
+    it('except for a single save', async () => {
+      fetch.and.returnValue({
+        json: () => {
+          return {
+            id: 'object-1',
+            ok: true
+          };
+        }
+      });
+      await openmct.objects.save(objectsToPersist[0]);
+
+      const requestUrl = fetch.calls.mostRecent().args[0];
+      const requestMethod = fetch.calls.mostRecent().args[1].method;
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(requestUrl.includes('_bulk_docs')).toBeFalse();
+      expect(requestUrl.endsWith('object-1')).toBeTrue();
+      expect(requestMethod).toEqual('PUT');
+    });
+  });
   describe('implements server-side search', () => {
     let mockPromise;
     beforeEach(() => {
