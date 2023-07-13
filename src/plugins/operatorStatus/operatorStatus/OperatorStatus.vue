@@ -116,8 +116,6 @@ export default {
       this.indicator.text(pollQuestion?.question || '');
     },
     async fetchMyStatus() {
-      const activeRole = await this.openmct.user.getActiveRole();
-      this.role = activeRole;
       // hide indicator for observer
       if (!this.openmct.user.canProvideStatusForRole()) {
         this.indicator.text('');
@@ -126,7 +124,12 @@ export default {
         return;
       }
 
-      console.log(activeRole);
+      const activeRole = await this.openmct.user.getActiveRole();
+      if (!activeRole) {
+        return;
+      }
+
+      this.role = activeRole;
       const status = await this.openmct.user.status.getStatusForRole(activeRole);
       if (status !== undefined) {
         this.setStatus({ status });
