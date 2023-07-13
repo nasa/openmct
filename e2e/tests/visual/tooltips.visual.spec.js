@@ -33,7 +33,7 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, expandTreePaneItemByName, expandEntireTree, setEndOffset } = require('../../appActions');
+const { createDomainObjectWithDefaults, expandEntireTree } = require('../../appActions');
 
 test.describe('Verify tooltips', () => {
   let folder1;
@@ -49,7 +49,6 @@ test.describe('Verify tooltips', () => {
 
   test.beforeEach(async ({ page, openmctConfig }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    const { myItemsFolderName } = openmctConfig;
 
     folder1 = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
