@@ -15,7 +15,7 @@ available * at runtime from the About dialog for additional information.
   <div v-if="readOnly === false" ref="clockButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu c-button--compact js-clock-button"
+        class="c-button--menu js-clock-button"
         :class="[buttonCssClass, selectedClock.cssClass]"
         @click.prevent.stop="showClocksMenu"
       >
@@ -23,17 +23,17 @@ available * at runtime from the About dialog for additional information.
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__clock">
-    <div class="c-compact-tc__clock__value">{{ selectedClock.name }}</div>
+  <div v-else class="c-compact-tc__setting-value__elem" :title="`Clock: ${selectedClock.name}`">
+    {{ selectedClock.name }}
   </div>
 </template>
 
 <script>
-import modeMixin from './mode-mixin';
+import clockMixin from './clock-mixin';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
-  mixins: [modeMixin],
+  mixins: [clockMixin],
   inject: {
     openmct: 'openmct',
     configuration: {
@@ -71,7 +71,7 @@ export default {
       const y = elementBoundingClientRect.y;
 
       const menuOptions = {
-        menuClass: 'c-conductor__clock-menu',
+        menuClass: 'c-conductor__clock-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.TOP_RIGHT
       };
 
@@ -121,7 +121,7 @@ export default {
       return this.configuration.menuOptions.filter(configMatches)[0];
     },
     setViewFromClock(clock) {
-      this.activeClock = clock;
+      this.selectedClock = this.getClockMetadata(clock);
     }
   }
 };

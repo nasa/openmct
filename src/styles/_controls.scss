@@ -638,6 +638,7 @@ select {
 
 .c-super-menu {
   // Two column layout, menu items on left with detail of hover element on right
+  $m: $interiorMarginLg;
   @include menuOuter();
   @include menuPositioning();
   display: flex;
@@ -645,20 +646,21 @@ select {
   flex-direction: row;
 
   > [class*='__'] {
-    $m: $interiorMarginLg;
-    flex: 1 1 50%;
-    &:first-child {
-      margin-right: $m;
-    }
+    //flex: 1 1 50%;
+    //&:first-child {
+    //  margin-right: $m;
+    //}
 
     &:last-child {
-      border-left: 1px solid $colorInteriorBorder;
-      padding-left: $m;
+      //border-left: 1px solid $colorInteriorBorder;
+      //padding-left: $m;
     }
   }
 
   &__menu {
     @include menuInner();
+    flex: 1 1 50%;
+    margin-right: $m;
     overflow: auto;
 
     ul {
@@ -671,16 +673,18 @@ select {
   }
 
   &__item-description {
+    border-left: 1px solid $colorInteriorBorder;
+    flex: 1 1 50%;
+    padding-left: $m;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
 
-    .l-item-description {
-      &__name,
-      &__description {
-        margin-top: $interiorMarginLg;
-      }
+    > * + * {
+      margin-top: $interiorMarginLg;
+    }
 
+    .l-item-description {
       &__icon {
         min-height: 20%;
         margin: 10% 25%;
@@ -698,6 +702,33 @@ select {
     }
   }
 }
+
+.c-super-menu--sm {
+  // Small version of the super menu, used by the compact Time Conductor
+  height: 120px;
+  width: 500px;
+
+  .c-super-menu__menu {
+    flex: 1 1 30%;
+  }
+
+  .c-super-menu__item-description {
+    flex: 1 1 70%;
+
+    [class*="__icon"] {
+      display: none !important;
+    }
+
+    [class*="__name"] {
+      margin-top: 0 !important;
+    }
+
+    [class*="__item-description"] {
+      min-width: 200px;
+    }
+  }
+}
+
 /******************************************************** CONTROL BARS */
 .c-control-bar {
   display: flex;

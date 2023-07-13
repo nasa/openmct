@@ -453,6 +453,10 @@
   white-space: nowrap;
 }
 
+@mixin fadeTruncate($color: $colorBodyBg, $angle: 90deg) {
+  background-image: linear-gradient($angle, transparent 0%, $color 100%);
+}
+
 @mixin reverseEllipsis() {
   @include ellipsize();
   direction: ltr;
@@ -585,9 +589,17 @@
   }
 }
 
+@function cButtonPadding($padding: $interiorMargin, $compact: false) {
+  @if $compact {
+    @return floor(math.div($padding, 1.5)) $padding;
+  } @else {
+    @return $padding floor($padding * 1.25);
+  }
+}
+
 @mixin cButtonLayout() {
   $pad: $interiorMargin;
-  padding: $pad floor($pad * 1.25);
+  padding: cButtonPadding($pad);
 
   &:after,
   > * + * {
@@ -595,7 +607,8 @@
   }
 
   &[class*='--compact'] {
-    padding: floor(math.div($pad, 1.5)) $pad;
+    //padding: floor(math.div($pad, 1.5)) $pad;
+    padding: cButtonPadding($pad, true);
   }
 }
 

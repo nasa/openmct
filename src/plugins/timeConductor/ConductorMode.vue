@@ -23,7 +23,7 @@
   <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu c-button--compact js-mode-button"
+        class="c-button--menu js-mode-button"
         :class="[buttonCssClass, selectedMode.cssClass]"
         @click.prevent.stop="showModesMenu"
       >
@@ -31,8 +31,8 @@
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__mode">
-    <div class="c-compact-tc__mode__value">{{ selectedMode.name }}</div>
+  <div v-else class="c-compact-tc__setting-value__elem" :title="`Mode: ${selectedMode.name}`">
+    {{ selectedMode.name }}
   </div>
 </template>
 
@@ -45,6 +45,12 @@ export default {
   mixins: [modeMixin],
   inject: ['openmct', 'configuration'],
   props: {
+    mode: {
+      type: String,
+      default() {
+        return undefined;
+      }
+    },
     readOnly: {
       type: Boolean,
       default() {
@@ -60,6 +66,14 @@ export default {
       modes: []
     };
   },
+  watch: {
+    mode: {
+      handler(newMode) {
+        console.log('conductor mode, mode handler, new mode', newMode);
+        this.setViewFromMode(newMode);
+      }
+    }
+  },
   mounted: function () {
     this.loadModes();
   },
@@ -70,15 +84,19 @@ export default {
       const y = elementBoundingClientRect.y;
 
       const menuOptions = {
-        menuClass: 'c-conductor__mode-menu',
+        menuClass: 'c-conductor__mode-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.TOP_RIGHT
       };
 
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setMode(modeKey) {
-      this.selectedMode = this.getModeMetadata(modeKey, TEST_IDS);
-      this.$emit('modeUpdated', modeKey);
+    setViewFromMode(mode) {
+      this.selectedMode = this.getModeMetadata(mode, TEST_IDS);
+    },
+    setMode(mode) {
+      this.setViewFromMode(mode);
+
+      this.$emit('modeUpdated', mode);
     }
   }
 };

@@ -29,12 +29,13 @@
       { 'alt-pressed': altPressed },
       isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
-    style="overflow: visible"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <conductor-mode :read-only="true" />
-    <conductor-clock :read-only="true" />
-    <conductor-time-system :read-only="true" />
+    <div class="c-compact-tc__setting-value u-fade-truncate">
+      <conductor-mode :mode="mode" :read-only="true" />
+      <conductor-clock :read-only="true" />
+      <conductor-time-system :read-only="true" />
+    </div>
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
     <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
     <conductor-axis
@@ -48,7 +49,6 @@
       @panAxis="pan"
       @zoomAxis="zoom"
     />
-    <div v-else class="u-flex-spreader"></div>
     <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
 
     <conductor-pop-up
@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     mode() {
-      return this.isFixed ? `${FIXED_MODE_KEY} Timespan` : REALTIME_MODE_KEY;
+      return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
     }
   },
   mounted() {
@@ -213,8 +213,8 @@ export default {
       );
       this.isUTCBased = timeSystem.isUTCBased;
     },
-    setMode(mode) {
-      this.isFixed = mode === FIXED_MODE_KEY;
+    setMode() {
+      this.isFixed = this.openmct.time.isFixed();
     },
     setViewFromBounds(bounds) {
       this.formattedBounds.start = this.timeFormatter.format(bounds.start);

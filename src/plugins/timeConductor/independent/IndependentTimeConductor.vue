@@ -36,7 +36,7 @@
       @change="toggleIndependentTC"
     />
 
-    <ConductorModeIcon v-if="independentTCEnabled" />
+    <ConductorModeIcon />
 
     <conductor-inputs-fixed
       v-if="showFixedInputs"
@@ -53,7 +53,10 @@
       :read-only="true"
       :compact="true"
     />
-    <div class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"></div>
+    <div
+      v-if="independentTCEnabled"
+      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
+    ></div>
 
     <conductor-pop-up
       v-if="showConductorPopup"

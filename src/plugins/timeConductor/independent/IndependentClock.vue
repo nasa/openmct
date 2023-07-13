@@ -28,11 +28,11 @@ available * at runtime from the About dialog for additional information.
 
 <script>
 import toggleMixin from '../../../ui/mixins/toggle-mixin';
-import modeMixin from '../mode-mixin';
+import clockMixin from '../clock-mixin';
 import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 
 export default {
-  mixins: [toggleMixin, modeMixin],
+  mixins: [toggleMixin, clockMixin],
   inject: ['openmct'],
   props: {
     clock: {
@@ -70,7 +70,7 @@ export default {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   mounted: function () {
-    this.loadClocks(this.getMenuOptions());
+    this.loadClocks();
     this.setViewFromClock(this.clock);
 
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
@@ -82,7 +82,7 @@ export default {
       const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
       const menuOptions = {
-        menuClass: 'c-conductor__clock-menu',
+        menuClass: 'c-conductor__clock-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
       };
       this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
@@ -115,7 +115,6 @@ export default {
       }
 
       // if global clock changes, reload and pull it
-      this.loadModes(this.getMenuOptions());
       this.selectedClock = this.getClockMetadata(clock);
     }
   }
