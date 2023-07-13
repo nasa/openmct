@@ -55,7 +55,8 @@ export default class LegendModel extends Model {
       showValueWhenExpanded: true,
       showMaximumWhenExpanded: true,
       showMinimumWhenExpanded: true,
-      showUnitsWhenExpanded: true
+      showUnitsWhenExpanded: true,
+      showLegendsForChildren: true
     };
   }
 }
