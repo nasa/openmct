@@ -40,6 +40,7 @@ export default class FaultManagementViewProvider {
 
   view(domainObject) {
     const openmct = this.openmct;
+    let _destroy = null;
 
     return {
       show: (element) => {
