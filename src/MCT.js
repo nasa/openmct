@@ -371,15 +371,20 @@ define([
         template: '<Layout ref="layout"></Layout>'
       });
       const component = appLayout.mount(domElement);
-      this.layout = component.$refs.layout;
-      this.app = appLayout;
-      Browse(this);
+      component.$nextTick(() => {
+        this.layout = component.$refs.layout;
+        this.app = appLayout;
+        Browse(this);
+        window.addEventListener('beforeunload', this.destroy);
+        this.router.start();
+        this.emit('start');
+      })
+    } else {
+      window.addEventListener('beforeunload', this.destroy);
+  
+      this.router.start();
+      this.emit('start');
     }
-
-    window.addEventListener('beforeunload', this.destroy);
-
-    this.router.start();
-    this.emit('start');
   };
 
   MCT.prototype.startHeadless = function () {
