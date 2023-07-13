@@ -42,6 +42,7 @@ export default class Tabs {
   }
 
   view(domainObject, objectPath) {
+    let openmct = this.openmct;
     let component = null;
 
     return {
@@ -53,10 +54,10 @@ export default class Tabs {
               TabsComponent
             },
             provide: {
-              openmct: this.openmct,
+              openmct,
               domainObject,
               objectPath,
-              composition: this.openmct.composition.get(domainObject)
+              composition: openmct.composition.get(domainObject)
             },
             data() {
               return {
@@ -66,7 +67,7 @@ export default class Tabs {
             template: '<tabs-component :isEditing="isEditing"></tabs-component>'
           },
           {
-            app: this.openmct.app,
+            app: openmct.app,
             element
           }
         );

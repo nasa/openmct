@@ -42,6 +42,7 @@ export default class FlexibleLayoutViewProvider {
   }
 
   view(domainObject, objectPath) {
+    let openmct = this.openmct;
     let _destroy = null;
     let component = null;
 
@@ -54,7 +55,7 @@ export default class FlexibleLayoutViewProvider {
               FlexibleLayoutComponent
             },
             provide: {
-              openmct: this.openmct,
+              openmct: openmct,
               objectPath,
               layoutObject: domainObject
             },
@@ -67,7 +68,7 @@ export default class FlexibleLayoutViewProvider {
               '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
           },
           {
-            app: this.openmct.app,
+            app: openmct.app,
             element
           }
         );

@@ -39,6 +39,7 @@ export default class FiltersInspectorViewProvider {
     );
   }
   view(selection) {
+    let openmct = this.openmct;
     let _destroy = null;
 
     const domainObject = selection?.[0]?.[0]?.context?.item;
@@ -52,12 +53,12 @@ export default class FiltersInspectorViewProvider {
               FiltersView
             },
             provide: {
-              openmct: this.openmct
+              openmct: openmct
             },
             template: '<filters-view></filters-view>'
           },
           {
-            app: this.openmct.app,
+            app: openmct.app,
             element
           }
         );
@@ -68,7 +69,7 @@ export default class FiltersInspectorViewProvider {
           return true;
         }
 
-        const metadata = this.openmct.telemetry.getMetadata(domainObject);
+        const metadata = openmct.telemetry.getMetadata(domainObject);
         const metadataWithFilters = metadata
           ? metadata.valueMetadatas.filter((value) => value.filters)
           : [];
@@ -76,7 +77,7 @@ export default class FiltersInspectorViewProvider {
         return metadataWithFilters.length;
       },
       priority: function () {
-        return this.openmct.priority.DEFAULT;
+        return openmct.priority.DEFAULT;
       },
       destroy: function () {
         if (_destroy) {

@@ -197,34 +197,35 @@ export default {
         this.composition.load();
       }
 
-      const { vNode } = mount({
-        components: {
-          Plot
-        },
-        provide: {
-          openmct,
-          domainObject: object,
-          path
-        },
-        data() {
-          return {
-            ...getProps(),
-            onYTickWidthChange,
-            onLockHighlightPointUpdated,
-            onHighlightsUpdated,
-            onConfigLoaded,
-            onCursorGuideChange,
-            onGridLinesChange,
-            isMissing,
-            loading: false
-          };
-        },
-        methods: {
-          loadingUpdated(loaded) {
-            this.loading = loaded;
-          }
-        },
-        template: `
+      const { vNode } = mount(
+        {
+          components: {
+            Plot
+          },
+          provide: {
+            openmct,
+            domainObject: object,
+            path
+          },
+          data() {
+            return {
+              ...getProps(),
+              onYTickWidthChange,
+              onLockHighlightPointUpdated,
+              onHighlightsUpdated,
+              onConfigLoaded,
+              onCursorGuideChange,
+              onGridLinesChange,
+              isMissing,
+              loading: false
+            };
+          },
+          methods: {
+            loadingUpdated(loaded) {
+              this.loading = loaded;
+            }
+          },
+          template: `
                   <Plot ref="plotComponent" v-if="!isMissing"
                       :class="{'is-stale': isStale}"
                       :grid-lines="gridLines"
@@ -241,7 +242,12 @@ export default {
                       @plotYTickWidth="onYTickWidthChange"
                       @cursorGuide="onCursorGuideChange"
                       @gridLines="onGridLinesChange"/>`
-      });
+        },
+        {
+          app: this.openmct.app,
+          element: this.$el
+        }
+      );
       this.component = vNode.componentInstance;
 
       if (this.isEditing) {
