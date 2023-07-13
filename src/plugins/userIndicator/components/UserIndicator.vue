@@ -45,10 +45,10 @@ export default {
   },
 
   async mounted() {
-    this.getUserInfo();
+    await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
-    await this.fetchOrPromptForRole();
+    this.fetchOrPromptForRole();
   },
   beforeDestroy() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
@@ -60,12 +60,18 @@ export default {
       this.role = this.openmct.user.getActiveRole();
       this.loggedIn = this.openmct.user.isLoggedIn();
     },
-    fetchOrPromptForRole() {
+    async fetchOrPromptForRole() {
       const UserAPI = this.openmct.user;
       const activeRole = UserAPI.getActiveRole();
       this.role = activeRole;
       if (!activeRole) {
         this.promptForRoleSelection();
+      } else {
+        // only notify the user if they have more than one role available
+        const allRoles = await this.openmct.user.getPossibleRoles();
+        if (allRoles.length > 1) {
+          this.openmct.notifications.info(`You're logged in as role ${activeRole}`);
+        }
       }
     },
     async promptForRoleSelection() {
