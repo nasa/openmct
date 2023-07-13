@@ -47,13 +47,11 @@ export default {
   inject: ['openmct', 'domainObject'],
   data() {
     return {
-      lastTimestamp: null
+      lastTimestamp: null,
+      configuration: this.domainObject.configuration
     };
   },
   computed: {
-    configuration() {
-      return this.domainObject.configuration;
-    },
     baseFormat() {
       return this.configuration.baseFormat;
     },
@@ -86,10 +84,16 @@ export default {
   },
   mounted() {
     this.unlisten = ticker.listen(this.tick);
+    this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration', (configuration) => {
+      this.configuration = configuration;
+    });
   },
   beforeUnmount() {
     if (this.unlisten) {
       this.unlisten();
+    }
+    if (this.unobserve) {
+      this.unobserve();
     }
   },
   methods: {
