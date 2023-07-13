@@ -30,10 +30,14 @@ const tooltipHelpers = {
       if (!tooltipText || tooltipText.length < 1) {
         return;
       }
+      let parentElement = this.$refs[elementRef];
+      if (Array.isArray(parentElement)) {
+        parentElement = parentElement[0];
+      }
       this.tooltip = this.openmct.tooltips.tooltip({
         toolTipText: tooltipText,
         toolTipLocation: tooltipLocation,
-        parentElement: this.$refs[elementRef]
+        parentElement: parentElement
       });
     },
     hideToolTip() {
