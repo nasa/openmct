@@ -16,13 +16,14 @@ class ActiveRoleSynchronizer {
     };
   }
   subscribeToRoleChanges(callback) {
-    this.#roleChannel.addEventListener('message', this.extractRoleFromEvent(callback));
+    this.#roleChannel.addEventListener('message', callback);
   }
   unsubscribeFromRoleChanges(callback) {
-    this.#roleChannel.removeEventListener('message', this.extractRoleFromEvent(callback));
+    this.#roleChannel.removeEventListener('message', callback);
   }
 
-  setActiveRoleFromChannelMessage(role) {
+  setActiveRoleFromChannelMessage(event) {
+    const role = event.data;
     this.openmct.user.setActiveRole(role);
   }
   broadcastNewRole(role) {

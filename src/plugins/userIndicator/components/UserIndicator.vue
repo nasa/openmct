@@ -46,11 +46,11 @@ export default {
   async mounted() {
     this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
-    this.roleChannel.subscribeToRoleChanges(this.setRoleSelection);
+    this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
     await this.fetchOrPromptForRole();
   },
   beforeDestroy() {
-    this.roleChannel.unsubscribeFromRoleChanges(this.setRoleSelection);
+    this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
   },
   methods: {
     async getUserInfo() {
@@ -96,6 +96,10 @@ export default {
           }
         ]
       });
+    },
+    onRoleChange(event) {
+      const role = event.data;
+      this.setRoleSelection(role);
     },
     setRoleSelection(role) {
       this.role = role;
