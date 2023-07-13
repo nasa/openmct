@@ -732,7 +732,7 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.DomainObject} domainObject the domain
    *        object for which to get limits
-   * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+   * @returns {LimitsResponseObject}
    * @method limits
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
@@ -779,18 +779,8 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.DomainObject} domainObject the domain
    *        object for which to display limits
-   * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
-   * @method limits returns a limits object of
-   * type {
-   *          level1: {
-   *              low: { key1: value1, key2: value2, color: <supportedColor> },
-   *              high: { key1: value1, key2: value2, color: <supportedColor> }
-   *          },
-   *          level2: {
-   *              low: { key1: value1, key2: value2 },
-   *              high: { key1: value1, key2: value2 }
-   *          }
-   *       }
+   * @returns {LimitsResponseObject}
+   * @method limits returns a limits object of type {LimitsResponseObject}
    *  supported colors are purple, red, orange, yellow and cyan
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
@@ -822,7 +812,7 @@ export default class TelemetryAPI {
  * @param {*} datum the telemetry datum to evaluate
  * @param {TelemetryProperty} the property to check for limit violations
  * @memberof module:openmct.TelemetryAPI~LimitEvaluator
- * @returns {module:openmct.TelemetryAPI~LimitViolation} metadata about
+ * @returns {LimitViolation} metadata about
  *          the limit violation, or undefined if a value is within limits
  */
 
@@ -833,6 +823,42 @@ export default class TelemetryAPI {
  * @property {string} cssClass the class (or space-separated classes) to
  *           apply to display elements for values which violate this limit
  * @property {string} name the human-readable name for the limit violation
+ * @property {number} low a lower limit for violation
+ * @property {number} high a higher limit violation
+ */
+
+/**
+ * @typedef {object} LimitsResponseObject
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {LimitDefinition} limitLevel the level name and it's limit definition
+ * @example {
+ *  [limitLevel]: {
+ *    low: {
+ *      color: lowColor,
+ *      value: lowValue
+ *    },
+ *    high: {
+ *      color: highColor,
+ *      value: highValue
+ *    }
+ *  }
+ * }
+ */
+
+/**
+ * Limit defined for a telemetry property.
+ * @typedef LimitDefinition
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {LimitDefinitionValue} low a lower limit
+ * @property {LimitDefinitionValue} high a higher limit
+ */
+
+/**
+ * Limit definition for a Limit of a telemetry property.
+ * @typedef LimitDefinitionValue
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {string} color color to represent this limit
+ * @property {Number} value the limit value
  */
 
 /**
