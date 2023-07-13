@@ -370,8 +370,8 @@ define([
         },
         template: '<Layout ref="layout"></Layout>'
       });
-      appLayout.mount(domElement);
-      this.layout = appLayout._instance.refs.layout;
+      const component = appLayout.mount(domElement);
+      this.layout = component.$refs.layout;
       this.app = appLayout;
       Browse(this);
     }
