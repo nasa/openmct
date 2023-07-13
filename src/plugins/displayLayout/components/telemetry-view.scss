@@ -18,6 +18,7 @@
   }
 
   &__value {
+    @include telemetryView();
     @include isLimit();
   }
 

@@ -544,3 +544,44 @@ $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
+
+@mixin discreteItem() {
+  background: rgba($colorBodyFg, 0.1);
+  border: none;
+  border-radius: $controlCr;
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid rgba(#fff, 0.1);
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: linear-gradient(pullForward($c, 5%), $c);
+  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin telemetryView(){
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
+}
+
+/**************************************************** OVERRIDES */
+.c-frame {
+  &:not(.no-frame) {
+    $bc: #666;
+    $bLR: 3px solid transparent;
+    $br: 20px;
+    background: none !important;
+    border-radius: $br;
+    border-top: 4px solid $bc !important;
+    border-bottom: 2px solid $bc !important;
+    border-left: $bLR !important;
+    border-right: $bLR !important;
+    padding: 5px 10px 10px 10px !important;
+  }
+}

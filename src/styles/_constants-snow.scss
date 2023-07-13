@@ -568,3 +568,7 @@ $scrollContainer: rgba(102, 102, 102, 0.1);
   background: $c;
 }
 
+@mixin telemetryView(){
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
+}

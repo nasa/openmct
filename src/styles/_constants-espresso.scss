@@ -569,3 +569,31 @@ $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
+@mixin discreteItem() {
+  background: $colorDiscreteItemBg;
+  border: none;
+  border-radius: $controlCr;
+
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid rgba(#fff, 0.1);
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: linear-gradient(pullForward($c, 5%), $c);
+  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin telemetryView(){
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
+}
