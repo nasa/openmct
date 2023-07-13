@@ -64,18 +64,11 @@ export default {
   data() {
     return {
       lastTimestamp: undefined,
-      active: true
+      active: true,
+      configuration: this.domainObject.configuration,
     };
   },
   computed: {
-    configuration() {
-      let configuration;
-      if (this.domainObject && this.domainObject.configuration) {
-        configuration = this.domainObject.configuration;
-      }
-
-      return configuration;
-    },
     relativeTimestamp() {
       let relativeTimestamp;
       if (this.configuration && this.configuration.timestamp) {
@@ -187,6 +180,9 @@ export default {
     }
   },
   mounted() {
+    this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration', (configuration) => {
+      this.configuration = configuration;
+    });
     this.$nextTick(() => {
       if (this.configuration && this.configuration.timerState === undefined) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
@@ -209,6 +205,9 @@ export default {
     this.active = false;
     if (this.unlisten) {
       this.unlisten();
+    }
+    if (this.unobserve) {
+      this.unobserve();
     }
   },
   methods: {
