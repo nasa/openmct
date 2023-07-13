@@ -140,7 +140,8 @@ export default {
       this.status = status;
     },
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(), 'below', 'objectLabel');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'objectLabel');
     }
   }
 };

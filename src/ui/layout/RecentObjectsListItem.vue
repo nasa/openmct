@@ -139,7 +139,8 @@ export default {
       this.$emit('openAndScrollTo', navigationPath);
     },
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(), 'below', 'recentObjectName');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'recentObjectName');
     }
   }
 };

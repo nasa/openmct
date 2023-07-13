@@ -739,7 +739,8 @@ export default {
       return this.round(((this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow)) * 100, 2);
     },
     async showToolTip() {
-      this.buildToolTip(await this.getTelemetryPath(), 'center', 'gauge');
+      const { CENTER } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getTelemetryPath(), CENTER, 'gauge');
     }
   }
 };

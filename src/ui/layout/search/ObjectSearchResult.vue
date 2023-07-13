@@ -131,7 +131,8 @@ export default {
       event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.result);
     },
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(this.result.identifier), 'below', 'resultName');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(this.result.identifier), BELOW, 'resultName');
     }
   }
 };

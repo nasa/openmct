@@ -135,7 +135,8 @@ export default {
   },
   methods: {
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(), 'below', 'swimLane');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'swimLane');
     }
   }
 };

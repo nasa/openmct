@@ -270,7 +270,8 @@ export default {
         .find((metadatum) => metadatum.hints.domain === undefined && metadatum.key !== 'name');
     },
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(), 'below', 'tableCell');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'tableCell');
     }
   }
 };

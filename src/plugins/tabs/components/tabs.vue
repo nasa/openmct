@@ -397,7 +397,8 @@ export default {
     },
     async showToolTip(tab) {
       const identifier = tab.domainObject.identifier;
-      this.buildToolTip(await this.getObjectPath(identifier), 'below', tab.keyString);
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(identifier), BELOW, tab.keyString);
     }
   }
 };

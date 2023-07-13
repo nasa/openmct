@@ -125,7 +125,8 @@ export default {
       this.conditionalLabel = latestDatum.output || '';
     },
     async showToolTip() {
-      this.buildToolTip(await this.getObjectPath(), 'below', 'conditionWidgetElement');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'conditionWidgetElement');
     }
   }
 };

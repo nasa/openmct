@@ -413,9 +413,10 @@ export default {
       }
     },
     async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(
         await this.getObjectPath(this.embed.domainObject.identifier),
-        'below',
+        BELOW,
         'notebookEmbed'
       );
     }

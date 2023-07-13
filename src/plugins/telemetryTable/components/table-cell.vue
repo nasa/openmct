@@ -90,7 +90,8 @@ export default {
       if (this.columnKey !== 'name') {
         return;
       }
-      this.buildToolTip(await this.getObjectPath(this.row.objectKeyString), 'below', 'tableCell');
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(this.row.objectKeyString), BELOW, 'tableCell');
     }
   }
 };

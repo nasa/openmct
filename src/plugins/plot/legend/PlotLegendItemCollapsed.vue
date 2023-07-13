@@ -197,9 +197,10 @@ export default {
       );
     },
     async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(
         await this.getTelemetryPath(this.seriesObject.domainObject.identifier),
-        'below',
+        BELOW,
         'series'
       );
     }
