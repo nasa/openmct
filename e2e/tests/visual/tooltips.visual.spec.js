@@ -33,7 +33,7 @@ Note: Larger testsuite sizes are OK due to the setup time associated with these 
 */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, expandTreePaneItemByName } = require('../../appActions');
+const { createDomainObjectWithDefaults, expandTreePaneItemByName, expandEntireTree, setEndOffset } = require('../../appActions');
 
 test.describe('Verify tooltips', () => {
   let folder1;
@@ -86,10 +86,7 @@ test.describe('Verify tooltips', () => {
     sineWaveObject3.path = swg3Path;
 
     // Expand all folders
-    await expandTreePaneItemByName(page, myItemsFolderName);
-    await expandTreePaneItemByName(page, folder1.name);
-    await expandTreePaneItemByName(page, folder2.name);
-    await expandTreePaneItemByName(page, folder3.name);
+    await expandEntireTree(page);
   });
 
   // LAD Tables - DONE
@@ -376,24 +373,26 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
-  test('display tooltip path for telemetry table names', async ({ page }) => {
-    await createDomainObjectWithDefaults(page, {
-      type: 'Telemetry Table',
-      name: 'Test Telemetry Table'
-    });
+  // test('display tooltip path for telemetry table names', async ({ page }) => {
+  //   await setEndOffset(page, { secs: '10' });
+  //   await createDomainObjectWithDefaults(page, {
+  //     type: 'Telemetry Table',
+  //     name: 'Test Telemetry Table'
+  //   });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
+  //   await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
+  //   await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
 
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+  //   await page.locator('button[title="Save"]').click();
+  //   await page.locator('text=Save and Finish Editing').click();
 
-    await page.getByText('SWG 1');
-    expect(true).toBe(true);
-    // await page.keyboard.down('Control');
-    // await page.locator('.c-ne__embed').hover();
-    // let tooltipText = await page.locator('.c-tooltip').textContent();
-    // tooltipText = tooltipText.replace('\n', '').trim();
-    // expect(tooltipText).toBe(sineWaveObject3.path);
-  });
+  //   // .c-telemetry-table__body
+
+  //   await page.keyboard.down('Control');
+
+  //   await page.locator('.noselect > [title="SWG 3"]').first().hover();
+  //   let tooltipText = await page.locator('.c-tooltip').textContent();
+  //   tooltipText = tooltipText.replace('\n', '').trim();
+  //   expect(tooltipText).toBe(sineWaveObject3.path);
+  // });
 });
