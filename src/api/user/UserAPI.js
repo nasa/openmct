@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants';
 import StatusAPI from './StatusAPI';
 import User from './User';
-import SessionPersistance from './SessionPersistance';
+import StoragePersistance from './StoragePersistance';
 
 class UserAPI extends EventEmitter {
   /**
@@ -112,7 +112,7 @@ class UserAPI extends EventEmitter {
     }
 
     // get from session storage
-    const sessionStorageValue = SessionPersistance.getActiveRole();
+    const sessionStorageValue = StoragePersistance.getActiveRole();
 
     return sessionStorageValue;
   }
@@ -122,7 +122,7 @@ class UserAPI extends EventEmitter {
    * @returns {undefined}
    */
   setActiveRole(role) {
-    SessionPersistance.setActiveRole(role);
+    StoragePersistance.setActiveRole(role);
     this.emit('roleChanged', role);
   }
 

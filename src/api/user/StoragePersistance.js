@@ -20,18 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { SESSION_STORAGE_KEY } from './constants';
+import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants';
 
-class SessionPersistance {
+class StoragePersistance {
   getActiveRole() {
-    return sessionStorage.getItem(SESSION_STORAGE_KEY);
+    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
   }
   setActiveRole(role) {
-    return sessionStorage.setItem(SESSION_STORAGE_KEY, role);
+    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
   }
   clearActiveRole() {
-    return sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
   }
 }
 
-export default new SessionPersistance();
+export default new StoragePersistance();
