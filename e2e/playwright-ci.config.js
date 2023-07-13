@@ -77,7 +77,6 @@ const config = {
       }
     ],
     ['junit', { outputFile: '../test-results/results.xml' }],
-    ['github'],
     ['@deploysentinel/playwright']
   ]
 };
