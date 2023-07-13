@@ -31,8 +31,6 @@ describe('The Example User Plugin', () => {
   });
 
   afterEach(() => {
-    const activeOverlays = openmct.overlays.activeOverlays;
-    activeOverlays.forEach((overlay) => overlay.dismiss());
     return resetApplicationState(openmct);
   });
 

@@ -25,6 +25,7 @@ import MCT from 'MCT';
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
 
+const EXAMPLE_ROLE = 'flight';
 const DEFAULT_TIME_OPTIONS = {
   timeSystemKey: 'utc',
   bounds: {
@@ -38,6 +39,7 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   openmct.install(openmct.plugins.LocalStorage());
   openmct.install(openmct.plugins.UTCTimeSystem());
   openmct.setAssetPath('/base');
+  openmct.user.setActiveRole(EXAMPLE_ROLE);
 
   const timeSystemKey = timeSystemOptions.timeSystemKey;
   const start = timeSystemOptions.bounds.start;
