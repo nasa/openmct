@@ -29,13 +29,15 @@
   />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
+      v-if="!compact"
       class="c-compact-tc__setting-value icon-minus u-fade-truncate--lg --no-sep"
       :title="`Start offset: ${offsets.start}`"
     >
       {{ offsets.start }}
     </div>
-    <div class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
+    <div v-if="!compact" class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
     <div
+      v-if="!compact"
       class="c-compact-tc__setting-value icon-plus u-fade-truncate--lg"
       :class="{ '--no-sep': compact }"
       :title="`End offset: ${offsets.end}`"
@@ -43,11 +45,10 @@
       {{ offsets.end }}
     </div>
     <div
-      v-if="!compact"
-      class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate --no-sep"
+      class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate--lg --no-sep"
       title="Last update"
     >
-      {{ formattedBounds.end }}
+      {{ formattedCurrentValue }}
     </div>
     <div class="u-flex-spreader"></div>
   </div>

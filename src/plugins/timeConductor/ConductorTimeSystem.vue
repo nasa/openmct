@@ -35,7 +35,7 @@
   </div>
   <div
     v-else
-    class="c-compact-tc__setting-value u-fade-truncate"
+    class="c-compact-tc__setting-value__elem"
     :title="`Time system: ${selectedTimeSystem.name}`"
   >
     {{ selectedTimeSystem.name }}

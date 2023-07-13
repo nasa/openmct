@@ -304,6 +304,16 @@
         text-transform: uppercase;
         white-space: nowrap;
 
+        > * + * {
+            margin-left: $interiorMarginSm;
+
+            &:before {
+                content: " - ";
+                display: inline-block;
+                opacity: 0.5;
+            }
+        }
+
         &[class*="icon"] {
             &:before {
                 font-size: 0.75em;

@@ -31,9 +31,11 @@
     ]"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
-    <conductor-mode :mode="mode" :read-only="true" />
-    <conductor-clock :read-only="true" />
-    <conductor-time-system :read-only="true" />
+    <div class="c-compact-tc__setting-value u-fade-truncate">
+      <conductor-mode :mode="mode" :read-only="true" />
+      <conductor-clock :read-only="true" />
+      <conductor-time-system :read-only="true" />
+    </div>
     <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
     <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
     <conductor-axis
