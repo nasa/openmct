@@ -10,11 +10,6 @@ class ActiveRoleSynchronizer {
 
     this.subscribeToRoleChanges(this.setActiveRoleFromChannelMessage);
   }
-  extractRoleFromEvent(callback) {
-    return function (event) {
-      callback(event.data);
-    };
-  }
   subscribeToRoleChanges(callback) {
     this.#roleChannel.addEventListener('message', callback);
   }
