@@ -216,12 +216,12 @@ test.describe('Verify tooltips', () => {
     await page.locator('button[title="Save"]').click();
     await page.locator('text=Save and Finish Editing').click();
 
-    // Create Overlay Plot
+    // Create Stacked Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Stacked Plot',
       name: 'Test Stacked Plot'
     });
-    // Edit Overlay Plot
+    // Edit Stacked Plot
     await page.locator('[title="Edit"]').click();
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-plot--stacked.holder');
     await page.locator('button[title="Save"]').click();
