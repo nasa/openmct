@@ -39,7 +39,8 @@ export default {
       role: undefined,
       loggedIn: false,
       roleChannel: undefined,
-      inputRoleSelection: undefined
+      inputRoleSelection: undefined,
+      roleSelectionDialog: undefined
     };
   },
 
@@ -73,13 +74,13 @@ export default {
         key: role,
         name: role
       }));
-      // automatically select role when a single option
+      // automatically select only role option
       if (selectionOptions.length === 1) {
         this.updateRole(selectionOptions[0].key);
         return;
       }
 
-      const dialog = this.openmct.overlays.selection({
+      this.roleSelectionDialog = this.openmct.overlays.selection({
         selectionOptions,
         iconClass: 'alert',
         title: 'Select Role',
@@ -93,7 +94,8 @@ export default {
             label: 'Select',
             emphasis: true,
             callback: () => {
-              dialog.dismiss();
+              this.roleSelectionDialog.dismiss();
+              this.roleSelectionDialog = undefined;
               const inputValueOrDefault = this.inputRoleSelection || selectionOptions[0].key;
               this.updateRole(inputValueOrDefault);
               this.openmct.notifications.info(`Successfully set new role to ${this.role}`);
@@ -104,6 +106,7 @@ export default {
     },
     onRoleChange(event) {
       const role = event.data;
+      this.roleSelectionDialog?.dismiss();
       this.setRoleSelection(role);
     },
     setRoleSelection(role) {
