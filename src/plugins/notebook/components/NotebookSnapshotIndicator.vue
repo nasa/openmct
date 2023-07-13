@@ -90,26 +90,29 @@ export default {
       drawerElement.innerHTML = '<div></div>';
       const divElement = document.querySelector('.l-shell__drawer div');
 
-      mount({
-        el: divElement,
-        components: {
-          SnapshotContainerComponent
+      mount(
+        {
+          el: divElement,
+          components: {
+            SnapshotContainerComponent
+          },
+          provide: {
+            openmct,
+            snapshotContainer
+          },
+          data() {
+            return {
+              toggleSnapshot
+            };
+          },
+          template:
+            '<SnapshotContainerComponent :toggleSnapshot="toggleSnapshot"></SnapshotContainerComponent>'
         },
-        provide: {
-          openmct,
-          snapshotContainer
-        },
-        data() {
-          return {
-            toggleSnapshot
-          };
-        },
-        template:
-          '<SnapshotContainerComponent :toggleSnapshot="toggleSnapshot"></SnapshotContainerComponent>'
-      }, {
-        app: openmct.app,
-        element: divElement
-      });
+        {
+          app: openmct.app,
+          element: divElement
+        }
+      );
     },
     updateSnapshotIndicatorTitle() {
       const snapshotCount = this.snapshotContainer.getSnapshots().length;

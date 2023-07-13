@@ -36,18 +36,21 @@ export default class ViewDatumAction {
     let viewContext = view.getViewContext && view.getViewContext();
     const row = viewContext.row;
     let attributes = row.getDatum && row.getDatum();
-    const { vNode, destroy } = mount({
-      components: {
-        MetadataListView
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          MetadataListView
+        },
+        provide: {
+          name: this.name,
+          attributes
+        },
+        template: '<MetadataListView />'
       },
-      provide: {
-        name: this.name,
-        attributes
-      },
-      template: '<MetadataListView />'
-    }, {
-      app: this._openmct.app
-    });
+      {
+        app: this._openmct.app
+      }
+    );
 
     this._openmct.overlays.overlay({
       element: vNode.el,

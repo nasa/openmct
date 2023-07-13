@@ -41,26 +41,29 @@ export default function TimelineViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              TimelineViewLayout
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TimelineViewLayout
+              },
+              provide: {
+                openmct,
+                domainObject,
+                composition: openmct.composition.get(domainObject),
+                objectPath
+              },
+              template: '<timeline-view-layout></timeline-view-layout>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              composition: openmct.composition.get(domainObject),
-              objectPath
-            },
-            template: '<timeline-view-layout></timeline-view-layout>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

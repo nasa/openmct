@@ -24,13 +24,14 @@ import GlobalClearIndicator from './components/globalClearIndicator.vue';
 import mount from 'utils/mount';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {
-    let installIndicator = options.indicator;
+  let installIndicator = options.indicator;
 
-    appliesToObjects = appliesToObjects || [];
+  appliesToObjects = appliesToObjects || [];
 
-    return function install(openmct) {
-      if (installIndicator) {
-        const { vNode } = mount({
+  return function install(openmct) {
+    if (installIndicator) {
+      const { vNode } = mount(
+        {
           components: {
             GlobalClearIndicator
           },
@@ -38,20 +39,22 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
             openmct
           },
           template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        },{
+        },
+        {
           app: openmct.app,
           element: document.createElement('div')
-        })
+        }
+      );
 
-        let indicator = {
-          element: vNode.el,
-          key: 'global-clear-indicator',
-          priority: openmct.priority.DEFAULT
-        };
+      let indicator = {
+        element: vNode.el,
+        key: 'global-clear-indicator',
+        priority: openmct.priority.DEFAULT
+      };
 
-        openmct.indicators.add(indicator);
-      }
+      openmct.indicators.add(indicator);
+    }
 
-      openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
-    };
-  }
+    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
+  };
+}

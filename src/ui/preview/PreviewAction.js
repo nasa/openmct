@@ -47,23 +47,26 @@ export default class PreviewAction extends EventEmitter {
   }
 
   invoke(objectPath, viewOptions) {
-    const { vNode, destroy } = mount({
-      components: {
-        Preview
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          Preview
+        },
+        provide: {
+          openmct: this._openmct,
+          objectPath: objectPath
+        },
+        data() {
+          return {
+            viewOptions
+          };
+        },
+        template: '<Preview :view-options="viewOptions"></Preview>'
       },
-      provide: {
-        openmct: this._openmct,
-        objectPath: objectPath
-      },
-      data() {
-        return {
-          viewOptions
-        };
-      },
-      template: '<Preview :view-options="viewOptions"></Preview>'
-    }, {
-      app: this._openmct.app
-    });
+      {
+        app: this._openmct.app
+      }
+    );
 
     let overlay = this._openmct.overlays.overlay({
       element: vNode.el,

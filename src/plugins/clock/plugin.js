@@ -95,24 +95,26 @@ export default function ClockPlugin(options) {
     if (options && options.enableClockIndicator === true) {
       const element = document.createElement('div');
 
-      const { vNode } = mount({
-        components: {
-          ClockIndicator
+      const { vNode } = mount(
+        {
+          components: {
+            ClockIndicator
+          },
+          provide: {
+            openmct
+          },
+          data() {
+            return {
+              indicatorFormat: CLOCK_INDICATOR_FORMAT
+            };
+          },
+          template: '<ClockIndicator :indicator-format="indicatorFormat" />'
         },
-        provide: {
-          openmct
-        },
-        data() {
-          return {
-            indicatorFormat: CLOCK_INDICATOR_FORMAT
-          };
-        },
-        template: '<ClockIndicator :indicator-format="indicatorFormat" />'
-      },
-      {
-        app: openmct.app,
-        element
-      });
+        {
+          app: openmct.app,
+          element
+        }
+      );
       const indicator = {
         element: vNode.el,
         key: 'clock-indicator',

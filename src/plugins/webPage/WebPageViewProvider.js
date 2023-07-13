@@ -36,24 +36,27 @@ export default function WebPage(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              WebPageComponent: WebPageComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                WebPageComponent: WebPageComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<web-page-component></web-page-component>'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<web-page-component></web-page-component>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

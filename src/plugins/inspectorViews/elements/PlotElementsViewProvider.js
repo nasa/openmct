@@ -37,20 +37,23 @@ export default function PlotElementsViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              PlotElementsPool
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlotElementsPool
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<PlotElementsPool />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<PlotElementsPool />`
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         showTab: function (isEditing) {
@@ -62,7 +65,7 @@ export default function PlotElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

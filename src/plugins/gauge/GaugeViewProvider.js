@@ -41,25 +41,28 @@ export default function GaugeViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              GaugeComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                GaugeComponent
+              },
+              provide: {
+                openmct,
+                domainObject,
+                composition: openmct.composition.get(domainObject)
+              },
+              template: '<gauge-component></gauge-component>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              composition: openmct.composition.get(domainObject)
-            },
-            template: '<gauge-component></gauge-component>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

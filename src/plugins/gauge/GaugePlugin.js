@@ -169,25 +169,28 @@ export default function () {
   function getGaugeFormController(openmct) {
     return {
       show(element, model, onChange) {
-        const { vNode } = mount({
-          el: element,
-          components: {
-            GaugeFormController
+        const { vNode } = mount(
+          {
+            el: element,
+            components: {
+              GaugeFormController
+            },
+            provide: {
+              openmct
+            },
+            data() {
+              return {
+                model,
+                onChange
+              };
+            },
+            template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
           },
-          provide: {
-            openmct
-          },
-          data() {
-            return {
-              model,
-              onChange
-            };
-          },
-          template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: openmct.app,
+            element
+          }
+        );
 
         return vNode.componentInstance;
       }

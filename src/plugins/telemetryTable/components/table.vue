@@ -500,9 +500,9 @@ export default {
     this.table.tableRows.on('remove', this.rowsRemoved);
     this.table.tableRows.on('sort', this.updateVisibleRows);
     this.table.tableRows.on('filter', this.updateVisibleRows);
-    
+
     this.table.configuration.on('change', this.updateConfiguration);
-    
+
     this.openmct.time.on('bounds', this.boundsChanged);
 
     //Default sort
@@ -638,16 +638,16 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-        this.updateVisibleRows();
-        this.synchronizeScrollX();
+      this.updateVisibleRows();
+      this.synchronizeScrollX();
 
-        if (this.shouldSnapToBottom()) {
-          this.autoScroll = true;
-        } else {
-          // If user scrolls away from bottom, disable auto-scroll.
-          // Auto-scroll will be re-enabled if user scrolls to bottom again.
-          this.autoScroll = false;
-        }
+      if (this.shouldSnapToBottom()) {
+        this.autoScroll = true;
+      } else {
+        // If user scrolls away from bottom, disable auto-scroll.
+        // Auto-scroll will be re-enabled if user scrolls to bottom again.
+        this.autoScroll = false;
+      }
     },
     shouldSnapToBottom() {
       return (
@@ -659,9 +659,9 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
-        if (this.$refs.headersHolderEl && this.scrollable) {
-          this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
-        }
+      if (this.$refs.headersHolderEl && this.scrollable) {
+        this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+      }
     },
     filterChanged(columnKey) {
       if (this.enableRegexSearch[columnKey]) {

@@ -44,24 +44,27 @@ export default class FaultManagementViewProvider {
 
     return {
       show: (element) => {
-        const { destroy } = mount({
-          el: element,
-          components: {
-            FaultManagementView
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FaultManagementView
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: '<FaultManagementView></FaultManagementView>'
           },
-          provide: {
-            openmct,
-            domainObject
-          },
-          template: '<FaultManagementView></FaultManagementView>'
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: openmct.app,
+            element
+          }
+        );
         _destroy = destroy;
       },
       destroy: () => {
-        if(_destroy) {
+        if (_destroy) {
           _destroy();
         }
       }

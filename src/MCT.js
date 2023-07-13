@@ -338,9 +338,12 @@ define([
    * @param {HTMLElement} [domElement] the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  MCT.prototype.start = function (domElement = document.body.firstElementChild, isHeadlessMode = false) {
+  MCT.prototype.start = function (
+    domElement = document.body.firstElementChild,
+    isHeadlessMode = false
+  ) {
     // Create element to mount Layout if it doesn't exist
-    if(domElement === null) {
+    if (domElement === null) {
       domElement = document.createElement('div');
       domElement.id = 'app';
       document.body.appendChild(domElement);
@@ -385,10 +388,10 @@ define([
         window.addEventListener('beforeunload', this.destroy);
         this.router.start();
         this.emit('start');
-      })
+      });
     } else {
       window.addEventListener('beforeunload', this.destroy);
-  
+
       this.router.start();
       this.emit('start');
     }

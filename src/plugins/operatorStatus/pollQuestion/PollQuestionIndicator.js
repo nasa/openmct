@@ -27,25 +27,28 @@ import PollQuestionComponent from './PollQuestion.vue';
 export default class PollQuestionIndicator extends AbstractStatusIndicator {
   createPopupComponent() {
     const indicator = this.getIndicator();
-    const { vNode } = mount({
-      components: {
-        PollQuestion: PollQuestionComponent
+    const { vNode } = mount(
+      {
+        components: {
+          PollQuestion: PollQuestionComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          indicator: indicator,
+          configuration: this.getConfiguration()
+        },
+        data() {
+          return {
+            positionX: 0,
+            positionY: 0
+          };
+        },
+        template: '<poll-question :positionX="positionX" :positionY="positionY" />'
       },
-      provide: {
-        openmct: this.openmct,
-        indicator: indicator,
-        configuration: this.getConfiguration()
-      },
-      data() {
-        return {
-          positionX: 0,
-          positionY: 0
-        };
-      },
-      template: '<poll-question :positionX="positionX" :positionY="positionY" />'
-    }, {
-      app: this.openmct.app
-    });
+      {
+        app: this.openmct.app
+      }
+    );
 
     return vNode.el;
   }

@@ -48,28 +48,31 @@ export default function OverlayPlotViewProvider(openmct) {
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
-          const { vNode, destroy } = mount({
-            el: element,
-            components: {
-              Plot
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<plot ref="plotComponent" :options="options"></plot>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<plot ref="plotComponent" :options="options"></plot>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
           component = vNode.componentInstance;
         },
@@ -81,7 +84,7 @@ export default function OverlayPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

@@ -39,25 +39,28 @@ export default class FolderListView {
   view(domainObject) {
     return {
       show: (element) => {
-        const { destroy } = mount({
-          el: element,
-          components: {
-            ListViewComponent
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              ListViewComponent
+            },
+            provide: {
+              openmct: this.openmct,
+              domainObject,
+              Moment
+            },
+            template: '<ListViewComponent></ListViewComponent>'
           },
-          provide: {
-            openmct: this.openmct,
-            domainObject,
-            Moment
-          },
-          template: '<ListViewComponent></ListViewComponent>'
-        }, {
-          app: this.openmct.app,
-          element
-        });
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
         this._destroy = destroy;
       },
       destroy: () => {
-        if(this._destroy) {
+        if (this._destroy) {
           this._destroy();
         }
       }
@@ -66,4 +69,4 @@ export default class FolderListView {
   priority() {
     return 1;
   }
-};
+}

@@ -37,23 +37,26 @@ export default class FolderGridView {
   view(domainObject) {
     return {
       show: (element) => {
-        const { destroy } = mount({
-          components: {
-            GridViewComponent
+        const { destroy } = mount(
+          {
+            components: {
+              GridViewComponent
+            },
+            provide: {
+              openmct: this.openmct,
+              domainObject
+            },
+            template: '<GridViewComponent></GridViewComponent>'
           },
-          provide: {
-            openmct: this.openmct,
-            domainObject
-          },
-          template: '<GridViewComponent></GridViewComponent>'
-        }, {
-          app: this.openmct.app,
-          element
-        });
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
         this._destroy = destroy;
       },
       destroy: () => {
-        if(this._destroy) {
+        if (this._destroy) {
           this._destroy();
         }
       }
@@ -63,4 +66,4 @@ export default class FolderGridView {
   priority() {
     return 1;
   }
-};
+}

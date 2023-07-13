@@ -25,7 +25,6 @@ import SuperMenuComponent from './components/SuperMenu.vue';
 import { h } from 'vue';
 import mount from 'utils/mount';
 
-
 export const MENU_PLACEMENT = {
   TOP: 'top',
   TOP_LEFT: 'top-left',

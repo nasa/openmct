@@ -39,24 +39,27 @@ export default function ConditionWidget(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              ConditionWidgetComponent: ConditionWidgetComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ConditionWidgetComponent: ConditionWidgetComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<condition-widget-component></condition-widget-component>'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<condition-widget-component></condition-widget-component>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

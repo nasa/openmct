@@ -34,7 +34,9 @@ export default class FiltersInspectorViewProvider {
   canView(selection) {
     const domainObject = selection?.[0]?.[0]?.context?.item;
 
-    return domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type);
+    return (
+      domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type)
+    );
   }
   view(selection) {
     let _destroy = null;
@@ -43,19 +45,22 @@ export default class FiltersInspectorViewProvider {
 
     return {
       show: function (element) {
-        const { destroy } = mount({
-          el: element,
-          components: {
-            FiltersView
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FiltersView
+            },
+            provide: {
+              openmct: this.openmct
+            },
+            template: '<filters-view></filters-view>'
           },
-          provide: {
-            openmct
-          },
-          template: '<filters-view></filters-view>'
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
         _destroy = destroy;
       },
       showTab: function (isEditing) {
@@ -63,7 +68,7 @@ export default class FiltersInspectorViewProvider {
           return true;
         }
 
-        const metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadata = this.openmct.telemetry.getMetadata(domainObject);
         const metadataWithFilters = metadata
           ? metadata.valueMetadatas.filter((value) => value.filters)
           : [];
@@ -71,7 +76,7 @@ export default class FiltersInspectorViewProvider {
         return metadataWithFilters.length;
       },
       priority: function () {
-        return openmct.priority.DEFAULT;
+        return this.openmct.priority.DEFAULT;
       },
       destroy: function () {
         if (_destroy) {
@@ -80,4 +85,4 @@ export default class FiltersInspectorViewProvider {
       }
     };
   }
-};
+}

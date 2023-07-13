@@ -42,20 +42,23 @@ export default function TimeListInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              TimelistPropertiesView: TimelistPropertiesView
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TimelistPropertiesView: TimelistPropertiesView
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item
+              },
+              template: '<timelist-properties-view></timelist-properties-view>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item
-            },
-            template: '<timelist-properties-view></timelist-properties-view>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {

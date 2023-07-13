@@ -100,25 +100,28 @@ export default function () {
   function getScatterPlotFormControl(openmct) {
     return {
       show(element, model, onChange) {
-        const { vNode } = mount({
-          el: element,
-          components: {
-            ScatterPlotForm
+        const { vNode } = mount(
+          {
+            el: element,
+            components: {
+              ScatterPlotForm
+            },
+            provide: {
+              openmct
+            },
+            data() {
+              return {
+                model,
+                onChange
+              };
+            },
+            template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
           },
-          provide: {
-            openmct
-          },
-          data() {
-            return {
-              model,
-              onChange
-            };
-          },
-          template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: openmct.app,
+            element
+          }
+        );
 
         return vNode;
       }

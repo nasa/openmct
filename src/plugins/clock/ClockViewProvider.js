@@ -37,24 +37,27 @@ export default function ClockViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Clock
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Clock
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<clock />'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<clock />'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

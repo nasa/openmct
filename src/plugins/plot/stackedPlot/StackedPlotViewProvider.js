@@ -50,28 +50,31 @@ export default function StackedPlotViewProvider(openmct) {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
 
-          const { vNode, destroy } = mount({
-            el: element,
-            components: {
-              StackedPlot
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                StackedPlot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
           component = vNode.componentInstance;
         },
@@ -83,7 +86,7 @@ export default function StackedPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

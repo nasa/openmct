@@ -1,6 +1,5 @@
 import ProgressDialogComponent from './components/ProgressDialogComponent.vue';
 import Overlay from './Overlay';
-import Vue from 'vue';
 import mount from 'utils/mount';
 
 let component;

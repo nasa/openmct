@@ -51,26 +51,29 @@ export default class ConditionSetViewProvider {
 
     return {
       show: (container, isEditing) => {
-        const { vNode, destroy } = mount({
-          el: container,
-          components: {
-            ConditionSet
+        const { vNode, destroy } = mount(
+          {
+            el: container,
+            components: {
+              ConditionSet
+            },
+            provide: {
+              openmct: this.openmct,
+              domainObject,
+              objectPath
+            },
+            data() {
+              return {
+                isEditing
+              };
+            },
+            template: '<condition-set :isEditing="isEditing"></condition-set>'
           },
-          provide: {
-            openmct: this.openmct,
-            domainObject,
-            objectPath
-          },
-          data() {
-            return {
-              isEditing
-            };
-          },
-          template: '<condition-set :isEditing="isEditing"></condition-set>'
-        }, {
-          app: this.openmct.app,
-          element: container
-        });
+          {
+            app: this.openmct.app,
+            element: container
+          }
+        );
         _destroy = destroy;
         component = vNode.componentInstance;
       },
@@ -78,7 +81,7 @@ export default class ConditionSetViewProvider {
         component.isEditing = isEditing;
       },
       destroy: () => {
-        if(_destroy) {
+        if (_destroy) {
           _destroy();
         }
       }

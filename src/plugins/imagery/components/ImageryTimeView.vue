@@ -237,22 +237,25 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        const { vNode } = mount({
-          components: {
-            SwimLane
+        const { vNode } = mount(
+          {
+            components: {
+              SwimLane
+            },
+            provide: {
+              openmct: this.openmct
+            },
+            data() {
+              return {
+                isNested: true
+              };
+            },
+            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
           },
-          provide: {
-            openmct: this.openmct
-          },
-          data() {
-            return {
-              isNested: true
-            };
-          },
-          template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
-        }, {
-          app: this.openmct.app
-        });
+          {
+            app: this.openmct.app
+          }
+        );
 
         const component = vNode.componentInstance;
         this.$refs.imageryHolder.appendChild(component.$el);

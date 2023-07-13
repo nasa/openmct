@@ -36,26 +36,29 @@ export default function PropertiesViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Properties
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Properties
+              },
+              provide: {
+                openmct
+              },
+              template: `<Properties />`
             },
-            provide: {
-              openmct
-            },
-            template: `<Properties />`
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

@@ -49,33 +49,36 @@ export default function PlanViewProvider(openmct) {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
 
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Plan
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plan
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact,
+                    isChildObject: isCompact
+                  }
+                };
+              },
+              template: '<plan :options="options"></plan>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact,
-                  isChildObject: isCompact
-                }
-              };
-            },
-            template: '<plan :options="options"></plan>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

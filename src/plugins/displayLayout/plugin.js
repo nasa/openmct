@@ -41,30 +41,33 @@ class DisplayLayoutView {
   }
 
   show(container, isEditing) {
-    const { vNode, destroy } = mount({
-      el: container,
-      components: {
-        DisplayLayout
+    const { vNode, destroy } = mount(
+      {
+        el: container,
+        components: {
+          DisplayLayout
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          options: this.options,
+          objectUtils,
+          currentView: this
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject,
+            isEditing
+          };
+        },
+        template:
+          '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        options: this.options,
-        objectUtils,
-        currentView: this
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject,
-          isEditing
-        };
-      },
-      template:
-        '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
-    }, {
-      app: this.openmct.app,
-      element: container
-    });
+      {
+        app: this.openmct.app,
+        element: container
+      }
+    );
     this._destroy = destroy;
     this.component = vNode.componentInstance;
   }
@@ -99,7 +102,7 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    if(this._destroy) {
+    if (this._destroy) {
       this._destroy();
     }
   }

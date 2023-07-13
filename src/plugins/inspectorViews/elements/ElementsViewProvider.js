@@ -39,20 +39,23 @@ export default function ElementsViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              ElementsPool
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ElementsPool
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<ElementsPool />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<ElementsPool />`
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         showTab: function (isEditing) {
@@ -64,7 +67,7 @@ export default function ElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

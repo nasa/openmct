@@ -24,29 +24,32 @@ export default class ImageryView {
       alternateObjectPath = viewOptions.objectPath;
     }
 
-    const { vNode, destroy } = mount({
-      el: element,
-      components: {
-        'imagery-view': ImageryViewComponent
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          'imagery-view': ImageryViewComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          domainObject: this.domainObject,
+          objectPath: alternateObjectPath || this.objectPath,
+          imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+          currentView: this
+        },
+        data() {
+          return {
+            focusedImageTimestamp
+          };
+        },
+        template:
+          '<imagery-view :focused-image-timestamp="focusedImageTimestamp" @update:focusedImageTimestamp="value => focusedImageTimestamp = value" ref="ImageryContainer"></imagery-view>'
       },
-      provide: {
-        openmct: this.openmct,
-        domainObject: this.domainObject,
-        objectPath: alternateObjectPath || this.objectPath,
-        imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
-        currentView: this
-      },
-      data() {
-        return {
-          focusedImageTimestamp
-        };
-      },
-      template:
-        '<imagery-view :focused-image-timestamp="focusedImageTimestamp" @update:focusedImageTimestamp="value => focusedImageTimestamp = value" ref="ImageryContainer"></imagery-view>'
-    }, {
-      app: this.openmct.app,
-      element
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
     this.component = vNode.componentInstance;
     this._destroy = destroy;
   }
@@ -81,7 +84,7 @@ export default class ImageryView {
   }
 
   destroy() {
-    if(this._destroy) {
+    if (this._destroy) {
       this._destroy();
     }
   }

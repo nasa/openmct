@@ -42,26 +42,29 @@ export default function TimelistViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Timelist
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Timelist
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                composition: openmct.composition.get(domainObject)
+              },
+              template: '<timelist></timelist>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath,
-              composition: openmct.composition.get(domainObject)
-            },
-            template: '<timelist></timelist>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

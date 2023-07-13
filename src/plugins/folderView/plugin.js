@@ -19,24 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import FolderGridView from "./FolderGridView";
-import FolderListView from "./FolderListView";
+import FolderGridView from './FolderGridView';
+import FolderListView from './FolderListView';
 
-export default function() {
-    return function install(openmct) {
-      openmct.types.addType('folder', {
-        name: 'Folder',
-        key: 'folder',
-        description:
-          "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
-        cssClass: 'icon-folder',
-        creatable: true,
-        initialize: function (domainObject) {
-          domainObject.composition = [];
-        }
-      });
+export default function () {
+  return function install(openmct) {
+    openmct.types.addType('folder', {
+      name: 'Folder',
+      key: 'folder',
+      description:
+        "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+      cssClass: 'icon-folder',
+      creatable: true,
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+      }
+    });
 
-      openmct.objectViews.addProvider(new FolderGridView(openmct));
-      openmct.objectViews.addProvider(new FolderListView(openmct));
+    openmct.objectViews.addProvider(new FolderGridView(openmct));
+    openmct.objectViews.addProvider(new FolderListView(openmct));
   };
 }

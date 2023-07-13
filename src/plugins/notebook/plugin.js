@@ -83,18 +83,21 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode } = mount({
-    components: {
-      NotebookSnapshotIndicator
+  const { vNode } = mount(
+    {
+      components: {
+        NotebookSnapshotIndicator
+      },
+      provide: {
+        openmct,
+        snapshotContainer
+      },
+      template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
     },
-    provide: {
-      openmct,
-      snapshotContainer
-    },
-    template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-  }, {
-    app: openmct.app
-  });
+    {
+      app: openmct.app
+    }
+  );
 
   const indicator = {
     element: vNode.el,

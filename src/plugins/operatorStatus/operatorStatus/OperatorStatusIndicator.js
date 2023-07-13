@@ -26,25 +26,28 @@ import OperatorStatusComponent from './OperatorStatus.vue';
 export default class OperatorStatusIndicator extends AbstractStatusIndicator {
   createPopupComponent() {
     const indicator = this.getIndicator();
-    const { vNode } = mount({
-      components: {
-        OperatorStatus: OperatorStatusComponent
+    const { vNode } = mount(
+      {
+        components: {
+          OperatorStatus: OperatorStatusComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          indicator: indicator,
+          configuration: this.getConfiguration()
+        },
+        data() {
+          return {
+            positionX: 0,
+            positionY: 0
+          };
+        },
+        template: '<operator-status :positionX="positionX" :positionY="positionY" />'
       },
-      provide: {
-        openmct: this.openmct,
-        indicator: indicator,
-        configuration: this.getConfiguration()
-      },
-      data() {
-        return {
-          positionX: 0,
-          positionY: 0
-        };
-      },
-      template: '<operator-status :positionX="positionX" :positionY="positionY" />'
-    }, {
-      app: this.openmct.app
-    });
+      {
+        app: this.openmct.app
+      }
+    );
 
     return vNode.el;
   }

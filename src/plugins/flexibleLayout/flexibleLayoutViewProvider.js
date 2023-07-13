@@ -47,27 +47,30 @@ export default class FlexibleLayoutViewProvider {
 
     return {
       show: function (element, isEditing) {
-        const { vNode, destroy } = mount({
-          el: element,
-          components: {
-            FlexibleLayoutComponent
+        const { vNode, destroy } = mount(
+          {
+            el: element,
+            components: {
+              FlexibleLayoutComponent
+            },
+            provide: {
+              openmct: this.openmct,
+              objectPath,
+              layoutObject: domainObject
+            },
+            data() {
+              return {
+                isEditing: isEditing
+              };
+            },
+            template:
+              '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
           },
-          provide: {
-            openmct,
-            objectPath,
-            layoutObject: domainObject
-          },
-          data() {
-            return {
-              isEditing: isEditing
-            };
-          },
-          template:
-            '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
         component = vNode.componentInstance;
         _destroy = destroy;
       },
@@ -84,7 +87,7 @@ export default class FlexibleLayoutViewProvider {
         component.isEditing = isEditing;
       },
       destroy: function (element) {
-        if(_destroy) {
+        if (_destroy) {
           _destroy();
           component = null;
         }
@@ -94,4 +97,4 @@ export default class FlexibleLayoutViewProvider {
   priority() {
     return 1;
   }
-};
+}

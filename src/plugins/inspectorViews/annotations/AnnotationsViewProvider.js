@@ -43,27 +43,30 @@ export default function AnnotationsViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Annotations
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Annotations
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<Annotations />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<Annotations />`
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

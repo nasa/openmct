@@ -46,27 +46,30 @@ export default class Tabs {
 
     return {
       show: function (element, editMode) {
-        const { vNode, destroy } = mount({
-          el: element,
-          components: {
-            TabsComponent
+        const { vNode, destroy } = mount(
+          {
+            el: element,
+            components: {
+              TabsComponent
+            },
+            provide: {
+              openmct: this.openmct,
+              domainObject,
+              objectPath,
+              composition: this.openmct.composition.get(domainObject)
+            },
+            data() {
+              return {
+                isEditing: editMode
+              };
+            },
+            template: '<tabs-component :isEditing="isEditing"></tabs-component>'
           },
-          provide: {
-            openmct,
-            domainObject,
-            objectPath,
-            composition: openmct.composition.get(domainObject)
-          },
-          data() {
-            return {
-              isEditing: editMode
-            };
-          },
-          template: '<tabs-component :isEditing="isEditing"></tabs-component>'
-        }, {
-          app: openmct.app,
-          element
-        });
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
         this.destroy = destroy;
         component = vNode.componentInstance;
       },
@@ -74,7 +77,7 @@ export default class Tabs {
         component.isEditing = editMode;
       },
       destroy: function (element) {
-        if(this.destroy) {
+        if (this.destroy) {
           this.destroy();
         }
       }

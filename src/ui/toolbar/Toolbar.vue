@@ -89,6 +89,11 @@ export default {
     // for edit mode changes and update toolbars if necessary.
     this.openmct.editor.on('isEditing', this.handleEditing);
   },
+  unmounted() {
+    this.openmct.selection.off('change', this.handleSelection);
+    this.openmct.editor.off('isEditing', this.handleEditing);
+    this.removeListeners();
+  },
   methods: {
     handleSelection(selection) {
       this.removeListeners();
@@ -306,11 +311,6 @@ export default {
     handleEditing(isEditing) {
       this.handleSelection(this.openmct.selection.get());
     }
-  },
-  unmounted() {
-    this.openmct.selection.off('change', this.handleSelection);
-    this.openmct.editor.off('isEditing', this.handleEditing);
-    this.removeListeners();
   }
 };
 </script>

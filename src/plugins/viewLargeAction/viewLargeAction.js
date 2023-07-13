@@ -77,23 +77,26 @@ export default class ViewLargeAction {
   }
 
   _getPreview(objectPath, view) {
-    const { vNode, destroy } = mount({
-      components: {
-        Preview
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          Preview
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath
+        },
+        data() {
+          return {
+            view
+          };
+        },
+        template: '<Preview :existing-view="view"></Preview>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath
-      },
-      data() {
-        return {
-          view
-        };
-      },
-      template: '<Preview :existing-view="view"></Preview>'
-    }, {
-      app: this.openmct.app
-    });
+      {
+        app: this.openmct.app
+      }
+    );
     this.preview = vNode.componentInstance;
     this.destroy = destroy;
 

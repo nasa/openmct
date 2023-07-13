@@ -84,9 +84,13 @@ export default {
   },
   mounted() {
     this.unlisten = ticker.listen(this.tick);
-    this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration', (configuration) => {
-      this.configuration = configuration;
-    });
+    this.unobserve = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      (configuration) => {
+        this.configuration = configuration;
+      }
+    );
   },
   beforeUnmount() {
     if (this.unlisten) {

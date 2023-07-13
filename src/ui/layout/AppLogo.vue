@@ -37,15 +37,18 @@ export default {
   },
   methods: {
     launchAbout() {
-      const { el, destroy } = mount({
-        components: { AboutDialog },
-        provide: {
-          openmct: this.openmct
+      const { el, destroy } = mount(
+        {
+          components: { AboutDialog },
+          provide: {
+            openmct: this.openmct
+          },
+          template: '<about-dialog></about-dialog>'
         },
-        template: '<about-dialog></about-dialog>'
-      }, {
-        app: this.openmct.app
-      });
+        {
+          app: this.openmct.app
+        }
+      );
 
       this.openmct.overlays.overlay({
         element: el,

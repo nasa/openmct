@@ -37,23 +37,26 @@ export default function HyperlinkProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              HyperlinkLayout
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                HyperlinkLayout
+              },
+              provide: {
+                domainObject
+              },
+              template: '<hyperlink-layout></hyperlink-layout>'
             },
-            provide: {
-              domainObject
-            },
-            template: '<hyperlink-layout></hyperlink-layout>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

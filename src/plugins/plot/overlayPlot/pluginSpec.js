@@ -188,7 +188,7 @@ describe('the plugin', function () {
     let mockComposition;
 
     afterAll(() => {
-      //component.$destroy();
+      component.$destroy();
       openmct.router.path = null;
     });
 
@@ -423,7 +423,7 @@ describe('the plugin', function () {
     let mockComposition;
 
     afterAll(() => {
-      //component.$destroy();
+      component.$destroy();
       openmct.router.path = null;
     });
 

@@ -67,28 +67,31 @@ export default function StylesInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              StylesInspectorView
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                StylesInspectorView
+              },
+              provide: {
+                openmct,
+                stylesManager,
+                selection
+              },
+              template: `<StylesInspectorView />`
             },
-            provide: {
-              openmct,
-              stylesManager,
-              selection
-            },
-            template: `<StylesInspectorView />`
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

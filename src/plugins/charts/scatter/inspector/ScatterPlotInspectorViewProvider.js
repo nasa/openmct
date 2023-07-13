@@ -19,27 +19,30 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
       let _destroy = null;
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              PlotOptions
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlotOptions
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item
+              },
+              template: '<plot-options></plot-options>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item
-            },
-            template: '<plot-options></plot-options>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

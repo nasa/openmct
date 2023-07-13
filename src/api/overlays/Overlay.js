@@ -28,21 +28,23 @@ class Overlay extends EventEmitter {
     this.autoHide = autoHide;
     this.dismissable = dismissable !== false;
 
-    const { destroy } = mount({
-      components: {
-        OverlayComponent: OverlayComponent
+    const { destroy } = mount(
+      {
+        components: {
+          OverlayComponent: OverlayComponent
+        },
+        provide: {
+          dismiss: this.notifyAndDismiss.bind(this),
+          element,
+          buttons,
+          dismissable: this.dismissable
+        },
+        template: '<overlay-component></overlay-component>'
       },
-      provide: {
-        dismiss: this.notifyAndDismiss.bind(this),
-        element,
-        buttons,
-        dismissable: this.dismissable
-      },
-      template: '<overlay-component></overlay-component>'
-    },
-    {
-      element: this.container
-    });
+      {
+        element: this.container
+      }
+    );
 
     this.destroy = destroy;
 

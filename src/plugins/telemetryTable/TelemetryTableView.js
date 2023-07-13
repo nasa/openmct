@@ -38,41 +38,44 @@ export default class TelemetryTableView {
   }
 
   destroy() {
-    if(this._destroy) {
+    if (this._destroy) {
       this._destroy();
     }
   }
 
   show(element, editMode) {
-    const { vNode, destroy } = mount({
-      el: element,
-      components: {
-        TableComponent
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          TableComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          table: this.table,
+          currentView: this
+        },
+        data() {
+          return {
+            isEditing: editMode,
+            marking: {
+              disableMultiSelect: false,
+              enable: true,
+              rowName: '',
+              rowNamePlural: '',
+              useAlternateControlBar: false
+            }
+          };
+        },
+        template:
+          '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        table: this.table,
-        currentView: this
-      },
-      data() {
-        return {
-          isEditing: editMode,
-          marking: {
-            disableMultiSelect: false,
-            enable: true,
-            rowName: '',
-            rowNamePlural: '',
-            useAlternateControlBar: false
-          }
-        };
-      },
-      template:
-        '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
-    }, {
-      app: this.openmct.app,
-      element
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
     this.component = vNode.componentInstance;
     this._destroy = destroy;
   }

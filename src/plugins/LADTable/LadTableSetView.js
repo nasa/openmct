@@ -36,27 +36,30 @@ export default class LadTableSetView {
   show(element) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
-    const { vNode, destroy } = mount({
-      el: element,
-      components: {
-        LadTableSet
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          LadTableSet
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          currentView: this,
+          ladTableConfiguration
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject
+          };
+        },
+        template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        currentView: this,
-        ladTableConfiguration
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject
-        };
-      },
-      template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
-    }, {
-      app: this.openmct.app,
-      element
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
     this._destroy = destroy;
     this.component = vNode.componentInstance;
   }
@@ -70,7 +73,7 @@ export default class LadTableSetView {
   }
 
   destroy() {
-    if(this._destroy) {
+    if (this._destroy) {
       this._destroy();
     }
   }

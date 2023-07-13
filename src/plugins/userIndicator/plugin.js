@@ -25,17 +25,20 @@ import UserIndicator from './components/UserIndicator.vue';
 
 export default function UserIndicatorPlugin() {
   function addIndicator(openmct) {
-    const { vNode } = mount({
-      components: {
-        UserIndicator
+    const { vNode } = mount(
+      {
+        components: {
+          UserIndicator
+        },
+        provide: {
+          openmct: openmct
+        },
+        template: '<UserIndicator />'
       },
-      provide: {
-        openmct: openmct
-      },
-      template: '<UserIndicator />'
-    }, {
-      app: openmct.app
-    });
+      {
+        app: openmct.app
+      }
+    );
 
     openmct.indicators.add({
       key: 'user-indicator',

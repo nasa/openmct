@@ -30,21 +30,24 @@ export default function PlotsInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              PlotOptions: PlotOptions
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlotOptions: PlotOptions
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item,
+                path: objectPath
+              },
+              template: '<plot-options></plot-options>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item,
-              path: objectPath
-            },
-            template: '<plot-options></plot-options>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {

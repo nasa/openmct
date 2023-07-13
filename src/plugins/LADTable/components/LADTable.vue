@@ -49,8 +49,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { toRaw } from 'vue';
+import Vue, { toRaw } from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 

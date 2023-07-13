@@ -41,26 +41,29 @@ export default function LADTableConfigurationViewProvider(openmct) {
 
       return {
         show(element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              LADTableConfiguration: LADTableConfigurationComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                LADTableConfiguration: LADTableConfigurationComponent
+              },
+              provide: {
+                openmct
+              },
+              template: '<LADTableConfiguration />'
             },
-            provide: {
-              openmct
-            },
-            template: '<LADTableConfiguration />'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority() {
           return 1;
         },
         destroy() {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

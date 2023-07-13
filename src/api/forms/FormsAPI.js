@@ -23,7 +23,6 @@
 import FormController from './FormController';
 import FormProperties from './components/FormProperties.vue';
 
-import Vue from 'vue';
 import _ from 'lodash';
 import mount from 'utils/mount';
 
@@ -157,25 +156,28 @@ export default class FormsAPI {
       formCancel = onFormAction(reject);
     });
 
-    const { destroy } = mount({
-      components: { FormProperties },
-      provide: {
-        openmct: self.openmct
+    const { destroy } = mount(
+      {
+        components: { FormProperties },
+        provide: {
+          openmct: self.openmct
+        },
+        data() {
+          return {
+            formStructure,
+            onChange: onFormPropertyChange,
+            onCancel: formCancel,
+            onSave: formSave
+          };
+        },
+        template:
+          '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
       },
-      data() {
-        return {
-          formStructure,
-          onChange: onFormPropertyChange,
-          onCancel: formCancel,
-          onSave: formSave
-        };
-      },
-      template:
-        '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
-    }, {
+      {
         element,
         app: self.openmct.app
-    });
+      }
+    );
 
     function onFormPropertyChange(data) {
       if (onChange) {

@@ -37,30 +37,33 @@ export default function TimerViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              Timer
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Timer
+              },
+              provide: {
+                openmct,
+                currentView: this
+              },
+              data() {
+                return {
+                  domainObject,
+                  objectPath
+                };
+              },
+              template: '<timer :domain-object="domainObject" :object-path="objectPath" />'
             },
-            provide: {
-              openmct,
-              currentView: this
-            },
-            data() {
-              return {
-                domainObject,
-                objectPath
-              };
-            },
-            template: '<timer :domain-object="domainObject" :object-path="objectPath" />'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

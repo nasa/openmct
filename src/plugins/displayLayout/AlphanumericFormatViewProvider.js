@@ -34,22 +34,25 @@ class AlphanumericFormatView {
   }
 
   show(element) {
-    const { vNode, destroy } = mount({
-      el: element,
-      name: 'AlphanumericFormat',
-      components: {
-        AlphanumericFormat
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        name: 'AlphanumericFormat',
+        components: {
+          AlphanumericFormat
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          currentView: this
+        },
+        template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        currentView: this
-      },
-      template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
-    }, {
-      app: this.openmct.app,
-      element
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
     this.component = vNode.componentInstance;
     this._destroy = destroy;
   }
@@ -67,7 +70,7 @@ class AlphanumericFormatView {
   }
 
   destroy() {
-    if(this._destroy) {
+    if (this._destroy) {
       this._destroy();
     }
   }

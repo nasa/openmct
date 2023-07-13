@@ -59,13 +59,13 @@ export default {
     objectPath: {
       type: Array,
       required: true
-    },
+    }
   },
   data() {
     return {
       lastTimestamp: undefined,
       active: true,
-      configuration: this.domainObject.configuration,
+      configuration: this.domainObject.configuration
     };
   },
   computed: {
@@ -180,9 +180,13 @@ export default {
     }
   },
   mounted() {
-    this.unobserve = this.openmct.objects.observe(this.domainObject, 'configuration', (configuration) => {
-      this.configuration = configuration;
-    });
+    this.unobserve = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      (configuration) => {
+        this.configuration = configuration;
+      }
+    );
     this.$nextTick(() => {
       if (this.configuration && this.configuration.timerState === undefined) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';

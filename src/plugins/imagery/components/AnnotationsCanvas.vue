@@ -95,7 +95,7 @@ export default {
         this.drawAnnotations();
       },
       deep: true
-    } 
+    }
   },
   mounted() {
     this.canvas = this.$refs.canvas;

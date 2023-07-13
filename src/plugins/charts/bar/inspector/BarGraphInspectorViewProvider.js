@@ -20,21 +20,23 @@ export default function BarGraphInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-
-          const { destroy } = mount({
-            el: element,
-            components: {
-              BarGraphOptions
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                BarGraphOptions
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item
+              },
+              template: '<bar-graph-options></bar-graph-options>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item
-            },
-            template: '<bar-graph-options></bar-graph-options>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {

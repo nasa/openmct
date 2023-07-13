@@ -49,29 +49,34 @@ export default function ImageryTimestripViewProvider(openmct) {
     },
     view: function (domainObject, objectPath) {
       let _destroy = null;
+      let component = null;
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              ImageryTimeView
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                ImageryTimeView
+              },
+              provide: {
+                openmct: openmct,
+                domainObject: domainObject,
+                objectPath: objectPath
+              },
+              template: '<imagery-time-view></imagery-time-view>'
             },
-            provide: {
-              openmct: openmct,
-              domainObject: domainObject,
-              objectPath: objectPath
-            },
-            template: '<imagery-time-view></imagery-time-view>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
+          component = vNode.componentInstance;
         },
 
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         },

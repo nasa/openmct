@@ -53,8 +53,6 @@ import mount from 'utils/mount';
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
 
-import Vue from 'vue';
-
 export default {
   inject: ['openmct', 'snapshotContainer'],
   props: {
@@ -189,11 +187,14 @@ export default {
       }
     },
     annotateSnapshot() {
-      const { vNode, destroy } = mount({
-        template: '<div id="snap-annotation"></div>'
-      }, {
-        app: this.openmct.app,
-      });
+      const { vNode, destroy } = mount(
+        {
+          template: '<div id="snap-annotation"></div>'
+        },
+        {
+          app: this.openmct.app
+        }
+      );
 
       const painterroInstance = new PainterroInstance(vNode.el);
       const annotateOverlay = this.openmct.overlays.overlay({
@@ -322,24 +323,27 @@ export default {
     openSnapshotOverlay(src) {
       const self = this;
 
-      const { vNode, destroy } = mount({
-        data: () => {
-          return {
-            createdOn: this.createdOn,
-            name: this.embed.name,
-            cssClass: this.embed.cssClass,
-            src
-          };
+      const { vNode, destroy } = mount(
+        {
+          data: () => {
+            return {
+              createdOn: this.createdOn,
+              name: this.embed.name,
+              cssClass: this.embed.cssClass,
+              src
+            };
+          },
+          methods: {
+            formatTime: self.formatTime,
+            annotateSnapshot: self.annotateSnapshot,
+            exportImage: self.exportImage
+          },
+          template: SnapshotTemplate
         },
-        methods: {
-          formatTime: self.formatTime,
-          annotateSnapshot: self.annotateSnapshot,
-          exportImage: self.exportImage
-        },
-        template: SnapshotTemplate
-      }, {
-        app: this.openmct.app
-      });
+        {
+          app: this.openmct.app
+        }
+      );
 
       this.snapshot = vNode.componentInstance;
       this.snapshotOverlay = this.openmct.overlays.overlay({

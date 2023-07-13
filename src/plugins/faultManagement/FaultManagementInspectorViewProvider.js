@@ -45,26 +45,29 @@ export default function FaultManagementInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              FaultManagementInspector
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                FaultManagementInspector
+              },
+              provide: {
+                openmct
+              },
+              template: '<FaultManagementInspector></FaultManagementInspector>'
             },
-            provide: {
-              openmct
-            },
-            template: '<FaultManagementInspector></FaultManagementInspector>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

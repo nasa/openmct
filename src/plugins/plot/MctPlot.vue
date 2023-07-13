@@ -396,7 +396,7 @@ export default {
     this.$on('loadingComplete', this.loadAnnotations);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
-    
+
     this.$nextTick(() => {
       this.setTimeContext();
       this.loaded = true;

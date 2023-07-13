@@ -49,32 +49,35 @@ export default function ScatterPlotViewProvider(openmct) {
       return {
         show: function (element) {
           const isCompact = isCompactView(objectPath);
-          const { destroy } = mount({
-            el: element,
-            components: {
-              ScatterPlotView
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ScatterPlotView
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<scatter-plot-view :options="options"></scatter-plot-view>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<scatter-plot-view :options="options"></scatter-plot-view>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         destroy: function () {
-          if(_destroy) {
+          if (_destroy) {
             _destroy();
           }
         }

@@ -53,21 +53,24 @@ export default {
 
         let viewContainer = document.createElement('div');
         this.$el.append(viewContainer);
-        const { destroy } = mount({
-          el: viewContainer,
-          components: {
-            SavedStylesView
+        const { destroy } = mount(
+          {
+            el: viewContainer,
+            components: {
+              SavedStylesView
+            },
+            provide: {
+              openmct: this.openmct,
+              selection: selection,
+              stylesManager: this.stylesManager
+            },
+            template: '<saved-styles-view />'
           },
-          provide: {
-            openmct: this.openmct,
-            selection: selection,
-            stylesManager: this.stylesManager
-          },
-          template: '<saved-styles-view />'
-        }, {
-          app: this.openmct.app,
-          element: viewContainer
-        });
+          {
+            app: this.openmct.app,
+            element: viewContainer
+          }
+        );
         this.destroy = destroy;
       }
     }

@@ -41,20 +41,23 @@ export default function GanttChartInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const { destroy } = mount({
-            el: element,
-            components: {
-              PlanViewConfiguration
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlanViewConfiguration
+              },
+              provide: {
+                openmct,
+                selection: selection
+              },
+              template: '<plan-view-configuration></plan-view-configuration>'
             },
-            provide: {
-              openmct,
-              selection: selection
-            },
-            template: '<plan-view-configuration></plan-view-configuration>'
-          }, {
-            app: openmct.app,
-            element
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
           _destroy = destroy;
         },
         priority: function () {

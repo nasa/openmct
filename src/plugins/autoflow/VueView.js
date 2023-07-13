@@ -21,14 +21,14 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
-export default function() {
+export default function () {
   return function VueView(options) {
     const { vNode, destroy } = mount(options);
 
-    this.show = function(container) {
+    this.show = function (container) {
       container.appendChild(vNode.el);
     };
 
     this.destroy = destroy;
-  }
+  };
 }
