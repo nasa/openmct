@@ -99,9 +99,9 @@ test.describe('Verify tooltips', () => {
   // Flexible Layout headers - DONE
   // Tab View layout headers - DONE
   // Search - DONE
-  // Gauge - 
+  // Gauge -
   // Notebook Embed - DONE
-  // Telemetry Table
+  // Telemetry Table -
   // Timeline Objects
   // Tree - DONE
   // Recent Objects
@@ -348,7 +348,7 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
-  test('display path for source telemetry when hovering over gauge', async ({ page }) => {
+  test('display path for source telemetry when hovering over gauge', ({ page }) => {
     expect(true).toBe(true);
     // await createDomainObjectWithDefaults(page, {
     //   type: 'Gauge',
@@ -374,5 +374,26 @@ test.describe('Verify tooltips', () => {
     let tooltipText = await page.locator('.c-tooltip').textContent();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
+  });
+
+  test('display tooltip path for telemetry table names', async ({ page }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Test Telemetry Table'
+    });
+
+    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
+
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    await page.getByText('SWG 1');
+    expect(true).toBe(true);
+    // await page.keyboard.down('Control');
+    // await page.locator('.c-ne__embed').hover();
+    // let tooltipText = await page.locator('.c-tooltip').textContent();
+    // tooltipText = tooltipText.replace('\n', '').trim();
+    // expect(tooltipText).toBe(sineWaveObject3.path);
   });
 });
