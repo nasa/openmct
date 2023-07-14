@@ -54,7 +54,7 @@ export default class ViewLargeAction {
 
     return (
       childElement &&
-      !childElement.classList.contains('js-main-container') &&
+      !childElement?.classList.contains('js-main-container') &&
       !this.openmct.router.isNavigatedObject(objectPath)
     );
   }

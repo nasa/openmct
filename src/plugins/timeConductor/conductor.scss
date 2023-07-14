@@ -340,8 +340,10 @@
 
     .c-so-view & {
         // Time Conductor in a Layout frame
+        padding: 3px 0;
+
         .c-clock-symbol {
-            $h: 14px;
+            $h: 13px;
             height: $h;
             width: $h;
         }
