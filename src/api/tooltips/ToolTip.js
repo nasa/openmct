@@ -34,7 +34,7 @@ class Tooltip extends EventEmitter {
   ) {
     super();
 
-    const { vNode, destroy }= mount({
+    const { vNode, destroy } = mount({
       components: {
         TooltipComponent: TooltipComponent
       },
