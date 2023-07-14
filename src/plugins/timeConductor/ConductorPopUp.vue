@@ -42,10 +42,6 @@
         class="c-conductor__history-select"
         title="Select and apply previously entered time intervals."
         :button-css-class="'c-icon-button'"
-        :offsets="timeOffsets"
-        :bounds="bounds"
-        :time-system="timeSystem"
-        :mode="timeMode"
       />
     </div>
     <conductor-inputs-fixed
