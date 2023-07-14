@@ -24,6 +24,7 @@ define([
   'EventEmitter',
   './api/api',
   './api/overlays/OverlayAPI',
+  './api/tooltips/ToolTipAPI',
   './selection/Selection',
   './plugins/plugins',
   './ui/registries/ViewRegistry',
@@ -48,6 +49,7 @@ define([
   EventEmitter,
   api,
   OverlayAPI,
+  ToolTipAPI,
   Selection,
   plugins,
   ViewRegistry,
@@ -219,6 +221,8 @@ define([
       ['editor', () => new api.EditorAPI.default(this)],
 
       ['overlays', () => new OverlayAPI.default()],
+
+      ['tooltips', () => new ToolTipAPI.default()],
 
       ['menus', () => new api.MenuAPI(this)],
 

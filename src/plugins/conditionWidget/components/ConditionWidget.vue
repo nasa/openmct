@@ -21,7 +21,12 @@
 -->
 
 <template>
-  <div ref="conditionWidgetElement" class="c-condition-widget u-style-receiver js-style-receiver">
+  <div
+    ref="conditionWidgetElement"
+    class="c-condition-widget u-style-receiver js-style-receiver"
+    @mouseover.ctrl="showToolTip"
+    @mouseleave="hideToolTip"
+  >
     <component :is="urlDefined ? 'a' : 'div'" class="c-condition-widget__label-wrapper" :href="url">
       <div class="c-condition-widget__label">{{ label }}</div>
     </component>
@@ -29,9 +34,11 @@
 </template>
 
 <script>
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
 
 export default {
+  mixins: [tooltipHelpers],
   inject: ['openmct', 'domainObject'],
   data: function () {
     return {
@@ -116,6 +123,10 @@ export default {
       }
 
       this.conditionalLabel = latestDatum.output || '';
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'conditionWidgetElement');
     }
   }
 };

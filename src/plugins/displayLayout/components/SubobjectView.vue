@@ -23,7 +23,6 @@
   <layout-frame
     :item="item"
     :grid-size="gridSize"
-    :title="domainObject && domainObject.name"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"

@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-snapshot c-ne__embed">
+  <div
+    ref="notebookEmbed"
+    class="c-snapshot c-ne__embed"
+    @mouseover.ctrl="showToolTip"
+    @mouseleave="hideToolTip"
+  >
     <div v-if="embed.snapshot" class="c-ne__embed__snap-thumb" @click="openSnapshot()">
       <img :src="thumbnailImage" />
     </div>
@@ -50,10 +55,12 @@ import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import objectPathToUrl from '@/tools/url';
 import mount from 'utils/mount';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
 
 export default {
+  mixins: [tooltipHelpers],
   inject: ['openmct', 'snapshotContainer'],
   props: {
     embed: {
@@ -411,6 +418,14 @@ export default {
           snapshotObject.fullSizeImage
         );
       }
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(
+        await this.getObjectPath(this.embed.domainObject.identifier),
+        BELOW,
+        'notebookEmbed'
+      );
     }
   }
 };

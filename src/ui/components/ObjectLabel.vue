@@ -31,7 +31,12 @@
     <div class="c-tree__item__type-icon c-object-label__type-icon" :class="typeClass">
       <span class="is-status__indicator" :title="`This item is ${status}`"></span>
     </div>
-    <div class="c-tree__item__name c-object-label__name">
+    <div
+      ref="objectLabel"
+      class="c-tree__item__name c-object-label__name"
+      @mouseover.ctrl="showToolTip"
+      @mouseleave="hideToolTip"
+    >
       {{ domainObject.name }}
     </div>
   </a>
@@ -41,9 +46,10 @@
 import ObjectLink from '../mixins/object-link';
 import ContextMenuGesture from '../mixins/context-menu-gesture';
 import PreviewAction from '../preview/PreviewAction.js';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 export default {
-  mixins: [ObjectLink, ContextMenuGesture],
+  mixins: [ObjectLink, ContextMenuGesture, tooltipHelpers],
   inject: ['openmct'],
   props: {
     domainObject: {
@@ -133,6 +139,10 @@ export default {
     },
     setStatus(status) {
       this.status = status;
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'objectLabel');
     }
   }
 };

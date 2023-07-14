@@ -35,12 +35,15 @@
       </div>
       <div
         v-for="(tab, index) in tabsList"
+        :ref="tab.keyString"
         :key="tab.keyString"
         class="c-tab c-tabs-view__tab js-tab"
         :class="{
           'is-current': isCurrent(tab)
         }"
         @click="showTab(tab, index)"
+        @mouseover.ctrl="showToolTip(tab)"
+        @mouseleave="hideToolTip"
       >
         <div
           ref="tabsLabel"
@@ -79,6 +82,7 @@
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import _ from 'lodash';
 
 const unknownObjectType = {
@@ -92,6 +96,7 @@ export default {
   components: {
     ObjectView
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
   props: {
     isEditing: {
@@ -389,6 +394,11 @@ export default {
 
       this.tabWidth = this.$refs.tabs.offsetWidth + 'px';
       this.tabHeight = this.$refs.tabsHolder.offsetHeight - this.$refs.tabs.offsetHeight + 'px';
+    },
+    async showToolTip(tab) {
+      const identifier = tab.domainObject.identifier;
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(identifier), BELOW, tab.keyString);
     }
   }
 };
