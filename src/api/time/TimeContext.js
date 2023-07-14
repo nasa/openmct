@@ -431,6 +431,7 @@ class TimeContext extends EventEmitter {
      * Time System
      * */
     this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.#copy(this.system));
+    this.emit('timeSystem', this.#copy(this.system));
 
     if (bounds) {
       this.setBounds(bounds);
@@ -477,6 +478,7 @@ class TimeContext extends EventEmitter {
      * a "tick" event (i.e. was an automatic update), false otherwise.
      */
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
+    this.emit('bounds', this.boundsVal, false);
   }
 
   /**
@@ -530,6 +532,7 @@ class TimeContext extends EventEmitter {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+    this.emit('clock', this.activeClock);
 
     if (offsets !== undefined) {
       this.setClockOffsets(offsets);
