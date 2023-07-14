@@ -81,7 +81,7 @@ export default {
         name: role
       }));
       // automatically select only role option
-      if (selectionOptions.length === 0){
+      if (selectionOptions.length === 0) {
         return;
       }
       if (selectionOptions.length === 1) {
