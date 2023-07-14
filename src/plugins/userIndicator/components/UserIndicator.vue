@@ -81,6 +81,9 @@ export default {
         name: role
       }));
       // automatically select only role option
+      if (selectionOptions.length === 0) {
+        return;
+      }
       if (selectionOptions.length === 1) {
         this.updateRole(selectionOptions[0].key);
         return;
