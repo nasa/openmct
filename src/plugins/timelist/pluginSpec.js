@@ -78,7 +78,13 @@ describe('the plugin', function () {
     appHolder.style.width = '640px';
     appHolder.style.height = '480px';
 
-    openmct = createOpenMct();
+    openmct = createOpenMct({
+      timeSystemKey: 'utc',
+      bounds: {
+        start: twoHoursPast,
+        end: twoHoursFuture
+      }
+    });
     openmct.install(new TimelistPlugin());
 
     timelistDefinition = openmct.types.get(TIMELIST_TYPE).definition;
