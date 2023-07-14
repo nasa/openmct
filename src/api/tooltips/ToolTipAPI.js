@@ -54,7 +54,7 @@ class TooltipAPI {
   }
 
   /**
-   * private
+   * @private for platform-internal use
    */
   showTooltip(tooltip) {
     for (let i = this.activeToolTips.length - 1; i > -1; i--) {
@@ -67,11 +67,16 @@ class TooltipAPI {
   }
 
   /**
-   * A description of option properties that can be passed into the overlay
-   * @typedef options
+   * A description of option properties that can be passed into the tooltip
+   * @typedef {Object} TooltipOptions
    * @property {string} tooltipText text to show in the tooltip
    * @property {TOOLTIP_LOCATIONS} tooltipLocation location to show the tooltip relative to the parentElement
    * @property {HTMLElement} parentElement reference to the DOM node we're adding the tooltip to
+   */
+
+  /**
+   * Tooltips take an options object that consists of the string, tooltipLocation, and parentElement
+   * @param {TooltipOptions} options
    */
   tooltip(options) {
     let tooltip = new Tooltip(options);
