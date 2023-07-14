@@ -22,3 +22,6 @@
 
 export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
 export const NO_PROVIDER_ERROR = 'No user provider has been set.';
+
+export const ACTIVE_ROLE_LOCAL_STORAGE_KEY = 'ACTIVE_USER_ROLE';
+export const ACTIVE_ROLE_BROADCAST_CHANNEL_NAME = 'ActiveRoleChannel';
