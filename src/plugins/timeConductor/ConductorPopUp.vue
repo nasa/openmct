@@ -3,20 +3,22 @@
     <div class="c-tc-input-popup__options">
       <IndependentMode
         v-if="isIndependent"
-        class="c-button--compact c-conductor__mode-select"
+        class="c-conductor__mode-select"
+        title="Sets the Time Conductor's mode."
         :mode="timeOptionMode"
-        :button-css-class="'c-button--compact'"
         @independentModeUpdated="saveIndependentMode"
       />
       <ConductorMode
         v-else
         class="c-conductor__mode-select"
+        title="Sets the Time Conductor's mode."
         :button-css-class="'c-icon-button'"
         @modeUpdated="saveMode"
       />
       <IndependentClock
         v-if="isIndependent"
         class="c-conductor__mode-select"
+        title="Sets the Time Conductor's clock."
         :clock="timeOptionClock"
         :button-css-class="'c-icon-button'"
         @independentClockUpdated="saveIndependentClock"
@@ -24,6 +26,7 @@
       <ConductorClock
         v-else
         class="c-conductor__mode-select"
+        title="Sets the Time Conductor's clock."
         :button-css-class="'c-icon-button'"
         @clockUpdated="saveClock"
       />
@@ -31,16 +34,14 @@
       <ConductorTimeSystem
         v-if="!isIndependent"
         class="c-conductor__time-system-select"
+        title="Sets the Time Conductor's time system."
         :button-css-class="'c-icon-button'"
       />
       <ConductorHistory
         v-if="!isIndependent"
         class="c-conductor__history-select"
+        title="Select and apply previously entered time intervals."
         :button-css-class="'c-icon-button'"
-        :offsets="timeOffsets"
-        :bounds="bounds"
-        :time-system="timeSystem"
-        :mode="timeMode"
       />
     </div>
     <conductor-inputs-fixed

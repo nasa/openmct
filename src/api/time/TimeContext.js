@@ -106,7 +106,10 @@ class TimeContext extends EventEmitter {
        * @property {TimeSystem} The value of the currently applied
        * Time System
        * */
-      this.emit('timeSystem', this.#copy(this.system));
+      const system = this.#copy(this.system);
+      this.emit('timeSystem', system);
+      this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, system);
+
       if (bounds) {
         this.bounds(bounds);
       }
@@ -186,6 +189,7 @@ class TimeContext extends EventEmitter {
        * a "tick" event (ie. was an automatic update), false otherwise.
        */
       this.emit('bounds', this.boundsVal, false);
+      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
     }
 
     //Return a copy to prevent direct mutation of time conductor bounds.
@@ -270,7 +274,9 @@ class TimeContext extends EventEmitter {
         end: currentValue + offsets.end
       };
 
-      this.bounds(newBounds);
+      if (this.isRealTime()) {
+        this.bounds(newBounds);
+      }
 
       /**
        * Event that is triggered when clock offsets change.
@@ -338,6 +344,7 @@ class TimeContext extends EventEmitter {
        * if the system is no longer following a clock source
        */
       this.emit('clock', this.activeClock);
+      this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
         this.clockOffsets(offsets);
@@ -404,10 +411,6 @@ class TimeContext extends EventEmitter {
    * @method setTimeSystem
    */
   setTimeSystem(timeSystemOrKey, bounds) {
-    if (!this.isRealTime() && !bounds) {
-      throw new Error('Must specify bounds when changing time system without an active clock.');
-    }
-
     if (timeSystemOrKey === undefined) {
       throw 'Please provide a time system';
     }
@@ -445,8 +448,6 @@ class TimeContext extends EventEmitter {
     if (bounds) {
       this.setBounds(bounds);
     }
-
-    return this.system;
   }
 
   /**
@@ -489,9 +490,6 @@ class TimeContext extends EventEmitter {
      * a "tick" event (i.e. was an automatic update), false otherwise.
      */
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
-
-    //Return a copy to prevent direct mutation of time conductor bounds.
-    return this.#copy(this.boundsVal);
   }
 
   /**
@@ -549,8 +547,6 @@ class TimeContext extends EventEmitter {
     if (offsets !== undefined) {
       this.setClockOffsets(offsets);
     }
-
-    return this.activeClock;
   }
 
   /**
@@ -583,8 +579,6 @@ class TimeContext extends EventEmitter {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
-
-    return this.mode;
   }
 
   /**
@@ -632,7 +626,9 @@ class TimeContext extends EventEmitter {
       end: currentValue + offsets.end
     };
 
-    this.setBounds(newBounds);
+    if (this.isRealTime()) {
+      this.setBounds(newBounds);
+    }
 
     /**
      * Event that is triggered when clock offsets change.
@@ -642,8 +638,6 @@ class TimeContext extends EventEmitter {
      * offsets.
      */
     this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
-
-    return this.offsets;
   }
 
   #warnMethodDeprecated(method, newMethod) {

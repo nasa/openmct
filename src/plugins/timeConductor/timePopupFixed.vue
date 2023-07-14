@@ -15,10 +15,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
-        @change="
-          validateAllBounds('startDate');
-          submitForm();
-        "
+        @change="validateAllBounds('startDate')"
       />
       <date-picker
         v-if="isUTCBased"
@@ -37,10 +34,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
-        @change="
-          validateAllBounds('startDate');
-          submitForm();
-        "
+        @change="validateAllBounds('startDate')"
       />
     </div>
 
@@ -54,10 +48,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
-        @change="
-          validateAllBounds('endDate');
-          submitForm();
-        "
+        @change="validateAllBounds('endDate')"
       />
       <date-picker
         v-if="isUTCBased"
@@ -76,10 +67,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
-        @change="
-          validateAllBounds('endDate');
-          submitForm();
-        "
+        @change="validateAllBounds('endDate')"
       />
     </div>
 
@@ -121,7 +109,7 @@ export default {
       timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
     );
     let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    let bounds = this.bounds || this.openmct.time.bounds();
+    let bounds = this.bounds || this.openmct.time.getBounds();
 
     return {
       timeFormatter,
@@ -312,12 +300,10 @@ export default {
     startDateSelected(date) {
       this.formattedBounds.start = this.timeFormatter.format(date).split(' ')[0];
       this.validateAllBounds('startDate');
-      this.submitForm();
     },
     endDateSelected(date) {
       this.formattedBounds.end = this.timeFormatter.format(date).split(' ')[0];
       this.validateAllBounds('endDate');
-      this.submitForm();
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {

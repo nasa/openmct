@@ -58,7 +58,6 @@
         :key="action.name"
         role="menuitem"
         :class="action.cssClass"
-        :title="action.description"
         :data-testid="action.testId || false"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"

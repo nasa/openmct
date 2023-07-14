@@ -26,15 +26,19 @@
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
   >
     <button
-      class="c-button--menu c-button--compact c-time-system-button"
+      class="c-button--menu c-time-system-button"
       :class="[buttonCssClass]"
       @click.prevent.stop="showTimeSystemMenu"
     >
-      {{ selectedTimeSystem.name }}
+      <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
     </button>
   </div>
-  <div v-else class="c-compact-tc__time-system">
-    <div class="c-compact-tc__time-system__value">{{ selectedTimeSystem.name }}</div>
+  <div
+    v-else
+    class="c-compact-tc__setting-value__elem"
+    :title="`Time system: ${selectedTimeSystem.name}`"
+  >
+    {{ selectedTimeSystem.name }}
   </div>
 </template>
 

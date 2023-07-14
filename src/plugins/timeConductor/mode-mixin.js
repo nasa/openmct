@@ -14,31 +14,6 @@ export default {
     loadModes() {
       this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata);
     },
-    loadClocks(menuOptions) {
-      let clocks;
-
-      if (menuOptions) {
-        clocks = menuOptions
-          .map((menuOption) => menuOption.clock)
-          .filter(isDefinedAndUnique)
-          .map(this.getClock);
-      }
-
-      this.clocks = clocks.map(this.getClockMetadata);
-
-      function isDefinedAndUnique(key, index, array) {
-        return key !== undefined && array.indexOf(key) === index;
-      }
-    },
-    getActiveClock() {
-      const activeClock = this.openmct.time.getClock();
-
-      //Create copy of active clock so the time API does not get reactified.
-      return Object.create(activeClock);
-    },
-    getClock(key) {
-      return this.openmct.time.getAllClocks().find((clock) => clock.key === key);
-    },
     getModeMetadata(mode, testIds = false) {
       let modeOptions;
       const key = mode;
@@ -71,21 +46,6 @@ export default {
       }
 
       return modeOptions;
-    },
-    getClockMetadata(clock) {
-      const key = clock.key;
-      const clockOptions = {
-        key,
-        name: clock.name,
-        description:
-          'Monitor streaming data in real-time. The Time ' +
-          'Conductor and displays will automatically advance themselves based on this clock. ' +
-          clock.description,
-        cssClass: clock.cssClass || 'icon-clock',
-        onItemClicked: () => this.setClock(key)
-      };
-
-      return clockOptions;
     }
   }
 };

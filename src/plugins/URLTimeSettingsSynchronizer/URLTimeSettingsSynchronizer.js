@@ -20,15 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const TIME_EVENTS = ['timeSystemChanged', 'modeChanged', 'clockChanged', 'clockOffsetsChanged'];
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';
 const SEARCH_START_BOUND = 'tc.startBound';
 const SEARCH_END_BOUND = 'tc.endBound';
 const SEARCH_START_DELTA = 'tc.startDelta';
 const SEARCH_END_DELTA = 'tc.endDelta';
-
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
+const TIME_EVENTS = [
+  TIME_CONTEXT_EVENTS.timeSystemChanged,
+  TIME_CONTEXT_EVENTS.modeChanged,
+  TIME_CONTEXT_EVENTS.clockChanged,
+  TIME_CONTEXT_EVENTS.clockOffsetsChanged
+];
 
 export default class URLTimeSettingsSynchronizer {
   constructor(openmct) {
@@ -222,7 +227,7 @@ export default class URLTimeSettingsSynchronizer {
 
     if (
       isValid &&
-      (mode.toLowerCase() === FIXED_MODE_KEY || mode.toLowerCase() === REALTIME_MODE_KEY)
+      (mode.toLowerCase() === FIXED_MODE_KEY || this.openmct.time.clocks.get(mode) !== undefined)
     ) {
       isValid = true;
     }

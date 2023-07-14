@@ -98,6 +98,13 @@ import IndependentTimeConductor from '@/plugins/timeConductor/independent/Indepe
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
+const SupportedViewTypes = [
+  'plot-stacked',
+  'plot-overlay',
+  'bar-graph.view',
+  'scatter-plot.view',
+  'time-strip.view'
+];
 
 export default {
   components: {
@@ -143,17 +150,13 @@ export default {
       complexContent,
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
-      status: ''
+      status: '',
+      supportsIndependentTime: false
     };
   },
   computed: {
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
-    },
-    supportsIndependentTime() {
-      // const viewKey = this.getViewKey();
-
-      return true; //this.domainObject && SupportedViewTypes.includes(viewKey);
     }
   },
   mounted() {
@@ -171,6 +174,9 @@ export default {
       this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
+
+    const viewKey = this.getViewKey();
+    this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
   beforeDestroy() {
     this.removeStatusListener();
@@ -237,7 +243,8 @@ export default {
       this.widthClass = wClass.trimStart();
     },
     getViewKey() {
-      let viewKey = this.this.$refs.objectView.viewKey;
+      let viewKey = this.$refs.objectView?.viewKey;
+
       if (this.objectViewKey) {
         viewKey = this.objectViewKey;
       }
