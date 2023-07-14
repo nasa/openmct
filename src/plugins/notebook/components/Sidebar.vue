@@ -199,7 +199,6 @@ export default {
       this.$emit('selectPage', newPage.id);
     },
     addSection() {
-      console.debug('🚨 🧧 addNewSection');
       const newSection = this.createNewSection();
       const sections = this.addNewSection(newSection);
 
