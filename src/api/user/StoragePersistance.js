@@ -19,26 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
-import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
 
-/**
- * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration
- * @returns {function} The plugin install function
- */
-export default function operatorStatusPlugin(configuration) {
-  return function install(openmct) {
-    if (openmct.user.hasProvider()) {
-      const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
-      operatorStatusIndicator.install();
+import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants';
 
-      openmct.user.status.canSetPollQuestion().then((canSetPollQuestion) => {
-        if (canSetPollQuestion) {
-          const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
-
-          pollQuestionIndicator.install();
-        }
-      });
-    }
-  };
+class StoragePersistance {
+  getActiveRole() {
+    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
+  setActiveRole(role) {
+    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
+  }
+  clearActiveRole() {
+    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
 }
+
+export default new StoragePersistance();

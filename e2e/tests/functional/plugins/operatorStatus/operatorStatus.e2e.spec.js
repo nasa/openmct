@@ -47,6 +47,11 @@ test.describe('Operator Status', () => {
       path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('Select Role')).toBeVisible();
+    // set role
+    await page.getByRole('button', { name: 'Select' }).click();
+    // dismiss role confirmation popup
+    await page.getByRole('button', { name: 'Dismiss' }).click();
   });
 
   // verify that operator status is visible
