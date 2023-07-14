@@ -41,6 +41,7 @@ import { v4 as uuid } from 'uuid';
 
 const SCROLL_TIMEOUT = 10000;
 
+const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const CURRENT_CSS_SUFFIX = '--is-current';
 const PAST_CSS_SUFFIX = '--is-past';
 const FUTURE_CSS_SUFFIX = '--is-future';
@@ -53,7 +54,7 @@ const headerItems = [
     format: function (value, object, key, openmct) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value);
+      return timeFormatter.format(value, TIME_FORMAT);
     }
   },
   {
@@ -64,7 +65,7 @@ const headerItems = [
     format: function (value, object, key, openmct) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value);
+      return timeFormatter.format(value, TIME_FORMAT);
     }
   },
   {
