@@ -134,6 +134,14 @@ define(['lodash'], function (_) {
     );
   };
 
+  TelemetryMetadataManager.prototype.getUseToUpdateInPlaceValue = function () {
+    return this.valueMetadatas.find(this.isInPlaceUpdateValue);
+  };
+
+  TelemetryMetadataManager.prototype.isInPlaceUpdateValue = function (metadatum) {
+    return metadatum.useToUpdateInPlace === true;
+  };
+
   TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {
     let valueMetadata = this.valuesForHints(['range'])[0];
 
