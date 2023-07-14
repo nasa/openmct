@@ -264,7 +264,7 @@ describe('The LAD Table', () => {
     });
 
     it('should show the name provided for the the telemetry producing object', () => {
-      const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText;
+      const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText.trim();
 
       const expectedName = mockObj.telemetry.name;
       expect(rowName).toBe(expectedName);
