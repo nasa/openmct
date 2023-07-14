@@ -26,6 +26,8 @@ import { TIMELIST_TYPE } from './constants';
 import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
 
+const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+
 const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
 const LIST_ITEM_BODY_CLASS = '.js-table__body th';
@@ -225,8 +227,12 @@ describe('the plugin', function () {
         expect(itemValues[3].innerHTML.trim()).toEqual(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
         );
-        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(twoHoursPast));
-        expect(itemValues[1].innerHTML.trim()).toEqual(timeFormatter.format(oneHourPast));
+        expect(itemValues[0].innerHTML.trim()).toEqual(
+          timeFormatter.format(twoHoursPast, TIME_FORMAT)
+        );
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(oneHourPast, TIME_FORMAT)
+        );
 
         done();
       });
