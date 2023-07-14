@@ -740,7 +740,7 @@ export default {
     },
     async showToolTip() {
       const { CENTER } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
-      this.buildToolTip(await this.getTelemetryPath(), CENTER, 'gauge');
+      this.buildToolTip(await this.getTelemetryPathString(), CENTER, 'gauge');
     }
   }
 };

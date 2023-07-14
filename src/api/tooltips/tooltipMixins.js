@@ -22,7 +22,7 @@
 
 const tooltipHelpers = {
   methods: {
-    async getTelemetryPath(telemetryIdentifier) {
+    async getTelemetryPathString(telemetryIdentifier) {
       let telemetryPathString = '';
       if (!this.domainObject?.identifier) {
         return;

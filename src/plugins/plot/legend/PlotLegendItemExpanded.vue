@@ -217,7 +217,7 @@ export default {
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(
-        await this.getTelemetryPath(this.seriesObject.domainObject.identifier),
+        await this.getTelemetryPathString(this.seriesObject.domainObject.identifier),
         BELOW,
         'seriesName'
       );
