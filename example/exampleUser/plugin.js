@@ -21,16 +21,18 @@
  *****************************************************************************/
 
 import ExampleUserProvider from './ExampleUserProvider';
+const AUTO_LOGIN_USER = 'mct-user';
+const STATUS_ROLES = ['flight', 'driver'];
 
 export default function ExampleUserPlugin(
-  { autoLoginUser, defaultStatusRole } = {
-    autoLoginUser: 'guest',
-    defaultStatusRole: 'test-role'
+  { autoLoginUser, statusRoles } = {
+    autoLoginUser: AUTO_LOGIN_USER,
+    statusRoles: STATUS_ROLES
   }
 ) {
   return function install(openmct) {
     const userProvider = new ExampleUserProvider(openmct, {
-      defaultStatusRole
+      statusRoles
     });
 
     if (autoLoginUser !== undefined) {

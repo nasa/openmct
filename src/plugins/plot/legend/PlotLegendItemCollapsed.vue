@@ -29,7 +29,12 @@
     @mouseover="toggleHover(true)"
     @mouseleave="toggleHover(false)"
   >
-    <div class="plot-series-swatch-and-name">
+    <div
+      ref="series"
+      class="plot-series-swatch-and-name"
+      @mouseover.ctrl="showToolTip"
+      @mouseleave="hideToolTip"
+    >
       <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }">
       </span>
       <span class="is-status__indicator" title="This item is missing or suspect"></span>
@@ -59,9 +64,10 @@ import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
 import eventHelpers from '../lib/eventHelpers';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import configStore from '../configuration/ConfigStore';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
-  mixins: [stalenessMixin],
+  mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject'],
   props: {
     seriesObject: {
@@ -181,9 +187,22 @@ export default {
     },
     toggleHover(hover) {
       this.hover = hover;
-      this.$emit('legendHoverChanged', {
-        seriesKey: this.hover ? this.seriesObject.keyString : ''
-      });
+      this.$emit(
+        'legendHoverChanged',
+        this.hover
+          ? {
+              seriesKey: this.seriesObject.keyString
+            }
+          : undefined
+      );
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(
+        await this.getTelemetryPathString(this.seriesObject.domainObject.identifier),
+        BELOW,
+        'series'
+      );
     }
   }
 };

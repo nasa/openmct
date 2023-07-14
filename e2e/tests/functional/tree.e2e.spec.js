@@ -174,6 +174,42 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
+  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+    page,
+    openmctConfig
+  }) => {
+    const { myItemsFolderName } = openmctConfig;
+    let requestWasAborted = false;
+
+    page.on('requestfailed', (request) => {
+      // check if the request was aborted
+      if (request.failure().errorText === 'net::ERR_ABORTED') {
+        requestWasAborted = true;
+      }
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Foo'
+    });
+
+    // Intercept and delay request
+    const delayInMs = 500;
+
+    await page.route('**', async (route, request) => {
+      await new Promise((resolve) => setTimeout(resolve, delayInMs));
+      route.continue();
+    });
+
+    // Quickly Expand/close the root folder
+    await page
+      .getByRole('button', {
+        name: `Expand ${myItemsFolderName} folder`
+      })
+      .dblclick({ delay: 400 });
+
+    expect(requestWasAborted).toBe(true);
+  });
 });
 
 /**

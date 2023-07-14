@@ -12,6 +12,15 @@ async function getUsername(openmct) {
   return username;
 }
 
+async function getActiveRole(openmct) {
+  let role = null;
+  if (openmct.user.hasProvider()) {
+    role = await openmct.user.getActiveRole?.();
+  }
+
+  return role;
+}
+
 export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
   START_BOUND: 'tc.startBound',
@@ -156,11 +165,15 @@ export async function addNotebookEntry(
   const embeds = embed ? [embed] : [];
 
   const id = `entry-${uuid()}`;
-  const createdBy = await getUsername(openmct);
+  const [createdBy, createdByRole] = await Promise.all([
+    getUsername(openmct),
+    getActiveRole(openmct)
+  ]);
   const entry = {
     id,
     createdOn: date,
     createdBy,
+    createdByRole,
     text: entryText,
     embeds
   };
