@@ -33,12 +33,15 @@
           <span class="is-status__indicator" :title="`This item is ${status}`"></span>
         </div>
         <span
+          ref="objectName"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
           :contenteditable="isPersistable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
+          @mouseover.ctrl="showToolTip"
+          @mouseleave="hideToolTip"
         >
           {{ domainObject.name }}
         </span>
@@ -137,6 +140,7 @@
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 const SupportedViewTypes = [
   'plot-stacked',
@@ -145,7 +149,6 @@ const SupportedViewTypes = [
   'time-strip.view',
   'example.imagery'
 ];
-
 const PLACEHOLDER_OBJECT = {};
 
 export default {
@@ -154,6 +157,7 @@ export default {
     NotebookMenuSwitcher,
     ViewSwitcher
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     actionCollection: {
@@ -415,6 +419,10 @@ export default {
     },
     setStatus(status) {
       this.status = status;
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'objectName');
     }
   }
 };

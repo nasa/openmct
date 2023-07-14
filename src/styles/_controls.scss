@@ -584,7 +584,6 @@ select {
   &.is-current {
     background: $colorTabCurrentBg;
     color: $colorTabCurrentFg;
-    pointer-events: none;
   }
 }
 
