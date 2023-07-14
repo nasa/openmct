@@ -119,6 +119,7 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
+import { markRaw } from 'vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -596,7 +597,7 @@ export default {
         }
 
         this.compositionCollections[navigationPath] = {};
-        this.compositionCollections[navigationPath].collection = collection;
+        this.compositionCollections[navigationPath].collection = markRaw(collection);
         this.compositionCollections[navigationPath].addHandler =
           this.compositionAddHandler(navigationPath);
         this.compositionCollections[navigationPath].removeHandler =
