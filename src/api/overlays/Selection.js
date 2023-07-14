@@ -20,14 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ObjectView from './ObjectView.vue';
-import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
-import Plot from '../../plugins/plot/Plot.vue';
-import WebPage from '../../plugins/webPage/components/WebPage.vue';
+import SelectionComponent from './components/SelectionComponent.vue';
+import Overlay from './Overlay';
+import Vue from 'vue';
 
-export default {
-  ObjectView,
-  StackedPlot,
-  Plot,
-  WebPage
-};
+class Selection extends Overlay {
+  constructor({
+    iconClass,
+    title,
+    message,
+    selectionOptions,
+    onChange,
+    currentSelection,
+    ...options
+  }) {
+    let component = new Vue({
+      components: {
+        SelectionComponent: SelectionComponent
+      },
+      provide: {
+        iconClass,
+        title,
+        message,
+        selectionOptions,
+        onChange,
+        currentSelection
+      },
+      template: '<selection-component></selection-component>'
+    }).$mount();
+
+    super({
+      element: component.$el,
+      size: 'fit',
+      dismissable: false,
+      onChange,
+      currentSelection,
+      ...options
+    });
+
+    this.once('destroy', () => {
+      component.$destroy();
+    });
+  }
+}
+
+export default Selection;

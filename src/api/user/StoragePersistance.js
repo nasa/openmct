@@ -20,14 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ObjectView from './ObjectView.vue';
-import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
-import Plot from '../../plugins/plot/Plot.vue';
-import WebPage from '../../plugins/webPage/components/WebPage.vue';
+import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants';
 
-export default {
-  ObjectView,
-  StackedPlot,
-  Plot,
-  WebPage
-};
+class StoragePersistance {
+  getActiveRole() {
+    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
+  setActiveRole(role) {
+    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
+  }
+  clearActiveRole() {
+    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
+}
+
+export default new StoragePersistance();

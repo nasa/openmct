@@ -63,16 +63,24 @@ const STATUSES = [
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
-  constructor(openmct, { defaultStatusRole } = { defaultStatusRole: undefined }) {
+  constructor(
+    openmct,
+    { statusRoles } = {
+      statusRoles: []
+    }
+  ) {
     super();
 
     this.openmct = openmct;
     this.user = undefined;
     this.loggedIn = false;
     this.autoLoginUser = undefined;
-    this.status = STATUSES[0];
+    this.statusRoleValues = statusRoles.map((role) => ({
+      role: role,
+      status: STATUSES[0]
+    }));
     this.pollQuestion = undefined;
-    this.defaultStatusRole = defaultStatusRole;
+    this.statusRoles = statusRoles;
 
     this.ExampleUser = createExampleUser(this.openmct.user.User);
     this.loginPromise = undefined;
@@ -94,14 +102,13 @@ export default class ExampleUserProvider extends EventEmitter {
     return this.loginPromise;
   }
 
-  canProvideStatusForRole() {
-    return Promise.resolve(true);
+  canProvideStatusForRole(role) {
+    return this.statusRoles.includes(role);
   }
 
   canSetPollQuestion() {
     return Promise.resolve(true);
   }
-
   hasRole(roleId) {
     if (!this.loggedIn) {
       Promise.resolve(undefined);
@@ -110,16 +117,18 @@ export default class ExampleUserProvider extends EventEmitter {
     return Promise.resolve(this.user.getRoles().includes(roleId));
   }
 
-  getStatusRoleForCurrentUser() {
-    return Promise.resolve(this.defaultStatusRole);
+  getPossibleRoles() {
+    return this.user.getRoles();
   }
 
   getAllStatusRoles() {
-    return Promise.resolve([this.defaultStatusRole]);
+    return Promise.resolve(this.statusRoles);
   }
 
   getStatusForRole(role) {
-    return Promise.resolve(this.status);
+    const statusForRole = this.statusRoleValues.find((statusRole) => statusRole.role === role);
+
+    return Promise.resolve(statusForRole?.status);
   }
 
   async getDefaultStatusForRole(role) {
@@ -130,7 +139,8 @@ export default class ExampleUserProvider extends EventEmitter {
 
   setStatusForRole(role, status) {
     status.timestamp = Date.now();
-    this.status = status;
+    const matchingIndex = this.statusRoleValues.findIndex((statusRole) => statusRole.role === role);
+    this.statusRoleValues[matchingIndex].status = status;
     this.emit('statusChange', {
       role,
       status
@@ -175,7 +185,7 @@ export default class ExampleUserProvider extends EventEmitter {
     // for testing purposes, this will skip the form, this wouldn't be used in
     // a normal authentication process
     if (this.autoLoginUser) {
-      this.user = new this.ExampleUser(id, this.autoLoginUser, ['example-role']);
+      this.user = new this.ExampleUser(id, this.autoLoginUser, ['flight', 'driver', 'observer']);
       this.loggedIn = true;
 
       return Promise.resolve();
