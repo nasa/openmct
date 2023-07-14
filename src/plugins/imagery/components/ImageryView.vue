@@ -375,14 +375,11 @@ export default {
       return age < cutoff && !this.refreshCSS;
     },
     canTrackDuration() {
-      let hasClock;
       if (this.timeContext) {
-        hasClock = this.timeContext.getClock();
+        return this.timeContext.isRealTime();
       } else {
-        hasClock = this.openmct.time.getClock();
+        return this.openmct.time.isRealTime();
       }
-
-      return hasClock && this.timeSystem.isUTCBased;
     },
     isNextDisabled() {
       let disabled = false;
@@ -531,14 +528,11 @@ export default {
       return isFresh;
     },
     isFixed() {
-      let clock;
       if (this.timeContext) {
-        clock = this.timeContext.getClock();
+        return this.timeContext.isFixed();
       } else {
-        clock = this.openmct.time.getClock();
+        return this.openmct.time.isFixed();
       }
-
-      return clock === undefined;
     },
     isSelectable() {
       return true;
@@ -1111,7 +1105,7 @@ export default {
       window.clearInterval(this.durationTracker);
     },
     updateDuration() {
-      let currentTime = this.timeContext.getClock() && this.timeContext.getClock().currentValue();
+      let currentTime = this.timeContext.getClock().currentValue();
       if (currentTime === undefined) {
         this.numericDuration = currentTime;
       } else if (Number.isInteger(this.parsedSelectedTime)) {

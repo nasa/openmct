@@ -60,9 +60,7 @@ export default {
     this.timeKey = this.timeSystem.key;
     this.timeFormatter = this.getFormatter(this.timeKey);
     this.setDataTimeContext();
-    setTimeout(() => {
-      this.loadTelemetry();
-    }, 200);
+    this.loadTelemetry();
   },
   beforeDestroy() {
     if (this.unsubscribe) {
