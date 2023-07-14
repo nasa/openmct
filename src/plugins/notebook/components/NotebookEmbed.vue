@@ -200,7 +200,7 @@ export default {
         template: '<div id="snap-annotation"></div>'
       }).$mount();
 
-      const painterroInstance = new PainterroInstance(annotateVue.$el);
+      const painterroInstance = new PainterroInstance(annotateVue.$el, this.openmct);
       const annotateOverlay = this.openmct.overlays.overlay({
         element: annotateVue.$el,
         size: 'large',
