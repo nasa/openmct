@@ -156,9 +156,7 @@ export default {
       delete this.existingViewElement;
     },
     initializeViewContainer() {
-      this.viewContainer = document.createElement('div');
-      this.viewContainer.classList.add('l-angular-ov-wrapper');
-      this.$refs.objectView.append(this.viewContainer);
+      this.viewContainer = this.$refs.objectView;
     },
     getActionsCollection(view) {
       if (this.actionCollection) {
