@@ -192,8 +192,12 @@ test.describe('Persistence operations @couchdb', () => {
     ]);
 
     //Slow down the test a bit
-    await expect(page.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
-    await expect(page2.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: `Expand ${myItemsFolderName} folder` })
+    ).toBeVisible();
+    await expect(
+      page2.getByRole('button', { name: `Expand ${myItemsFolderName} folder` })
+    ).toBeVisible();
 
     // Both pages: Click the Create button
     await Promise.all([

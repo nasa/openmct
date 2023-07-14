@@ -44,6 +44,7 @@
       <view-control
         ref="action"
         class="c-tree__item__view-control"
+        :domain-object="node.object"
         :value="isOpen || isLoading"
         :enabled="!activeSearch && hasComposition"
         @input="itemAction()"

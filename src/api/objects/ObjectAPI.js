@@ -242,11 +242,16 @@ export default class ObjectAPI {
         return domainObject;
       })
       .catch((error) => {
-        console.warn(`Failed to retrieve ${keystring}:`, error);
         delete this.cache[keystring];
-        const result = this.applyGetInterceptors(identifier);
 
-        return result;
+        // suppress abort errors
+        if (error.name === 'AbortError') {
+          return;
+        }
+
+        console.warn(`Failed to retrieve ${keystring}:`, error);
+
+        return this.applyGetInterceptors(identifier);
       });
 
     this.cache[keystring] = objectPromise;
