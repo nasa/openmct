@@ -22,14 +22,14 @@
 
 define([], function () {
   class TelemetryTableRow {
-    constructor(datum, columns, objectKeyString, limitEvaluator, updateInPlace) {
+    constructor(datum, columns, objectKeyString, limitEvaluator, inPlaceUpdateKey) {
       this.columns = columns;
 
       this.datum = createNormalizedDatum(datum, columns);
       this.fullDatum = datum;
       this.limitEvaluator = limitEvaluator;
       this.objectKeyString = objectKeyString;
-      this.updateInPlace = updateInPlace;
+      this.inPlaceUpdateKey = inPlaceUpdateKey;
     }
 
     getFormattedDatum(headers) {

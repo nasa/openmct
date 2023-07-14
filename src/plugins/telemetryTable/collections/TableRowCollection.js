@@ -107,29 +107,25 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       }
     }
 
-    inPlaceUpdate(row) {
-      if (!row.updateInPlace || !row.datum.messageId) {
+    getInPlaceUpdateIndex(row) {
+      const inPlaceUpdateKey = row.inPlaceUpdateKey;
+      if (!inPlaceUpdateKey) {
         return false;
       }
 
       const foundIndex = this.rows.findIndex(
         (existingRow) =>
-          existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId
+          existingRow.datum[inPlaceUpdateKey] &&
+          existingRow.datum[inPlaceUpdateKey] === row.datum[inPlaceUpdateKey]
       );
 
-      return foundIndex > -1;
+      return foundIndex;
     }
 
-    updateRowInPlace(row) {
-      const foundIndex = this.rows.findIndex(
-        (existingRow) =>
-          existingRow.datum.messageId && existingRow.datum.messageId === row.datum.messageId
-      );
-      if (foundIndex > -1) {
-        const foundRow = this.rows[foundIndex];
-        foundRow.updateWithDatum(row.datum);
-        this.rows[foundIndex] = foundRow;
-      }
+    updateRowInPlace(row, index) {
+      const foundRow = this.rows[index];
+      foundRow.updateWithDatum(row.datum);
+      this.rows[index] = foundRow;
     }
 
     sortCollection(rows) {
@@ -144,8 +140,9 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
 
     insertOrUpdateRows(rowsToAdd, addToBeginning) {
       rowsToAdd.forEach((row) => {
-        if (this.inPlaceUpdate(row)) {
-          this.updateRowInPlace(row);
+        const index = this.getInPlaceUpdateIndex(row);
+        if (index > -1) {
+          this.updateRowInPlace(row, index);
         } else {
           if (addToBeginning) {
             this.rows.unshift(row);
@@ -165,8 +162,9 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
         const existingRow = this.rows[i];
         const incomingRow = rows[j];
 
-        if (this.inPlaceUpdate(incomingRow)) {
-          this.updateRowInPlace(incomingRow);
+        const index = this.getInPlaceUpdateIndex(incomingRow);
+        if (index > -1) {
+          this.updateRowInPlace(incomingRow, index);
         } else {
           if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
             mergedRows.push(existingRow);
