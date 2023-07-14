@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Conductor from './Conductor.vue';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
 
 function isTruthy(a) {
   return Boolean(a);
@@ -121,6 +122,7 @@ export default function (config) {
     const defaultClock = defaults.clock;
 
     if (defaultClock) {
+      openmct.time.setMode(REALTIME_MODE_KEY);
       openmct.time.setClock(defaults.clock, defaults.clockOffsets);
       openmct.time.setTimeSystem(defaults.timeSystem, openmct.time.getBounds());
     } else {
@@ -128,9 +130,11 @@ export default function (config) {
       const firstClock = config.menuOptions.find((option) => option.clock);
 
       if (firstClock) {
+        openmct.time.setMode(REALTIME_MODE_KEY);
         openmct.time.setClock(firstClock.clock, firstClock.clockOffsets);
+      } else {
+        openmct.time.setMode(FIXED_MODE_KEY);
       }
-
       openmct.time.setTimeSystem(defaults.timeSystem, defaults.bounds);
     }
 
