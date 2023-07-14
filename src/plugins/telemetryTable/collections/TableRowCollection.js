@@ -110,7 +110,7 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
     getInPlaceUpdateIndex(row) {
       const inPlaceUpdateKey = row.inPlaceUpdateKey;
       if (!inPlaceUpdateKey) {
-        return false;
+        return -1;
       }
 
       const foundIndex = this.rows.findIndex(
