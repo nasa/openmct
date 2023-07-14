@@ -38,7 +38,12 @@
         <div class="c-object-label__type-icon" :class="cssClass">
           <span class="is-status__indicator" :title="`This item is ${status}`"></span>
         </div>
-        <div class="c-object-label__name">
+        <div
+          ref="objectName"
+          class="c-object-label__name"
+          @mouseover.ctrl="showToolTip"
+          @mouseleave="hideToolTip"
+        >
           {{ domainObject && domainObject.name }}
         </div>
       </div>
@@ -91,6 +96,7 @@
 <script>
 import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
@@ -100,6 +106,7 @@ export default {
     ObjectView,
     NotebookMenuSwitcher
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     domainObject: {
@@ -225,6 +232,10 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'objectName');
     }
   }
 };
