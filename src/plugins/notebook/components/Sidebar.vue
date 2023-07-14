@@ -199,6 +199,7 @@ export default {
       this.$emit('selectPage', newPage.id);
     },
     addSection() {
+      console.debug('🚨 🧧 addNewSection');
       const newSection = this.createNewSection();
       const sections = this.addNewSection(newSection);
 
@@ -209,23 +210,21 @@ export default {
 
       this.$emit('selectSection', newSection.id);
     },
-    addNewPage(page) {
-      const pages = this.pages.map((p) => {
-        p.isSelected = false;
-
-        return p;
+    addNewPage(newPage) {
+      this.pages.forEach((page) => {
+        page.isSelected = false;
       });
 
-      return pages.concat(page);
+      this.pages.push(newPage);
+      return this.pages;
     },
-    addNewSection(section) {
-      const sections = this.sections.map((s) => {
-        s.isSelected = false;
-
-        return s;
+    addNewSection(newSection) {
+      this.sections.forEach((section) => {
+        section.isSelected = false;
       });
 
-      return sections.concat(section);
+      this.sections.push(newSection);
+      return this.sections;
     },
     createNewPage() {
       const pageTitle = this.pageTitle;
