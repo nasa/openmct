@@ -425,7 +425,6 @@ export default {
       const filterTime = Date.now();
       const pageEntries =
         getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
-
       const hours = parseInt(this.showTime, 10);
       const filteredPageEntriesByTime = hours
         ? pageEntries.filter((entry) => filterTime - entry.createdOn <= hours * 60 * 60 * 1000)
@@ -975,7 +974,9 @@ export default {
       });
     },
     sectionsChanged({ sections, id = undefined }) {
+      this.startTransaction();
       mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+      this.saveTransaction();
       this.updateDefaultNotebookSection(sections, id);
     },
     selectPage(pageId) {

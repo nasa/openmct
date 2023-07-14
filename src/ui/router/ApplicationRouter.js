@@ -80,7 +80,7 @@ class ApplicationRouter extends EventEmitter {
    * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams}
    */
   getAllSearchParams() {
-    return this.getHashRelativeURL().searchParams;
+    return this.getHashRelativeURL()?.searchParams;
   }
 
   /**
@@ -108,7 +108,7 @@ class ApplicationRouter extends EventEmitter {
    * @returns {URL} current url location
    */
   getHashRelativeURL() {
-    return this.getCurrentLocation().url;
+    return this.getCurrentLocation()?.url;
   }
 
   /**
@@ -126,7 +126,7 @@ class ApplicationRouter extends EventEmitter {
    * @returns {string} value of paramName from current url searchParams
    */
   getSearchParam(paramName) {
-    return this.getAllSearchParams().get(paramName);
+    return this.getAllSearchParams()?.get(paramName);
   }
 
   /**
