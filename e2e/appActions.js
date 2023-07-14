@@ -401,14 +401,7 @@ async function setEndOffset(page, offset) {
 async function selectInspectorTab(page, name) {
   const inspectorTabs = page.getByRole('tablist');
   const inspectorTab = inspectorTabs.getByTitle(name);
-  const inspectorTabClass = await inspectorTab.getAttribute('class');
-  const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
-
-  // do not click a tab that is already selected or it will timeout your test
-  // do to a { pointer-events: none; } on selected tabs
-  if (!isSelectedInspectorTab) {
-    await inspectorTab.click();
-  }
+  await inspectorTab.click();
 }
 
 /**
