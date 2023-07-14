@@ -219,15 +219,13 @@ export default {
       notebookAnnotations: {},
       selectedEntryId: undefined,
       activeTransaction: false,
-      savingTransaction: false
+      savingTransaction: false,
+      sections: this.domainObject.configuration.sections || []
     };
   },
   computed: {
     pages() {
       return this.getPages() || [];
-    },
-    sections() {
-      return this.getSections();
     },
     selectedPage() {
       const pages = this.getPages();
@@ -330,6 +328,13 @@ export default {
       this.domainObject,
       '*',
       this.filterAndSortEntries
+    );
+    this.unobserveSections = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.sections',
+      (sections) => {
+        this.sections = sections;
+      }
     );
   },
   beforeUnmount() {
