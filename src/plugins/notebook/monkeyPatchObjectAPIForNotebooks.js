@@ -78,7 +78,7 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
   if (localMutable.configuration.entries) {
     const FORCE_REMOTE = true;
-    const localEntries = structuredClone(localMutable.configuration.entries);
+    const localEntries = structuredClone(toRaw(localMutable.configuration.entries));
     const remoteObject = await openmct.objects.get(
       localMutable.identifier,
       undefined,
