@@ -52,20 +52,31 @@ import objectUtils from '../objects/object-utils';
  *
  */
 export default class CompositionProvider {
-  publicAPI;
-  listeningTo;
+  #publicAPI;
+  #listeningTo;
 
   /**
    * @param {OpenMCT} publicAPI
    * @param {CompositionAPI} compositionAPI
    */
   constructor(publicAPI, compositionAPI) {
-    this.publicAPI = publicAPI;
-    this.listeningTo = {};
-    this.establishTopicListener = this.establishTopicListener.bind(this);
+    this.#publicAPI = publicAPI;
+    this.#listeningTo = {};
 
-    compositionAPI.addPolicy(this.cannotContainItself.bind(this));
-    compositionAPI.addPolicy(this.supportsComposition.bind(this));
+    compositionAPI.addPolicy(this.#cannotContainItself.bind(this));
+    compositionAPI.addPolicy(this.#supportsComposition.bind(this));
+  }
+
+  get listeningTo() {
+    return this.#listeningTo;
+  }
+
+  get establishTopicListener() {
+    return this.#establishTopicListener.bind(this);
+  }
+
+  get publicAPI() {
+    return this.#publicAPI;
   }
 
   /**
@@ -169,14 +180,14 @@ export default class CompositionProvider {
    * circular dependencies.
    * @private
    */
-  establishTopicListener() {
+  #establishTopicListener() {
     if (this.topicListener) {
       return;
     }
 
-    this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation.bind(this));
+    this.#publicAPI.objects.eventEmitter.on('mutation', this.#onMutation.bind(this));
     this.topicListener = () => {
-      this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation.bind(this));
+      this.#publicAPI.objects.eventEmitter.off('mutation', this.#onMutation.bind(this));
     };
   }
 
@@ -186,7 +197,7 @@ export default class CompositionProvider {
    * @param {DomainObject} child
    * @returns {boolean}
    */
-  cannotContainItself(parent, child) {
+  #cannotContainItself(parent, child) {
     return !(
       parent.identifier.namespace === child.identifier.namespace &&
       parent.identifier.key === child.identifier.key
@@ -198,8 +209,8 @@ export default class CompositionProvider {
    * @param {DomainObject} parent
    * @returns {boolean}
    */
-  supportsComposition(parent, _child) {
-    return this.publicAPI.composition.supportsComposition(parent);
+  #supportsComposition(parent, _child) {
+    return this.#publicAPI.composition.supportsComposition(parent);
   }
 
   /**
@@ -209,9 +220,9 @@ export default class CompositionProvider {
    * @private
    * @param {DomainObject} oldDomainObject
    */
-  onMutation(newDomainObject, oldDomainObject) {
+  #onMutation(newDomainObject, oldDomainObject) {
     const id = objectUtils.makeKeyString(oldDomainObject.identifier);
-    const listeners = this.listeningTo[id];
+    const listeners = this.#listeningTo[id];
 
     if (!listeners) {
       return;
