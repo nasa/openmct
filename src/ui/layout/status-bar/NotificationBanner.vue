@@ -113,8 +113,8 @@ export default {
   mounted() {
     this.openmct.notifications.on('notification', this.showNotification);
     this.openmct.notifications.on('dismiss-all', this.clearModel);
-    activeNotification = this.openmct.notifications.activeNotification;
-    if (activeNotification) {
+    if (this.openmct.notifications.activeNotification) {
+      activeNotification = this.openmct.notifications.activeNotification;
       this.showNotification(activeNotification);
     }
   },
