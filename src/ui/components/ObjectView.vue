@@ -273,9 +273,7 @@ export default {
         this.loadComposition();
       }
 
-      this.viewContainer = document.createElement('div');
-      this.viewContainer.classList.add('l-angular-ov-wrapper');
-      this.$refs.objectViewWrapper.append(this.viewContainer);
+      this.viewContainer = this.$refs.objectViewWrapper;
       let provider = this.getViewProvider();
       if (!provider) {
         return;

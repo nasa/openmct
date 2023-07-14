@@ -349,9 +349,9 @@ define([
     // Create element to mount Layout if it doesn't exist
     if (domElement === null) {
       domElement = document.createElement('div');
-      domElement.id = 'app';
       document.body.appendChild(domElement);
     }
+    domElement.id = 'openmct-app';
 
     if (this.types.get('layout') === undefined) {
       this.install(

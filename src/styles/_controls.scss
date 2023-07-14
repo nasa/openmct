@@ -634,6 +634,7 @@ select {
   @include menuOuter();
   @include menuPositioning();
   display: flex;
+  height: auto;
   padding: $interiorMarginLg;
   flex-direction: row;
 

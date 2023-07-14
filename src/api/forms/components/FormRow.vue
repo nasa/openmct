@@ -26,8 +26,7 @@
       {{ row.name }}
     </div>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
-    <div v-if="row.control" class="c-form-row__controls">
-      <div ref="rowElement"></div>
+    <div v-if="row.control" class="c-form-row__controls" ref="rowElement">
     </div>
   </div>
 </template>

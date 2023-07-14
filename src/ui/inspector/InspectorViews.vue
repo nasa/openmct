@@ -67,9 +67,7 @@ export default {
         : [];
 
       this.visibleViews.forEach((visibleView) => {
-        let viewContainer = document.createElement('div');
-        this.$el.append(viewContainer);
-        visibleView.show(viewContainer);
+        visibleView.show(this.$el);
       });
     },
     clearAndShowViewsForTab() {

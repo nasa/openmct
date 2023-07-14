@@ -21,7 +21,6 @@
 -->
 
 <template>
-  <div class="l-angular-ov-wrapper">
     <div class="u-contents">
       <div class="c-clock l-time-display u-style-receiver js-style-receiver">
         <div class="c-clock__timezone">
@@ -35,7 +34,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>

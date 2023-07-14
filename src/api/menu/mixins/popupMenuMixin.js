@@ -103,11 +103,8 @@ export default {
   computed: {
     styleObject() {
       return {
-        position: 'absolute',
         top: `${this.top}px`,
         left: `${this.left}px`,
-        height: 'auto',
-        width: 'auto'
       };
     }
   }

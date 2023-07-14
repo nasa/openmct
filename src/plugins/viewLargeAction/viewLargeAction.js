@@ -40,8 +40,8 @@ export default class ViewLargeAction {
 
   invoke(objectPath, view) {
     performance.mark('viewlarge.start');
-    const childElement = view?.parentElement?.firstChild;
-    if (!childElement) {
+    const element = view?.parentElement;
+    if (!element) {
       const message = 'ViewLargeAction: missing element';
       this.openmct.notifications.error(message);
       throw new Error(message);
@@ -51,11 +51,11 @@ export default class ViewLargeAction {
   }
 
   appliesTo(objectPath, view) {
-    const childElement = view?.parentElement?.firstChild;
+    const element = view?.parentElement;
 
     return (
-      childElement &&
-      !childElement?.classList.contains('js-main-container') &&
+      element &&
+      !element?.classList.contains('js-main-container') &&
       !this.openmct.router.isNavigatedObject(objectPath)
     );
   }
