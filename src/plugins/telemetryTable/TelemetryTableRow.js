@@ -96,7 +96,10 @@ define([], function () {
         ...this.datum,
         ...normalizedUpdatesToDatum
       };
-      this.fullDatum = this.datum;
+      this.fullDatum = {
+        ...this.fullDatum,
+        ...updatesToDatum
+      };
     }
   }
 
