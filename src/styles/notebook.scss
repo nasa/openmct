@@ -570,18 +570,22 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: $interiorMarginLg;
-
-  > * {
-    flex: 1 1 auto;
-
-    &:first-child {
-      flex: 0 0 auto;
-    }
-  }
+  padding: $interiorMargin $interiorMarginLg;
 
   > * + * {
     margin-top: $interiorMargin;
+  }
+
+  .l-browse-bar {
+    flex: 0 0 auto;
+  }
+
+  .c-snapshots-h__title {
+    display: flex;
+  }
+
+  .c-snapshots {
+    flex: 1 1 auto;
   }
 }
 
