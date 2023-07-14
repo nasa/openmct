@@ -20,13 +20,22 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <td :title="formattedValue" @click="selectCell($event.currentTarget, columnKey)">
+  <td
+    ref="tableCell"
+    :title="formattedValue"
+    @click="selectCell($event.currentTarget, columnKey)"
+    @mouseover.ctrl="showToolTip"
+    @mouseleave="hideToolTip"
+  >
     {{ formattedValue }}
   </td>
 </template>
 
 <script>
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+
 export default {
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     row: {
@@ -76,6 +85,13 @@ export default {
         );
         event.stopPropagation();
       }
+    },
+    async showToolTip() {
+      if (this.columnKey !== 'name') {
+        return;
+      }
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(this.row.objectKeyString), BELOW, 'tableCell');
     }
   }
 };
