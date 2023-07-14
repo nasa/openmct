@@ -27,6 +27,7 @@
     :min-height="item.height"
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
+    :domain-object="item.domainObject"
   >
     <template #label>
       {{ item.domainObject.name }}

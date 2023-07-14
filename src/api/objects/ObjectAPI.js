@@ -541,6 +541,40 @@ export default class ObjectAPI {
   }
 
   /**
+   * Return path of telemetry objects in the object composition
+   * @param {object} identifier the identifier for the domain object to query for
+   * @param {object} [telemetryIdentifier] the specific identifier for the telemetry
+   *  to look for in the composition, uses first object in composition otherwise
+   * @returns {Array} path of telemetry object in object composition
+   */
+  async getTelemetryPath(identifier, telemetryIdentifier) {
+    const objectDetails = await this.get(identifier);
+    const telemetryPath = [];
+    if (objectDetails.composition && !['folder'].includes(objectDetails.type)) {
+      let sourceTelemetry = objectDetails.composition[0];
+      if (telemetryIdentifier) {
+        sourceTelemetry = objectDetails.composition.find(
+          (telemetrySource) =>
+            this.makeKeyString(telemetrySource) === this.makeKeyString(telemetryIdentifier)
+        );
+      }
+      const compositionElement = await this.get(sourceTelemetry);
+      if (!['yamcs.telemetry', 'generator'].includes(compositionElement.type)) {
+        return telemetryPath;
+      }
+      const telemetryKey = compositionElement.identifier.key;
+      const telemetryPathObjects = await this.getOriginalPath(telemetryKey);
+      telemetryPathObjects.forEach((pathObject) => {
+        if (pathObject.type === 'root') {
+          return;
+        }
+        telemetryPath.unshift(pathObject.name);
+      });
+    }
+    return telemetryPath;
+  }
+
+  /**
    * Modify a domain object. Internal to ObjectAPI, won't call save after.
    * @private
    *
