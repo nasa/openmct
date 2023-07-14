@@ -223,10 +223,16 @@ class CouchObjectProvider {
 
       return json;
     } catch (error) {
+      // abort errors are expected
+      if (error.name === 'AbortError') {
+        return;
+      }
+
       // Network error, CouchDB unreachable.
       if (response === null) {
         this.indicator.setIndicatorToState(DISCONNECTED);
         console.error(error.message);
+
         throw new Error(`CouchDB Error - No response"`);
       } else {
         if (body?.model && isNotebookOrAnnotationType(body.model)) {

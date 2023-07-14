@@ -334,12 +334,13 @@ export default {
     },
     async openTreeItem(parentItem) {
       const parentPath = parentItem.navigationPath;
+      const abortSignal = this.startItemLoad(parentPath);
 
-      this.startItemLoad(parentPath);
       // pass in abort signal when functional
       const childrenItems = await this.loadAndBuildTreeItemsFor(
         parentItem.object.identifier,
-        parentItem.objectPath
+        parentItem.objectPath,
+        abortSignal
       );
       const parentIndex = this.treeItems.indexOf(parentItem);
 

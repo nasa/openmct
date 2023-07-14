@@ -19,26 +19,49 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
-import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
 
-/**
- * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration
- * @returns {function} The plugin install function
- */
-export default function operatorStatusPlugin(configuration) {
-  return function install(openmct) {
-    if (openmct.user.hasProvider()) {
-      const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
-      operatorStatusIndicator.install();
+import SelectionComponent from './components/SelectionComponent.vue';
+import Overlay from './Overlay';
+import Vue from 'vue';
 
-      openmct.user.status.canSetPollQuestion().then((canSetPollQuestion) => {
-        if (canSetPollQuestion) {
-          const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
+class Selection extends Overlay {
+  constructor({
+    iconClass,
+    title,
+    message,
+    selectionOptions,
+    onChange,
+    currentSelection,
+    ...options
+  }) {
+    let component = new Vue({
+      components: {
+        SelectionComponent: SelectionComponent
+      },
+      provide: {
+        iconClass,
+        title,
+        message,
+        selectionOptions,
+        onChange,
+        currentSelection
+      },
+      template: '<selection-component></selection-component>'
+    }).$mount();
 
-          pollQuestionIndicator.install();
-        }
-      });
-    }
-  };
+    super({
+      element: component.$el,
+      size: 'fit',
+      dismissable: false,
+      onChange,
+      currentSelection,
+      ...options
+    });
+
+    this.once('destroy', () => {
+      component.$destroy();
+    });
+  }
 }
+
+export default Selection;
