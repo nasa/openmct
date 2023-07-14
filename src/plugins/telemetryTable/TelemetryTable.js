@@ -332,11 +332,12 @@ define([
     }
 
     addColumnsForObject(telemetryObject) {
-      let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+      const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+      let metadataValues = metadata.values();
 
       this.addNameColumn(telemetryObject, metadataValues);
       metadataValues.forEach((metadatum) => {
-        if (metadatum.key === 'name' || this.openmct.telemetry.isInPlaceUpdateValue(metadatum)) {
+        if (metadatum.key === 'name' || metadata.isInPlaceUpdateValue(metadatum)) {
           return;
         }
 
