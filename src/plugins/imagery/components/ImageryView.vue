@@ -271,6 +271,8 @@ export default {
       autoScroll: true,
       thumbnailClick: THUMBNAIL_CLICKED,
       isPaused: false,
+      isFixed: false,
+      canTrackDuration: false,
       refreshCSS: false,
       focusedImageIndex: undefined,
       focusedImageRelatedTelemetry: {},
@@ -285,7 +287,6 @@ export default {
       viewHeight: 0,
       lockCompass: true,
       resizingWindow: false,
-      timeContext: undefined,
       zoomFactor: ZOOM_SCALE_DEFAULT,
       filters: {
         brightness: 100,
@@ -373,16 +374,6 @@ export default {
       let age = this.numericDuration;
 
       return age < cutoff && !this.refreshCSS;
-    },
-    canTrackDuration() {
-      let hasClock;
-      if (this.timeContext) {
-        hasClock = this.timeContext.clock();
-      } else {
-        hasClock = this.openmct.time.clock();
-      }
-
-      return hasClock && this.timeSystem.isUTCBased;
     },
     isNextDisabled() {
       let disabled = false;
@@ -530,16 +521,6 @@ export default {
 
       return isFresh;
     },
-    isFixed() {
-      let clock;
-      if (this.timeContext) {
-        clock = this.timeContext.clock();
-      } else {
-        clock = this.openmct.time.clock();
-      }
-
-      return clock === undefined;
-    },
     isSelectable() {
       return true;
     },
@@ -668,7 +649,6 @@ export default {
       this.isPaused = true;
     }
 
-    this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
     // related telemetry keys
@@ -774,14 +754,40 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       //listen
-      this.timeContext.on('timeSystem', this.trackDuration);
-      this.timeContext.on('clock', this.trackDuration);
+      this.timeContext.on('timeSystem', this.timeContextChanged);
+      this.timeContext.on('clock', this.timeContextChanged);
+      this.timeContextChanged();
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('timeSystem', this.trackDuration);
-        this.timeContext.off('clock', this.trackDuration);
+        this.timeContext.off('timeSystem', this.timeContextChanged);
+        this.timeContext.off('clock', this.timeContextChanged);
       }
+    },
+    timeContextChanged() {
+      this.setIsFixed();
+      this.setCanTrackDuration();
+      this.trackDuration();
+    },
+    setIsFixed() {
+      let clock;
+      if (this.timeContext) {
+        clock = this.timeContext.clock();
+      } else {
+        clock = this.openmct.time.clock();
+      }
+
+      this.isFixed = clock === undefined;
+    },
+    setCanTrackDuration() {
+      let hasClock;
+      if (this.timeContext) {
+        hasClock = this.timeContext.clock();
+      } else {
+        hasClock = this.openmct.time.clock();
+      }
+
+      this.canTrackDuration = hasClock && this.timeSystem.isUTCBased;
     },
     updateSelection(selection) {
       const selectionType = selection?.[0]?.[0]?.context?.type;
