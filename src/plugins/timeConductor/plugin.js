@@ -120,23 +120,22 @@ export default function (config) {
 
     const defaults = config.menuOptions[0];
     const defaultClock = defaults.clock;
+    const defaultMode = defaultClock ? REALTIME_MODE_KEY : FIXED_MODE_KEY;
+    const defaultBounds = defaults.bounds;
 
     if (defaultClock) {
-      openmct.time.setMode(REALTIME_MODE_KEY);
       openmct.time.setClock(defaults.clock, defaults.clockOffsets);
-      openmct.time.setTimeSystem(defaults.timeSystem, openmct.time.getBounds());
     } else {
       // always have an active clock, regardless of mode
       const firstClock = config.menuOptions.find((option) => option.clock);
 
       if (firstClock) {
-        openmct.time.setMode(REALTIME_MODE_KEY);
         openmct.time.setClock(firstClock.clock, firstClock.clockOffsets);
-      } else {
-        openmct.time.setMode(FIXED_MODE_KEY);
       }
-      openmct.time.setTimeSystem(defaults.timeSystem, defaults.bounds);
     }
+
+    openmct.time.setMode(defaultMode);
+    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds || openmct.time.getBounds());
 
     openmct.on('start', function () {
       mountComponent(openmct, config);
