@@ -265,15 +265,6 @@ class TimeContext extends EventEmitter {
       }
 
       this.offsets = offsets;
-
-      const currentValue = this.activeClock.currentValue();
-      const newBounds = {
-        start: currentValue + offsets.start,
-        end: currentValue + offsets.end
-      };
-
-      this.bounds(newBounds);
-
       /**
        * Event that is triggered when clock offsets change.
        * @event clockOffsets
@@ -282,6 +273,17 @@ class TimeContext extends EventEmitter {
        * offsets.
        */
       this.emit('clockOffsets', offsets);
+
+      //we don't change and emit the bounds if we're not in realtime mode
+      if (this.isRealTime()) {
+        const currentValue = this.activeClock.currentValue();
+        const newBounds = {
+          start: currentValue + offsets.start,
+          end: currentValue + offsets.end
+        };
+
+        this.bounds(newBounds);
+      }
     }
 
     return this.offsets;
@@ -581,6 +583,19 @@ class TimeContext extends EventEmitter {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+
+    //We are also going to emit bounds here
+    if (this.isRealTime()) {
+      const currentValue = this.activeClock.currentValue();
+      const newBounds = {
+        start: currentValue + this.offsets.start,
+        end: currentValue + this.offsets.end
+      };
+
+      this.setBounds(newBounds);
+    } else {
+      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
+    }
   }
 
   /**
@@ -621,15 +636,6 @@ class TimeContext extends EventEmitter {
     }
 
     this.offsets = this.#copy(offsets);
-
-    const currentValue = this.activeClock.currentValue();
-    const newBounds = {
-      start: currentValue + offsets.start,
-      end: currentValue + offsets.end
-    };
-
-    this.setBounds(newBounds);
-
     /**
      * Event that is triggered when clock offsets change.
      * @event clockOffsets
@@ -638,6 +644,17 @@ class TimeContext extends EventEmitter {
      * offsets.
      */
     this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
+
+    //we don't emit the bounds if we're not in realtime mode
+    if (this.isRealTime()) {
+      const currentValue = this.activeClock.currentValue();
+      const newBounds = {
+        start: currentValue + offsets.start,
+        end: currentValue + offsets.end
+      };
+
+      this.setBounds(newBounds);
+    }
   }
 
   #warnMethodDeprecated(method, newMethod) {
