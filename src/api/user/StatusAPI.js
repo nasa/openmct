@@ -140,9 +140,9 @@ export default class StatusAPI extends EventEmitter {
     const provider = this.#userAPI.getProvider();
 
     if (provider.canProvideStatusForRole) {
-      return provider.canProvideStatusForRole(role);
+      return Promise.resolve(provider.canProvideStatusForRole(role));
     } else {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
@@ -151,11 +151,16 @@ export default class StatusAPI extends EventEmitter {
    * @param {Status} status The status to set for the provided role
    * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
    */
-  setStatusForRole(role, status) {
+  setStatusForRole(status) {
     const provider = this.#userAPI.getProvider();
 
     if (provider.setStatusForRole) {
-      return provider.setStatusForRole(role, status);
+      const activeRole = this.#userAPI.getActiveRole();
+      if (!provider.canProvideStatusForRole(activeRole)) {
+        return false;
+      }
+
+      return provider.setStatusForRole(activeRole, status);
     } else {
       this.#userAPI.error('User provider does not support setting role status');
     }
@@ -217,35 +222,19 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
-   * The status role of the current user. A user may have multiple roles, but will only have one role
-   * that provides status at any time.
-   * @returns {Promise<import("./UserAPI").Role>} the role for which the current user can provide status.
-   */
-  getStatusRoleForCurrentUser() {
-    const provider = this.#userAPI.getProvider();
-
-    if (provider.getStatusRoleForCurrentUser) {
-      return provider.getStatusRoleForCurrentUser();
-    } else {
-      this.#userAPI.error('User provider cannot provide role status for this user');
-    }
-  }
-
-  /**
    * @returns {Promise<Boolean>} true if the configured UserProvider can provide status for the currently logged in user, false otherwise.
    * @see StatusUserProvider
    */
   async canProvideStatusForCurrentUser() {
     const provider = this.#userAPI.getProvider();
 
-    if (provider.getStatusRoleForCurrentUser) {
-      const activeStatusRole = await this.#userAPI.getProvider().getStatusRoleForCurrentUser();
-      const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
-
-      return canProvideStatus;
-    } else {
+    if (!provider) {
       return false;
     }
+    const activeStatusRole = await this.#userAPI.getActiveRole();
+    const canProvideStatus = await this.canProvideStatusForRole(activeStatusRole);
+
+    return canProvideStatus;
   }
 
   /**

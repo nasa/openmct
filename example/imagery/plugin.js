@@ -156,9 +156,9 @@ export default function () {
       key: 'thumbnail',
       ...formatThumbnail
     });
-    openmct.telemetry.addProvider(getRealtimeProvider());
-    openmct.telemetry.addProvider(getHistoricalProvider());
-    openmct.telemetry.addProvider(getLadProvider());
+    openmct.telemetry.addProvider(getRealtimeProvider(openmct));
+    openmct.telemetry.addProvider(getHistoricalProvider(openmct));
+    openmct.telemetry.addProvider(getLadProvider(openmct));
   };
 }
 
@@ -207,14 +207,14 @@ function getImageLoadDelay(domainObject) {
   return imageLoadDelay;
 }
 
-function getRealtimeProvider() {
+function getRealtimeProvider(openmct) {
   return {
     supportsSubscribe: (domainObject) => domainObject.type === 'example.imagery',
     subscribe: (domainObject, callback) => {
       const delay = getImageLoadDelay(domainObject);
       const interval = setInterval(() => {
         const imageSamples = getImageSamples(domainObject.configuration);
-        const datum = pointForTimestamp(Date.now(), domainObject.name, imageSamples, delay);
+        const datum = pointForTimestamp(openmct.time.now(), domainObject.name, imageSamples, delay);
         callback(datum);
       }, delay);
 
@@ -225,7 +225,7 @@ function getRealtimeProvider() {
   };
 }
 
-function getHistoricalProvider() {
+function getHistoricalProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
       return domainObject.type === 'example.imagery' && options.strategy !== 'latest';
@@ -233,7 +233,7 @@ function getHistoricalProvider() {
     request: (domainObject, options) => {
       const delay = getImageLoadDelay(domainObject);
       let start = options.start;
-      const end = Math.min(options.end, Date.now());
+      const end = Math.min(options.end, openmct.time.now());
       const data = [];
       while (start <= end && data.length < delay) {
         const imageSamples = getImageSamples(domainObject.configuration);
@@ -247,7 +247,7 @@ function getHistoricalProvider() {
   };
 }
 
-function getLadProvider() {
+function getLadProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
       return domainObject.type === 'example.imagery' && options.strategy === 'latest';
@@ -255,7 +255,7 @@ function getLadProvider() {
     request: (domainObject, options) => {
       const delay = getImageLoadDelay(domainObject);
       const datum = pointForTimestamp(
-        Date.now(),
+        openmct.time.now(),
         domainObject.name,
         getImageSamples(domainObject.configuration),
         delay

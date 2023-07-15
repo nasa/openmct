@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import TimeContext from './TimeContext';
-import { TIME_CONTEXT_EVENTS } from './constants';
+import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -167,8 +167,11 @@ class IndependentTimeContext extends TimeContext {
        * if the system is no longer following a clock source
        */
       this.emit('clock', this.activeClock);
+      this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
+        this.setMode(REALTIME_MODE_KEY);
+
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
       }

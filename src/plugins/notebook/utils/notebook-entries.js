@@ -123,7 +123,7 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
     domainObjectType && domainObjectType.definition
       ? domainObjectType.definition.cssClass
       : 'icon-object-unknown';
-  const date = Date.now();
+  const date = openmct.time.now();
   const historicLink = link
     ? getHistoricLinkInFixedMode(openmct, bounds, link)
     : objectLink.computed.objectLink.call({
@@ -159,7 +159,7 @@ export async function addNotebookEntry(
     return;
   }
 
-  const date = Date.now();
+  const date = openmct.time.now();
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
   const embeds = embed ? [embed] : [];

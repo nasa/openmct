@@ -215,8 +215,13 @@ define([
           return;
         }
 
+        const metadataValue = this.openmct.telemetry
+          .getMetadata(this.telemetryObjects[keyString].telemetryObject)
+          .getUseToUpdateInPlaceValue();
+
         let telemetryRows = telemetry.map(
-          (datum) => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator)
+          (datum) =>
+            new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator, metadataValue?.key)
         );
 
         if (this.paused) {
@@ -268,8 +273,14 @@ define([
       Object.keys(this.telemetryCollections).forEach((keyString) => {
         let { columnMap, limitEvaluator } = this.telemetryObjects[keyString];
 
+        const metadataValue = this.openmct.telemetry
+          .getMetadata(this.telemetryObjects[keyString].telemetryObject)
+          .getUseToUpdateInPlaceValue();
+
         this.telemetryCollections[keyString].getAll().forEach((datum) => {
-          allRows.push(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+          allRows.push(
+            new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator, metadataValue?.key)
+          );
         });
       });
 
@@ -321,11 +332,12 @@ define([
     }
 
     addColumnsForObject(telemetryObject) {
-      let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+      const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+      let metadataValues = metadata.values();
 
       this.addNameColumn(telemetryObject, metadataValues);
       metadataValues.forEach((metadatum) => {
-        if (metadatum.key === 'name') {
+        if (metadatum.key === 'name' || metadata.isInPlaceUpdateValue(metadatum)) {
           return;
         }
 

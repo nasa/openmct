@@ -87,7 +87,7 @@ describe('The Time API', function () {
     expect(function () {
       api.timeSystem(timeSystem, bounds);
     }).not.toThrow();
-    expect(api.timeSystem()).toBe(timeSystem);
+    expect(api.timeSystem()).toEqual(timeSystem);
   });
 
   it('Disallows setting of time system without bounds', function () {
@@ -110,7 +110,7 @@ describe('The Time API', function () {
     expect(function () {
       api.timeSystem(timeSystemKey);
     }).not.toThrow();
-    expect(api.timeSystem()).toBe(timeSystem);
+    expect(api.timeSystem()).toEqual(timeSystem);
   });
 
   it('Emits an event when time system changes', function () {
@@ -184,7 +184,8 @@ describe('The Time API', function () {
     });
 
     it('sets bounds based on current value', function () {
-      api.clock('mts', mockOffsets);
+      api.setClock('mts', mockOffsets);
+      console.log(api.bounds(), api.getBounds());
       expect(api.bounds()).toEqual({
         start: 10,
         end: 11

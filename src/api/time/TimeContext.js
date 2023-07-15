@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY } from './constants';
+import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY, FIXED_MODE_KEY } from './constants';
 
 class TimeContext extends EventEmitter {
   constructor() {
@@ -272,9 +272,7 @@ class TimeContext extends EventEmitter {
         end: currentValue + offsets.end
       };
 
-      if (this.isRealTime()) {
-        this.bounds(newBounds);
-      }
+      this.bounds(newBounds);
 
       /**
        * Event that is triggered when clock offsets change.
@@ -296,6 +294,8 @@ class TimeContext extends EventEmitter {
    */
   stopClock() {
     this.#warnMethodDeprecated('"stopClock"');
+
+    this.setMode(FIXED_MODE_KEY);
   }
 
   /**
@@ -345,6 +345,8 @@ class TimeContext extends EventEmitter {
       this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
+        this.setMode(REALTIME_MODE_KEY);
+
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
       }
@@ -361,9 +363,8 @@ class TimeContext extends EventEmitter {
    * using current offsets.
    */
   tick(timestamp) {
-    if (!this.activeClock) {
-      return;
-    }
+    // always emit the timestamp
+    this.emit('tick', timestamp);
 
     if (this.mode === REALTIME_MODE_KEY) {
       const newBounds = {
@@ -376,6 +377,17 @@ class TimeContext extends EventEmitter {
       this.emit('bounds', this.boundsVal, true);
       this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, true);
     }
+  }
+
+  /**
+   * Get the timestamp of the current clock
+   * @returns {number} current timestamp of current clock regardless of mode
+   * @memberof module:openmct.TimeAPI#
+   * @method now
+   */
+
+  now() {
+    return this.activeClock.currentValue();
   }
 
   /**
@@ -431,6 +443,7 @@ class TimeContext extends EventEmitter {
      * Time System
      * */
     this.emit(TIME_CONTEXT_EVENTS.timeSystemChanged, this.#copy(this.system));
+    this.emit('timeSystem', this.#copy(this.system));
 
     if (bounds) {
       this.setBounds(bounds);
@@ -477,6 +490,7 @@ class TimeContext extends EventEmitter {
      * a "tick" event (i.e. was an automatic update), false otherwise.
      */
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.boundsVal, false);
+    this.emit('bounds', this.boundsVal, false);
   }
 
   /**
@@ -530,6 +544,7 @@ class TimeContext extends EventEmitter {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+    this.emit('clock', this.activeClock);
 
     if (offsets !== undefined) {
       this.setClockOffsets(offsets);
@@ -613,9 +628,7 @@ class TimeContext extends EventEmitter {
       end: currentValue + offsets.end
     };
 
-    if (this.isRealTime()) {
-      this.setBounds(newBounds);
-    }
+    this.setBounds(newBounds);
 
     /**
      * Event that is triggered when clock offsets change.

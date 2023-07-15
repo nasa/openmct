@@ -26,7 +26,7 @@
  * and appActions. These fixtures should be generalized across all plugins.
  */
 
-const { test, expect } = require('./baseFixtures');
+const { test, expect, request } = require('./baseFixtures');
 // const { createDomainObjectWithDefaults } = require('./appActions');
 const path = require('path');
 
@@ -147,6 +147,7 @@ exports.test = test.extend({
   }
 });
 exports.expect = expect;
+exports.request = request;
 
 /**
  * Takes a readable stream and returns a string.
