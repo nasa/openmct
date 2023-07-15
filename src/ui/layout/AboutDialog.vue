@@ -21,7 +21,7 @@
 -->
 <template>
   <!-- eslint-disable vue/no-v-html -->
-  <div class="c-about c-about--splash" :style="{ position: 'fixed' }">
+  <div class="c-about c-about--splash">
     <div class="c-about__image c-splash-image"></div>
     <div class="c-about__text s-text">
       <div

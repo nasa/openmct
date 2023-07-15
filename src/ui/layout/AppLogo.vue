@@ -50,6 +50,8 @@ export default {
         }
       );
 
+      el.classList.add('u-contents');
+
       this.openmct.overlays.overlay({
         element: el,
         size: 'large',
