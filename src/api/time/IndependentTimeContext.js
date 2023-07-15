@@ -170,8 +170,6 @@ class IndependentTimeContext extends TimeContext {
       this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
-        this.setMode(REALTIME_MODE_KEY);
-
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
       }
@@ -224,8 +222,6 @@ class IndependentTimeContext extends TimeContext {
         throw `Unknown clock ${keyOrClock.key}. Has it been registered with 'addClock'?`;
       }
     }
-
-    // this.setMode(REALTIME_MODE_KEY);
 
     const previousClock = this.activeClock;
     if (previousClock) {
@@ -289,6 +285,19 @@ class IndependentTimeContext extends TimeContext {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+
+    //We are also going to emit bounds here
+    if (this.mode === REALTIME_MODE_KEY && this.activeClock) {
+      const currentValue = this.activeClock.currentValue();
+      const newBounds = {
+        start: currentValue + this.offsets.start,
+        end: currentValue + this.offsets.end
+      };
+
+      this.setBounds(newBounds);
+    } else {
+      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
+    }
 
     return this.mode;
   }
