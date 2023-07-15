@@ -85,26 +85,47 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
     }
 
     sortAndMergeRows(rows) {
-      const sortedRowsToAdd = this.sortCollection(rows);
+      const sortedRows = this.sortCollection(rows);
 
       if (this.rows.length === 0) {
-        this.rows = sortedRowsToAdd;
+        this.rows = sortedRows;
 
         return;
       }
 
-      const firstIncomingRow = sortedRowsToAdd[0];
-      const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
+      const firstIncomingRow = sortedRows[0];
+      const lastIncomingRow = sortedRows[sortedRows.length - 1];
       const firstExistingRow = this.rows[0];
       const lastExistingRow = this.rows[this.rows.length - 1];
 
       if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow) === lastIncomingRow) {
-        this.rows = [...sortedRowsToAdd, ...this.rows];
+        this.insertOrUpdateRows(sortedRows, true);
       } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow) === lastExistingRow) {
-        this.rows = [...this.rows, ...sortedRowsToAdd];
+        this.insertOrUpdateRows(sortedRows, false);
       } else {
-        this.mergeSortedRows(sortedRowsToAdd);
+        this.mergeSortedRows(sortedRows);
       }
+    }
+
+    getInPlaceUpdateIndex(row) {
+      const inPlaceUpdateKey = row.inPlaceUpdateKey;
+      if (!inPlaceUpdateKey) {
+        return -1;
+      }
+
+      const foundIndex = this.rows.findIndex(
+        (existingRow) =>
+          existingRow.datum[inPlaceUpdateKey] &&
+          existingRow.datum[inPlaceUpdateKey] === row.datum[inPlaceUpdateKey]
+      );
+
+      return foundIndex;
+    }
+
+    updateRowInPlace(row, index) {
+      const foundRow = this.rows[index];
+      foundRow.updateWithDatum(row.datum);
+      this.rows[index] = foundRow;
     }
 
     sortCollection(rows) {
@@ -117,6 +138,21 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       return sortedRows;
     }
 
+    insertOrUpdateRows(rowsToAdd, addToBeginning) {
+      rowsToAdd.forEach((row) => {
+        const index = this.getInPlaceUpdateIndex(row);
+        if (index > -1) {
+          this.updateRowInPlace(row, index);
+        } else {
+          if (addToBeginning) {
+            this.rows.unshift(row);
+          } else {
+            this.rows.push(row);
+          }
+        }
+      });
+    }
+
     mergeSortedRows(rows) {
       const mergedRows = [];
       let i = 0;
@@ -126,12 +162,17 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
         const existingRow = this.rows[i];
         const incomingRow = rows[j];
 
-        if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
-          mergedRows.push(existingRow);
-          i++;
+        const index = this.getInPlaceUpdateIndex(incomingRow);
+        if (index > -1) {
+          this.updateRowInPlace(incomingRow, index);
         } else {
-          mergedRows.push(incomingRow);
-          j++;
+          if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+            mergedRows.push(existingRow);
+            i++;
+          } else {
+            mergedRows.push(incomingRow);
+            j++;
+          }
         }
       }
 
