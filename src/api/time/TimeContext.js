@@ -272,9 +272,7 @@ class TimeContext extends EventEmitter {
         end: currentValue + offsets.end
       };
 
-      if (this.isRealTime()) {
-        this.bounds(newBounds);
-      }
+      this.bounds(newBounds);
 
       /**
        * Event that is triggered when clock offsets change.
@@ -347,10 +345,10 @@ class TimeContext extends EventEmitter {
       this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
+        this.setMode(REALTIME_MODE_KEY);
+
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
-
-        this.setMode(REALTIME_MODE_KEY);
       }
     } else if (arguments.length === 1) {
       throw 'When setting the clock, clock offsets must also be provided';
@@ -630,9 +628,7 @@ class TimeContext extends EventEmitter {
       end: currentValue + offsets.end
     };
 
-    if (this.isRealTime()) {
-      this.setBounds(newBounds);
-    }
+    this.setBounds(newBounds);
 
     /**
      * Event that is triggered when clock offsets change.

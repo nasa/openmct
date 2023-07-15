@@ -183,9 +183,7 @@ describe('The Time API', function () {
       api.addClock(anotherMockTickSource);
     });
 
-    // don't think this is the case anymore with an always ticking clock,
-    // adding a clock would manipulate the bounds during fixed mode
-    xit('sets bounds based on current value', function () {
+    it('sets bounds based on current value', function () {
       api.setClock('mts', mockOffsets);
       console.log(api.bounds(), api.getBounds());
       expect(api.bounds()).toEqual({
