@@ -73,7 +73,6 @@
     <multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
       <pane
         class="l-shell__pane-tree"
-        style="width: 300px"
         handle="after"
         label="Browse"
         hide-param="hideTree"
