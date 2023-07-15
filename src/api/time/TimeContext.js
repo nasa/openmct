@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY } from './constants';
+import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY, FIXED_MODE_KEY } from './constants';
 
 class TimeContext extends EventEmitter {
   constructor() {
@@ -296,6 +296,8 @@ class TimeContext extends EventEmitter {
    */
   stopClock() {
     this.#warnMethodDeprecated('"stopClock"');
+
+    this.setMode(FIXED_MODE_KEY);
   }
 
   /**
@@ -347,6 +349,8 @@ class TimeContext extends EventEmitter {
       if (this.activeClock !== undefined) {
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
+
+        this.setMode(REALTIME_MODE_KEY);
       }
     } else if (arguments.length === 1) {
       throw 'When setting the clock, clock offsets must also be provided';

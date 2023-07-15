@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+import { FIXED_MODE_KEY } from '../api/time/constants';
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
@@ -45,10 +46,11 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   const start = timeSystemOptions.bounds.start;
   const end = timeSystemOptions.bounds.end;
 
-  openmct.time.timeSystem(timeSystemKey, {
+  openmct.time.setTimeSystem(timeSystemKey, {
     start,
     end
   });
+  openmct.time.setMode(FIXED_MODE_KEY);
 
   return openmct;
 }
