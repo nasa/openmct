@@ -29,7 +29,7 @@
  */
 
 const base = require('@playwright/test');
-const { expect } = base;
+const { expect, request } = base;
 const fs = require('fs');
 const path = require('path');
 const { v4: uuid } = require('uuid');
@@ -179,4 +179,5 @@ exports.test = base.test.extend({
 });
 
 exports.expect = expect;
+exports.request = request;
 exports.waitForAnimations = waitForAnimations;
