@@ -67,7 +67,7 @@ export default {
       this.contextClickActive = true;
       this.$emit('context-click-active', true);
     },
-    onContextMenuunmounted() {
+    onContextMenuDestroyed() {
       this.contextClickActive = false;
       this.$emit('context-click-active', false);
     }
