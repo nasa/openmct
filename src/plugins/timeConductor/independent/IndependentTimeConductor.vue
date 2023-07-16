@@ -293,7 +293,7 @@ export default {
         offsets = this.timeOptions.fixedOffsets;
       } else {
         if (this.timeOptions.clockOffsets === undefined) {
-          this.timeOptions.clockOffsets = this.openmct.time.clockOffsets();
+          this.timeOptions.clockOffsets = this.openmct.time.getClockOffsets();
         }
 
         offsets = this.timeOptions.clockOffsets;

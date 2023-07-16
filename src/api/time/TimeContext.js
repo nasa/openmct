@@ -584,7 +584,7 @@ class TimeContext extends EventEmitter {
 
     //We are also going to emit bounds here
     if (this.isRealTime()) {
-      if (this.activeClock) {
+      if (this.activeClock && this.offsets?.start && this.offsets?.end) {
         const currentValue = this.activeClock.currentValue();
         const newBounds = {
           start: currentValue + this.offsets.start,
@@ -594,7 +594,10 @@ class TimeContext extends EventEmitter {
         this.setBounds(newBounds);
       }
     } else {
-      this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
+      const bounds = this.getBounds();
+      if (bounds?.start && bounds?.end) {
+        this.emit(TIME_CONTEXT_EVENTS.boundsChanged, bounds);
+      }
     }
   }
 
