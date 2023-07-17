@@ -83,8 +83,7 @@ export default {
   },
   data() {
     return {
-      domainObject: this.defaultObject,
-      viewKey: undefined
+      domainObject: this.defaultObject
     };
   },
   computed: {

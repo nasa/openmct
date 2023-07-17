@@ -134,7 +134,7 @@ export default {
 
       if (isExistingView) {
         this.view = this.existingView;
-        this.existingViewElement = this.existingView.parentElement.firstChild;
+        this.existingViewElement = this.existingView.parentElement.firstElementChild;
         this.currentViewProvider = this.viewProviders[this.existingViewIndex];
       } else {
         this.currentViewProvider = viewProvider;
