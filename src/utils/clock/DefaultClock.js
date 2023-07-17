@@ -53,13 +53,7 @@ export default class DefaultClock extends EventEmitter {
    * @returns {function} a function for deregistering the provided listener
    */
   on(event) {
-    let result = super.on.apply(this, arguments);
-
-    if (this.listeners(event).length === 1) {
-      this.start();
-    }
-
-    return result;
+    return super.on.apply(this, arguments);
   }
 
   /**
@@ -70,13 +64,7 @@ export default class DefaultClock extends EventEmitter {
    * @returns {function} a function for deregistering the provided listener
    */
   off(event) {
-    let result = super.off.apply(this, arguments);
-
-    if (this.listeners(event).length === 0) {
-      this.stop();
-    }
-
-    return result;
+    return super.off.apply(this, arguments);
   }
 
   /**

@@ -45,8 +45,6 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   const timeSystemKey = timeSystemOptions.timeSystemKey;
   const start = timeSystemOptions.bounds.start;
   const end = timeSystemOptions.bounds.end;
-  //we now have to set a clock
-  openmct.time.setClock('local');
 
   openmct.time.setTimeSystem(timeSystemKey, {
     start,

@@ -96,6 +96,7 @@ define([
     };
 
     this.destroy = this.destroy.bind(this);
+    this.defaultClock = 'local';
     [
       /**
        * Tracks current selection state of the application.
@@ -381,6 +382,10 @@ define([
     }
 
     window.addEventListener('beforeunload', this.destroy);
+
+    if (!this.time.getClock()) {
+      this.time.setClock(this.defaultClock);
+    }
 
     this.router.start();
     this.emit('start');
