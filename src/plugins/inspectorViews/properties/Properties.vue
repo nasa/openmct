@@ -56,6 +56,11 @@ export default {
     Location
   },
   inject: ['openmct'],
+  data() {
+    return {
+      selection: undefined
+    };
+  },
   computed: {
     details() {
       return this.customDetails ?? this.domainObjectDetails;
@@ -210,9 +215,6 @@ export default {
 
       return hasSingleSelection && !isRootObject;
     }
-  },
-  created() {
-    this.selection = [];
   },
   mounted() {
     this.openmct.selection.on('change', this.updateSelection);
