@@ -153,12 +153,6 @@ export default {
 
       return position;
     },
-    timeOffsets() {
-      return this.isFixed ? this.openmct.time.getBounds() : this.openmct.time.getClockOffsets();
-    },
-    timeMode() {
-      return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
-    },
     popupClasses() {
       const value = this.bottom ? 'c-tc-input-popup--bottom ' : '';
       const mode = this.isFixed ? 'fixed-mode' : 'realtime-mode';
@@ -203,7 +197,6 @@ export default {
 
       this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
       this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
-      this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
 
       this.setViewFromClock(this.timeContext.getClock());
       this.setBounds(this.timeContext.getBounds());
@@ -211,7 +204,6 @@ export default {
     stopFollowingTimeContext() {
       this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
       this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
-      this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
     },
     setViewFromClock() {
       this.bounds = this.isFixed
@@ -222,9 +214,6 @@ export default {
       if (this.isFixed || !isTick) {
         this.bounds = bounds;
       }
-    },
-    setMode(mode) {
-      // this.isFixed = mode === FIXED_MODE_KEY;
     },
     saveFixedBounds(bounds) {
       this.$emit('fixedBoundsUpdated', bounds);

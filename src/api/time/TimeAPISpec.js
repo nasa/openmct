@@ -184,8 +184,7 @@ describe('The Time API', function () {
     });
 
     it('sets bounds based on current value', function () {
-      api.setClock('mts', mockOffsets);
-      console.log(api.bounds(), api.getBounds());
+      api.clock('mts', mockOffsets);
       expect(api.bounds()).toEqual({
         start: 10,
         end: 11

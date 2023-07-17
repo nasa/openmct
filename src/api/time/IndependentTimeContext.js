@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import TimeContext from './TimeContext';
-import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
+import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -170,6 +170,7 @@ class IndependentTimeContext extends TimeContext {
       this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
+        //set the mode here or isRealtime will be false even if we're in clock mode
         this.setMode(REALTIME_MODE_KEY);
 
         this.clockOffsets(offsets);
@@ -200,13 +201,10 @@ class IndependentTimeContext extends TimeContext {
    * Offsets from 'now', if provided, will be used to set realtime mode offsets
    *
    * @param {Clock || string} keyOrClock The clock to activate, or its key
-   * @param {ClockOffsets} offsets on each tick these will be used to calculate
-   * the start and end bounds when in realtime mode.
-   * This maintains a sliding time window of a fixed width that automatically updates.
    * @fires module:openmct.TimeAPI~clock
    * @return {Clock} the currently active clock;
    */
-  setClock(keyOrClock, offsets) {
+  setClock(keyOrClock) {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.setClock(...arguments);
     }
@@ -225,8 +223,6 @@ class IndependentTimeContext extends TimeContext {
       }
     }
 
-    // this.setMode(REALTIME_MODE_KEY);
-
     const previousClock = this.activeClock;
     if (previousClock) {
       previousClock.off('tick', this.tick);
@@ -243,10 +239,6 @@ class IndependentTimeContext extends TimeContext {
      * if the system is no longer following a clock source
      */
     this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
-
-    if (offsets !== undefined) {
-      this.setClockOffsets(offsets);
-    }
 
     return this.activeClock;
   }
@@ -267,11 +259,12 @@ class IndependentTimeContext extends TimeContext {
    * Set the mode to either fixed or realtime.
    *
    * @param {Mode} mode The mode to activate
+   * @param {TimeBounds | ClockOffsets} offsetsOrBounds A time window of a fixed width
    * @fires module:openmct.TimeAPI~clock
    * @return {Mode} the currently active mode;
    */
-  setMode(mode) {
-    if (!mode || mode === this.mode) {
+  setMode(mode, offsetsOrBounds) {
+    if (!mode) {
       return;
     }
 
@@ -279,16 +272,29 @@ class IndependentTimeContext extends TimeContext {
       return this.upstreamTimeContext.setMode(...arguments);
     }
 
-    this.mode = mode;
+    if (mode === MODES.realtime && this.activeClock === undefined) {
+      throw `Unknown clock. Has a clock been registered with 'addClock'?`;
+    }
 
-    /**
-     * The active clock has changed.
-     * @event clock
-     * @memberof module:openmct.TimeAPI~
-     * @property {Clock} clock The newly activated clock, or undefined
-     * if the system is no longer following a clock source
-     */
-    this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+    if (mode !== this.mode) {
+      this.mode = mode;
+      /**
+       * The active mode has changed.
+       * @event modeChanged
+       * @memberof module:openmct.TimeAPI~
+       * @property {Mode} mode The newly activated mode
+       */
+      this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));
+    }
+
+    //We are also going to set bounds here
+    if (offsetsOrBounds !== undefined) {
+      if (this.mode === REALTIME_MODE_KEY) {
+        this.setClockOffsets(offsetsOrBounds);
+      } else {
+        this.setBounds(offsetsOrBounds);
+      }
+    }
 
     return this.mode;
   }

@@ -98,6 +98,7 @@ describe('Clock plugin:', () => {
       clockView.show(child);
 
       await Vue.nextTick();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
     });
 
     afterEach(() => {
@@ -222,10 +223,12 @@ describe('Clock plugin:', () => {
     it('contains text', async () => {
       await setupClock(true);
 
+      await Vue.nextTick();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
       ).element;
-
       const clockIndicatorText = clockIndicator.textContent.trim();
       const textIncludesUTC = clockIndicatorText.includes('UTC');
 

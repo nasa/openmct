@@ -140,11 +140,10 @@ class TimeAPI extends GlobalTimeContext {
     timeContext.resetContext();
 
     if (clockKey) {
-      timeContext.setMode(REALTIME_MODE_KEY);
-      timeContext.setClock(clockKey, value);
+      timeContext.setClock(clockKey);
+      timeContext.setMode(REALTIME_MODE_KEY, value);
     } else {
-      timeContext.setMode(FIXED_MODE_KEY);
-      timeContext.setBounds(value);
+      timeContext.setMode(FIXED_MODE_KEY, value);
     }
 
     // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context

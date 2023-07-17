@@ -42,12 +42,13 @@ export default {
   },
   data() {
     return {
-      timeTextValue: null
+      timeTextValue: this.openmct.time.now()
     };
   },
   mounted() {
     this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
+    this.tick(this.timeTextValue);
   },
   beforeDestroy() {
     this.openmct.time.off('tick', this.tick);
