@@ -115,23 +115,26 @@ export default class URLTimeSettingsSynchronizer {
       // should update timesystem
       if (timeSystem.key !== timeParameters.timeSystem) {
         this.openmct.time.setTimeSystem(timeParameters.timeSystem, timeParameters.bounds);
-      } else if (!this.areStartAndEndEqual(this.openmct.time.getBounds(), timeParameters.bounds)) {
-        this.openmct.time.setBounds(timeParameters.bounds);
       }
-
-      this.openmct.time.setMode(FIXED_MODE_KEY);
+      if (!this.areStartAndEndEqual(this.openmct.time.getBounds(), timeParameters.bounds)) {
+        this.openmct.time.setMode(FIXED_MODE_KEY, timeParameters.bounds);
+      } else {
+        this.openmct.time.setMode(FIXED_MODE_KEY);
+      }
     } else {
       const clock = this.openmct.time.getClock();
 
       if (clock?.key !== timeParameters.mode) {
-        this.openmct.time.setClock(timeParameters.mode, timeParameters.clockOffsets);
-      } else if (
-        !this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)
-      ) {
-        this.openmct.time.setClockOffsets(timeParameters.clockOffsets);
+        this.openmct.time.setClock(timeParameters.mode);
       }
 
-      this.openmct.time.setMode(REALTIME_MODE_KEY);
+      if (
+        !this.areStartAndEndEqual(this.openmct.time.getClockOffsets(), timeParameters.clockOffsets)
+      ) {
+        this.openmct.time.setMode(REALTIME_MODE_KEY, timeParameters.clockOffsets);
+      } else {
+        this.openmct.time.setMode(REALTIME_MODE_KEY);
+      }
 
       if (timeSystem?.key !== timeParameters.timeSystem) {
         this.openmct.time.setTimeSystem(timeParameters.timeSystem);
