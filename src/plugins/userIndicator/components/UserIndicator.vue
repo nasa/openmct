@@ -50,7 +50,7 @@ export default {
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
     await this.fetchOrPromptForRole();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
   },
   methods: {
