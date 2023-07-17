@@ -329,6 +329,13 @@ export default {
       '*',
       this.filterAndSortEntries
     );
+    this.unobserveSections = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.sections',
+      (sections) => {
+        this.sections = sections;
+      }
+    );
   },
   beforeUnmount() {
     this.abortController.abort();
@@ -338,6 +345,10 @@ export default {
 
     if (this.unobserveEntries) {
       this.unobserveEntries();
+    }
+
+    if(this.unobserveSections) {
+      this.unobserveSections();
     }
 
     Object.keys(this.notebookAnnotations).forEach((entryID) => {
