@@ -137,7 +137,10 @@
             @entry-selection="entrySelection(entry)"
           />
         </div>
-        <div v-if="showLockButton" class="c-notebook__commit-entries-control">
+        <div
+          v-if="isRestricted && filteredAndSortedEntries?.length > 0 && !selectedPage.isLocked"
+          class="c-notebook__commit-entries-control"
+        >
           <button
             class="c-button c-button--major commit-button icon-lock"
             title="Commit entries and lock this page from further changes"
@@ -277,15 +280,6 @@ export default {
       }
 
       return sidebarClasses;
-    },
-    showLockButton() {
-      const entries = getNotebookEntries(
-        this.domainObject,
-        this.selectedSection,
-        this.selectedPage
-      );
-
-      return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
     }
   },
   watch: {
@@ -329,13 +323,6 @@ export default {
       '*',
       this.filterAndSortEntries
     );
-    this.unobserveSections = this.openmct.objects.observe(
-      this.domainObject,
-      'configuration.sections',
-      (sections) => {
-        this.sections = sections;
-      }
-    );
   },
   beforeUnmount() {
     this.abortController.abort();
@@ -345,10 +332,6 @@ export default {
 
     if (this.unobserveEntries) {
       this.unobserveEntries();
-    }
-
-    if(this.unobserveSections) {
-      this.unobserveSections();
     }
 
     Object.keys(this.notebookAnnotations).forEach((entryID) => {
@@ -980,6 +963,7 @@ export default {
       });
     },
     sectionsChanged({ sections, id = undefined }) {
+      this.sections = [...sections];
       this.startTransaction();
       mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
       this.saveTransaction();
