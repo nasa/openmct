@@ -329,13 +329,6 @@ export default {
       '*',
       this.filterAndSortEntries
     );
-    this.unobserveSections = this.openmct.objects.observe(
-      this.domainObject,
-      'configuration.sections',
-      (sections) => {
-        this.sections = sections;
-      }
-    );
   },
   beforeUnmount() {
     this.abortController.abort();
@@ -814,28 +807,25 @@ export default {
       this.searchResults = output;
     },
     getPages() {
-      const selectedSection = this.selectedSection;
-      if (!selectedSection || !selectedSection.pages.length) {
+      if (!this.selectedSection || !this.selectedSection.pages.length) {
         return [];
       }
 
-      return selectedSection.pages;
+      return this.selectedSection.pages;
     },
     getSelectedPageId() {
-      const page = this.selectedPage;
-      if (!page) {
+      if (!this.selectedPage) {
         return undefined;
       }
 
-      return page.id;
+      return this.selectedPage.id;
     },
     getSelectedSectionId() {
-      const section = this.selectedSection;
-      if (!section) {
+      if (!this.selectedSection) {
         return undefined;
       }
 
-      return section.id;
+      return this.selectedSection.id;
     },
     async newEntry(embed, event) {
       this.startTransaction();
