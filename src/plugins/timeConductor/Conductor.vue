@@ -70,7 +70,12 @@
 
 <script>
 import _ from 'lodash';
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import {
+  FIXED_MODE_KEY,
+  MODES,
+  REALTIME_MODE_KEY,
+  TIME_CONTEXT_EVENTS
+} from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
@@ -227,6 +232,10 @@ export default {
         format: key
       }).formatter;
     },
+    getBoundsForMode(mode) {
+      const isRealTime = mode === MODES.realtime;
+      return isRealTime ? this.openmct.time.getClockOffsets() : this.openmct.time.getBounds();
+    },
     saveFixedBounds(bounds) {
       this.openmct.time.setBounds(bounds);
     },
@@ -234,10 +243,10 @@ export default {
       this.openmct.time.setClockOffsets(offsets);
     },
     saveClock(clockOptions) {
-      this.openmct.time.setClock(clockOptions.clockKey, clockOptions.offsets);
+      this.openmct.time.setClock(clockOptions.clockKey);
     },
     saveMode(mode) {
-      this.openmct.time.setMode(mode);
+      this.openmct.time.setMode(mode, this.getBoundsForMode(mode));
     },
     copy(object) {
       return JSON.parse(JSON.stringify(object));

@@ -121,21 +121,32 @@ export default function (config) {
     const defaults = config.menuOptions[0];
     const defaultClock = defaults.clock;
     const defaultMode = defaultClock ? REALTIME_MODE_KEY : FIXED_MODE_KEY;
-    const defaultBounds = defaults.bounds;
+    const defaultBounds = defaults.bounds || openmct.time.getBounds();
+    let clockOffsets = openmct.time.getClockOffsets();
 
     if (defaultClock) {
-      openmct.time.setClock(defaults.clock, defaults.clockOffsets);
+      openmct.time.setClock(defaults.clock);
+      clockOffsets = defaults.clockOffsets;
     } else {
       // always have an active clock, regardless of mode
       const firstClock = config.menuOptions.find((option) => option.clock);
 
       if (firstClock) {
-        openmct.time.setClock(firstClock.clock, firstClock.clockOffsets);
+        openmct.time.setClock(firstClock.clock);
+        clockOffsets = firstClock.clockOffsets;
       }
     }
 
-    openmct.time.setMode(defaultMode);
-    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds || openmct.time.getBounds());
+    openmct.time.setMode(defaultMode, defaultClock ? clockOffsets : defaultBounds);
+    //We are going to set the clockOffsets in fixed time mode since the conductor components down the line need these
+    if (clockOffsets && defaultMode === FIXED_MODE_KEY) {
+      openmct.time.setClockOffsets(clockOffsets);
+    }
+    //We are going to set the fixed time bounds in realtime time mode since the conductor components down the line need these
+    if (defaultBounds && defaultMode === REALTIME_MODE_KEY) {
+      openmct.time.setBounds(clockOffsets);
+    }
+    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds);
 
     openmct.on('start', function () {
       mountComponent(openmct, config);

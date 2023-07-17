@@ -79,7 +79,12 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants';
+import {
+  TIME_CONTEXT_EVENTS,
+  FIXED_MODE_KEY,
+  MODES,
+  REALTIME_MODE_KEY
+} from '../../../api/time/constants';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
@@ -290,13 +295,9 @@ export default {
       let offsets;
 
       if (this.isFixed) {
-        offsets = this.timeOptions.fixedOffsets;
+        offsets = this.timeOptions.fixedOffsets ?? this.timeContext.getBounds();
       } else {
-        if (this.timeOptions.clockOffsets === undefined) {
-          this.timeOptions.clockOffsets = this.openmct.time.getClockOffsets();
-        }
-
-        offsets = this.timeOptions.clockOffsets;
+        offsets = this.timeOptions.clockOffsets ?? this.openmct.time.getClockOffsets();
       }
 
       if (!timeContext.hasOwnContext()) {
@@ -306,13 +307,11 @@ export default {
           this.isFixed ? undefined : this.timeOptions.clock
         );
       } else {
-        timeContext.setMode(this.timeOptions.mode);
-
-        if (timeContext.isFixed()) {
-          timeContext.setBounds(offsets);
-        } else {
-          timeContext.setClock(this.timeOptions.clock, offsets);
+        if (!this.isFixed) {
+          timeContext.setClock(this.timeOptions.clock);
         }
+
+        timeContext.setMode(this.timeOptions.mode, offsets);
       }
     },
     destroyIndependentTime() {
