@@ -58,7 +58,7 @@ export default {
   inject: ['openmct'],
   data() {
     return {
-      selection: undefined
+      selection: []
     };
   },
   computed: {
@@ -230,7 +230,7 @@ export default {
       return `detail-${component}`;
     },
     updateSelection(selection) {
-      this.selection = selection;
+      this.selection.splice(0, this.selection.length, ...selection);
     }
   }
 };
