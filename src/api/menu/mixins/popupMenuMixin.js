@@ -104,7 +104,7 @@ export default {
     styleObject() {
       return {
         top: `${this.top}px`,
-        left: `${this.left}px`,
+        left: `${this.left}px`
       };
     }
   }

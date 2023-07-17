@@ -809,8 +809,7 @@ export default {
         this.currentView
       );
       const visibleActions = actionCollection.getVisibleActions();
-      const viewLargeAction =
-        visibleActions?.find((action) => action.key === 'large.view');
+      const viewLargeAction = visibleActions?.find((action) => action.key === 'large.view');
 
       if (viewLargeAction?.appliesTo(this.objectPath, this.currentView)) {
         viewLargeAction.invoke(this.objectPath, this.currentView);

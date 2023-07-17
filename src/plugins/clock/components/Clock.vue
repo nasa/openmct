@@ -21,19 +21,19 @@
 -->
 
 <template>
-    <div class="u-contents">
-      <div class="c-clock l-time-display u-style-receiver js-style-receiver">
-        <div class="c-clock__timezone">
-          {{ timeZoneAbbr }}
-        </div>
-        <div class="c-clock__value">
-          {{ timeTextValue }}
-        </div>
-        <div class="c-clock__ampm">
-          {{ timeAmPm }}
-        </div>
+  <div class="u-contents">
+    <div class="c-clock l-time-display u-style-receiver js-style-receiver">
+      <div class="c-clock__timezone">
+        {{ timeZoneAbbr }}
+      </div>
+      <div class="c-clock__value">
+        {{ timeTextValue }}
+      </div>
+      <div class="c-clock__ampm">
+        {{ timeAmPm }}
       </div>
     </div>
+  </div>
 </template>
 
 <script>
