@@ -158,7 +158,6 @@ class IndependentTimeContext extends TimeContext {
       }
 
       this.activeClock = clock;
-      this.setMode(REALTIME_MODE_KEY);
 
       /**
        * The active clock has changed.
@@ -171,6 +170,9 @@ class IndependentTimeContext extends TimeContext {
       this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
 
       if (this.activeClock !== undefined) {
+        //set the mode here or isRealtime will be false even if we're in clock mode
+        this.setMode(REALTIME_MODE_KEY);
+
         this.clockOffsets(offsets);
         this.activeClock.on('tick', this.tick);
       }
