@@ -189,11 +189,9 @@ test.describe('Example Imagery Object', () => {
   test('Using the zoom features does not pause telemetry', async ({ page }) => {
     const pausePlayButton = page.locator('.c-button.pause-play');
 
-    // open the time conductor drop down
-    await page.locator('.c-mode-button').click();
+    // switch to realtime
+    await setRealTimeMode(page);
 
-    // Click local clock
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
     // Zoom in via button
@@ -233,11 +231,8 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -259,11 +254,8 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -544,11 +536,8 @@ async function performImageryViewOperationsAndAssert(page) {
   const nextImageButton = page.locator('.c-nav--next');
   await nextImageButton.click();
 
-  // Click time conductor mode button
-  await page.locator('.c-mode-button').click();
-
-  // Select local clock mode
-  await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+  // set realtime mode
+  await setRealTimeMode(page);
 
   // Zoom in on next image
   await mouseZoomOnImageAndAssert(page, 2);
@@ -892,4 +881,16 @@ async function createImageryView(page) {
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function setRealTimeMode(page) {
+  await page.locator('.c-compact-tc').click();
+  await page.waitForSelector('.c-tc-input-popup', { state: 'visible' });
+  // Click mode dropdown
+  await page.getByRole('button', { name: ' Fixed Timespan ' }).click();
+  // Click realtime
+  await page.getByTestId('conductor-modeOption-realtime').click();
 }
