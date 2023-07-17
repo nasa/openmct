@@ -236,14 +236,9 @@ function getHistoricalProvider(openmct) {
       const end = Math.min(options.end, openmct.time.now());
       const data = [];
       while (start <= end && data.length < delay) {
-        data.push(
-          pointForTimestamp(
-            start,
-            domainObject.name,
-            getImageSamples(domainObject.configuration),
-            delay
-          )
-        );
+        const imageSamples = getImageSamples(domainObject.configuration);
+        const generatedDataPoint = pointForTimestamp(start, domainObject.name, imageSamples, delay);
+        data.push(generatedDataPoint);
         start += delay;
       }
 
