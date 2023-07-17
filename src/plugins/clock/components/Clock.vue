@@ -47,7 +47,7 @@ export default {
   inject: ['openmct', 'domainObject'],
   data() {
     return {
-      lastTimestamp: null
+      lastTimestamp: this.openmct.time.now()
     };
   },
   computed: {
