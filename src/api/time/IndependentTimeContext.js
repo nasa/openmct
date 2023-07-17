@@ -158,6 +158,7 @@ class IndependentTimeContext extends TimeContext {
       }
 
       this.activeClock = clock;
+      this.setMode(REALTIME_MODE_KEY);
 
       /**
        * The active clock has changed.

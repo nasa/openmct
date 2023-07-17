@@ -335,6 +335,7 @@ class TimeContext extends EventEmitter {
       }
 
       this.activeClock = clock;
+      this.setMode(REALTIME_MODE_KEY);
 
       /**
        * The active clock has changed.
