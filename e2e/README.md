@@ -101,7 +101,7 @@ npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep
 
 ### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desirable or an unintended regression.
 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
 
@@ -137,7 +137,7 @@ These tests are expected to become blocking and gating with assertions as we ext
 
 ### File Structure
 
-Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
+Our file structure follows the type of type of testing being exercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
 |File Path|Description|
 |:-:|-|
