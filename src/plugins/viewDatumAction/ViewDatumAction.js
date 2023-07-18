@@ -30,7 +30,7 @@ export default class ViewDatumAction {
     this.description = 'View full value of datum received';
     this.cssClass = 'icon-object';
 
-    this._openmct = openmct;
+    this.openmct = openmct;
   }
   invoke(objectPath, view) {
     let viewContext = view.getViewContext && view.getViewContext();
@@ -48,11 +48,11 @@ export default class ViewDatumAction {
         template: '<MetadataListView />'
       },
       {
-        app: this._openmct.app
+        app: this.openmct.app
       }
     );
 
-    this._openmct.overlays.overlay({
+    this.openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
       dismissable: true,
