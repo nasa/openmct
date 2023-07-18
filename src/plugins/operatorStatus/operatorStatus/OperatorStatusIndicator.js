@@ -49,7 +49,7 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
       }
     );
 
-    return vNode.el;
+    return vNode.componentInstance;
   }
 
   createIndicator() {

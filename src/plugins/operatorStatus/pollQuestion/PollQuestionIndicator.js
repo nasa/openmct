@@ -50,7 +50,7 @@ export default class PollQuestionIndicator extends AbstractStatusIndicator {
       }
     );
 
-    return vNode.el;
+    return vNode.componentInstance;
   }
 
   createIndicator() {
