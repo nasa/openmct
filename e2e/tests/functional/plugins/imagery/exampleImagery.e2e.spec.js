@@ -70,13 +70,17 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
-  test('Can use independent time conductor to change time', async ({ page }) => {
+  test.only('Can use independent time conductor to change time', async ({ page }) => {
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByTitle('Enable independent Time Conductor').locator('label').click();
-    await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
-    await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
-    await page.getByRole('textbox').nth(1).click();
+    await page.pause();
+    await page.locator('.c-compact-tc').first().click();
+    await page.getByRole('textbox').nth(3).fill('01:11:00');
+    await page.getByRole('textbox').nth(2).fill('2021-12-30');
+    await page.getByRole('textbox').nth(1).fill('01:01:00');
+    await page.getByRole('textbox').nth(0).fill('2021-12-30');
+    await page.getByRole('button', { name: 'Submit Fixed Inputs' }).click();
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -87,8 +91,8 @@ test.describe('Example Imagery Object', () => {
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
 
     // Test independent fixed time with global realtime
-    await page.getByRole('button', { name: /Fixed Timespan/ }).click();
-    await page.getByTestId('conductor-modeOption-realtime').click();
+    await setGlobalRealTimeMode(page);
+    await page.pause();
     await page.getByTitle('Enable independent Time Conductor').locator('label').click();
     // check image date to be in the past
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -236,7 +240,7 @@ test.describe('Example Imagery Object', () => {
     const pausePlayButton = page.locator('.c-button.pause-play');
 
     // switch to realtime
-    await setRealTimeMode(page);
+    await setGlobalRealTimeMode(page);
 
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
@@ -278,7 +282,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // set realtime mode
-    await setRealTimeMode(page);
+    await setGlobalRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -301,7 +305,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // set realtime mode
-    await setRealTimeMode(page);
+    await setGlobalRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -583,7 +587,7 @@ async function performImageryViewOperationsAndAssert(page) {
   await nextImageButton.click();
 
   // set realtime mode
-  await setRealTimeMode(page);
+  await setGlobalRealTimeMode(page);
 
   // Zoom in on next image
   await mouseZoomOnImageAndAssert(page, 2);
@@ -932,8 +936,8 @@ async function createImageryView(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function setRealTimeMode(page) {
-  await page.locator('.c-compact-tc').click();
+async function setGlobalRealTimeMode(page) {
+  await page.locator('.l-shell__time-conductor .c-compact-tc').click();
   await page.waitForSelector('.c-tc-input-popup', { state: 'visible' });
   // Click mode dropdown
   await page.getByRole('button', { name: ' Fixed Timespan ' }).click();

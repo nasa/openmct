@@ -122,10 +122,15 @@
     <div class="pr-time-input pr-time-input--buttons">
       <button
         class="c-button c-button--major icon-check"
+        aria-label="Submit Realtime Inputs"
         :disabled="isDisabled"
         @click.prevent="submit"
       ></button>
-      <button class="c-button icon-x" @click.prevent="hide"></button>
+      <button
+        class="c-button icon-x"
+        aria-label="Dismiss Realtime Inputs"
+        @click.prevent="hide"
+      ></button>
     </div>
   </form>
 </template>
