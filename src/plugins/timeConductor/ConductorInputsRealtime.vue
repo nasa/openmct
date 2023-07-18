@@ -53,7 +53,7 @@
         class="c-input--datetime"
         type="text"
         autocorrect="off"
-        :spellcheck="false"
+        spellcheck="false"
         :disabled="true"
       />
     </div>
