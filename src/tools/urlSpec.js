@@ -72,9 +72,8 @@ describe('the url tool', function () {
         'tc.mode': 'fixed'
       };
       const constructedURL = objectPathToUrl(openmct, mockObjectPath, customParams);
-      expect(constructedURL).toContain(
-        'tc.startBound=1669911059&tc.endBound=1669911082&tc.mode=fixed'
-      );
+      expect(constructedURL).toContain('tc.startBound=1669911059&tc.endBound=1669911082');
+      expect(constructedURL).toContain('tc.mode=fixed');
     });
   });
 });
