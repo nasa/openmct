@@ -24,7 +24,7 @@
     ref="root"
     class="c-tree__item__label c-object-label"
     :class="[statusClass]"
-    :draggable="true"
+    draggable="true"
     @dragstart="dragStart"
     @click="navigateOrPreview"
   >

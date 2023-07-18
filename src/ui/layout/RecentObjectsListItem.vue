@@ -35,7 +35,7 @@
         ref="recentObjectName"
         class="c-recentobjects-listitem__title"
         :name="domainObject.name"
-        :draggable="true"
+        draggable="true"
         @dragstart="dragStart"
         @click.prevent="clickedRecent"
         @mouseover.ctrl="showToolTip"

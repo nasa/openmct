@@ -36,7 +36,7 @@
         ref="resultName"
         class="c-gsearch-result__title"
         :name="resultName"
-        :draggable="true"
+        draggable="true"
         @dragstart="dragStart"
         @click="clickedResult"
         @mouseover.ctrl="showToolTip"
