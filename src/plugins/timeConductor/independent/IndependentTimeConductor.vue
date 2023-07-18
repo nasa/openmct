@@ -79,12 +79,7 @@
 </template>
 
 <script>
-import {
-  TIME_CONTEXT_EVENTS,
-  FIXED_MODE_KEY,
-  MODES,
-  REALTIME_MODE_KEY
-} from '../../../api/time/constants';
+import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';

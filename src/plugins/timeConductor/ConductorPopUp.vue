@@ -70,7 +70,7 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
-import { TIME_CONTEXT_EVENTS, REALTIME_MODE_KEY, FIXED_MODE_KEY } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
   components: {
