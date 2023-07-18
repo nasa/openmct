@@ -266,7 +266,8 @@ export default {
       gridLines: this.initGridLines,
       yAxes: [],
       hiddenYAxisIds: [],
-      yAxisListWithRange: []
+      yAxisListWithRange: [],
+      config: {}
     };
   },
   computed: {
