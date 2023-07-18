@@ -71,7 +71,6 @@ export default class DefaultClock extends EventEmitter {
    * @returns {number} The last value provided for a clock tick
    */
   currentValue() {
-    console.log('current val', this.lastTick)
     return this.lastTick;
   }
 }

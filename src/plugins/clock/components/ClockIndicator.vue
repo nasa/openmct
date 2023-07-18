@@ -54,10 +54,7 @@ export default {
   },
   methods: {
     tick(timestamp) {
-      this.timeTextValue = this.formattedText(timestamp);
-    },
-    formattedText(timestamp) {
-      return `${moment.utc(timestamp).format(this.indicatorFormat)} ${
+      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
         this.openmct.time.getTimeSystem().name
       }`;
     }
