@@ -24,6 +24,7 @@ import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/te
 import { millisecondsToDHMS, getPreciseDuration } from '../../utils/duration';
 import ConductorPlugin from './plugin';
 import Vue from 'vue';
+import { FIXED_MODE_KEY } from '../../api/time/constants';
 
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = THIRTY_SECONDS * 2;
@@ -74,7 +75,7 @@ describe('time conductor', () => {
     element.appendChild(child);
 
     openmct.on('start', () => {
-      openmct.time.bounds({
+      openmct.time.setMode(FIXED_MODE_KEY, {
         start: config.menuOptions[0].bounds.start,
         end: config.menuOptions[0].bounds.end
       });
@@ -106,7 +107,7 @@ describe('time conductor', () => {
     });
   });
 
-  xdescribe('in realtime mode', () => {
+  describe('in realtime mode', () => {
     beforeEach((done) => {
       const switcher = appHolder.querySelector('.is-fixed-mode');
       const clickEvent = createMouseEvent('click');
