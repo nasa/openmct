@@ -43,6 +43,7 @@ export default class LocalClock extends DefaultClock {
   }
 
   start() {
+    super.tick(this.lastTick);
     this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
   }
 

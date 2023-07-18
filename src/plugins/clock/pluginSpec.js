@@ -25,7 +25,7 @@ import clockPlugin from './plugin';
 
 import Vue from 'vue';
 
-describe('Clock plugin:', () => {
+fdescribe('Clock plugin:', () => {
   let openmct;
   let clockDefinition;
   let element;

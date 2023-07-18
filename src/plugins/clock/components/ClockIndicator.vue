@@ -42,20 +42,22 @@ export default {
   },
   data() {
     return {
-      timeTextValue: this.openmct.time.now()
+      timeTextValue: undefined
     };
   },
   mounted() {
     this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
-    this.tick(this.timeTextValue);
   },
   beforeDestroy() {
     this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {
-      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
+      this.timeTextValue = this.formattedText(timestamp);
+    },
+    formattedText(timestamp) {
+      return `${moment.utc(timestamp).format(this.indicatorFormat)} ${
         this.openmct.time.getTimeSystem().name
       }`;
     }

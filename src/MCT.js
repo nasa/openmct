@@ -354,6 +354,10 @@ define([
 
     this.element = domElement;
 
+    if (!this.time.getClock()) {
+      this.time.setClock(this.defaultClock);
+    }
+
     this.router.route(/^\/$/, () => {
       this.router.setPath('/browse/');
     });
@@ -382,10 +386,6 @@ define([
     }
 
     window.addEventListener('beforeunload', this.destroy);
-
-    if (!this.time.getClock()) {
-      this.time.setClock(this.defaultClock);
-    }
 
     this.router.start();
     this.emit('start');

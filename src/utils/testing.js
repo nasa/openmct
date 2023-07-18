@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
-import { FIXED_MODE_KEY } from '../api/time/constants';
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
@@ -50,8 +49,6 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
     start,
     end
   });
-  //we now have to set a mode
-  openmct.time.setMode(FIXED_MODE_KEY);
 
   return openmct;
 }
