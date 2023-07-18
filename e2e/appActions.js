@@ -314,7 +314,9 @@ async function _isInEditMode(page, identifier) {
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
-  await page.locator('.c-mode-button').click();
+  const timeConductorMode = await page.locator('.c-compact-tc');
+  await timeConductorMode.click();
+  await timeConductorMode.locator('.js-mode-button').click();
 
   // Switch time conductor mode
   if (isFixedTimespan) {
@@ -353,23 +355,23 @@ async function setRealTimeMode(page) {
  * @param {OffsetValues} offset
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { hours, mins, secs }, offsetButton) {
-  await offsetButton.click();
+async function setTimeConductorOffset(page, { hours, mins, secs }) {
+  // await offsetButton.click();
 
   if (hours) {
-    await page.fill('.pr-time-controls__hrs', hours);
+    await page.fill('.pr-time-input__hrs', hours);
   }
 
   if (mins) {
-    await page.fill('.pr-time-controls__mins', mins);
+    await page.fill('.pr-time-input__mins', mins);
   }
 
   if (secs) {
-    await page.fill('.pr-time-controls__secs', secs);
+    await page.fill('.pr-time-input__secs', secs);
   }
 
   // Click the check button
-  await page.locator('.pr-time__buttons .icon-check').click();
+  await page.locator('.pr-time-input--buttons .icon-check').click();
 }
 
 /**
@@ -378,8 +380,10 @@ async function setTimeConductorOffset(page, { hours, mins, secs }, offsetButton)
  * @param {OffsetValues} offset
  */
 async function setStartOffset(page, offset) {
-  const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
-  await setTimeConductorOffset(page, offset, startOffsetButton);
+  // Click 'mode' button
+  const timeConductorMode = await page.locator('.c-compact-tc');
+  await timeConductorMode.click();
+  await setTimeConductorOffset(page, offset);
 }
 
 /**
@@ -388,8 +392,10 @@ async function setStartOffset(page, offset) {
  * @param {OffsetValues} offset
  */
 async function setEndOffset(page, offset) {
-  const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
-  await setTimeConductorOffset(page, offset, endOffsetButton);
+  // Click 'mode' button
+  const timeConductorMode = await page.locator('.c-compact-tc');
+  await timeConductorMode.click();
+  await setTimeConductorOffset(page, offset);
 }
 
 /**
