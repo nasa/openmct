@@ -37,7 +37,6 @@ class AlphanumericFormatView {
     const { vNode, destroy } = mount(
       {
         el: element,
-        name: 'AlphanumericFormat',
         components: {
           AlphanumericFormat
         },
@@ -46,7 +45,7 @@ class AlphanumericFormatView {
           objectPath: this.objectPath,
           currentView: this
         },
-        template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
+        template: '<AlphanumericFormat ref="alphanumericFormat" />'
       },
       {
         app: this.openmct.app,
