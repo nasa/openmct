@@ -65,7 +65,6 @@ describe('time conductor', () => {
   beforeEach((done) => {
     openmct = createOpenMct();
     openmct.install(new ConductorPlugin(config));
-
     element = document.createElement('div');
     element.style.width = '640px';
     element.style.height = '480px';
@@ -97,55 +96,63 @@ describe('time conductor', () => {
   describe('in fixed time mode', () => {
     it('shows delta inputs', () => {
       const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
-      const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
-      expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
-      expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
-      expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual(
-        'Fixed Timespan'
-      );
+      const dateTimeInputs = fixedModeEl.querySelectorAll('.c-compact-tc__setting-value__elem');
+      expect(dateTimeInputs[0].innerHTML.trim()).toEqual('Fixed Timespan');
+      expect(dateTimeInputs[1].innerHTML.trim()).toEqual('Local Clock');
+      expect(dateTimeInputs[2].innerHTML.trim()).toEqual('UTC');
+      const dateTimes = fixedModeEl.querySelectorAll('.c-compact-tc__setting-value');
+      expect(dateTimes[1].innerHTML.trim()).toEqual('1978-01-19 23:30:00.000Z');
+      expect(dateTimes[2].innerHTML.trim()).toEqual('1978-01-20 00:00:00.000Z');
     });
   });
 
   describe('in realtime mode', () => {
     beforeEach((done) => {
-      const switcher = appHolder.querySelector('.js-mode-button');
+      const switcher = appHolder.querySelector('.is-fixed-mode');
       const clickEvent = createMouseEvent('click');
-
       switcher.dispatchEvent(clickEvent);
       Vue.nextTick(() => {
-        const clockItem = document.querySelectorAll('.c-conductor__mode-menu li')[1];
-        clockItem.dispatchEvent(clickEvent);
+        const modeButton = switcher.querySelector('.c-tc-input-popup .c-button--menu');
+        const clickEvent1 = createMouseEvent('click');
+        modeButton.dispatchEvent(clickEvent1);
         Vue.nextTick(() => {
-          done();
+          const clockItem = document.querySelectorAll(
+            '.c-conductor__mode-menu .c-super-menu__menu li'
+          )[1];
+          const clickEvent2 = createMouseEvent('click');
+          clockItem.dispatchEvent(clickEvent2);
+          Vue.nextTick(() => {
+            done();
+          });
         });
       });
     });
 
     it('shows delta inputs', () => {
       const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
-      const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-conductor__delta-button');
+      const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-compact-tc__setting-value__elem');
+      expect(dateTimeInputs[0].innerHTML.trim()).toEqual('Real-Time');
 
-      expect(dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
-      expect(dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
+      const dateTimes = realtimeModeEl.querySelectorAll('.c-compact-tc__setting-value');
+      expect(dateTimes[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
+      expect(dateTimes[2].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
     });
 
     it('shows clock options', () => {
       const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
-
-      expect(realtimeModeEl.querySelector('.js-mode-button .c-button__label').innerHTML).toEqual(
-        'Local Clock'
-      );
+      const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-compact-tc__setting-value__elem');
+      expect(dateTimeInputs[1].innerHTML.trim()).toEqual('Local Clock');
     });
 
     it('shows the current time', () => {
       const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
-      const currentTimeEl = realtimeModeEl.querySelector('.c-input--datetime');
+      const currentTimeEl = realtimeModeEl.querySelector('.c-compact-tc__current-update');
       const currentTime = openmct.time.clock().currentValue();
       const { start, end } = openmct.time.bounds();
 
       expect(currentTime).toBeGreaterThan(start);
       expect(currentTime).toBeLessThanOrEqual(end);
-      expect(currentTimeEl.value.length).toBeGreaterThan(0);
+      expect(currentTimeEl.innerHTML.trim().length).toBeGreaterThan(0);
     });
   });
 });

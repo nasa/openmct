@@ -29,12 +29,17 @@ describe('Telemetry API', () => {
 
   beforeEach(() => {
     openmct = {
-      time: jasmine.createSpyObj('timeAPI', ['timeSystem', 'bounds']),
+      time: jasmine.createSpyObj('timeAPI', ['timeSystem', 'getTimeSystem', 'bounds', 'getBounds']),
       types: jasmine.createSpyObj('typeRegistry', ['get'])
     };
 
     openmct.time.timeSystem.and.returnValue({ key: 'system' });
+    openmct.time.getTimeSystem.and.returnValue({ key: 'system' });
     openmct.time.bounds.and.returnValue({
+      start: 0,
+      end: 1
+    });
+    openmct.time.getBounds.and.returnValue({
       start: 0,
       end: 1
     });
@@ -261,16 +266,14 @@ describe('Telemetry API', () => {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: jasmine.any(Object)
+        domain: 'system'
       });
 
       expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: jasmine.any(Object)
+        domain: 'system'
       });
 
       telemetryProvider.supportsRequest.calls.reset();
@@ -281,16 +284,14 @@ describe('Telemetry API', () => {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: jasmine.any(Object)
+        domain: 'system'
       });
 
       expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: jasmine.any(Object)
+        domain: 'system'
       });
     });
 
@@ -309,16 +310,14 @@ describe('Telemetry API', () => {
         start: 20,
         end: 30,
         domain: 'someDomain',
-        signal,
-        timeContext: jasmine.any(Object)
+        signal
       });
 
       expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         start: 20,
         end: 30,
         domain: 'someDomain',
-        signal,
-        timeContext: jasmine.any(Object)
+        signal
       });
     });
   });
