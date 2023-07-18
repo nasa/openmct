@@ -808,18 +808,10 @@ export default {
       return this.selectedSection.pages;
     },
     getSelectedPageId() {
-      if (!this.selectedPage) {
-        return undefined;
-      }
-
-      return this.selectedPage.id;
+      return this.selectedPage?.id;
     },
     getSelectedSectionId() {
-      if (!this.selectedSection) {
-        return undefined;
-      }
-
-      return this.selectedSection.id;
+      return this.selectedSection?.id;
     },
     async newEntry(embed, event) {
       this.startTransaction();
