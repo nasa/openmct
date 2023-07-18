@@ -529,12 +529,10 @@ class TimeContext extends EventEmitter {
     const previousClock = this.activeClock;
     if (previousClock) {
       previousClock.off('tick', this.tick);
-      previousClock.stop();
     }
 
     this.activeClock = clock;
     this.activeClock.on('tick', this.tick);
-    this.activeClock.start();
 
     /**
      * The active clock has changed.
