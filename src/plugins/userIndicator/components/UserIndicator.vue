@@ -38,7 +38,6 @@ export default {
       userName: undefined,
       role: undefined,
       loggedIn: false,
-      roleChannel: undefined,
       inputRoleSelection: undefined,
       roleSelectionDialog: undefined
     };
