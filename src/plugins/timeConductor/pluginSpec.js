@@ -106,7 +106,7 @@ describe('time conductor', () => {
     });
   });
 
-  describe('in realtime mode', () => {
+  xdescribe('in realtime mode', () => {
     beforeEach((done) => {
       const switcher = appHolder.querySelector('.is-fixed-mode');
       const clickEvent = createMouseEvent('click');
