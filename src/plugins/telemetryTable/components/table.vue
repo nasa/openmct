@@ -501,21 +501,21 @@ export default {
     this.table.tableRows.on('sort', this.updateVisibleRows);
     this.table.tableRows.on('filter', this.updateVisibleRows);
 
-    this.table.configuration.on('change', this.updateConfiguration);
-
+    
     this.openmct.time.on('bounds', this.boundsChanged);
-
+    
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
     this.scrollable = this.$refs.scrollable;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
     this.headersHolderEl = this.$refs.headersHolderEl;
-
+    this.table.configuration.on('change', this.updateConfiguration);
+    
     this.calculateTableSize();
     this.pollForResize();
     this.calculateScrollbarWidth();
-
+    
     this.table.initialize();
   },
   beforeUnmount() {
@@ -713,13 +713,11 @@ export default {
      * Calculates height based on total number of rows, and sets table height.
      */
     setHeight() {
-      this.$nextTick(() => {
         let tableRowsLength = this.table.tableRows.getRowsLength();
         this.totalHeight = this.rowHeight * tableRowsLength - 1;
         // Set element height directly to avoid having to wait for Vue to update DOM
         // which causes subsequent scroll to use an out of date height.
         this.contentTable.style.height = this.totalHeight + 'px';
-      });
     },
     exportAsCSV(data) {
       const headerKeys = Object.keys(this.headers);

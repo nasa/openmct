@@ -70,7 +70,7 @@ export default {
     }
   },
   methods: {
-    navigate(event) {
+    navigate(_event) {
       this.openmct.router.navigate(this.objectLink);
     }
   }

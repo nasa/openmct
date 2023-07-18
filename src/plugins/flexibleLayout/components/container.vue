@@ -29,7 +29,7 @@
     <div
       v-show="isEditing"
       class="c-fl-container__header"
-      :draggable="true"
+      draggable="true"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
