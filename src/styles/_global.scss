@@ -63,6 +63,11 @@ div {
   }
 }
 
+.u-flex-spreader {
+  // Pushes against elements in a flex layout to spread them out
+  flex: 1 1 auto;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
   ::-webkit-scrollbar {
@@ -382,3 +387,25 @@ body.desktop .has-local-controls {
 //.--hide-by-default { display: none !important; }
 @include responsiveContainerWidths('220');
 @include responsiveContainerWidths('600');
+
+.u-fade-truncate,
+.u-fade-truncate--lg {
+  &:after {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    content: "";
+    right: 0;
+    width: $fadeTruncateW * 1.5;
+    z-index: 2;
+  }
+
+  &.--no-sep {
+    border-right: none;
+  }
+}
+
+.u-fade-truncate--lg {
+  flex-basis: 100% !important;
+}

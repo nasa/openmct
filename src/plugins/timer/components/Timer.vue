@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
 
 const moment = require('moment-timezone');
 const momentDurationFormatSetup = require('moment-duration-format');
@@ -63,9 +63,8 @@ export default {
   },
   data() {
     return {
-      lastTimestamp: undefined,
-      active: true,
-      configuration: this.domainObject.configuration
+      configuration: this.domainObject.configuration,
+      lastTimestamp: null
     };
   },
   computed: {
@@ -188,15 +187,13 @@ export default {
       }
     );
     this.$nextTick(() => {
-      if (this.configuration && this.configuration.timerState === undefined) {
+      if (!this.configuration?.timerState) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
         this.triggerAction(`timer.${timerAction}`);
       }
 
-      window.requestAnimationFrame(this.tick);
-      this.unlisten = ticker.listen(() => {
-        this.openmct.objects.refresh(this.domainObject);
-      });
+      this.handleTick = raf(this.handleTick);
+      this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(
         this.objectPath,
@@ -206,28 +203,24 @@ export default {
     });
   },
   beforeUnmount() {
-    this.active = false;
-    if (this.unlisten) {
-      this.unlisten();
-    }
     if (this.unobserve) {
       this.unobserve();
     }
+    this.openmct.time.off('tick', this.handleTick);
   },
   methods: {
-    tick() {
+    handleTick() {
       const isTimerRunning = !['paused', 'stopped'].includes(this.timerState);
+
       if (isTimerRunning) {
-        this.lastTimestamp = new Date();
+        this.lastTimestamp = new Date(this.openmct.time.now());
       }
 
       if (this.timerState === 'paused' && !this.lastTimestamp) {
         this.lastTimestamp = this.pausedTime;
       }
 
-      if (this.active) {
-        window.requestAnimationFrame(this.tick);
-      }
+      this.openmct.objects.refresh(this.domainObject);
     },
     restartTimer() {
       this.triggerAction('timer.restart');

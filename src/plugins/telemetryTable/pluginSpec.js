@@ -229,6 +229,7 @@ describe('the plugin', () => {
 
     afterEach(() => {
       openmct.router.path = originalRouterPath;
+      openmct.time.setClock('local');
     });
 
     it('Shows no progress bar initially', () => {

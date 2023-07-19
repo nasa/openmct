@@ -70,6 +70,52 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
+  test('Can use independent time conductor to change time', async ({ page }) => {
+    // Test independent fixed time with global fixed time
+    // flip on independent time conductor
+    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+    await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
+    await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
+    await page.getByRole('textbox').nth(1).click();
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+    // Test independent fixed time with global realtime
+    await page.getByRole('button', { name: /Fixed Timespan/ }).click();
+    await page.getByTestId('conductor-modeOption-realtime').click();
+    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+    // check image date to be in the past
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    // flip it off
+    await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+    // Test independent realtime with global realtime
+    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    // change independent time to realtime
+    await page.getByRole('button', { name: /Fixed Timespan/ }).click();
+    await page.getByRole('menuitem', { name: /Local Clock/ }).click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+    // back to the past
+    await page
+      .getByRole('button', { name: /Local Clock/ })
+      .first()
+      .click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    // check image date to be in the past
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+  });
+
   test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
     const deltaYStep = 100; //equivalent to 1x zoom
 
@@ -189,11 +235,9 @@ test.describe('Example Imagery Object', () => {
   test('Using the zoom features does not pause telemetry', async ({ page }) => {
     const pausePlayButton = page.locator('.c-button.pause-play');
 
-    // open the time conductor drop down
-    await page.locator('.c-mode-button').click();
+    // switch to realtime
+    await setRealTimeMode(page);
 
-    // Click local clock
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
     // Zoom in via button
@@ -233,11 +277,8 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -259,11 +300,8 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
     const pausePlayButton = await page.locator('.c-button.pause-play');
@@ -544,11 +582,8 @@ async function performImageryViewOperationsAndAssert(page) {
   const nextImageButton = page.locator('.c-nav--next');
   await nextImageButton.click();
 
-  // Click time conductor mode button
-  await page.locator('.c-mode-button').click();
-
-  // Select local clock mode
-  await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+  // set realtime mode
+  await setRealTimeMode(page);
 
   // Zoom in on next image
   await mouseZoomOnImageAndAssert(page, 2);
@@ -892,4 +927,16 @@ async function createImageryView(page) {
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function setRealTimeMode(page) {
+  await page.locator('.c-compact-tc').click();
+  await page.waitForSelector('.c-tc-input-popup', { state: 'visible' });
+  // Click mode dropdown
+  await page.getByRole('button', { name: ' Fixed Timespan ' }).click();
+  // Click realtime
+  await page.getByTestId('conductor-modeOption-realtime').click();
 }

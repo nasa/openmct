@@ -449,7 +449,7 @@ export default {
         }
       }
 
-      this.entry.modified = Date.now();
+      this.entry.modified = this.openmct.time.now();
 
       this.$emit('updateEntry', this.entry);
     },

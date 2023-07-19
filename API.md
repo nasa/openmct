@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [Building Applications With Open MCT](#developing-applications-with-open-mct)
+- [Developing Applications With Open MCT](#developing-applications-with-open-mct)
   - [Scope and purpose of this document](#scope-and-purpose-of-this-document)
   - [Building From Source](#building-from-source)
   - [Starting an Open MCT application](#starting-an-open-mct-application)
@@ -26,7 +26,7 @@
           - [Value Hints](#value-hints)
         - [The Time Conductor and Telemetry](#the-time-conductor-and-telemetry)
       - [Telemetry Providers](#telemetry-providers)
-      - [Telemetry Requests and Responses.](#telemetry-requests-and-responses)
+      - [Telemetry Requests and Responses](#telemetry-requests-and-responses)
       - [Request Strategies **draft**](#request-strategies-draft)
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
@@ -872,6 +872,8 @@ The currently active clock (if any) can be retrieved by calling the same
 function without any arguments.
 
 #### Stopping an active clock
+
+_As of July 2023, this method will be deprecated. Open MCT will always have a ticking clock._
 
 The `stopClock` method can be used to stop an active clock, and to clear it. It
 will stop the clock from ticking, and set the active clock to `undefined`.

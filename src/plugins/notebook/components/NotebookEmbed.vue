@@ -203,7 +203,7 @@ export default {
         }
       );
 
-      const painterroInstance = new PainterroInstance(vNode.el);
+      const painterroInstance = new PainterroInstance(vNode.el, this.openmct);
       const annotateOverlay = this.openmct.overlays.overlay({
         element: vNode.el,
         size: 'large',
@@ -266,7 +266,6 @@ export default {
         this.embed.bounds.start !== bounds.start || this.embed.bounds.end !== bounds.end;
       const isFixedTimespanMode = !this.openmct.time.clock();
 
-      this.openmct.time.stopClock();
       let message = '';
       if (isTimeBoundChanged) {
         this.openmct.time.bounds({

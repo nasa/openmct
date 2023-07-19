@@ -255,7 +255,7 @@ export default {
     }
   },
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -770,24 +770,17 @@ export default {
       this.trackDuration();
     },
     setIsFixed() {
-      let clock;
-      if (this.timeContext) {
-        clock = this.timeContext.clock();
-      } else {
-        clock = this.openmct.time.clock();
-      }
-
-      this.isFixed = clock === undefined;
+      this.isFixed = this.timeContext ? this.timeContext.isFixed() : this.openmct.time.isFixed();
     },
     setCanTrackDuration() {
-      let hasClock;
+      let isRealTime;
       if (this.timeContext) {
-        hasClock = this.timeContext.clock();
+        isRealTime = this.timeContext.isRealTime();
       } else {
-        hasClock = this.openmct.time.clock();
+        isRealTime = this.openmct.time.isRealTime();
       }
 
-      this.canTrackDuration = hasClock && this.timeSystem.isUTCBased;
+      this.canTrackDuration = isRealTime && this.timeSystem.isUTCBased;
     },
     updateSelection(selection) {
       const selectionType = selection?.[0]?.[0]?.context?.type;
@@ -1116,7 +1109,7 @@ export default {
       window.clearInterval(this.durationTracker);
     },
     updateDuration() {
-      let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
+      let currentTime = this.timeContext.getClock().currentValue();
       if (currentTime === undefined) {
         this.numericDuration = currentTime;
       } else if (Number.isInteger(this.parsedSelectedTime)) {

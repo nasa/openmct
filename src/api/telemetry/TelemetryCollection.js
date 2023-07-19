@@ -23,6 +23,7 @@
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
@@ -60,8 +61,11 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
+    }
+    this.options = options;
     this.unsubscribe = undefined;
-    this.options = this.openmct.telemetry.standardizeRequestOptions(options);
     this.pageState = undefined;
     this.lastBounds = undefined;
     this.requestAbort = undefined;
@@ -78,11 +82,11 @@ export default class TelemetryCollection extends EventEmitter {
       this._error(LOADED_ERROR);
     }
 
-    this._setTimeSystem(this.options.timeContext.timeSystem());
-    this.lastBounds = this.options.timeContext.bounds();
-
+    this._setTimeSystem(this.options.timeContext.getTimeSystem());
+    this.lastBounds = this.options.timeContext.getBounds();
     this._watchBounds();
     this._watchTimeSystem();
+    this._watchTimeModeChange();
 
     this._requestHistoricalTelemetry();
     this._initiateSubscriptionTelemetry();
@@ -101,6 +105,7 @@ export default class TelemetryCollection extends EventEmitter {
 
     this._unwatchBounds();
     this._unwatchTimeSystem();
+    this._unwatchTimeModeChange();
     if (this.unsubscribe) {
       this.unsubscribe();
     }
@@ -121,7 +126,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    let options = { ...this.options };
+    let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
       options
@@ -433,6 +438,10 @@ export default class TelemetryCollection extends EventEmitter {
     this._reset();
   }
 
+  _timeModeChanged() {
+    this._reset();
+  }
+
   /**
    * Reset the telemetry data of the collection, and re-request
    * historical telemetry
@@ -450,19 +459,35 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * adds the _bounds callback to the 'bounds' timeAPI listener
+   * adds the _bounds callback to the 'boundsChanged' timeAPI listener
    * @private
    */
   _watchBounds() {
-    this.options.timeContext.on('bounds', this._bounds, this);
+    this.options.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this._bounds, this);
   }
 
   /**
-   * removes the _bounds callback from the 'bounds' timeAPI listener
+   * removes the _bounds callback from the 'boundsChanged' timeAPI listener
    * @private
    */
   _unwatchBounds() {
-    this.options.timeContext.off('bounds', this._bounds, this);
+    this.options.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this._bounds, this);
+  }
+
+  /**
+   * adds the _timeModeChanged callback to the 'modeChanged' timeAPI listener
+   * @private
+   */
+  _watchTimeModeChange() {
+    this.options.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this._timeModeChanged, this);
+  }
+
+  /**
+   * removes the _timeModeChanged callback from the 'modeChanged' timeAPI listener
+   * @private
+   */
+  _unwatchTimeModeChange() {
+    this.options.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this._timeModeChanged, this);
   }
 
   /**
@@ -470,7 +495,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _watchTimeSystem() {
-    this.options.timeContext.on('timeSystem', this._setTimeSystemAndFetchData, this);
+    this.options.timeContext.on(
+      TIME_CONTEXT_EVENTS.timeSystemChanged,
+      this._setTimeSystemAndFetchData,
+      this
+    );
   }
 
   /**
@@ -478,7 +507,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _unwatchTimeSystem() {
-    this.options.timeContext.off('timeSystem', this._setTimeSystemAndFetchData, this);
+    this.options.timeContext.off(
+      TIME_CONTEXT_EVENTS.timeSystemChanged,
+      this._setTimeSystemAndFetchData,
+      this
+    );
   }
 
   /**

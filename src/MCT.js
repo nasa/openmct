@@ -96,6 +96,7 @@ define([
     };
 
     this.destroy = this.destroy.bind(this);
+    this.defaultClock = 'local';
     [
       /**
        * Tracks current selection state of the application.
@@ -362,6 +363,10 @@ define([
     }
 
     this.element = domElement;
+
+    if (!this.time.getClock()) {
+      this.time.setClock(this.defaultClock);
+    }
 
     this.router.route(/^\/$/, () => {
       this.router.setPath('/browse/');
