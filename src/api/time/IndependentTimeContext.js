@@ -299,6 +299,14 @@ class IndependentTimeContext extends TimeContext {
     return this.mode;
   }
 
+  isRealTime() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.isRealTime(...arguments);
+    } else {
+      return super.isRealTime(...arguments);
+    }
+  }
+
   /**
    * Causes this time context to follow another time context (either the global context, or another upstream time context)
    * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.

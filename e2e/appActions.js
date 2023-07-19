@@ -314,7 +314,7 @@ async function _isInEditMode(page, identifier) {
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
+  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
   await timeConductorMode.click();
   await timeConductorMode.locator('.js-mode-button').click();
   const modeMenu = await page.locator('.c-conductor__mode-menu .c-super-menu__menu');
