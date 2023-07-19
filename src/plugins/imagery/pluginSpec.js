@@ -684,6 +684,10 @@ describe('The Imagery View Layouts', () => {
       return Vue.nextTick();
     });
 
+    afterEach(() => {
+      openmct.time.setClock('local');
+    });
+
     it('on mount should show imagery within the given bounds', (done) => {
       Vue.nextTick(() => {
         const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');

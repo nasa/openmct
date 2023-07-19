@@ -422,7 +422,7 @@ export default {
       });
     },
     filterAndSortEntries() {
-      const filterTime = Date.now();
+      const filterTime = this.openmct.time.now();
       const pageEntries =
         getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
 

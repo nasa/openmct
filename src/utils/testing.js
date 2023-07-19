@@ -45,7 +45,7 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   const start = timeSystemOptions.bounds.start;
   const end = timeSystemOptions.bounds.end;
 
-  openmct.time.timeSystem(timeSystemKey, {
+  openmct.time.setTimeSystem(timeSystemKey, {
     start,
     end
   });

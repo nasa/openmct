@@ -200,7 +200,7 @@ export default {
         template: '<div id="snap-annotation"></div>'
       }).$mount();
 
-      const painterroInstance = new PainterroInstance(annotateVue.$el);
+      const painterroInstance = new PainterroInstance(annotateVue.$el, this.openmct);
       const annotateOverlay = this.openmct.overlays.overlay({
         element: annotateVue.$el,
         size: 'large',
@@ -265,7 +265,6 @@ export default {
         this.embed.bounds.start !== bounds.start || this.embed.bounds.end !== bounds.end;
       const isFixedTimespanMode = !this.openmct.time.clock();
 
-      this.openmct.time.stopClock();
       let message = '';
       if (isTimeBoundChanged) {
         this.openmct.time.bounds({

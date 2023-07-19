@@ -27,7 +27,7 @@ export default class StalenessUtils {
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
     this.lastStalenessResponseTime = 0;
 
-    this.setTimeSystem(this.openmct.time.timeSystem());
+    this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
   }
 

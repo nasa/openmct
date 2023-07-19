@@ -21,17 +21,6 @@
 -->
 <template>
   <div>
-    <div
-      v-if="supportsIndependentTime"
-      class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
-    >
-      <independent-time-conductor
-        :domain-object="domainObject"
-        :object-path="path"
-        @stateChanged="updateIndependentTimeState"
-        @updated="saveTimeOptions"
-      />
-    </div>
     <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
   </div>
 </template>
@@ -40,19 +29,11 @@
 import _ from 'lodash';
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
-import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'scatter-plot.view',
-  'time-strip.view'
-];
 export default {
   components: {
-    IndependentTimeConductor
+    // IndependentTimeConductor
   },
   mixins: [stalenessMixin],
   inject: ['openmct'],
@@ -98,11 +79,6 @@ export default {
     },
     font() {
       return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
-    },
-    supportsIndependentTime() {
-      const viewKey = this.getViewKey();
-
-      return this.domainObject && SupportedViewTypes.includes(viewKey);
     },
     viewClasses() {
       let classes;
@@ -509,17 +485,6 @@ export default {
       if (elemToStyle !== undefined) {
         elemToStyle.dataset.font = newFont;
       }
-    },
-    //Should the domainObject be updated in the Independent Time conductor component itself?
-    updateIndependentTimeState(useIndependentTime) {
-      this.openmct.objects.mutate(
-        this.domainObject,
-        'configuration.useIndependentTime',
-        useIndependentTime
-      );
-    },
-    saveTimeOptions(options) {
-      this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
     }
   }
 };

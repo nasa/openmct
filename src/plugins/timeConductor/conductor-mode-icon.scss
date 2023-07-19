@@ -86,22 +86,17 @@
 }
 
 .c-clock-symbol {
-  $c: $colorBtnBg; //$colorObjHdrIc;
-  $d: 18px;
+  $c: rgba($colorBodyFg, 0.5);
+  $d: 16px;
   height: $d;
   width: $d;
   position: relative;
 
-  &:before {
-    font-family: symbolsfont;
-    color: $c;
-    content: $glyph-icon-brackets;
-    font-size: $d;
-    line-height: normal;
-    display: block;
+  &__outer {
+    // SVG brackets shape
     width: 100%;
     height: 100%;
-    z-index: 1;
+    fill: $c;
   }
 
   // Clock hands
@@ -117,6 +112,7 @@
     left: 50%;
     top: 50%;
     z-index: 2;
+
     &:before {
       background: $c;
       content: '';
@@ -125,18 +121,22 @@
       width: 100%;
       bottom: -1px;
     }
+
     &.hand-little {
       z-index: 2;
       animation-duration: 12s;
       transform: translate(-50%, -50%) rotate(120deg);
+
       &:before {
         height: ceil($handH * 0.6);
       }
     }
+
     &.hand-big {
       z-index: 1;
       animation-duration: 1s;
       transform: translate(-50%, -50%);
+
       &:before {
         height: $handH;
       }
@@ -146,14 +146,35 @@
   // Modes
   .is-realtime-mode &,
   .is-lad-mode & {
-    &:before {
+    $c: $colorTimeRealtimeFgSubtle;
+
+    .c-clock-symbol__outer {
       // Brackets icon
-      color: $colorTime;
+      fill: $c;
     }
+
     div[class*='hand'] {
       animation-name: clock-hands;
+
       &:before {
-        background: $colorTime;
+        background: $c;
+      }
+    }
+  }
+}
+
+// Contexts
+.c-so-view--no-frame {
+  .c-compact-tc:not(.is-expanded) {
+    .c-clock-symbol {
+      $c: $frameControlsColorFg;
+
+      &__outer {
+        fill: $c;
+      }
+
+      div[class*='hand']:before {
+        background: $c;
       }
     }
   }

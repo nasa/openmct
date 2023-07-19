@@ -41,13 +41,13 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
 
 export default {
   inject: ['openmct', 'domainObject'],
   data() {
     return {
-      lastTimestamp: null
+      lastTimestamp: this.openmct.time.now()
     };
   },
   computed: {
@@ -85,12 +85,11 @@ export default {
     }
   },
   mounted() {
-    this.unlisten = ticker.listen(this.tick);
+    this.tick = raf(this.tick);
+    this.openmct.time.on('tick', this.tick);
   },
   beforeDestroy() {
-    if (this.unlisten) {
-      this.unlisten();
-    }
+    this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {

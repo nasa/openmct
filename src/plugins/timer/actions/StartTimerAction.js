@@ -50,7 +50,7 @@ export default class StartTimerAction {
       timestamp = moment(timestamp);
     }
 
-    const now = moment(new Date());
+    const now = moment(new Date(this.openmct.time.now()));
     if (pausedTime) {
       const timeShift = moment.duration(now.diff(pausedTime));
       const shiftedTime = timestamp.add(timeShift);
