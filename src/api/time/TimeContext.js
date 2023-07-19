@@ -657,7 +657,7 @@ class TimeContext extends EventEmitter {
     // TODO: add docs and point to them in warning.
     //  For more information and migration instructions, visit [link to documentation or migration guide].
 
-    // console.warn(message);
+    console.warn(message);
   }
 
   #copy(object) {
