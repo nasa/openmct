@@ -394,7 +394,7 @@ async function setTimeConductorOffset(page, { hours, mins, secs }, end) {
  */
 async function setStartOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
+  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
   await timeConductorMode.click();
   await setTimeConductorOffset(page, offset, false);
 }
@@ -406,7 +406,7 @@ async function setStartOffset(page, offset) {
  */
 async function setEndOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
+  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
   await timeConductorMode.click();
   await setTimeConductorOffset(page, offset, true);
 }
@@ -415,7 +415,7 @@ async function setDateAndTime(page, startDate, endDate, independentTimeConductor
   // Bring up the time conductor popup
   const timeConductorMode = independentTimeConductor
     ? await page.locator('.c-conductor-holder--compact .c-compact-tc')
-    : await page.locator('.c-compact-tc');
+    : await page.locator('.l-shell__time-conductor.c-compact-tc');
   await timeConductorMode.click();
 
   if (startDate) {
