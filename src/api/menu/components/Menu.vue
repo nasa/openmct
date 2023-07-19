@@ -20,17 +20,17 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-menu" :class="options.menuClass">
+  <div class="c-menu" :class="options.menuClass" :style="styleObject">
     <ul v-if="options.actions.length && options.actions[0].length" role="menu">
-      <template v-for="(actionGroups, index) in options.actions">
-        <div :key="index" role="group">
+      <template v-for="(actionGroups, index) in options.actions" :key="index">
+        <div role="group">
           <li
             v-for="action in actionGroups"
             :key="action.name"
             role="menuitem"
             :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
-            :data-testid="action.testId || false"
+            :data-testid="action.testId || null"
             @click="action.onItemClicked"
           >
             {{ action.name }}
@@ -42,8 +42,8 @@
             class="c-menu__section-separator"
           ></div>
           <li v-if="actionGroups.length === 0" :key="index">No actions defined.</li>
-        </div></template
-      >
+        </div>
+      </template>
     </ul>
 
     <ul v-else role="menu">
@@ -53,7 +53,7 @@
         role="menuitem"
         :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
         :title="action.description"
-        :data-testid="action.testId || false"
+        :data-testid="action.testId || null"
         @click="action.onItemClicked"
       >
         {{ action.name }}
@@ -64,7 +64,9 @@
 </template>
 
 <script>
+import popupMenuMixin from '../mixins/popupMenuMixin';
 export default {
+  mixins: [popupMenuMixin],
   inject: ['options']
 };
 </script>

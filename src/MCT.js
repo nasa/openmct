@@ -343,7 +343,17 @@ define([
    * @param {HTMLElement} [domElement] the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
+  MCT.prototype.start = function (
+    domElement = document.body.firstElementChild,
+    isHeadlessMode = false
+  ) {
+    // Create element to mount Layout if it doesn't exist
+    if (domElement === null) {
+      domElement = document.createElement('div');
+      document.body.appendChild(domElement);
+    }
+    domElement.id = 'openmct-app';
+
     if (this.types.get('layout') === undefined) {
       this.install(
         this.plugins.DisplayLayout({
@@ -370,25 +380,30 @@ define([
      */
 
     if (!isHeadlessMode) {
-      const appLayout = new Vue({
+      const appLayout = Vue.createApp({
         components: {
           Layout: Layout.default
         },
         provide: {
-          openmct: this
+          openmct: Vue.markRaw(this)
         },
         template: '<Layout ref="layout"></Layout>'
       });
-      domElement.appendChild(appLayout.$mount().$el);
+      const component = appLayout.mount(domElement);
+      component.$nextTick(() => {
+        this.layout = component.$refs.layout;
+        this.app = appLayout;
+        Browse(this);
+        window.addEventListener('beforeunload', this.destroy);
+        this.router.start();
+        this.emit('start');
+      });
+    } else {
+      window.addEventListener('beforeunload', this.destroy);
 
-      this.layout = appLayout.$refs.layout;
-      Browse(this);
+      this.router.start();
+      this.emit('start');
     }
-
-    window.addEventListener('beforeunload', this.destroy);
-
-    this.router.start();
-    this.emit('start');
   };
 
   MCT.prototype.startHeadless = function () {

@@ -23,7 +23,7 @@
   <time-popup-realtime
     v-if="readOnly === false"
     :offsets="offsets"
-    @focus.native="$event.target.select()"
+    @focus="$event.target.select()"
     @update="timePopUpdate"
     @dismiss="dismiss"
   />
@@ -148,7 +148,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.stopFollowingTime();
   },

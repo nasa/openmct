@@ -21,6 +21,7 @@
 -->
 <template>
   <a
+    ref="root"
     class="c-tree__item__label c-object-label"
     :class="[statusClass]"
     draggable="true"
@@ -97,7 +98,7 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
     this.previewAction = new PreviewAction(this.openmct);
   },
-  destroyed() {
+  unmounted() {
     this.removeStatusListener();
   },
   methods: {

@@ -186,7 +186,7 @@ export default {
     const viewKey = this.getViewKey();
     this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeStatusListener();
 
     if (this.actionCollection) {

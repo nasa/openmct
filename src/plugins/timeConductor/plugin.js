@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import Conductor from './Conductor.vue';
+import { markRaw } from 'vue';
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
 
 function isTruthy(a) {
@@ -101,16 +102,17 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-  openmct.layout.conductorComponent = Object.create({
+  const conductorApp = {
     components: {
       Conductor
     },
-    template: '<conductor></conductor>',
     provide: {
       openmct: openmct,
       configuration: configuration
-    }
-  });
+    },
+    template: '<conductor />'
+  };
+  openmct.layout.conductorComponent = markRaw(conductorApp);
 }
 
 export default function (config) {

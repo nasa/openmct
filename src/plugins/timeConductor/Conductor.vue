@@ -155,7 +155,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
 

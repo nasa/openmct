@@ -62,7 +62,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     let activeClock = this.openmct.time.getClock();
 
     return {
@@ -70,11 +70,11 @@ export default {
       timeSystems: this.getValidTimesystemsForClock(activeClock)
     };
   },
-  mounted: function () {
+  mounted() {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
-  destroyed: function () {
+  unmounted() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },

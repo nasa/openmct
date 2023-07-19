@@ -133,7 +133,7 @@ export default {
       this.openmct.objects.get(this.item.identifier).then(this.setObject);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

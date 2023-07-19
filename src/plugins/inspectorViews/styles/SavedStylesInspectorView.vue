@@ -26,45 +26,52 @@
 
 <script>
 import SavedStylesView from './SavedStylesView.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct', 'stylesManager'],
   data() {
     return {
-      selection: []
+      selection: [],
+      destroy: null
     };
   },
   mounted() {
     this.openmct.selection.on('change', this.updateSelection);
     this.updateSelection(this.openmct.selection.get());
   },
-  destroyed() {
+  unmounted() {
     this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
     updateSelection(selection) {
       if (selection.length > 0 && selection[0].length > 0) {
-        if (this.component) {
-          this.component.$destroy();
-          this.component = undefined;
+        if (this.destroy) {
+          this.destroy();
           this.$el.innerHTML = '';
         }
 
         let viewContainer = document.createElement('div');
         this.$el.append(viewContainer);
-        this.component = new Vue({
-          el: viewContainer,
-          components: {
-            SavedStylesView
+        const { destroy } = mount(
+          {
+            el: viewContainer,
+            components: {
+              SavedStylesView
+            },
+            provide: {
+              openmct: this.openmct,
+              selection: selection,
+              stylesManager: this.stylesManager
+            },
+            template: '<saved-styles-view />'
           },
-          provide: {
-            openmct: this.openmct,
-            selection: selection,
-            stylesManager: this.stylesManager
-          },
-          template: '<saved-styles-view />'
-        });
+          {
+            app: this.openmct.app,
+            element: viewContainer
+          }
+        );
+        this.destroy = destroy;
       }
     }
   }

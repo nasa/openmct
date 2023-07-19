@@ -69,11 +69,17 @@ export default {
     }
   },
   watch: {
-    selection() {
-      this.updateSelection();
+    selection: {
+      handler() {
+        this.updateSelection();
+      },
+      deep: true
     },
-    visibleTabs() {
-      this.selectDefaultTabIfSelectedNotVisible();
+    visibleTabs: {
+      handler() {
+        this.selectDefaultTabIfSelectedNotVisible();
+      },
+      deep: true
     }
   },
   methods: {

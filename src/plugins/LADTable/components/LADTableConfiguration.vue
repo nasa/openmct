@@ -87,7 +87,7 @@ export default {
 
     this.composition.load();
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.destroy();
     this.openmct.editor.off('isEditing', this.toggleEdit);
 
@@ -126,7 +126,7 @@ export default {
       ladTable.domainObject = domainObject;
       ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-      this.$set(this.ladTelemetryObjects, ladTable.key, []);
+      this.ladTelemetryObjects[ladTable.key] = [];
       this.ladTableObjects.push(ladTable);
 
       const composition = this.openmct.composition.get(ladTable.domainObject);
@@ -165,7 +165,7 @@ export default {
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
         telemetryObjects.push(telemetryObject);
 
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
         this.shouldShowUnitsCheckbox();
       };
@@ -179,7 +179,7 @@ export default {
         );
 
         telemetryObjects.splice(index, 1);
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
         this.shouldShowUnitsCheckbox();
       };
@@ -220,7 +220,7 @@ export default {
       }
 
       if (showUnitsCheckbox && this.headers.units === undefined) {
-        this.$set(this.headers, 'units', 'Units');
+        this.headers.units = 'Units';
       }
 
       if (!showUnitsCheckbox && this.headers?.units) {

@@ -40,8 +40,11 @@ export default {
     }
   },
   watch: {
-    selection() {
-      this.updateSelectionViews();
+    selection: {
+      handler() {
+        this.updateSelectionViews();
+      },
+      deep: true
     },
     selectedTab() {
       this.clearAndShowViewsForTab();
@@ -64,12 +67,12 @@ export default {
       }
     },
     showViewsForTab() {
-      this.visibleViews = this.selectedViews.filter((view) => view.key === this.selectedTab.key);
+      this.visibleViews = this.selectedTab
+        ? this.selectedViews.filter((view) => view.key === this.selectedTab.key)
+        : [];
 
       this.visibleViews.forEach((visibleView) => {
-        let viewContainer = document.createElement('div');
-        this.$el.append(viewContainer);
-        visibleView.show(viewContainer);
+        visibleView.show(this.$el);
       });
     },
     clearAndShowViewsForTab() {

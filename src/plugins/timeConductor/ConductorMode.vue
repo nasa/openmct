@@ -58,7 +58,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     const mode = this.openmct.time.getMode();
 
     return {
@@ -73,7 +73,7 @@ export default {
       }
     }
   },
-  mounted: function () {
+  mounted() {
     this.loadModes();
   },
   methods: {

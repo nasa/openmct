@@ -165,15 +165,21 @@ export default {
     }
   },
   watch: {
-    pages(newPages) {
-      if (!newPages.length) {
-        this.addPage();
-      }
+    pages: {
+      handler(newPages, oldPages) {
+        if (!newPages.length) {
+          this.addPage();
+        }
+      },
+      deep: true
     },
-    sections(newSections) {
-      if (!newSections.length) {
-        this.addSection();
-      }
+    sections: {
+      handler(newSections, oldSections) {
+        if (!newSections.length) {
+          this.addSection();
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -203,23 +209,21 @@ export default {
 
       this.$emit('selectSection', newSection.id);
     },
-    addNewPage(page) {
-      const pages = this.pages.map((p) => {
-        p.isSelected = false;
-
-        return p;
+    addNewPage(newPage) {
+      this.pages.forEach((page) => {
+        page.isSelected = false;
       });
 
-      return pages.concat(page);
+      this.pages.push(newPage);
+      return this.pages;
     },
-    addNewSection(section) {
-      const sections = this.sections.map((s) => {
-        s.isSelected = false;
-
-        return s;
+    addNewSection(newSection) {
+      this.sections.forEach((section) => {
+        section.isSelected = false;
       });
 
-      return sections.concat(section);
+      this.sections.push(newSection);
+      return this.sections;
     },
     createNewPage() {
       const pageTitle = this.pageTitle;

@@ -62,7 +62,7 @@ export default {
     this.setDataTimeContext();
     this.loadTelemetry();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unsubscribe) {
       this.unsubscribe();
       delete this.unsubscribe;

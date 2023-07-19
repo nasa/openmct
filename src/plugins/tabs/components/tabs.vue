@@ -166,10 +166,10 @@ export default {
     document.addEventListener('dragstart', this.dragstart);
     document.addEventListener('dragend', this.dragend);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.persistCurrentTabIndex(this.currentTabIndex);
   },
-  destroyed() {
+  unmounted() {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.onReorder);
@@ -318,7 +318,7 @@ export default {
       let oldTabs = this.tabsList.slice();
 
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.tabsList, reorderEvent.newIndex, oldTabs[reorderEvent.oldIndex]);
+        this.tabsList[reorderEvent.newIndex] = oldTabs[reorderEvent.oldIndex];
       });
     },
     onDrop(e) {
@@ -365,7 +365,7 @@ export default {
       });
       let tab = this.tabsList[tabPos];
 
-      this.$set(tab, 'status', status);
+      tab.status = status;
     },
     isTabLoaded(tab) {
       if (this.internalDomainObject.keep_alive) {

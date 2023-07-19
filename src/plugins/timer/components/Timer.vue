@@ -50,27 +50,24 @@ const momentDurationFormatSetup = require('moment-duration-format');
 momentDurationFormatSetup(moment);
 
 export default {
-  inject: ['openmct', 'currentView', 'objectPath'],
+  inject: ['openmct', 'currentView'],
   props: {
     domainObject: {
       type: Object,
+      required: true
+    },
+    objectPath: {
+      type: Array,
       required: true
     }
   },
   data() {
     return {
-      lastTimestamp: undefined
+      configuration: this.domainObject.configuration,
+      lastTimestamp: null
     };
   },
   computed: {
-    configuration() {
-      let configuration;
-      if (this.domainObject && this.domainObject.configuration) {
-        configuration = this.domainObject.configuration;
-      }
-
-      return configuration;
-    },
     relativeTimestamp() {
       let relativeTimestamp;
       if (this.configuration && this.configuration.timestamp) {
@@ -182,6 +179,13 @@ export default {
     }
   },
   mounted() {
+    this.unobserve = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      (configuration) => {
+        this.configuration = configuration;
+      }
+    );
     this.$nextTick(() => {
       if (!this.configuration?.timerState) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
@@ -198,7 +202,10 @@ export default {
       this.showOrHideAvailableActions();
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    if (this.unobserve) {
+      this.unobserve();
+    }
     this.openmct.time.off('tick', this.handleTick);
   },
   methods: {

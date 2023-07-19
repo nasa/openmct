@@ -184,7 +184,7 @@
           :selected="focusedImageIndex === index && isPaused"
           :real-time="!isFixed"
           :viewable-area="focusedImageIndex === index ? viewableArea : null"
-          @click.native="thumbnailClicked(index)"
+          @click="thumbnailClicked(index)"
         />
       </div>
 
@@ -271,6 +271,8 @@ export default {
       autoScroll: true,
       thumbnailClick: THUMBNAIL_CLICKED,
       isPaused: false,
+      isFixed: false,
+      canTrackDuration: false,
       refreshCSS: false,
       focusedImageIndex: undefined,
       focusedImageRelatedTelemetry: {},
@@ -285,7 +287,6 @@ export default {
       viewHeight: 0,
       lockCompass: true,
       resizingWindow: false,
-      timeContext: undefined,
       zoomFactor: ZOOM_SCALE_DEFAULT,
       filters: {
         brightness: 100,
@@ -373,13 +374,6 @@ export default {
       let age = this.numericDuration;
 
       return age < cutoff && !this.refreshCSS;
-    },
-    canTrackDuration() {
-      if (this.timeContext) {
-        return this.timeContext.isRealTime();
-      } else {
-        return this.openmct.time.isRealTime();
-      }
     },
     isNextDisabled() {
       let disabled = false;
@@ -527,13 +521,6 @@ export default {
 
       return isFresh;
     },
-    isFixed() {
-      if (this.timeContext) {
-        return this.timeContext.isFixed();
-      } else {
-        return this.openmct.time.isFixed();
-      }
-    },
     isSelectable() {
       return true;
     },
@@ -662,7 +649,6 @@ export default {
       this.isPaused = true;
     }
 
-    this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
     // related telemetry keys
@@ -714,7 +700,7 @@ export default {
 
     this.openmct.selection.on('change', this.updateSelection);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.abortController.abort();
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
@@ -768,14 +754,33 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       //listen
-      this.timeContext.on('timeSystem', this.trackDuration);
-      this.timeContext.on('clock', this.trackDuration);
+      this.timeContext.on('timeSystem', this.timeContextChanged);
+      this.timeContext.on('clock', this.timeContextChanged);
+      this.timeContextChanged();
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('timeSystem', this.trackDuration);
-        this.timeContext.off('clock', this.trackDuration);
+        this.timeContext.off('timeSystem', this.timeContextChanged);
+        this.timeContext.off('clock', this.timeContextChanged);
       }
+    },
+    timeContextChanged() {
+      this.setIsFixed();
+      this.setCanTrackDuration();
+      this.trackDuration();
+    },
+    setIsFixed() {
+      this.isFixed = this.timeContext ? this.timeContext.isFixed() : this.openmct.time.isFixed();
+    },
+    setCanTrackDuration() {
+      let isRealTime;
+      if (this.timeContext) {
+        isRealTime = this.timeContext.isRealTime();
+      } else {
+        isRealTime = this.openmct.time.isRealTime();
+      }
+
+      this.canTrackDuration = isRealTime && this.timeSystem.isUTCBased;
     },
     updateSelection(selection) {
       const selectionType = selection?.[0]?.[0]?.context?.type;
@@ -797,10 +802,9 @@ export default {
         this.currentView
       );
       const visibleActions = actionCollection.getVisibleActions();
-      const viewLargeAction =
-        visibleActions && visibleActions.find((action) => action.key === 'large.view');
+      const viewLargeAction = visibleActions?.find((action) => action.key === 'large.view');
 
-      if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
+      if (viewLargeAction?.appliesTo(this.objectPath, this.currentView)) {
         viewLargeAction.invoke(this.objectPath, this.currentView);
       }
     },
@@ -892,7 +896,7 @@ export default {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const timeForAnnotation = foundAnnotation.targets[targetId].time;
         if (!this.imageryAnnotations[timeForAnnotation]) {
-          this.$set(this.imageryAnnotations, timeForAnnotation, []);
+          this.imageryAnnotations[timeForAnnotation] = [];
         }
 
         const annotationExtant = this.imageryAnnotations[timeForAnnotation].some(
@@ -956,10 +960,10 @@ export default {
           let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
           if (!valuesOnTelemetry) {
-            this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
+            this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
           }
 
-          this.$set(this.focusedImageRelatedTelemetry, key, value);
+          this.focusedImageRelatedTelemetry[key] = value;
         }
       }
 
@@ -968,7 +972,7 @@ export default {
         const transformations = this.relatedTelemetry[key];
 
         if (transformations !== undefined) {
-          this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
+          this.imageHistory[this.focusedImageIndex][key] = transformations;
         }
       });
     },
@@ -982,7 +986,7 @@ export default {
         if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
           this.relatedTelemetry[key].subscribe((datum) => {
             let valueKey = this.relatedTelemetry[key].realtime.valueKey;
-            this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+            this.latestRelatedTelemetry[key] = datum[valueKey];
           });
         }
       });
@@ -1080,7 +1084,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.focusedImageTimestamp = undefined;
+      this.$emit('update:focusedImageTimestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;

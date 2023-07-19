@@ -151,7 +151,7 @@ export default {
 
     this.setViewFromClock(this.openmct.time.clock());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unlisten) {
       this.unlisten();
     }

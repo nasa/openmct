@@ -112,7 +112,7 @@ export default {
       const removePage = {
         cssClass: 'icon-trash',
         name: this.removeActionString,
-        callback: this.getRemoveDialog.bind(this)
+        onItemClicked: this.getRemoveDialog.bind(this)
       };
 
       this.popupMenuItems = [removePage];

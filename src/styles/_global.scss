@@ -152,6 +152,10 @@ html {
   width: 100%;
 }
 
+#openmct-app {
+  @include abs();
+}
+
 body {
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;

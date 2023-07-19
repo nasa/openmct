@@ -180,7 +180,7 @@ export default {
 
     this.loaded = true;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -260,7 +260,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.plotSeries, index, series);
+      this.plotSeries[index] = series;
       this.setYAxisLabel(yAxisId);
     },
 

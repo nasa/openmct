@@ -48,7 +48,6 @@
         class="c-recentobjects-listitem__object-path"
         :read-only="false"
         :domain-object="domainObject"
-        :show-original-path="false"
         :object-path="objectPath"
       />
     </div>
@@ -102,7 +101,7 @@ export default {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
-  destroyed() {
+  unmounted() {
     this.previewAction.off('isVisible', this.togglePreviewState);
   },
   methods: {

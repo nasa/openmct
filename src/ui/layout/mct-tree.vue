@@ -119,6 +119,7 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
+import { markRaw } from 'vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -248,11 +249,17 @@ export default {
     mainTreeHeight() {
       this.updateVisibleItems();
     },
-    focusedItems() {
-      this.updateVisibleItems();
+    focusedItems: {
+      handler(val, oldVal) {
+        this.updateVisibleItems();
+      },
+      deep: true
     },
-    openTreeItems() {
-      this.setSavedOpenItems();
+    openTreeItems: {
+      handler(val, oldVal) {
+        this.setSavedOpenItems();
+      },
+      deep: true
     }
   },
   async mounted() {
@@ -278,7 +285,7 @@ export default {
     this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
     this.scrollEndEvent = _.debounce(this.scrollEndEvent, 100);
   },
-  destroyed() {
+  unmounted() {
     if (this.treeResizeObserver) {
       this.treeResizeObserver.disconnect();
     }
@@ -287,7 +294,7 @@ export default {
     this.destroyMutables();
   },
   methods: {
-    async initialize() {
+    initialize() {
       this.observers = {};
       this.mutables = {};
       this.isLoading = true;
@@ -295,7 +302,8 @@ export default {
       this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
       this.treeResizeObserver.observe(this.$el);
 
-      await this.calculateHeights();
+      // need to wait for the first tick to get the height of the tree
+      this.$nextTick().then(this.calculateHeights);
 
       return;
     },
@@ -392,12 +400,12 @@ export default {
         this.abortItemLoad(path);
       }
 
-      this.$set(this.treeItemLoading, path, new AbortController());
+      this.treeItemLoading[path] = new AbortController();
 
       return this.treeItemLoading[path].signal;
     },
     endItemLoad(path) {
-      this.$set(this.treeItemLoading, path, undefined);
+      this.treeItemLoading[path] = undefined;
       delete this.treeItemLoading[path];
     },
     abortItemLoad(path) {
@@ -590,7 +598,7 @@ export default {
         }
 
         this.compositionCollections[navigationPath] = {};
-        this.compositionCollections[navigationPath].collection = collection;
+        this.compositionCollections[navigationPath].collection = markRaw(collection);
         this.compositionCollections[navigationPath].addHandler =
           this.compositionAddHandler(navigationPath);
         this.compositionCollections[navigationPath].removeHandler =

@@ -21,6 +21,7 @@
  *****************************************************************************/
 import objectUtils from '../objects/object-utils';
 import CompositionProvider from './CompositionProvider';
+import { toRaw } from 'vue';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
@@ -167,7 +168,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    */
   add(parent, childId) {
     if (!this.includes(parent, childId)) {
-      const composition = structuredClone(parent.composition);
+      const composition = structuredClone(toRaw(parent.composition));
       composition.push(childId);
       this.publicAPI.objects.mutate(parent, 'composition', composition);
     }

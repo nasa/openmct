@@ -108,13 +108,16 @@ export default {
     }
   },
   watch: {
-    highlights(newHighlights) {
-      const highlightedObject = newHighlights.find(
-        (highlight) => highlight.series.keyString === this.seriesObject.keyString
-      );
-      if (newHighlights.length === 0 || highlightedObject) {
-        this.initialize(highlightedObject);
-      }
+    highlights: {
+      handler(newHighlights) {
+        const highlightedObject = newHighlights.find(
+          (highlight) => highlight.series.keyString === this.seriesObject.keyString
+        );
+        if (newHighlights.length === 0 || highlightedObject) {
+          this.initialize(highlightedObject);
+        }
+      },
+      deep: true
     }
   },
   mounted() {
@@ -141,7 +144,7 @@ export default {
     this.subscribeToStaleness(this.seriesObject.domainObject);
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {

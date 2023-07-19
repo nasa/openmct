@@ -266,7 +266,8 @@ export default {
       gridLines: this.initGridLines,
       yAxes: [],
       hiddenYAxisIds: [],
-      yAxisListWithRange: []
+      yAxisListWithRange: [],
+      config: {}
     };
   },
   computed: {
@@ -395,13 +396,14 @@ export default {
     this.openmct.objectViews.on('clearData', this.clearData);
     this.$on('loadingComplete', this.loadAnnotations);
     this.openmct.selection.on('change', this.updateSelection);
-    this.setTimeContext();
-
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
-    this.loaded = true;
+    this.$nextTick(() => {
+      this.setTimeContext();
+      this.loaded = true;
+    });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -558,7 +560,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.seriesModels, index, series);
+      this.seriesModels[index] = series;
       this.listenTo(
         series,
         'change:xKey',

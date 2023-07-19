@@ -21,18 +21,16 @@
 -->
 
 <template>
-  <div class="l-angular-ov-wrapper">
-    <div class="u-contents">
-      <div class="c-clock l-time-display u-style-receiver js-style-receiver">
-        <div class="c-clock__timezone">
-          {{ timeZoneAbbr }}
-        </div>
-        <div class="c-clock__value">
-          {{ timeTextValue }}
-        </div>
-        <div class="c-clock__ampm">
-          {{ timeAmPm }}
-        </div>
+  <div class="u-contents">
+    <div class="c-clock l-time-display u-style-receiver js-style-receiver">
+      <div class="c-clock__timezone">
+        {{ timeZoneAbbr }}
+      </div>
+      <div class="c-clock__value">
+        {{ timeTextValue }}
+      </div>
+      <div class="c-clock__ampm">
+        {{ timeAmPm }}
       </div>
     </div>
   </div>
@@ -47,13 +45,11 @@ export default {
   inject: ['openmct', 'domainObject'],
   data() {
     return {
+      configuration: this.domainObject.configuration,
       lastTimestamp: this.openmct.time.now()
     };
   },
   computed: {
-    configuration() {
-      return this.domainObject.configuration;
-    },
     baseFormat() {
       return this.configuration.baseFormat;
     },
@@ -85,10 +81,21 @@ export default {
     }
   },
   mounted() {
+    this.unobserve = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      (configuration) => {
+        this.configuration = configuration;
+      }
+    );
     this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    if (this.unobserve) {
+      this.unobserve();
+    }
+
     this.openmct.time.off('tick', this.tick);
   },
   methods: {

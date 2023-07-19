@@ -73,7 +73,6 @@
     <multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
       <pane
         class="l-shell__pane-tree"
-        style="width: 300px"
         handle="after"
         label="Browse"
         hide-param="hideTree"
@@ -81,18 +80,18 @@
         @start-resizing="onStartResizing"
         @end-resizing="onEndResizing"
       >
-        <button
-          slot="controls"
-          class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
-          title="Collapse all tree items"
-          @click="handleTreeReset"
-        ></button>
-        <button
-          slot="controls"
-          class="c-icon-button l-shell__sync-tree-button icon-target"
-          title="Show selected item in tree"
-          @click="handleSyncTreeNavigation"
-        ></button>
+        <template #controls>
+          <button
+            class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+            title="Collapse all tree items"
+            @click="handleTreeReset"
+          ></button>
+          <button
+            class="c-icon-button l-shell__sync-tree-button icon-target"
+            title="Show selected item in tree"
+            @click="handleSyncTreeNavigation"
+          ></button>
+        </template>
         <multipane type="vertical">
           <pane>
             <mct-tree
@@ -109,14 +108,15 @@
               @openAndScrollTo="openAndScrollTo($event)"
               @setClearButtonDisabled="setClearButtonDisabled"
             />
-            <button
-              slot="controls"
-              class="c-icon-button icon-clear-data"
-              aria-label="Clear Recently Viewed"
-              title="Clear Recently Viewed"
-              :disabled="disableClearButton"
-              @click="handleClearRecentObjects"
-            ></button>
+            <template #controls>
+              <button
+                class="c-icon-button icon-clear-data"
+                aria-label="Clear Recently Viewed"
+                title="Clear Recently Viewed"
+                :disabled="disableClearButton"
+                @click="handleClearRecentObjects"
+              ></button>
+            </template>
           </pane>
         </multipane>
       </pane>

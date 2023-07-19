@@ -29,6 +29,7 @@
       'real-time': realTime
     }"
     :title="image.formattedTime"
+    @click="handleClick"
   >
     <a class="c-thumb__image-wrapper" href="" :download="image.imageDownloadName" @click.prevent>
       <img
@@ -144,6 +145,9 @@ export default {
     }
   },
   methods: {
+    handleClick(event) {
+      this.$emit('click', event);
+    },
     imageLoadCompleted() {
       if (!this.$refs.img) {
         return;

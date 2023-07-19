@@ -41,7 +41,7 @@ test.describe('Form Validation Behavior', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     await page.click('button:has-text("Create")');
-    await page.click(':nth-match(:text("Folder"), 2)');
+    await page.getByRole('menuitem', { name: ' Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
     await page.click('text=Properties Title Notes >> input[type="text"]');

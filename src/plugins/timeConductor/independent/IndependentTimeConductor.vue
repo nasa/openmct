@@ -195,7 +195,7 @@ export default {
   mounted() {
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopFollowingTimeContext();
     this.destroyIndependentTime();
   },

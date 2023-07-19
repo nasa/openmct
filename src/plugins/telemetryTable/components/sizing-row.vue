@@ -51,7 +51,7 @@ export default {
       this.pollForRowHeight();
     }
   },
-  destroyed() {
+  unmounted() {
     this.clearPoll();
   },
   methods: {

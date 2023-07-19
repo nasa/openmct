@@ -76,7 +76,7 @@ export default {
       timeOptions: this.domainObject.configuration.timeOptions
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
@@ -129,7 +129,7 @@ export default {
     reorder(reorderPlan) {
       let oldItems = this.items.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+        this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
     },
     updateContentHeight() {

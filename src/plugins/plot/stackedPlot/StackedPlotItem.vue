@@ -23,7 +23,7 @@
   <div :aria-label="`Stacked Plot Item ${childObject.name}`"></div>
 </template>
 <script>
-import Vue from 'vue';
+import mount from 'utils/mount';
 import conditionalStylesMixin from './mixins/objectStyles-mixin';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import StalenessUtils from '@/utils/staleness';
@@ -112,9 +112,12 @@ export default {
     hideLegend(newHideLegend) {
       this.updateComponentProp('hideLegend', newHideLegend);
     },
-    staleObjects() {
-      this.isStale = this.staleObjects.length > 0;
-      this.updateComponentProp('isStale', this.isStale);
+    staleObjects: {
+      handler() {
+        this.isStale = this.staleObjects.length > 0;
+        this.updateComponentProp('isStale', this.isStale);
+      },
+      deep: true
     }
   },
   mounted() {
@@ -123,15 +126,15 @@ export default {
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
 
     if (this.removeSelectable) {
       this.removeSelectable();
     }
 
-    if (this.component) {
-      this.component.$destroy();
+    if (this._destroy) {
+      this._destroy();
     }
 
     this.destroyStalenessListeners();
@@ -159,8 +162,8 @@ export default {
 
       this.destroyStalenessListeners();
 
-      if (this.component) {
-        this.component.$destroy();
+      if (this._destroy) {
+        this._destroy();
         this.component = null;
         this.$el.innerHTML = '';
       }
@@ -180,8 +183,6 @@ export default {
 
       const getProps = this.getProps;
       const isMissing = openmct.objects.isMissing(object);
-      let viewContainer = document.createElement('div');
-      this.$el.append(viewContainer);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object, (isStale) => {
@@ -196,35 +197,35 @@ export default {
         this.composition.load();
       }
 
-      this.component = new Vue({
-        el: viewContainer,
-        components: {
-          Plot
-        },
-        provide: {
-          openmct,
-          domainObject: object,
-          path
-        },
-        data() {
-          return {
-            ...getProps(),
-            onYTickWidthChange,
-            onLockHighlightPointUpdated,
-            onHighlightsUpdated,
-            onConfigLoaded,
-            onCursorGuideChange,
-            onGridLinesChange,
-            isMissing,
-            loading: false
-          };
-        },
-        methods: {
-          loadingUpdated(loaded) {
-            this.loading = loaded;
-          }
-        },
-        template: `
+      const { vNode } = mount(
+        {
+          components: {
+            Plot
+          },
+          provide: {
+            openmct,
+            domainObject: object,
+            path
+          },
+          data() {
+            return {
+              ...getProps(),
+              onYTickWidthChange,
+              onLockHighlightPointUpdated,
+              onHighlightsUpdated,
+              onConfigLoaded,
+              onCursorGuideChange,
+              onGridLinesChange,
+              isMissing,
+              loading: false
+            };
+          },
+          methods: {
+            loadingUpdated(loaded) {
+              this.loading = loaded;
+            }
+          },
+          template: `
                   <Plot ref="plotComponent" v-if="!isMissing"
                       :class="{'is-stale': isStale}"
                       :grid-lines="gridLines"
@@ -241,7 +242,13 @@ export default {
                       @plotYTickWidth="onYTickWidthChange"
                       @cursorGuide="onCursorGuideChange"
                       @gridLines="onGridLinesChange"/>`
-      });
+        },
+        {
+          app: this.openmct.app,
+          element: this.$el
+        }
+      );
+      this.component = vNode.componentInstance;
 
       if (this.isEditing) {
         this.setSelection();

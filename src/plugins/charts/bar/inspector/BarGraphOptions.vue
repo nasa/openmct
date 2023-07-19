@@ -167,7 +167,7 @@ export default {
     this.registerListeners();
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
     this.stopListening();
   },
@@ -192,7 +192,7 @@ export default {
       }
     },
     addSeries(series, index) {
-      this.$set(this.plotSeries, this.plotSeries.length, series);
+      this.plotSeries.push(series);
       this.setupOptions();
     },
     removeSeries(seriesIdentifier) {

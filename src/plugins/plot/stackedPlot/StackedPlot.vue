@@ -145,7 +145,7 @@ export default {
       };
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   mounted() {
@@ -217,10 +217,10 @@ export default {
     addChild(child) {
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
-      this.$set(this.tickWidthMap, id, {
+      this.tickWidthMap[id] = {
         leftTickWidth: 0,
         rightTickWidth: 0
-      });
+      };
 
       this.compositionObjects.push({
         object: child,
@@ -270,7 +270,7 @@ export default {
       let oldComposition = this.compositionObjects.slice();
 
       reorderPlan.forEach((reorder) => {
-        this.$set(this.compositionObjects, reorder.newIndex, oldComposition[reorder.oldIndex]);
+        this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
       });
     },
 
@@ -315,7 +315,7 @@ export default {
         return;
       }
 
-      this.$set(this.tickWidthMap, plotId, data);
+      this.tickWidthMap[plotId] = data;
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;

@@ -64,7 +64,7 @@ export default {
     this.registerListeners();
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -102,7 +102,7 @@ export default {
       }
     },
     addSeries(series, index) {
-      this.$set(this.plotSeries, this.plotSeries.length, series);
+      this.plotSeries.push(series);
       this.setAxesLabels();
     },
     removeSeries(seriesKey) {

@@ -50,7 +50,7 @@ export default {
     this.openmct.time.on('tick', this.tick);
     this.tick(this.timeTextValue);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off('tick', this.tick);
   },
   methods: {

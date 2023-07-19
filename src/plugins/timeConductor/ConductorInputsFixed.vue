@@ -24,7 +24,7 @@
     v-if="readOnly === false"
     :input-bounds="bounds"
     :input-time-system="timeSystem"
-    @focus.native="$event.target.select()"
+    @focus="$event.target.select()"
     @update="setBoundsFromView"
     @dismiss="dismiss"
   />
@@ -124,7 +124,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.stopFollowingTimeContext();
   },

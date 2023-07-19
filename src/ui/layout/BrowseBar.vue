@@ -141,6 +141,7 @@ import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { toRaw } from 'vue';
 
 const SupportedViewTypes = [
   'plot-stacked',
@@ -202,7 +203,7 @@ export default {
       });
     },
     hasParent() {
-      return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return toRaw(this.domainObject) !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
     },
     parentUrl() {
       const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -268,7 +269,6 @@ export default {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
@@ -282,7 +282,7 @@ export default {
       this.isEditing = isEditing;
     });
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.mutationObserver) {
       this.mutationObserver();
     }

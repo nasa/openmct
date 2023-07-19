@@ -24,7 +24,7 @@ define(['./FiltersInspectorViewProvider'], function (FiltersInspectorViewProvide
   return function plugin(supportedObjectTypesArray) {
     return function install(openmct) {
       openmct.inspectorViews.addProvider(
-        new FiltersInspectorViewProvider(openmct, supportedObjectTypesArray)
+        new FiltersInspectorViewProvider.default(openmct, supportedObjectTypesArray)
       );
     };
   };

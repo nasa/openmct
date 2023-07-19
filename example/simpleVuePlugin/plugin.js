@@ -24,7 +24,7 @@ function SimpleVuePlugin() {
             container.appendChild(vm.$mount().$el);
           },
           destroy: function (container) {
-            vm.$destroy();
+            //vm.$destroy();
           }
         };
       }

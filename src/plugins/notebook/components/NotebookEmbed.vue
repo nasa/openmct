@@ -54,12 +54,10 @@ import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import objectPathToUrl from '@/tools/url';
+import mount from 'utils/mount';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
-
-import Vue from 'vue';
 
 export default {
   mixins: [tooltipHelpers],
@@ -196,13 +194,18 @@ export default {
       }
     },
     annotateSnapshot() {
-      const annotateVue = new Vue({
-        template: '<div id="snap-annotation"></div>'
-      }).$mount();
+      const { vNode, destroy } = mount(
+        {
+          template: '<div id="snap-annotation"></div>'
+        },
+        {
+          app: this.openmct.app
+        }
+      );
 
-      const painterroInstance = new PainterroInstance(annotateVue.$el, this.openmct);
+      const painterroInstance = new PainterroInstance(vNode.el, this.openmct);
       const annotateOverlay = this.openmct.overlays.overlay({
-        element: annotateVue.$el,
+        element: vNode.el,
         size: 'large',
         dismissable: false,
         buttons: [
@@ -226,9 +229,7 @@ export default {
             }
           }
         ],
-        onDestroy: () => {
-          annotateVue.$destroy(true);
-        }
+        onDestroy: destroy
       });
 
       painterroInstance.intialize();
@@ -328,26 +329,32 @@ export default {
     openSnapshotOverlay(src) {
       const self = this;
 
-      this.snapshot = new Vue({
-        data: () => {
-          return {
-            createdOn: this.createdOn,
-            name: this.embed.name,
-            cssClass: this.embed.cssClass,
-            src
-          };
+      const { vNode, destroy } = mount(
+        {
+          data: () => {
+            return {
+              createdOn: this.createdOn,
+              name: this.embed.name,
+              cssClass: this.embed.cssClass,
+              src
+            };
+          },
+          methods: {
+            formatTime: self.formatTime,
+            annotateSnapshot: self.annotateSnapshot,
+            exportImage: self.exportImage
+          },
+          template: SnapshotTemplate
         },
-        methods: {
-          formatTime: self.formatTime,
-          annotateSnapshot: self.annotateSnapshot,
-          exportImage: self.exportImage
-        },
-        template: SnapshotTemplate
-      }).$mount();
+        {
+          app: this.openmct.app
+        }
+      );
 
+      this.snapshot = vNode.componentInstance;
       this.snapshotOverlay = this.openmct.overlays.overlay({
-        element: this.snapshot.$el,
-        onDestroy: () => this.snapshot.$destroy(true),
+        element: vNode.el,
+        onDestroy: destroy,
         size: 'large',
         autoHide: false,
         dismissable: true,
