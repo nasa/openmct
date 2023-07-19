@@ -318,7 +318,6 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
   await timeConductorMode.click();
   await timeConductorMode.locator('.js-mode-button').click();
   const modeMenu = await page.locator('.c-conductor__mode-menu .c-super-menu__menu');
-  console.log(modeMenu);
   // Switch time conductor mode
   if (isFixedTimespan) {
     await modeMenu.getByRole('menuitem').first().click();
