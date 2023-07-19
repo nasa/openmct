@@ -32,6 +32,7 @@
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
       :title="`Start bounds: ${formattedBounds.start}`"
+      aria-label="Start bounds"
     >
       {{ formattedBounds.start }}
     </div>

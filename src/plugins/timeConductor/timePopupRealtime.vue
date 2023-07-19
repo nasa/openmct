@@ -19,6 +19,7 @@
         min="0"
         max="23"
         title="Enter 0 - 23"
+        aria-label="Start offset hours"
         @change="validate()"
         @keyup="validate()"
         @focusin="selectAll($event)"
@@ -37,6 +38,7 @@
         max="59"
         title="Enter 0 - 59"
         step="1"
+        aria-label="Start offset minutes"
         @change="validate()"
         @keyup="validate()"
         @focusin="selectAll($event)"
@@ -55,6 +57,7 @@
         max="59"
         title="Enter 0 - 59"
         step="1"
+        aria-label="Start offset seconds"
         @change="validate()"
         @keyup="validate()"
         @focusin="selectAll($event)"
@@ -75,6 +78,7 @@
         min="0"
         max="23"
         title="Enter 0 - 23"
+        aria-label="End offset hours"
         @change="validate()"
         @keyup="validate()"
         @focusin="selectAll($event)"
@@ -111,6 +115,7 @@
         max="59"
         title="Enter 0 - 59"
         step="1"
+        aria-label="End offset seconds"
         @change="validate()"
         @keyup="validate()"
         @focusin="selectAll($event)"
@@ -123,9 +128,10 @@
       <button
         class="c-button c-button--major icon-check"
         :disabled="isDisabled"
+        aria-label="Submit time offsets"
         @click.prevent="submit"
       ></button>
-      <button class="c-button icon-x" @click.prevent="hide"></button>
+      <button class="c-button icon-x" @click.prevent="hide" aria-label="Discard time offsets"></button>
     </div>
   </form>
 </template>

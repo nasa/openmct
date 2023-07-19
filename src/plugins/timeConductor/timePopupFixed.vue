@@ -15,6 +15,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
+        aria-label="Start date"
         @change="validateAllBounds('startDate')"
       />
       <date-picker
@@ -34,6 +35,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
+        aria-label="Start time"
         @change="validateAllBounds('startDate')"
       />
     </div>
@@ -48,6 +50,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
+        aria-label="End date"
         @change="validateAllBounds('endDate')"
       />
       <date-picker
@@ -67,6 +70,7 @@
         type="text"
         autocorrect="off"
         spellcheck="false"
+        aria-label="End time"
         @change="validateAllBounds('endDate')"
       />
     </div>
@@ -75,9 +79,10 @@
       <button
         class="c-button c-button--major icon-check"
         :disabled="isDisabled"
+        aria-label="Submit time bounds"
         @click.prevent="submit"
       ></button>
-      <button class="c-button icon-x" @click.prevent="hide"></button>
+      <button class="c-button icon-x" @click.prevent="hide" aria-label="Discard time bounds"></button>
     </div>
   </form>
 </template>
