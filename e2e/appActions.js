@@ -317,12 +317,13 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
   const timeConductorMode = await page.locator('.c-compact-tc');
   await timeConductorMode.click();
   await timeConductorMode.locator('.js-mode-button').click();
-
+  const modeMenu = await page.locator('.c-conductor__mode-menu .c-super-menu__menu');
+  console.log(modeMenu);
   // Switch time conductor mode
   if (isFixedTimespan) {
-    await page.locator('data-testid=conductor-modeOption-fixed').click();
+    await modeMenu.getByRole('menuitem').first().click();
   } else {
-    await page.locator('data-testid=conductor-modeOption-realtime').click();
+    await modeMenu.getByRole('menuitem').nth(1).click();
   }
 }
 
@@ -353,21 +354,34 @@ async function setRealTimeMode(page) {
  * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
+ * @param {Boolean} end is it the end offset?
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { hours, mins, secs }) {
-  // await offsetButton.click();
+async function setTimeConductorOffset(page, { hours, mins, secs }, end) {
+  if (!end) {
+    if (hours) {
+      await page.locator('.pr-time-input__hrs').first().fill(hours);
+    }
 
-  if (hours) {
-    await page.fill('.pr-time-input__hrs', hours);
-  }
+    if (mins) {
+      await page.locator('.pr-time-input__mins').first().fill(mins);
+    }
 
-  if (mins) {
-    await page.fill('.pr-time-input__mins', mins);
-  }
+    if (secs) {
+      await page.locator('.pr-time-input__secs').first().fill(secs);
+    }
+  } else {
+    if (hours) {
+      await page.locator('.pr-time-input__hrs').nth(1).fill(hours);
+    }
 
-  if (secs) {
-    await page.fill('.pr-time-input__secs', secs);
+    if (mins) {
+      await page.locator('.pr-time-input__mins').nth(1).fill(mins);
+    }
+
+    if (secs) {
+      await page.locator('.pr-time-input__secs').nth(1).fill(secs);
+    }
   }
 
   // Click the check button
@@ -383,7 +397,7 @@ async function setStartOffset(page, offset) {
   // Click 'mode' button
   const timeConductorMode = await page.locator('.c-compact-tc');
   await timeConductorMode.click();
-  await setTimeConductorOffset(page, offset);
+  await setTimeConductorOffset(page, offset, false);
 }
 
 /**
@@ -395,7 +409,37 @@ async function setEndOffset(page, offset) {
   // Click 'mode' button
   const timeConductorMode = await page.locator('.c-compact-tc');
   await timeConductorMode.click();
-  await setTimeConductorOffset(page, offset);
+  await setTimeConductorOffset(page, offset, true);
+}
+
+async function setDateAndTime(page, startDate, endDate, independentTimeConductor) {
+  // Bring up the time conductor popup
+  const timeConductorMode = independentTimeConductor
+    ? await page.locator('.c-conductor-holder--compact .c-compact-tc')
+    : await page.locator('.c-compact-tc');
+  await timeConductorMode.click();
+
+  if (startDate) {
+    const startDateLocator = page.locator('input[type="text"]').first();
+    const startTimeLocator = page.locator('input[type="text"]').nth(1);
+
+    // Click and fill start time
+    await startDateLocator.click();
+    await startDateLocator.fill(startDate.toString().substring(0, 10));
+    await startTimeLocator.click();
+    await startTimeLocator.fill(startDate.toString().substring(11, 19));
+  }
+
+  if (endDate) {
+    const endDateLocator = page.locator('input[type="text"]').nth(2);
+    const endTimeLocator = page.locator('input[type="text"]').nth(3);
+
+    // Click and fill end time
+    await endDateLocator.click();
+    await endDateLocator.fill(endDate.toString().substring(0, 10));
+    await endTimeLocator.click();
+    await endTimeLocator.fill(endDate.toString().substring(11, 19));
+  }
 }
 
 /**
@@ -509,6 +553,7 @@ module.exports = {
   setRealTimeMode,
   setStartOffset,
   setEndOffset,
+  setDateAndTime,
   selectInspectorTab,
   waitForPlotsToRender
 };

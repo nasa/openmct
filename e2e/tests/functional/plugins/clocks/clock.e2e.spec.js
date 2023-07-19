@@ -41,7 +41,7 @@ test.describe('Clock Generator CRUD Operations', () => {
     await page.click('button:has-text("Create")');
 
     // Click Clock
-    await page.click('text=Clock');
+    await page.getByRole('menuitem').first().click();
 
     // Click .icon-arrow-down
     await page.locator('.icon-arrow-down').click();
