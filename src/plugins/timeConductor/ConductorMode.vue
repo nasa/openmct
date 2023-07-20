@@ -32,7 +32,7 @@
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__setting-value__elem" :title="`Mode: ${selectedMode.name}`">
+  <div role="button" v-else class="c-compact-tc__setting-value__elem" aria-label="Time Conductor Mode">
     {{ selectedMode.name }}
   </div>
 </template>
