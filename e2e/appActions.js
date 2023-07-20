@@ -356,30 +356,33 @@ async function setRealTimeMode(page) {
  * @param {OffsetValues} offset
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { startHours, startMins, startSecs, endHours, endMins, endSecs }) {
-    if (startHours) {
-      await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
-    }
+async function setTimeConductorOffset(
+  page,
+  { startHours, startMins, startSecs, endHours, endMins, endSecs }
+) {
+  if (startHours) {
+    await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
+  }
 
-    if (startMins) {
-      await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
-    }
+  if (startMins) {
+    await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
+  }
 
-    if (startSecs) {
-      await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
-    }
+  if (startSecs) {
+    await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
+  }
 
-    if (endHours) {
-      await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
-    }
+  if (endHours) {
+    await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
+  }
 
-    if (endMins) {
-      await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
-    }
+  if (endMins) {
+    await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
+  }
 
-    if (endSecs) {
-      await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
-    }
+  if (endSecs) {
+    await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
+  }
 
   // Click the check button
   await page.locator('.pr-time-input--buttons .icon-check').click();
@@ -410,8 +413,8 @@ async function setEndOffset(page, offset) {
 async function setTimeConductorBounds(page, startDate, endDate, isIndepdendentTime) {
   // Bring up the time conductor popup
   const timeConductorMode = isIndepdendentTime
-    ? await page.getByRole('button', { name: 'Independent Time Conductor Mode' })
-    : await page.getByRole('button', { name: 'Time Conductor Mode', exact: true });
+    ? await page.locator('.c-conductor-holder--compact .c-compact-tc')
+    : await page.locator('.l-shell__time-conductor.c-compact-tc');
   await timeConductorMode.click();
 
   if (startDate) {
