@@ -32,7 +32,11 @@ const {
   waitForPlotsToRender
 } = require('../../../../appActions');
 
-test.describe('Plot Tagging', () => {
+test.describe.fixme('Plot Tagging', () => {
+  test.info().annotations.push({
+    type: 'issue',
+    description: 'https://github.com/nasa/openmct/issues/6822'
+  });
   /**
    * Given a canvas and a set of points, tags the points on the canvas.
    * @param {import('@playwright/test').Page} page
