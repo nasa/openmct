@@ -26,7 +26,7 @@
         class="c-button--menu js-mode-button"
         :class="[buttonCssClass, selectedMode.cssClass]"
         @click.prevent.stop="showModesMenu"
-        aria-label="Time Conductor Mode"
+        aria-label="Time Conductor Mode Menu"
       >
         <span class="c-button__label">{{ selectedMode.name }}</span>
       </button>

@@ -25,7 +25,7 @@
       <button
         class="c-button--menu js-clock-button"
         :class="[buttonCssClass, selectedClock.cssClass]"
-        aria-label="Time Conductor Clock"
+        aria-label="Time Conductor Clock Menu"
         @click.prevent.stop="showClocksMenu"
       >
         <span class="c-button__label">{{ selectedClock.name }}</span>
