@@ -26,7 +26,7 @@ const {
   setRealTimeMode,
   setStartOffset,
   setEndOffset,
-  setDateAndTime
+  setTimeConductorBounds
 } = require('../../../../appActions');
 
 test.describe('Time conductor operations', () => {
@@ -41,11 +41,11 @@ test.describe('Time conductor operations', () => {
     let endDate = 'xxxx-01-01 02:00:00.000Z';
     endDate = year + endDate.substring(4);
 
-    await setDateAndTime(page, startDate, endDate);
+    await setTimeConductorBounds(page, startDate, endDate);
 
     // invalid start date
     startDate = year + 1 + startDate.substring(4);
-    await setDateAndTime(page, startDate);
+    await setTimeConductorBounds(page, startDate);
 
     // Bring up the time conductor popup
     const timeConductorMode = await page.locator('.c-compact-tc');
@@ -62,11 +62,11 @@ test.describe('Time conductor operations', () => {
 
     // fix to valid start date
     startDate = year - 1 + startDate.substring(4);
-    await setDateAndTime(page, startDate);
+    await setTimeConductorBounds(page, startDate);
 
     // invalid end date
     endDate = year - 2 + endDate.substring(4);
-    await setDateAndTime(page, undefined, endDate);
+    await setTimeConductorBounds(page, undefined, endDate);
 
     await startDateLocator.click();
 
@@ -82,11 +82,11 @@ test.describe('Time conductor operations', () => {
 test.describe('Time conductor input fields real-time mode', () => {
   test('validate input fields in real-time mode', async ({ page }) => {
     const startOffset = {
-      secs: '23'
+      startSecs: '23'
     };
 
     const endOffset = {
-      secs: '31'
+      endSecs: '31'
     };
 
     // Go to baseURL
@@ -116,12 +116,12 @@ test.describe('Time conductor input fields real-time mode', () => {
     page
   }) => {
     const startOffset = {
-      mins: '30',
-      secs: '23'
+      startMins: '30',
+      startSecs: '23'
     };
 
     const endOffset = {
-      secs: '01'
+      endSecs: '01'
     };
 
     // Convert offsets to milliseconds
@@ -198,11 +198,11 @@ test.describe('Time Conductor History', () => {
     // with startBound at 2022-01-01 00:00:00.000Z
     // and endBound at 2022-01-01 00:00:00.200Z
     await page.goto(
-      './#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1640995200000&tc.endBound=1640995200200&tc.timeSystem=utc&hideInspector=true',
-      { waitUntil: 'networkidle' }
+      './#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1640995200000&tc.endBound=1640995200200&tc.timeSystem=utc&hideInspector=true'
     );
-    await page.locator("[aria-label='Time Conductor History']").hover({ trial: true });
-    await page.locator("[aria-label='Time Conductor History']").click();
+    await page.getByRole('button', { name: 'Time Conductor Settings' }).click();
+    await page.getByRole('button', { name: 'Time Conductor History' }).hover({ trial: true });
+    await page.getByRole('button', { name: 'Time Conductor History' }).click();
 
     // Validate history item format
     const historyItem = page.locator('text="2022-01-01 00:00:00 + 200ms"');

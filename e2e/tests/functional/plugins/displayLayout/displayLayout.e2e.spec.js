@@ -26,7 +26,7 @@ const {
   setStartOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setDateAndTime
+  setTimeConductorBounds
 } = require('../../../../appActions');
 
 test.describe('Display Layout', () => {
@@ -249,7 +249,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setDateAndTime(page, startDate, endDate, true);
+    await setTimeConductorBounds(page, startDate, endDate, true);
     await page.locator('.pr-time-input--buttons .icon-check').click();
 
     // check image date

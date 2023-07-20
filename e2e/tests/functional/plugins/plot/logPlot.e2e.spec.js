@@ -26,7 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { selectInspectorTab, setDateAndTime } = require('../../../../appActions');
+const { selectInspectorTab, setTimeConductorBounds } = require('../../../../appActions');
 
 test.describe('Log plot tests', () => {
   test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
@@ -90,7 +90,7 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   const start = '2022-03-29 22:00:00.000Z';
   const end = '2022-03-29 22:00:30.000Z';
 
-  await setDateAndTime(page, start, end);
+  await setTimeConductorBounds(page, start, end);
 
   // create overlay plot
 

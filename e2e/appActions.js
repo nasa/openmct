@@ -314,15 +314,13 @@ async function _isInEditMode(page, identifier) {
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
-  await timeConductorMode.click();
-  await timeConductorMode.locator('.js-mode-button').click();
-  const modeMenu = await page.locator('.c-conductor__mode-menu .c-super-menu__menu');
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+  await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
   // Switch time conductor mode
   if (isFixedTimespan) {
-    await modeMenu.getByRole('menuitem').first().click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
   } else {
-    await modeMenu.getByRole('menuitem').nth(1).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
   }
 }
 
@@ -344,44 +342,44 @@ async function setRealTimeMode(page) {
 
 /**
  * @typedef {Object} OffsetValues
- * @property {string | undefined} hours
- * @property {string | undefined} mins
- * @property {string | undefined} secs
+ * @property {string | undefined} startHours
+ * @property {string | undefined} startMins
+ * @property {string | undefined} startSecs
+ * @property {string | undefined} endHours
+ * @property {string | undefined} endMins
+ * @property {string | undefined} endSecs
  */
 
 /**
  * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
- * @param {Boolean} end is it the end offset?
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { hours, mins, secs }, end) {
-  if (!end) {
-    if (hours) {
-      await page.locator('.pr-time-input__hrs').first().fill(hours);
+async function setTimeConductorOffset(page, { startHours, startMins, startSecs, endHours, endMins, endSecs }) {
+    if (startHours) {
+      await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
     }
 
-    if (mins) {
-      await page.locator('.pr-time-input__mins').first().fill(mins);
+    if (startMins) {
+      await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
     }
 
-    if (secs) {
-      await page.locator('.pr-time-input__secs').first().fill(secs);
-    }
-  } else {
-    if (hours) {
-      await page.locator('.pr-time-input__hrs').nth(1).fill(hours);
+    if (startSecs) {
+      await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
     }
 
-    if (mins) {
-      await page.locator('.pr-time-input__mins').nth(1).fill(mins);
+    if (endHours) {
+      await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
     }
 
-    if (secs) {
-      await page.locator('.pr-time-input__secs').nth(1).fill(secs);
+    if (endMins) {
+      await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
     }
-  }
+
+    if (endSecs) {
+      await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
+    }
 
   // Click the check button
   await page.locator('.pr-time-input--buttons .icon-check').click();
@@ -394,8 +392,7 @@ async function setTimeConductorOffset(page, { hours, mins, secs }, end) {
  */
 async function setStartOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
-  await timeConductorMode.click();
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await setTimeConductorOffset(page, offset, false);
 }
 
@@ -406,38 +403,27 @@ async function setStartOffset(page, offset) {
  */
 async function setEndOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.l-shell__time-conductor.c-compact-tc');
-  await timeConductorMode.click();
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await setTimeConductorOffset(page, offset, true);
 }
 
-async function setDateAndTime(page, startDate, endDate, independentTimeConductor) {
+async function setTimeConductorBounds(page, startDate, endDate, isIndepdendentTime) {
   // Bring up the time conductor popup
-  const timeConductorMode = independentTimeConductor
-    ? await page.locator('.c-conductor-holder--compact .c-compact-tc')
-    : await page.locator('.l-shell__time-conductor.c-compact-tc');
+  const timeConductorMode = isIndepdendentTime
+    ? await page.getByRole('button', { name: 'Independent Time Conductor Mode' })
+    : await page.getByRole('button', { name: 'Time Conductor Mode', exact: true });
   await timeConductorMode.click();
 
   if (startDate) {
-    const startDateLocator = page.locator('input[type="text"]').first();
-    const startTimeLocator = page.locator('input[type="text"]').nth(1);
-
-    // Click and fill start time
-    await startDateLocator.click();
-    await startDateLocator.fill(startDate.toString().substring(0, 10));
-    await startTimeLocator.click();
-    await startTimeLocator.fill(startDate.toString().substring(11, 19));
+    // Fill start time
+    page.getByRole('textbox', { name: 'Start date' }).fill(startDate.toString().substring(0, 10));
+    page.getByRole('textbox', { name: 'Start time' }).fill(startDate.toString().substring(11, 19));
   }
 
   if (endDate) {
-    const endDateLocator = page.locator('input[type="text"]').nth(2);
-    const endTimeLocator = page.locator('input[type="text"]').nth(3);
-
-    // Click and fill end time
-    await endDateLocator.click();
-    await endDateLocator.fill(endDate.toString().substring(0, 10));
-    await endTimeLocator.click();
-    await endTimeLocator.fill(endDate.toString().substring(11, 19));
+    // Fill end time
+    page.getByRole('textbox', { name: 'End date' }).fill(endDate.toString().substring(0, 10));
+    page.getByRole('textbox', { name: 'End time' }).fill(endDate.toString().substring(11, 19));
   }
 }
 
@@ -552,7 +538,7 @@ module.exports = {
   setRealTimeMode,
   setStartOffset,
   setEndOffset,
-  setDateAndTime,
+  setTimeConductorBounds,
   selectInspectorTab,
   waitForPlotsToRender
 };
