@@ -26,7 +26,7 @@ const {
   setStartOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setTimeConductorBounds
+  setIndependentTimeConductorBounds
 } = require('../../../../appActions');
 
 test.describe('Display Layout', () => {
@@ -244,13 +244,9 @@ test.describe('Display Layout', () => {
     await page.locator('button[title="Save"]').click();
     await page.locator('text=Save and Finish Editing').click();
 
-    // flip on independent time conductor
-    await page.getByRole('switch').click();
-
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setTimeConductorBounds(page, startDate, endDate, true);
-    await page.locator('.pr-time-input--buttons .icon-check').click();
+    await setIndependentTimeConductorBounds(page, startDate, endDate);
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
