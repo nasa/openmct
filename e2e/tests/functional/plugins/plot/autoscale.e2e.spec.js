@@ -24,7 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { selectInspectorTab } = require('../../../../appActions');
+const { selectInspectorTab, setTimeConductorBounds } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
   viewport: {
@@ -131,12 +131,7 @@ async function setTimeRange(
   // Set a specific time range for consistency, otherwise it will change
   // on every test to a range based on the current time.
 
-  const timeInputs = page.locator('input.c-input--datetime');
-  await timeInputs.first().click();
-  await timeInputs.first().fill(start);
-
-  await timeInputs.nth(1).click();
-  await timeInputs.nth(1).fill(end);
+  await setTimeConductorBounds(page, start, end);
 }
 
 /**
