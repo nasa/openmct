@@ -24,14 +24,15 @@
   <div ref="plan" class="c-plan c-timeline-holder">
     <template v-if="viewBounds && !options.compact">
       <swim-lane>
-        <template slot="label">{{ timeSystem.name }}</template>
-        <timeline-axis
-          slot="object"
-          :bounds="viewBounds"
-          :time-system="timeSystem"
-          :content-height="height"
-          :rendering-engine="renderingEngine"
-        />
+        <template #label>{{ timeSystem.name }}</template>
+        <template #object>
+          <timeline-axis
+            :bounds="viewBounds"
+            :time-system="timeSystem"
+            :content-height="height"
+            :rendering-engine="renderingEngine"
+          />
+        </template>
       </swim-lane>
     </template>
     <div class="c-plan__contents u-contents">
@@ -153,7 +154,7 @@ export default {
     );
     this.loadComposition();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.resizeTimer);
     this.stopFollowingTimeContext();
     if (this.unlisten) {

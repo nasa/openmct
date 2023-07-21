@@ -36,7 +36,7 @@
             :key="openmct.objects.makeKeyString(objectResult.identifier)"
             :result="objectResult"
             @preview-changed="previewChanged"
-            @click.native="selectedResult"
+            @click="selectedResult"
           />
         </div>
         <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
@@ -45,7 +45,7 @@
             v-for="annotationResult in annotationResults"
             :key="makeKeyForAnnotationResult(annotationResult)"
             :result="annotationResult"
-            @click.native="selectedResult"
+            @click="selectedResult"
           />
         </div>
         <div v-if="searchLoading" class="c-gsearch__result-pane-msg">

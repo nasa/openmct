@@ -35,7 +35,11 @@
       :y-axis="config.yAxis"
       @seriesUpdated="updateSeriesConfigForObject"
     />
-    <ul v-if="isStackedPlotObject || !isStackedPlotNestedObject" class="l-inspector-part">
+    <ul
+      v-if="isStackedPlotObject || !isStackedPlotNestedObject"
+      class="l-inspector-part"
+      aria-label="Legend Properties"
+    >
       <h2 class="--first" title="Legend options">Legend</h2>
       <legend-form class="grid-properties" :legend="config.legend" />
     </ul>
@@ -107,7 +111,7 @@ export default {
 
     this.loaded = true;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -145,7 +149,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.incrementAxisUsageCount(yAxisId);
-      this.$set(this.plotSeries, index, series);
+      this.plotSeries[index] = series;
       this.setYAxisLabel(yAxisId);
 
       if (this.isStackedPlotObject) {

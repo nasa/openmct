@@ -77,7 +77,7 @@ export default {
       this.reloadTelemetry
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopFollowingTimeContext();
 
     if (!this.composition) {

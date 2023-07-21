@@ -24,6 +24,7 @@ import CouchDocument from './CouchDocument';
 import CouchObjectQueue from './CouchObjectQueue';
 import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from './CouchStatusIndicator';
 import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
+import _ from 'lodash';
 
 const REV = '_rev';
 const ID = '_id';
@@ -42,6 +43,8 @@ class CouchObjectProvider {
     this.batchIds = [];
     this.onEventMessage = this.onEventMessage.bind(this);
     this.onEventError = this.onEventError.bind(this);
+    this.flushPersistenceQueue = _.debounce(this.flushPersistenceQueue.bind(this));
+    this.persistenceQueue = [];
   }
 
   /**
@@ -220,10 +223,16 @@ class CouchObjectProvider {
 
       return json;
     } catch (error) {
+      // abort errors are expected
+      if (error.name === 'AbortError') {
+        return;
+      }
+
       // Network error, CouchDB unreachable.
       if (response === null) {
         this.indicator.setIndicatorToState(DISCONNECTED);
         console.error(error.message);
+
         throw new Error(`CouchDB Error - No response"`);
       } else {
         if (body?.model && isNotebookOrAnnotationType(body.model)) {
@@ -668,9 +677,12 @@ class CouchObjectProvider {
     if (!this.objectQueue[key].pending) {
       this.objectQueue[key].pending = true;
       const queued = this.objectQueue[key].dequeue();
-      let document = new CouchDocument(key, queued.model);
-      document.metadata.created = Date.now();
-      this.request(key, 'PUT', document)
+      let couchDocument = new CouchDocument(key, queued.model);
+      couchDocument.metadata.created = Date.now();
+      this.#enqueueForPersistence({
+        key,
+        document: couchDocument
+      })
         .then((response) => {
           this.#checkResponse(response, queued.intermediateResponse, key);
         })
@@ -681,6 +693,42 @@ class CouchObjectProvider {
     }
 
     return intermediateResponse.promise;
+  }
+
+  #enqueueForPersistence({ key, document }) {
+    return new Promise((resolve, reject) => {
+      this.persistenceQueue.push({
+        key,
+        document,
+        resolve,
+        reject
+      });
+      this.flushPersistenceQueue();
+    });
+  }
+
+  async flushPersistenceQueue() {
+    if (this.persistenceQueue.length > 1) {
+      const batch = {
+        docs: this.persistenceQueue.map((queued) => queued.document)
+      };
+      const response = await this.request('_bulk_docs', 'POST', batch);
+      response.forEach((responseMetadatum) => {
+        const queued = this.persistenceQueue.find(
+          (queuedMetadatum) => queuedMetadatum.key === responseMetadatum.id
+        );
+        if (responseMetadatum.ok) {
+          queued.resolve(responseMetadatum);
+        } else {
+          queued.reject(responseMetadatum);
+        }
+      });
+    } else if (this.persistenceQueue.length === 1) {
+      const { key, document, resolve, reject } = this.persistenceQueue[0];
+
+      this.request(key, 'PUT', document).then(resolve).catch(reject);
+    }
+    this.persistenceQueue = [];
   }
 
   /**

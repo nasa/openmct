@@ -159,6 +159,9 @@ class InMemorySearchProvider {
     return pendingQuery.promise;
   }
 
+  /**
+   * @private
+   */
   #localQueryFallBack({ queryId, searchType, query, maxResults }) {
     if (searchType === this.searchTypes.OBJECTS) {
       return this.localSearchForObjects(queryId, query, maxResults);

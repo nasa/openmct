@@ -1,3 +1,5 @@
+import { toRaw } from 'vue';
+
 export default {
   inject: ['openmct'],
   props: {
@@ -15,23 +17,29 @@ export default {
   },
   mounted() {
     //TODO: touch support
-    this.$el.addEventListener('contextmenu', this.showContextMenu);
+    this.$nextTick(() => {
+      this.$refs.root.addEventListener('contextmenu', this.showContextMenu);
+    });
 
     function updateObject(oldObject, newObject) {
-      Object.assign(oldObject, newObject);
+      const rawNewObject = toRaw(newObject);
+      const rawOldObject = toRaw(oldObject);
+      Object.assign(rawOldObject, rawNewObject);
     }
 
     this.objectPath.forEach((object) => {
       if (object) {
-        this.$once(
-          'hook:destroyed',
-          this.openmct.objects.observe(object, '*', updateObject.bind(this, object))
+        const unobserve = this.openmct.objects.observe(
+          object,
+          '*',
+          updateObject.bind(this, object)
         );
+        this.$once('hook:unmounted', unobserve);
       }
     });
   },
-  destroyed() {
-    this.$el.removeEventListener('contextMenu', this.showContextMenu);
+  beforeUnmount() {
+    this.$refs.root.removeEventListener('contextMenu', this.showContextMenu);
   },
   methods: {
     showContextMenu(event) {

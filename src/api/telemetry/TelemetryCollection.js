@@ -23,6 +23,23 @@
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants';
+
+/**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {import('../time/TimeContext').TimeContext} TimeContext
+ */
+
+/**
+ * @typedef {import('./TelemetryAPI').TelemetryRequestOptions} TelemetryRequestOptions
+ */
+
+/**
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ */
 
 /** Class representing a Telemetry Collection. */
 
@@ -31,10 +48,10 @@ export default class TelemetryCollection extends EventEmitter {
    * Creates a Telemetry Collection
    *
    * @param  {OpenMCT} openmct - Open MCT
-   * @param  {module:openmct.DomainObject} domainObject - Domain Object to use for telemetry collection
-   * @param  {object} options - Any options passed in for request/subscribe
+   * @param  {DomainObject} domainObject - Domain Object to use for telemetry collection
+   * @param  {TelemetryRequestOptions} options - Any options passed in for request/subscribe
    */
-  constructor(openmct, domainObject, options) {
+  constructor(openmct, domainObject, options = {}) {
     super();
 
     this.loaded = false;
@@ -44,8 +61,11 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-    this.unsubscribe = undefined;
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
+    }
     this.options = options;
+    this.unsubscribe = undefined;
     this.pageState = undefined;
     this.lastBounds = undefined;
     this.requestAbort = undefined;
@@ -62,11 +82,11 @@ export default class TelemetryCollection extends EventEmitter {
       this._error(LOADED_ERROR);
     }
 
-    this._setTimeSystem(this.openmct.time.timeSystem());
-    this.lastBounds = this.openmct.time.bounds();
-
+    this._setTimeSystem(this.options.timeContext.getTimeSystem());
+    this.lastBounds = this.options.timeContext.getBounds();
     this._watchBounds();
     this._watchTimeSystem();
+    this._watchTimeModeChange();
 
     this._requestHistoricalTelemetry();
     this._initiateSubscriptionTelemetry();
@@ -85,6 +105,7 @@ export default class TelemetryCollection extends EventEmitter {
 
     this._unwatchBounds();
     this._unwatchTimeSystem();
+    this._unwatchTimeModeChange();
     if (this.unsubscribe) {
       this.unsubscribe();
     }
@@ -105,11 +126,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    let options = { ...this.options };
-    let historicalProvider;
-
-    this.openmct.telemetry.standardizeRequestOptions(options);
-    historicalProvider = this.openmct.telemetry.findRequestProvider(this.domainObject, options);
+    let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
+    const historicalProvider = this.openmct.telemetry.findRequestProvider(
+      this.domainObject,
+      options
+    );
 
     if (!historicalProvider) {
       return;
@@ -417,6 +438,10 @@ export default class TelemetryCollection extends EventEmitter {
     this._reset();
   }
 
+  _timeModeChanged() {
+    this._reset();
+  }
+
   /**
    * Reset the telemetry data of the collection, and re-request
    * historical telemetry
@@ -434,19 +459,35 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * adds the _bounds callback to the 'bounds' timeAPI listener
+   * adds the _bounds callback to the 'boundsChanged' timeAPI listener
    * @private
    */
   _watchBounds() {
-    this.openmct.time.on('bounds', this._bounds, this);
+    this.options.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this._bounds, this);
   }
 
   /**
-   * removes the _bounds callback from the 'bounds' timeAPI listener
+   * removes the _bounds callback from the 'boundsChanged' timeAPI listener
    * @private
    */
   _unwatchBounds() {
-    this.openmct.time.off('bounds', this._bounds, this);
+    this.options.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this._bounds, this);
+  }
+
+  /**
+   * adds the _timeModeChanged callback to the 'modeChanged' timeAPI listener
+   * @private
+   */
+  _watchTimeModeChange() {
+    this.options.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this._timeModeChanged, this);
+  }
+
+  /**
+   * removes the _timeModeChanged callback from the 'modeChanged' timeAPI listener
+   * @private
+   */
+  _unwatchTimeModeChange() {
+    this.options.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this._timeModeChanged, this);
   }
 
   /**
@@ -454,7 +495,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _watchTimeSystem() {
-    this.openmct.time.on('timeSystem', this._setTimeSystemAndFetchData, this);
+    this.options.timeContext.on(
+      TIME_CONTEXT_EVENTS.timeSystemChanged,
+      this._setTimeSystemAndFetchData,
+      this
+    );
   }
 
   /**
@@ -462,7 +507,11 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _unwatchTimeSystem() {
-    this.openmct.time.off('timeSystem', this._setTimeSystemAndFetchData, this);
+    this.options.timeContext.off(
+      TIME_CONTEXT_EVENTS.timeSystemChanged,
+      this._setTimeSystemAndFetchData,
+      this
+    );
   }
 
   /**

@@ -1,9 +1,8 @@
 import ProgressDialogComponent from './components/ProgressDialogComponent.vue';
 import Overlay from './Overlay';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 let component;
-
 class ProgressDialog extends Overlay {
   constructor({
     progressPerc,
@@ -15,7 +14,7 @@ class ProgressDialog extends Overlay {
     timestamp,
     ...options
   }) {
-    component = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         ProgressDialogComponent: ProgressDialogComponent
       },
@@ -35,17 +34,18 @@ class ProgressDialog extends Overlay {
         };
       },
       template: '<progress-dialog-component :model="model"></progress-dialog-component>'
-    }).$mount();
+    });
+    component = vNode.componentInstance;
 
     super({
-      element: component.$el,
+      element: vNode.el,
       size: 'fit',
       dismissable: false,
       ...options
     });
 
     this.once('destroy', () => {
-      component.$destroy();
+      destroy();
     });
   }
 

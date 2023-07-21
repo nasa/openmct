@@ -26,7 +26,11 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  selectInspectorTab,
+  waitForPlotsToRender
+} = require('../../../../appActions');
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -227,4 +231,45 @@ test.describe('Stacked Plot', () => {
       page.locator('[aria-label="Plot Series Properties"] .c-object-label')
     ).toContainText(swgC.name);
   });
+
+  test('the legend toggles between aggregate and per child', async ({ page }) => {
+    await page.goto(stackedPlot.url);
+
+    // Go into edit mode
+    await page.click('button[title="Edit"]');
+
+    await selectInspectorTab(page, 'Config');
+
+    let legendProperties = await page.locator('[aria-label="Legend Properties"]');
+    await legendProperties.locator('[title="Display legends per sub plot."]~div input').uncheck();
+
+    await assertAggregateLegendIsVisible(page);
+
+    // Save (exit edit mode)
+    await page.locator('button[title="Save"]').click();
+    await page.locator('li[title="Save and Finish Editing"]').click();
+
+    await assertAggregateLegendIsVisible(page);
+
+    await page.reload();
+
+    await assertAggregateLegendIsVisible(page);
+  });
 });
+
+/**
+ * Asserts that aggregate stacked plot legend is visible
+ * @param {import('@playwright/test').Page} page
+ */
+async function assertAggregateLegendIsVisible(page) {
+  // Wait for plot series data to load
+  await waitForPlotsToRender(page);
+  // Wait for plot legend to be shown
+  await page.waitForSelector('.js-stacked-plot-legend', { state: 'attached' });
+  // There should be 3 legend items
+  expect(
+    await page
+      .locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
+      .count()
+  ).toBe(3);
+}

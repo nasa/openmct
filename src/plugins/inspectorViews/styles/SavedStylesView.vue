@@ -60,7 +60,7 @@ export default {
 
     this.loadStyles();
   },
-  destroyed() {
+  unmounted() {
     this.openmct.editor.off('isEditing', this.setIsEditing);
     this.stylesManager.off('stylesUpdated', this.setStyles);
     this.stylesManager.off('limitReached', this.showLimitReachedDialog);

@@ -30,12 +30,15 @@
   >
     <div
       v-if="domainObject"
+      ref="telemetryViewWrapper"
       class="c-telemetry-view u-style-receiver"
       :class="[itemClasses]"
       :style="styleObject"
       :data-font-size="item.fontSize"
       :data-font="item.font"
       @contextmenu.prevent="showContextMenu"
+      @mouseover.ctrl="showToolTip"
+      @mouseleave="hideToolTip"
     >
       <div class="is-status__indicator" :title="`This item is ${status}`"></div>
       <div v-if="showLabel" class="c-telemetry-view__label">
@@ -69,6 +72,7 @@ import {
   getDefaultNotebook,
   getNotebookSectionAndPage
 } from '@/plugins/notebook/utils/notebook-storage.js';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -97,7 +101,7 @@ export default {
   components: {
     LayoutFrame
   },
-  mixins: [conditionalStylesMixin, stalenessMixin],
+  mixins: [conditionalStylesMixin, stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'objectPath', 'currentView'],
   props: {
     item: {
@@ -234,7 +238,7 @@ export default {
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeStatusListener();
 
     if (this.removeSelectable) {
@@ -379,6 +383,10 @@ export default {
     },
     setStatus(status) {
       this.status = status;
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'telemetryViewWrapper');
     }
   }
 };

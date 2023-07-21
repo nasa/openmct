@@ -83,6 +83,7 @@ $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: $colorBodyFg;
 $colorAHov: $colorKey;
 $filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location items
+$filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2);
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
@@ -144,13 +145,31 @@ $colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
-$colorTime: #618cff;
-$colorTimeBg: $colorTime;
-$colorTimeFg: $colorBodyBg;
-$colorTimeHov: pushBack($colorTime, 5%);
-$colorTimeSubtle: pushBack($colorTime, 20%);
+$colorTimeCommonFg: #eee;
+$colorTimeFixed: #59554c;
+$colorTimeFixedBg: $colorTimeFixed;
+$colorTimeFixedFg: #eee;
+$colorTimeFixedFgSubtle: #b2aa98;
+$colorTimeFixedHov: pullForward($colorTimeFixed, 10%);
+$colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+$colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
+$colorTimeFixedBtnBgMajor: #a09375;
+$colorTimeFixedBtnFgMajor: #fff;
+
+$colorTimeRealtime: #445890;
+$colorTimeRealtimeBg: $colorTimeRealtime;
+$colorTimeRealtimeFg: #eee;
+$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
+$colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+$colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
+$colorTimeRealtimeBtnBgMajor: #588ffa;
+$colorTimeRealtimeBtnFgMajor: #fff;
+
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
-$colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(0.8);
 $timeConductorActiveBg: $colorKey;
 $timeConductorActivePanBg: #a0cde1;

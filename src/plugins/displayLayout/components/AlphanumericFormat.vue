@@ -61,7 +61,7 @@ export default {
     this.openmct.selection.on('change', this.handleSelection);
     this.handleSelection(this.openmct.selection.get());
   },
-  destroyed() {
+  unmounted() {
     this.openmct.editor.off('isEditing', this.toggleEdit);
     this.openmct.selection.off('change', this.handleSelection);
   },

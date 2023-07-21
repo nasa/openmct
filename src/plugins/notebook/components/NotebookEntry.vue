@@ -37,7 +37,10 @@
           <span class="c-ne__created-date">{{ createdOnDate }}</span>
           <span class="c-ne__created-time">{{ createdOnTime }}</span>
           <span v-if="entry.createdBy" class="c-ne__creator">
-            <span class="icon-person"></span> {{ entry.createdBy }}
+            <span class="icon-person"></span>
+            {{
+              entry.createdByRole ? `${entry.createdBy}: ${entry.createdByRole}` : entry.createdBy
+            }}
           </span>
         </div>
         <span v-if="!readOnly && !isLocked" class="c-ne__local-controls--hidden">
@@ -61,12 +64,12 @@
         </template>
         <template v-else-if="!isLocked">
           <div
+            v-bind.prop="formattedText"
             :id="entry.id"
             class="c-ne__text c-ne__input"
             aria-label="Notebook Entry Input"
             tabindex="-1"
             :contenteditable="canEdit"
-            v-bind.prop="formattedText"
             @mouseover="checkEditability($event)"
             @mouseleave="canEdit = true"
             @mousedown="preventFocusIfNotSelected($event)"
@@ -80,11 +83,11 @@
 
         <template v-else>
           <div
+            v-bind.prop="formattedText"
             :id="entry.id"
             class="c-ne__text"
             contenteditable="false"
             tabindex="0"
-            v-bind.prop="formattedText"
           ></div>
         </template>
 
@@ -288,7 +291,7 @@ export default {
       this.urlWhitelist = this.entryUrlWhitelist;
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.embedsWrapperResizeObserver) {
       this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
     }
@@ -433,13 +436,20 @@ export default {
       this.timestampAndUpdate();
     },
     async timestampAndUpdate() {
-      const user = await this.openmct.user.getCurrentUser();
-
+      const [user, activeRole] = await Promise.all([
+        this.openmct.user.getCurrentUser(),
+        this.openmct.user.getActiveRole?.()
+      ]);
       if (user === undefined) {
         this.entry.modifiedBy = UNKNOWN_USER;
+      } else {
+        this.entry.modifiedBy = user.getName();
+        if (activeRole) {
+          this.entry.modifiedByRole = activeRole;
+        }
       }
 
-      this.entry.modified = Date.now();
+      this.entry.modified = this.openmct.time.now();
 
       this.$emit('updateEntry', this.entry);
     },

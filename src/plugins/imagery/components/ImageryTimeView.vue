@@ -29,7 +29,7 @@
 <script>
 import * as d3Scale from 'd3-scale';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import imageryData from '../../imagery/mixins/imageryData';
 import PreviewAction from '@/ui/preview/PreviewAction';
 import _ from 'lodash';
@@ -61,8 +61,11 @@ export default {
     };
   },
   watch: {
-    imageHistory(newHistory, oldHistory) {
-      this.updatePlotImagery();
+    imageHistory: {
+      handler(newHistory, oldHistory) {
+        this.updatePlotImagery();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -86,7 +89,7 @@ export default {
 
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.imageryStripResizeObserver) {
       this.imageryStripResizeObserver.disconnect();
     }
@@ -234,22 +237,28 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        let component = new Vue({
-          components: {
-            SwimLane
+        const { vNode } = mount(
+          {
+            components: {
+              SwimLane
+            },
+            provide: {
+              openmct: this.openmct
+            },
+            data() {
+              return {
+                isNested: true
+              };
+            },
+            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
           },
-          provide: {
-            openmct: this.openmct
-          },
-          data() {
-            return {
-              isNested: true
-            };
-          },
-          template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><div class="c-imagery-tsv-container"></div></template></swim-lane>`
-        });
+          {
+            app: this.openmct.app
+          }
+        );
 
-        this.$refs.imageryHolder.appendChild(component.$mount().$el);
+        const component = vNode.componentInstance;
+        this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
         imageryContainer.style.maxWidth = `${containerWidth}px`;

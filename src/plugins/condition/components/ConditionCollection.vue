@@ -122,7 +122,7 @@ export default {
       deep: true
     }
   },
-  destroyed() {
+  unmounted() {
     this.composition.off('add', this.addTelemetryObject);
     this.composition.off('remove', this.removeTelemetryObject);
     if (this.conditionManager) {

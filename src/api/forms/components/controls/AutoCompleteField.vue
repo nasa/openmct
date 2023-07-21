@@ -166,7 +166,7 @@ export default {
       this.options = this.model.options;
     }
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener('click', this.handleOutsideClick);
   },
   methods: {

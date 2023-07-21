@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$set(this.invalidProperties, data.model.key, data.invalid);
+      this.invalidProperties[data.model.key] = data.invalid;
 
       this.$emit('onChange', data);
     },

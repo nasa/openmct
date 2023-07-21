@@ -40,7 +40,7 @@ export default {
     );
     this.initObjectStyles();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.stopListeningObjectStyles) {
       this.stopListeningObjectStyles();
     }

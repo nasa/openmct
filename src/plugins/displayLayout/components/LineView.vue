@@ -24,13 +24,13 @@
   <div class="l-layout__frame c-frame no-frame c-line-view" :class="[styleClass]" :style="style">
     <svg width="100%" height="100%">
       <line
-        class="c-line-view__hover-indicator"
         v-bind="linePosition"
+        class="c-line-view__hover-indicator"
         vector-effect="non-scaling-stroke"
       />
       <line
-        class="c-line-view__line"
         v-bind="linePosition"
+        class="c-line-view__line"
         :stroke="stroke"
         vector-effect="non-scaling-stroke"
       />
@@ -257,7 +257,7 @@ export default {
       this.initSelect
     );
   },
-  destroyed() {
+  unmounted() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

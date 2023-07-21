@@ -26,7 +26,14 @@
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
   >
-    <td class="js-first-data">{{ domainObject.name }}</td>
+    <td
+      ref="tableCell"
+      class="js-first-data"
+      @mouseover.ctrl="showToolTip"
+      @mouseleave="hideToolTip"
+    >
+      {{ domainObject.name }}
+    </td>
     <td v-if="showTimestamp" class="js-second-data">{{ formattedTimestamp }}</td>
     <td class="js-third-data" :class="valueClasses">{{ value }}</td>
     <td v-if="hasUnits" class="js-units">
@@ -42,8 +49,10 @@ const BLANK_VALUE = '---';
 
 import identifierToString from '/src/tools/url';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
+  mixins: [tooltipHelpers],
   inject: ['openmct', 'currentView'],
   props: {
     domainObject: {
@@ -181,7 +190,7 @@ export default {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.time.off('timeSystem', this.updateTimeSystem);
     this.telemetryCollection.off('add', this.setLatestValues);
     this.telemetryCollection.off('clear', this.resetValues);
@@ -259,6 +268,10 @@ export default {
       return metadata
         .values()
         .find((metadatum) => metadatum.hints.domain === undefined && metadatum.key !== 'name');
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'tableCell');
     }
   }
 };

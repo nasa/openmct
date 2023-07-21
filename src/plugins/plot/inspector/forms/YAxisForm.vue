@@ -138,7 +138,7 @@ export default {
       loaded: false
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.autoscale === false && this.validationErrors.range) {
       this.autoscale = true;
       this.updateForm('autoscale');

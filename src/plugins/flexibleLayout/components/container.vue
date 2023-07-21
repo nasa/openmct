@@ -43,9 +43,8 @@
     />
 
     <div class="c-fl-container__frames-holder">
-      <template v-for="(frame, i) in frames">
+      <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
-          :key="frame.id"
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
@@ -55,7 +54,6 @@
         />
 
         <drop-hint
-          :key="'hint-' + i"
           class="c-fl-frame__drop-hint"
           :index="i"
           :allow-drop="allowDrop"
@@ -64,7 +62,6 @@
 
         <resize-handle
           v-if="i !== frames.length - 1"
-          :key="'handle-' + i"
           :index="i"
           :orientation="rowsLayout ? 'horizontal' : 'vertical'"
           :is-editing="isEditing"
@@ -132,7 +129,7 @@ export default {
 
     this.unsubscribeSelection = this.openmct.selection.selectable(this.$el, context, false);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.unsubscribeSelection();
   },
   methods: {

@@ -27,9 +27,10 @@ but only assume that example imagery is present.
 /* globals process */
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
+const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
@@ -44,10 +45,11 @@ test.describe('Example Imagery Object', () => {
 
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+    page.waitForResponse('')
     // Zoom in x2 and assert
     await mouseZoomOnImageAndAssert(page, 2);
 
@@ -69,14 +71,76 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
+  test('Can use independent time conductor to change time', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6821'
+    });
+    // Test independent fixed time with global fixed time
+    // flip on independent time conductor
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+    await page.getByRole('textbox', { name: 'Start date' }).click();
+    await page.getByRole('textbox', { name: 'Start date' }).fill('');
+    await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
+    await page.getByRole('textbox', { name: 'Start time' }).click();
+    await page.getByRole('textbox', { name: 'Start time' }).fill('');
+    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
+    await page.getByRole('textbox', { name: 'End date' }).click();
+    await page.getByRole('textbox', { name: 'End date' }).fill('');
+    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
+    await page.getByRole('textbox', { name: 'End time' }).click();
+    await page.getByRole('textbox', { name: 'End time' }).fill('');
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
+    await page.getByRole('button', { name: 'Submit time bounds' }).click();
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+
+    // Test independent fixed time with global realtime
+    await setRealTimeMode(page);
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+    // check image date to be in the past
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    // flip it off
+    await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+    
+    // Test independent realtime with global realtime
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    // change independent time to realtime
+    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+    await page.getByRole('button', { name: "Independent Time Conductor Mode Menu" }).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+    // back to the past
+    await page.getByRole('button', { name: "Independent Time Conductor Mode Menu" }).click();
+    await page
+    .getByRole('menuitem', { name: /Real-Time/ })
+    .click();
+    await page.getByRole('button', { name: "Independent Time Conductor Mode Menu" }).click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    // check image date to be in the past
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+  });
+
   test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
     const deltaYStep = 100; //equivalent to 1x zoom
 
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
 
     // zoom in
     await page.mouse.wheel(0, deltaYStep * 2);
-    await page.locator(backgroundImageSelector).hover({ trial: true });
+    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
     const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -131,6 +195,36 @@ test.describe('Example Imagery Object', () => {
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
   });
 
+  test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+    const canvas = page.locator('canvas');
+    await canvas.hover({ trial: true });
+
+    const canvasBoundingBox = await canvas.boundingBox();
+    const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
+    const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
+
+    await Promise.all(tagHotkey.map((x) => page.keyboard.down(x)));
+    await page.mouse.down();
+    // steps not working for me here
+    await page.mouse.move(canvasCenterX - 20, canvasCenterY - 20);
+    await page.mouse.move(canvasCenterX - 100, canvasCenterY - 100);
+    await page.mouse.up();
+    await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
+
+    //Wait for canvas to stablize.
+    await canvas.hover({ trial: true });
+
+    // add some tags
+    await page.getByText('Annotations').click();
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Driving').click();
+
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Science').click();
+  });
+
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
     await buttonZoomOnImageAndAssert(page);
   });
@@ -158,11 +252,9 @@ test.describe('Example Imagery Object', () => {
   test('Using the zoom features does not pause telemetry', async ({ page }) => {
     const pausePlayButton = page.locator('.c-button.pause-play');
 
-    // open the time conductor drop down
-    await page.locator('.c-mode-button').click();
+    // switch to realtime
+    await setRealTimeMode(page);
 
-    // Click local clock
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
     // Zoom in via button
@@ -172,7 +264,7 @@ test.describe('Example Imagery Object', () => {
 
   test('Uses low fetch priority', async ({ page }) => {
     const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
-    await expect(priority).toBe('low');
+    expect(priority).toBe('low');
   });
 });
 
@@ -185,24 +277,7 @@ test.describe('Example Imagery in Display Layout', () => {
     displayLayout = await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
     await page.goto(displayLayout.url);
 
-    /* Create Sine Wave Generator with minimum Image Load Delay */
-    // Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click text=Example Imagery
-    await page.click('li[role="menuitem"]:has-text("Example Imagery")');
-
-    // Clear and set Image load delay to minimum value
-    await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('5000');
-
-    // Click text=OK
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle' }),
-      page.click('button:has-text("OK")'),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
+    await createImageryView(page);
 
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(
       'Unnamed Example Imagery'
@@ -219,14 +294,11 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
-    const pausePlayButton = await page.locator('.c-button.pause-play');
+    const pausePlayButton = page.locator('.c-button.pause-play');
 
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
@@ -245,14 +317,11 @@ test.describe('Example Imagery in Display Layout', () => {
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
 
-    // Click time conductor mode button
-    await page.locator('.c-mode-button').click();
-
     // set realtime mode
-    await page.locator('[data-testid="conductor-modeOption-realtime"]').click();
+    await setRealTimeMode(page);
 
     // pause/play button
-    const pausePlayButton = await page.locator('.c-button.pause-play');
+    const pausePlayButton = page.locator('.c-button.pause-play');
     await pausePlayButton.click();
     await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
 
@@ -315,8 +384,46 @@ test.describe('Example Imagery in Display Layout', () => {
     await page.locator('div[title="Resize object height"] > input').click();
     await page.locator('div[title="Resize object height"] > input').fill('100');
 
-    expect(thumbsWrapperLocator.isVisible()).toBeTruthy();
+    await expect(thumbsWrapperLocator).toBeVisible();
     await expect(thumbsWrapperLocator).not.toHaveClass(/is-small-thumbs/);
+  });
+
+  /**
+   * Toggle layer visibility checkbox by clicking on checkbox label
+   * - should toggle checkbox and layer visibility for that image view
+   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   */
+  test('Toggle layer visibility by clicking on label', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6709'
+    });
+    await createImageryView(page);
+    await page.goto(displayLayout.url);
+
+    const imageElements = page.locator('.c-imagery__main-image-wrapper');
+
+    await expect(imageElements).toHaveCount(2);
+
+    const imageOne = page.locator('.c-imagery__main-image-wrapper').nth(0);
+    const imageTwo = page.locator('.c-imagery__main-image-wrapper').nth(1);
+    const imageOneWrapper = imageOne.locator('.image-wrapper');
+    const imageTwoWrapper = imageTwo.locator('.image-wrapper');
+
+    await imageTwo.hover();
+
+    await imageTwo.locator('button[title="Layers"]').click();
+
+    const imageTwoLayersMenuContent = imageTwo.locator('button[title="Layers"] + div');
+    const imageTwoLayersToggleLabel = imageTwoLayersMenuContent.locator('label').last();
+
+    await imageTwoLayersToggleLabel.click();
+
+    const imageOneLayers = imageOneWrapper.locator('.layer-image');
+    const imageTwoLayers = imageTwoWrapper.locator('.layer-image');
+
+    await expect(imageOneLayers).toHaveCount(0);
+    await expect(imageTwoLayers).toHaveCount(1);
   });
 });
 
@@ -492,11 +599,8 @@ async function performImageryViewOperationsAndAssert(page) {
   const nextImageButton = page.locator('.c-nav--next');
   await nextImageButton.click();
 
-  // Click time conductor mode button
-  await page.locator('.c-mode-button').click();
-
-  // Select local clock mode
-  await page.locator('[data-testid=conductor-modeOption-realtime]').click();
+  // set realtime mode
+  await setRealTimeMode(page);
 
   // Zoom in on next image
   await mouseZoomOnImageAndAssert(page, 2);
@@ -692,7 +796,6 @@ async function panZoomAndAssertImageProperties(page) {
 async function mouseZoomOnImageAndAssert(page, factor = 2) {
   // Zoom in
   const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
-  await page.locator(backgroundImageSelector).hover({ trial: true });
   const deltaYStep = 100; // equivalent to 1x zoom
   await page.mouse.wheel(0, deltaYStep * factor);
   const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
@@ -703,7 +806,7 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
   await page.mouse.move(imageCenterX, imageCenterY);
 
   // Wait for zoom animation to finish
-  await page.locator(backgroundImageSelector).hover({ trial: true });
+  await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
   const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
 
   if (factor > 0) {
@@ -818,4 +921,27 @@ async function resetImageryPanAndZoom(page) {
 
   await panZoomResetBtn.click();
   await waitForAnimations(backgroundImage);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function createImageryView(page) {
+  // Click the Create button
+  await page.click('button:has-text("Create")');
+
+  // Click text=Example Imagery
+  await page.click('li[role="menuitem"]:has-text("Example Imagery")');
+
+  // Clear and set Image load delay to minimum value
+  await page.locator('input[type="number"]').fill('');
+  await page.locator('input[type="number"]').fill('5000');
+
+  // Click text=OK
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'networkidle' }),
+    page.click('button:has-text("OK")'),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
 }

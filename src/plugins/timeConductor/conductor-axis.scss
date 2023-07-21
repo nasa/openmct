@@ -57,11 +57,11 @@
   }
 
   .is-realtime-mode & {
-    $c: 1px solid rgba($colorTime, 0.7);
+    $c: 1px solid rgba($colorTimeRealtime, 0.7);
     border-left: $c;
     border-right: $c;
     svg text {
-      fill: $colorTime;
+      fill: $colorTimeRealtime;
     }
   }
 }

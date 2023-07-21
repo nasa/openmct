@@ -21,13 +21,16 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-
+import { markRaw } from 'vue';
 export default class LADTableConfiguration extends EventEmitter {
   constructor(domainObject, openmct) {
     super();
 
     this.domainObject = domainObject;
-    this.openmct = openmct;
+
+    // Prevent Vue from making this a Proxy, otherwise
+    // it cannot access any private methods (like #mutate()).
+    this.openmct = markRaw(openmct);
 
     this.objectMutated = this.objectMutated.bind(this);
     this.unlistenFromMutation = openmct.objects.observe(

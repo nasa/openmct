@@ -98,7 +98,7 @@ export default {
     this.drawAxis(this.bounds, this.timeSystem);
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
-  destroyed() {
+  unmounted() {
     clearInterval(this.resizeTimer);
   },
   methods: {
@@ -110,7 +110,7 @@ export default {
       }
     },
     updateNowMarker() {
-      if (this.openmct.time.clock() === undefined) {
+      if (this.openmct.time.getClock() === undefined) {
         let nowMarker = document.querySelector('.nowMarker');
         if (nowMarker) {
           nowMarker.classList.add('hidden');
@@ -120,7 +120,7 @@ export default {
         if (nowMarker) {
           nowMarker.classList.remove('hidden');
           nowMarker.style.height = this.contentHeight + 'px';
-          const nowTimeStamp = this.openmct.time.clock().currentValue();
+          const nowTimeStamp = this.openmct.time.getClock().currentValue();
           const now = this.xScale(nowTimeStamp);
           nowMarker.style.left = now + this.offset + 'px';
         }
@@ -154,7 +154,7 @@ export default {
       }
 
       if (timeSystem === undefined) {
-        timeSystem = this.openmct.time.timeSystem();
+        timeSystem = this.openmct.time.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {

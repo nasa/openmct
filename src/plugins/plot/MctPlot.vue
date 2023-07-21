@@ -77,6 +77,7 @@
             <mct-chart
               :rectangles="rectangles"
               :highlights="highlights"
+              :show-limit-line-labels="limitLineLabels"
               :annotated-points="annotatedPoints"
               :annotation-selections="annotationSelections"
               :hidden-y-axis-ids="hiddenYAxisIds"
@@ -183,7 +184,7 @@ import MctTicks from './MctTicks.vue';
 import MctChart from './chart/MctChart.vue';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
-import KDBush from 'kdbush';
+import Flatbush from 'flatbush';
 import _ from 'lodash';
 
 const OFFSET_THRESHOLD = 10;
@@ -231,7 +232,7 @@ export default {
     limitLineLabels: {
       type: Object,
       default() {
-        return {};
+        return undefined;
       }
     },
     colorPalette: {
@@ -257,7 +258,7 @@ export default {
       seriesModels: [],
       legend: {},
       pending: 0,
-      isRealTime: this.openmct.time.clock() !== undefined,
+      isRealTime: this.openmct.time.isRealTime(),
       loaded: false,
       isTimeOutOfSync: false,
       isFrozenOnMouseDown: false,
@@ -265,7 +266,8 @@ export default {
       gridLines: this.initGridLines,
       yAxes: [],
       hiddenYAxisIds: [],
-      yAxisListWithRange: []
+      yAxisListWithRange: [],
+      config: {}
     };
   },
   computed: {
@@ -339,6 +341,9 @@ export default {
       this.cursorGuide = newCursorGuide;
     }
   },
+  created() {
+    this.abortController = new AbortController();
+  },
   mounted() {
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
@@ -346,7 +351,7 @@ export default {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
     eventHelpers.extend(this);
-    this.updateRealTime = this.updateRealTime.bind(this);
+    this.updateMode = this.updateMode.bind(this);
     this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
     this.setTimeContext = this.setTimeContext.bind(this);
 
@@ -391,13 +396,15 @@ export default {
     this.openmct.objectViews.on('clearData', this.clearData);
     this.$on('loadingComplete', this.loadAnnotations);
     this.openmct.selection.on('change', this.updateSelection);
-    this.setTimeContext();
-
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
-    this.loaded = true;
+    this.$nextTick(() => {
+      this.setTimeContext();
+      this.loaded = true;
+    });
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
@@ -410,8 +417,8 @@ export default {
       // on clicking on a search result we highlight the annotation and zoom - we know it's an annotation result when isAnnotationSearchResult === true
       // We shouldn't zoom when we're selecting existing annotations to view them or creating new annotations.
       const selectionType = selection?.[0]?.[0]?.context?.type;
-      const validSelectionTypes = ['clicked-on-plot-selection', 'plot-annotation-search-result'];
-      const isAnnotationSearchResult = selectionType === 'plot-annotation-search-result';
+      const validSelectionTypes = ['clicked-on-plot-selection', 'annotation-search-result'];
+      const isAnnotationSearchResult = selectionType === 'annotation-search-result';
 
       if (!validSelectionTypes.includes(selectionType)) {
         // wrong type of selection
@@ -517,20 +524,19 @@ export default {
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
-
       this.timeContext = this.openmct.time.getContextForView(this.path);
       this.followTimeContext();
     },
     followTimeContext() {
-      this.updateDisplayBounds(this.timeContext.bounds());
-      this.timeContext.on('clock', this.updateRealTime);
-      this.timeContext.on('bounds', this.updateDisplayBounds);
+      this.updateDisplayBounds(this.timeContext.getBounds());
+      this.timeContext.on('modeChanged', this.updateMode);
+      this.timeContext.on('boundsChanged', this.updateDisplayBounds);
       this.synchronized(true);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('clock', this.updateRealTime);
-        this.timeContext.off('bounds', this.updateDisplayBounds);
+        this.timeContext.off('modeChanged', this.updateMode);
+        this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },
     getConfig() {
@@ -554,7 +560,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.seriesModels, index, series);
+      this.seriesModels[index] = series;
       this.listenTo(
         series,
         'change:xKey',
@@ -621,7 +627,8 @@ export default {
       await Promise.all(
         this.seriesModels.map(async (seriesModel) => {
           const seriesAnnotations = await this.openmct.annotation.getAnnotations(
-            seriesModel.model.identifier
+            seriesModel.model.identifier,
+            this.abortController.signal
           );
           rawAnnotationsForPlot.push(...seriesAnnotations);
         })
@@ -768,8 +775,8 @@ export default {
       const displayRange = series.getDisplayRange(xKey);
       this.config.xAxis.set('range', displayRange);
     },
-    updateRealTime(clock) {
-      this.isRealTime = clock !== undefined;
+    updateMode() {
+      this.isRealTime = this.timeContext.isRealTime();
     },
 
     /**
@@ -830,13 +837,13 @@ export default {
      * displays can update accordingly.
      */
     synchronized(value) {
-      const isLocalClock = this.timeContext.clock();
+      const isRealTime = this.timeContext.isRealTime();
 
       if (typeof value !== 'undefined') {
         this._synchronized = value;
         this.isTimeOutOfSync = value !== true;
 
-        const isUnsynced = isLocalClock && !value;
+        const isUnsynced = isRealTime && !value;
         this.setStatus(isUnsynced);
       }
 
@@ -1393,6 +1400,24 @@ export default {
 
       return annotationsByPoints.flat();
     },
+    searchWithFlatbush(seriesData, seriesModel, boundingBox) {
+      const flatbush = new Flatbush(seriesData.length);
+      seriesData.forEach((point) => {
+        const x = seriesModel.getXVal(point);
+        const y = seriesModel.getYVal(point);
+        flatbush.add(x, y, x, y);
+      });
+      flatbush.finish();
+
+      const rangeResults = flatbush.search(
+        boundingBox.minX,
+        boundingBox.minY,
+        boundingBox.maxX,
+        boundingBox.maxY
+      );
+
+      return rangeResults;
+    },
     getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
       // load series models in KD-Trees
       const seriesKDTrees = [];
@@ -1408,22 +1433,8 @@ export default {
 
         const seriesData = seriesModel.getSeriesData();
         if (seriesData && seriesData.length) {
-          const kdTree = new KDBush(
-            seriesData,
-            (point) => {
-              return seriesModel.getXVal(point);
-            },
-            (point) => {
-              return seriesModel.getYVal(point);
-            }
-          );
           const searchResults = [];
-          const rangeResults = kdTree.range(
-            boundingBox.minX,
-            boundingBox.minY,
-            boundingBox.maxX,
-            boundingBox.maxY
-          );
+          const rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
           rangeResults.forEach((id) => {
             const seriesDatum = seriesData[id];
             if (seriesDatum) {
@@ -1524,7 +1535,11 @@ export default {
         this.endMarquee();
       }
 
-      this.loadAnnotations();
+      this.loadAnnotations().catch((err) => {
+        if (err.name !== 'AbortError') {
+          throw err;
+        }
+      });
     },
 
     zoom(zoomDirection, zoomFactor) {
@@ -1853,7 +1868,6 @@ export default {
     },
 
     synchronizeTimeConductor() {
-      this.timeContext.stopClock();
       const range = this.config.xAxis.get('displayRange');
       this.timeContext.bounds({
         start: range.min,

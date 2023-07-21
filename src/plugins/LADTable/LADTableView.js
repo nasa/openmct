@@ -22,38 +22,47 @@
 
 import LadTable from './components/LADTable.vue';
 import LADTableConfiguration from './LADTableConfiguration';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class LADTableView {
   constructor(openmct, domainObject, objectPath) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this.component = null;
+    this._destroy = null;
   }
 
   show(element) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
-    this.component = new Vue({
-      el: element,
-      components: {
-        LadTable
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          LadTable
+        },
+        provide: {
+          openmct: this.openmct,
+          currentView: this,
+          ladTableConfiguration
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject,
+            objectPath: this.objectPath
+          };
+        },
+        template:
+          '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
       },
-      provide: {
-        openmct: this.openmct,
-        currentView: this,
-        ladTableConfiguration
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject,
-          objectPath: this.objectPath
-        };
-      },
-      template:
-        '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
   }
 
   getViewContext() {
@@ -64,8 +73,9 @@ export default class LADTableView {
     return this.component.$refs.ladTable.getViewContext();
   }
 
-  destroy(element) {
-    this.component.$destroy();
-    this.component = undefined;
+  destroy() {
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 }

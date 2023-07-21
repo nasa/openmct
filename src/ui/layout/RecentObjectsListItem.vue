@@ -32,11 +32,14 @@
     ></div>
     <div class="c-recentobjects-listitem__body">
       <span
+        ref="recentObjectName"
         class="c-recentobjects-listitem__title"
         :name="domainObject.name"
         draggable="true"
         @dragstart="dragStart"
         @click.prevent="clickedRecent"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
       >
         {{ domainObject.name }}
       </span>
@@ -45,7 +48,6 @@
         class="c-recentobjects-listitem__object-path"
         :read-only="false"
         :domain-object="domainObject"
-        :show-original-path="false"
         :object-path="objectPath"
       />
     </div>
@@ -62,12 +64,14 @@
 <script>
 import ObjectPath from '../components/ObjectPath.vue';
 import PreviewAction from '../preview/PreviewAction';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 export default {
   name: 'RecentObjectsListItem',
   components: {
     ObjectPath
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     domainObject: {
@@ -97,7 +101,7 @@ export default {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
-  destroyed() {
+  unmounted() {
     this.previewAction.off('isVisible', this.togglePreviewState);
   },
   methods: {
@@ -132,6 +136,10 @@ export default {
     },
     openAndScrollTo(navigationPath) {
       this.$emit('openAndScrollTo', navigationPath);
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'recentObjectName');
     }
   }
 };

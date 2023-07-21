@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue, { toRaw } from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -139,7 +139,7 @@ export default {
     );
     this.initializeViewActions();
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
 
     this.composition.off('add', this.addItem);
@@ -191,7 +191,7 @@ export default {
     reorder(reorderPlan) {
       const oldItems = this.items.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+        this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
     },
     metadataHasUnits(valueMetadatas) {
@@ -230,7 +230,7 @@ export default {
       };
     },
     toggleFixedLayout() {
-      const config = structuredClone(this.configuration);
+      const config = structuredClone(toRaw(this.configuration));
 
       config.isFixedLayout = !this.configuration.isFixedLayout;
       this.ladTableConfiguration.updateConfiguration(config);

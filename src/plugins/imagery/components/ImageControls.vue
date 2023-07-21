@@ -137,7 +137,7 @@ export default {
     imageUrl(newUrl, oldUrl) {
       // reset image pan/zoom if newUrl only if not locked
       if (newUrl && !this.panZoomLocked) {
-        this.$emit('resetImage');
+        this.handleResetImage();
       }
     },
     cursorStates(states) {
@@ -149,7 +149,7 @@ export default {
     document.addEventListener('keyup', this.handleKeyUp);
     this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
   },

@@ -23,8 +23,8 @@
 import FormController from './FormController';
 import FormProperties from './components/FormProperties.vue';
 
-import Vue from 'vue';
 import _ from 'lodash';
+import mount from 'utils/mount';
 
 export default class FormsAPI {
   constructor(openmct) {
@@ -156,25 +156,28 @@ export default class FormsAPI {
       formCancel = onFormAction(reject);
     });
 
-    const vm = new Vue({
-      components: { FormProperties },
-      provide: {
-        openmct: self.openmct
+    const { destroy } = mount(
+      {
+        components: { FormProperties },
+        provide: {
+          openmct: self.openmct
+        },
+        data() {
+          return {
+            formStructure,
+            onChange: onFormPropertyChange,
+            onCancel: formCancel,
+            onSave: formSave
+          };
+        },
+        template:
+          '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
       },
-      data() {
-        return {
-          formStructure,
-          onChange: onFormPropertyChange,
-          onCancel: formCancel,
-          onSave: formSave
-        };
-      },
-      template:
-        '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
-    }).$mount();
-
-    const formElement = vm.$el;
-    element.append(formElement);
+      {
+        element,
+        app: self.openmct.app
+      }
+    );
 
     function onFormPropertyChange(data) {
       if (onChange) {
@@ -195,8 +198,7 @@ export default class FormsAPI {
 
     function onFormAction(callback) {
       return () => {
-        formElement.remove();
-        vm.$destroy();
+        destroy();
 
         if (callback) {
           callback(changes);

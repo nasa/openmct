@@ -25,7 +25,8 @@ const {
   createDomainObjectWithDefaults,
   setStartOffset,
   setFixedTimeMode,
-  setRealTimeMode
+  setRealTimeMode,
+  setIndependentTimeConductorBounds
 } = require('../../../../appActions');
 
 test.describe('Display Layout', () => {
@@ -204,6 +205,121 @@ test.describe('Display Layout', () => {
     await page.goto(displayLayout.url);
 
     expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+  });
+
+  test('independent time works with display layouts and its children', async ({ page }) => {
+    await setFixedTimeMode(page);
+    // Create Example Imagery
+    const exampleImageryObject = await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery'
+    });
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const exampleImageryTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(exampleImageryObject.name)
+    });
+    let layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+
+    //adjust so that we can see the independent time conductor toggle
+    // Adjust object height
+    await page.locator('div[title="Resize object height"] > input').click();
+    await page.locator('div[title="Resize object height"] > input').fill('70');
+
+    // Adjust object width
+    await page.locator('div[title="Resize object width"] > input').click();
+    await page.locator('div[title="Resize object width"] > input').fill('70');
+
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    const startDate = '2021-12-30 01:01:00.000Z';
+    const endDate = '2021-12-30 01:11:00.000Z';
+    await setIndependentTimeConductorBounds(page, startDate, endDate);
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByRole('switch').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+  });
+
+  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
+    page
+  }) => {
+    // Create another Sine Wave Generator
+    const anotherSineWaveObject = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
+    });
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+
+    let layoutGridHolder = page.locator('.l-layout__grid-holder');
+    // eslint-disable-next-line playwright/no-force-option
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+
+    await page.getByText('View type').click();
+    await page.getByText('Overlay Plot').click();
+
+    const anotherSineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(anotherSineWaveObject.name)
+    });
+    layoutGridHolder = page.locator('.l-layout__grid-holder');
+    // eslint-disable-next-line playwright/no-force-option
+    await anotherSineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+
+    await page.getByText('View type').click();
+    await page.getByText('Overlay Plot').click();
+
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    // Time to inspect some network traffic
+    let networkRequests = [];
+    page.on('request', (request) => {
+      const searchRequest = request.url().endsWith('_find');
+      const fetchRequest = request.resourceType() === 'fetch';
+      if (searchRequest && fetchRequest) {
+        networkRequests.push(request);
+      }
+    });
+
+    await page.reload();
+
+    // wait for annotations requests to be batched and requested
+    await page.waitForLoadState('networkidle');
+
+    // Network requests for the composite telemetry with multiple items should be:
+    // 1.  a single batched request for annotations
+    expect(networkRequests.length).toBe(1);
   });
 });
 

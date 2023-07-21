@@ -314,13 +314,13 @@ async function _isInEditMode(page, identifier) {
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
-  await page.locator('.c-mode-button').click();
-
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+  await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
   // Switch time conductor mode
   if (isFixedTimespan) {
-    await page.locator('data-testid=conductor-modeOption-fixed').click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
   } else {
-    await page.locator('data-testid=conductor-modeOption-realtime').click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
   }
 }
 
@@ -342,9 +342,12 @@ async function setRealTimeMode(page) {
 
 /**
  * @typedef {Object} OffsetValues
- * @property {string | undefined} hours
- * @property {string | undefined} mins
- * @property {string | undefined} secs
+ * @property {string | undefined} startHours
+ * @property {string | undefined} startMins
+ * @property {string | undefined} startSecs
+ * @property {string | undefined} endHours
+ * @property {string | undefined} endMins
+ * @property {string | undefined} endSecs
  */
 
 /**
@@ -353,23 +356,36 @@ async function setRealTimeMode(page) {
  * @param {OffsetValues} offset
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { hours, mins, secs }, offsetButton) {
-  await offsetButton.click();
-
-  if (hours) {
-    await page.fill('.pr-time-controls__hrs', hours);
+async function setTimeConductorOffset(
+  page,
+  { startHours, startMins, startSecs, endHours, endMins, endSecs }
+) {
+  if (startHours) {
+    await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
   }
 
-  if (mins) {
-    await page.fill('.pr-time-controls__mins', mins);
+  if (startMins) {
+    await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
   }
 
-  if (secs) {
-    await page.fill('.pr-time-controls__secs', secs);
+  if (startSecs) {
+    await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
+  }
+
+  if (endHours) {
+    await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
+  }
+
+  if (endMins) {
+    await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
+  }
+
+  if (endSecs) {
+    await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
   }
 
   // Click the check button
-  await page.locator('.pr-time__buttons .icon-check').click();
+  await page.locator('.pr-time-input--buttons .icon-check').click();
 }
 
 /**
@@ -378,8 +394,9 @@ async function setTimeConductorOffset(page, { hours, mins, secs }, offsetButton)
  * @param {OffsetValues} offset
  */
 async function setStartOffset(page, offset) {
-  const startOffsetButton = page.locator('data-testid=conductor-start-offset-button');
-  await setTimeConductorOffset(page, offset, startOffsetButton);
+  // Click 'mode' button
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+  await setTimeConductorOffset(page, offset, false);
 }
 
 /**
@@ -388,8 +405,52 @@ async function setStartOffset(page, offset) {
  * @param {OffsetValues} offset
  */
 async function setEndOffset(page, offset) {
-  const endOffsetButton = page.locator('data-testid=conductor-end-offset-button');
-  await setTimeConductorOffset(page, offset, endOffsetButton);
+  // Click 'mode' button
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+  await setTimeConductorOffset(page, offset, true);
+}
+
+async function setTimeConductorBounds(page, startDate, endDate) {
+  // Bring up the time conductor popup
+  await page.click('.l-shell__time-conductor.c-compact-tc');
+
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setIndependentTimeConductorBounds(page, startDate, endDate) {
+  // Activate Independent Time Conductor in Fixed Time Mode
+  await page.getByRole('switch').click();
+
+  // Bring up the time conductor popup
+  await page.click('.c-conductor-holder--compact .c-compact-tc');
+
+  await expect(page.locator('.itc-popout')).toBeVisible();
+
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setTimeBounds(page, startDate, endDate) {
+  if (startDate) {
+    // Fill start time
+    await page
+      .getByRole('textbox', { name: 'Start date' })
+      .fill(startDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'Start time' })
+      .fill(startDate.toString().substring(11, 19));
+  }
+
+  if (endDate) {
+    // Fill end time
+    await page.getByRole('textbox', { name: 'End date' }).fill(endDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'End time' })
+      .fill(endDate.toString().substring(11, 19));
+  }
 }
 
 /**
@@ -401,14 +462,7 @@ async function setEndOffset(page, offset) {
 async function selectInspectorTab(page, name) {
   const inspectorTabs = page.getByRole('tablist');
   const inspectorTab = inspectorTabs.getByTitle(name);
-  const inspectorTabClass = await inspectorTab.getAttribute('class');
-  const isSelectedInspectorTab = inspectorTabClass.includes('is-current');
-
-  // do not click a tab that is already selected or it will timeout your test
-  // do to a { pointer-events: none; } on selected tabs
-  if (!isSelectedInspectorTab) {
-    await inspectorTab.click();
-  }
+  await inspectorTab.click();
 }
 
 /**
@@ -510,6 +564,8 @@ module.exports = {
   setRealTimeMode,
   setStartOffset,
   setEndOffset,
+  setTimeConductorBounds,
+  setIndependentTimeConductorBounds,
   selectInspectorTab,
   waitForPlotsToRender
 };

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
 
 const moment = require('moment-timezone');
 const momentDurationFormatSetup = require('moment-duration-format');
@@ -50,28 +50,24 @@ const momentDurationFormatSetup = require('moment-duration-format');
 momentDurationFormatSetup(moment);
 
 export default {
-  inject: ['openmct', 'currentView', 'objectPath'],
+  inject: ['openmct', 'currentView'],
   props: {
     domainObject: {
       type: Object,
+      required: true
+    },
+    objectPath: {
+      type: Array,
       required: true
     }
   },
   data() {
     return {
-      lastTimestamp: undefined,
-      active: true
+      configuration: this.domainObject.configuration,
+      lastTimestamp: null
     };
   },
   computed: {
-    configuration() {
-      let configuration;
-      if (this.domainObject && this.domainObject.configuration) {
-        configuration = this.domainObject.configuration;
-      }
-
-      return configuration;
-    },
     relativeTimestamp() {
       let relativeTimestamp;
       if (this.configuration && this.configuration.timestamp) {
@@ -183,16 +179,21 @@ export default {
     }
   },
   mounted() {
+    this.unobserve = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration',
+      (configuration) => {
+        this.configuration = configuration;
+      }
+    );
     this.$nextTick(() => {
-      if (this.configuration && this.configuration.timerState === undefined) {
+      if (!this.configuration?.timerState) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
         this.triggerAction(`timer.${timerAction}`);
       }
 
-      window.requestAnimationFrame(this.tick);
-      this.unlisten = ticker.listen(() => {
-        this.openmct.objects.refresh(this.domainObject);
-      });
+      this.handleTick = raf(this.handleTick);
+      this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(
         this.objectPath,
@@ -201,26 +202,25 @@ export default {
       this.showOrHideAvailableActions();
     });
   },
-  beforeDestroy() {
-    this.active = false;
-    if (this.unlisten) {
-      this.unlisten();
+  beforeUnmount() {
+    if (this.unobserve) {
+      this.unobserve();
     }
+    this.openmct.time.off('tick', this.handleTick);
   },
   methods: {
-    tick() {
+    handleTick() {
       const isTimerRunning = !['paused', 'stopped'].includes(this.timerState);
+
       if (isTimerRunning) {
-        this.lastTimestamp = new Date();
+        this.lastTimestamp = new Date(this.openmct.time.now());
       }
 
       if (this.timerState === 'paused' && !this.lastTimestamp) {
         this.lastTimestamp = this.pausedTime;
       }
 
-      if (this.active) {
-        window.requestAnimationFrame(this.tick);
-      }
+      this.openmct.objects.refresh(this.domainObject);
     },
     restartTimer() {
       this.triggerAction('timer.restart');

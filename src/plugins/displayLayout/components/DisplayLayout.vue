@@ -55,7 +55,7 @@
       :grid-size="gridSize"
       :init-select="initSelectIndex === index"
       :index="index"
-      :multi-select="selectedLayoutItems.length > 1"
+      :multi-select="selectedLayoutItems.length > 1 || null"
       :is-editing="isEditing"
       @contextClick="updateViewContext"
       @move="move"
@@ -161,15 +161,13 @@ export default {
       selection: [],
       showGrid: true,
       viewContext: {},
-      gridDimensions: [0, 0]
+      gridDimensions: [0, 0],
+      layoutItems: this.domainObject.configuration.items
     };
   },
   computed: {
     gridSize() {
       return this.domainObject.configuration.layoutGrid.map(Number);
-    },
-    layoutItems() {
-      return this.domainObject.configuration.items;
     },
     selectedLayoutItems() {
       return this.layoutItems.filter((item) => {
@@ -223,9 +221,13 @@ export default {
     this.composition.load();
     this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
 
+    this.openmct.objects.observe(this.domainObject, 'configuration.items', (items) => {
+      this.layoutItems = items;
+    });
+
     this.watchDisplayResize();
   },
-  destroyed: function () {
+  unmounted: function () {
     this.openmct.selection.off('change', this.setSelection);
     this.composition.off('add', this.addChild);
     this.composition.off('remove', this.removeChild);

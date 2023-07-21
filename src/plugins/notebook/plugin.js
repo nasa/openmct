@@ -37,7 +37,7 @@ import {
   NOTEBOOK_BASE_INSTALLED
 } from './notebook-constants';
 
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 let notebookSnapshotContainer;
 function getSnapshotContainer(openmct) {
@@ -83,18 +83,24 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const notebookSnapshotIndicator = new Vue({
-    components: {
-      NotebookSnapshotIndicator
+  const { vNode } = mount(
+    {
+      components: {
+        NotebookSnapshotIndicator
+      },
+      provide: {
+        openmct,
+        snapshotContainer
+      },
+      template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
     },
-    provide: {
-      openmct,
-      snapshotContainer
-    },
-    template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-  });
+    {
+      app: openmct.app
+    }
+  );
+
   const indicator = {
-    element: notebookSnapshotIndicator.$mount().$el,
+    element: vNode.el,
     key: 'notebook-snapshot-indicator',
     priority: openmct.priority.DEFAULT
   };

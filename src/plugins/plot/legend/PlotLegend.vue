@@ -150,7 +150,7 @@ export default {
 
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.objectComposition) {
       this.objectComposition.off('add', this.addTelemetryObject);
       this.objectComposition.off('remove', this.removeTelemetryObject);
@@ -196,7 +196,7 @@ export default {
       config.series.forEach(this.addSeries, this);
     },
     addSeries(series) {
-      this.$set(this.seriesModels, this.seriesModels.length, series);
+      this.seriesModels[this.seriesModels.length] = series;
     },
 
     removeSeries(plotSeries) {

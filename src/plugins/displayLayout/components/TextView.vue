@@ -127,7 +127,7 @@ export default {
       this.initSelect
     );
   },
-  destroyed() {
+  unmounted() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

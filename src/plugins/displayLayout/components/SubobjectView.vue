@@ -23,7 +23,6 @@
   <layout-frame
     :item="item"
     :grid-size="gridSize"
-    :title="domainObject && domainObject.name"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
@@ -134,7 +133,7 @@ export default {
       this.openmct.objects.get(this.item.identifier).then(this.setObject);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

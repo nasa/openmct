@@ -61,7 +61,7 @@ export default {
   mounted() {
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener('click', this.handleOutsideClick);
   },
   methods: {

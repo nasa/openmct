@@ -62,7 +62,7 @@ export default {
     this.openmct.router.on('change:path', this.onPathChange);
     this.getSavedRecentItems();
   },
-  destroyed() {
+  unmounted() {
     this.openmct.router.off('change:path', this.onPathChange);
   },
   methods: {

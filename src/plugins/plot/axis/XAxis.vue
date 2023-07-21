@@ -73,17 +73,17 @@ export default {
     this.xAxis = this.getXAxisFromConfig();
     this.loaded = true;
     this.setUpXAxisOptions();
-    this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
+    this.openmct.time.on('timeSystemChanged', this.syncXAxisToTimeSystem);
     this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
   },
-  beforeDestroy() {
-    this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
+  beforeUnmount() {
+    this.openmct.time.off('timeSystemChanged', this.syncXAxisToTimeSystem);
   },
   methods: {
     isEnabledXKeyToggle() {
       const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.seriesModel;
       const isFrozen = this.xAxis.get('frozen');
-      const inRealTimeMode = this.openmct.time.clock();
+      const inRealTimeMode = this.openmct.time.isRealTime();
 
       return isSinglePlot && !isFrozen && !inRealTimeMode;
     },

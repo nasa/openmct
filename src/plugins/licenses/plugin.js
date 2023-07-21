@@ -20,18 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import Licenses from './Licenses.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function () {
   return function install(openmct) {
     openmct.router.route(/^\/licenses$/, () => {
-      let licensesVm = new Vue(Licenses).$mount();
+      const { vNode, destroy } = mount(Licenses, { app: openmct.app });
 
       openmct.overlays.overlay({
-        element: licensesVm.$el,
+        element: vNode.el,
         size: 'fullscreen',
         dismissable: false,
-        onDestroy: () => licensesVm.$destroy()
+        onDestroy: destroy
       });
     });
   };

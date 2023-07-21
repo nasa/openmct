@@ -83,7 +83,7 @@ export default {
       this.refreshData
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopFollowingTimeContext();
 
     this.removeAllSubscriptions();

@@ -30,7 +30,7 @@
 
 <script>
 import moment from 'moment';
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
 
 export default {
   inject: ['openmct'],
@@ -42,20 +42,22 @@ export default {
   },
   data() {
     return {
-      timeTextValue: null
+      timeTextValue: this.openmct.time.now()
     };
   },
   mounted() {
-    this.unlisten = ticker.listen(this.tick);
+    this.tick = raf(this.tick);
+    this.openmct.time.on('tick', this.tick);
+    this.tick(this.timeTextValue);
   },
-  beforeDestroy() {
-    if (this.unlisten) {
-      this.unlisten();
-    }
+  beforeUnmount() {
+    this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {
-      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
+      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
+        this.openmct.time.getTimeSystem().name
+      }`;
     }
   }
 };
