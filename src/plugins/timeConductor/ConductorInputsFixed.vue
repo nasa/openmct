@@ -40,6 +40,7 @@
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
       :title="`End bounds: ${formattedBounds.end}`"
+      aria-label="End bounds"
     >
       {{ formattedBounds.end }}
     </div>
