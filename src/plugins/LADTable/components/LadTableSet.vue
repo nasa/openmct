@@ -178,7 +178,7 @@ export default {
         this.unwatchStaleness(combinedKey);
       });
 
-      this.$delete(this.ladTelemetryObjects, ladTable.key);
+      delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
     },
     reorderLadTables(reorderPlan) {

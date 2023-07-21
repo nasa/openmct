@@ -151,7 +151,7 @@ export default {
       );
       const ladTable = this.ladTableObjects[index];
 
-      this.$delete(this.ladTelemetryObjects, ladTable.key);
+      delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
 
       this.shouldShowUnitsCheckbox();
@@ -224,7 +224,7 @@ export default {
       }
 
       if (!showUnitsCheckbox && this.headers?.units) {
-        this.$delete(this.headers, 'units');
+        delete this.headers.units;
       }
     },
     metadataHasUnits(domainObject) {

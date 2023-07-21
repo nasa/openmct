@@ -173,14 +173,14 @@ export default {
 
       if (globalFiltersToRemove.length > 0) {
         globalFiltersToRemove.forEach((key) => {
-          this.$delete(this.globalFilters, key);
-          this.$delete(this.globalMetadata, key);
+          delete this.globalFilters[key];
+          delete this.globalMetadata[key];
         });
         this.mutateConfigurationGlobalFilters();
       }
 
-      this.$delete(this.children, keyString);
-      this.$delete(this.persistedFilters, keyString);
+      delete this.children[keyString];
+      delete this.persistedFilters[keyString];
       this.mutateConfigurationFilters();
     },
     getGlobalFiltersToRemove(keyString) {

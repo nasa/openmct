@@ -232,7 +232,7 @@ export default {
     removeChild(childIdentifier) {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
 
-      this.$delete(this.tickWidthMap, id);
+      delete this.tickWidthMap[id];
 
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
