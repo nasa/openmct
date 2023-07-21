@@ -31,29 +31,24 @@ export default {
     selectedTab: {
       type: Object,
       default: undefined
-    },
-    selection: {
-      type: Array,
-      default: () => {
-        return [];
-      }
     }
   },
   watch: {
-    selection: {
-      handler() {
-        this.updateSelectionViews();
-      },
-      deep: true
-    },
     selectedTab() {
       this.clearAndShowViewsForTab();
     }
   },
+  mounted() {
+    this.updateSelectionViews();
+    this.openmct.selection.on('change', this.updateSelectionViews);
+  },
+  unmounted() {
+    this.openmct.selection.off('change', this.updateSelectionViews);
+  },
   methods: {
     updateSelectionViews(selection) {
       this.clearViews();
-      this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+      this.selectedViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
       this.showViewsForTab();
     },
     clearViews() {
