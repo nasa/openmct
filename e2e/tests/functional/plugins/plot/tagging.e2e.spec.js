@@ -33,10 +33,6 @@ const {
 } = require('../../../../appActions');
 
 test.describe.fixme('Plot Tagging', () => {
-  test.info().annotations.push({
-    type: 'issue',
-    description: 'https://github.com/nasa/openmct/issues/6822'
-  });
   /**
    * Given a canvas and a set of points, tags the points on the canvas.
    * @param {import('@playwright/test').Page} page
@@ -171,6 +167,10 @@ test.describe.fixme('Plot Tagging', () => {
   });
 
   test('Tags work with Overlay Plots', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6822'
+    });
     //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
     test.slow();
 
