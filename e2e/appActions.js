@@ -410,23 +410,46 @@ async function setEndOffset(page, offset) {
   await setTimeConductorOffset(page, offset, true);
 }
 
-async function setTimeConductorBounds(page, startDate, endDate, isIndepdendentTime) {
+async function setTimeConductorBounds(page, startDate, endDate) {
   // Bring up the time conductor popup
-  const timeConductorMode = isIndepdendentTime
-    ? await page.locator('.c-conductor-holder--compact .c-compact-tc')
-    : await page.locator('.l-shell__time-conductor.c-compact-tc');
-  await timeConductorMode.click();
+  await page.click('.l-shell__time-conductor.c-compact-tc');
 
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setIndependentTimeConductorBounds(page, startDate, endDate) {
+  // Activate Independent Time Conductor in Fixed Time Mode
+  await page.getByRole('switch').click();
+
+  // Bring up the time conductor popup
+  await page.click('.c-conductor-holder--compact .c-compact-tc');
+
+  await expect(page.locator('.itc-popout')).toBeVisible();
+
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
-    page.getByRole('textbox', { name: 'Start date' }).fill(startDate.toString().substring(0, 10));
-    page.getByRole('textbox', { name: 'Start time' }).fill(startDate.toString().substring(11, 19));
+    await page
+      .getByRole('textbox', { name: 'Start date' })
+      .fill(startDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'Start time' })
+      .fill(startDate.toString().substring(11, 19));
   }
 
   if (endDate) {
     // Fill end time
-    page.getByRole('textbox', { name: 'End date' }).fill(endDate.toString().substring(0, 10));
-    page.getByRole('textbox', { name: 'End time' }).fill(endDate.toString().substring(11, 19));
+    await page.getByRole('textbox', { name: 'End date' }).fill(endDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'End time' })
+      .fill(endDate.toString().substring(11, 19));
   }
 }
 
@@ -542,6 +565,7 @@ module.exports = {
   setStartOffset,
   setEndOffset,
   setTimeConductorBounds,
+  setIndependentTimeConductorBounds,
   selectInspectorTab,
   waitForPlotsToRender
 };
