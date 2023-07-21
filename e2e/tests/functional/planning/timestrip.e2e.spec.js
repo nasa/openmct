@@ -167,7 +167,7 @@ test.describe('Time Strip', () => {
 
       // Switch to the previous Time Strip and verify that only one event is displayed
       await page.goto(timestrip.url);
-      expect(await activityBounds.count()).toEqual(5);
+      expect(await activityBounds.count()).toEqual(1);
     });
   });
 });
