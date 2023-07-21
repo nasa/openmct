@@ -476,7 +476,6 @@ export default {
           {
             label: 'Lock Page',
             callback: () => {
-              let sections = this.getSections();
               this.selectedPage.isLocked = true;
 
               // cant be default if it's locked
@@ -488,7 +487,7 @@ export default {
                 this.selectedSection.isLocked = true;
               }
 
-              mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+              mutateObject(this.openmct, this.domainObject, 'configuration.sections', this.sections);
 
               if (!this.domainObject.locked) {
                 mutateObject(this.openmct, this.domainObject, 'locked', true);
@@ -707,9 +706,6 @@ export default {
     },
     getSection(id) {
       return this.sections.find((s) => s.id === id);
-    },
-    getSections() {
-      return this.domainObject.configuration.sections || [];
     },
     getSearchResults() {
       if (!this.search.length) {
