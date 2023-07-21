@@ -400,6 +400,9 @@ class IndependentTimeContext extends TimeContext {
     if (viewKey && key === viewKey) {
       //this is necessary as the upstream context gets reassigned after this
       this.stopFollowingTimeContext();
+      if (this.activeClock !== undefined) {
+        this.activeClock.off('tick', this.tick);
+      }
 
       let timeContext = this.globalTimeContext;
 
