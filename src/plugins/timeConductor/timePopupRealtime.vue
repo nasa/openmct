@@ -131,7 +131,11 @@
         aria-label="Submit time offsets"
         @click.prevent="submit"
       ></button>
-      <button class="c-button icon-x" @click.prevent="hide" aria-label="Discard time offsets"></button>
+      <button
+        class="c-button icon-x"
+        aria-label="Discard time offsets"
+        @click.prevent="hide"
+      ></button>
     </div>
   </form>
 </template>
@@ -173,7 +177,7 @@ export default {
   methods: {
     format(ref) {
       const curVal = this[ref];
-      this[ref] = curVal.padStart(2, '0');
+      this[ref] = curVal.toString().padStart(2, '0');
     },
     validate() {
       let disabled = false;
