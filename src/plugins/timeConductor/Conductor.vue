@@ -49,7 +49,11 @@
       @panAxis="pan"
       @zoomAxis="zoom"
     />
-    <div role="button" class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear" aria-label="Time Conductor Settings"></div>
+    <div
+      role="button"
+      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
+      aria-label="Time Conductor Settings"
+    ></div>
 
     <conductor-pop-up
       v-if="showConductorPopup"

@@ -354,7 +354,7 @@ export default {
       const newTreeItems = [...this.treeItems];
       newTreeItems.splice(parentIndex + 1, 0, ...childrenItems);
       this.treeItems = [...newTreeItems];
-      
+
       if (!this.isTreeItemOpen(parentItem)) {
         this.openTreeItems.push(parentPath);
       }

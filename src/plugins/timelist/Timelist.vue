@@ -114,7 +114,8 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.getClock()?.currentValue() || this.openmct.time.bounds()?.start;
+    this.timestamp =
+      this.openmct.time.getClock()?.currentValue() || this.openmct.time.bounds()?.start;
     this.openmct.time.on('clock', this.setViewFromClock);
 
     this.getPlanDataAndSetConfig(this.domainObject);
