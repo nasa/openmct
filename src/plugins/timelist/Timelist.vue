@@ -114,7 +114,7 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
+    this.timestamp = this.openmct.time.getClock()?.currentValue() || this.openmct.time.bounds()?.start;
     this.openmct.time.on('clock', this.setViewFromClock);
 
     this.getPlanDataAndSetConfig(this.domainObject);
@@ -148,7 +148,7 @@ export default {
       this.composition.load();
     }
 
-    this.setViewFromClock(this.openmct.time.clock());
+    this.setViewFromClock(this.openmct.time.getClock());
   },
   beforeUnmount() {
     if (this.unlisten) {
@@ -201,9 +201,9 @@ export default {
       }
     },
     updateTimestamp(bounds, isTick) {
-      if (isTick === true && this.openmct.time.clock() !== undefined) {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-      } else if (isTick === false && this.openmct.time.clock() === undefined) {
+      if (isTick === true && this.openmct.time.getClock() !== undefined) {
+        this.updateTimeStampAndListActivities(this.openmct.time.getClock().currentValue());
+      } else if (isTick === false && this.openmct.time.getClock() === undefined) {
         // set the start time for fixed time using the selected bounds start
         this.updateTimeStampAndListActivities(bounds.start);
       }
@@ -215,7 +215,7 @@ export default {
         this.hideAll = false;
         this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
       } else {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+        this.updateTimeStampAndListActivities(this.openmct.time.getClock().currentValue());
       }
     },
     addItem(domainObject) {
