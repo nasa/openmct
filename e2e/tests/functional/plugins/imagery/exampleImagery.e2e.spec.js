@@ -49,7 +49,6 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
-    page.waitForResponse('')
     // Zoom in x2 and assert
     await mouseZoomOnImageAndAssert(page, 2);
 
