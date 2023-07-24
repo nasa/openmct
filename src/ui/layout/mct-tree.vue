@@ -702,12 +702,19 @@ export default {
         sortedTreeItems.splice(parentIndex + 1, 0, ...children);
       });
 
-      // Splice in all of the sorted descendants
-      this.treeItems.splice(
+      // We need to reassign this.treeItems here since splice in place of all the sorted descendants doesn't seem to trigger a Vue update
+      let newTreeItems = this.treeItems.slice();
+      newTreeItems.splice(
         this.treeItems.indexOf(parentItem) + 1,
         sortedTreeItems.length,
         ...sortedTreeItems
       );
+      this.treeItems = newTreeItems;
+      // this.treeItems.splice(
+      //   this.treeItems.indexOf(parentItem) + 1,
+      //   sortedTreeItems.length,
+      //   ...sortedTreeItems
+      // );
     },
     buildNavigationPath(objectPath) {
       return (

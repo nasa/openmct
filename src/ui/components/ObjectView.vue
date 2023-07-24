@@ -62,11 +62,6 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {
-      domainObject: this.defaultObject
-    };
-  },
   computed: {
     path() {
       return this.domainObject && (this.currentObjectPath || this.objectPath);

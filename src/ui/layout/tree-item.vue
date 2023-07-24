@@ -51,6 +51,7 @@
       />
       <object-label
         ref="objectLabel"
+        :title="node.object.name"
         :domain-object="node.object"
         :object-path="node.objectPath"
         :navigate-to-path="navigationPath"

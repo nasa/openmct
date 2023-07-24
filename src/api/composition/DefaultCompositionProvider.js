@@ -74,7 +74,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    *          the Identifiers in this composition
    */
   load(domainObject) {
-    return Promise.all(domainObject.composition);
+    return Promise.all(domainObject.composition.map(this.publicAPI.objects.parseKeyString));
   }
   /**
    * Attach listeners for changes to the composition of a given domain object.
