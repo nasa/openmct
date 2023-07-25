@@ -50,7 +50,7 @@ export default {
       event.preventDefault();
       event.stopPropagation();
 
-      let actionsCollection = this.openmct.actions.getActionsCollection(this.objectPath);
+      let actionsCollection = this.openmct.actions.getActionsCollection(toRaw(this.objectPath));
       let actions = actionsCollection.getVisibleActions();
       let sortedActions = this.openmct.actions._groupAndSortActions(actions);
 

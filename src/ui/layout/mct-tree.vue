@@ -351,7 +351,9 @@ export default {
 
       this.endItemLoad(parentPath);
 
-      this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(parentIndex + 1, 0, ...childrenItems);
+      this.treeItems = [...newTreeItems];
 
       if (!this.isTreeItemOpen(parentItem)) {
         this.openTreeItems.push(parentPath);
@@ -388,7 +390,9 @@ export default {
 
         return true;
       });
-      this.openTreeItems.splice(pathIndex, 1);
+      const newOpenTreeItems = [...this.openTreeItems];
+      newOpenTreeItems.splice(pathIndex, 1);
+      this.openTreeItems = [...newOpenTreeItems];
       this.removeCompositionListenerFor(path);
     },
     closeTreeItem(item) {
@@ -703,11 +707,13 @@ export default {
       });
 
       // Splice in all of the sorted descendants
-      this.treeItems.splice(
-        this.treeItems.indexOf(parentItem) + 1,
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(
+        newTreeItems.indexOf(parentItem) + 1,
         sortedTreeItems.length,
         ...sortedTreeItems
       );
+      this.treeItems = [...newTreeItems];
     },
     buildNavigationPath(objectPath) {
       return (
@@ -792,7 +798,9 @@ export default {
       }
 
       const removeIndex = this.getTreeItemIndex(item.navigationPath);
-      this.treeItems.splice(removeIndex, 1);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(removeIndex, 1);
+      this.treeItems = [...newTreeItems];
     },
     addItemToTreeBefore(addItem, beforeItem) {
       const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
@@ -805,7 +813,9 @@ export default {
       this.addItemToTree(addItem, addIndex + 1);
     },
     addItemToTree(addItem, index) {
-      this.treeItems.splice(index, 0, addItem);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(index, 0, addItem);
+      this.treeItems = [...newTreeItems];
 
       if (this.isTreeItemOpen(addItem)) {
         this.openTreeItem(addItem);

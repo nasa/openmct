@@ -112,7 +112,7 @@ export default {
 
       const foundSeries = seriesIndex > -1;
       if (foundSeries) {
-        this.$delete(this.plotSeries, seriesIndex);
+        this.plotSeries.splice(seriesIndex, 1);
         this.setAxesLabels();
       }
     },

@@ -46,10 +46,10 @@ test.describe('Example Imagery Object', () => {
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
     await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
+    await page.locator(backgroundImageSelector).waitFor();
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
-    page.waitForResponse('');
     // Zoom in x2 and assert
     await mouseZoomOnImageAndAssert(page, 2);
 
