@@ -110,7 +110,7 @@ test.describe('Time List', () => {
 
     await test.step('Does not show milliseconds in times', async () => {
       // Get the first activity
-      const row = await page.locator('.js-list-item').first();
+      const row = page.locator('.js-list-item').first();
       // Verify that none fo the times have milliseconds displayed.
       // Example: 2024-11-17T16:00:00Z is correct and 2024-11-17T16:00:00.000Z is wrong
 
