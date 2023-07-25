@@ -396,7 +396,7 @@ async function setTimeConductorOffset(
 async function setStartOffset(page, offset) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
-  await setTimeConductorOffset(page, offset, false);
+  await setTimeConductorOffset(page, offset);
 }
 
 /**
@@ -407,7 +407,7 @@ async function setStartOffset(page, offset) {
 async function setEndOffset(page, offset) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
-  await setTimeConductorOffset(page, offset, true);
+  await setTimeConductorOffset(page, offset);
 }
 
 async function setTimeConductorBounds(page, startDate, endDate) {
