@@ -487,7 +487,12 @@ export default {
                 this.selectedSection.isLocked = true;
               }
 
-              mutateObject(this.openmct, this.domainObject, 'configuration.sections', this.sections);
+              mutateObject(
+                this.openmct,
+                this.domainObject,
+                'configuration.sections',
+                this.sections
+              );
 
               if (!this.domainObject.locked) {
                 mutateObject(this.openmct, this.domainObject, 'locked', true);

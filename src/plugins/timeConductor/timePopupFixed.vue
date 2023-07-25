@@ -82,7 +82,11 @@
         aria-label="Submit time bounds"
         @click.prevent="submit"
       ></button>
-      <button class="c-button icon-x" @click.prevent="hide" aria-label="Discard time bounds"></button>
+      <button
+        class="c-button icon-x"
+        aria-label="Discard time bounds"
+        @click.prevent="hide"
+      ></button>
     </div>
   </form>
 </template>
