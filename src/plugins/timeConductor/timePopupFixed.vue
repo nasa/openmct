@@ -1,92 +1,94 @@
 <template>
-  <form ref="fixedDeltaInput" class="c-tc-input-popup__input-grid">
-    <div class="pr-time-label"><em>Start</em> Date</div>
-    <div class="pr-time-label">Time Z</div>
-    <div class="pr-time-label"></div>
-    <div class="pr-time-label"><em>End</em> Date</div>
-    <div class="pr-time-label">Time Z</div>
-    <div class="pr-time-label"></div>
+  <form ref="fixedDeltaInput">
+    <div class="c-tc-input-popup__input-grid">
+      <div class="pr-time-label"><em>Start</em> Date</div>
+      <div class="pr-time-label">Time</div>
+      <div class="pr-time-label"></div>
+      <div class="pr-time-label"><em>End</em> Date</div>
+      <div class="pr-time-label">Time</div>
+      <div class="pr-time-label"></div>
 
-    <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
-      <input
-        ref="startDate"
-        v-model="formattedBounds.start"
-        class="c-input--datetime"
-        type="text"
-        autocorrect="off"
-        spellcheck="false"
-        aria-label="Start date"
-        @change="validateAllBounds('startDate')"
-      />
-      <date-picker
-        v-if="isUTCBased"
-        class="c-ctrl-wrapper--menus-left"
-        :default-date-time="formattedBounds.start"
-        :formatter="timeFormatter"
-        @date-selected="startDateSelected"
-      />
-    </div>
+      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+        <input
+          ref="startDate"
+          v-model="formattedBounds.start"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Start date"
+          @change="validateAllBounds('startDate')"
+        />
+        <date-picker
+          v-if="isUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.start"
+          :formatter="timeFormatter"
+          @date-selected="startDateSelected"
+        />
+      </div>
 
-    <div class="pr-time-input pr-time-input--time">
-      <input
-        ref="startTime"
-        v-model="formattedBounds.startTime"
-        class="c-input--datetime"
-        type="text"
-        autocorrect="off"
-        spellcheck="false"
-        aria-label="Start time"
-        @change="validateAllBounds('startDate')"
-      />
-    </div>
+      <div class="pr-time-input pr-time-input--time">
+        <input
+          ref="startTime"
+          v-model="formattedBounds.startTime"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Start time"
+          @change="validateAllBounds('startDate')"
+        />
+      </div>
 
-    <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
+      <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-    <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
-      <input
-        ref="endDate"
-        v-model="formattedBounds.end"
-        class="c-input--datetime"
-        type="text"
-        autocorrect="off"
-        spellcheck="false"
-        aria-label="End date"
-        @change="validateAllBounds('endDate')"
-      />
-      <date-picker
-        v-if="isUTCBased"
-        class="c-ctrl-wrapper--menus-left"
-        :default-date-time="formattedBounds.end"
-        :formatter="timeFormatter"
-        @date-selected="endDateSelected"
-      />
-    </div>
+      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+        <input
+          ref="endDate"
+          v-model="formattedBounds.end"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="End date"
+          @change="validateAllBounds('endDate')"
+        />
+        <date-picker
+          v-if="isUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.end"
+          :formatter="timeFormatter"
+          @date-selected="endDateSelected"
+        />
+      </div>
 
-    <div class="pr-time-input pr-time-input--time">
-      <input
-        ref="endTime"
-        v-model="formattedBounds.endTime"
-        class="c-input--datetime"
-        type="text"
-        autocorrect="off"
-        spellcheck="false"
-        aria-label="End time"
-        @change="validateAllBounds('endDate')"
-      />
-    </div>
+      <div class="pr-time-input pr-time-input--time">
+        <input
+          ref="endTime"
+          v-model="formattedBounds.endTime"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="End time"
+          @change="validateAllBounds('endDate')"
+        />
+      </div>
 
-    <div class="pr-time-input pr-time-input--buttons">
-      <button
-        class="c-button c-button--major icon-check"
-        :disabled="isDisabled"
-        aria-label="Submit time bounds"
-        @click.prevent="submit"
-      ></button>
-      <button
-        class="c-button icon-x"
-        aria-label="Discard time bounds"
-        @click.prevent="hide"
-      ></button>
+      <div class="pr-time-input pr-time-input--buttons">
+        <button
+          class="c-button c-button--major icon-check"
+          :disabled="isDisabled"
+          aria-label="Submit time bounds"
+          @click.prevent="submit"
+        ></button>
+        <button
+          class="c-button icon-x"
+          aria-label="Discard time bounds"
+          @click.prevent="hide"
+        ></button>
+      </div>
     </div>
   </form>
 </template>

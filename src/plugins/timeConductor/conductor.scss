@@ -563,6 +563,10 @@
             }
         }
     }
+
+    .pr-time-input input {
+        width: 3.5em; // Needed for Firefox
+    }
 }
 
 .c-compact-tc {
