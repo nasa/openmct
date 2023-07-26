@@ -259,7 +259,7 @@ export default {
       this.addItem(itemType + '-view', element);
     },
     setSelection(selection) {
-      this.selection = selection;
+      this.selection = [...selection];
     },
     itemIsInCurrentSelection(item) {
       return this.selection.some(
