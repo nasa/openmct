@@ -119,7 +119,7 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
-import { markRaw } from 'vue';
+import { markRaw, reactive } from 'vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -263,7 +263,7 @@ export default {
     }
   },
   async mounted() {
-    await this.initialize();
+    this.initialize();
     await this.loadRoot();
     this.isLoading = false;
 
@@ -379,7 +379,7 @@ export default {
         return;
       }
 
-      this.treeItems = this.treeItems.filter((item) => {
+      const newTreeItems = this.treeItems.filter((item) => {
         const otherPath = item.navigationPath;
         if (otherPath !== path && this.isTreeItemAChildOf(otherPath, path)) {
           this.destroyObserverByPath(otherPath);
@@ -390,6 +390,7 @@ export default {
 
         return true;
       });
+      this.treeItems = [...newTreeItems];
       const newOpenTreeItems = [...this.openTreeItems];
       newOpenTreeItems.splice(pathIndex, 1);
       this.openTreeItems = [...newOpenTreeItems];
@@ -636,14 +637,15 @@ export default {
       let objectPath = [domainObject].concat(parentObjectPath);
       let navigationPath = this.buildNavigationPath(objectPath);
 
-      return {
+      // Ensure that we create reactive objects for the tree
+      return reactive({
         id: this.openmct.objects.makeKeyString(domainObject.identifier),
         object: domainObject,
         leftOffset: (objectPath.length - 1) * TREE_ITEM_INDENT_PX + 'px',
         isNew,
         objectPath,
         navigationPath
-      };
+      });
     },
     addMutable(mutableDomainObject, parentObjectPath) {
       const objectPath = [mutableDomainObject].concat(parentObjectPath);
