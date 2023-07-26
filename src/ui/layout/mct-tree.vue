@@ -342,7 +342,7 @@ export default {
         parentItem.objectPath,
         abortSignal
       );
-      const parentIndex = this.treeItems.indexOf(parentItem);
+      const parentIndex = this.treeItems.findIndex((item) => item.navigationPath === parentPath);
 
       // if it's not loading, it was aborted
       if (!this.isItemLoading(parentPath) || parentIndex === -1) {
