@@ -43,7 +43,7 @@ describe('The User Status API', () => {
     mockUser = new openmct.user.User('test-user', 'A test user');
     userProvider.getCurrentUser.and.returnValue(Promise.resolve(mockUser));
     userProvider.getPossibleStatuses.and.returnValue(Promise.resolve([]));
-    userProvider.getPossibleRoles().and.returnValue(Promise.resolve([]));
+    userProvider.getPossibleRoles.and.returnValue(Promise.resolve([]));
     userProvider.getAllStatusRoles.and.returnValue(Promise.resolve([]));
     userProvider.canSetPollQuestion.and.returnValue(Promise.resolve(false));
     userProvider.isLoggedIn.and.returnValue(true);
