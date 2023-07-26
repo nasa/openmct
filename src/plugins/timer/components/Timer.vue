@@ -179,7 +179,6 @@ export default {
     }
   },
   mounted() {
-    console.log
     this.unobserve = this.openmct.objects.observe(
       this.domainObject,
       'configuration',
