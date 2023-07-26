@@ -236,25 +236,16 @@ export default {
       [this.startInputHrs, this.startInputMins, this.startInputSecs] =
         this.offsets.start.split(':');
       [this.endInputHrs, this.endInputMins, this.endInputSecs] = this.offsets.end.split(':');
-      this.numberSelect('startInputHrs');
+      this.$nextTick(() => {
+        this.numberSelect('startInputHrs');
+      });
     },
     numberSelect(input) {
+      if (this.$refs[input] === undefined || this.$refs[input] === null) {
+        return;
+      }
       this.$refs[input].focus();
-
-      // change to text, select, then change back to number
-      // number inputs do not support select()
-      this.$nextTick(() => {
-        if (this.$refs[input] === undefined) {
-          return;
-        }
-
-        this.$refs[input].setAttribute('type', 'text');
-        this.$refs[input].select();
-
-        this.$nextTick(() => {
-          this.$refs[input].setAttribute('type', 'number');
-        });
-      });
+      this.$refs[input].select();
     },
     selectAll($ev) {
       $ev.target.select();

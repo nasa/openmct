@@ -1109,7 +1109,7 @@ export default {
       window.clearInterval(this.durationTracker);
     },
     updateDuration() {
-      let currentTime = this.timeContext.getClock().currentValue();
+      let currentTime = this.timeContext.isRealTime() ? this.timeContext.now() : undefined;
       if (currentTime === undefined) {
         this.numericDuration = currentTime;
       } else if (Number.isInteger(this.parsedSelectedTime)) {
