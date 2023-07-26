@@ -24,7 +24,7 @@
   <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
       {{ role ? `${userName}: ${role}` : userName }}
-      <button @click="promptForRoleSelection">Change Role</button>
+      <button v-if="availableRoles?.length > 1" @click="promptForRoleSelection">Change Role</button>
     </span>
   </div>
 </template>
@@ -37,6 +37,7 @@ export default {
     return {
       userName: undefined,
       role: undefined,
+      availableRoles: [],
       loggedIn: false,
       inputRoleSelection: undefined,
       roleSelectionDialog: undefined
@@ -57,6 +58,7 @@ export default {
       const user = await this.openmct.user.getCurrentUser();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
+      this.availableRoles = await this.openmct.user.getPossibleRoles();
       this.loggedIn = this.openmct.user.isLoggedIn();
     },
     async fetchOrPromptForRole() {
@@ -67,15 +69,15 @@ export default {
         this.promptForRoleSelection();
       } else {
         // only notify the user if they have more than one role available
-        const allRoles = await this.openmct.user.getPossibleRoles();
-        if (allRoles.length > 1) {
+        this.availableRoles = await this.openmct.user.getPossibleRoles();
+        if (this.availableRoles.length > 1) {
           this.openmct.notifications.info(`You're logged in as role ${activeRole}`);
         }
       }
     },
     async promptForRoleSelection() {
-      const allRoles = await this.openmct.user.getPossibleRoles();
-      const selectionOptions = allRoles.map((role) => ({
+      this.availableRoles = await this.openmct.user.getPossibleRoles();
+      const selectionOptions = this.availableRoles.map((role) => ({
         key: role,
         name: role
       }));
