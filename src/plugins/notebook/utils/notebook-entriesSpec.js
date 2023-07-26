@@ -156,6 +156,9 @@ describe('Notebook Entries:', () => {
         }
       });
     };
+    openmct.user.getCurrentUser = () => {
+      return Promise.resolve([]);
+    };
 
     const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
       const entries = NotebookEntries.getNotebookEntries(
