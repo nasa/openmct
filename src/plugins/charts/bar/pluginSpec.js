@@ -122,7 +122,7 @@ describe('the plugin', function () {
     resetApplicationState(openmct).then(done).catch(done);
   });
 
-  xdescribe('The bar graph view', () => {
+  describe('The bar graph view', () => {
     let barGraphObject;
     // eslint-disable-next-line no-unused-vars
     let mockComposition;
@@ -163,7 +163,7 @@ describe('the plugin', function () {
       expect(plotViewProvider).toBeDefined();
     });
 
-    it('Renders plotly bar graph', () => {
+    xit('Renders plotly bar graph', async () => {
       let barChartElement = element.querySelectorAll('.plotly');
       expect(barChartElement.length).toBe(1);
     });
