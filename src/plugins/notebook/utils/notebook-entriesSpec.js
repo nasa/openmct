@@ -99,6 +99,7 @@ let openmct;
 describe('Notebook Entries:', () => {
   beforeEach(() => {
     openmct = createOpenMct();
+    openmct.time.setClock('local');
     openmct.types.addType('notebook', {
       creatable: true
     });
@@ -155,9 +156,6 @@ describe('Notebook Entries:', () => {
           return USER;
         }
       });
-    };
-    openmct.user.getCurrentUser = () => {
-      return Promise.resolve([]);
     };
 
     const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
@@ -219,7 +217,6 @@ describe('Notebook Entries:', () => {
   it('deleteNotebookEntries deletes correct page entries', async () => {
     await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
     await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-
     NotebookEntries.deleteNotebookEntries(
       openmct,
       notebookDomainObject,
