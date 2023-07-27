@@ -62,7 +62,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
     const id = this.#getObjectKeyString(domainObject);
 
     if (this.#isRealTime === undefined) {
-      this.#updateRealTime(this.#openmct.time.clock());
+      this.#updateRealTime(this.#openmct.time.getMode());
     }
 
     this.#handleClockUpdate();
@@ -92,15 +92,15 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     if (observers && !this.#watchingTheClock) {
       this.#watchingTheClock = true;
-      this.#openmct.time.on('clock', this.#updateRealTime, this);
+      this.#openmct.time.on('modeChanged', this.#updateRealTime, this);
     } else if (!observers && this.#watchingTheClock) {
       this.#watchingTheClock = false;
-      this.#openmct.time.off('clock', this.#updateRealTime, this);
+      this.#openmct.time.off('modeChanged', this.#updateRealTime, this);
     }
   }
 
-  #updateRealTime(clock) {
-    this.#isRealTime = clock !== undefined;
+  #updateRealTime(mode) {
+    this.#isRealTime = mode !== 'fixed';
 
     if (!this.#isRealTime) {
       Object.keys(this.#observingStaleness).forEach((id) => {
