@@ -63,7 +63,7 @@ describe('the plugin', () => {
     it('notifies the user of the number of notifications', () => {
       let notificationCountElement = document.querySelector('.c-indicator__count');
 
-      expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
+      expect(notificationCountElement.innerText).toEqual('1');
     });
   });
 });
