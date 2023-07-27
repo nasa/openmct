@@ -324,7 +324,7 @@ export default class PlotSeries extends Model {
   async load(options) {
     await this.fetch(options);
     this.emit('load');
-    this.loadLimits();
+    await this.loadLimits();
   }
 
   async loadLimits() {
