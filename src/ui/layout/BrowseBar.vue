@@ -164,7 +164,7 @@ export default {
     actionCollection: {
       type: Object,
       default: () => {
-        return {};
+        return undefined;
       }
     }
   },
