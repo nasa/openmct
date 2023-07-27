@@ -71,6 +71,10 @@ export default {
     this.openmct.notifications.on('notification', this.updateNotifications);
     this.openmct.notifications.on('dismiss-all', this.updateNotifications);
   },
+  unmounted() {
+    this.openmct.notifications.of('notification', this.updateNotifications);
+    this.openmct.notifications.of('dismiss-all', this.updateNotifications);
+  },
   methods: {
     dismissAllNotifications() {
       this.openmct.notifications.dismissAllNotifications();
