@@ -163,7 +163,7 @@ describe('the plugin', function () {
       expect(plotViewProvider).toBeDefined();
     });
 
-    xit('Renders plotly bar graph', async () => {
+    xit('Renders plotly bar graph', () => {
       let barChartElement = element.querySelectorAll('.plotly');
       expect(barChartElement.length).toBe(1);
     });
