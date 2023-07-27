@@ -76,7 +76,7 @@ function generateTelemetry(start, count) {
   return telemetry;
 }
 
-fdescribe('The Imagery View Layouts', () => {
+describe('The Imagery View Layouts', () => {
   const imageryKey = 'example.imagery';
   const imageryForTimeStripKey = 'example.imagery.time-strip.view';
   const START = Date.now();
