@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  setIndependentTimeConductorBounds
+} = require('../../../../appActions');
 
 test.describe('Flexible Layout', () => {
   let sineWaveObject;
@@ -187,16 +190,17 @@ test.describe('Flexible Layout', () => {
     await page.locator('text=Save and Finish Editing').click();
 
     // flip on independent time conductor
-    await page.getByTitle('Enable independent Time Conductor').first().locator('label').click();
-    await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
-    await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
-    await page.getByRole('textbox').nth(1).click();
+    await setIndependentTimeConductorBounds(
+      page,
+      '2021-12-30 01:01:00.000Z',
+      '2021-12-30 01:11:00.000Z'
+    );
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
 
     // flip it off
-    await page.getByTitle('Disable independent Time Conductor').first().locator('label').click();
+    await page.getByRole('switch').click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });

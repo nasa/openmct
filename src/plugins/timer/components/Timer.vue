@@ -219,8 +219,6 @@ export default {
       if (this.timerState === 'paused' && !this.lastTimestamp) {
         this.lastTimestamp = this.pausedTime;
       }
-
-      this.openmct.objects.refresh(this.domainObject);
     },
     restartTimer() {
       this.triggerAction('timer.restart');

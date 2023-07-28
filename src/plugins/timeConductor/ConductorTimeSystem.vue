@@ -28,6 +28,7 @@
     <button
       class="c-button--menu c-time-system-button"
       :class="[buttonCssClass]"
+      aria-label="Time Conductor Time System"
       @click.prevent.stop="showTimeSystemMenu"
     >
       <span class="c-button__label">{{ selectedTimeSystem.name }}</span>

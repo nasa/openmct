@@ -162,7 +162,7 @@ export default {
       showGrid: true,
       viewContext: {},
       gridDimensions: [0, 0],
-      layoutItems: this.domainObject.configuration.items
+      layoutItems: this.domainObject.configuration.items || []
     };
   },
   computed: {
@@ -227,7 +227,7 @@ export default {
 
     this.watchDisplayResize();
   },
-  unmounted: function () {
+  unmounted() {
     this.openmct.selection.off('change', this.setSelection);
     this.composition.off('add', this.addChild);
     this.composition.off('remove', this.removeChild);
@@ -259,7 +259,7 @@ export default {
       this.addItem(itemType + '-view', element);
     },
     setSelection(selection) {
-      this.selection = selection;
+      this.selection = [...selection];
     },
     itemIsInCurrentSelection(item) {
       return this.selection.some(
@@ -623,6 +623,7 @@ export default {
           return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
         }
       });
+      this.layoutItems = layoutItems;
       this.mutate('configuration.items', layoutItems);
       this.clearSelection();
     },

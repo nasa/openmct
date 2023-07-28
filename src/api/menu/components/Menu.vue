@@ -30,7 +30,6 @@
             role="menuitem"
             :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
             :title="action.description"
-            :data-testid="action.testId || null"
             @click="action.onItemClicked"
           >
             {{ action.name }}
@@ -53,7 +52,6 @@
         role="menuitem"
         :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
         :title="action.description"
-        :data-testid="action.testId || null"
         @click="action.onItemClicked"
       >
         {{ action.name }}

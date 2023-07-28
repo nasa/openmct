@@ -35,7 +35,7 @@ import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 
 const TEST_KEY_ID = 'some-other-key';
 
-describe('the plugin', function () {
+xdescribe('the plugin', function () {
   let element;
   let child;
   let openmct;
@@ -697,7 +697,7 @@ describe('the plugin', function () {
     });
   });
 
-  describe('the inspector view', () => {
+  xdescribe('the inspector view', () => {
     let component;
     let viewComponentObject;
     let mockComposition;

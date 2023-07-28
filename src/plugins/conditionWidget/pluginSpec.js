@@ -186,7 +186,9 @@ describe('the plugin', function () {
     await Vue.nextTick();
 
     const domainUrl = mockConditionObject[CONDITION_WIDGET_KEY].url;
-    expect(urlParent.innerHTML).toContain(`<a href="${domainUrl}"`);
+    expect(urlParent.innerHTML).toContain(
+      `<a class="c-condition-widget__label-wrapper" href="${domainUrl}"`
+    );
 
     const conditionWidgetRender = urlParent.querySelector('.c-condition-widget');
     expect(conditionWidgetRender).toBeDefined();

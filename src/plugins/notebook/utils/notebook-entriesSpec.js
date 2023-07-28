@@ -99,6 +99,7 @@ let openmct;
 describe('Notebook Entries:', () => {
   beforeEach(() => {
     openmct = createOpenMct();
+    openmct.time.setClock('local');
     openmct.types.addType('notebook', {
       creatable: true
     });
@@ -216,7 +217,6 @@ describe('Notebook Entries:', () => {
   it('deleteNotebookEntries deletes correct page entries', async () => {
     await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
     await NotebookEntries.addNotebookEntry(openmct, notebookDomainObject, notebookStorage);
-
     NotebookEntries.deleteNotebookEntries(
       openmct,
       notebookDomainObject,

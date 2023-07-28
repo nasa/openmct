@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+import { markRaw } from 'vue';
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
@@ -35,7 +36,8 @@ const DEFAULT_TIME_OPTIONS = {
 };
 
 export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
-  const openmct = new MCT();
+  let openmct = new MCT();
+  openmct = markRaw(openmct);
   openmct.install(openmct.plugins.LocalStorage());
   openmct.install(openmct.plugins.UTCTimeSystem());
   openmct.setAssetPath('/base');

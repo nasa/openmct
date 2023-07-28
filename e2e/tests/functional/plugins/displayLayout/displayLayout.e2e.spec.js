@@ -25,7 +25,8 @@ const {
   createDomainObjectWithDefaults,
   setStartOffset,
   setFixedTimeMode,
-  setRealTimeMode
+  setRealTimeMode,
+  setIndependentTimeConductorBounds
 } = require('../../../../appActions');
 
 test.describe('Display Layout', () => {
@@ -231,20 +232,27 @@ test.describe('Display Layout', () => {
     let layoutGridHolder = page.locator('.l-layout__grid-holder');
     await exampleImageryTreeItem.dragTo(layoutGridHolder);
 
+    //adjust so that we can see the independent time conductor toggle
+    // Adjust object height
+    await page.locator('div[title="Resize object height"] > input').click();
+    await page.locator('div[title="Resize object height"] > input').fill('70');
+
+    // Adjust object width
+    await page.locator('div[title="Resize object width"] > input').click();
+    await page.locator('div[title="Resize object width"] > input').fill('70');
+
     await page.locator('button[title="Save"]').click();
     await page.locator('text=Save and Finish Editing').click();
 
-    // flip on independent time conductor
-    await page.getByTitle('Enable independent Time Conductor').first().locator('label').click();
-    await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
-    await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
-    await page.getByRole('textbox').nth(1).click();
+    const startDate = '2021-12-30 01:01:00.000Z';
+    const endDate = '2021-12-30 01:11:00.000Z';
+    await setIndependentTimeConductorBounds(page, startDate, endDate);
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
 
     // flip it off
-    await page.getByTitle('Disable independent Time Conductor').first().locator('label').click();
+    await page.getByRole('switch').click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });

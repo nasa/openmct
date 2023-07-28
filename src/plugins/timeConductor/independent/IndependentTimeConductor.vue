@@ -28,17 +28,17 @@
       { 'is-expanded': independentTCEnabled }
     ]"
   >
-    <toggle-switch
+    <ToggleSwitch
       id="independentTCToggle"
       class="c-toggle-switch--mini"
       :checked="independentTCEnabled"
-      :title="toggleTitle"
+      :name="toggleTitle"
       @change="toggleIndependentTC"
     />
 
     <ConductorModeIcon />
 
-    <conductor-inputs-fixed
+    <ConductorInputsFixed
       v-if="showFixedInputs"
       class="c-compact-tc__bounds--fixed"
       :object-path="objectPath"
@@ -46,7 +46,7 @@
       :compact="true"
     />
 
-    <conductor-inputs-realtime
+    <ConductorInputsRealtime
       v-if="showRealtimeInputs"
       class="c-compact-tc__bounds--real-time"
       :object-path="objectPath"
@@ -55,10 +55,12 @@
     />
     <div
       v-if="independentTCEnabled"
+      role="button"
       class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
+      aria-label="Independent Time Conductor Settings"
     ></div>
 
-    <conductor-pop-up
+    <ConductorPopUp
       v-if="showConductorPopup"
       ref="conductorPopup"
       :object-path="objectPath"
@@ -145,7 +147,7 @@ export default {
   },
   computed: {
     toggleTitle() {
-      return `${this.independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`;
+      return `${this.independentTCEnabled ? 'Disable' : 'Enable'} Independent Time Conductor`;
     },
     showFixedInputs() {
       return this.isFixed && this.independentTCEnabled;

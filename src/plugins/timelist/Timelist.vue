@@ -103,9 +103,8 @@ export default {
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
-    this.planObjects = [];
-
     return {
+      planObjects: [],
       viewBounds: undefined,
       height: 0,
       planActivities: [],
@@ -115,7 +114,9 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
+    this.timestamp = this.openmct.time.isRealTime()
+      ? this.openmct.time.now()
+      : this.openmct.time.bounds().start;
     this.openmct.time.on('clock', this.setViewFromClock);
 
     this.getPlanDataAndSetConfig(this.domainObject);
@@ -149,7 +150,7 @@ export default {
       this.composition.load();
     }
 
-    this.setViewFromClock(this.openmct.time.clock());
+    this.setViewFromClock(this.openmct.time.getClock());
   },
   beforeUnmount() {
     if (this.unlisten) {
@@ -202,21 +203,21 @@ export default {
       }
     },
     updateTimestamp(bounds, isTick) {
-      if (isTick === true && this.openmct.time.clock() !== undefined) {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-      } else if (isTick === false && this.openmct.time.clock() === undefined) {
+      if (isTick === true && this.openmct.time.isRealTime()) {
+        this.updateTimeStampAndListActivities(this.openmct.time.now());
+      } else if (isTick === false && !this.openmct.time.isRealTime()) {
         // set the start time for fixed time using the selected bounds start
         this.updateTimeStampAndListActivities(bounds.start);
       }
     },
     setViewFromClock(newClock) {
       this.filterValue = this.domainObject.configuration.filter;
-      this.isFixedTime = newClock === undefined;
+      this.isFixedTime = !this.openmct.time.isRealTime();
       if (this.isFixedTime) {
         this.hideAll = false;
         this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
       } else {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
+        this.updateTimeStampAndListActivities(this.openmct.time.now());
       }
     },
     addItem(domainObject) {
@@ -345,12 +346,13 @@ export default {
       let activities = [];
 
       groups.forEach((key) => {
-        activities = activities.concat(this.planData[key]);
+        // Create new objects so Vue 3 can detect any changes
+        activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
       });
       // filter activities first, then sort by start time
       activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
       activities = this.applyStyles(activities);
-      this.planActivities = activities;
+      this.planActivities = [...activities];
       //We need to wait for the next tick since we need the height of the row from the DOM
       this.$nextTick(this.setScrollTop);
     },

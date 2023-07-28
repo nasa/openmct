@@ -164,7 +164,7 @@ export default {
     actionCollection: {
       type: Object,
       default: () => {
-        return {};
+        return undefined;
       }
     }
   },
@@ -324,12 +324,7 @@ export default {
       this.openmct.editor.edit();
     },
     getViewKey() {
-      let viewKey = this.viewKey;
-      if (this.objectViewKey) {
-        viewKey = this.objectViewKey;
-      }
-
-      return viewKey;
+      return this.viewKey;
     },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({

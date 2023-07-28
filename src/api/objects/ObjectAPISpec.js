@@ -23,6 +23,9 @@ describe('The Object API', () => {
             return USERNAME;
           }
         });
+      },
+      getPossibleRoles() {
+        return Promise.resolve([]);
       }
     };
     openmct = createOpenMct();

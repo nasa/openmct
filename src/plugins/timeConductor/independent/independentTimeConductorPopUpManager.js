@@ -42,8 +42,11 @@ export default {
   methods: {
     initializePopup() {
       this.conductorPopup = this.$refs.conductorPopup.$el;
-      document.body.appendChild(this.conductorPopup); // remove from container as it (and it's ancestors) have overflow:hidden
-
+      // we need to append it the first time since the popup has overflow:hidden
+      // then we show/hide based on the flag
+      if (this.conductorPopup.parentNode !== document.body) {
+        document.body.appendChild(this.conductorPopup);
+      }
       this.$nextTick(() => {
         window.addEventListener('resize', this.positionBox);
         document.addEventListener('click', this.handleClickAway);
@@ -97,11 +100,6 @@ export default {
       if (!this.conductorPopup) {
         return;
       }
-
-      if (this.conductorPopup.parentNode === document.body) {
-        document.body.removeChild(this.conductorPopup);
-      }
-
       this.showConductorPopup = false;
       this.conductorPopup = null;
       this.positionX = -10000; // reset it off screan
