@@ -100,6 +100,7 @@ export default class TelemetryCollection extends EventEmitter {
    */
   destroy() {
     if (this.requestAbort) {
+      console.log('destryoing');
       this.requestAbort.abort();
     }
 
