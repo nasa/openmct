@@ -98,6 +98,8 @@ test.describe('Time List', () => {
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
+      await page.goto(timelist.url);
+
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
         `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
