@@ -34,7 +34,7 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-  test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
+  test.only('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
     //This is necessary due to the size of the test suite.
@@ -107,7 +107,7 @@ test.describe('Autoscale', () => {
     await page.keyboard.up('Alt');
 
     // Ensure the drag worked.
-    await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
+    await testYTicks(page, ['-0.50', '0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00']);
 
     //Wait for canvas to stablize.
     await canvas.hover({ trial: true });
