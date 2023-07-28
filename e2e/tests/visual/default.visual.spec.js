@@ -40,7 +40,7 @@ test.describe('Visual - Default', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
     await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-    await page.getByTitle("Collapse Browse Pane").click();
+    await page.getByTitle('Collapse Browse Pane').click();
   });
   test.use({
     clockOptions: {

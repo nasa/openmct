@@ -53,7 +53,7 @@ test.describe('Visual - addInit', () => {
     });
     //Go to baseURL
     await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-    await page.getByTitle("Collapse Browse Pane").click();
+    await page.getByTitle('Collapse Browse Pane').click();
 
     await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 

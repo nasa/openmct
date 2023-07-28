@@ -42,7 +42,7 @@ test.describe('Visual - Controlled Clock @localStorage', () => {
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
     // Go to baseURL
     await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-    await page.getByTitle("Collapse Browse Pane").click();
+    await page.getByTitle('Collapse Browse Pane').click();
 
     await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
     //Ensure that we're on the Unnamed Overlay Plot object
