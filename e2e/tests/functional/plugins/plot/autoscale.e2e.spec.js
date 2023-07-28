@@ -34,10 +34,7 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-  test('User can set autoscale with a valid range @snapshot', async ({
-    page,
-    openmctConfig
-  }) => {
+  test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
     //This is necessary due to the size of the test suite.
