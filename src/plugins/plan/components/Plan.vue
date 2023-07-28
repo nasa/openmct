@@ -281,7 +281,7 @@ export default {
 
       if (!clientWidth) {
         //this is a hack - need a better way to find the parent of this component
-        let parent = this.openmct.layout.$refs.browseObject.$el;
+        let parent = this.getParent();
         if (parent) {
           clientWidth = parent.getBoundingClientRect().width;
         }
@@ -289,12 +289,15 @@ export default {
 
       return clientWidth - 200;
     },
+    getParent() {
+      //this is a hack - need a better way to find the parent of this component
+      return this.$el.closest('.c-so-view__object-view');
+    },
     getClientHeight() {
       let clientHeight = this.$refs.plan.clientHeight;
 
       if (!clientHeight) {
-        //this is a hack - need a better way to find the parent of this component
-        let parent = this.openmct.layout.$refs.browseObject.$el;
+        let parent = this.getParent();
         if (parent) {
           clientHeight = parent.getBoundingClientRect().height;
         }

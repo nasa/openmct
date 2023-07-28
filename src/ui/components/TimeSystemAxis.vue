@@ -78,6 +78,9 @@ export default {
     },
     timeSystem(newTimeSystem) {
       this.drawAxis(this.bounds, newTimeSystem);
+    },
+    contentHeight() {
+      this.updateNowMarker();
     }
   },
   mounted() {
@@ -110,20 +113,13 @@ export default {
       }
     },
     updateNowMarker() {
-      if (this.openmct.time.getClock() === undefined) {
-        let nowMarker = document.querySelector('.nowMarker');
-        if (nowMarker) {
-          nowMarker.classList.add('hidden');
-        }
-      } else {
-        let nowMarker = document.querySelector('.nowMarker');
-        if (nowMarker) {
-          nowMarker.classList.remove('hidden');
-          nowMarker.style.height = this.contentHeight + 'px';
-          const nowTimeStamp = this.openmct.time.getClock().currentValue();
-          const now = this.xScale(nowTimeStamp);
-          nowMarker.style.left = now + this.offset + 'px';
-        }
+      let nowMarker = this.$el.querySelector('.nowMarker');
+      if (nowMarker) {
+        nowMarker.classList.remove('hidden');
+        nowMarker.style.height = this.contentHeight + 'px';
+        const nowTimeStamp = this.openmct.time.now();
+        const now = this.xScale(nowTimeStamp);
+        nowMarker.style.left = now + this.offset + 'px';
       }
     },
     setDimensions() {
