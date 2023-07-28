@@ -169,7 +169,7 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * This abort any active requests
+   * Abort any pending requests
    * @private
    */
   _abortRequests() {
