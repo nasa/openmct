@@ -291,7 +291,7 @@ export default {
     },
     getParent() {
       //this is a hack - need a better way to find the parent of this component
-      return this.$el.closest('.c-so-view__object-view');
+      return this.$el.closest('.is-object-type-time-strip');
     },
     getClientHeight() {
       let clientHeight = this.$refs.plan.clientHeight;
