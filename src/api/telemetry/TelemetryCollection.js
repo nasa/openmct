@@ -109,7 +109,7 @@ export default class TelemetryCollection extends EventEmitter {
       this.unsubscribe();
     }
 
-    this.openmct.router.on('change:path', this._abortRequests);
+    this.openmct.router.off('change:path', this._abortRequests);
 
     this.removeAllListeners();
   }
