@@ -70,9 +70,6 @@ export default {
       required: true
     }
   },
-  created() {
-    this.compositions = [];
-  },
   data() {
     return {
       ladTableObjects: [],
@@ -116,6 +113,9 @@ export default {
 
       return '';
     }
+  },
+  created() {
+    this.compositions = [];
   },
   mounted() {
     this.ladTableConfiguration.on('change', this.handleConfigurationChange);
