@@ -169,11 +169,15 @@ export default {
     updateViewBounds() {
       const bounds = this.timeContext.bounds();
       this.updateContentHeight();
-      let currentTimeSystem = this.timeSystems.find(
+      let currentTimeSystemIndex = this.timeSystems.findIndex(
         (item) => item.timeSystem.key === this.openmct.time.timeSystem().key
       );
-      if (currentTimeSystem) {
+      if (currentTimeSystemIndex > -1) {
+        let currentTimeSystem = {
+          ...this.timeSystems[currentTimeSystemIndex]
+        };
         currentTimeSystem.bounds = bounds;
+        this.timeSystems.splice(currentTimeSystemIndex, 1, currentTimeSystem);
       }
     },
     setTimeContext() {

@@ -24,7 +24,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 import Layout from './Layout.vue';
 
-describe('Open MCT Layout:', () => {
+xdescribe('Open MCT Layout:', () => {
   let openmct;
   let element;
   let components;

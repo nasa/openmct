@@ -75,6 +75,7 @@ describe('The LAD Table', () => {
     child = document.createElement('div');
     parent.appendChild(child);
 
+    openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
     spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
     ladPlugin = new LadPlugin();

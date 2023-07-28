@@ -374,7 +374,7 @@ class InMemorySearchProvider {
     delete provider.pendingIndex[keyString];
 
     try {
-      if (domainObject) {
+      if (domainObject && domainObject.identifier) {
         await provider.index(domainObject);
       }
     } catch (error) {

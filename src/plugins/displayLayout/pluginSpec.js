@@ -105,11 +105,11 @@ describe('the plugin', function () {
       composition: []
     };
 
-    const applicableViews = openmct.objectViews.get(testViewObject, []);
+    const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
     let displayLayoutViewProvider = applicableViews.find(
       (viewProvider) => viewProvider.key === 'layout.view'
     );
-    let view = displayLayoutViewProvider.view(testViewObject);
+    let view = displayLayoutViewProvider.view(testViewObject, [testViewObject]);
     let error;
 
     try {
@@ -159,7 +159,7 @@ describe('the plugin', function () {
       const displayLayoutViewProvider = applicableViews.find(
         (viewProvider) => viewProvider.key === 'layout.view'
       );
-      const view = displayLayoutViewProvider.view(displayLayoutItem);
+      const view = displayLayoutViewProvider.view(displayLayoutItem, displayLayoutItem);
       view.show(child, false);
 
       Vue.nextTick(done);

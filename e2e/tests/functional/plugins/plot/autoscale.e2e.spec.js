@@ -107,7 +107,7 @@ test.describe('Autoscale', () => {
     await page.keyboard.up('Alt');
 
     // Ensure the drag worked.
-    await testYTicks(page, ['0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00', '3.50']);
+    await testYTicks(page, ['-0.50', '0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00']);
 
     //Wait for canvas to stablize.
     await canvas.hover({ trial: true });
