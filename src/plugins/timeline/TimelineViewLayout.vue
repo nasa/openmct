@@ -52,6 +52,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import { getValidatedData } from '../plan/util';
+import _ from 'lodash';
 
 const unknownObjectType = {
   definition: {
@@ -81,6 +82,7 @@ export default {
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
     this.stopFollowingTimeContext();
+    this.contentResizeObserver.disconnect();
   },
   mounted() {
     this.items = [];
@@ -92,6 +94,10 @@ export default {
       this.composition.on('reorder', this.reorder);
       this.composition.load();
     }
+
+    this.handleContentResize = _.debounce(this.handleContentResize, 500);
+    this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
+    this.contentResizeObserver.observe(this.$refs.timelineHolder);
   },
   methods: {
     addItem(domainObject) {
@@ -132,6 +138,9 @@ export default {
         this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
     },
+    handleContentResize() {
+      this.updateContentHeight();
+    },
     updateContentHeight() {
       const clientHeight = this.getClientHeight();
       if (this.height !== clientHeight) {
@@ -139,11 +148,11 @@ export default {
       }
     },
     getClientHeight() {
-      let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
+      let clientHeight = this.$refs.timelineHolder.getBoundingClientRect().height;
 
       if (!clientHeight) {
         //this is a hack - need a better way to find the parent of this component
-        let parent = this.openmct.layout.$refs.browseObject.$el;
+        let parent = this.$el.closest('.c-object-view');
         if (parent) {
           clientHeight = parent.getBoundingClientRect().height;
         }
