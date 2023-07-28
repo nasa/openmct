@@ -52,7 +52,8 @@ test.describe('Visual - addInit', () => {
       path: path.join(__dirname, '../../helper', './addInitRestrictedNotebook.js')
     });
     //Go to baseURL
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    await page.getByTitle("Collapse Browse Pane").click();
 
     await createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
 

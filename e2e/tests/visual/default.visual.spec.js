@@ -39,7 +39,8 @@ const { createDomainObjectWithDefaults } = require('../../appActions');
 test.describe('Visual - Default', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    await page.getByTitle("Collapse Browse Pane").click();
   });
   test.use({
     clockOptions: {
@@ -98,6 +99,8 @@ test.describe('Visual - Default', () => {
 
     let endDate = 'xxxx-01-01 02:00:00.000Z';
     endDate = year + endDate.substring(4);
+
+    await page.getByRole('button', { name: 'Time Conductor Settings' }).click();
 
     await page.locator('input[type="text"]').nth(1).fill(endDate.toString());
     await page.locator('input[type="text"]').first().fill(startDate.toString());
