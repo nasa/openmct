@@ -70,11 +70,13 @@ export default {
       required: true
     }
   },
+  created() {
+    this.compositions = [];
+  },
   data() {
     return {
       ladTableObjects: [],
       ladTelemetryObjects: {},
-      compositions: [],
       viewContext: {},
       staleObjects: [],
       configuration: this.ladTableConfiguration.getConfiguration()
