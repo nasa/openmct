@@ -782,6 +782,7 @@ export default class TelemetryAPI {
    */
   getLimits(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
+
     if (!provider || !provider.getLimits) {
       return {
         limits: function () {
@@ -790,7 +791,17 @@ export default class TelemetryAPI {
       };
     }
 
-    return provider.getLimits(domainObject);
+    const abortController = new AbortController();
+    const options = { signal: abortController.signal };
+    this.requestAbortControllers.add(abortController);
+
+    const limitsResponse = provider.getLimits(domainObject, options);
+
+    limitsResponse.limits.finally(() => {
+      this.requestAbortControllers.delete(abortController);
+    });
+
+    return limitsResponse;
   }
 }
 
