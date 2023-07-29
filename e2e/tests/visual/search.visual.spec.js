@@ -32,7 +32,8 @@ const percySnapshot = require('@percy/playwright');
 test.describe('Grand Search', () => {
   test.beforeEach(async ({ page, theme }) => {
     //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    await page.getByTitle('Collapse Browse Pane').click();
   });
   test.use({
     clockOptions: {

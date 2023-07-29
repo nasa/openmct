@@ -242,6 +242,10 @@ workflows:
           name: e2e-stable
           node-version: lts/hydrogen
           suite: stable
+      - perf-test:
+          node-version: lts/hydrogen
+      - visual-test:
+          node-version: lts/hydrogen
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
