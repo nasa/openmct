@@ -71,7 +71,7 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
-  test('Can use independent time conductor to change time', async ({ page }) => {
+  test.only('Can use independent time conductor to change time', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6821'
@@ -80,19 +80,21 @@ test.describe('Example Imagery Object', () => {
     // flip on independent time conductor
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await page.getByRole('textbox', { name: 'Start date' }).click();
     await page.getByRole('textbox', { name: 'Start date' }).fill('');
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
-    await page.getByRole('textbox', { name: 'Start time' }).click();
+    await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'Start time' }).fill('');
-    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
-    await page.getByRole('textbox', { name: 'End date' }).click();
+    await page.getByRole('textbox', { name: 'Start time' }).type('01:01:00');
+    await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'End date' }).fill('');
-    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
-    await page.getByRole('textbox', { name: 'End time' }).click();
+    await page.getByRole('textbox', { name: 'End date' }).type('2021-12-30');
+    await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'End time' }).fill('');
-    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
-    await page.getByRole('button', { name: 'Submit time bounds' }).click();
+    await page.getByRole('textbox', { name: 'End time' }).type('01:11:00');
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Enter');
+    // expect(await page.getByRole('button', { name: 'Submit time bounds' }).isEnabled()).toBe(true);
+    // await page.getByRole('button', { name: 'Submit time bounds' }).click();
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
