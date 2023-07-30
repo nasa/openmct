@@ -30,9 +30,10 @@ function copyRelatedMetadata(metadata) {
 
 import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 export default class RelatedTelemetry {
-  constructor(openmct, domainObject, telemetryKeys) {
+  constructor(openmct, domainObject, telemetryKeys, timeContext) {
     this._openmct = openmct;
     this._domainObject = domainObject;
+    this.timeContext = timeContext;
 
     let metadata = this._openmct.telemetry.getMetadata(this._domainObject);
     let imageHints = metadata.valuesForHints(['image'])[0];
@@ -43,7 +44,7 @@ export default class RelatedTelemetry {
       this.keys = telemetryKeys;
 
       this._timeFormatter = undefined;
-      this._timeSystemChange(this._openmct.time.timeSystem());
+      this._timeSystemChange(this.timeContext.timeSystem());
 
       // grab related telemetry metadata
       for (let key of this.keys) {
@@ -57,7 +58,7 @@ export default class RelatedTelemetry {
       this._timeSystemChange = this._timeSystemChange.bind(this);
       this.destroy = this.destroy.bind(this);
 
-      this._openmct.time.on('timeSystem', this._timeSystemChange);
+      this.timeContext.on('timeSystem', this._timeSystemChange);
     }
   }
 
@@ -109,7 +110,7 @@ export default class RelatedTelemetry {
         // and set bounds.
         ephemeralContext.resetContext();
         const newBounds = {
-          start: this._openmct.time.bounds().start,
+          start: this.timeContext.bounds().start,
           end: this._parseTime(datum)
         };
         ephemeralContext.bounds(newBounds);
@@ -183,7 +184,7 @@ export default class RelatedTelemetry {
   }
 
   destroy() {
-    this._openmct.time.off('timeSystem', this._timeSystemChange);
+    this.timeContext.off('timeSystem', this._timeSystemChange);
     for (let key of this.keys) {
       if (this[key] && this[key].unsubscribe) {
         this[key].unsubscribe();

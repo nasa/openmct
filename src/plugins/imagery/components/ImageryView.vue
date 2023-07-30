@@ -209,6 +209,7 @@ import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from '../../imagery/mixins/imageryData';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -754,32 +755,28 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       //listen
-      this.timeContext.on('timeSystem', this.timeContextChanged);
-      this.timeContext.on('clock', this.timeContextChanged);
-      this.timeContextChanged();
+      this.timeContext.on('timeSystem', this.setModeAndTrackDuration);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setModeAndTrackDuration);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setModeAndTrackDuration);
+      this.setModeAndTrackDuration();
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('timeSystem', this.timeContextChanged);
-        this.timeContext.off('clock', this.timeContextChanged);
+        this.timeContext.off('timeSystem', this.setModeAndTrackDuration);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setModeAndTrackDuration);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setModeAndTrackDuration);
       }
     },
-    timeContextChanged() {
+    setModeAndTrackDuration() {
       this.setIsFixed();
       this.setCanTrackDuration();
       this.trackDuration();
     },
     setIsFixed() {
-      this.isFixed = this.timeContext ? this.timeContext.isFixed() : this.openmct.time.isFixed();
+      this.isFixed = this.timeContext.isRealTime() === false;
     },
     setCanTrackDuration() {
-      let isRealTime;
-      if (this.timeContext) {
-        isRealTime = this.timeContext.isRealTime();
-      } else {
-        isRealTime = this.openmct.time.isRealTime();
-      }
-
+      let isRealTime = this.timeContext.isRealTime();
       this.canTrackDuration = isRealTime && this.timeSystem.isUTCBased;
     },
     updateSelection(selection) {
@@ -809,13 +806,18 @@ export default {
       }
     },
     async initializeRelatedTelemetry() {
-      this.relatedTelemetry = new RelatedTelemetry(this.openmct, this.domainObject, [
-        ...this.spacecraftPositionKeys,
-        ...this.spacecraftOrientationKeys,
-        ...this.cameraKeys,
-        ...this.sunKeys,
-        ...this.transformationsKeys
-      ]);
+      this.relatedTelemetry = new RelatedTelemetry(
+        this.openmct,
+        this.domainObject,
+        [
+          ...this.spacecraftPositionKeys,
+          ...this.spacecraftOrientationKeys,
+          ...this.cameraKeys,
+          ...this.sunKeys,
+          ...this.transformationsKeys
+        ],
+        this.timeContext
+      );
 
       if (this.relatedTelemetry.hasRelatedTelemetry) {
         await this.relatedTelemetry.load();
