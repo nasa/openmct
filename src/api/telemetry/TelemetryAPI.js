@@ -204,7 +204,8 @@ export default class TelemetryAPI {
    */
   standardizeRequestOptions(options = {}) {
     if (!Object.hasOwn(options, 'start')) {
-      if (options.timeContext?.getBounds()) {
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.start) {
         options.start = options.timeContext.getBounds().start;
       } else {
         options.start = this.openmct.time.getBounds().start;
@@ -212,7 +213,8 @@ export default class TelemetryAPI {
     }
 
     if (!Object.hasOwn(options, 'end')) {
-      if (options.timeContext?.getBounds()) {
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.end) {
         options.end = options.timeContext.getBounds().end;
       } else {
         options.end = this.openmct.time.getBounds().end;
