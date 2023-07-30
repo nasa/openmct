@@ -307,7 +307,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
-    if (this.modeChanged && !isTick) {
+    if (this.modeChanged) {
       this.modeChanged = false;
       this._reset();
       return;
