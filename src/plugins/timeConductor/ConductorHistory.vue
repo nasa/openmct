@@ -102,7 +102,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.updateTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.updateMode);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.addTimespan);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.addTimespan);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.updateTimeSystem);
