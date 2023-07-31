@@ -71,6 +71,7 @@ export default class TelemetryCollection extends EventEmitter {
     this.requestAbort = undefined;
     this.isStrategyLatest = this.options.strategy === 'latest';
     this.dataOutsideTimeBounds = false;
+    this.modeChanged = false;
   }
 
   /**
@@ -306,6 +307,12 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
+    if (this.modeChanged) {
+      this.modeChanged = false;
+      this._reset();
+      return;
+    }
+
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -439,7 +446,8 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   _timeModeChanged() {
-    this._reset();
+    //We're need this so that when the bounds change comes in after this mode change, we can reset and request historic telemetry
+    this.modeChanged = true;
   }
 
   /**
