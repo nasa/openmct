@@ -24,10 +24,9 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
 import { getLimitClass } from './limitUtil';
 
-export default defineComponent({
+export default {
   props: {
     point: {
       type: Object,
@@ -55,5 +54,5 @@ export default defineComponent({
       return getLimitClass(this.limit, 'c-plot-limit-line--');
     }
   }
-});
+};
 </script>
