@@ -797,9 +797,11 @@ export default class TelemetryAPI {
 
     const limitsResponse = provider.getLimits(domainObject, options);
 
-    return limitsResponse.limits().finally(() => {
+    limitsResponse.limits().finally(() => {
       this.requestAbortControllers.delete(abortController);
     });
+
+    return limitsResponse;
   }
 }
 
