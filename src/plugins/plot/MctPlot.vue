@@ -248,6 +248,7 @@ export default {
       highlights: [],
       annotatedPoints: [],
       annotationSelections: [],
+      annotationsEverLoaded: false,
       lockHighlightPoint: false,
       yKeyOptions: [],
       yAxisLabel: '',
@@ -394,7 +395,11 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', this.loadAnnotations);
+    this.$on('loadingComplete', () => {
+      if (this.annotationViewingAndEditingAllowed) {
+        this.loadAnnotations();
+      }
+    });
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -618,6 +623,7 @@ export default {
       }
     },
     async loadAnnotations() {
+      console.debug(`🖼️ Loading annotations...`);
       if (!this.openmct.annotation.getAvailableTags().length) {
         // don't bother loading annotations if there are no tags
         return;
@@ -636,6 +642,7 @@ export default {
       if (rawAnnotationsForPlot) {
         this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
       }
+      this.annotationsEverLoaded = true;
     },
     loadSeriesData(series) {
       //this check ensures that duplicate requests don't happen on load
@@ -777,6 +784,7 @@ export default {
     },
     updateMode() {
       this.isRealTime = this.timeContext.isRealTime();
+      console.debug(`⏰ mode changed`, this.isRealTime);
     },
 
     /**
@@ -1785,6 +1793,9 @@ export default {
       });
       this.config.xAxis.set('frozen', true);
       this.setStatus();
+      if (!this.annotationsEverLoaded) {
+        this.loadAnnotations();
+      }
     },
 
     resumeRealtimeData() {
