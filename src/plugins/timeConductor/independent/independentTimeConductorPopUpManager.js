@@ -32,7 +32,7 @@ export default {
     };
   },
   beforeUnmount() {
-    if (this.conductorPopup.parentNode === document.body) {
+    if (this.conductorPopup && this.conductorPopup.parentNode === document.body) {
       document.body.removeChild(this.conductorPopup);
       this.conductorPopup = null;
     }
