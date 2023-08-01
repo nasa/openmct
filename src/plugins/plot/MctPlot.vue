@@ -348,6 +348,7 @@ export default {
   mounted() {
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
+    this.rawAnnotationsForPlot = [];
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
@@ -629,18 +630,18 @@ export default {
         return;
       }
 
-      const rawAnnotationsForPlot = [];
+      this.rawAnnotationsForPlot = [];
       await Promise.all(
         this.seriesModels.map(async (seriesModel) => {
           const seriesAnnotations = await this.openmct.annotation.getAnnotations(
             seriesModel.model.identifier,
             this.abortController.signal
           );
-          rawAnnotationsForPlot.push(...seriesAnnotations);
+          this.rawAnnotationsForPlot.push(...seriesAnnotations);
         })
       );
-      if (rawAnnotationsForPlot) {
-        this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
+      if (this.rawAnnotationsForPlot) {
+        this.annotatedPoints = this.findAnnotationPoints(this.rawAnnotationsForPlot);
       }
       this.annotationsEverLoaded = true;
     },
@@ -797,6 +798,7 @@ export default {
       };
       this.config.xAxis.set('range', newRange);
       if (!isTick) {
+        this.annotatedPoints = [];
         this.clearPanZoomHistory();
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
