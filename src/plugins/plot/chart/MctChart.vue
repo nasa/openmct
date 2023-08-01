@@ -42,7 +42,7 @@ import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import LimitLine from './LimitLine.vue';
 import LimitLabel from './LimitLabel.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -747,16 +747,14 @@ export default {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      let LimitLineClass = Vue.extend(LimitLine);
-      const component = new LimitLineClass({
-        propsData: {
+      const { vNode } = mount(LimitLine, {
+        props: {
           point,
           limit
         }
       });
-      component.$mount();
 
-      return component.$el;
+      return vNode.el;
     },
     getLimitOverlap(limit, overlapMap) {
       //calculate if limit lines are too close to each other
@@ -792,16 +790,14 @@ export default {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      let LimitLabelClass = Vue.extend(LimitLabel);
-      const component = new LimitLabelClass({
-        propsData: {
+      const { vNode } = mount(LimitLabel, {
+        props: {
           limit: Object.assign({}, overlap, limit),
           point
         }
       });
-      component.$mount();
 
-      return component.$el;
+      return vNode.el;
     },
     drawAlarmPoints(alarmSet) {
       this.drawAPI.drawLimitPoints(
