@@ -795,13 +795,19 @@ export default class TelemetryAPI {
     const options = { signal: abortController.signal };
     this.requestAbortControllers.add(abortController);
 
-    const limitsResponse = provider.getLimits(domainObject, options);
+    try {
+      return provider.getLimits(domainObject, options);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        this.openmct.notifications.error(
+          'Error requesting telemetry data, see console for details'
+        );
+      }
 
-    limitsResponse.limits().finally(() => {
+      throw new Error(error);
+    } finally {
       this.requestAbortControllers.delete(abortController);
-    });
-
-    return limitsResponse;
+    }
   }
 }
 
