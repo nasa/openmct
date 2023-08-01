@@ -32,7 +32,7 @@ const {
   waitForPlotsToRender
 } = require('../../../../appActions');
 
-test.describe.fixme('Plot Tagging', () => {
+test.describe.only('Plot Tagging', () => {
   /**
    * Given a canvas and a set of points, tags the points on the canvas.
    * @param {import('@playwright/test').Page} page
@@ -97,8 +97,8 @@ test.describe.fixme('Plot Tagging', () => {
     // click on the tagged plot point
     await canvas.click({
       position: {
-        x: 325,
-        y: 377
+        x: 50,
+        y: 50
       }
     });
 
@@ -153,8 +153,8 @@ test.describe.fixme('Plot Tagging', () => {
     // click on the tagged plot point
     await canvas.click({
       position: {
-        x: 100,
-        y: 100
+        x: 50,
+        y: 50
       }
     });
 
@@ -201,8 +201,8 @@ test.describe.fixme('Plot Tagging', () => {
     await createTags({
       page,
       canvas,
-      xEnd: 700,
-      yEnd: 480
+      xEnd: 100,
+      yEnd: 100
     });
 
     await setFixedTimeMode(page);
@@ -230,7 +230,7 @@ test.describe.fixme('Plot Tagging', () => {
     await setFixedTimeMode(page);
   });
 
-  test('Tags work with Plot View of telemetry items', async ({ page }) => {
+  test.only('Tags work with Plot View of telemetry items', async ({ page }) => {
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator'
     });
@@ -239,9 +239,10 @@ test.describe.fixme('Plot Tagging', () => {
     await createTags({
       page,
       canvas,
-      xEnd: 700,
-      yEnd: 480
+      xEnd: 500,
+      yEnd: 500
     });
+    await page.pause();
     await basicTagsTests(page);
   });
 
@@ -269,8 +270,8 @@ test.describe.fixme('Plot Tagging', () => {
     await createTags({
       page,
       canvas,
-      xEnd: 700,
-      yEnd: 215
+      xEnd: 100,
+      yEnd: 100
     });
     await basicTagsTests(page);
     await testTelemetryItem(page, alphaSineWave);
