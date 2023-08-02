@@ -574,7 +574,7 @@ export default {
         this.limitLines.push(limitLine);
       }
 
-      this.seriesLimits.set(series, limitElements);
+      this.seriesLimits.set(toRaw(series), limitElements);
     },
     clearLimitLines(series) {
       const seriesLimits = this.seriesLimits.get(toRaw(series));
@@ -585,7 +585,7 @@ export default {
           line.destroy();
         }, this);
 
-        this.seriesLimits.delete(series);
+        this.seriesLimits.delete(toRaw(series));
       }
     },
     canDraw(yAxisId) {
