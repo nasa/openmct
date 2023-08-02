@@ -489,7 +489,7 @@ export default {
         this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
       }
 
-      this.seriesElements.delete(series);
+      this.seriesElements.delete(toRaw(series));
 
       this.clearLimitLines(series);
     },
@@ -555,7 +555,7 @@ export default {
         this.alarmSets.push(elements.alarmSet);
       }
 
-      this.seriesElements.set(series, elements);
+      this.seriesElements.set(toRaw(series), elements);
     },
     makeLimitLines(series) {
       this.clearLimitLines(series);
@@ -574,7 +574,7 @@ export default {
         this.limitLines.push(limitLine);
       }
 
-      this.seriesLimits.set(series, limitElements);
+      this.seriesLimits.set(toRaw(series), limitElements);
     },
     clearLimitLines(series) {
       const seriesLimits = this.seriesLimits.get(toRaw(series));
@@ -585,7 +585,7 @@ export default {
           line.destroy();
         }, this);
 
-        this.seriesLimits.delete(series);
+        this.seriesLimits.delete(toRaw(series));
       }
     },
     canDraw(yAxisId) {
