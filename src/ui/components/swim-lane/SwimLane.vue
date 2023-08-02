@@ -44,7 +44,7 @@
     </div>
     <div
       class="c-swimlane__lane-object"
-      :style="objectStyle"
+      :style="{ 'min-height': minHeight }"
       :class="{ 'u-contents': showUcontents }"
     >
       <slot name="object"></slot>
@@ -110,23 +110,9 @@ export default {
     domainObject: {
       type: Object,
       default: undefined
-    },
-    useStyle: {
-      type: Object,
-      default: undefined
     }
   },
   computed: {
-    objectStyle() {
-      let style = { 'min-height': this.minHeight };
-      if (this.useStyle) {
-        style = {
-          ...style,
-          ...this.useStyle
-        };
-      }
-      return style;
-    },
     gridRowSpan() {
       if (this.spanRowsCount) {
         return `grid-row: span ${this.spanRowsCount}`;

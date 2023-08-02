@@ -32,6 +32,9 @@ import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
+  components: {
+    // IndependentTimeConductor
+  },
   mixins: [stalenessMixin],
   inject: ['openmct'],
   props: {
@@ -164,7 +167,6 @@ export default {
       this.triggerUnsubscribeFromStaleness();
 
       this.openmct.objectViews.off('clearData', this.clearData);
-      this.openmct.objectViews.off('leftClearance', this.notifyClearance);
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -285,7 +287,6 @@ export default {
       }
 
       this.openmct.objectViews.on('clearData', this.clearData);
-      this.openmct.objectViews.on('leftClearance', this.notifyClearance);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -459,9 +460,6 @@ export default {
           this.currentView.onClearData();
         }
       }
-    },
-    notifyClearance() {
-      this.$emit('leftClearance', ...arguments);
     },
     isEditingAllowed() {
       let browseObject = this.openmct.layout.$refs.browseObject.domainObject;

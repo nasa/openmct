@@ -100,8 +100,7 @@ export default {
       compositionObjectsConfigLoaded: false,
       position: 'top',
       showLegendsForChildren: true,
-      expanded: false,
-      maxTickWidth: undefined
+      expanded: false
     };
   },
   computed: {
@@ -122,6 +121,28 @@ export default {
       }
 
       return legendExpandedStateClass;
+    },
+    /**
+     * Returns the maximum width of the left and right y axes ticks of this stacked plots children
+     * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
+     */
+    maxTickWidth() {
+      const tickWidthValues = Object.values(this.tickWidthMap);
+      const maxLeftTickWidth = Math.max(
+        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.leftTickWidth)
+      );
+      const maxRightTickWidth = Math.max(
+        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.rightTickWidth)
+      );
+      const hasMultipleLeftAxes = tickWidthValues.some(
+        (tickWidthItem) => tickWidthItem.hasMultipleLeftAxes === true
+      );
+
+      return {
+        leftTickWidth: maxLeftTickWidth,
+        rightTickWidth: maxRightTickWidth,
+        hasMultipleLeftAxes
+      };
     }
   },
   beforeUnmount() {
@@ -200,7 +221,7 @@ export default {
         leftTickWidth: 0,
         rightTickWidth: 0
       };
-      this.setMaxTickWidth();
+
       this.compositionObjects.push({
         object: child,
         keyString: id
@@ -212,7 +233,7 @@ export default {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
 
       delete this.tickWidthMap[id];
-      this.setMaxTickWidth();
+
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
 
@@ -259,7 +280,6 @@ export default {
         leftTickWidth: 0,
         rightTickWidth: 0
       };
-      this.setMaxTickWidth();
     },
 
     exportJPG() {
@@ -296,7 +316,6 @@ export default {
       }
 
       this.tickWidthMap[plotId] = data;
-      this.setMaxTickWidth();
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;
@@ -330,36 +349,6 @@ export default {
         exportPNG: this.exportPNG,
         exportJPG: this.exportJPG
       };
-    },
-    /**
-     * Returns the maximum width of the left and right y axes ticks of this stacked plots children
-     * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
-     */
-    setMaxTickWidth() {
-      const tickWidthValues = Object.values(this.tickWidthMap);
-      const maxLeftTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.leftTickWidth)
-      );
-      const maxRightTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.rightTickWidth)
-      );
-      const hasMultipleLeftAxes = tickWidthValues.some(
-        (tickWidthItem) => tickWidthItem.hasMultipleLeftAxes === true
-      );
-
-      this.maxTickWidth = {
-        leftTickWidth: maxLeftTickWidth,
-        rightTickWidth: maxRightTickWidth,
-        hasMultipleLeftAxes
-      };
-      const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-      this.openmct.objectViews.emit(
-        'leftClearance',
-        {
-          ...this.maxTickWidth
-        },
-        id
-      );
     }
   }
 };

@@ -300,7 +300,6 @@ export default {
     },
     onYTickWidthChange() {
       this.$emit('plotYTickWidth', ...arguments);
-      this.openmct.objectViews.emit('leftClearance', ...arguments);
     },
     onCursorGuideChange() {
       this.$emit('cursorGuide', ...arguments);

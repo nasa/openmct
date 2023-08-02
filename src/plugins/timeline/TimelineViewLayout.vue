@@ -28,7 +28,6 @@
       </template>
       <template #object>
         <timeline-axis
-          :style="{ 'margin-left': `${leftWidth ? leftWidth + 20 : 0}px` }"
           :bounds="timeSystemItem.bounds"
           :time-system="timeSystemItem.timeSystem"
           :content-height="height"
@@ -41,10 +40,8 @@
       <timeline-object-view
         v-for="item in items"
         :key="item.keyString"
-        :use-left="leftWidth"
         class="c-timeline__content js-timeline__content"
         :item="item"
-        @leftClearance="setLeftClearance"
       />
     </div>
   </div>
@@ -76,7 +73,6 @@ export default {
       items: [],
       timeSystems: [],
       height: 0,
-      leftWidth: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions
     };
@@ -207,9 +203,6 @@ export default {
         this.timeContext.off('bounds', this.updateViewBounds);
         this.timeContext.off('clock', this.updateViewBounds);
       }
-    },
-    setLeftClearance(data) {
-      this.leftWidth = Math.max(this.leftWidth, data.leftTickWidth);
     }
   }
 };

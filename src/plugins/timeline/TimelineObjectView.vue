@@ -28,7 +28,6 @@
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
     :domain-object="item.domainObject"
-    :use-style="leftStyle"
   >
     <template #label>
       {{ item.domainObject.name }}
@@ -40,7 +39,6 @@
         :default-object="item.domainObject"
         :object-path="item.objectPath"
         @change-action-collection="setActionCollection"
-        @leftClearance="notifyLeftClearance"
       />
     </template>
   </swim-lane>
@@ -60,34 +58,14 @@ export default {
     item: {
       type: Object,
       required: true
-    },
-    useLeft: {
-      type: Number,
-      default() {
-        return 0;
-      }
     }
   },
   data() {
     return {
       domainObject: undefined,
       mutablePromise: undefined,
-      status: '',
-      leftClearance: 0
+      status: ''
     };
-  },
-  computed: {
-    leftStyle() {
-      if (this.leftClearance !== this.useLeft) {
-        const maxWidth = Math.max(this.leftClearance, this.useLeft);
-        const minWidth = Math.min(this.leftClearance, this.useLeft);
-        const leftWidth = maxWidth - minWidth;
-        const offset = this.leftClearance ? 0 : 20;
-
-        return { 'margin-left': `${leftWidth + offset}px` };
-      }
-      return {};
-    }
   },
   watch: {
     item(newItem) {
@@ -155,12 +133,6 @@ export default {
         actionCollection.objectPath,
         actionCollection.view
       );
-    },
-    notifyLeftClearance(data, id) {
-      if (id === this.item.keyString) {
-        this.leftClearance = data.leftTickWidth;
-        this.$emit('leftClearance', ...arguments);
-      }
     },
     setStatus(status) {
       this.status = status;
