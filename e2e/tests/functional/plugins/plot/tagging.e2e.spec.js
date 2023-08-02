@@ -171,8 +171,6 @@ test.describe('Plot Tagging', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6822'
     });
-    //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
-    test.slow();
 
     const overlayPlot = await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot'
