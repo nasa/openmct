@@ -42,6 +42,7 @@ class TimeContext extends EventEmitter {
     this.activeClock = undefined;
     this.offsets = undefined;
     this.mode = undefined;
+    this.warnCounts = {};
 
     this.tick = this.tick.bind(this);
   }
@@ -648,6 +649,17 @@ class TimeContext extends EventEmitter {
   }
 
   #warnMethodDeprecated(method, newMethod) {
+    const MAX_CALLS = 1; // Only warn once per unique method and newMethod combination
+
+    const key = `${method}.${newMethod}`;
+    const currentWarnCount = this.warnCounts[key] || 0;
+
+    if (currentWarnCount >= MAX_CALLS) {
+      return; // Don't warn if already warned once
+    }
+
+    this.warnCounts[key] = currentWarnCount + 1;
+
     let message = `[DEPRECATION WARNING]: The ${method} API method is deprecated and will be removed in a future version of Open MCT.`;
 
     if (newMethod) {
