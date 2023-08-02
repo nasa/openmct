@@ -72,10 +72,13 @@ export default {
   computed: {
     timeDelta() {
       if (this.configuration.pausedTime) {
-        return Date.parse(this.configuration.pausedTime) - Date.parse(this.configuration.timestamp);
+        return Date.parse(this.configuration.pausedTime) - this.startTimeMs;
       } else {
-        return this.lastTimestamp - Date.parse(this.configuration.timestamp);
+        return this.lastTimestamp - this.startTimeMs;
       }
+    },
+    startTimeMs() {
+      return Date.parse(this.configuration.timestamp)
     },
     timeTextValue() {
       const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
