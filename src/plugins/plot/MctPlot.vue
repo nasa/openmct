@@ -623,7 +623,6 @@ export default {
       }
     },
     async loadAnnotations() {
-      console.debug(`🖼️ Loading annotations...`);
       if (!this.openmct.annotation.getAvailableTags().length) {
         // don't bother loading annotations if there are no tags
         return;
@@ -784,7 +783,6 @@ export default {
     },
     updateMode() {
       this.isRealTime = this.timeContext.isRealTime();
-      console.debug(`⏰ mode changed`, this.isRealTime);
     },
 
     /**
