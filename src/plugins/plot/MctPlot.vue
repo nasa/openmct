@@ -345,6 +345,7 @@ export default {
     this.abortController = new AbortController();
   },
   mounted() {
+    console.log('plot mounted');
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
 
@@ -398,9 +399,11 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
+    console.log('got to nextTick');
     this.$nextTick(() => {
       this.setTimeContext();
       this.loaded = true;
+      console.log(this.loaded);
     });
   },
   beforeUnmount() {
