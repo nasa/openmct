@@ -29,6 +29,7 @@ export default class StatusAPI extends EventEmitter {
     super();
     this.#userAPI = userAPI;
     this.#openmct = openmct;
+    this.#cachedPossibleStatuses = null;
 
     this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
     this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
@@ -103,18 +104,31 @@ export default class StatusAPI extends EventEmitter {
   /**
    * @returns {Promise<Array<Status>>} the complete list of possible states that an operator can reply to a poll question with.
    */
-  async getPossibleStatuses() {
+async getPossibleStatuses() {
+    // Check if the possible statuses are already cached, and if so, return them
+    if (this.#cachedPossibleStatuses) {
+      return this.#cachedPossibleStatuses;
+    }
+
     const provider = this.#userAPI.getProvider();
 
     if (provider.getPossibleStatuses) {
-      const possibleStatuses = (await provider.getPossibleStatuses()) || [];
+      try {
+        const possibleStatuses = await provider.getPossibleStatuses() || [];
 
-      return possibleStatuses.map((status) => status);
+        // Cache the result for future calls
+        this.#cachedPossibleStatuses = possibleStatuses.map((status) => status);
+
+        return possibleStatuses;
+      } catch (error) {
+        console.error('Error fetching possible statuses:', error);
+        return [];
+      }
     } else {
-      this.#userAPI.error('User provider cannot provide statuses');
+      // Throw an error if the user provider does not support the method
+      throw new Error('User provider cannot provide statuses');
     }
   }
-
   /**
    * @param {import("./UserAPI").Role} role The role to fetch the current status for.
    * @returns {Promise<Status>} the current status of the provided role
