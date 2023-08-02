@@ -80,6 +80,10 @@ export default {
       return this.lastTimestamp - this.relativeTimestamp;
     },
     timeTextValue() {
+      if(this.timerState !== 'started') {
+        // THIS IS NOT RIGHT!!!
+        return moment.duration(this.lastTimestamp - this.configuration.pausedTime, 'ms').format(this.format, { trim: false });
+      }
       if (isNaN(this.timeDelta)) {
         return null;
       }
@@ -176,12 +180,15 @@ export default {
       this.showOrHideAvailableActions();
     }
   },
+  created() {
+    this.refreshTimerObject = throttle(this.refreshTimerObject, refreshRateSeconds * 1000);
+  },
   mounted() {
     this.unobserve = this.openmct.objects.observe(
       this.domainObject,
-      'configuration',
-      (configuration) => {
-        this.configuration = Object.assign({}, configuration);
+      '*',
+      (domainObject) => {
+        this.configuration = domainObject.configuration;
       }
     );
     this.$nextTick(() => {
@@ -191,7 +198,6 @@ export default {
       }
 
       this.handleTick = raf(this.handleTick);
-      this.refreshTimerObject = throttle(this.refreshTimerObject, refreshRateSeconds * 1000);
       this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(
