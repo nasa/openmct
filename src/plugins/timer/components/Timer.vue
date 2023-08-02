@@ -52,12 +52,8 @@ const refreshRateSeconds = 2;
 momentDurationFormatSetup(moment);
 
 export default {
-  inject: ['openmct', 'currentView'],
+  inject: ['openmct', 'currentView', 'domainObject'],
   props: {
-    domainObject: {
-      type: Object,
-      required: true
-    },
     objectPath: {
       type: Array,
       required: true
@@ -185,7 +181,7 @@ export default {
       this.domainObject,
       'configuration',
       (configuration) => {
-        this.configuration = configuration;
+        this.configuration = Object.assign({}, configuration);
       }
     );
     this.$nextTick(() => {

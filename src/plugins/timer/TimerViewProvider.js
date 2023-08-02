@@ -22,6 +22,7 @@
 
 import Timer from './components/Timer.vue';
 import mount from 'utils/mount';
+import { markRaw, toRaw } from 'vue';
 
 export default function TimerViewProvider(openmct) {
   return {
@@ -32,11 +33,12 @@ export default function TimerViewProvider(openmct) {
       return domainObject.type === 'timer';
     },
 
-    view: function (domainObject, objectPath) {
+    view(domainObject, objectPath) {
       let _destroy = null;
 
       return {
-        show: function (element) {
+        show(element) {
+          const rawDomainObject = markRaw(toRaw(domainObject));
           const { destroy } = mount(
             {
               el: element,
@@ -45,11 +47,11 @@ export default function TimerViewProvider(openmct) {
               },
               provide: {
                 openmct,
+                domainObject: rawDomainObject,
                 currentView: this
               },
               data() {
                 return {
-                  domainObject,
                   objectPath
                 };
               },
@@ -62,7 +64,7 @@ export default function TimerViewProvider(openmct) {
           );
           _destroy = destroy;
         },
-        destroy: function () {
+        destroy() {
           if (_destroy) {
             _destroy();
           }
