@@ -346,6 +346,7 @@ export default {
   },
   mounted() {
     console.log('plot mounted');
+    console.log(this.domainObject);
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
 
