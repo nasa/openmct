@@ -489,7 +489,7 @@ export default {
         this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
       }
 
-      this.seriesElements.delete(series);
+      this.seriesElements.delete(toRaw(series));
 
       this.clearLimitLines(series);
     },
@@ -555,7 +555,7 @@ export default {
         this.alarmSets.push(elements.alarmSet);
       }
 
-      this.seriesElements.set(series, elements);
+      this.seriesElements.set(toRaw(series), elements);
     },
     makeLimitLines(series) {
       this.clearLimitLines(series);
