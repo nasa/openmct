@@ -42,7 +42,8 @@ import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import LimitLine from './LimitLine.vue';
 import LimitLabel from './LimitLabel.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+import { toRaw } from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -315,7 +316,7 @@ export default {
         return;
       }
 
-      const elements = this.seriesElements.get(series);
+      const elements = this.seriesElements.get(toRaw(series));
       elements.lines.forEach(function (line) {
         this.lines.splice(this.lines.indexOf(line), 1);
         line.destroy();
@@ -333,7 +334,7 @@ export default {
         return;
       }
 
-      const elements = this.seriesElements.get(series);
+      const elements = this.seriesElements.get(toRaw(series));
       if (elements.alarmSet) {
         elements.alarmSet.destroy();
         this.alarmSets.splice(this.alarmSets.indexOf(elements.alarmSet), 1);
@@ -349,7 +350,7 @@ export default {
         return;
       }
 
-      const elements = this.seriesElements.get(series);
+      const elements = this.seriesElements.get(toRaw(series));
       elements.pointSets.forEach(function (pointSet) {
         this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
         pointSet.destroy();
@@ -473,7 +474,7 @@ export default {
       this.$emit('plotReinitializeCanvas');
     },
     removeChartElement(series) {
-      const elements = this.seriesElements.get(series);
+      const elements = this.seriesElements.get(toRaw(series));
 
       elements.lines.forEach(function (line) {
         this.lines.splice(this.lines.indexOf(line), 1);
@@ -576,7 +577,7 @@ export default {
       this.seriesLimits.set(series, limitElements);
     },
     clearLimitLines(series) {
-      const seriesLimits = this.seriesLimits.get(series);
+      const seriesLimits = this.seriesLimits.get(toRaw(series));
 
       if (seriesLimits) {
         seriesLimits.limitLines.forEach(function (line) {
@@ -747,16 +748,14 @@ export default {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      let LimitLineClass = Vue.extend(LimitLine);
-      const component = new LimitLineClass({
-        propsData: {
+      const { vNode } = mount(LimitLine, {
+        props: {
           point,
           limit
         }
       });
-      component.$mount();
 
-      return component.$el;
+      return vNode.el;
     },
     getLimitOverlap(limit, overlapMap) {
       //calculate if limit lines are too close to each other
@@ -792,16 +791,14 @@ export default {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      let LimitLabelClass = Vue.extend(LimitLabel);
-      const component = new LimitLabelClass({
-        propsData: {
+      const { vNode } = mount(LimitLabel, {
+        props: {
           limit: Object.assign({}, overlap, limit),
           point
         }
       });
-      component.$mount();
 
-      return component.$el;
+      return vNode.el;
     },
     drawAlarmPoints(alarmSet) {
       this.drawAPI.drawLimitPoints(
