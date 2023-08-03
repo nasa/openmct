@@ -21,9 +21,18 @@
 -->
 
 <template>
-  <div class="clock-child"><p>Clock Child Component</p></div>
+  <div class="test-parent">
+    <div class="c-test-component">Test!</div>
+    <test-child />
+  </div>
 </template>
 
 <script>
-export default {};
+import TestChild from './TestChild.vue';
+
+export default {
+  components: {
+    TestChild
+  }
+};
 </script>

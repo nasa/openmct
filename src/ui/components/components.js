@@ -24,12 +24,12 @@ import ObjectView from './ObjectView.vue';
 import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
 import Plot from '../../plugins/plot/Plot.vue';
 import WebPage from '../../plugins/webPage/components/WebPage.vue';
-import Clock from '../../plugins/clock/components/Clock.vue';
+import Test from '../../plugins/test/components/Test.vue';
 
 export default {
   ObjectView,
   StackedPlot,
   Plot,
   WebPage,
-  Clock
+  Test
 };

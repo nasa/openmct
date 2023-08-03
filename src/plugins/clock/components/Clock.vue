@@ -33,7 +33,6 @@
         {{ timeAmPm }}
       </div>
     </div>
-    <clock-child />
   </div>
 </template>
 
@@ -41,12 +40,8 @@
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 import raf from 'utils/raf';
-import ClockChild from './ClockChildy.vue';
 
 export default {
-  components: {
-    ClockChild
-  },
   inject: ['openmct', 'domainObject'],
   data() {
     return {
