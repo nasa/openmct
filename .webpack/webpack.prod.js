@@ -12,7 +12,7 @@ const common = require('./webpack.common');
 const projectRootDir = path.resolve(__dirname, '..');
 
 module.exports = merge(common, {
-  mode: 'production',
+  mode: 'development',
   plugins: [
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '""'
