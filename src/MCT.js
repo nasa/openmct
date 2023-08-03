@@ -391,7 +391,7 @@ define([
         },
         template: '<Layout ref="layout"></Layout>'
       });
-      appLayout.component('Plot', Plot);
+      appLayout.component('Plot', openmct.components.Plot);
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
         this.layout = component.$refs.layout;
