@@ -45,6 +45,9 @@ export default {
     styleBarWidth() {
       return this.model.progressPerc !== undefined ? `width: ${this.model.progressPerc}%;` : '';
     }
+  },
+  mounted() {
+    console.log('progress bar mounted');
   }
 };
 </script>
