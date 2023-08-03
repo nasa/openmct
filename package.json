@@ -83,7 +83,7 @@
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
     "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
-    "build:prod": "webpack --config ./.webpack/webpack.prod.js",
+    "build:prod": "webpack --config ./.webpack/webpack.dev.js",
     "build:dev": "webpack --config ./.webpack/webpack.dev.js",
     "build:coverage": "webpack --config ./.webpack/webpack.coverage.js",
     "build:watch": "webpack --config ./.webpack/webpack.dev.js --watch",
