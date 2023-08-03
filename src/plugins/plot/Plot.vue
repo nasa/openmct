@@ -70,6 +70,7 @@ import ProgressBar from '../../ui/components/ProgressBar.vue';
 import StalenessUtils from '@/utils/staleness';
 
 export default {
+  name: 'Plot',
   components: {
     MctPlot,
     ProgressBar,
