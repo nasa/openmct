@@ -260,6 +260,7 @@ test.describe('Display Layout', () => {
   test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
     page
   }) => {
+    await setFixedTimeMode(page);
     // Create another Sine Wave Generator
     const anotherSineWaveObject = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator'
@@ -316,10 +317,20 @@ test.describe('Display Layout', () => {
 
     // wait for annotations requests to be batched and requested
     await page.waitForLoadState('networkidle');
-
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
     expect(networkRequests.length).toBe(1);
+
+    await setRealTimeMode(page);
+    networkRequests = [];
+
+    await page.reload();
+
+    // wait for annotations to not load (if we have any, we've got a problem)
+    await page.waitForLoadState('networkidle');
+
+    // In real time mode, we don't fetch annotations at all
+    expect(networkRequests.length).toBe(0);
   });
 });
 
