@@ -21,18 +21,18 @@
  *****************************************************************************/
 
 /*
-Tests to verify plot tagging functionality.
+Tests to verify plot tagging performance.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test, expect } = require('../../pluginFixtures');
 const {
   createDomainObjectWithDefaults,
   setRealTimeMode,
   setFixedTimeMode,
   waitForPlotsToRender
-} = require('../../../../appActions');
+} = require('../../appActions');
 
-test.describe('Plot Tagging', () => {
+test.describe.fixme('Plot Tagging Performance', () => {
   /**
    * Given a canvas and a set of points, tags the points on the canvas.
    * @param {import('@playwright/test').Page} page
@@ -171,6 +171,8 @@ test.describe('Plot Tagging', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6822'
     });
+    //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+    test.slow();
 
     const overlayPlot = await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot'
@@ -179,19 +181,13 @@ test.describe('Plot Tagging', () => {
     const alphaSineWave = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Alpha Sine Wave',
-      parent: overlayPlot.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.01'
-      }
+      parent: overlayPlot.uuid
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Beta Sine Wave',
-      parent: overlayPlot.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.02'
-      }
+      parent: overlayPlot.uuid
     });
 
     await page.goto(overlayPlot.url);
@@ -234,10 +230,7 @@ test.describe('Plot Tagging', () => {
 
   test('Tags work with Plot View of telemetry items', async ({ page }) => {
     await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.01'
-      }
+      type: 'Sine Wave Generator'
     });
     const canvas = page.locator('canvas').nth(1);
     await createTags({
@@ -255,19 +248,13 @@ test.describe('Plot Tagging', () => {
     const alphaSineWave = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Alpha Sine Wave',
-      parent: stackedPlot.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.01'
-      }
+      parent: stackedPlot.uuid
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Beta Sine Wave',
-      parent: stackedPlot.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.02'
-      }
+      parent: stackedPlot.uuid
     });
 
     await page.goto(stackedPlot.url);

@@ -826,56 +826,32 @@ export default {
         );
       }
     },
-    annotatedPointWithinRange(annotatedPoint, xRange, yRange) {
-      if (!yRange) {
-        return false;
-      }
-
-      const xValue = annotatedPoint.series.getXVal(annotatedPoint.point);
-      const yValue = annotatedPoint.series.getYVal(annotatedPoint.point);
-
-      return (
-        xValue > xRange.min && xValue < xRange.max && yValue > yRange.min && yValue < yRange.max
-      );
-    },
     drawAnnotatedPoints(yAxisId) {
       // we should do this by series, and then plot all the points at once instead
       // of doing it one by one
       if (this.annotatedPoints && this.annotatedPoints.length) {
         const uniquePointsToDraw = [];
-        const xRange = this.config.xAxis.get('displayRange');
-        let yRange;
-        if (yAxisId === this.config.yAxis.get('id')) {
-          yRange = this.config.yAxis.get('displayRange');
-        } else if (this.config.additionalYAxes.length) {
-          const yAxisForId = this.config.additionalYAxes.find(
-            (yAxis) => yAxis.get('id') === yAxisId
-          );
-          yRange = yAxisForId.get('displayRange');
-        }
 
         const annotatedPoints = this.annotatedPoints.filter(
           this.matchByYAxisId.bind(this, yAxisId)
         );
         annotatedPoints.forEach((annotatedPoint) => {
-          // if the annotation is outside the range, don't draw it
-          if (this.annotatedPointWithinRange(annotatedPoint, xRange, yRange)) {
-            const canvasXValue = this.offset[yAxisId].xVal(
-              annotatedPoint.point,
-              annotatedPoint.series
-            );
-            const canvasYValue = this.offset[yAxisId].yVal(
-              annotatedPoint.point,
-              annotatedPoint.series
-            );
-            const pointToDraw = new Float32Array([canvasXValue, canvasYValue]);
-            const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
-              return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
-            });
-            if (!drawnPoint) {
-              uniquePointsToDraw.push(pointToDraw);
-              this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
-            }
+          // annotation points are all within range (checked in MctPlot with FlatBush), so we don't need to check
+          const canvasXValue = this.offset[yAxisId].xVal(
+            annotatedPoint.point,
+            annotatedPoint.series
+          );
+          const canvasYValue = this.offset[yAxisId].yVal(
+            annotatedPoint.point,
+            annotatedPoint.series
+          );
+          const pointToDraw = new Float32Array([canvasXValue, canvasYValue]);
+          const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
+            return rawPoint[0] === pointToDraw[0] && rawPoint[1] === pointToDraw[1];
+          });
+          if (!drawnPoint) {
+            uniquePointsToDraw.push(pointToDraw);
+            this.drawAnnotatedPoint(annotatedPoint, pointToDraw);
           }
         });
       }
