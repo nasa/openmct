@@ -34,6 +34,7 @@ define([
   './ui/router/ApplicationRouter',
   './ui/router/Browse',
   './ui/layout/Layout.vue',
+  './plugins/plot/Plot.vue',
   './ui/preview/plugin',
   './api/Branding',
   './plugins/licenses/plugin',
@@ -59,6 +60,7 @@ define([
   ApplicationRouter,
   Browse,
   Layout,
+  Plot,
   PreviewPlugin,
   BrandingAPI,
   LicensesPlugin,
@@ -389,7 +391,7 @@ define([
         },
         template: '<Layout ref="layout"></Layout>'
       });
-      appLayout.component('Plot', openmct.components.Plot);
+      appLayout.component('Plot', Plot);
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
         this.layout = component.$refs.layout;
