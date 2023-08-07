@@ -97,7 +97,7 @@ test.describe('Example Imagery Object', () => {
     await page.keyboard.press('Enter');
 
     // check image date
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();

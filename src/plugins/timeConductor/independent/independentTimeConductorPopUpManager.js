@@ -31,13 +31,16 @@ export default {
       conductorPopup: null
     };
   },
+  beforeUnmount() {
+    if (this.conductorPopup && this.conductorPopup.parentNode === document.body) {
+      document.body.removeChild(this.conductorPopup);
+      this.conductorPopup = null;
+    }
+  },
   mounted() {
     this.positionBox = debounce(raf(this.positionBox), 250);
     this.timeConductorOptionsHolder = this.$el;
     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
-  },
-  beforeDestroy() {
-    this.clearPopup();
   },
   methods: {
     initializePopup() {
@@ -60,12 +63,7 @@ export default {
       // itc toggled,
       // something is emitting a dupe event with pointer id = -1, want to ignore those
       // itc is currently enabled
-      if (
-        !this.conductorPopup &&
-        !isToggle &&
-        clickEvent.pointerId !== -1 &&
-        this.independentTCEnabled
-      ) {
+      if (!isToggle && clickEvent.pointerId !== -1 && this.independentTCEnabled) {
         this.showConductorPopup = true;
       }
     },
@@ -101,7 +99,6 @@ export default {
         return;
       }
       this.showConductorPopup = false;
-      this.conductorPopup = null;
       this.positionX = -10000; // reset it off screan
 
       document.removeEventListener('click', this.handleClickAway);
