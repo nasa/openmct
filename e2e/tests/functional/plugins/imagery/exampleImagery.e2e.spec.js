@@ -71,7 +71,7 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
-  test.only('Can use independent time conductor to change time', async ({ page }) => {
+  test('Can use independent time conductor to change time', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6821'
