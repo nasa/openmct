@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
             
-      - run: npx playwright@1.32.3 install
+      - run: npx playwright@1.36.2 install
       - run: npx playwright install chrome-beta
       - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
       - run: npm run test:e2e:full -- --max-failures=40
