@@ -70,12 +70,9 @@ export default {
   mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject'],
   props: {
-    seriesObject: {
-      type: Object,
-      required: true,
-      default() {
-        return {};
-      }
+    seriesKeyString: {
+      type: String,
+      required: true
     },
     highlights: {
       type: Array,
@@ -111,7 +108,7 @@ export default {
     highlights: {
       handler(newHighlights) {
         const highlightedObject = newHighlights.find(
-          (highlight) => highlight.series.keyString === this.seriesObject.keyString
+          (highlight) => highlight.keyString === this.seriesKey
         );
         if (newHighlights.length === 0 || highlightedObject) {
           this.initialize(highlightedObject);
@@ -121,28 +118,14 @@ export default {
     }
   },
   mounted() {
+    this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
+    this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+    this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+    this.config.series.forEach(this.onSeriesAdd, this);
     this.legend = this.config.legend;
     this.loaded = true;
-    this.listenTo(
-      this.seriesObject,
-      'change:color',
-      (newColor) => {
-        this.updateColor(newColor);
-      },
-      this
-    );
-    this.listenTo(
-      this.seriesObject,
-      'change:name',
-      () => {
-        this.updateName();
-      },
-      this
-    );
-    this.subscribeToStaleness(this.seriesObject.domainObject);
-    this.initialize();
   },
   beforeUnmount() {
     this.stopListening();
@@ -153,8 +136,41 @@ export default {
 
       return configStore.get(configId);
     },
+    onSeriesAdd(series, index) {
+      this.seriesModels[index] = series;
+      if (series.keyString === this.seriesKeyString) {
+        this.listenTo(
+          series,
+          'change:color',
+          (newColor) => {
+            this.updateColor(newColor);
+          },
+          this
+        );
+        this.listenTo(
+          series,
+          'change:name',
+          () => {
+            this.updateName();
+          },
+          this
+        );
+        this.subscribeToStaleness(series.domainObject);
+        this.initialize();
+      }
+    },
+    onSeriesRemove(series, index) {
+      this.seriesModels.splice(index, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
     initialize(highlightedObject) {
-      const seriesObject = highlightedObject?.series || this.seriesObject;
+      const seriesKeyStringToUse = highlightedObject?.seriesKeyString || this.seriesKeyString;
+      const seriesObject = this.getSeries(seriesKeyStringToUse);
 
       this.isMissing = seriesObject.domainObject.status === 'missing';
       this.colorAsHexString = seriesObject.get('color').asHexString();
@@ -186,7 +202,8 @@ export default {
       this.colorAsHexString = newColor.asHexString();
     },
     updateName() {
-      this.nameWithUnit = this.seriesObject.nameWithUnit();
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      this.nameWithUnit = seriesObject.nameWithUnit();
     },
     toggleHover(hover) {
       this.hover = hover;
@@ -194,15 +211,16 @@ export default {
         'legendHoverChanged',
         this.hover
           ? {
-              seriesKey: this.seriesObject.keyString
+              seriesKey: this.seriesKeyString
             }
           : undefined
       );
     },
     async showToolTip() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(
-        await this.getTelemetryPathString(this.seriesObject.domainObject.identifier),
+        await this.getTelemetryPathString(seriesObject.domainObject.identifier),
         BELOW,
         'series'
       );

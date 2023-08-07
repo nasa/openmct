@@ -45,7 +45,7 @@
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
-          :series-object="seriesObject"
+          :series-key-string="seriesObject.keyString"
           @legendHoverChanged="legendHoverChanged"
         />
       </div>

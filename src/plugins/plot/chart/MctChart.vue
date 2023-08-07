@@ -176,6 +176,7 @@ export default {
   },
   mounted() {
     eventHelpers.extend(this);
+    this.seriesModels = [];
     this.config = this.getConfig();
     this.isDestroyed = false;
     this.lines = [];
@@ -255,7 +256,8 @@ export default {
       this.changeAlarmMarkers(newXKey, oldXKey, series);
       this.changeLimitLines(newXKey, oldXKey, series);
     },
-    onSeriesAdd(series) {
+    onSeriesAdd(series, index) {
+      this.seriesModels[index] = series;
       this.listenTo(series, `change:${HANDLED_ATTRIBUTES.xKey}`, this.reDraw, this);
       this.listenTo(
         series,
@@ -279,10 +281,11 @@ export default {
       this.makeChartElement(series);
       this.makeLimitLines(series);
     },
-    onSeriesRemove(series) {
+    onSeriesRemove(series, index) {
       this.stopListening(series);
       this.removeChartElement(series);
       this.scheduleDraw();
+      this.seriesModels.splice(index, 1);
     },
     onAddPoint(point, insertIndex, series) {
       const mainYAxisId = this.config.yAxis.get('id');
@@ -893,15 +896,21 @@ export default {
         highlights.forEach(this.drawHighlight.bind(this, yAxisId), this);
       }
     },
+    getSeries(keystring) {
+      return this.seriesModels.find((series) => {
+        return series.keystring === keystring;
+      });
+    },
     drawHighlight(yAxisId, highlight) {
       const points = new Float32Array([
         this.offset[yAxisId].xVal(highlight.point, highlight.series),
         this.offset[yAxisId].yVal(highlight.point, highlight.series)
       ]);
+      const series = this.getSeries(highlight.series.keystring);
 
-      const color = highlight.series.get('color').asRGBAArray();
+      const color = series.get('color').asRGBAArray();
       const pointCount = 1;
-      const shape = highlight.series.get('markerShape');
+      const shape = series.get('markerShape');
 
       this.drawAPI.drawPoints(points, color, pointCount, HIGHLIGHT_SIZE, shape);
     },

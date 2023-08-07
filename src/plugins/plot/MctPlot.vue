@@ -1157,7 +1157,7 @@ export default {
             series.closest = series.nearestPoint(point);
 
             return {
-              series: series,
+              seriesKeyString: series.keyString,
               point: series.closest
             };
           });

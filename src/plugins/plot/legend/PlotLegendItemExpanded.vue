@@ -134,7 +134,7 @@ export default {
     highlights: {
       handler(newHighlights) {
         const highlightedObject = newHighlights.find(
-          (highlight) => highlight.series.keyString === this.seriesObject.keyString
+          (highlight) => highlight.keyString === this.seriesObject.keyString
         );
         if (newHighlights.length === 0 || highlightedObject) {
           this.initialize(highlightedObject);
