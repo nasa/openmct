@@ -71,7 +71,7 @@ test.describe('Example Imagery Object', () => {
     await dragContrastSliderAndAssertFilterValues(page);
   });
 
-  test('Can use independent time conductor to change time', async ({ page }) => {
+  test.only('Can use independent time conductor to change time', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6821'
@@ -79,11 +79,13 @@ test.describe('Example Imagery Object', () => {
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
-    // FIXME: ITC needs to be made more performant as these
-    // click handlers aren't being registered in time
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(300);
+
+    // Adding in delay to address flakiness of ITC test-- button event handlers not registering in time
+    await expect(page.locator('#independentTCToggle')).toBeChecked();
+    await expect(page.locator('.c-compact-tc').first()).toBeVisible();
+
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
