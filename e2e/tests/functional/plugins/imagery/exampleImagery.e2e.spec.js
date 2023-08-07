@@ -79,22 +79,20 @@ test.describe('Example Imagery Object', () => {
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+    // FIXME: ITC needs to be made more performant as these
+    // click handlers aren't being registered in time
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(300);
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await page.getByRole('textbox', { name: 'Start date' }).fill('');
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'Start time' }).fill('');
-    await page.getByRole('textbox', { name: 'Start time' }).type('01:01:00');
+    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End date' }).fill('');
-    await page.getByRole('textbox', { name: 'End date' }).type('2021-12-30');
+    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End time' }).fill('');
-    await page.getByRole('textbox', { name: 'End time' }).type('01:11:00');
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
-    // expect(await page.getByRole('button', { name: 'Submit time bounds' }).isEnabled()).toBe(true);
-    // await page.getByRole('button', { name: 'Submit time bounds' }).click();
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -106,9 +104,12 @@ test.describe('Example Imagery Object', () => {
 
     // Test independent fixed time with global realtime
     await setRealTimeMode(page);
+    await expect(
+      page.getByRole('switch', { name: 'Enable Independent Time Conductor' })
+    ).toBeEnabled();
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     // check image date to be in the past
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
     // timestamp shouldn't be in the past anymore
