@@ -157,7 +157,7 @@ export default {
     this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
     this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.clearAllValidation();
   },
   methods: {

@@ -167,6 +167,7 @@ test.describe('Plot Tagging', () => {
   });
 
   test('Tags work with Overlay Plots', async ({ page }) => {
+    test.slow();
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6822'
