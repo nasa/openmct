@@ -20,15 +20,15 @@ jobs:
         with:
           node-version: 'lts/hydrogen'
 
-      - name: Cache NPM dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      # - name: Cache NPM dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
       
-      - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
+      - run: npm install --no-audit --progress=false
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
