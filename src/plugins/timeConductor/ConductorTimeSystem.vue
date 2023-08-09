@@ -72,7 +72,7 @@ export default {
     };
   },
   mounted() {
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   unmounted() {

@@ -56,7 +56,7 @@ describe('the plugin', () => {
     openmct = createOpenMct();
 
     // Table Plugin is actually installed by default, but because installing it
-    // again is harmless it is left here as an examplar for non-default plugins.
+    // again is harmless it is left here as an example for non-default plugins.
     tablePlugin = new TablePlugin();
     openmct.install(tablePlugin);
 

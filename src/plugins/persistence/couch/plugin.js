@@ -40,7 +40,7 @@ export default function CouchPlugin(options) {
       couchStatusIndicator
     );
 
-    // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namepaces (alternately "mct", and "")
+    // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namespaces (alternately "mct", and "")
     // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
     openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
     openmct.objects.addProvider(NAMESPACE, install.couchProvider);

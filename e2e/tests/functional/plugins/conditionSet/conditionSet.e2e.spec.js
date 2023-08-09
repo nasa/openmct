@@ -22,7 +22,7 @@
 
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
-suite is sharing state between tests which is considered an anti-pattern. Implimenting in this way to
+suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
@@ -127,7 +127,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     // Verify Inspector Details has updated Name property
     expect.soft(page.locator('text=Renamed Condition Set').nth(2)).toBeTruthy();
 
-    // Verify Tree reflects updated Name proprety
+    // Verify Tree reflects updated Name property
     // Expand Tree
     await page.locator(`text=Open MCT ${myItemsFolderName} >> span >> nth=3`).click();
     // Verify Condition Set Object is renamed in Tree
@@ -150,7 +150,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     // Verify Inspector Details has updated Name property
     expect.soft(page.locator('text=Renamed Condition Set').nth(2)).toBeTruthy();
 
-    // Verify Tree reflects updated Name proprety
+    // Verify Tree reflects updated Name property
     // Expand Tree
     await page.locator(`text=Open MCT ${myItemsFolderName} >> span >> nth=3`).click();
     // Verify Condition Set Object is renamed in Tree

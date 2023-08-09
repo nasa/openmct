@@ -43,7 +43,7 @@ class UserAPI extends EventEmitter {
 
   /**
    * Set the user provider for the user API. This allows you
-   *  to specifiy ONE user provider to be used with Open MCT.
+   *  to specify ONE user provider to be used with Open MCT.
    * @method setProvider
    * @memberof module:openmct.UserAPI#
    * @param {module:openmct.UserAPI~UserProvider} provider the new

@@ -63,7 +63,7 @@ test.describe.fixme('Plot Tagging Performance', () => {
     await page.keyboard.up('Alt');
     await page.keyboard.up('Shift');
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -91,7 +91,7 @@ test.describe.fixme('Plot Tagging Performance', () => {
 
     const canvas = page.locator('canvas').nth(1);
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // click on the tagged plot point

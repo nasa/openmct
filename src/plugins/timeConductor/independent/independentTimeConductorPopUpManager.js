@@ -99,7 +99,7 @@ export default {
         return;
       }
       this.showConductorPopup = false;
-      this.positionX = -10000; // reset it off screan
+      this.positionX = -10000; // reset it off screen
 
       document.removeEventListener('click', this.handleClickAway);
       window.removeEventListener('resize', this.positionBox);
