@@ -21,13 +21,13 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { render } from '@testing-library/vue';
 import Layout from './Layout.vue';
+import Vue from 'vue';
 
-xdescribe('Open MCT Layout:', () => {
+fdescribe('Open MCT Layout:', () => {
   let openmct;
-  let element;
-  let components;
+  let container;
 
   beforeEach((done) => {
     openmct = createOpenMct();
@@ -44,13 +44,59 @@ xdescribe('Open MCT Layout:', () => {
   });
 
   describe('the pane:', () => {
+    const components = {
+      tree: {
+        param: 'hideTree',
+        pane: '.l-shell__pane-tree',
+        collapseButton: '.l-shell__pane-tree .l-pane__collapse-button',
+        expandButton: '.l-shell__pane-tree .l-pane__expand-button'
+      },
+      inspector: {
+        param: 'hideInspector',
+        pane: '.l-shell__pane-inspector',
+        collapseButton: '.l-shell__pane-inspector .l-pane__collapse-button',
+        expandButton: '.l-shell__pane-inspector .l-pane__expand-button'
+      }
+    };
+
+    // eslint-disable-next-line require-await
+    async function createLayout() {
+      const result = render(Layout, {
+        provide: {
+          openmct
+        }
+      });
+      container = result.container;
+    }
+
+    function isCollapsed(selector) {
+      return container.querySelector(selector).classList.contains('l-pane--collapsed');
+    }
+
+    function setHideParams() {
+      Object.entries(components).forEach(([name, component]) => {
+        openmct.router.setSearchParam(component.param, true);
+      });
+    }
+
+    function toggleCollapseButtons() {
+      Object.entries(components).forEach(([name, component]) => {
+        container.querySelector(component.collapseButton).click();
+      });
+    }
+
+    function toggleExpandButtons() {
+      Object.entries(components).forEach(([name, component]) => {
+        container.querySelector(component.expandButton).click();
+      });
+    }
+
     it('is displayed on layout load', async () => {
       await createLayout();
       await Vue.nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
-        expect(component.pane).toBeTruthy();
-
+        expect(container.querySelector(component.pane)).toBeTruthy();
         expect(isCollapsed(component.pane)).toBeFalse();
       });
     });
@@ -73,7 +119,6 @@ xdescribe('Open MCT Layout:', () => {
 
       Object.entries(components).forEach(([name, component]) => {
         expect(openmct.router.getSearchParam(component.param)).toEqual('true');
-
         expect(isCollapsed(component.pane)).toBeTrue();
       });
     });
@@ -87,67 +132,8 @@ xdescribe('Open MCT Layout:', () => {
 
       Object.entries(components).forEach(([name, component]) => {
         expect(openmct.router.getSearchParam(component.param)).not.toEqual('true');
-
         expect(isCollapsed(component.pane)).toBeFalse();
       });
     });
   });
-
-  async function createLayout() {
-    const el = document.createElement('div');
-    const child = document.createElement('div');
-    el.appendChild(child);
-
-    element = await new Vue({
-      el,
-      components: {
-        Layout
-      },
-      provide: {
-        openmct
-      },
-      template: `<Layout ref="layout"/>`
-    }).$mount().$el;
-
-    setComponents();
-  }
-
-  function setComponents() {
-    components = {
-      tree: {
-        param: 'hideTree',
-        pane: element.querySelector('.l-shell__pane-tree'),
-        collapseButton: element.querySelector('.l-shell__pane-tree .l-pane__collapse-button'),
-        expandButton: element.querySelector('.l-shell__pane-tree .l-pane__expand-button')
-      },
-      inspector: {
-        param: 'hideInspector',
-        pane: element.querySelector('.l-shell__pane-inspector'),
-        collapseButton: element.querySelector('.l-shell__pane-inspector .l-pane__collapse-button'),
-        expandButton: element.querySelector('.l-shell__pane-inspector .l-pane__expand-button')
-      }
-    };
-  }
-
-  function isCollapsed(el) {
-    return el.classList.contains('l-pane--collapsed');
-  }
-
-  function setHideParams() {
-    Object.entries(components).forEach(([name, component]) => {
-      openmct.router.setSearchParam(component.param, true);
-    });
-  }
-
-  function toggleCollapseButtons() {
-    Object.entries(components).forEach(([name, component]) => {
-      component.collapseButton.click();
-    });
-  }
-
-  function toggleExpandButtons() {
-    Object.entries(components).forEach(([name, component]) => {
-      component.expandButton.click();
-    });
-  }
 });
