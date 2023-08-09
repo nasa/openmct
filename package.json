@@ -82,7 +82,7 @@
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
     "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
-    "lint:spelling": "cspell \"**/*.*\"",
+    "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.js",
     "build:dev": "webpack --config ./.webpack/webpack.dev.js",
