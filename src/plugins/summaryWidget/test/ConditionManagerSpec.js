@@ -394,7 +394,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
     });
 
     it(
-      'evaluates a set of rules and returns the id of the' +
+      'evaluates a set of rules and returns the id of the ' +
         'last active rule, or the first if no rules are active',
       function () {
         const mockRuleOrder = ['default', 'rule0', 'rule1'];
