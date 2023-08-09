@@ -94,6 +94,7 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npm run lint
+      - run: npm run lint:spelling
       - generate_and_store_version_and_filesystem_artifacts
   unit-test:
     parameters:
