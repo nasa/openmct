@@ -48,12 +48,12 @@ test.describe('ExportAsJSON', () => {
   test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
     // Create 2 objects with hierarchy
     // Export as JSON
-    // Verify Hiearchy
+    // Verify Hierarchy
   });
   test.fixme(
     'Verify that the ExportAsJSON dropdown does not appear for the item X',
     async ({ page }) => {
-      // Other than non-persistible objects
+      // Other than non-persistable objects
     }
   );
 });

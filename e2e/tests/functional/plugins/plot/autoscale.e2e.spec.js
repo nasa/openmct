@@ -76,7 +76,7 @@ test.describe('Autoscale', () => {
     await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
-    // Make sure that after turning off autoscale, the user entered range values are reflexted in the ticks.
+    // Make sure that after turning off autoscale, the user entered range values are reflected in the ticks.
     await testYTicks(page, [
       '-2.00',
       '-1.50',
@@ -118,7 +118,7 @@ test.describe('Autoscale', () => {
     // Ensure the drag worked.
     await testYTicks(page, ['-0.50', '0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00']);
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     expect

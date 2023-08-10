@@ -39,7 +39,7 @@ test.describe('Notebook CRUD Operations', () => {
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
   test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
   test.fixme('Can Delete a Notebook Object', async ({ page }) => {
-    // Other than non-persistible objects
+    // Other than non-persistable objects
   });
 });
 

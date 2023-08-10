@@ -214,7 +214,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.up();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -394,7 +394,7 @@ test.describe('Example Imagery in Display Layout', () => {
   /**
    * Toggle layer visibility checkbox by clicking on checkbox label
    * - should toggle checkbox and layer visibility for that image view
-   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   * - should NOT toggle checkbox and layer visibility for the first image view in display
    */
   test('Toggle layer visibility by clicking on label', async ({ page }) => {
     test.info().annotations.push({

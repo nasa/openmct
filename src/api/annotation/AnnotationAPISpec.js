@@ -168,7 +168,7 @@ describe('The Annotation API', () => {
           targetDomainObjects: [mockDomainObject],
           targets: { fooTarget: {} }
         };
-        openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
+        openmct.annotation.setNamespaceToSaveAnnotations('namespaceThatDoesNotExist');
         await openmct.annotation.create(annotationCreationArguments);
       } catch (error) {
         expect(error).toBeDefined();

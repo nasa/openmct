@@ -315,12 +315,12 @@ define([
   };
 
   /**
-     * Initialze a new rule from a default configuration, or build a {Rule} object
-     * from it if already exists
-     * @param {string} ruleId An key to be used to identify this ruleId, or the key
-                              of the rule to be instantiated
-     * @param {string} ruleName The initial human-readable name of this rule
-     */
+   * Initialize a new rule from a default configuration, or build a {Rule} object
+   * from it if already exists
+   * @param {string} ruleId An key to be used to identify this ruleId, or the key
+                            of the rule to be instantiated
+    * @param {string} ruleName The initial human-readable name of this rule
+    */
   SummaryWidget.prototype.initRule = function (ruleId, ruleName) {
     let ruleConfig;
     const styleObj = {};
