@@ -39,7 +39,7 @@ export default class FormsAPI {
    *   This function accepts element, model and onChange function
    *   element - html element (place holder) to render a row view
    *   model - row data for rendering name, value etc for given row type
-   *   onChange - an onChange event callback funtion to keep track of any change in value
+   *   onChange - an onChange event callback function to keep track of any change in value
    * @property {function} destroy a callback function when a vue component gets destroyed
    */
 

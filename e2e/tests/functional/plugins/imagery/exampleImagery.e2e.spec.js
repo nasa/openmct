@@ -27,7 +27,7 @@ but only assume that example imagery is present.
 /* globals process */
 const { waitForAnimations } = require('../../../../baseFixtures');
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../../../appActions');
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
@@ -46,6 +46,7 @@ test.describe('Example Imagery Object', () => {
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
     await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
+    await page.locator(backgroundImageSelector).waitFor();
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -71,46 +72,65 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Can use independent time conductor to change time', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6821'
+    });
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
-    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
-    await page.getByRole('textbox').nth(1).fill('2021-12-30 01:11:00.000Z');
-    await page.getByRole('textbox').nth(0).fill('2021-12-30 01:01:00.000Z');
-    await page.getByRole('textbox').nth(1).click();
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+
+    // Adding in delay to address flakiness of ITC test-- button event handlers not registering in time
+    await expect(page.locator('#independentTCToggle')).toBeChecked();
+    await expect(page.locator('.c-compact-tc').first()).toBeVisible();
+
+    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+
+    await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
+    await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
+    await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
+    await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Enter');
 
     // check image date
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off
-    await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+    await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
 
     // Test independent fixed time with global realtime
-    await page.getByRole('button', { name: /Fixed Timespan/ }).click();
-    await page.getByTestId('conductor-modeOption-realtime').click();
-    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+    await setRealTimeMode(page);
+    await expect(
+      page.getByRole('switch', { name: 'Enable Independent Time Conductor' })
+    ).toBeEnabled();
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     // check image date to be in the past
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
     // flip it off
-    await page.getByTitle('Disable independent Time Conductor').locator('label').click();
+    await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
 
     // Test independent realtime with global realtime
-    await page.getByTitle('Enable independent Time Conductor').locator('label').click();
+    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
     // change independent time to realtime
-    await page.getByRole('button', { name: /Fixed Timespan/ }).click();
-    await page.getByRole('menuitem', { name: /Local Clock/ }).click();
+    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+    await page.getByRole('button', { name: 'Independent Time Conductor Mode Menu' }).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
     // back to the past
-    await page
-      .getByRole('button', { name: /Local Clock/ })
-      .first()
-      .click();
+    await page.getByRole('button', { name: 'Independent Time Conductor Mode Menu' }).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    await page.getByRole('button', { name: 'Independent Time Conductor Mode Menu' }).click();
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
     // check image date to be in the past
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -194,7 +214,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.up();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -247,7 +267,7 @@ test.describe('Example Imagery Object', () => {
 
   test('Uses low fetch priority', async ({ page }) => {
     const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
-    await expect(priority).toBe('low');
+    expect(priority).toBe('low');
   });
 });
 
@@ -281,7 +301,7 @@ test.describe('Example Imagery in Display Layout', () => {
     await setRealTimeMode(page);
 
     // pause/play button
-    const pausePlayButton = await page.locator('.c-button.pause-play');
+    const pausePlayButton = page.locator('.c-button.pause-play');
 
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
 
@@ -304,7 +324,7 @@ test.describe('Example Imagery in Display Layout', () => {
     await setRealTimeMode(page);
 
     // pause/play button
-    const pausePlayButton = await page.locator('.c-button.pause-play');
+    const pausePlayButton = page.locator('.c-button.pause-play');
     await pausePlayButton.click();
     await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
 
@@ -374,7 +394,7 @@ test.describe('Example Imagery in Display Layout', () => {
   /**
    * Toggle layer visibility checkbox by clicking on checkbox label
    * - should toggle checkbox and layer visibility for that image view
-   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   * - should NOT toggle checkbox and layer visibility for the first image view in display
    */
   test('Toggle layer visibility by clicking on label', async ({ page }) => {
     test.info().annotations.push({
@@ -927,16 +947,4 @@ async function createImageryView(page) {
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function setRealTimeMode(page) {
-  await page.locator('.c-compact-tc').click();
-  await page.waitForSelector('.c-tc-input-popup', { state: 'visible' });
-  // Click mode dropdown
-  await page.getByRole('button', { name: ' Fixed Timespan ' }).click();
-  // Click realtime
-  await page.getByTestId('conductor-modeOption-realtime').click();
 }

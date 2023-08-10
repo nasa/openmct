@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      timeTextValue: this.openmct.time.now()
+      timeTextValue: this.openmct.time.getClock() ? this.openmct.time.now() : undefined
     };
   },
   mounted() {

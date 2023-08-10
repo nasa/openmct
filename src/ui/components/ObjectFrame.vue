@@ -251,13 +251,7 @@ export default {
       this.widthClass = wClass.trimStart();
     },
     getViewKey() {
-      let viewKey = this.$refs.objectView?.viewKey;
-
-      if (this.objectViewKey) {
-        viewKey = this.objectViewKey;
-      }
-
-      return viewKey;
+      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

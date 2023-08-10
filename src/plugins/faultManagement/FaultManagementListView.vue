@@ -169,7 +169,7 @@ export default {
       if (selected) {
         this.selectedFaults[fault.id] = fault;
       } else {
-        this.$delete(this.selectedFaults, fault.id);
+        delete this.selectedFaults[fault.id];
       }
 
       const selectedFaults = Object.values(this.selectedFaults);

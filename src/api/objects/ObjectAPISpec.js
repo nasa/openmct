@@ -23,6 +23,9 @@ describe('The Object API', () => {
             return USERNAME;
           }
         });
+      },
+      getPossibleRoles() {
+        return Promise.resolve([]);
       }
     };
     openmct = createOpenMct();
@@ -122,7 +125,7 @@ describe('The Object API', () => {
         await objectAPI.save(mockDomainObject);
         expect(mockDomainObject.createdBy).toBe(USERNAME);
       });
-      it("Sets the current user for 'modifedBy' on existing objects", async () => {
+      it("Sets the current user for 'modifiedBy' on existing objects", async () => {
         mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
         mockDomainObject.modified = Date.now();
 

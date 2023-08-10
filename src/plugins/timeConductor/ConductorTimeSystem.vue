@@ -28,6 +28,7 @@
     <button
       class="c-button--menu c-time-system-button"
       :class="[buttonCssClass]"
+      aria-label="Time Conductor Time System"
       @click.prevent.stop="showTimeSystemMenu"
     >
       <span class="c-button__label">{{ selectedTimeSystem.name }}</span>
@@ -71,7 +72,7 @@ export default {
     };
   },
   mounted() {
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSysteChanged, this.setViewFromTimeSystem);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   unmounted() {

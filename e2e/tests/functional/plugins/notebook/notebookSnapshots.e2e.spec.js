@@ -35,7 +35,7 @@ test.describe('Snapshot Menu tests', () => {
       // There should be no default notebook
       // Clear default notebook if exists using `localStorage.setItem('notebook-storage', null);`
       // refresh page
-      // Click on 'Notebook Snaphot Menu'
+      // Click on 'Notebook Snapshot Menu'
       // 'save to Notebook Snapshots' should be only option there
     }
   );
@@ -62,7 +62,7 @@ test.describe('Snapshot Menu tests', () => {
   });
   test.fixme('Snapshots adjust time conductor', async ({ page }) => {
     // Create Telemetry object
-    // Set Telemetry object's timeconductor to Fixed time with Start and Endtimes are recorded
+    // Set Telemetry object's timeconductor to Fixed time with Start and End times are recorded
     // Embed Telemetry object into notebook
     // Set Time Conductor to Local clock
     // Click into embedded telemetry object and verify object appears with same fixed time from record

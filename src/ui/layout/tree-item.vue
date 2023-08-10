@@ -191,7 +191,6 @@ export default {
   },
   unmounted() {
     this.openmct.router.off('change:path', this.highlightIfNavigated);
-    this.$emit('tree-item-destroyed', this.navigationPath);
   },
   methods: {
     targetedPathAnimationEnd($event) {

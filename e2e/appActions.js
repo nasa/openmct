@@ -35,6 +35,7 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
+ * @property {Object<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**
@@ -65,7 +66,10 @@ const { expect } = require('@playwright/test');
  * @param {CreateObjectOptions} options
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+  page,
+  { type, name, parent = 'mine', customParameters = {} }
+) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -92,6 +96,13 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // currently running test and its project.
     const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
     await notesInput.fill(page.testNotes);
+  }
+
+  // If there are any further parameters, fill them in
+  for (const [key, value] of Object.entries(customParameters)) {
+    const input = page.locator(`form[name="mctForm"] ${key}`);
+    await input.fill('');
+    await input.fill(value);
   }
 
   // Click OK button and wait for Navigate event
@@ -314,15 +325,13 @@ async function _isInEditMode(page, identifier) {
  */
 async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
-  await timeConductorMode.click();
-  await timeConductorMode.locator('.js-mode-button').click();
-
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+  await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
   // Switch time conductor mode
   if (isFixedTimespan) {
-    await page.locator('data-testid=conductor-modeOption-fixed').click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
   } else {
-    await page.locator('data-testid=conductor-modeOption-realtime').click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
   }
 }
 
@@ -344,9 +353,12 @@ async function setRealTimeMode(page) {
 
 /**
  * @typedef {Object} OffsetValues
- * @property {string | undefined} hours
- * @property {string | undefined} mins
- * @property {string | undefined} secs
+ * @property {string | undefined} startHours
+ * @property {string | undefined} startMins
+ * @property {string | undefined} startSecs
+ * @property {string | undefined} endHours
+ * @property {string | undefined} endMins
+ * @property {string | undefined} endSecs
  */
 
 /**
@@ -355,19 +367,32 @@ async function setRealTimeMode(page) {
  * @param {OffsetValues} offset
  * @param {import('@playwright/test').Locator} offsetButton
  */
-async function setTimeConductorOffset(page, { hours, mins, secs }) {
-  // await offsetButton.click();
-
-  if (hours) {
-    await page.fill('.pr-time-input__hrs', hours);
+async function setTimeConductorOffset(
+  page,
+  { startHours, startMins, startSecs, endHours, endMins, endSecs }
+) {
+  if (startHours) {
+    await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
   }
 
-  if (mins) {
-    await page.fill('.pr-time-input__mins', mins);
+  if (startMins) {
+    await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
   }
 
-  if (secs) {
-    await page.fill('.pr-time-input__secs', secs);
+  if (startSecs) {
+    await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
+  }
+
+  if (endHours) {
+    await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
+  }
+
+  if (endMins) {
+    await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
+  }
+
+  if (endSecs) {
+    await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
   }
 
   // Click the check button
@@ -381,8 +406,7 @@ async function setTimeConductorOffset(page, { hours, mins, secs }) {
  */
 async function setStartOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
-  await timeConductorMode.click();
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await setTimeConductorOffset(page, offset);
 }
 
@@ -393,9 +417,51 @@ async function setStartOffset(page, offset) {
  */
 async function setEndOffset(page, offset) {
   // Click 'mode' button
-  const timeConductorMode = await page.locator('.c-compact-tc');
-  await timeConductorMode.click();
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await setTimeConductorOffset(page, offset);
+}
+
+async function setTimeConductorBounds(page, startDate, endDate) {
+  // Bring up the time conductor popup
+  await page.click('.l-shell__time-conductor.c-compact-tc');
+
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setIndependentTimeConductorBounds(page, startDate, endDate) {
+  // Activate Independent Time Conductor in Fixed Time Mode
+  await page.getByRole('switch').click();
+
+  // Bring up the time conductor popup
+  await page.click('.c-conductor-holder--compact .c-compact-tc');
+
+  await expect(page.locator('.itc-popout')).toBeVisible();
+
+  await setTimeBounds(page, startDate, endDate);
+
+  await page.keyboard.press('Enter');
+}
+
+async function setTimeBounds(page, startDate, endDate) {
+  if (startDate) {
+    // Fill start time
+    await page
+      .getByRole('textbox', { name: 'Start date' })
+      .fill(startDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'Start time' })
+      .fill(startDate.toString().substring(11, 19));
+  }
+
+  if (endDate) {
+    // Fill end time
+    await page.getByRole('textbox', { name: 'End date' }).fill(endDate.toString().substring(0, 10));
+    await page
+      .getByRole('textbox', { name: 'End time' })
+      .fill(endDate.toString().substring(11, 19));
+  }
 }
 
 /**
@@ -509,6 +575,8 @@ module.exports = {
   setRealTimeMode,
   setStartOffset,
   setEndOffset,
+  setTimeConductorBounds,
+  setIndependentTimeConductorBounds,
   selectInspectorTab,
   waitForPlotsToRender
 };

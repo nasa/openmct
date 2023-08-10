@@ -23,8 +23,8 @@
 <template>
   <div class="c-inspector js-inspector">
     <object-name />
-    <InspectorTabs :selection="selection" :is-editing="isEditing" @select-tab="selectTab" />
-    <InspectorViews :selection="selection" :selected-tab="selectedTab" />
+    <InspectorTabs :is-editing="isEditing" @select-tab="selectTab" />
+    <InspectorViews :selected-tab="selectedTab" />
   </div>
 </template>
 
@@ -48,20 +48,10 @@ export default {
   },
   data() {
     return {
-      selection: this.openmct.selection.get(),
       selectedTab: undefined
     };
   },
-  mounted() {
-    this.openmct.selection.on('change', this.setSelection);
-  },
-  unmounted() {
-    this.openmct.selection.off('change', this.setSelection);
-  },
   methods: {
-    setSelection(selection) {
-      this.selection = selection;
-    },
     selectTab(tab) {
       this.selectedTab = tab;
     }

@@ -27,7 +27,7 @@ define([
    * @param {MCT} openmct An MCT instance
    * @param {ConditionManager} conditionManager A ConditionManager instance
    * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
-   * @param {element} container The DOM element which cotains this summary widget
+   * @param {element} container The DOM element which contains this summary widget
    */
   function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
     eventHelpers.extend(this);
@@ -303,7 +303,7 @@ define([
    * Register a callback with this rule: supported callbacks are remove, change,
    * conditionChange, and duplicate
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -335,7 +335,7 @@ define([
   };
 
   /**
-   * Mutate thet domain object with this rule's local configuration
+   * Mutate the domain object with this rule's local configuration
    */
   Rule.prototype.updateDomainObject = function () {
     this.openmct.objects.mutate(
@@ -385,7 +385,7 @@ define([
   };
 
   /**
-   * Initialze a new condition. If called with the sourceConfig and sourceIndex arguments,
+   * Initialize a new condition. If called with the sourceConfig and sourceIndex arguments,
    * will insert a new condition with the provided configuration after the sourceIndex
    * index. Otherwise, initializes a new blank rule and inserts it at the end
    * of the list.

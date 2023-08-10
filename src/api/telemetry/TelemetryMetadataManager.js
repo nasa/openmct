@@ -92,7 +92,7 @@ define(['lodash'], function (_) {
   };
 
   /**
-   * Get an array of valueMetadatas that posess all hints requested.
+   * Get an array of valueMetadatas that possess all hints requested.
    * Array is sorted based on hint priority.
    *
    */

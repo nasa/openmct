@@ -46,8 +46,8 @@ define(['./Select'], function (Select) {
     }
 
     /**
-     * Event handler for the intial metadata load event from the associated
-     * ConditionManager. Retreives metadata from the manager and populates
+     * Event handler for the initial metadata load event from the associated
+     * ConditionManager. Retrieves metadata from the manager and populates
      * the select element.
      * @private
      */

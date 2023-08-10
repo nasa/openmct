@@ -28,7 +28,7 @@ import { MARKER_SHAPES } from './MarkerShapes';
  *
  * @constructor
  * @param {CanvasElement} canvas the canvas object to render upon
- * @throws {Error} an error is thrown if Canvas's 2D API is unavailab
+ * @throws {Error} an error is thrown if Canvas's 2D API is unavailable
  */
 
 /**
@@ -36,7 +36,7 @@ import { MARKER_SHAPES } from './MarkerShapes';
  *
  * @constructor
  * @param {CanvasElement} canvas the canvas object to render upon
- * @throws {Error} an error is thrown if Canvas's 2D API is unavailab
+ * @throws {Error} an error is thrown if Canvas's 2D API is unavailable
  */
 function Draw2D(canvas) {
   this.canvas = canvas;

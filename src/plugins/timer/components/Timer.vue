@@ -43,9 +43,11 @@
 
 <script>
 import raf from 'utils/raf';
+import throttle from '../../../utils/throttle';
 
 const moment = require('moment-timezone');
 const momentDurationFormatSetup = require('moment-duration-format');
+const refreshRateSeconds = 2;
 
 momentDurationFormatSetup(moment);
 
@@ -68,37 +70,20 @@ export default {
     };
   },
   computed: {
-    relativeTimestamp() {
-      let relativeTimestamp;
-      if (this.configuration && this.configuration.timestamp) {
-        relativeTimestamp = moment(this.configuration.timestamp).toDate();
-      } else if (this.configuration && this.configuration.timestamp === undefined) {
-        relativeTimestamp = undefined;
-      }
-
-      return relativeTimestamp;
-    },
     timeDelta() {
-      return this.lastTimestamp - this.relativeTimestamp;
+      if (this.configuration.pausedTime) {
+        return Date.parse(this.configuration.pausedTime) - this.startTimeMs;
+      } else {
+        return this.lastTimestamp - this.startTimeMs;
+      }
+    },
+    startTimeMs() {
+      return Date.parse(this.configuration.timestamp);
     },
     timeTextValue() {
-      if (isNaN(this.timeDelta)) {
-        return null;
-      }
-
       const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
 
       return moment.duration(toWholeSeconds, 'ms').format(this.format, { trim: false });
-    },
-    pausedTime() {
-      let pausedTime;
-      if (this.configuration && this.configuration.pausedTime) {
-        pausedTime = moment(this.configuration.pausedTime).toDate();
-      } else if (this.configuration && this.configuration.pausedTime === undefined) {
-        pausedTime = undefined;
-      }
-
-      return pausedTime;
     },
     timerState() {
       let timerState = 'started';
@@ -179,13 +164,9 @@ export default {
     }
   },
   mounted() {
-    this.unobserve = this.openmct.objects.observe(
-      this.domainObject,
-      'configuration',
-      (configuration) => {
-        this.configuration = configuration;
-      }
-    );
+    this.unobserve = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
+      this.configuration = domainObject.configuration;
+    });
     this.$nextTick(() => {
       if (!this.configuration?.timerState) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
@@ -193,6 +174,7 @@ export default {
       }
 
       this.handleTick = raf(this.handleTick);
+      this.refreshTimerObject = throttle(this.refreshTimerObject, refreshRateSeconds * 1000);
       this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(
@@ -210,16 +192,10 @@ export default {
   },
   methods: {
     handleTick() {
-      const isTimerRunning = !['paused', 'stopped'].includes(this.timerState);
-
-      if (isTimerRunning) {
-        this.lastTimestamp = new Date(this.openmct.time.now());
-      }
-
-      if (this.timerState === 'paused' && !this.lastTimestamp) {
-        this.lastTimestamp = this.pausedTime;
-      }
-
+      this.lastTimestamp = new Date(this.openmct.time.now());
+      this.refreshTimerObject();
+    },
+    refreshTimerObject() {
       this.openmct.objects.refresh(this.domainObject);
     },
     restartTimer() {

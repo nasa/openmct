@@ -74,7 +74,6 @@ export default {
     return {
       ladTableObjects: [],
       ladTelemetryObjects: {},
-      compositions: [],
       viewContext: {},
       staleObjects: [],
       configuration: this.ladTableConfiguration.getConfiguration()
@@ -114,6 +113,9 @@ export default {
 
       return '';
     }
+  },
+  created() {
+    this.compositions = [];
   },
   mounted() {
     this.ladTableConfiguration.on('change', this.handleConfigurationChange);
@@ -178,7 +180,7 @@ export default {
         this.unwatchStaleness(combinedKey);
       });
 
-      this.$delete(this.ladTelemetryObjects, ladTable.key);
+      delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
     },
     reorderLadTables(reorderPlan) {

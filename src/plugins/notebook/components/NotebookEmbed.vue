@@ -106,9 +106,8 @@ export default {
   watch: {
     isLocked(value) {
       if (value === true) {
-        let index = this.menuActions.findIndex((item) => item.id === 'removeEmbed');
-
-        this.$delete(this.menuActions, index);
+        const index = this.menuActions.findIndex((item) => item.id === 'removeEmbed');
+        this.menuActions.splice(index, 1);
       }
     }
   },
@@ -140,7 +139,7 @@ export default {
           onItemClicked: () => this.openSnapshot()
         };
 
-        this.menuActions = [viewSnapshot];
+        this.menuActions.splice(0, this.menuActions.length, viewSnapshot);
       }
 
       const navigateToItem = {
@@ -167,7 +166,7 @@ export default {
         onItemClicked: () => this.previewEmbed()
       };
 
-      this.menuActions = this.menuActions.concat([quickView, navigateToItem, navigateToItemInTime]);
+      this.menuActions.push(...[quickView, navigateToItem, navigateToItemInTime]);
 
       if (!this.isLocked) {
         const removeEmbed = {
@@ -232,7 +231,7 @@ export default {
         onDestroy: destroy
       });
 
-      painterroInstance.intialize();
+      painterroInstance.initialize();
 
       const fullSizeImageObjectIdentifier = this.embed.snapshot.fullSizeImageObjectIdentifier;
       if (!fullSizeImageObjectIdentifier) {

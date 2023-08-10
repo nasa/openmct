@@ -38,6 +38,7 @@ import { getPreciseDuration } from '../../utils/duration';
 import { SORT_ORDER_OPTIONS } from './constants';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 const SCROLL_TIMEOUT = 10000;
 
@@ -103,9 +104,8 @@ export default {
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
-    this.planObjects = [];
-
     return {
+      planObjects: [],
       viewBounds: undefined,
       height: 0,
       planActivities: [],
@@ -115,8 +115,8 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
-    this.openmct.time.on('clock', this.setViewFromClock);
+    this.timestamp = this.openmct.time.now();
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
 
     this.getPlanDataAndSetConfig(this.domainObject);
 
@@ -137,7 +137,7 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.openmct.time.on('bounds', this.updateTimestamp);
+    this.openmct.time.on('tick', this.updateTimestamp);
     this.openmct.editor.on('isEditing', this.setEditState);
 
     this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -149,7 +149,7 @@ export default {
       this.composition.load();
     }
 
-    this.setViewFromClock(this.openmct.time.clock());
+    this.setFixedTime(this.openmct.time.getMode());
   },
   beforeUnmount() {
     if (this.unlisten) {
@@ -165,8 +165,8 @@ export default {
     }
 
     this.openmct.editor.off('isEditing', this.setEditState);
-    this.openmct.time.off('bounds', this.updateTimestamp);
-    this.openmct.time.off('clock', this.setViewFromClock);
+    this.openmct.time.off('tick', this.updateTimestamp);
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
 
     this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
     if (this.clearAutoScrollDisabledTimer) {
@@ -201,22 +201,15 @@ export default {
         this.listActivities();
       }
     },
-    updateTimestamp(bounds, isTick) {
-      if (isTick === true && this.openmct.time.clock() !== undefined) {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-      } else if (isTick === false && this.openmct.time.clock() === undefined) {
-        // set the start time for fixed time using the selected bounds start
-        this.updateTimeStampAndListActivities(bounds.start);
-      }
+    updateTimestamp(timestamp) {
+      //The clock never stops ticking
+      this.updateTimeStampAndListActivities(timestamp);
     },
-    setViewFromClock(newClock) {
+    setFixedTime() {
       this.filterValue = this.domainObject.configuration.filter;
-      this.isFixedTime = newClock === undefined;
+      this.isFixedTime = !this.openmct.time.isRealTime();
       if (this.isFixedTime) {
         this.hideAll = false;
-        this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
-      } else {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
       }
     },
     addItem(domainObject) {
@@ -345,12 +338,13 @@ export default {
       let activities = [];
 
       groups.forEach((key) => {
-        activities = activities.concat(this.planData[key]);
+        // Create new objects so Vue 3 can detect any changes
+        activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
       });
       // filter activities first, then sort by start time
       activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
       activities = this.applyStyles(activities);
-      this.planActivities = activities;
+      this.planActivities = [...activities];
       //We need to wait for the next tick since we need the height of the row from the DOM
       this.$nextTick(this.setScrollTop);
     },

@@ -25,13 +25,19 @@
       <button
         class="c-button--menu js-mode-button"
         :class="[buttonCssClass, selectedMode.cssClass]"
+        aria-label="Time Conductor Mode Menu"
         @click.prevent.stop="showModesMenu"
       >
         <span class="c-button__label">{{ selectedMode.name }}</span>
       </button>
     </div>
   </div>
-  <div v-else class="c-compact-tc__setting-value__elem" :title="`Mode: ${selectedMode.name}`">
+  <div
+    v-else
+    role="button"
+    class="c-compact-tc__setting-value__elem"
+    aria-label="Time Conductor Mode"
+  >
     {{ selectedMode.name }}
   </div>
 </template>

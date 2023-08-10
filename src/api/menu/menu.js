@@ -52,12 +52,12 @@ class Menu extends EventEmitter {
   }
 
   dismiss() {
-    this.emit('destroy');
     if (this.destroy) {
       this.destroy();
       this.destroy = null;
     }
     document.removeEventListener('click', this.dismiss);
+    this.emit('destroy');
   }
 
   showMenu() {

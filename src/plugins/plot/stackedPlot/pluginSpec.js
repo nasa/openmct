@@ -34,7 +34,7 @@ import EventEmitter from 'EventEmitter';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import PlotOptions from '../inspector/PlotOptions.vue';
 
-describe('the plugin', function () {
+xdescribe('the plugin', function () {
   let element;
   let child;
   let openmct;

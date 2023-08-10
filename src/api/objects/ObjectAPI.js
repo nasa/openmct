@@ -520,7 +520,7 @@ export default class ObjectAPI {
   }
 
   /**
-   * Inovke interceptors if applicable for a given domain object.
+   * Invoke interceptors if applicable for a given domain object.
    * @private
    */
   applyGetInterceptors(identifier, domainObject) {

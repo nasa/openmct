@@ -60,7 +60,6 @@ function isNew(doc) {
 
 function generateTelemetry(start, count) {
   let telemetry = [];
-
   for (let i = 1, l = count + 1; i < l; i++) {
     let stringRep = i + 'minute';
     let logo = 'images/logo-openmct.svg';
@@ -211,7 +210,6 @@ describe('The Imagery View Layouts', () => {
       disconnect() {}
     });
 
-    //spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
     spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
     originalRouterPath = openmct.router.path;
@@ -401,18 +399,22 @@ describe('The Imagery View Layouts', () => {
     it('on mount should show the the most recent image', async () => {
       //Looks like we need Vue.nextTick here so that computed properties settle down
       await Vue.nextTick();
+      await Vue.nextTick();
+      await Vue.nextTick();
       const imageInfo = getImageInfo(parent);
       expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
     });
 
-    it('on mount should show the any image layers', async () => {
+    it('on mount should show any image layers', async () => {
       //Looks like we need Vue.nextTick here so that computed properties settle down
+      await Vue.nextTick();
       await Vue.nextTick();
       const layerEls = parent.querySelectorAll('.js-layer-image');
       expect(layerEls.length).toEqual(1);
     });
 
     it('should use the image thumbnailUrl for thumbnails', async () => {
+      await Vue.nextTick();
       await Vue.nextTick();
       const fullSizeImageUrl = imageTelemetry[5].url;
       const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
@@ -432,6 +434,7 @@ describe('The Imagery View Layouts', () => {
 
     it('should show the clicked thumbnail as the main image', async () => {
       //Looks like we need Vue.nextTick here so that computed properties settle down
+      await Vue.nextTick();
       await Vue.nextTick();
       const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
       parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
@@ -459,6 +462,7 @@ describe('The Imagery View Layouts', () => {
 
     it('should show that an image is not new', async () => {
       await Vue.nextTick();
+      await Vue.nextTick();
       const target = formatThumbnail(imageTelemetry[4].url);
       parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
@@ -469,6 +473,7 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should navigate via arrow keys', async () => {
+      await Vue.nextTick();
       await Vue.nextTick();
       const keyOpts = {
         element: parent.querySelector('.c-imagery'),
@@ -485,6 +490,7 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should navigate via numerous arrow keys', async () => {
+      await Vue.nextTick();
       await Vue.nextTick();
       const element = parent.querySelector('.c-imagery');
       const type = 'keyup';
@@ -580,6 +586,7 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should display the viewable area when zoom factor is greater than 1', async () => {
+      await Vue.nextTick();
       await Vue.nextTick();
       expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
 
@@ -688,31 +695,28 @@ describe('The Imagery View Layouts', () => {
       openmct.time.setClock('local');
     });
 
-    it('on mount should show imagery within the given bounds', (done) => {
-      Vue.nextTick(() => {
-        const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
-        expect(imageElements.length).toEqual(5);
-        done();
-      });
+    it('on mount should show imagery within the given bounds', async () => {
+      await Vue.nextTick();
+      await Vue.nextTick();
+      const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+      expect(imageElements.length).toEqual(5);
     });
 
-    it('should show the clicked thumbnail as the preview image', (done) => {
-      Vue.nextTick(() => {
-        const mouseDownEvent = createMouseEvent('mousedown');
-        let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
-        imageWrapper[2].dispatchEvent(mouseDownEvent);
-        Vue.nextTick(() => {
-          const timestamp = imageWrapper[2].id.replace('wrapper-', '');
-          expect(componentView.previewAction.invoke).toHaveBeenCalledWith(
-            [componentView.objectPath[0]],
-            {
-              timestamp: Number(timestamp),
-              objectPath: componentView.objectPath
-            }
-          );
-          done();
-        });
-      });
+    it('should show the clicked thumbnail as the preview image', async () => {
+      await Vue.nextTick();
+      await Vue.nextTick();
+      const mouseDownEvent = createMouseEvent('mousedown');
+      let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
+      imageWrapper[2].dispatchEvent(mouseDownEvent);
+      await Vue.nextTick();
+      const timestamp = imageWrapper[2].id.replace('wrapper-', '');
+      expect(componentView.previewAction.invoke).toHaveBeenCalledWith(
+        [componentView.objectPath[0]],
+        {
+          timestamp: Number(timestamp),
+          objectPath: componentView.objectPath
+        }
+      );
     });
 
     it('should remove images when clock advances', async () => {

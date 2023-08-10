@@ -2,7 +2,7 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.32.3-focal
+      - image: mcr.microsoft.com/playwright:v1.36.2-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
@@ -94,6 +94,7 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npm run lint
+      - run: npm run lint:spelling
       - generate_and_store_version_and_filesystem_artifacts
   unit-test:
     parameters:
@@ -162,7 +163,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright@1.32.3 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.36.2 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
@@ -242,6 +243,10 @@ workflows:
           name: e2e-stable
           node-version: lts/hydrogen
           suite: stable
+      - perf-test:
+          node-version: lts/hydrogen
+      - visual-test:
+          node-version: lts/hydrogen
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:

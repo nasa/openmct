@@ -171,7 +171,7 @@ xdescribe('AutoflowTabularPlugin', () => {
           return [{ hint: hints[0] }];
         });
 
-        view = provider.view(testObject);
+        view = provider.view(testObject, [testObject]);
         view.show(testContainer);
 
         return Vue.nextTick();

@@ -105,11 +105,11 @@ describe('the plugin', function () {
       composition: []
     };
 
-    const applicableViews = openmct.objectViews.get(testViewObject, []);
+    const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
     let displayLayoutViewProvider = applicableViews.find(
       (viewProvider) => viewProvider.key === 'layout.view'
     );
-    let view = displayLayoutViewProvider.view(testViewObject);
+    let view = displayLayoutViewProvider.view(testViewObject, [testViewObject]);
     let error;
 
     try {
@@ -141,7 +141,7 @@ describe('the plugin', function () {
       };
       displayLayoutItem = {
         composition: [
-          // no item in compostion, but item in configuration items
+          // no item in composition, but item in configuration items
         ],
         configuration: {
           items: [item],
@@ -159,13 +159,13 @@ describe('the plugin', function () {
       const displayLayoutViewProvider = applicableViews.find(
         (viewProvider) => viewProvider.key === 'layout.view'
       );
-      const view = displayLayoutViewProvider.view(displayLayoutItem);
+      const view = displayLayoutViewProvider.view(displayLayoutItem, displayLayoutItem);
       view.show(child, false);
 
       Vue.nextTick(done);
     });
 
-    it('will sync compostion and layout items', () => {
+    it('will sync composition and layout items', () => {
       expect(displayLayoutItem.configuration.items.length).toBe(0);
     });
   });

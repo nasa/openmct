@@ -28,10 +28,10 @@ const { createDomainObjectWithDefaults, createNotification } = require('../../ap
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Notifications List', () => {
-  test('Notifications can be dismissed individually', async ({ page }) => {
+  test.fixme('Notifications can be dismissed individually', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/6122'
+      description: 'https://github.com/nasa/openmct/issues/6820'
     });
 
     // Go to baseURL

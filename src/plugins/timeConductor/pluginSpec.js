@@ -108,25 +108,27 @@ describe('time conductor', () => {
   });
 
   describe('in realtime mode', () => {
-    beforeEach((done) => {
+    beforeEach(async () => {
+      openmct.time.setClockOffsets({
+        start: -THIRTY_MINUTES,
+        end: THIRTY_SECONDS
+      });
+
       const switcher = appHolder.querySelector('.is-fixed-mode');
       const clickEvent = createMouseEvent('click');
       switcher.dispatchEvent(clickEvent);
-      Vue.nextTick(() => {
-        const modeButton = switcher.querySelector('.c-tc-input-popup .c-button--menu');
-        const clickEvent1 = createMouseEvent('click');
-        modeButton.dispatchEvent(clickEvent1);
-        Vue.nextTick(() => {
-          const clockItem = document.querySelectorAll(
-            '.c-conductor__mode-menu .c-super-menu__menu li'
-          )[1];
-          const clickEvent2 = createMouseEvent('click');
-          clockItem.dispatchEvent(clickEvent2);
-          Vue.nextTick(() => {
-            done();
-          });
-        });
-      });
+      await Vue.nextTick();
+      const modeButton = switcher.querySelector('.c-tc-input-popup .c-button--menu');
+      const clickEvent1 = createMouseEvent('click');
+      modeButton.dispatchEvent(clickEvent1);
+      await Vue.nextTick();
+      const clockItem = document.querySelectorAll(
+        '.c-conductor__mode-menu .c-super-menu__menu li'
+      )[1];
+      const clickEvent2 = createMouseEvent('click');
+      clockItem.dispatchEvent(clickEvent2);
+      await Vue.nextTick();
+      await Vue.nextTick();
     });
 
     it('shows delta inputs', () => {

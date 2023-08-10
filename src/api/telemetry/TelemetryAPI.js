@@ -204,7 +204,8 @@ export default class TelemetryAPI {
    */
   standardizeRequestOptions(options = {}) {
     if (!Object.hasOwn(options, 'start')) {
-      if (options.timeContext?.getBounds()) {
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.start) {
         options.start = options.timeContext.getBounds().start;
       } else {
         options.start = this.openmct.time.getBounds().start;
@@ -212,7 +213,8 @@ export default class TelemetryAPI {
     }
 
     if (!Object.hasOwn(options, 'end')) {
-      if (options.timeContext?.getBounds()) {
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.end) {
         options.end = options.timeContext.getBounds().end;
       } else {
         options.end = this.openmct.time.getBounds().end;
@@ -228,7 +230,7 @@ export default class TelemetryAPI {
 
   /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
-   * The request will be modifyed when it is received and will be returned in it's modified state
+   * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
@@ -267,7 +269,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Get or set greedy LAD. For stategy "latest" telemetry in
+   * Get or set greedy LAD. For strategy "latest" telemetry in
    * realtime mode the start bound will be ignored if true and
    * there is no new data to replace the existing data.
    * defaults to true
