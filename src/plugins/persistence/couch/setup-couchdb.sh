@@ -18,7 +18,6 @@ if [ "${COUCH_ADMIN_PASSWORD}" ]; then
     CURL_USERPASS_ARG+=":${COUCH_ADMIN_PASSWORD}"
 fi
 
-# Functions
 resource_exists() {
     response=$(curl -u "${CURL_USERPASS_ARG}" -s -o /dev/null -I -w "%{http_code}" $1);
     if [ "200" == "${response}" ]; then
@@ -77,17 +76,24 @@ update_db_permissions() {
     fi
 }
 
-create_system_tables() {
-    local system_tables=("_users" "_replicator")
-    for table in "${system_tables[@]}"; do
-        echo "Creating $table database"
-        response=$(curl -su "${CURL_USERPASS_ARG}" -X PUT $COUCH_BASE_LOCAL/$table)
-        if [ "{\"ok\":true}" == "${response}" ]; then
-            echo "Successfully created $table database"
-        else
-            echo "Unable to create $table database"
-        fi
-    done
+create_users_table() {
+    echo "Creating _users database"
+    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT $COUCH_BASE_LOCAL/_users)
+    if [ "{\"ok\":true}" == "${response}" ]; then
+        echo "Successfully created _users database"
+    else
+        echo "Unable to create _users database"
+    fi
+}
+
+create_replicator_table() {
+    echo "Creating _replicator database"
+    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT $COUCH_BASE_LOCAL/_replicator)
+    if [ "{\"ok\":true}" == "${response}" ]; then
+        echo "Successfully created _replicator database"
+    else
+        echo "Unable to create _replicator database"
+    fi
 }
 
 # Main script execution
@@ -100,13 +106,22 @@ else
     echo "Admin user exists"
 fi
 
-# Check if system tables exist; if not, create them.
-system_tables_exist=$(resource_exists $COUCH_BASE_LOCAL/_users)
-if [ "TRUE" == "${system_tables_exist}" ]; then
-    echo "System tables exist, skipping creation"
+# Check if the _users table exists; if not, create it.
+users_table_exists=$(resource_exists $COUCH_BASE_LOCAL/_users)
+if [ "FALSE" == "${users_table_exists}" ]; then
+    echo "Creating _users table"
+    create_users_table
 else
-    echo "Fresh install, creating system tables"
-    create_system_tables
+    echo "_users table already exists, skipping creation"
+fi
+
+# Check if the _replicator table exists; if not, create it.
+replicator_table_exists=$(resource_exists $COUCH_BASE_LOCAL/_replicator)
+if [ "FALSE" == "${replicator_table_exists}" ]; then
+    echo "Creating _replicator table"
+    create_replicator_table
+else
+    echo "_replicator table already exists, skipping creation"
 fi
 
 # Check if the database exists; if not, create it.
