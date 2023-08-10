@@ -53,7 +53,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
    * Register a callback with this ConditionManager: supported callbacks are add
    * remove, load, metadata, and receiveTelemetry
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -154,7 +154,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Invoked when a telemtry subscription yields new data. Updates the LAD
+   * Invoked when a telemetry subscription yields new data. Updates the LAD
    * cache and invokes any registered receiveTelemetry callbacks
    * @param {string} objId The key associated with the telemetry source
    * @param {datum} datum The new data from the telemetry source
@@ -239,7 +239,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Invoked on a remove event in this Summary Widget's compostion. Removes
+   * Invoked on a remove event in this Summary Widget's composition. Removes
    * the object from the local composition, and untracks it
    * @param {object} identifier The identifier of the object to be removed
    * @private
@@ -311,7 +311,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Returns the type associated with a telemtry data field of a particular domain
+   * Returns the type associated with a telemetry data field of a particular domain
    * object
    * @param {string} id The key associated with the domain object
    * @param {string} property The telemetry field key to retrieve the type of
@@ -324,7 +324,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Returns the human-readable name of a telemtry data field of a particular domain
+   * Returns the human-readable name of a telemetry data field of a particular domain
    * object
    * @param {string} id The key associated with the domain object
    * @param {string} property The telemetry field key to retrieve the type of
@@ -346,7 +346,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Returns true if the initial compostion load has completed
+   * Returns true if the initial composition load has completed
    * @return {boolean}
    */
   ConditionManager.prototype.loadCompleted = function () {
@@ -361,7 +361,7 @@ define(['./ConditionEvaluator', 'objectUtils', 'EventEmitter', 'lodash'], functi
   };
 
   /**
-   * Triggers the telemetryRecieve callbacks registered to this ConditionManager,
+   * Triggers the telemetryReceive callbacks registered to this ConditionManager,
    * used by the {TestDataManager} to force a rule evaluation when test data is
    * enabled
    */

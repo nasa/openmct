@@ -292,7 +292,7 @@ test.describe('Move & link item tests', () => {
 });
 
 test.fixme(
-  'Cannot move a previously created domain object to non-peristable object in Move Modal',
+  'Cannot move a previously created domain object to non-persistable object in Move Modal',
   async ({ page }) => {
     //Create a domain object
     //Save Domain object

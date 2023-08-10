@@ -35,8 +35,8 @@ describe('The Image Exporter', () => {
     return resetApplicationState(openmct);
   });
 
-  describe('basic instatation', () => {
-    it('can be instatiated', () => {
+  describe('basic instantiation', () => {
+    it('can be instantiated', () => {
       imageExporter = new ImageExporter(openmct);
 
       expect(imageExporter).not.toEqual(null);

@@ -96,7 +96,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
       expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
     });
 
-    it('initialzes a default rule', function () {
+    it('initializes a default rule', function () {
       expect(mockDomainObject.configuration.ruleConfigById.default).toBeDefined();
       expect(mockDomainObject.configuration.ruleOrder).toEqual(['default']);
     });

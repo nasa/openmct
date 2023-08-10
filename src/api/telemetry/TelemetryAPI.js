@@ -230,7 +230,7 @@ export default class TelemetryAPI {
 
   /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
-   * The request will be modifyed when it is received and will be returned in it's modified state
+   * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
@@ -269,7 +269,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Get or set greedy LAD. For stategy "latest" telemetry in
+   * Get or set greedy LAD. For strategy "latest" telemetry in
    * realtime mode the start bound will be ignored if true and
    * there is no new data to replace the existing data.
    * defaults to true
