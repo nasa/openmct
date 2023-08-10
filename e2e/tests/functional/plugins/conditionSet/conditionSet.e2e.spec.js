@@ -276,7 +276,7 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
   });
-  test.only('ConditionSet should output blank instead of the default value', async ({ page }) => {
+  test('ConditionSet should output blank instead of the default value', async ({ page }) => {
     //Navigate to baseURL
     const swg = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
