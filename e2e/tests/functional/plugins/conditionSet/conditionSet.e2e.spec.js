@@ -205,16 +205,20 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 });
 
 test.describe('Basic Condition Set Use', () => {
+  let conditionSet;
+
   test.beforeEach(async ({ page }) => {
     // Open a browser, navigate to the main page, and wait until all network events to resolve
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
-  test('Can add a condition', async ({ page }) => {
     // Create a new condition set
-    await createDomainObjectWithDefaults(page, {
+    conditionSet = await createDomainObjectWithDefaults(page, {
       type: 'Condition Set',
       name: 'Test Condition Set'
     });
+  });
+  test('Can add a condition', async ({ page }) => {
+    await page.goto(conditionSet.url);
+
     // Change the object to edit mode
     await page.locator('[title="Edit"]').click();
 
@@ -224,6 +228,7 @@ test.describe('Basic Condition Set Use', () => {
     const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
     expect(numOfUnnamedConditions).toEqual(1);
   });
+
   test('ConditionSet should display appropriate view options', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
@@ -238,16 +243,13 @@ test.describe('Basic Condition Set Use', () => {
       type: 'Sine Wave Generator',
       name: 'Beta Sine Wave Generator'
     });
-    const conditionSet1 = await createDomainObjectWithDefaults(page, {
-      type: 'Condition Set',
-      name: 'Test Condition Set'
-    });
+
+    await page.goto(conditionSet.url);
 
     // Change the object to edit mode
     await page.locator('[title="Edit"]').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.goto(conditionSet1.url);
     page.click('button[title="Show selected item in tree"]');
     // Add the Alpha & Beta Sine Wave Generator to the Condition Set and save changes
     const treePane = page.getByRole('tree', {
@@ -274,32 +276,18 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
   });
-  test('ConditionSet should output blank instead of the default value', async ({ page }) => {
+  test.only('ConditionSet should output blank instead of the default value', async ({ page }) => {
     //Navigate to baseURL
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Click the object specified by 'type'
-    await page.click(`li[role='menuitem']:text("Sine Wave Generator")`);
-    await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
-    const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-    await nameInput.fill('Delayed Sine Wave Generator');
-
-    // Click OK button and wait for Navigate event
-    await Promise.all([
-      page.waitForLoadState(),
-      page.click('[aria-label="Save"]'),
-      // Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    // Create a new condition set
-    await createDomainObjectWithDefaults(page, {
-      type: 'Condition Set',
-      name: 'Test Blank Output of Condition Set'
+    const swg = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      customParameters: {
+        "[aria-label='Loading Delay (ms)']": '8000'
+      }
     });
+    
+    await page.goto(swg.url);
+    await page.getByTitle('Show selected item in tree').click();
+    await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.locator('[title="Edit"]').click();
 
@@ -309,60 +297,57 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
     await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
 
-    // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
-    // Add the Sine Wave Generator to the Condition Set and save changes
-    const treePane = page.getByRole('tree', {
+
+    const sineWaveGeneratorTreeItem = page.getByRole('tree', {
       name: 'Main Tree'
+    }).getByRole('treeitem', {
+      name: swg.name
     });
-    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
-      name: 'Delayed Sine Wave Generator'
-    });
-    const conditionCollection = await page.locator('#conditionCollection');
+    const conditionCollection = page.locator('#conditionCollection');
 
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    const firstCriterionTelemetry = await page.locator(
+    const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    firstCriterionTelemetry.selectOption({ label: 'Delayed Sine Wave Generator' });
+    firstCriterionTelemetry.selectOption({ label: swg.name });
 
-    const secondCriterionTelemetry = await page.locator(
+    const secondCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=1'
     );
-    secondCriterionTelemetry.selectOption({ label: 'Delayed Sine Wave Generator' });
+    secondCriterionTelemetry.selectOption({ label: swg.name });
 
-    const firstCriterionMetadata = await page.locator(
+    const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
     firstCriterionMetadata.selectOption({ label: 'Sine' });
 
-    const secondCriterionMetadata = await page.locator(
+    const secondCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=1'
     );
     secondCriterionMetadata.selectOption({ label: 'Sine' });
 
-    const firstCriterionComparison = await page.locator(
+    const firstCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=0'
     );
     firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
 
-    const secondCriterionComparison = await page.locator(
+    const secondCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=1'
     );
     secondCriterionComparison.selectOption({ label: 'is less than' });
 
-    const firstCriterionInput = await page.locator('[aria-label="Criterion Input"] >> nth=0');
+    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
     await firstCriterionInput.fill('0');
 
-    const secondCriterionInput = await page.locator('[aria-label="Criterion Input"] >> nth=1');
+    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
 
     const saveButtonLocator = page.locator('button[title="Save"]');
     await saveButtonLocator.click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    const outputValue = await page.locator('[aria-label="Current Output Value"]');
+    const outputValue = page.locator('[aria-label="Current Output Value"]');
     await expect(outputValue).toHaveText('---');
   });
 });
