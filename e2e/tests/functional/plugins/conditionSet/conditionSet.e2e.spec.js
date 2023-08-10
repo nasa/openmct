@@ -284,7 +284,7 @@ test.describe('Basic Condition Set Use', () => {
         "[aria-label='Loading Delay (ms)']": '8000'
       }
     });
-    
+
     await page.goto(swg.url);
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
@@ -297,12 +297,13 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
     await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
 
-
-    const sineWaveGeneratorTreeItem = page.getByRole('tree', {
-      name: 'Main Tree'
-    }).getByRole('treeitem', {
-      name: swg.name
-    });
+    const sineWaveGeneratorTreeItem = page
+      .getByRole('tree', {
+        name: 'Main Tree'
+      })
+      .getByRole('treeitem', {
+        name: swg.name
+      });
     const conditionCollection = page.locator('#conditionCollection');
 
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
