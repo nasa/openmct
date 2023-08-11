@@ -36,6 +36,7 @@
     "flatbush": "4.2.0",
     "git-rev-sync": "3.0.2",
     "html2canvas": "1.4.1",
+    "husky": "8.0.3",
     "imports-loader": "4.0.1",
     "jasmine-core": "5.0.0",
     "karma": "6.4.2",
@@ -48,6 +49,7 @@
     "karma-sourcemap-loader": "0.4.0",
     "karma-spec-reporter": "0.0.36",
     "karma-webpack": "5.0.0",
+    "lint-staged": "12.5.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
     "mini-css-extract-plugin": "2.7.6",
@@ -70,8 +72,8 @@
     "uuid": "9.0.0",
     "vue": "^3.1.0",
     "vue-eslint-parser": "9.3.1",
-    "webpack": "5.88.0",
     "vue-loader": "^16.0.0",
+    "webpack": "5.88.0",
     "webpack-cli": "5.1.1",
     "webpack-dev-server": "4.15.1",
     "webpack-merge": "5.9.0"
@@ -107,7 +109,7 @@
     "cov:e2e:full:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-full",
     "cov:e2e:stable:publish": "codecov --disable=gcov -f ./coverage/e2e/lcov.info -F e2e-stable",
     "cov:unit:publish": "codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
-    "prepare": "npm run build:prod && npx tsc"
+    "prepare": "husky install && npm run build:prod && npx tsc"
   },
   "repository": {
     "type": "git",
@@ -125,5 +127,14 @@
     "Safari >= 16"
   ],
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "lint-staged": {
+    "*": [
+      "npm run lint:spelling"
+    ],
+    "*.{js,ts}": [
+      "npm run lint",
+      "npm run lint:fix"
+    ]
+  }
 }
