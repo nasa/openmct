@@ -65,7 +65,7 @@ export default {
     },
     hasUnits: {
       type: Boolean,
-      requred: true
+      required: true
     },
     isStale: {
       type: Boolean,

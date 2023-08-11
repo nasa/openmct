@@ -28,15 +28,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       
-      - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
+      - run: npm install --cache ~/.npm --no-audit --progress=false
 
       - name: Login to DockerHub
-        uses: docker/login-action@v2 
+        uses: docker/login-action@v2
+        continue-on-error: true
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - run: npx playwright@1.32.3 install
+      - run: npx playwright@1.36.2 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |

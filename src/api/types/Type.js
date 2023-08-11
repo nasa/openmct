@@ -24,7 +24,7 @@
  * A Type describes a kind of domain object that may appear or be
  * created within Open MCT.
  *
- * @param {module:opemct.TypeRegistry~TypeDefinition} definition
+ * @param {module:openmct.TypeRegistry~TypeDefinition} definition
  * @class Type
  * @memberof module:openmct
  */

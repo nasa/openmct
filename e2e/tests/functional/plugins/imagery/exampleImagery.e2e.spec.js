@@ -79,25 +79,25 @@ test.describe('Example Imagery Object', () => {
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+
+    // Adding in delay to address flakiness of ITC test-- button event handlers not registering in time
+    await expect(page.locator('#independentTCToggle')).toBeChecked();
+    await expect(page.locator('.c-compact-tc').first()).toBeVisible();
+
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await page.getByRole('textbox', { name: 'Start date' }).fill('');
+
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'Start time' }).fill('');
-    await page.getByRole('textbox', { name: 'Start time' }).type('01:01:00');
+    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End date' }).fill('');
-    await page.getByRole('textbox', { name: 'End date' }).type('2021-12-30');
+    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End time' }).fill('');
-    await page.getByRole('textbox', { name: 'End time' }).type('01:11:00');
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
-    // expect(await page.getByRole('button', { name: 'Submit time bounds' }).isEnabled()).toBe(true);
-    // await page.getByRole('button', { name: 'Submit time bounds' }).click();
 
     // check image date
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
@@ -106,9 +106,12 @@ test.describe('Example Imagery Object', () => {
 
     // Test independent fixed time with global realtime
     await setRealTimeMode(page);
+    await expect(
+      page.getByRole('switch', { name: 'Enable Independent Time Conductor' })
+    ).toBeEnabled();
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     // check image date to be in the past
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
     // timestamp shouldn't be in the past anymore
@@ -211,7 +214,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.up();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -391,7 +394,7 @@ test.describe('Example Imagery in Display Layout', () => {
   /**
    * Toggle layer visibility checkbox by clicking on checkbox label
    * - should toggle checkbox and layer visibility for that image view
-   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   * - should NOT toggle checkbox and layer visibility for the first image view in display
    */
   test('Toggle layer visibility by clicking on label', async ({ page }) => {
     test.info().annotations.push({

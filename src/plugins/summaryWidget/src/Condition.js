@@ -18,7 +18,7 @@ define([
   /**
    * Represents an individual condition for a summary widget rule. Manages the
    * associated inputs and view.
-   * @param {Object} conditionConfig The configurration for this condition, consisting
+   * @param {Object} conditionConfig The configuration for this condition, consisting
    *                                of object, key, operation, and values fields
    * @param {number} index the index of this Condition object in it's parent Rule's data model,
    *                        to be injected into callbacks for removes
@@ -121,7 +121,7 @@ define([
    * Register a callback with this condition: supported callbacks are remove, change,
    * duplicate
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */

@@ -29,13 +29,13 @@ export default function PerformanceIndicator() {
     indicator.statusClass('s-status-info');
     openmct.indicators.add(indicator);
 
-    let rafHandle = requestAnimationFrame(incremementFrames);
+    let rafHandle = requestAnimationFrame(incrementFrames);
 
     openmct.on('destroy', () => {
       cancelAnimationFrame(rafHandle);
     });
 
-    function incremementFrames() {
+    function incrementFrames() {
       let now = performance.now();
       if (now - lastCalculated < 1000) {
         frames++;
@@ -45,7 +45,7 @@ export default function PerformanceIndicator() {
         frames = 1;
       }
 
-      rafHandle = requestAnimationFrame(incremementFrames);
+      rafHandle = requestAnimationFrame(incrementFrames);
     }
 
     function updateFPS(fps) {

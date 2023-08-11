@@ -60,7 +60,7 @@ define([
   };
 
   /**
-   * Initialze a new test data item, either from a source configuration, or with
+   * Initialize a new test data item, either from a source configuration, or with
    * the default empty configuration
    * @param {Object} [config] An object with sourceItem and index fields to instantiate
    *                          this rule from, optional
@@ -99,7 +99,7 @@ define([
 
   /**
    * Change event handler for the test data items which compose this
-   * test data generateor
+   * test data generator
    * @param {Object} event An object representing this event, with value, property,
    *                       and index fields
    */
@@ -120,7 +120,7 @@ define([
   };
 
   /**
-   * Intantiate {TestDataItem} objects from the current configuration, and
+   * Instantiate {TestDataItem} objects from the current configuration, and
    * update the view accordingly
    */
   TestDataManager.prototype.refreshItems = function () {
