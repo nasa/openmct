@@ -40,24 +40,22 @@ test.describe('Grand Search', () => {
       type: 'Display Layout',
       name: 'Visual Test Display Layout'
     });
-
+    
     clock = await createDomainObjectWithDefaults(page, {
       type: 'Clock',
       name: 'Visual Test Clock',
       parent: displayLayout.uuid
     });
-
-    // Navigate to display layout and collapse the left pane
-    await page.goto(displayLayout.url);
-    await page.getByTitle('Collapse Browse Pane').click();
   });
-
+  
   test('Can search for folder object, and subsequent search dropdown behaves properly', async ({
     page,
     theme
   }) => {
     const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
     const searchResults = page.getByRole('searchbox', { name: 'OpenMCT Search' });
+    // Navigate to display layout
+    await page.goto(displayLayout.url);
 
     // Search for the clock object
     await searchInput.click();
