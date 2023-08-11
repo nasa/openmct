@@ -62,6 +62,9 @@ export default class RemoteClock extends DefaultClock {
     this.openmct.objects
       .get(this.identifier)
       .then((domainObject) => {
+        if (this.eventNames().length === 0) {
+          return;
+        }
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.timeTelemetryObject = domainObject;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
