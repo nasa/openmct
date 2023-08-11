@@ -74,7 +74,7 @@ describe('The User API', () => {
       provider.autoLogin(USERNAME);
     });
 
-    it('to check if a user (not specific) is loged in', (done) => {
+    it('to check if a user (not specific) is logged in', (done) => {
       expect(openmct.user.isLoggedIn()).toBeFalse();
 
       openmct.user.on('providerAdded', () => {

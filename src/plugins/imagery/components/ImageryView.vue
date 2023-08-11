@@ -789,7 +789,7 @@ export default {
       }
     },
     expand() {
-      // check for modifier keys so it doesnt interfere with the layout
+      // check for modifier keys so it doesn't interfere with the layout
       if (this.cursorStates.modifierKeyPressed) {
         return;
       }

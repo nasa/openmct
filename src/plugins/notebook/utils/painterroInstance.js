@@ -39,7 +39,7 @@ export default class PainterroInstance {
     this.painterroInstance.save();
   }
 
-  intialize() {
+  initialize() {
     this.config = Object.assign({}, DEFAULT_CONFIG);
 
     this.config.id = this.elementId;

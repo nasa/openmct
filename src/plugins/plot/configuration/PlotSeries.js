@@ -554,7 +554,7 @@ export default class PlotSeries extends Model {
 
   /**
      * Update the series data with the given value.
-     * This return type definition is totally wrong, only covers sinwave generator. It needs to be generic.
+     * This return type definition is totally wrong, only covers sinewave generator. It needs to be generic.
      * @return-example {Array<{
             cos: number
             sin: number

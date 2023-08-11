@@ -22,7 +22,7 @@
 
 import NotificationAPI from './NotificationAPI';
 
-describe('The Notifiation API', () => {
+describe('The Notification API', () => {
   let notificationAPIInstance;
   let defaultTimeout = 4000;
 
@@ -108,7 +108,7 @@ describe('The Notifiation API', () => {
     });
   });
 
-  describe('the error method notificiation', () => {
+  describe('the error method notification', () => {
     let message = 'Minimized error message';
 
     afterAll(() => {

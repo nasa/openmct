@@ -40,8 +40,8 @@ const DEFAULT_IMAGE_SAMPLES = [
   'https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg',
   'https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg'
 ];
-const DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS = 20000;
-const MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS = 5000;
+const DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 20000;
+const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;
 
 let openmctInstance;
 
@@ -58,7 +58,7 @@ export default function () {
       initialize: (object) => {
         object.configuration = {
           imageLocation: '',
-          imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
+          imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS,
           imageSamples: [],
           layers: []
         };
@@ -188,20 +188,20 @@ function getImageLoadDelay(domainObject) {
     openmctInstance.objects.mutate(
       domainObject,
       'configuration.imageLoadDelayInMilliSeconds',
-      DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS
+      DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS
     );
 
-    return DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    return DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS;
   }
 
-  if (imageLoadDelay < MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS) {
+  if (imageLoadDelay < MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS) {
     openmctInstance.objects.mutate(
       domainObject,
       'configuration.imageLoadDelayInMilliSeconds',
-      MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS
+      MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS
     );
 
-    return MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    return MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS;
   }
 
   return imageLoadDelay;

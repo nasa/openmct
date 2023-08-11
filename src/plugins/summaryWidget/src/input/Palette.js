@@ -99,7 +99,7 @@ define([
   /**
    * Register a callback with this palette: supported callback is change
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -140,7 +140,7 @@ define([
   };
 
   /**
-   * Update the view assoicated with the currently selected item
+   * Update the view associated with the currently selected item
    */
   Palette.prototype.updateSelected = function (item) {
     this.domElement.querySelectorAll('.c-palette__item').forEach((paletteItem) => {
