@@ -37,7 +37,7 @@
       @mouseover.ctrl="showToolTip"
       @mouseleave="hideToolTip"
     >
-      {{ domainObject.name }}
+      {{ labelName }}
     </div>
   </a>
 </template>
@@ -78,6 +78,10 @@ export default {
     };
   },
   computed: {
+    labelName() {
+      console.debug(`😿 computing labelName: ${this.domainObject.name}`);
+      return this.domainObject.name;
+    },
     typeClass() {
       let type = this.openmct.types.get(this.domainObject.type);
       if (!type) {

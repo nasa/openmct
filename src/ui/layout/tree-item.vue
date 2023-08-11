@@ -51,7 +51,7 @@
       />
       <object-label
         ref="objectLabel"
-        :domain-object="node.object"
+        :domain-object="domainObjectProperty"
         :object-path="node.objectPath"
         :navigate-to-path="navigationPath"
         @context-click-active="setContextClickActive"
@@ -135,6 +135,10 @@ export default {
     };
   },
   computed: {
+    domainObjectProperty() {
+      console.debug(`🎃 domain object for tree item:`, this.node.object);
+      return this.node.object;
+    },
     isAlias() {
       let parent = this.node.objectPath[1];
 
