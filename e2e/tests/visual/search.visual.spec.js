@@ -40,14 +40,14 @@ test.describe('Grand Search', () => {
       type: 'Display Layout',
       name: 'Visual Test Display Layout'
     });
-    
+
     clock = await createDomainObjectWithDefaults(page, {
       type: 'Clock',
       name: 'Visual Test Clock',
       parent: displayLayout.uuid
     });
   });
-  
+
   test('Can search for folder object, and subsequent search dropdown behaves properly', async ({
     page,
     theme
