@@ -27,7 +27,13 @@
 // If the above namespace is ever resolved, we can fold this search provider
 // back into the object provider.
 
+const BATCH_ANNOTATION_DEBOUNCE_MS = 100;
+
 class CouchSearchProvider {
+  #bulkPromise;
+  #batchIds;
+  #lastAbortSignal;
+
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
     this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
@@ -36,6 +42,8 @@ class CouchSearchProvider {
       this.searchTypes.ANNOTATIONS,
       this.searchTypes.TAGS
     ];
+    this.#batchIds = [];
+    this.#bulkPromise = null;
   }
 
   supportsSearchType(searchType) {
@@ -68,28 +76,77 @@ class CouchSearchProvider {
     return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
   }
 
-  searchForAnnotations(keyString, abortSignal) {
+  async #deferBatchAnnotationSearch() {
+    // We until the next event loop cycle to "collect" all of the get
+    // requests triggered in this iteration of the event loop
+    await this.#waitForDebounce();
+    const batchIdsToSearch = [...this.#batchIds];
+    this.#clearBatch();
+    return this.#bulkAnnotationSearch(batchIdsToSearch);
+  }
+
+  #clearBatch() {
+    this.#batchIds = [];
+    this.#bulkPromise = undefined;
+  }
+
+  #waitForDebounce() {
+    let timeoutID;
+    clearTimeout(timeoutID);
+
+    return new Promise((resolve) => {
+      timeoutID = setTimeout(() => {
+        resolve();
+      }, BATCH_ANNOTATION_DEBOUNCE_MS);
+    });
+  }
+
+  #bulkAnnotationSearch(batchIdsToSearch) {
     const filter = {
       selector: {
         $and: [
           {
-            model: {
-              targets: {}
-            }
-          },
-          {
             'model.type': {
               $eq: 'annotation'
             }
+          },
+          {
+            $or: []
           }
         ]
       }
     };
-    filter.selector.$and[0].model.targets[keyString] = {
-      $exists: true
-    };
+    let lastAbortSignal = null;
+    // TODO: should remove duplicates from batchIds
+    batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
+      const modelFilter = {
+        model: {
+          targets: {}
+        }
+      };
+      modelFilter.model.targets[keyString] = {
+        $exists: true
+      };
 
-    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+      filter.selector.$and[1].$or.push(modelFilter);
+      lastAbortSignal = abortSignal;
+    });
+
+    return this.couchObjectProvider.getObjectsByFilter(filter, lastAbortSignal);
+  }
+
+  async searchForAnnotations(keyString, abortSignal) {
+    this.#batchIds.push({ keyString, abortSignal });
+    if (!this.#bulkPromise) {
+      this.#bulkPromise = this.#deferBatchAnnotationSearch();
+    }
+
+    const returnedData = await this.#bulkPromise;
+    // only return data that matches the keystring
+    const filteredByKeyString = returnedData.filter((foundAnnotation) => {
+      return foundAnnotation.targets[keyString];
+    });
+    return filteredByKeyString;
   }
 
   searchForTags(tagsArray, abortSignal) {

@@ -20,59 +20,64 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-  'objectUtils',
-  './components/table-configuration.vue',
-  './TelemetryTableConfiguration',
-  'vue'
-], function (objectUtils, TableConfigurationComponent, TelemetryTableConfiguration, Vue) {
-  function TableConfigurationViewProvider(openmct) {
-    return {
-      key: 'table-configuration',
-      name: 'Configuration',
-      canView: function (selection) {
-        if (selection.length !== 1 || selection[0].length === 0) {
-          return false;
-        }
+import mount from 'utils/mount';
+import TableConfigurationComponent from './components/table-configuration.vue';
+import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 
-        let object = selection[0][0].context.item;
+export default function TableConfigurationViewProvider(openmct) {
+  return {
+    key: 'table-configuration',
+    name: 'Configuration',
+    canView: function (selection) {
+      if (selection.length !== 1 || selection[0].length === 0) {
+        return false;
+      }
 
-        return object && object.type === 'table';
-      },
-      view: function (selection) {
-        let component;
-        let domainObject = selection[0][0].context.item;
-        let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+      let object = selection[0][0].context.item;
 
-        return {
-          show: function (element) {
-            component = new Vue({
+      return object && object.type === 'table';
+    },
+    view: function (selection) {
+      let _destroy = null;
+      let tableConfiguration;
+      const domainObject = selection[0][0].context.item;
+
+      return {
+        show: function (element) {
+          tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+          const { destroy } = mount(
+            {
               el: element,
               components: {
-                TableConfiguration: TableConfigurationComponent.default
+                TableConfiguration: TableConfigurationComponent
               },
               provide: {
                 openmct,
                 tableConfiguration
               },
               template: '<table-configuration></table-configuration>'
-            });
-          },
-          priority: function () {
-            return 1;
-          },
-          destroy: function () {
-            if (component) {
-              component.$destroy();
-              component = undefined;
+            },
+            {
+              app: openmct.app,
+              element
             }
-
-            tableConfiguration = undefined;
+          );
+          _destroy = destroy;
+        },
+        showTab: function (isEditing) {
+          return isEditing;
+        },
+        priority: function () {
+          return 1;
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
           }
-        };
-      }
-    };
-  }
 
-  return TableConfigurationViewProvider;
-});
+          tableConfiguration = undefined;
+        }
+      };
+    }
+  };
+}

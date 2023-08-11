@@ -1,5 +1,6 @@
 import { isAnnotationType, isNotebookType, isNotebookOrAnnotationType } from './notebook-constants';
 import _ from 'lodash';
+import { toRaw } from 'vue';
 
 export default function (openmct) {
   const apiSave = openmct.objects.save.bind(openmct.objects);
@@ -40,7 +41,7 @@ function resolveConflicts(domainObject, localMutable, openmct) {
 }
 
 async function resolveNotebookTagConflicts(localAnnotation, openmct) {
-  const localClonedAnnotation = structuredClone(localAnnotation);
+  const localClonedAnnotation = structuredClone(toRaw(localAnnotation));
   const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
   // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
@@ -77,7 +78,7 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
   if (localMutable.configuration.entries) {
     const FORCE_REMOTE = true;
-    const localEntries = structuredClone(localMutable.configuration.entries);
+    const localEntries = structuredClone(toRaw(localMutable.configuration.entries));
     const remoteObject = await openmct.objects.get(
       localMutable.identifier,
       undefined,

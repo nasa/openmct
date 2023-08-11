@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import Clock from './components/Clock.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function ClockViewProvider(openmct) {
   return {
@@ -33,25 +33,33 @@ export default function ClockViewProvider(openmct) {
     },
 
     view: function (domainObject) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              Clock
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Clock
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<clock />'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<clock />'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

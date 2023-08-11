@@ -22,7 +22,7 @@
 
 import FaultManagementInspector from './FaultManagementInspector.vue';
 
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
 
@@ -41,28 +41,34 @@ export default function FaultManagementInspectorViewProvider(openmct) {
       return object && object.type === FAULT_MANAGEMENT_TYPE;
     },
     view: (selection) => {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              FaultManagementInspector
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                FaultManagementInspector
+              },
+              provide: {
+                openmct
+              },
+              template: '<FaultManagementInspector></FaultManagementInspector>'
             },
-            provide: {
-              openmct
-            },
-            template: '<FaultManagementInspector></FaultManagementInspector>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

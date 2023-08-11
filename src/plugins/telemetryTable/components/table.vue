@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-table-wrapper" :class="tableClasses">
+  <div ref="root" class="c-table-wrapper" :class="tableClasses">
     <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar">
       <button
         v-if="allowExport"
@@ -141,7 +141,7 @@
       <!-- Headers table -->
       <div
         v-show="!hideHeaders"
-        ref="headersTable"
+        ref="headersHolderEl"
         class="c-telemetry-table__headers-w js-table__headers-w"
         :style="{ 'max-width': widthWithScroll }"
       >
@@ -202,12 +202,14 @@
       </div>
       <!-- Content table -->
       <div
+        ref="scrollable"
         class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w"
         :style="{ 'max-width': widthWithScroll }"
         @scroll="scroll"
       >
         <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
         <table
+          ref="contentTable"
           class="c-table__body c-telemetry-table__body js-telemetry-table__content"
           :style="{ height: totalHeight + 'px' }"
         >
@@ -232,12 +234,15 @@
         </table>
       </div>
       <!-- Sizing table -->
-      <table class="c-telemetry-table__sizing js-telemetry-table__sizing" :style="sizingTableWidth">
+      <table
+        ref="sizingTable"
+        class="c-telemetry-table__sizing js-telemetry-table__sizing"
+        :style="sizingTableWidth"
+      >
         <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
-          <template v-for="(title, key) in headers">
+          <template v-for="(title, key) in headers" :key="key">
             <th
-              :key="key"
               :style="{
                 width: configuredColumnWidths[key] + 'px',
                 'max-width': configuredColumnWidths[key] + 'px'
@@ -277,6 +282,7 @@ import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './sizing-row.vue';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import { toRaw } from 'vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -434,7 +440,8 @@ export default {
             this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
           }
         }
-      }
+      },
+      deep: true
     },
     paused: {
       handler(newVal) {
@@ -498,10 +505,10 @@ export default {
 
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
-    this.scrollable = this.$el.querySelector('.js-telemetry-table__body-w');
-    this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
-    this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
-    this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
+    this.scrollable = this.$refs.scrollable;
+    this.contentTable = this.$refs.contentTable;
+    this.sizingTable = this.$refs.sizingTable;
+    this.headersHolderEl = this.$refs.headersHolderEl;
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
@@ -510,7 +517,7 @@ export default {
 
     this.table.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.table.off('object-added', this.addObject);
     this.table.off('object-removed', this.removeObject);
     this.table.off('historical-rows-processed', this.checkForMarkedRows);
@@ -651,7 +658,9 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
-      this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+      if (this.$refs.headersHolderEl && this.scrollable) {
+        this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+      }
     },
     filterChanged(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
@@ -813,7 +822,7 @@ export default {
       this.isDropTargetActive = isActive;
     },
     pollForResize() {
-      let el = this.$el;
+      let el = this.$refs.root;
       let width = el.clientWidth;
       let height = el.clientHeight;
       let scrollTop = this.scrollable.scrollTop;
@@ -918,7 +927,7 @@ export default {
 
       let markedRow = this.visibleRows[rowIndex];
 
-      this.$set(markedRow, 'marked', true);
+      markedRow.marked = true;
       this.pause();
 
       if (this.marking.disableMultiSelect) {
@@ -951,11 +960,11 @@ export default {
           this.markedRows.splice(1);
         }
 
-        let lastRowToBeMarked = this.visibleRows[rowIndex];
+        const lastRowToBeMarked = this.visibleRows[rowIndex];
 
-        let allRows = this.table.tableRows.getRows();
-        let firstRowIndex = allRows.indexOf(this.markedRows[0]);
-        let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+        const allRows = this.table.tableRows.getRows();
+        let firstRowIndex = allRows.indexOf(toRaw(this.markedRows[0]));
+        let lastRowIndex = allRows.indexOf(toRaw(lastRowToBeMarked));
 
         //supports backward selection
         if (lastRowIndex < firstRowIndex) {
@@ -966,7 +975,7 @@ export default {
 
         for (let i = firstRowIndex; i <= lastRowIndex; i++) {
           let row = allRows[i];
-          this.$set(row, 'marked', true);
+          row.marked = true;
 
           if (row !== baseRow) {
             this.markedRows.push(row);
@@ -1008,13 +1017,13 @@ export default {
       this.configuredColumnWidths = this.columnWidths;
 
       this.visibleRows.forEach((row, i) => {
-        this.$set(this.sizingRows, i, undefined);
+        this.sizingRows[i] = undefined;
         delete this.sizingRows[i];
       });
     },
     recalculateColumnWidths() {
       this.visibleRows.forEach((row, i) => {
-        this.$set(this.sizingRows, i, row);
+        this.sizingRows[i] = row;
       });
 
       this.configuredColumnWidths = {};
@@ -1028,12 +1037,12 @@ export default {
       this.$nextTick().then(this.calculateColumnWidths);
     },
     toggleRegex(key) {
-      this.$set(this.filters, key, '');
+      this.filters[key] = '';
 
       if (this.enableRegexSearch[key] === undefined) {
-        this.$set(this.enableRegexSearch, key, true);
+        this.enableRegexSearch[key] = true;
       } else {
-        this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]);
+        this.enableRegexSearch[key] = !this.enableRegexSearch[key];
       }
     },
     isCompleteRegex(string) {

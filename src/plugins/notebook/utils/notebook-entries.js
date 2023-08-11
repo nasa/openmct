@@ -12,6 +12,15 @@ async function getUsername(openmct) {
   return username;
 }
 
+async function getActiveRole(openmct) {
+  let role = null;
+  if (openmct.user.hasProvider()) {
+    role = await openmct.user.getActiveRole?.();
+  }
+
+  return role;
+}
+
 export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
   START_BOUND: 'tc.startBound',
@@ -114,7 +123,7 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
     domainObjectType && domainObjectType.definition
       ? domainObjectType.definition.cssClass
       : 'icon-object-unknown';
-  const date = Date.now();
+  const date = openmct.time.now();
   const historicLink = link
     ? getHistoricLinkInFixedMode(openmct, bounds, link)
     : objectLink.computed.objectLink.call({
@@ -150,17 +159,21 @@ export async function addNotebookEntry(
     return;
   }
 
-  const date = Date.now();
+  const date = openmct.time.now();
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
   const embeds = embed ? [embed] : [];
 
   const id = `entry-${uuid()}`;
-  const createdBy = await getUsername(openmct);
+  const [createdBy, createdByRole] = await Promise.all([
+    getUsername(openmct),
+    getActiveRole(openmct)
+  ]);
   const entry = {
     id,
     createdOn: date,
     createdBy,
+    createdByRole,
     text: entryText,
     embeds
   };

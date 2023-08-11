@@ -40,20 +40,10 @@
 export default {
   inject: ['openmct'],
   props: {
-    selection: {
-      type: Array,
-      default: () => {
-        return [];
-      }
-    },
     isEditing: {
       type: Boolean,
       required: true
     }
-  },
-  selection: {
-    type: Array,
-    default: []
   },
   data() {
     return {
@@ -69,16 +59,23 @@ export default {
     }
   },
   watch: {
-    selection() {
-      this.updateSelection();
-    },
-    visibleTabs() {
-      this.selectDefaultTabIfSelectedNotVisible();
+    visibleTabs: {
+      handler() {
+        this.selectDefaultTabIfSelectedNotVisible();
+      },
+      deep: true
     }
+  },
+  mounted() {
+    this.updateSelection();
+    this.openmct.selection.on('change', this.updateSelection);
+  },
+  unmounted() {
+    this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
     updateSelection() {
-      const inspectorViews = this.openmct.inspectorViews.get(this.selection);
+      const inspectorViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
 
       this.tabs = inspectorViews.map((view) => {
         return {

@@ -20,7 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  setTimeConductorBounds
+} = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Telemetry Table', () => {
@@ -51,18 +54,14 @@ test.describe('Telemetry Table', () => {
     await expect(tableWrapper).toHaveClass(/is-paused/);
 
     // Subtract 5 minutes from the current end bound datetime and set it
-    const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
-    await endTimeInput.click();
-
-    let endDate = await endTimeInput.inputValue();
+    // Bring up the time conductor popup
+    let endDate = await page.locator('[aria-label="End bounds"]').textContent();
     endDate = new Date(endDate);
 
     endDate.setUTCMinutes(endDate.getUTCMinutes() - 5);
     endDate = endDate.toISOString().replace(/T/, ' ');
 
-    await endTimeInput.fill('');
-    await endTimeInput.fill(endDate);
-    await page.keyboard.press('Enter');
+    await setTimeConductorBounds(page, undefined, endDate);
 
     await expect(tableWrapper).not.toHaveClass(/is-paused/);
 

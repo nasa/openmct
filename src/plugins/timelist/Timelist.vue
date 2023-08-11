@@ -37,12 +37,15 @@ import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration';
 import { SORT_ORDER_OPTIONS } from './constants';
 import _ from 'lodash';
-import moment from 'moment';
 import { v4 as uuid } from 'uuid';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 const SCROLL_TIMEOUT = 10000;
-const ROW_HEIGHT = 30;
-const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
+
+const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const CURRENT_CSS_SUFFIX = '--is-current';
+const PAST_CSS_SUFFIX = '--is-past';
+const FUTURE_CSS_SUFFIX = '--is-future';
 const headerItems = [
   {
     defaultDirection: true,
@@ -50,12 +53,9 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct) {
-      const clock = openmct.time.clock();
-      if (clock && clock.formatTime) {
-        return clock.formatTime(value);
-      } else {
-        return `${moment(value).format(TIME_FORMAT)}Z`;
-      }
+      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+      return timeFormatter.format(value, TIME_FORMAT);
     }
   },
   {
@@ -64,12 +64,9 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct) {
-      const clock = openmct.time.clock();
-      if (clock && clock.formatTime) {
-        return clock.formatTime(value);
-      } else {
-        return `${moment(value).format(TIME_FORMAT)}Z`;
-      }
+      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+      return timeFormatter.format(value, TIME_FORMAT);
     }
   },
   {
@@ -79,9 +76,9 @@ const headerItems = [
     format: function (value) {
       let result;
       if (value < 0) {
-        result = `-${getPreciseDuration(Math.abs(value))}`;
+        result = `+${getPreciseDuration(Math.abs(value), true)}`;
       } else if (value > 0) {
-        result = `+${getPreciseDuration(value)}`;
+        result = `-${getPreciseDuration(value, true)}`;
       } else {
         result = 'Now';
       }
@@ -107,9 +104,8 @@ export default {
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
-    this.planObjects = [];
-
     return {
+      planObjects: [],
       viewBounds: undefined,
       height: 0,
       planActivities: [],
@@ -119,8 +115,8 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.clock()?.currentValue() || this.openmct.time.bounds()?.start;
-    this.openmct.time.on('clock', this.setViewFromClock);
+    this.timestamp = this.openmct.time.now();
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
 
     this.getPlanDataAndSetConfig(this.domainObject);
 
@@ -141,7 +137,7 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.openmct.time.on('bounds', this.updateTimestamp);
+    this.openmct.time.on('tick', this.updateTimestamp);
     this.openmct.editor.on('isEditing', this.setEditState);
 
     this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -153,9 +149,9 @@ export default {
       this.composition.load();
     }
 
-    this.setViewFromClock(this.openmct.time.clock());
+    this.setFixedTime(this.openmct.time.getMode());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unlisten) {
       this.unlisten();
     }
@@ -169,10 +165,10 @@ export default {
     }
 
     this.openmct.editor.off('isEditing', this.setEditState);
-    this.openmct.time.off('bounds', this.updateTimestamp);
-    this.openmct.time.off('clock', this.setViewFromClock);
+    this.openmct.time.off('tick', this.updateTimestamp);
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
 
-    this.$el.parentElement.removeEventListener('scroll', this.deferAutoScroll, true);
+    this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
     if (this.clearAutoScrollDisabledTimer) {
       clearTimeout(this.clearAutoScrollDisabledTimer);
     }
@@ -197,7 +193,6 @@ export default {
       if (this.isEditing) {
         this.filterValue = configuration.filter;
         this.hideAll = false;
-        this.showAll = true;
         this.listActivities();
       } else {
         this.filterValue = configuration.filter;
@@ -206,22 +201,15 @@ export default {
         this.listActivities();
       }
     },
-    updateTimestamp(_bounds, isTick) {
-      if (isTick === true && this.openmct.time.clock() !== undefined) {
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
-      }
+    updateTimestamp(timestamp) {
+      //The clock never stops ticking
+      this.updateTimeStampAndListActivities(timestamp);
     },
-    setViewFromClock(newClock) {
+    setFixedTime() {
       this.filterValue = this.domainObject.configuration.filter;
-      const isFixedTime = newClock === undefined;
-      if (isFixedTime) {
+      this.isFixedTime = !this.openmct.time.isRealTime();
+      if (this.isFixedTime) {
         this.hideAll = false;
-        this.showAll = true;
-        this.updateTimeStampAndListActivities(this.openmct.time.bounds()?.start);
-      } else {
-        this.setSort();
-        this.setViewBounds();
-        this.updateTimeStampAndListActivities(this.openmct.time.clock().currentValue());
       }
     },
     addItem(domainObject) {
@@ -290,8 +278,6 @@ export default {
       const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
 
       if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-        //don't show all events
-        this.showAll = false;
         this.viewBounds = undefined;
         this.hideAll = true;
 
@@ -301,18 +287,12 @@ export default {
       this.hideAll = false;
 
       if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
-        //show all events
-        this.showAll = true;
         this.viewBounds = undefined;
 
         return;
       }
 
-      this.showAll = false;
-
       this.viewBounds = {};
-
-      this.noCurrent = currentEventsIndex === 0;
 
       if (pastEventsIndex !== 1) {
         const pastDurationInMS = this.getDurationInMilliSeconds(
@@ -358,43 +338,57 @@ export default {
       let activities = [];
 
       groups.forEach((key) => {
-        activities = activities.concat(this.planData[key]);
+        // Create new objects so Vue 3 can detect any changes
+        activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
       });
-      activities = activities.filter(this.filterActivities);
+      // filter activities first, then sort by start time
+      activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
       activities = this.applyStyles(activities);
-      this.setScrollTop();
-      // sort by start time
-      this.planActivities = activities.sort(this.sortByStartTime);
+      this.planActivities = [...activities];
+      //We need to wait for the next tick since we need the height of the row from the DOM
+      this.$nextTick(this.setScrollTop);
     },
     updateTimeStampAndListActivities(time) {
       this.timestamp = time;
 
       this.listActivities();
     },
-    filterActivities(activity, index) {
-      const hasFilterMatch = this.filterByName(activity.name);
+    isActivityInBounds(activity) {
+      const startInBounds =
+        activity.start >= this.openmct.time.bounds()?.start &&
+        activity.start <= this.openmct.time.bounds()?.end;
+      const endInBounds =
+        activity.end >= this.openmct.time.bounds()?.start &&
+        activity.end <= this.openmct.time.bounds()?.end;
+      const middleInBounds =
+        activity.start <= this.openmct.time.bounds()?.start &&
+        activity.end >= this.openmct.time.bounds()?.end;
 
+      return startInBounds || endInBounds || middleInBounds;
+    },
+    filterActivities(activity, index) {
+      if (this.isEditing) {
+        return true;
+      }
+
+      const hasFilterMatch = this.filterByName(activity.name);
       if (hasFilterMatch === false || this.hideAll === true) {
         return false;
       }
 
-      if (this.showAll === true) {
-        return true;
+      if (!this.isActivityInBounds(activity)) {
+        return false;
       }
-
       //current event or future start event or past end event
-      const isCurrent =
-        this.noCurrent === false &&
-        this.timestamp >= activity.start &&
-        this.timestamp <= activity.end;
+      const isCurrent = this.timestamp >= activity.start && this.timestamp <= activity.end;
       const isPast =
         this.timestamp > activity.end &&
-        (this.viewBounds.pastEnd === undefined ||
-          activity.end >= this.viewBounds.pastEnd(this.timestamp));
+        (this.viewBounds?.pastEnd === undefined ||
+          activity.end >= this.viewBounds?.pastEnd(this.timestamp));
       const isFuture =
         this.timestamp < activity.start &&
-        (this.viewBounds.futureStart === undefined ||
-          activity.start <= this.viewBounds.futureStart(this.timestamp));
+        (this.viewBounds?.futureStart === undefined ||
+          activity.start <= this.viewBounds?.futureStart(this.timestamp));
 
       return isCurrent || isPast || isFuture;
     },
@@ -410,30 +404,41 @@ export default {
     },
     applyStyles(activities) {
       let firstCurrentActivityIndex = -1;
+      let activityClosestToNowIndex = -1;
       let currentActivitiesCount = 0;
       const styledActivities = activities.map((activity, index) => {
         if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-          activity.cssClass = '--is-current';
+          activity.cssClass = CURRENT_CSS_SUFFIX;
           if (firstCurrentActivityIndex < 0) {
             firstCurrentActivityIndex = index;
           }
 
           currentActivitiesCount = currentActivitiesCount + 1;
         } else if (this.timestamp < activity.start) {
-          activity.cssClass = '--is-future';
+          activity.cssClass = FUTURE_CSS_SUFFIX;
+          //the index of the first activity that's greater than the current timestamp
+          if (activityClosestToNowIndex < 0) {
+            activityClosestToNowIndex = index;
+          }
         } else {
-          activity.cssClass = '--is-past';
+          activity.cssClass = PAST_CSS_SUFFIX;
         }
 
         if (!activity.key) {
           activity.key = uuid();
         }
 
-        activity.duration = activity.start - this.timestamp;
+        if (activity.start < this.timestamp) {
+          //if the activity start time has passed, display the time to the end of the activity
+          activity.duration = activity.end - this.timestamp;
+        } else {
+          activity.duration = activity.start - this.timestamp;
+        }
 
         return activity;
       });
 
+      this.activityClosestToNowIndex = activityClosestToNowIndex;
       this.firstCurrentActivityIndex = firstCurrentActivityIndex;
       this.currentActivitiesCount = currentActivitiesCount;
 
@@ -451,25 +456,49 @@ export default {
       }
 
       this.firstCurrentActivityIndex = -1;
+      this.activityClosestToNowIndex = -1;
       this.currentActivitiesCount = 0;
       this.$el.parentElement?.scrollTo({ top: 0 });
       this.autoScrolled = false;
     },
     setScrollTop() {
-      //scroll to somewhere mid-way of the current activities
-      if (this.firstCurrentActivityIndex > -1) {
+      //The view isn't ready yet
+      if (!this.$el.parentElement) {
+        return;
+      }
+
+      const row = this.$el.querySelector('.js-list-item');
+      if (row && this.firstCurrentActivityIndex > -1) {
+        // scroll to somewhere mid-way of the current activities
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
         if (this.canAutoScroll() === false) {
           return;
         }
 
         const scrollOffset =
           this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
-        this.$el.parentElement.scrollTo({
+        this.$el.parentElement?.scrollTo({
           top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
           behavior: 'smooth'
         });
         this.autoScrolled = false;
+      } else if (row && this.activityClosestToNowIndex > -1) {
+        // scroll to somewhere close to 'now'
+
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
+        if (this.canAutoScroll() === false) {
+          return;
+        }
+
+        this.$el.parentElement.scrollTo({
+          top: ROW_HEIGHT * (this.activityClosestToNowIndex - 1),
+          behavior: 'smooth'
+        });
+        this.autoScrolled = false;
       } else {
+        // scroll to the top
         this.resetScroll();
       }
     },

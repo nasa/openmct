@@ -24,13 +24,13 @@
   <div class="l-layout__frame c-frame no-frame c-line-view" :class="[styleClass]" :style="style">
     <svg width="100%" height="100%">
       <line
-        class="c-line-view__hover-indicator"
         v-bind="linePosition"
+        class="c-line-view__hover-indicator"
         vector-effect="non-scaling-stroke"
       />
       <line
-        class="c-line-view__line"
         v-bind="linePosition"
+        class="c-line-view__line"
         :stroke="stroke"
         vector-effect="non-scaling-stroke"
       />
@@ -101,7 +101,11 @@ export default {
       type: Number,
       required: true
     },
-    multiSelect: Boolean
+    multiSelect: Boolean,
+    isEditing: {
+      type: Boolean,
+      required: true
+    }
   },
   data() {
     return {
@@ -114,7 +118,7 @@ export default {
     showFrameEdit() {
       let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
 
-      return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
+      return this.isEditing && !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
     },
     position() {
       let { x, y, x2, y2 } = this.item;
@@ -257,7 +261,7 @@ export default {
       this.initSelect
     );
   },
-  destroyed() {
+  unmounted() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

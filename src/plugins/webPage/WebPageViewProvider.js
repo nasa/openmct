@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import WebPageComponent from './components/WebPage.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function WebPage(openmct) {
   return {
@@ -32,25 +32,33 @@ export default function WebPage(openmct) {
       return domainObject.type === 'webPage';
     },
     view: function (domainObject) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              WebPageComponent: WebPageComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                WebPageComponent: WebPageComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<web-page-component></web-page-component>'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<web-page-component></web-page-component>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-        destroy: function (element) {
-          component.$destroy();
-          component = undefined;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     },

@@ -26,10 +26,8 @@ import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
-
 import objectUtils from 'objectUtils';
-
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -38,31 +36,40 @@ class DisplayLayoutView {
     this.objectPath = objectPath;
     this.options = options;
 
-    this.component = undefined;
+    this.component = null;
+    this.app = null;
   }
 
   show(container, isEditing) {
-    this.component = new Vue({
-      el: container,
-      components: {
-        DisplayLayout
+    const { vNode, destroy } = mount(
+      {
+        el: container,
+        components: {
+          DisplayLayout
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          options: this.options,
+          objectUtils,
+          currentView: this
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject,
+            isEditing
+          };
+        },
+        template:
+          '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        options: this.options,
-        objectUtils,
-        currentView: this
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject,
-          isEditing
-        };
-      },
-      template:
-        '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
-    });
+      {
+        app: this.openmct.app,
+        element: container
+      }
+    );
+    this._destroy = destroy;
+    this.component = vNode.componentInstance;
   }
 
   getViewContext() {
@@ -95,8 +102,9 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    this.component.$destroy();
-    this.component = undefined;
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 }
 

@@ -167,7 +167,7 @@ export default {
     this.registerListeners();
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
     this.stopListening();
   },
@@ -192,7 +192,7 @@ export default {
       }
     },
     addSeries(series, index) {
-      this.$set(this.plotSeries, this.plotSeries.length, series);
+      this.plotSeries.push(series);
       this.setupOptions();
     },
     removeSeries(seriesIdentifier) {
@@ -200,7 +200,7 @@ export default {
         this.openmct.objects.areIdsEqual(seriesIdentifier, plotSeries.identifier)
       );
       if (index >= 0) {
-        this.$delete(this.plotSeries, index);
+        this.plotSeries.splice(index, 1);
         this.setupOptions();
       }
     },

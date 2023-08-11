@@ -45,6 +45,7 @@
 
 <script>
 import TagSelection from './TagSelection.vue';
+import { toRaw } from 'vue';
 
 export default {
   components: {
@@ -113,7 +114,7 @@ export default {
   mounted() {
     this.annotationsChanged();
   },
-  destroyed() {
+  unmounted() {
     document.body.removeEventListener('click', this.tagCanceled);
   },
   methods: {
@@ -154,7 +155,7 @@ export default {
       }
 
       for (let index = 0; index < tagsFromAnnotations.length; index += 1) {
-        this.$set(this.addedTags, index, tagsFromAnnotations[index]);
+        this.addedTags[index] = tagsFromAnnotations[index];
       }
     },
     addTag() {
@@ -197,14 +198,22 @@ export default {
 
       if (!existingAnnotation) {
         const contentText = `${this.annotationType} tag`;
+
+        // need to get raw version of target domain objects for comparisons to work
+        const rawTargetDomainObjects = {};
+        Object.keys(this.targetDomainObjects).forEach((targetDomainObjectKey) => {
+          rawTargetDomainObjects[targetDomainObjectKey] = toRaw(
+            this.targetDomainObjects[targetDomainObjectKey]
+          );
+        });
         const annotationCreationArguments = {
           name: contentText,
           existingAnnotation,
           contentText: contentText,
-          targets: this.targets,
-          targetDomainObjects: this.targetDomainObjects,
-          domainObject: this.domainObject,
-          annotationType: this.annotationType,
+          targets: toRaw(this.targets),
+          targetDomainObjects: rawTargetDomainObjects,
+          domainObject: toRaw(this.domainObject),
+          annotationType: toRaw(this.annotationType),
           tags: [newTag]
         };
         existingAnnotation = await this.openmct.annotation.create(annotationCreationArguments);

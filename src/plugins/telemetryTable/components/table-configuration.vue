@@ -84,27 +84,28 @@ export default {
       configuration: this.tableConfiguration.getConfiguration()
     };
   },
-  mounted() {
+  async mounted() {
     this.unlisteners = [];
     this.openmct.editor.on('isEditing', this.toggleEdit);
-    let compositionCollection = this.openmct.composition.get(this.tableConfiguration.domainObject);
+    const compositionCollection = this.openmct.composition.get(
+      this.tableConfiguration.domainObject
+    );
 
-    compositionCollection.load().then((composition) => {
-      this.addColumnsForAllObjects(composition);
-      this.updateHeaders(this.tableConfiguration.getAllHeaders());
+    const composition = await compositionCollection.load();
+    this.addColumnsForAllObjects(composition);
+    this.updateHeaders(this.tableConfiguration.getAllHeaders());
 
-      compositionCollection.on('add', this.addObject);
-      this.unlisteners.push(
-        compositionCollection.off.bind(compositionCollection, 'add', this.addObject)
-      );
+    compositionCollection.on('add', this.addObject);
+    this.unlisteners.push(
+      compositionCollection.off.bind(compositionCollection, 'add', this.addObject)
+    );
 
-      compositionCollection.on('remove', this.removeObject);
-      this.unlisteners.push(
-        compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject)
-      );
-    });
+    compositionCollection.on('remove', this.removeObject);
+    this.unlisteners.push(
+      compositionCollection.off.bind(compositionCollection, 'remove', this.removeObject)
+    );
   },
-  destroyed() {
+  unmounted() {
     this.tableConfiguration.destroy();
     this.openmct.editor.off('isEditing', this.toggleEdit);
     this.unlisteners.forEach((unlisten) => unlisten());

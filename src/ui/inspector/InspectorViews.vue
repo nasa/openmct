@@ -31,26 +31,24 @@ export default {
     selectedTab: {
       type: Object,
       default: undefined
-    },
-    selection: {
-      type: Array,
-      default: () => {
-        return [];
-      }
     }
   },
   watch: {
-    selection() {
-      this.updateSelectionViews();
-    },
     selectedTab() {
       this.clearAndShowViewsForTab();
     }
   },
+  mounted() {
+    this.updateSelectionViews();
+    this.openmct.selection.on('change', this.updateSelectionViews);
+  },
+  unmounted() {
+    this.openmct.selection.off('change', this.updateSelectionViews);
+  },
   methods: {
     updateSelectionViews(selection) {
       this.clearViews();
-      this.selectedViews = this.openmct.inspectorViews.get(this.selection);
+      this.selectedViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
       this.showViewsForTab();
     },
     clearViews() {
@@ -64,12 +62,12 @@ export default {
       }
     },
     showViewsForTab() {
-      this.visibleViews = this.selectedViews.filter((view) => view.key === this.selectedTab.key);
+      this.visibleViews = this.selectedTab
+        ? this.selectedViews.filter((view) => view.key === this.selectedTab.key)
+        : [];
 
       this.visibleViews.forEach((visibleView) => {
-        let viewContainer = document.createElement('div');
-        this.$el.append(viewContainer);
-        visibleView.show(viewContainer);
+        visibleView.show(this.$el);
       });
     },
     clearAndShowViewsForTab() {

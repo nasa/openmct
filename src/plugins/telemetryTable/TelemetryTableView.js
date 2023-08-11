@@ -1,13 +1,14 @@
 import TableComponent from './components/table.vue';
 import TelemetryTable from './TelemetryTable';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class TelemetryTableView {
   constructor(openmct, domainObject, objectPath) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this._destroy = null;
+    this.component = null;
 
     Object.defineProperty(this, 'table', {
       value: new TelemetryTable(domainObject, openmct),
@@ -36,37 +37,46 @@ export default class TelemetryTableView {
     return this.table;
   }
 
-  destroy(element) {
-    this.component.$destroy();
-    this.component = undefined;
+  destroy() {
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 
   show(element, editMode) {
-    this.component = new Vue({
-      el: element,
-      components: {
-        TableComponent
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          TableComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          table: this.table,
+          currentView: this
+        },
+        data() {
+          return {
+            isEditing: editMode,
+            marking: {
+              disableMultiSelect: false,
+              enable: true,
+              rowName: '',
+              rowNamePlural: '',
+              useAlternateControlBar: false
+            }
+          };
+        },
+        template:
+          '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        table: this.table,
-        currentView: this
-      },
-      data() {
-        return {
-          isEditing: editMode,
-          marking: {
-            disableMultiSelect: false,
-            enable: true,
-            rowName: '',
-            rowNamePlural: '',
-            useAlternateControlBar: false
-          }
-        };
-      },
-      template:
-        '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
   }
 }

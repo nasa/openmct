@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import TimelineViewLayout from './TimelineViewLayout.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function TimelineViewProvider(openmct) {
   return {
@@ -37,27 +37,35 @@ export default function TimelineViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              TimelineViewLayout
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TimelineViewLayout
+              },
+              provide: {
+                openmct,
+                domainObject,
+                composition: openmct.composition.get(domainObject),
+                objectPath
+              },
+              template: '<timeline-view-layout></timeline-view-layout>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              composition: openmct.composition.get(domainObject),
-              objectPath
-            },
-            template: '<timeline-view-layout></timeline-view-layout>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

@@ -23,7 +23,7 @@
 define(['./tabs'], function (Tabs) {
   return function plugin() {
     return function install(openmct) {
-      openmct.objectViews.addProvider(new Tabs(openmct));
+      openmct.objectViews.addProvider(new Tabs.default(openmct));
 
       openmct.types.addType('tabs', {
         name: 'Tabs View',

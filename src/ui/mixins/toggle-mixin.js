@@ -25,7 +25,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  unmounted() {
     document.removeEventListener('click', this.toggle);
   }
 };

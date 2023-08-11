@@ -154,7 +154,7 @@ export default {
       deep: true
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.resetApplied();
   },
   mounted() {

@@ -46,7 +46,7 @@ test.describe('Example Event Generator CRUD Operations', () => {
   });
 });
 
-test.describe('Example Event Generator Telemetry Event Verficiation', () => {
+test.describe('Example Event Generator Telemetry Event Verification', () => {
   test.fixme('telemetry is coming in for test event', async ({ page }) => {
     // Go to object created in step one
     // Verify the telemetry table is filled with > 1 row

@@ -1,5 +1,5 @@
 import PlotOptions from './PlotOptions.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function StackedPlotsInspectorViewProvider(openmct) {
   return {
@@ -17,7 +17,7 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
       return isStackedPlotObject;
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
       let objectPath;
 
       if (selection.length) {
@@ -28,26 +28,32 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              PlotOptions: PlotOptions
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlotOptions: PlotOptions
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item,
+                path: objectPath
+              },
+              template: '<plot-options></plot-options>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item,
-              path: objectPath
-            },
-            template: '<plot-options></plot-options>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

@@ -98,7 +98,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.updateSelection(this.openmct.selection.get());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
 
     if (this.statusUnsubscribe) {

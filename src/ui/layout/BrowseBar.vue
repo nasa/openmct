@@ -33,12 +33,15 @@
           <span class="is-status__indicator" :title="`This item is ${status}`"></span>
         </div>
         <span
+          ref="objectName"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
           :contenteditable="isPersistable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
+          @mouseover.ctrl="showToolTip"
+          @mouseleave="hideToolTip"
         >
           {{ domainObject.name }}
         </span>
@@ -46,6 +49,15 @@
     </div>
 
     <div class="l-browse-bar__end">
+      <div
+        v-if="supportsIndependentTime"
+        class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+      >
+        <independent-time-conductor
+          :domain-object="domainObject"
+          :object-path="openmct.router.path"
+        />
+      </div>
       <ViewSwitcher v-if="!isEditing" :current-view="currentView" :views="views" />
       <!-- Action buttons -->
       <NotebookMenuSwitcher
@@ -127,20 +139,32 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { toRaw } from 'vue';
 
+const SupportedViewTypes = [
+  'plot-stacked',
+  'plot-overlay',
+  'bar-graph.view',
+  'time-strip.view',
+  'example.imagery'
+];
 const PLACEHOLDER_OBJECT = {};
 
 export default {
   components: {
+    IndependentTimeConductor,
     NotebookMenuSwitcher,
     ViewSwitcher
   },
+  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     actionCollection: {
       type: Object,
       default: () => {
-        return {};
+        return undefined;
       }
     }
   },
@@ -179,7 +203,7 @@ export default {
       });
     },
     hasParent() {
-      return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return toRaw(this.domainObject) !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
     },
     parentUrl() {
       const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -221,6 +245,11 @@ export default {
       } else {
         return 'Unlocked for editing - click to lock.';
       }
+    },
+    supportsIndependentTime() {
+      const viewKey = this.getViewKey();
+
+      return this.domainObject && SupportedViewTypes.includes(viewKey);
     }
   },
   watch: {
@@ -240,7 +269,6 @@ export default {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
@@ -254,7 +282,7 @@ export default {
       this.isEditing = isEditing;
     });
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.mutationObserver) {
       this.mutationObserver();
     }
@@ -294,6 +322,9 @@ export default {
     },
     edit() {
       this.openmct.editor.edit();
+    },
+    getViewKey() {
+      return this.viewKey;
     },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({
@@ -383,6 +414,10 @@ export default {
     },
     setStatus(status) {
       this.status = status;
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(await this.getObjectPath(), BELOW, 'objectName');
     }
   }
 };

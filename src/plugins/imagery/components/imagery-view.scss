@@ -293,6 +293,13 @@
     width: 100%;
   }
 
+  &__annotation-indicator {
+    color: $colorClickIconButton;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+  }
+
   &__timestamp {
     flex: 0 0 auto;
     padding: 2px 3px;
@@ -539,4 +546,12 @@
     display: block;
     align-self: flex-end;
   }
+}
+
+.c-image-canvas {
+  pointer-events: auto; // This allows the image element to receive a browser-level context click
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
 }

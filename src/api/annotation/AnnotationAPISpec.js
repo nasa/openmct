@@ -168,7 +168,7 @@ describe('The Annotation API', () => {
           targetDomainObjects: [mockDomainObject],
           targets: { fooTarget: {} }
         };
-        openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
+        openmct.annotation.setNamespaceToSaveAnnotations('namespaceThatDoesNotExist');
         await openmct.annotation.create(annotationCreationArguments);
       } catch (error) {
         expect(error).toBeDefined();
@@ -263,6 +263,54 @@ describe('The Annotation API', () => {
       const results = await openmct.annotation.searchForTags('q');
       expect(results).toBeDefined();
       expect(results.length).toEqual(0);
+    });
+  });
+
+  describe('Target Comparators', () => {
+    let targets;
+    let otherTargets;
+    let comparator;
+
+    beforeEach(() => {
+      targets = {
+        fooTarget: {
+          foo: 42
+        }
+      };
+      otherTargets = {
+        fooTarget: {
+          bar: 42
+        }
+      };
+      comparator = (t1, t2) => t1.fooTarget.foo === t2.fooTarget.bar;
+    });
+
+    it('can add a comparator function', () => {
+      const notebookAnnotationType = openmct.annotation.ANNOTATION_TYPES.NOTEBOOK;
+      expect(
+        openmct.annotation.areAnnotationTargetsEqual(notebookAnnotationType, targets, otherTargets)
+      ).toBeFalse(); // without a comparator, these should NOT be equal
+      // Register a comparator function for the notebook annotation type
+      openmct.annotation.addTargetComparator(notebookAnnotationType, comparator);
+      expect(
+        openmct.annotation.areAnnotationTargetsEqual(notebookAnnotationType, targets, otherTargets)
+      ).toBeTrue(); // the comparator should make these equal
+    });
+
+    it('falls back to deep equality check if no comparator functions', () => {
+      const annotationTypeWithoutComparator = openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL;
+      const areEqual = openmct.annotation.areAnnotationTargetsEqual(
+        annotationTypeWithoutComparator,
+        targets,
+        targets
+      );
+      const areNotEqual = openmct.annotation.areAnnotationTargetsEqual(
+        annotationTypeWithoutComparator,
+        targets,
+        otherTargets
+      );
+      expect(areEqual).toBeTrue();
+      expect(areNotEqual).toBeFalse();
     });
   });
 });

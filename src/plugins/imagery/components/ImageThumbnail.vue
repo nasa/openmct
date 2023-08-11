@@ -29,6 +29,7 @@
       'real-time': realTime
     }"
     :title="image.formattedTime"
+    @click="handleClick"
   >
     <a class="c-thumb__image-wrapper" href="" :download="image.imageDownloadName" @click.prevent>
       <img
@@ -38,6 +39,11 @@
         fetchpriority="low"
         @load="imageLoadCompleted"
       />
+      <i
+        v-show="showAnnotationIndicator"
+        class="c-thumb__annotation-indicator icon-status-poll-edit"
+      >
+      </i>
     </a>
     <div v-if="viewableArea" class="c-thumb__viewable-area" :style="viewableAreaStyle"></div>
     <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
@@ -65,6 +71,12 @@ export default {
     realTime: {
       type: Boolean,
       required: true
+    },
+    imageryAnnotations: {
+      type: Array,
+      default() {
+        return [];
+      }
     },
     viewableArea: {
       type: Object,
@@ -125,9 +137,17 @@ export default {
         width: `${width}px`,
         height: `${height}px`
       };
+    },
+    showAnnotationIndicator() {
+      return this.imageryAnnotations.some((annotation) => {
+        return !annotation._deleted;
+      });
     }
   },
   methods: {
+    handleClick(event) {
+      this.$emit('click', event);
+    },
     imageLoadCompleted() {
       if (!this.$refs.img) {
         return;

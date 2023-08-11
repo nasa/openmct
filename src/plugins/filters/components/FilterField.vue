@@ -37,14 +37,37 @@
             :id="`${filter}filterControl`"
             class="c-input--flex"
             type="text"
+            :aria-label="label"
             :disabled="useGlobal"
             :value="persistedValue(filter)"
-            @change="updateFilterValue($event, filter)"
+            @change="updateFilterValueFromString($event, filter)"
           />
         </template>
 
+        <!-- Dropdown, editing -->
+        <template v-if="filter.possibleValues && filter.singleSelectionThreshold && isEditing">
+          <select
+            name="setSelectionThreshold"
+            :aria-label="label"
+            :disabled="useGlobal"
+            @change="updateFilterValueFromDropdown($event, filter.comparator, $event.target.value)"
+          >
+            <option key="NONE" value="NONE" selected="isSelected(filter.comparator, option.value)">
+              None
+            </option>
+            <option
+              v-for="option in filter.possibleValues"
+              :key="option.label"
+              :value="option.value"
+              :selected="isSelected(filter.comparator, option.value)"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </template>
+
         <!-- Checkbox list, editing -->
-        <template v-if="filter.possibleValues && isEditing">
+        <template v-if="filter.possibleValues && isEditing && !filter.singleSelectionThreshold">
           <div
             v-for="option in filter.possibleValues"
             :key="option.value"
@@ -54,9 +77,10 @@
               :id="`${option.value}filterControl`"
               class="c-checkbox-list__input"
               type="checkbox"
+              :aria-label="label"
               :disabled="useGlobal"
-              :checked="isChecked(filter.comparator, option.value)"
-              @change="updateFilterValue($event, filter.comparator, option.value)"
+              :checked="isSelected(filter.comparator, option.value)"
+              @change="updateFilterValueFromCheckbox($event, filter.comparator, option.value)"
             />
             <span class="c-checkbox-list__value">
               {{ option.label }}
@@ -89,6 +113,10 @@ export default {
       type: Object,
       required: true
     },
+    label: {
+      type: String,
+      required: true
+    },
     useGlobal: Boolean,
     persistedFilters: {
       type: Object,
@@ -105,14 +133,14 @@ export default {
   mounted() {
     this.openmct.editor.on('isEditing', this.toggleIsEditing);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.toggleIsEditing);
   },
   methods: {
     toggleIsEditing(isEditing) {
       this.isEditing = isEditing;
     },
-    isChecked(comparator, value) {
+    isSelected(comparator, value) {
       if (this.persistedFilters[comparator] && this.persistedFilters[comparator].includes(value)) {
         return true;
       } else {
@@ -122,11 +150,17 @@ export default {
     persistedValue(comparator) {
       return this.persistedFilters && this.persistedFilters[comparator];
     },
-    updateFilterValue(event, comparator, value) {
-      if (value !== undefined) {
-        this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
+    updateFilterValueFromString(event, comparator) {
+      this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
+    },
+    updateFilterValueFromCheckbox(event, comparator, value) {
+      this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
+    },
+    updateFilterValueFromDropdown(event, comparator, value) {
+      if (value === 'NONE') {
+        this.$emit('clearFilters', this.filterField.key);
       } else {
-        this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
+        this.$emit('filterSingleSelected', this.filterField.key, comparator, value);
       }
     },
     getFilterLabels(filter) {

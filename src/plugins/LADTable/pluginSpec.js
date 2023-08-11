@@ -75,6 +75,7 @@ describe('The LAD Table', () => {
     child = document.createElement('div');
     parent.appendChild(child);
 
+    openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
     spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
     ladPlugin = new LadPlugin();
@@ -126,7 +127,7 @@ describe('The LAD Table', () => {
       }).not.toThrow();
     });
 
-    it('should reject non-telemtry producing objects', () => {
+    it('should reject non-telemetry producing objects', () => {
       expect(() => {
         ladTableCompositionCollection.add(mockObj.ladTable);
       }).toThrow();
@@ -253,10 +254,10 @@ describe('The LAD Table', () => {
 
     it('should show aggregate telemetry type with blank data', async () => {
       await Vue.nextTick();
-      const lastestData = parent
+      const latestData = parent
         .querySelectorAll(TABLE_BODY_ROWS)[1]
         .querySelectorAll('td')[2].innerText;
-      expect(lastestData).toBe('---');
+      expect(latestData).toBe('---');
       const dataType = parent
         .querySelectorAll(TABLE_BODY_ROWS)[1]
         .querySelector('.js-type-data').innerText;
@@ -264,7 +265,7 @@ describe('The LAD Table', () => {
     });
 
     it('should show the name provided for the the telemetry producing object', () => {
-      const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText;
+      const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText.trim();
 
       const expectedName = mockObj.telemetry.name;
       expect(rowName).toBe(expectedName);

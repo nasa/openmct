@@ -89,10 +89,13 @@ export default {
     }
   },
   watch: {
-    pages() {
-      if (!this.containsPage(this.selectedPageId)) {
-        this.selectPage(this.pages[0].id);
-      }
+    pages: {
+      handler(val, oldVal) {
+        if (!this.containsPage(this.selectedPageId)) {
+          this.selectPage(this.pages[0].id);
+        }
+      },
+      deep: true
     }
   },
   methods: {

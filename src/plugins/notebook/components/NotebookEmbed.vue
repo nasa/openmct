@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-snapshot c-ne__embed">
+  <div
+    ref="notebookEmbed"
+    class="c-snapshot c-ne__embed"
+    @mouseover.ctrl="showToolTip"
+    @mouseleave="hideToolTip"
+  >
     <div v-if="embed.snapshot" class="c-ne__embed__snap-thumb" @click="openSnapshot()">
       <img :src="thumbnailImage" />
     </div>
@@ -49,13 +54,13 @@ import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import objectPathToUrl from '@/tools/url';
-
+import mount from 'utils/mount';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
 
-import Vue from 'vue';
-
 export default {
+  mixins: [tooltipHelpers],
   inject: ['openmct', 'snapshotContainer'],
   props: {
     embed: {
@@ -101,9 +106,8 @@ export default {
   watch: {
     isLocked(value) {
       if (value === true) {
-        let index = this.menuActions.findIndex((item) => item.id === 'removeEmbed');
-
-        this.$delete(this.menuActions, index);
+        const index = this.menuActions.findIndex((item) => item.id === 'removeEmbed');
+        this.menuActions.splice(index, 1);
       }
     }
   },
@@ -135,7 +139,7 @@ export default {
           onItemClicked: () => this.openSnapshot()
         };
 
-        this.menuActions = [viewSnapshot];
+        this.menuActions.splice(0, this.menuActions.length, viewSnapshot);
       }
 
       const navigateToItem = {
@@ -162,7 +166,7 @@ export default {
         onItemClicked: () => this.previewEmbed()
       };
 
-      this.menuActions = this.menuActions.concat([quickView, navigateToItem, navigateToItemInTime]);
+      this.menuActions.push(...[quickView, navigateToItem, navigateToItemInTime]);
 
       if (!this.isLocked) {
         const removeEmbed = {
@@ -189,13 +193,18 @@ export default {
       }
     },
     annotateSnapshot() {
-      const annotateVue = new Vue({
-        template: '<div id="snap-annotation"></div>'
-      }).$mount();
+      const { vNode, destroy } = mount(
+        {
+          template: '<div id="snap-annotation"></div>'
+        },
+        {
+          app: this.openmct.app
+        }
+      );
 
-      const painterroInstance = new PainterroInstance(annotateVue.$el);
+      const painterroInstance = new PainterroInstance(vNode.el, this.openmct);
       const annotateOverlay = this.openmct.overlays.overlay({
-        element: annotateVue.$el,
+        element: vNode.el,
         size: 'large',
         dismissable: false,
         buttons: [
@@ -219,12 +228,10 @@ export default {
             }
           }
         ],
-        onDestroy: () => {
-          annotateVue.$destroy(true);
-        }
+        onDestroy: destroy
       });
 
-      painterroInstance.intialize();
+      painterroInstance.initialize();
 
       const fullSizeImageObjectIdentifier = this.embed.snapshot.fullSizeImageObjectIdentifier;
       if (!fullSizeImageObjectIdentifier) {
@@ -258,7 +265,6 @@ export default {
         this.embed.bounds.start !== bounds.start || this.embed.bounds.end !== bounds.end;
       const isFixedTimespanMode = !this.openmct.time.clock();
 
-      this.openmct.time.stopClock();
       let message = '';
       if (isTimeBoundChanged) {
         this.openmct.time.bounds({
@@ -322,26 +328,32 @@ export default {
     openSnapshotOverlay(src) {
       const self = this;
 
-      this.snapshot = new Vue({
-        data: () => {
-          return {
-            createdOn: this.createdOn,
-            name: this.embed.name,
-            cssClass: this.embed.cssClass,
-            src
-          };
+      const { vNode, destroy } = mount(
+        {
+          data: () => {
+            return {
+              createdOn: this.createdOn,
+              name: this.embed.name,
+              cssClass: this.embed.cssClass,
+              src
+            };
+          },
+          methods: {
+            formatTime: self.formatTime,
+            annotateSnapshot: self.annotateSnapshot,
+            exportImage: self.exportImage
+          },
+          template: SnapshotTemplate
         },
-        methods: {
-          formatTime: self.formatTime,
-          annotateSnapshot: self.annotateSnapshot,
-          exportImage: self.exportImage
-        },
-        template: SnapshotTemplate
-      }).$mount();
+        {
+          app: this.openmct.app
+        }
+      );
 
+      this.snapshot = vNode.componentInstance;
       this.snapshotOverlay = this.openmct.overlays.overlay({
-        element: this.snapshot.$el,
-        onDestroy: () => this.snapshot.$destroy(true),
+        element: vNode.el,
+        onDestroy: destroy,
         size: 'large',
         autoHide: false,
         dismissable: true,
@@ -404,6 +416,14 @@ export default {
           snapshotObject.fullSizeImage
         );
       }
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(
+        await this.getObjectPath(this.embed.domainObject.identifier),
+        BELOW,
+        'notebookEmbed'
+      );
     }
   }
 };

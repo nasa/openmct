@@ -24,6 +24,7 @@ import EventEmitter from 'EventEmitter';
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants';
 import StatusAPI from './StatusAPI';
 import User from './User';
+import StoragePersistance from './StoragePersistance';
 
 class UserAPI extends EventEmitter {
   /**
@@ -42,7 +43,7 @@ class UserAPI extends EventEmitter {
 
   /**
    * Set the user provider for the user API. This allows you
-   *  to specifiy ONE user provider to be used with Open MCT.
+   *  to specify ONE user provider to be used with Open MCT.
    * @method setProvider
    * @memberof module:openmct.UserAPI#
    * @param {module:openmct.UserAPI~UserProvider} provider the new
@@ -85,6 +86,58 @@ class UserAPI extends EventEmitter {
     } else {
       return this._provider.getCurrentUser();
     }
+  }
+  /**
+   *  If a user provider is set, it will return an array of possible roles
+   *  that can be selected by the current user
+   *  @memberof module:openmct.UserAPI#
+   *  @returns {Array}
+   *  @throws Will throw an error if no user provider is set
+   */
+
+  getPossibleRoles() {
+    if (!this.hasProvider()) {
+      this.error(NO_PROVIDER_ERROR);
+    }
+    return this._provider.getPossibleRoles();
+  }
+  /**
+   * If a user provider is set, it will return the active role or null
+   * @memberof module:openmct.UserAPI#
+   * @returns {string|null}
+   */
+  getActiveRole() {
+    if (!this.hasProvider()) {
+      return null;
+    }
+
+    // get from session storage
+    const sessionStorageValue = StoragePersistance.getActiveRole();
+
+    return sessionStorageValue;
+  }
+  /**
+   * Set the active role in session storage
+   * @memberof module:openmct.UserAPI#
+   * @returns {undefined}
+   */
+  setActiveRole(role) {
+    StoragePersistance.setActiveRole(role);
+    this.emit('roleChanged', role);
+  }
+
+  /**
+   * Will return if a role can provide a operator status response
+   * @memberof module:openmct.UserApi#
+   * @returns {Boolean}
+   */
+  canProvideStatusForRole() {
+    if (!this.hasProvider()) {
+      return null;
+    }
+    const activeRole = this.getActiveRole();
+
+    return this._provider.canProvideStatusForRole?.(activeRole);
   }
 
   /**

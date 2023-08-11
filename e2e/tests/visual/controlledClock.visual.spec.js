@@ -41,6 +41,9 @@ test.describe('Visual - Controlled Clock', () => {
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
+    // Go to baseURL
+    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    await page.getByTitle('Collapse Browse Pane').click();
     await page
       .locator('a')
       .filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' })

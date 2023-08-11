@@ -89,6 +89,11 @@ export default {
     // for edit mode changes and update toolbars if necessary.
     this.openmct.editor.on('isEditing', this.handleEditing);
   },
+  unmounted() {
+    this.openmct.selection.off('change', this.handleSelection);
+    this.openmct.editor.off('isEditing', this.handleEditing);
+    this.removeListeners();
+  },
   methods: {
     handleSelection(selection) {
       this.removeListeners();
@@ -138,7 +143,7 @@ export default {
         domainObject,
         '*',
         function (newObject) {
-          this.domainObjectsById[id].newObject = JSON.parse(JSON.stringify(newObject));
+          this.domainObjectsById[id].newObject = newObject;
           this.updateToolbarAfterMutation();
         }.bind(this)
       );
@@ -306,11 +311,6 @@ export default {
     handleEditing(isEditing) {
       this.handleSelection(this.openmct.selection.get());
     }
-  },
-  detroyed() {
-    this.openmct.selection.off('change', this.handleSelection);
-    this.openmct.editor.off('isEditing', this.handleEditing);
-    this.removeListeners();
   }
 };
 </script>

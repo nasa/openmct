@@ -22,7 +22,7 @@
 
 import ScatterPlotView from './ScatterPlotView.vue';
 import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function ScatterPlotViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -44,34 +44,42 @@ export default function ScatterPlotViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          let isCompact = isCompactView(objectPath);
-          component = new Vue({
-            el: element,
-            components: {
-              ScatterPlotView
+          const isCompact = isCompactView(objectPath);
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ScatterPlotView
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<scatter-plot-view :options="options"></scatter-plot-view>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<scatter-plot-view :options="options"></scatter-plot-view>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

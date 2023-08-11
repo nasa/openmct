@@ -46,7 +46,7 @@ test.describe('Fault Management Visual Tests', () => {
 
     await percySnapshot(
       page,
-      `Acknowledged faults, have a checkmark on the fault icon and appear in the acknowldeged view (theme: '${theme}')`
+      `Acknowledged faults, have a checkmark on the fault icon and appear in the acknowledged view (theme: '${theme}')`
     );
   });
 

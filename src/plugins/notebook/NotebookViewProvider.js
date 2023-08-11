@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
 import Notebook from './components/Notebook.vue';
 import Agent from '@/utils/agent/Agent';
+import mount from 'utils/mount';
 
 export default class NotebookViewProvider {
   constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
@@ -40,35 +40,44 @@ export default class NotebookViewProvider {
   }
 
   view(domainObject) {
-    let component;
     let openmct = this.openmct;
     let snapshotContainer = this.snapshotContainer;
     let agent = new Agent(window);
     let entryUrlWhitelist = this.entryUrlWhitelist;
+    let _destroy = null;
 
     return {
       show(container) {
-        component = new Vue({
-          el: container,
-          components: {
-            Notebook
+        const { destroy } = mount(
+          {
+            el: container,
+            components: {
+              Notebook
+            },
+            provide: {
+              openmct,
+              snapshotContainer,
+              agent,
+              entryUrlWhitelist
+            },
+            data() {
+              return {
+                domainObject
+              };
+            },
+            template: '<Notebook :domain-object="domainObject"></Notebook>'
           },
-          provide: {
-            openmct,
-            snapshotContainer,
-            agent,
-            entryUrlWhitelist
-          },
-          data() {
-            return {
-              domainObject
-            };
-          },
-          template: '<Notebook :domain-object="domainObject"></Notebook>'
-        });
+          {
+            app: openmct.app,
+            element: container
+          }
+        );
+        _destroy = destroy;
       },
       destroy() {
-        component.$destroy();
+        if (_destroy) {
+          _destroy();
+        }
       }
     };
   }

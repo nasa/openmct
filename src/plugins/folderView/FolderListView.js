@@ -19,52 +19,54 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
+import ListViewComponent from './components/ListView.vue';
+import Moment from 'moment';
+import { ALLOWED_FOLDER_TYPES } from './constants.js';
 
-define(['./components/ListView.vue', './constants.js', 'vue', 'moment'], function (
-  ListViewComponent,
-  constants,
-  Vue,
-  Moment
-) {
-  function FolderListView(openmct) {
-    const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+export default class FolderListView {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = 'list-view';
+    this.name = 'List View';
+    this.cssClass = 'icon-list-view';
+  }
 
+  canView(domainObject) {
+    return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+  }
+
+  view(domainObject) {
     return {
-      key: 'list-view',
-      name: 'List View',
-      cssClass: 'icon-list-view',
-      canView: function (domainObject) {
-        return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
-      },
-      view: function (domainObject) {
-        let component;
-
-        return {
-          show: function (element) {
-            component = new Vue({
-              el: element,
-              components: {
-                listViewComponent: ListViewComponent.default
-              },
-              provide: {
-                openmct,
-                domainObject,
-                Moment
-              },
-              template: '<list-view-component></list-view-component>'
-            });
+      show: (element) => {
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              ListViewComponent
+            },
+            provide: {
+              openmct: this.openmct,
+              domainObject,
+              Moment
+            },
+            template: '<ListViewComponent></ListViewComponent>'
           },
-          destroy: function (element) {
-            component.$destroy();
-            component = undefined;
+          {
+            app: this.openmct.app,
+            element
           }
-        };
+        );
+        this._destroy = destroy;
       },
-      priority: function () {
-        return 1;
+      destroy: () => {
+        if (this._destroy) {
+          this._destroy();
+        }
       }
     };
   }
-
-  return FolderListView;
-});
+  priority() {
+    return 1;
+  }
+}

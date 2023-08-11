@@ -22,7 +22,7 @@
 
 import stylesManager from './StylesManager';
 import StylesInspectorView from './StylesInspectorView.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
 
@@ -63,29 +63,37 @@ export default function StylesInspectorViewProvider(openmct) {
       );
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       return {
-        show: function (el) {
-          component = new Vue({
-            el,
-            components: {
-              StylesInspectorView
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                StylesInspectorView
+              },
+              provide: {
+                openmct,
+                stylesManager,
+                selection
+              },
+              template: `<StylesInspectorView />`
             },
-            provide: {
-              openmct,
-              stylesManager,
-              selection
-            },
-            template: `<StylesInspectorView />`
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

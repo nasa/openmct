@@ -190,7 +190,7 @@ export default {
       this.setStatus
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeStatusListener) {
       this.removeStatusListener();
     }

@@ -23,6 +23,9 @@ describe('The Object API', () => {
             return USERNAME;
           }
         });
+      },
+      getPossibleRoles() {
+        return Promise.resolve([]);
       }
     };
     openmct = createOpenMct();
@@ -122,7 +125,7 @@ describe('The Object API', () => {
         await objectAPI.save(mockDomainObject);
         expect(mockDomainObject.createdBy).toBe(USERNAME);
       });
-      it("Sets the current user for 'modifedBy' on existing objects", async () => {
+      it("Sets the current user for 'modifiedBy' on existing objects", async () => {
         mockDomainObject.persisted = Date.now() - FIFTEEN_MINUTES;
         mockDomainObject.modified = Date.now();
 
@@ -248,10 +251,17 @@ describe('The Object API', () => {
       });
 
       it('displays a notification in the event of an error', () => {
-        mockProvider.get.and.returnValue(Promise.reject());
+        openmct.notifications.warn = jasmine.createSpy('warn');
+        mockProvider.get.and.returnValue(
+          Promise.reject({
+            name: 'Error',
+            status: 404,
+            statusText: 'Not Found'
+          })
+        );
 
         return objectAPI.get(mockDomainObject.identifier).catch(() => {
-          expect(openmct.notifications.error).toHaveBeenCalledWith(
+          expect(openmct.notifications.warn).toHaveBeenCalledWith(
             `Failed to retrieve object ${TEST_NAMESPACE}:${TEST_KEY}`
           );
         });

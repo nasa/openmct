@@ -21,7 +21,11 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../pluginFixtures');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  setIndependentTimeConductorBounds
+} = require('../../../appActions');
 
 const testPlan = {
   TEST_GROUP: [
@@ -69,7 +73,7 @@ const testPlan = {
 };
 
 test.describe('Time Strip', () => {
-  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Indepdenent Time Contexts @unstable', async ({
+  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts @unstable', async ({
     page
   }) => {
     test.info().annotations.push({
@@ -78,9 +82,6 @@ test.describe('Time Strip', () => {
     });
 
     // Constant locators
-    const independentTimeConductorInputs = page.locator(
-      '.l-shell__main-independent-time-conductor .c-input--datetime'
-    );
     const activityBounds = page.locator('.activity-bounds');
 
     // Goto baseURL
@@ -122,9 +123,7 @@ test.describe('Time Strip', () => {
     });
 
     await test.step('TimeStrip can use the Independent Time Conductor', async () => {
-      // Activate Independent Time Conductor in Fixed Time Mode
-      await page.click('.c-toggle-switch__slider');
-      expect(await activityBounds.count()).toEqual(0);
+      expect(await activityBounds.count()).toEqual(5);
 
       // Set the independent time bounds so that only one event is shown
       const startBound = testPlan.TEST_GROUP[0].start;
@@ -132,12 +131,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await independentTimeConductorInputs.nth(0).fill('');
-      await independentTimeConductorInputs.nth(0).fill(startBoundString);
-      await page.keyboard.press('Enter');
-      await independentTimeConductorInputs.nth(1).fill('');
-      await independentTimeConductorInputs.nth(1).fill(endBoundString);
-      await page.keyboard.press('Enter');
+      await setIndependentTimeConductorBounds(page, startBoundString, endBoundString);
       expect(await activityBounds.count()).toEqual(1);
     });
 
@@ -156,9 +150,6 @@ test.describe('Time Strip', () => {
       await page.click("button[title='Save']");
       await page.click("li[title='Save and Finish Editing']");
 
-      // Activate Independent Time Conductor in Fixed Time Mode
-      await page.click('.c-toggle-switch__slider');
-
       // All events should be displayed at this point because the
       // initial independent context bounds will match the global bounds
       expect(await activityBounds.count()).toEqual(5);
@@ -169,12 +160,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await independentTimeConductorInputs.nth(0).fill('');
-      await independentTimeConductorInputs.nth(0).fill(startBoundString);
-      await page.keyboard.press('Enter');
-      await independentTimeConductorInputs.nth(1).fill('');
-      await independentTimeConductorInputs.nth(1).fill(endBoundString);
-      await page.keyboard.press('Enter');
+      await setIndependentTimeConductorBounds(page, startBoundString, endBoundString);
 
       // Verify that two events are displayed
       expect(await activityBounds.count()).toEqual(2);

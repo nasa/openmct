@@ -22,37 +22,46 @@
 
 import LadTableSet from './components/LadTableSet.vue';
 import LADTableConfiguration from './LADTableConfiguration';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default class LadTableSetView {
   constructor(openmct, domainObject, objectPath) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this._destroy = null;
+    this.component = null;
   }
 
   show(element) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
-    this.component = new Vue({
-      el: element,
-      components: {
-        LadTableSet
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          LadTableSet
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          currentView: this,
+          ladTableConfiguration
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject
+          };
+        },
+        template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        currentView: this,
-        ladTableConfiguration
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject
-        };
-      },
-      template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this._destroy = destroy;
+    this.component = vNode.componentInstance;
   }
 
   getViewContext() {
@@ -63,8 +72,9 @@ export default class LadTableSetView {
     return this.component.$refs.ladTableSet.getViewContext();
   }
 
-  destroy(element) {
-    this.component.$destroy();
-    this.component = undefined;
+  destroy() {
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 }

@@ -25,7 +25,7 @@ import { MULTIPLE_PROVIDER_ERROR } from './constants';
 import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Test User';
-const EXAMPLE_ROLE = 'example-role';
+const EXAMPLE_ROLE = 'flight';
 
 describe('The User API', () => {
   let openmct;
@@ -74,7 +74,7 @@ describe('The User API', () => {
       provider.autoLogin(USERNAME);
     });
 
-    it('to check if a user (not specific) is loged in', (done) => {
+    it('to check if a user (not specific) is logged in', (done) => {
       expect(openmct.user.isLoggedIn()).toBeFalse();
 
       openmct.user.on('providerAdded', () => {

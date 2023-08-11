@@ -21,6 +21,7 @@
 -->
 <template>
   <tr
+    ref="root"
     class="c-list-item js-folder-child"
     :class="{
       'is-alias': item.isAlias === true

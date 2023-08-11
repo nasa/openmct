@@ -34,6 +34,7 @@ test.describe('Grand Search', () => {
   let displayLayout;
   test.beforeEach(async ({ page, theme }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.getByTitle('Collapse Browse Pane').click();
 
     displayLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',

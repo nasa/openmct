@@ -134,7 +134,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     // Click the context menu button for the new page
     await page.getByTitle('Open context menu').click();
     // Delete the page
-    await page.getByRole('listitem', { name: 'Delete Page' }).click();
+    await page.getByRole('menuitem', { name: 'Delete Page' }).click();
     // Click OK button
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
 

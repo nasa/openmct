@@ -123,7 +123,7 @@ export default {
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
   },
-  destroyed() {
+  unmounted() {
     if (this.actionCollection) {
       this.actionCollection.off('update', this.updateActionItems);
     }

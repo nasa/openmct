@@ -63,8 +63,11 @@
           :filter-field="metadatum"
           :use-global="persistedFilters.useGlobal"
           :persisted-filters="updatedFilters[metadatum.key]"
-          @filterSelected="updateFiltersWithSelectedValue"
+          label="Specific Filter"
+          @filterSelected="updateMultipleFiltersWithSelectedValue"
           @filterTextValueChanged="updateFiltersWithTextValue"
+          @filterSingleSelected="updateSingleSelection"
+          @clearFilters="clearFilters"
         />
       </ul>
     </div>
@@ -133,14 +136,14 @@ export default {
     this.objectCssClass = type.definition.cssClass;
     this.openmct.editor.on('isEditing', this.toggleIsEditing);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.toggleIsEditing);
   },
   methods: {
     toggleExpanded() {
       this.expanded = !this.expanded;
     },
-    updateFiltersWithSelectedValue(key, comparator, valueName, value) {
+    updateMultipleFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
 
       if (filterValue[comparator]) {
@@ -148,24 +151,32 @@ export default {
           filterValue[comparator].push(valueName);
         } else {
           if (filterValue[comparator].length === 1) {
-            this.$set(this.updatedFilters, key, {});
+            this.updatedFilters[key] = {};
           } else {
             filterValue[comparator] = filterValue[comparator].filter((v) => v !== valueName);
           }
         }
       } else {
-        this.$set(this.updatedFilters[key], comparator, [valueName]);
+        this.updatedFilters[key][comparator] = [valueName];
       }
 
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
+    clearFilters(key) {
+      this.updatedFilters[key] = {};
+      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+    },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
-        this.$set(this.updatedFilters, key, {});
+        this.updatedFilters[key] = {};
       } else {
-        this.$set(this.updatedFilters[key], comparator, value);
+        this.updatedFilters[key][comparator] = value;
       }
 
+      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+    },
+    updateSingleSelection(key, comparator, value) {
+      this.updatedFilters[key][comparator] = [value];
       this.$emit('updateFilters', this.keyString, this.updatedFilters);
     },
     useGlobalFilter(checked) {

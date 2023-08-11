@@ -27,9 +27,10 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
   >
     <plot-legend
-      v-if="compositionObjectsConfigLoaded"
+      v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
+      class="js-stacked-plot-legend"
       @legendHoverChanged="legendHoverChanged"
       @expanded="updateExpanded"
       @position="updatePosition"
@@ -46,6 +47,7 @@
         :cursor-guide="cursorGuide"
         :show-limit-line-labels="showLimitLineLabels"
         :parent-y-tick-width="maxTickWidth"
+        :hide-legend="showLegendsForChildren === false"
         @plotYTickWidth="onYTickWidthChange"
         @loadingUpdated="loadingUpdated"
         @cursorGuide="onCursorGuideChange"
@@ -66,6 +68,7 @@ import ColorPalette from '@/ui/color/ColorPalette';
 import PlotLegend from '../legend/PlotLegend.vue';
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
   components: {
@@ -96,19 +99,28 @@ export default {
       colorPalette: new ColorPalette(),
       compositionObjectsConfigLoaded: false,
       position: 'top',
+      showLegendsForChildren: true,
       expanded: false
     };
   },
   computed: {
     plotLegendPositionClass() {
+      if (this.showLegendsForChildren) {
+        return '';
+      }
+
       return `plot-legend-${this.position}`;
     },
     plotLegendExpandedStateClass() {
-      if (this.expanded) {
-        return 'plot-legend-expanded';
-      } else {
-        return 'plot-legend-collapsed';
+      let legendExpandedStateClass = '';
+
+      if (this.showLegendsForChildren !== true && this.expanded) {
+        legendExpandedStateClass = 'plot-legend-expanded';
+      } else if (this.showLegendsForChildren !== true && !this.expanded) {
+        legendExpandedStateClass = 'plot-legend-collapsed';
       }
+
+      return legendExpandedStateClass;
     },
     /**
      * Returns the maximum width of the left and right y axes ticks of this stacked plots children
@@ -133,13 +145,15 @@ export default {
       };
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   mounted() {
+    eventHelpers.extend(this);
     //We only need to initialize the stacked plot config for legend properties
     const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     this.config = this.getConfig(configId);
+    this.showLegendsForChildren = this.config.legend.get('showLegendsForChildren');
 
     this.loaded = true;
     this.imageExporter = new ImageExporter(this.openmct);
@@ -183,20 +197,30 @@ export default {
 
           return this.configLoaded[id] === true;
         });
+      if (this.compositionObjectsConfigLoaded) {
+        this.listenTo(
+          this.config.legend,
+          'change:showLegendsForChildren',
+          this.updateShowLegendsForChildren,
+          this
+        );
+      }
     },
     destroy() {
       this.composition.off('add', this.addChild);
       this.composition.off('remove', this.removeChild);
       this.composition.off('reorder', this.compositionReorder);
+
+      this.stopListening();
     },
 
     addChild(child) {
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
-      this.$set(this.tickWidthMap, id, {
+      this.tickWidthMap[id] = {
         leftTickWidth: 0,
         rightTickWidth: 0
-      });
+      };
 
       this.compositionObjects.push({
         object: child,
@@ -208,7 +232,7 @@ export default {
     removeChild(childIdentifier) {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
 
-      this.$delete(this.tickWidthMap, id);
+      delete this.tickWidthMap[id];
 
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
@@ -246,7 +270,7 @@ export default {
       let oldComposition = this.compositionObjects.slice();
 
       reorderPlan.forEach((reorder) => {
-        this.$set(this.compositionObjects, reorder.newIndex, oldComposition[reorder.oldIndex]);
+        this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
       });
     },
 
@@ -291,7 +315,7 @@ export default {
         return;
       }
 
-      this.$set(this.tickWidthMap, plotId, data);
+      this.tickWidthMap[plotId] = data;
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;
@@ -304,6 +328,9 @@ export default {
     },
     updatePosition(position) {
       this.position = position;
+    },
+    updateShowLegendsForChildren(showLegendsForChildren) {
+      this.showLegendsForChildren = showLegendsForChildren;
     },
     updateReady(ready) {
       this.configReady = ready;

@@ -92,7 +92,7 @@ define(['lodash'], function (_) {
   };
 
   /**
-   * Get an array of valueMetadatas that posess all hints requested.
+   * Get an array of valueMetadatas that possess all hints requested.
    * Array is sorted based on hint priority.
    *
    */
@@ -132,6 +132,14 @@ define(['lodash'], function (_) {
     return this.valueMetadatas.filter(
       (metadatum) => metadatum.filters && metadatum.filters.length > 0
     );
+  };
+
+  TelemetryMetadataManager.prototype.getUseToUpdateInPlaceValue = function () {
+    return this.valueMetadatas.find(this.isInPlaceUpdateValue);
+  };
+
+  TelemetryMetadataManager.prototype.isInPlaceUpdateValue = function (metadatum) {
+    return metadatum.useToUpdateInPlace === true;
   };
 
   TelemetryMetadataManager.prototype.getDefaultDisplayValue = function () {

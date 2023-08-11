@@ -26,9 +26,7 @@
       {{ row.name }}
     </div>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
-    <div v-if="row.control" class="c-form-row__controls">
-      <div ref="rowElement"></div>
-    </div>
+    <div v-if="row.control" ref="rowElement" class="c-form-row__controls"></div>
   </div>
 </template>
 
@@ -91,7 +89,7 @@ export default {
 
     this.formControl.show(this.$refs.rowElement, this.row, this.onChange);
   },
-  destroyed() {
+  unmounted() {
     const destroy = this.formControl.destroy;
     if (destroy) {
       destroy();

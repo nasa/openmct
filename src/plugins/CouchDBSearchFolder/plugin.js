@@ -1,21 +1,26 @@
 export default function (folderName, couchPlugin, searchFilter) {
+  const DEFAULT_NAME = 'CouchDB Documents';
+
   return function install(openmct) {
     const couchProvider = couchPlugin.couchProvider;
+    //replace any non-letter/non-number with a hyphen
+    const couchSearchId = (folderName || DEFAULT_NAME).replace(/[^a-zA-Z0-9]/g, '-');
+    const couchSearchName = `couch-search-${couchSearchId}`;
 
     openmct.objects.addRoot({
-      namespace: 'couch-search',
-      key: 'couch-search'
+      namespace: couchSearchName,
+      key: couchSearchName
     });
 
-    openmct.objects.addProvider('couch-search', {
+    openmct.objects.addProvider(couchSearchName, {
       get(identifier) {
-        if (identifier.key !== 'couch-search') {
+        if (identifier.key !== couchSearchName) {
           return undefined;
         } else {
           return Promise.resolve({
             identifier,
             type: 'folder',
-            name: folderName || 'CouchDB Documents',
+            name: folderName || DEFAULT_NAME,
             location: 'ROOT'
           });
         }
@@ -25,8 +30,8 @@ export default function (folderName, couchPlugin, searchFilter) {
     openmct.composition.addProvider({
       appliesTo(domainObject) {
         return (
-          domainObject.identifier.namespace === 'couch-search' &&
-          domainObject.identifier.key === 'couch-search'
+          domainObject.identifier.namespace === couchSearchName &&
+          domainObject.identifier.key === couchSearchName
         );
       },
       load() {

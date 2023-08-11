@@ -41,7 +41,7 @@ export default {
   mounted() {
     this.unsubscribe = this.openmct.faults.subscribe(this.domainObject, this.updateFault);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
@@ -53,7 +53,7 @@ export default {
       } else if (type === FAULT_MANAGEMENT_ALARMS) {
         this.faultsList.forEach((faultValue, i) => {
           if (fault.id === faultValue.id) {
-            this.$set(this.faultsList, i, fault);
+            this.faultsList[i] = fault;
           }
         });
       }

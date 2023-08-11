@@ -19,39 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ClearDataAction from './ClearDataAction';
+import GlobalClearIndicator from './components/globalClearIndicator.vue';
+import mount from 'utils/mount';
 
-define(['./components/globalClearIndicator.vue', './ClearDataAction', 'vue'], function (
-  GlobaClearIndicator,
-  ClearDataAction,
-  Vue
-) {
-  return function plugin(appliesToObjects, options = { indicator: true }) {
-    let installIndicator = options.indicator;
+export default function plugin(appliesToObjects, options = { indicator: true }) {
+  let installIndicator = options.indicator;
 
-    appliesToObjects = appliesToObjects || [];
+  appliesToObjects = appliesToObjects || [];
 
-    return function install(openmct) {
-      if (installIndicator) {
-        let component = new Vue({
+  return function install(openmct) {
+    if (installIndicator) {
+      const { vNode } = mount(
+        {
           components: {
-            GlobalClearIndicator: GlobaClearIndicator.default
+            GlobalClearIndicator
           },
           provide: {
             openmct
           },
           template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        });
+        },
+        {
+          app: openmct.app,
+          element: document.createElement('div')
+        }
+      );
 
-        let indicator = {
-          element: component.$mount().$el,
-          key: 'global-clear-indicator',
-          priority: openmct.priority.DEFAULT
-        };
+      let indicator = {
+        element: vNode.el,
+        key: 'global-clear-indicator',
+        priority: openmct.priority.DEFAULT
+      };
 
-        openmct.indicators.add(indicator);
-      }
+      openmct.indicators.add(indicator);
+    }
 
-      openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
-    };
+    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
   };
-});
+}

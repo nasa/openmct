@@ -115,6 +115,10 @@ describe('the RemoteClock plugin', () => {
       });
     });
 
+    afterEach(() => {
+      openmct.time.setClock('local');
+    });
+
     it('Does not throw error if time system is changed before remote clock initialized', () => {
       expect(() => openmct.time.timeSystem('utc')).not.toThrow();
     });

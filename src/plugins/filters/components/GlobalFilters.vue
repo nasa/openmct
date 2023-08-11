@@ -43,8 +43,11 @@
         :key="metadatum.key"
         :filter-field="metadatum"
         :persisted-filters="updatedFilters[metadatum.key]"
+        label="Global Filter"
         @filterSelected="updateFiltersWithSelectedValue"
         @filterTextValueChanged="updateFiltersWithTextValue"
+        @filterSingleSelected="updateSingleSelection"
+        @clearFilters="clearFilters"
       />
     </ul>
   </li>
@@ -97,6 +100,10 @@ export default {
     toggleExpanded() {
       this.expanded = !this.expanded;
     },
+    clearFilters(key) {
+      this.updatedFilters[key] = {};
+      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+    },
     updateFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
 
@@ -105,22 +112,26 @@ export default {
           filterValue[comparator].push(valueName);
         } else {
           if (filterValue[comparator].length === 1) {
-            this.$set(this.updatedFilters, key, {});
+            this.updatedFilters[key] = {};
           } else {
             filterValue[comparator] = filterValue[comparator].filter((v) => v !== valueName);
           }
         }
       } else {
-        this.$set(this.updatedFilters[key], comparator, [valueName]);
+        this.updatedFilters[key][comparator] = [valueName];
       }
 
       this.$emit('persistGlobalFilters', key, this.updatedFilters);
     },
+    updateSingleSelection(key, comparator, value) {
+      this.updatedFilters[key][comparator] = [value];
+      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+    },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
-        this.$set(this.updatedFilters, key, {});
+        this.updatedFilters[key] = {};
       } else {
-        this.$set(this.updatedFilters[key], comparator, value);
+        this.updatedFilters[key][comparator] = value;
       }
 
       this.$emit('persistGlobalFilters', key, this.updatedFilters);

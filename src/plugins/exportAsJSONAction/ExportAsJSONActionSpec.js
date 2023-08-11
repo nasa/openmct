@@ -73,7 +73,7 @@ describe('Export as JSON plugin', () => {
     expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(true);
   });
 
-  it('ExportAsJSONAction does not applie to non-persistable objects', () => {
+  it('ExportAsJSONAction does not apply to non-persistable objects', () => {
     domainObject = {
       identifier: {
         key: 'export-testing',
@@ -212,7 +212,7 @@ describe('Export as JSON plugin', () => {
     const parent = {
       composition: [
         {
-          key: 'infinteChild',
+          key: 'infiniteChild',
           namespace: ''
         }
       ],
@@ -235,7 +235,7 @@ describe('Export as JSON plugin', () => {
         }
       ],
       identifier: {
-        key: 'infinteChild',
+        key: 'infiniteChild',
         namespace: ''
       },
       name: 'child',
@@ -265,7 +265,7 @@ describe('Export as JSON plugin', () => {
         Object.prototype.hasOwnProperty.call(completedTree.openmct, 'infiniteParent')
       ).toBeTruthy();
       expect(
-        Object.prototype.hasOwnProperty.call(completedTree.openmct, 'infinteChild')
+        Object.prototype.hasOwnProperty.call(completedTree.openmct, 'infiniteChild')
       ).toBeTruthy();
 
       done();

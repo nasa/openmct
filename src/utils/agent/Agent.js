@@ -24,7 +24,7 @@
  * info using a comparison between the userAgent and key
  * device names
  * @constructor
- * @param window the broser object model
+ * @param window the browser object model
  * @memberof /utils/agent
  */
 export default class Agent {

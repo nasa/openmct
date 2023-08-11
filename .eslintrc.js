@@ -28,6 +28,8 @@ module.exports = {
     }
   },
   rules: {
+    'vue/no-v-for-template-key': 'off',
+    'vue/no-v-for-template-key-on-child': 'error',
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
     'you-dont-need-lodash-underscore/throttle': 'off',

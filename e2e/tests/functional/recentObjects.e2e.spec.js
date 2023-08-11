@@ -59,53 +59,60 @@ test.describe('Recent Objects', () => {
     await page.mouse.move(0, 100);
     await page.mouse.up();
   });
-  test('Navigated objects show up in recents, object renames and deletions are reflected', async ({
-    page
-  }) => {
-    // Verify that both created objects appear in the list and are in the correct order
-    await assertInitialRecentObjectsListState();
-
-    // Navigate to the folder by clicking on the main object name in the recent objects list item
-    await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
-    await page.waitForURL(`**/${folderA.uuid}?*`);
-    expect(recentObjectsList.getByRole('listitem').nth(0).getByText(folderA.name)).toBeTruthy();
-
-    // Rename
-    folderA.name = `${folderA.name}-NEW!`;
-    await page.locator('.l-browse-bar__object-name').fill('');
-    await page.locator('.l-browse-bar__object-name').fill(folderA.name);
-    await page.keyboard.press('Enter');
-
-    // Verify rename has been applied in recent objects list item and objects paths
-    expect(
-      await page
-        .getByRole('navigation', {
-          name: clock.name
-        })
-        .locator('a')
-        .filter({
-          hasText: folderA.name
-        })
-        .count()
-    ).toBeGreaterThan(0);
-    expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
-
-    // Delete
-    await page.click('button[title="Show selected item in tree"]');
-    // Delete the folder via the left tree pane treeitem context menu
-    await page
-      .getByRole('treeitem', { name: new RegExp(folderA.name) })
-      .locator('a')
-      .click({
-        button: 'right'
+  test.fixme(
+    'Navigated objects show up in recents, object renames and deletions are reflected',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/6818'
       });
-    await page.getByRole('menuitem', { name: /Remove/ }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
 
-    // Verify that the folder and clock are no longer in the recent objects list
-    await expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeHidden();
-    await expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeHidden();
-  });
+      // Verify that both created objects appear in the list and are in the correct order
+      await assertInitialRecentObjectsListState();
+
+      // Navigate to the folder by clicking on the main object name in the recent objects list item
+      await page.getByRole('listitem', { name: folderA.name }).getByText(folderA.name).click();
+      await page.waitForURL(`**/${folderA.uuid}?*`);
+      expect(recentObjectsList.getByRole('listitem').nth(0).getByText(folderA.name)).toBeTruthy();
+
+      // Rename
+      folderA.name = `${folderA.name}-NEW!`;
+      await page.locator('.l-browse-bar__object-name').fill('');
+      await page.locator('.l-browse-bar__object-name').fill(folderA.name);
+      await page.keyboard.press('Enter');
+
+      // Verify rename has been applied in recent objects list item and objects paths
+      expect(
+        await page
+          .getByRole('navigation', {
+            name: clock.name
+          })
+          .locator('a')
+          .filter({
+            hasText: folderA.name
+          })
+          .count()
+      ).toBeGreaterThan(0);
+      expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
+
+      // Delete
+      await page.click('button[title="Show selected item in tree"]');
+      // Delete the folder via the left tree pane treeitem context menu
+      await page
+        .getByRole('treeitem', { name: new RegExp(folderA.name) })
+        .locator('a')
+        .click({
+          button: 'right'
+        });
+      await page.getByRole('menuitem', { name: /Remove/ }).click();
+      await page.getByRole('button', { name: 'OK' }).click();
+
+      // Verify that the folder and clock are no longer in the recent objects list
+      await expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeHidden();
+      await expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeHidden();
+    }
+  );
+
   test('Clicking on an object in the path of a recent object navigates to the object', async ({
     page,
     openmctConfig

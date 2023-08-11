@@ -41,7 +41,7 @@ test.describe('Form Validation Behavior', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     await page.click('button:has-text("Create")');
-    await page.click(':nth-match(:text("Folder"), 2)');
+    await page.getByRole('menuitem', { name: ' Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
     await page.click('text=Properties Title Notes >> input[type="text"]');
@@ -192,8 +192,12 @@ test.describe('Persistence operations @couchdb', () => {
     ]);
 
     //Slow down the test a bit
-    await expect(page.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
-    await expect(page2.getByRole('treeitem', { name: `  ${myItemsFolderName}` })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: `Expand ${myItemsFolderName} folder` })
+    ).toBeVisible();
+    await expect(
+      page2.getByRole('button', { name: `Expand ${myItemsFolderName} folder` })
+    ).toBeVisible();
 
     // Both pages: Click the Create button
     await Promise.all([

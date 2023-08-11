@@ -27,7 +27,7 @@ export default {
     this.status = this.openmct.status.get(identifier);
     this.removeStatusListener = this.openmct.status.observe(identifier, this.setStatus);
   },
-  destroyed() {
+  unmounted() {
     this.removeStatusListener();
   }
 };

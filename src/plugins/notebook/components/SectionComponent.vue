@@ -94,7 +94,7 @@ export default {
       const removeSection = {
         cssClass: 'icon-trash',
         name: this.removeActionString,
-        callback: this.getRemoveDialog.bind(this)
+        onItemClicked: this.getRemoveDialog
       };
 
       this.popupMenuItems = [removeSection];

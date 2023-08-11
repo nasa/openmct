@@ -147,7 +147,7 @@ export default {
     this.fetchStatusSummary();
     this.openmct.user.status.on('statusChange', this.fetchStatusSummary);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.user.status.off('statusChange', this.fetchStatusSummary);
     this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
   },
