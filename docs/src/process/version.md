@@ -53,7 +53,7 @@ requirements.
 
 Additionally, the following project-specific standards will be used:
 
-* During development, a "-SNAPSHOT" suffix shall be appended to the
+* During development, a "-next" suffix shall be appended to the
   version number. The version number before the suffix shall reflect
   the next expected version number for release.
 * Prior to a 1.0.0 release, the _minor_ version will be incremented
@@ -93,7 +93,7 @@ numbers by the following process:
 
 1. Update version number in `package.json`
   1. Checkout branch created for the last sprint that has been successfully tested.
-  2. Remove a `-SNAPSHOT` suffix from the version in `package.json`.
+  2. Remove a `-next` suffix from the version in `package.json`.
   3. Verify that resulting version number meets semantic versioning
      requirements relative to previous stable version. Increment the 
      version number if necessary.
@@ -138,7 +138,7 @@ numbers by the following process:
   1. Create a new branch off the `master` branch.
   2. Remove any suffix from the version number, 
      or increment the _patch_ version if there is no suffix.
-  3. Append a `-SNAPSHOT` suffix.
+  3. Append a `-next` suffix.
   4. Commit changes to `package.json` on the `master` branch.
      The commit message should reference the sprint being opened,
      preferably by a URL reference to the associated Milestone in
@@ -150,6 +150,6 @@ numbers by the following process:
 Projects dependent on Open MCT being co-developed by the Open MCT
 team should follow a similar process, except that they should
 additionally update their dependency on Open MCT to point to the
-latest archive when removing their `-SNAPSHOT` status, and
+latest archive when removing their `-next` status, and
 that they should be pointed back to the `master` branch after
 this has completed.
