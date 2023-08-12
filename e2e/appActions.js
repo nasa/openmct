@@ -220,6 +220,64 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 }
 
 /**
+ * Create a standardized Telemetry Object (Sine Wave Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests).
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createExampleTelemetryObject(page, parent = 'mine') {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+  // TODO: Make this field even more accessible
+  const name = 'VIPER Rover Heading';
+  const nameInputLocator = page.getByRole('dialog').locator('input[type="text"]');
+
+  await page.goto(`${parentUrl}?hideTree=true`);
+
+  await page.locator('button:has-text("Create")').click();
+
+  await page.locator('li:has-text("Sine Wave Generator")').click();
+
+  await nameInputLocator.fill(name);
+
+  // Fill out the fields with default values
+  await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
+  await page.getByRole('spinbutton', { name: 'Amplitude' }).fill('1');
+  await page.getByRole('spinbutton', { name: 'Offset' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Data Rate (hz)' }).fill('1');
+  await page.getByRole('spinbutton', { name: 'Phase (radians)' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Randomness' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('0');
+
+  await page.getByRole('button', { name: 'Save' }).click();
+
+  // Wait until the URL is updated
+  await page.waitForURL(`**/${parent}/*`);
+
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name,
+    uuid,
+    url
+  };
+}
+
+/**
+ * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url The url to the domainObject
+ * @param {string | number} start The starting time bound in milliseconds since epoch
+ * @param {string | number} end The ending time bound in milliseconds since epoch
+ */
+async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
+  await page.goto(
+    `${url}?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${start}&tc.endBound=${end}`
+  );
+}
+
+/**
  * Open the given `domainObject`'s context menu from the object tree.
  * Expands the path to the object and scrolls to it if necessary.
  *
@@ -282,13 +340,13 @@ async function getFocusedObjectUuid(page) {
  * URLs returned will be of the form `'./browse/#/mine/<uuid0>/<uuid1>/...'`
  *
  * @param {import('@playwright/test').Page} page
- * @param {string} uuid the uuid of the object to get the url for
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier the uuid or identifier of the object to get the url for
  * @returns {Promise<string>} the url of the object
  */
-async function getHashUrlToDomainObject(page, uuid) {
-  await page.waitForLoadState('load'); //Add some determinism
-  const hashUrl = await page.evaluate(async (objectUuid) => {
-    const path = await window.openmct.objects.getOriginalPath(objectUuid);
+async function getHashUrlToDomainObject(page, identifier) {
+  await page.waitForLoadState('load');
+  const hashUrl = await page.evaluate(async (objectIdentifier) => {
+    const path = await window.openmct.objects.getOriginalPath(objectIdentifier);
     let url =
       './#/browse/' +
       [...path]
@@ -302,7 +360,7 @@ async function getHashUrlToDomainObject(page, uuid) {
     }
 
     return url;
-  }, uuid);
+  }, identifier);
 
   return hashUrl;
 }
@@ -311,6 +369,7 @@ async function getHashUrlToDomainObject(page, uuid) {
  * Utilizes the OpenMCT API to detect if the UI is in Edit mode.
  * @private
  * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
  * @return {Promise<boolean>} true if the Open MCT is in Edit Mode
  */
 async function _isInEditMode(page, identifier) {
@@ -563,6 +622,7 @@ async function getCanvasPixels(page, canvasSelector) {
 // eslint-disable-next-line no-undef
 module.exports = {
   createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
   expandEntireTree,
@@ -570,6 +630,7 @@ module.exports = {
   getCanvasPixels,
   getHashUrlToDomainObject,
   getFocusedObjectUuid,
+  navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
