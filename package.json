@@ -54,7 +54,7 @@
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
-    "nasa-grammar": "1.1.0",
+    "nasa-grammar": "1.1.1",
     "nyc": "15.1.0",
     "painterro": "1.2.78",
     "plotly.js-basic-dist": "2.20.0",
