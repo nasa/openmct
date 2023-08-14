@@ -285,7 +285,12 @@ test.describe('Basic Condition Set Use', () => {
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.goto(exampleTelemetry.url);
+    // Edit SWG to add 8 second loading delay
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+    await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
+    await page.getByLabel('Save').click();
+
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
