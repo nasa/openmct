@@ -480,6 +480,12 @@ async function setEndOffset(page, offset) {
   await setTimeConductorOffset(page, offset);
 }
 
+/**
+ * Set the time conductor bounds in fixed time mode
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setTimeConductorBounds(page, startDate, endDate) {
   // Bring up the time conductor popup
   await page.click('.l-shell__time-conductor.c-compact-tc');
@@ -489,6 +495,12 @@ async function setTimeConductorBounds(page, startDate, endDate) {
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the independent time conductor bounds in fixed time mode
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setIndependentTimeConductorBounds(page, startDate, endDate) {
   // Activate Independent Time Conductor in Fixed Time Mode
   await page.getByRole('switch').click();
@@ -502,6 +514,12 @@ async function setIndependentTimeConductorBounds(page, startDate, endDate) {
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the bounds of the visible conductor in fixed time mode
+ * @param {import('@playwright/test').Page} page 
+ * @param {string} startDate 
+ * @param {string} endDate 
+ */
 async function setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
