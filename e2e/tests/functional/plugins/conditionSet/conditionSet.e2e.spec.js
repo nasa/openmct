@@ -280,7 +280,7 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
   });
-  test.only('ConditionSet has correct outputs when telemetry is and is not available', async ({
+  test('ConditionSet has correct outputs when telemetry is and is not available', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
