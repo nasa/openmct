@@ -280,29 +280,23 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
   });
-  test('ConditionSet should output blank instead of the default value when no telemetry available', async ({
+  test.only('ConditionSet has correct outputs when telemetry is and is not available', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
-
-    // Edit SWG to add 8 second loading delay
-    await page.getByTitle('More options').click();
-    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
-    await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
-    await page.getByLabel('Save').click();
 
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.locator('[title="Edit"]').click();
 
-    //Create two conditions
+    // Create two conditions
     await page.locator('#addCondition').click();
     await page.locator('#addCondition').click();
     await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
     await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
 
-    //Add Telemetry to ConditionSet
+    // Add Telemetry to ConditionSet
     const sineWaveGeneratorTreeItem = page
       .getByRole('tree', {
         name: 'Main Tree'
@@ -313,7 +307,7 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    //Modify First Criterion
+    // Modify First Criterion
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
@@ -329,7 +323,7 @@ test.describe('Basic Condition Set Use', () => {
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
     await firstCriterionInput.fill('0');
 
-    //Modify First Criterion
+    // Modify First Criterion
     const secondCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=1'
     );
@@ -348,12 +342,23 @@ test.describe('Basic Condition Set Use', () => {
     const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
 
-    //Save ConditionSet
+    // Save ConditionSet
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    //Expect that the output value is blank or ---
-    const outputValue = page.locator('[aria-label="Current Output Value"]');
+    // Expect that the output value is not blank if receiving telemetry
+    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    await expect(outputValue).not.toHaveText('---');
+    
+    await page.goto(exampleTelemetry.url);
+    // Edit SWG to add 8 second loading delay
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+    await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
+    await page.getByLabel('Save').click();
+    
+    // Expect that the output value is blank or '---' if not receiving telemetry
+    await page.goto(conditionSet.url);
     await expect(outputValue).toHaveText('---');
   });
 });
