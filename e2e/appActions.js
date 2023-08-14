@@ -516,9 +516,9 @@ async function setIndependentTimeConductorBounds(page, startDate, endDate) {
 
 /**
  * Set the bounds of the visible conductor in fixed time mode
- * @param {import('@playwright/test').Page} page 
- * @param {string} startDate 
- * @param {string} endDate 
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
  */
 async function setTimeBounds(page, startDate, endDate) {
   if (startDate) {
