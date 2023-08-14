@@ -24,7 +24,7 @@
     <ul class="c-tree-and-search__tree c-tree c-tree__scrollable" aria-label="Recent Objects">
       <recent-objects-list-item
         v-for="recentObject in recentObjects"
-        :key="`${recentObject.navigationPath}`"
+        :key="recentObject.navigationPath"
         :object-path="recentObject.objectPath"
         :navigation-path="recentObject.navigationPath"
         :domain-object="recentObject.domainObject"
