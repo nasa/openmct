@@ -476,7 +476,10 @@
     "unthrottled",
     "Codecov",
     "dont",
-    "mediump"
+    "mediump",
+    "sinonjs",
+    "generatedata",
+    "grandsearch"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
