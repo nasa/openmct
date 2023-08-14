@@ -350,7 +350,7 @@ test.describe('Basic Condition Set Use', () => {
     // the correct value when the underlying telemetry subscription is active.
     let outputValue = page.locator('[aria-label="Current Output Value"]');
     await expect(outputValue).toHaveText('false');
-  
+
     await page.goto(exampleTelemetry.url);
 
     // Edit SWG to add 8 second loading delay to simulate the case
@@ -359,7 +359,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
     await page.getByLabel('Save').click();
-    
+
     // Expect that the output value is blank or '---' if the
     // underlying telemetry subscription is not active.
     await page.goto(conditionSet.url);
