@@ -219,12 +219,6 @@ export default {
     }
   },
   watch: {
-    visibleItems: {
-      handler(val) {
-        console.debug(`🗺️ visibleItems changed`, val);
-      },
-      deep: true
-    },
     syncTreeNavigation() {
       this.searchValue = '';
 
@@ -256,7 +250,6 @@ export default {
     },
     focusedItems: {
       handler(val, oldVal) {
-        console.debug(`🍇 focused items changed`, val);
         this.updateVisibleItems();
       },
       deep: true
@@ -678,7 +671,6 @@ export default {
       );
     },
     sortTreeItems(parentObjectPath) {
-      console.log(`👾 Should possibly be sorting tree items`);
       const navigationPath = this.buildNavigationPath(parentObjectPath);
       const parentItem = this.getTreeItemByPath(navigationPath);
 
