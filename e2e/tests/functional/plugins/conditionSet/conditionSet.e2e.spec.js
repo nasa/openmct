@@ -219,7 +219,7 @@ test.describe('Basic Condition Set Use', () => {
       name: 'Test Condition Set'
     });
   });
-  test('Creating a condition defaults the condition name to Unnamed Condition', async ({
+  test('Creating a condition defaults the condition name to "Unnamed Condition"', async ({
     page
   }) => {
     await page.goto(conditionSet.url);
@@ -230,7 +230,9 @@ test.describe('Basic Condition Set Use', () => {
     // Click Add Condition button
     await page.locator('#addCondition').click();
     // Check that the new Unnamed Condition section appears
-    const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
+    const numOfUnnamedConditions = await page
+      .locator('.c-condition__name', { hasText: 'Unnamed Condition' })
+      .count();
     expect(numOfUnnamedConditions).toEqual(1);
   });
   test('ConditionSet should display appropriate view options', async ({ page }) => {
