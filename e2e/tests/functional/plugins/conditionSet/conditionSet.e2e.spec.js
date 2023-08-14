@@ -27,7 +27,10 @@ demonstrate some playwright for test developers. This pattern should not be re-u
 */
 
 const { test, expect } = require('../../../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject
+} = require('../../../../appActions');
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
@@ -216,7 +219,9 @@ test.describe('Basic Condition Set Use', () => {
       name: 'Test Condition Set'
     });
   });
-  test('Can add a condition', async ({ page }) => {
+  test('Creating a condition defaults the condition name to Unnamed Condition', async ({
+    page
+  }) => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
@@ -228,7 +233,6 @@ test.describe('Basic Condition Set Use', () => {
     const numOfUnnamedConditions = await page.locator('text=Unnamed Condition').count();
     expect(numOfUnnamedConditions).toEqual(1);
   });
-
   test('ConditionSet should display appropriate view options', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
@@ -266,9 +270,9 @@ test.describe('Basic Condition Set Use', () => {
     await alphaGeneratorTreeItem.dragTo(conditionCollection);
     await betaGeneratorTreeItem.dragTo(conditionCollection);
 
-    const saveButtonLocator = page.locator('button[title="Save"]');
-    await saveButtonLocator.click();
+    await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
     await page.click('button[title="Change the current view"]');
 
     await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
@@ -276,78 +280,74 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
   });
-  test('ConditionSet should output blank instead of the default value', async ({ page }) => {
-    //Navigate to baseURL
-    const swg = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      customParameters: {
-        "[aria-label='Loading Delay (ms)']": '8000'
-      }
-    });
+  test('ConditionSet should output blank instead of the default value when no telemetry available', async ({
+    page
+  }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.goto(swg.url);
+    await page.goto(exampleTelemetry.url);
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.locator('[title="Edit"]').click();
 
-    // Click Add Condition button twice
+    //Create two conditions
     await page.locator('#addCondition').click();
     await page.locator('#addCondition').click();
     await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
     await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
 
+    //Add Telemetry to ConditionSet
     const sineWaveGeneratorTreeItem = page
       .getByRole('tree', {
         name: 'Main Tree'
       })
       .getByRole('treeitem', {
-        name: swg.name
+        name: exampleTelemetry.name
       });
     const conditionCollection = page.locator('#conditionCollection');
-
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
+    //Modify First Criterion
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    firstCriterionTelemetry.selectOption({ label: swg.name });
-
-    const secondCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
-    );
-    secondCriterionTelemetry.selectOption({ label: swg.name });
-
+    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
     const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
     firstCriterionMetadata.selectOption({ label: 'Sine' });
+    const firstCriterionComparison = page.locator(
+      '[aria-label="Criterion Comparison Selection"] >> nth=0'
+    );
+    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
+    await firstCriterionInput.fill('0');
+
+    //Modify First Criterion
+    const secondCriterionTelemetry = page.locator(
+      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
+    );
+    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
 
     const secondCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=1'
     );
     secondCriterionMetadata.selectOption({ label: 'Sine' });
 
-    const firstCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=0'
-    );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
-
     const secondCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=1'
     );
     secondCriterionComparison.selectOption({ label: 'is less than' });
 
-    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
-
     const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
 
-    const saveButtonLocator = page.locator('button[title="Save"]');
-    await saveButtonLocator.click();
+    //Save ConditionSet
+    await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    //Expect that the output value is blank or ---
     const outputValue = page.locator('[aria-label="Current Output Value"]');
     await expect(outputValue).toHaveText('---');
   });
