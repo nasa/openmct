@@ -495,8 +495,7 @@ async function setIndependentTimeConductorBounds(page, startDate, endDate) {
 
   // Bring up the time conductor popup
   await page.click('.c-conductor-holder--compact .c-compact-tc');
-
-  await expect(page.locator('.itc-popout')).toBeVisible();
+  await expect(page.locator('.itc-popout')).toBeInViewport();
 
   await setTimeBounds(page, startDate, endDate);
 
