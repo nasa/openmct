@@ -1,0 +1,8 @@
+{
+  "default": true,
+  "noProgress": false,
+  "fix": true,
+  "outputFormatters": [["markdownlint-cli2-formatter-pretty"]],
+  "ignores": ["node_modules"],
+  "globs": ["**/*.md", "*.md", "*/*.md"]
+}
