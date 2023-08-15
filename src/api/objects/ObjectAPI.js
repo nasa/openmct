@@ -555,39 +555,35 @@ export default class ObjectAPI {
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
     const telemetryPath = [];
-    if (['folder'].includes(objectDetails.type)) {
+    if (objectDetails.type === 'folder') {
       return telemetryPath;
     }
 
     let sourceTelemetry = null;
-    let isParentSameAsChild = true;
-    Object.keys(identifier).forEach((key) => {
-      if (identifier[key] !== telemetryIdentifier[key]) {
-        isParentSameAsChild = false;
-      }
-    });
-    if (isParentSameAsChild) {
+    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
       sourceTelemetry = identifier;
     } else if (objectDetails.composition) {
       sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
-        sourceTelemetry = objectDetails.composition.find(
-          (telemetrySource) =>
-            this.makeKeyString(telemetrySource) === this.makeKeyString(telemetryIdentifier)
+        sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
+          utils.identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
     }
+
     const compositionElement = await this.get(sourceTelemetry);
     if (!['yamcs.telemetry', 'generator', 'yamcs.aggregate'].includes(compositionElement.type)) {
       return telemetryPath;
     }
+
     const telemetryPathObjects = await this.getOriginalPath(compositionElement.identifier);
-    telemetryPathObjects.forEach((pathObject) => {
+    telemetryPathObjects.reverse().forEach((pathObject) => {
       if (pathObject.type === 'root') {
         return;
       }
-      telemetryPath.unshift(pathObject.name);
+      telemetryPath.push(pathObject.name);
     });
+
     return telemetryPath;
   }
 
