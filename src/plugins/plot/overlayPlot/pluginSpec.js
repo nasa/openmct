@@ -185,7 +185,6 @@ describe('the plugin', function () {
     let testTelemetryObject;
     let testTelemetryObject2;
     let config;
-    let component;
     let mockComposition;
     let destroyPlot;
 
@@ -305,7 +304,7 @@ describe('the plugin', function () {
       let viewContainer = document.createElement('div');
       child.appendChild(viewContainer);
       const composition = openmct.composition.get(overlayPlotObject);
-      const { vNode, destroy } = mount(
+      const { destroy } = mount(
         {
           components: {
             Plot
@@ -323,7 +322,6 @@ describe('the plugin', function () {
         }
       );
 
-      component = vNode.componentInstance;
       destroyPlot = destroy;
 
       await telemetryPromise;
@@ -393,6 +391,7 @@ describe('the plugin', function () {
       });
 
       afterEach(() => {
+        destroyPlotOptions();
         openmct.router.path = null;
       });
 
@@ -431,7 +430,6 @@ describe('the plugin', function () {
   describe('The overlay plot view with single axes', () => {
     let testTelemetryObject;
     let config;
-    let component;
     let mockComposition;
     let destroyOverlayPlot;
 
@@ -497,7 +495,7 @@ describe('the plugin', function () {
       const composition = openmct.composition.get(overlayPlotObject);
       const viewContainer = document.createElement('div');
       child.appendChild(viewContainer);
-      const { vNode, destroy } = mount(
+      const { destroy } = mount(
         {
           components: {
             Plot
@@ -515,7 +513,6 @@ describe('the plugin', function () {
         }
       );
 
-      component = vNode.componentInstance;
       destroyOverlayPlot = destroy;
 
       await telemetryPromise;
