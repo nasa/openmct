@@ -65,6 +65,9 @@ export default {
   },
   unmounted() {
     this.openmct.router.off('change:path', this.onPathChange);
+    Object.values(this.nameChangeListeners).forEach((unlisten) => {
+      unlisten();
+    });
   },
   methods: {
     addNameListenerFor(domainObject) {
@@ -270,6 +273,9 @@ export default {
             label: 'OK',
             callback: () => {
               localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+              Object.values(this.nameChangeListeners).forEach((unlisten) => {
+                unlisten();
+              });
               this.recents = [];
               dialog.dismiss();
               this.$emit('setClearButtonDisabled', true);
