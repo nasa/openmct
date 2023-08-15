@@ -114,7 +114,7 @@ export default {
       });
     }
   },
-  ummounted() {
+  unmounted() {
     Object.values(this.nameChangeListeners).forEach((unlisten) => {
       unlisten();
     });

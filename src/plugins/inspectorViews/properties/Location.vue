@@ -76,7 +76,7 @@ export default {
     this.nameChangeListeners = {};
     await this.createPathBreadCrumb();
   },
-  ummounted() {
+  unmounted() {
     Object.values(this.nameChangeListeners).forEach((unlisten) => {
       unlisten();
     });
