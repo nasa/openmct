@@ -144,7 +144,7 @@ export default {
       newFrameLocation: [],
       identifierMap: {},
       containers: this.layoutObject.configuration.containers,
-      rowsLayout: this.layoutObject.configuration.rowsLayout,
+      rowsLayout: this.layoutObject.configuration.rowsLayout
     };
   },
   computed: {
@@ -219,7 +219,6 @@ export default {
 
       this.containers.splice(containerIndex, 1);
 
-      
       // add a container when there are no containers in the FL,
       // to prevent user from not being able to add a frame via
       // drag and drop.

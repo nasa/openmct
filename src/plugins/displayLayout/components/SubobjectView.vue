@@ -37,7 +37,7 @@
       :layout-font-size="item.fontSize"
       :layout-font="item.font"
     />
-</LayoutFrame>
+  </LayoutFrame>
 </template>
 
 <script>
