@@ -126,6 +126,6 @@
     "ios_saf >= 16",
     "Safari >= 16"
   ],
-  "author": "",
+  "author": "National Aeronautics and Space Administration",
   "license": "Apache-2.0"
 }
