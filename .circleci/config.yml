@@ -236,7 +236,7 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node16-lint
+          name: node18-lint
           node-version: lts/gallium
       - unit-test:
           name: node18-chrome
@@ -255,7 +255,7 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-chrome-nightly
+          name: node18-chrome-nightly
           node-version: lts/gallium
       - unit-test:
           name: node18-chrome
