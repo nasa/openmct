@@ -57,13 +57,22 @@ class TooltipAPI {
    * @private for platform-internal use
    */
   showTooltip(tooltip) {
+    this.removeAllTooltips();
+    this.activeToolTips.push(tooltip);
+    tooltip.show();
+  }
+
+  /**
+   * API method to allow for removing all tooltips
+   */
+  removeAllTooltips() {
+    if (!this.activeToolTips?.length) {
+      return;
+    }
     for (let i = this.activeToolTips.length - 1; i > -1; i--) {
       this.activeToolTips[i].destroy();
       this.activeToolTips.splice(i, 1);
     }
-    this.activeToolTips.push(tooltip);
-
-    tooltip.show();
   }
 
   /**
