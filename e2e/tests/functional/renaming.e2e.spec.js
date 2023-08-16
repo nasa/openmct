@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify branding related components.
+This test suite is dedicated to tests for renaming objects, and their global application effects.
 */
 
 const { test, expect } = require('../../baseFixtures.js');
