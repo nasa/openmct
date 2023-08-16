@@ -482,12 +482,16 @@ async function setEndOffset(page, offset) {
 
 /**
  * Set the time conductor bounds in fixed time mode
+ * 
+ * NOTE: Unless explicitly testing the Time Conductor itself, it is advised to instead
+ * navigate directly to the object with the desired time bounds using `navigateToObjectWithFixedTimeBounds()`.
  * @param {import('@playwright/test').Page} page
  * @param {string} startDate
  * @param {string} endDate
  */
 async function setTimeConductorBounds(page, startDate, endDate) {
   // Bring up the time conductor popup
+  expect(await page.locator('.l-shell__time-conductor.c-compact-tc').count()).toBe(1);
   await page.click('.l-shell__time-conductor.c-compact-tc');
 
   await setTimeBounds(page, startDate, endDate);
