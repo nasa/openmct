@@ -482,7 +482,7 @@ async function setEndOffset(page, offset) {
 
 /**
  * Set the time conductor bounds in fixed time mode
- * 
+ *
  * NOTE: Unless explicitly testing the Time Conductor itself, it is advised to instead
  * navigate directly to the object with the desired time bounds using `navigateToObjectWithFixedTimeBounds()`.
  * @param {import('@playwright/test').Page} page
