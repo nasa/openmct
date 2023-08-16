@@ -188,7 +188,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.click(`li:text("Plan")`);
 
   // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(name);
 
@@ -640,6 +640,21 @@ async function getCanvasPixels(page, canvasSelector) {
   return getTelemValuePromise;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
+ * @param {string} url
+ * @param {string} newName
+ */
+async function renameObjectFromContextMenu(page, url, newName) {
+  await openObjectTreeContextMenu(page, url);
+  await page.click('li:text("Edit Properties")');
+  const nameInput = page.getByLabel('Title', { exact: true });
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  await page.click('[aria-label="Save"]');
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
   createDomainObjectWithDefaults,
@@ -660,5 +675,6 @@ module.exports = {
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
   selectInspectorTab,
-  waitForPlotsToRender
+  waitForPlotsToRender,
+  renameObjectFromContextMenu
 };
