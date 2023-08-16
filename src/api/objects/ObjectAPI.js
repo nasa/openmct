@@ -579,7 +579,8 @@ export default class ObjectAPI {
     const telemetryPathObjects = await this.getOriginalPath(compositionElement.identifier);
     telemetryPath = telemetryPathObjects
       .reverse()
-      .filter((pathObject) => pathObject.type !== 'root');
+      .filter((pathObject) => pathObject.type !== 'root')
+      .map((pathObject) => pathObject.name);
 
     return telemetryPath;
   }
