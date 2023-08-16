@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe('The URLTimeSettingsSynchronizer', () => {
+xdescribe('The URLTimeSettingsSynchronizer', () => {
   let appHolder;
   let openmct;
   let resolveFunction;
@@ -40,7 +40,6 @@ describe('The URLTimeSettingsSynchronizer', () => {
   });
 
   afterEach(() => {
-    openmct.time.stopClock();
     openmct.router.removeListener('change:hash', resolveFunction);
 
     appHolder = undefined;

@@ -13,7 +13,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
-    'plugin:vue/recommended',
+    'plugin:vue/vue3-recommended',
     'plugin:you-dont-need-lodash-underscore/compatible',
     'plugin:prettier/recommended'
   ],
@@ -28,6 +28,10 @@ module.exports = {
     }
   },
   rules: {
+    'vue/no-deprecated-dollar-listeners-api': 'warn',
+    'vue/no-deprecated-events-api': 'warn',
+    'vue/no-v-for-template-key': 'off',
+    'vue/no-v-for-template-key-on-child': 'error',
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
     'you-dont-need-lodash-underscore/throttle': 'off',

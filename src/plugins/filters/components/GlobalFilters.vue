@@ -101,7 +101,7 @@ export default {
       this.expanded = !this.expanded;
     },
     clearFilters(key) {
-      this.$set(this.updatedFilters, key, {});
+      this.updatedFilters[key] = {};
       this.$emit('persistGlobalFilters', key, this.updatedFilters);
     },
     updateFiltersWithSelectedValue(key, comparator, valueName, value) {
@@ -112,26 +112,26 @@ export default {
           filterValue[comparator].push(valueName);
         } else {
           if (filterValue[comparator].length === 1) {
-            this.$set(this.updatedFilters, key, {});
+            this.updatedFilters[key] = {};
           } else {
             filterValue[comparator] = filterValue[comparator].filter((v) => v !== valueName);
           }
         }
       } else {
-        this.$set(this.updatedFilters[key], comparator, [valueName]);
+        this.updatedFilters[key][comparator] = [valueName];
       }
 
       this.$emit('persistGlobalFilters', key, this.updatedFilters);
     },
     updateSingleSelection(key, comparator, value) {
-      this.$set(this.updatedFilters[key], comparator, [value]);
+      this.updatedFilters[key][comparator] = [value];
       this.$emit('persistGlobalFilters', key, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
-        this.$set(this.updatedFilters, key, {});
+        this.updatedFilters[key] = {};
       } else {
-        this.$set(this.updatedFilters[key], comparator, value);
+        this.updatedFilters[key][comparator] = value;
       }
 
       this.$emit('persistGlobalFilters', key, this.updatedFilters);

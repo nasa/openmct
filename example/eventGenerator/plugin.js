@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventTelmetryProvider from './EventTelemetryProvider';
+import EventTelemetryProvider from './EventTelemetryProvider';
 import EventMetadataProvider from './EventMetadataProvider';
 
 export default function EventGeneratorPlugin(options) {
@@ -36,7 +36,7 @@ export default function EventGeneratorPlugin(options) {
         };
       }
     });
-    openmct.telemetry.addProvider(new EventTelmetryProvider());
+    openmct.telemetry.addProvider(new EventTelemetryProvider());
     openmct.telemetry.addProvider(new EventMetadataProvider());
   };
 }

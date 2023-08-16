@@ -184,7 +184,7 @@
           :selected="focusedImageIndex === index && isPaused"
           :real-time="!isFixed"
           :viewable-area="focusedImageIndex === index ? viewableArea : null"
-          @click.native="thumbnailClicked(index)"
+          @click="thumbnailClicked(index)"
         />
       </div>
 
@@ -209,6 +209,7 @@ import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from '../../imagery/mixins/imageryData';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -255,7 +256,7 @@ export default {
     }
   },
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -271,6 +272,8 @@ export default {
       autoScroll: true,
       thumbnailClick: THUMBNAIL_CLICKED,
       isPaused: false,
+      isFixed: false,
+      canTrackDuration: false,
       refreshCSS: false,
       focusedImageIndex: undefined,
       focusedImageRelatedTelemetry: {},
@@ -285,7 +288,6 @@ export default {
       viewHeight: 0,
       lockCompass: true,
       resizingWindow: false,
-      timeContext: undefined,
       zoomFactor: ZOOM_SCALE_DEFAULT,
       filters: {
         brightness: 100,
@@ -373,16 +375,6 @@ export default {
       let age = this.numericDuration;
 
       return age < cutoff && !this.refreshCSS;
-    },
-    canTrackDuration() {
-      let hasClock;
-      if (this.timeContext) {
-        hasClock = this.timeContext.clock();
-      } else {
-        hasClock = this.openmct.time.clock();
-      }
-
-      return hasClock && this.timeSystem.isUTCBased;
     },
     isNextDisabled() {
       let disabled = false;
@@ -530,16 +522,6 @@ export default {
 
       return isFresh;
     },
-    isFixed() {
-      let clock;
-      if (this.timeContext) {
-        clock = this.timeContext.clock();
-      } else {
-        clock = this.openmct.time.clock();
-      }
-
-      return clock === undefined;
-    },
     isSelectable() {
       return true;
     },
@@ -668,7 +650,6 @@ export default {
       this.isPaused = true;
     }
 
-    this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
     // related telemetry keys
@@ -720,7 +701,7 @@ export default {
 
     this.openmct.selection.on('change', this.updateSelection);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.abortController.abort();
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
@@ -774,14 +755,29 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       //listen
-      this.timeContext.on('timeSystem', this.trackDuration);
-      this.timeContext.on('clock', this.trackDuration);
+      this.timeContext.on('timeSystem', this.setModeAndTrackDuration);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setModeAndTrackDuration);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setModeAndTrackDuration);
+      this.setModeAndTrackDuration();
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('timeSystem', this.trackDuration);
-        this.timeContext.off('clock', this.trackDuration);
+        this.timeContext.off('timeSystem', this.setModeAndTrackDuration);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setModeAndTrackDuration);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setModeAndTrackDuration);
       }
+    },
+    setModeAndTrackDuration() {
+      this.setIsFixed();
+      this.setCanTrackDuration();
+      this.trackDuration();
+    },
+    setIsFixed() {
+      this.isFixed = this.timeContext.isRealTime() === false;
+    },
+    setCanTrackDuration() {
+      let isRealTime = this.timeContext.isRealTime();
+      this.canTrackDuration = isRealTime && this.timeSystem.isUTCBased;
     },
     updateSelection(selection) {
       const selectionType = selection?.[0]?.[0]?.context?.type;
@@ -793,7 +789,7 @@ export default {
       }
     },
     expand() {
-      // check for modifier keys so it doesnt interfere with the layout
+      // check for modifier keys so it doesn't interfere with the layout
       if (this.cursorStates.modifierKeyPressed) {
         return;
       }
@@ -803,21 +799,25 @@ export default {
         this.currentView
       );
       const visibleActions = actionCollection.getVisibleActions();
-      const viewLargeAction =
-        visibleActions && visibleActions.find((action) => action.key === 'large.view');
+      const viewLargeAction = visibleActions?.find((action) => action.key === 'large.view');
 
-      if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
+      if (viewLargeAction?.appliesTo(this.objectPath, this.currentView)) {
         viewLargeAction.invoke(this.objectPath, this.currentView);
       }
     },
     async initializeRelatedTelemetry() {
-      this.relatedTelemetry = new RelatedTelemetry(this.openmct, this.domainObject, [
-        ...this.spacecraftPositionKeys,
-        ...this.spacecraftOrientationKeys,
-        ...this.cameraKeys,
-        ...this.sunKeys,
-        ...this.transformationsKeys
-      ]);
+      this.relatedTelemetry = new RelatedTelemetry(
+        this.openmct,
+        this.domainObject,
+        [
+          ...this.spacecraftPositionKeys,
+          ...this.spacecraftOrientationKeys,
+          ...this.cameraKeys,
+          ...this.sunKeys,
+          ...this.transformationsKeys
+        ],
+        this.timeContext
+      );
 
       if (this.relatedTelemetry.hasRelatedTelemetry) {
         await this.relatedTelemetry.load();
@@ -898,7 +898,7 @@ export default {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const timeForAnnotation = foundAnnotation.targets[targetId].time;
         if (!this.imageryAnnotations[timeForAnnotation]) {
-          this.$set(this.imageryAnnotations, timeForAnnotation, []);
+          this.imageryAnnotations[timeForAnnotation] = [];
         }
 
         const annotationExtant = this.imageryAnnotations[timeForAnnotation].some(
@@ -962,10 +962,10 @@ export default {
           let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
           if (!valuesOnTelemetry) {
-            this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
+            this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
           }
 
-          this.$set(this.focusedImageRelatedTelemetry, key, value);
+          this.focusedImageRelatedTelemetry[key] = value;
         }
       }
 
@@ -974,7 +974,7 @@ export default {
         const transformations = this.relatedTelemetry[key];
 
         if (transformations !== undefined) {
-          this.$set(this.imageHistory[this.focusedImageIndex], key, transformations);
+          this.imageHistory[this.focusedImageIndex][key] = transformations;
         }
       });
     },
@@ -988,7 +988,7 @@ export default {
         if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
           this.relatedTelemetry[key].subscribe((datum) => {
             let valueKey = this.relatedTelemetry[key].realtime.valueKey;
-            this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+            this.latestRelatedTelemetry[key] = datum[valueKey];
           });
         }
       });
@@ -1086,7 +1086,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.focusedImageTimestamp = undefined;
+      this.$emit('update:focusedImageTimestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;
@@ -1111,7 +1111,7 @@ export default {
       window.clearInterval(this.durationTracker);
     },
     updateDuration() {
-      let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
+      let currentTime = this.timeContext.isRealTime() ? this.timeContext.now() : undefined;
       if (currentTime === undefined) {
         this.numericDuration = currentTime;
       } else if (Number.isInteger(this.parsedSelectedTime)) {

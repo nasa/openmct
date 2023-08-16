@@ -80,7 +80,7 @@ export default {
     this.openmct.selection.on('change', this.showSelection);
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.editor.off('isEditing', this.setEditState);
     this.openmct.selection.off('change', this.showSelection);
 

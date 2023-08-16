@@ -28,7 +28,7 @@ export default {
       isStale: false
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.triggerUnsubscribeFromStaleness();
   },
   methods: {

@@ -22,11 +22,11 @@
 <template>
   <div class="c-search" :class="{ 'is-active': active === true }">
     <input
+      v-bind="$attrs"
       class="c-search__input"
       aria-label="Search Input"
       tabindex="10000"
       type="search"
-      v-bind="$attrs"
       :value="value"
       v-on="inputListeners"
     />

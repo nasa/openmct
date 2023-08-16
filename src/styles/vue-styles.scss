@@ -1,5 +1,6 @@
 @import '../api/overlays/components/dialog-component.scss';
 @import '../api/overlays/components/overlay-component.scss';
+@import '../api/tooltips/components/tooltip-component.scss';
 @import '../plugins/condition/components/conditionals.scss';
 @import '../plugins/conditionWidget/components/condition-widget.scss';
 @import '../plugins/condition/components/inspector/conditional-styles.scss';
@@ -23,7 +24,6 @@
 @import '../plugins/telemetryTable/components/table.scss';
 @import '../plugins/timeConductor/conductor.scss';
 @import '../plugins/timeConductor/conductor-axis.scss';
-@import '../plugins/timeConductor/conductor-mode.scss';
 @import '../plugins/timeConductor/conductor-mode-icon.scss';
 @import '../plugins/timeConductor/date-picker.scss';
 @import '../plugins/timeline/timeline.scss';

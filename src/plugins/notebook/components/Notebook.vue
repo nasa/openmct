@@ -137,7 +137,10 @@
             @entry-selection="entrySelection(entry)"
           />
         </div>
-        <div v-if="showLockButton" class="c-notebook__commit-entries-control">
+        <div
+          v-if="isRestricted && filteredAndSortedEntries?.length > 0 && !selectedPage.isLocked"
+          class="c-notebook__commit-entries-control"
+        >
           <button
             class="c-button c-button--major commit-button icon-lock"
             title="Commit entries and lock this page from further changes"
@@ -219,15 +222,13 @@ export default {
       notebookAnnotations: {},
       selectedEntryId: undefined,
       activeTransaction: false,
-      savingTransaction: false
+      savingTransaction: false,
+      sections: this.domainObject.configuration.sections || []
     };
   },
   computed: {
     pages() {
       return this.getPages() || [];
-    },
-    sections() {
-      return this.getSections();
     },
     selectedPage() {
       const pages = this.getPages();
@@ -279,15 +280,6 @@ export default {
       }
 
       return sidebarClasses;
-    },
-    showLockButton() {
-      const entries = getNotebookEntries(
-        this.domainObject,
-        this.selectedSection,
-        this.selectedPage
-      );
-
-      return entries && entries.length > 0 && this.isRestricted && !this.selectedPage.isLocked;
     }
   },
   watch: {
@@ -332,7 +324,7 @@ export default {
       this.filterAndSortEntries
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.abortController.abort();
     if (this.unlisten) {
       this.unlisten();
@@ -405,7 +397,7 @@ export default {
         const targetId = Object.keys(foundAnnotation.targets)[0];
         const entryId = foundAnnotation.targets[targetId].entryId;
         if (!this.notebookAnnotations[entryId]) {
-          this.$set(this.notebookAnnotations, entryId, []);
+          this.notebookAnnotations[entryId] = [];
         }
 
         const annotationExtant = this.notebookAnnotations[entryId].some((existingAnnotation) => {
@@ -422,10 +414,9 @@ export default {
       });
     },
     filterAndSortEntries() {
-      const filterTime = Date.now();
+      const filterTime = this.openmct.time.now();
       const pageEntries =
         getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
-
       const hours = parseInt(this.showTime, 10);
       const filteredPageEntriesByTime = hours
         ? pageEntries.filter((entry) => filterTime - entry.createdOn <= hours * 60 * 60 * 1000)
@@ -485,7 +476,6 @@ export default {
           {
             label: 'Lock Page',
             callback: () => {
-              let sections = this.getSections();
               this.selectedPage.isLocked = true;
 
               // cant be default if it's locked
@@ -497,7 +487,12 @@ export default {
                 this.selectedSection.isLocked = true;
               }
 
-              mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+              mutateObject(
+                this.openmct,
+                this.domainObject,
+                'configuration.sections',
+                this.sections
+              );
 
               if (!this.domainObject.locked) {
                 mutateObject(this.openmct, this.domainObject, 'locked', true);
@@ -717,9 +712,6 @@ export default {
     getSection(id) {
       return this.sections.find((s) => s.id === id);
     },
-    getSections() {
-      return this.domainObject.configuration.sections || [];
-    },
     getSearchResults() {
       if (!this.search.length) {
         return [];
@@ -810,28 +802,17 @@ export default {
       this.searchResults = output;
     },
     getPages() {
-      const selectedSection = this.selectedSection;
-      if (!selectedSection || !selectedSection.pages.length) {
+      if (!this.selectedSection || !this.selectedSection.pages.length) {
         return [];
       }
 
-      return selectedSection.pages;
+      return this.selectedSection.pages;
     },
     getSelectedPageId() {
-      const page = this.selectedPage;
-      if (!page) {
-        return undefined;
-      }
-
-      return page.id;
+      return this.selectedPage?.id;
     },
     getSelectedSectionId() {
-      const section = this.selectedSection;
-      if (!section) {
-        return undefined;
-      }
-
-      return section.id;
+      return this.selectedSection?.id;
     },
     async newEntry(embed, event) {
       this.startTransaction();
@@ -975,7 +956,10 @@ export default {
       });
     },
     sectionsChanged({ sections, id = undefined }) {
+      this.sections = [...sections];
+      this.startTransaction();
       mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
+      this.saveTransaction();
       this.updateDefaultNotebookSection(sections, id);
     },
     selectPage(pageId) {

@@ -48,7 +48,6 @@
 
 <script>
 const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
-
 export default {
   inject: ['openmct', 'indicator', 'configuration'],
   props: {
@@ -63,7 +62,6 @@ export default {
   },
   data() {
     return {
-      allRoles: [],
       role: '--',
       pollQuestionUpdated: '--',
       currentPollQuestion: DEFAULT_POLL_QUESTION,
@@ -78,26 +76,27 @@ export default {
         left: `${this.positionX}px`,
         top: `${this.positionY}px`
       };
+    },
+    canProvideStatusForRole() {
+      return this.openmct.user.canProvideStatusForRole(this.role);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.user.status.off('statusChange', this.setStatus);
     this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
+    this.openmct.user.off('roleChanged', this.fetchMyStatus);
   },
   async mounted() {
     this.unsubscribe = [];
     await this.fetchUser();
-    await this.findFirstApplicableRole();
     this.fetchPossibleStatusesForUser();
     this.fetchCurrentPoll();
-    this.fetchMyStatus();
+    await this.fetchMyStatus();
     this.subscribeToMyStatus();
     this.subscribeToPollQuestion();
+    this.subscribeToRoleChange();
   },
   methods: {
-    async findFirstApplicableRole() {
-      this.role = await this.openmct.user.status.getStatusRoleForCurrentUser();
-    },
     async fetchUser() {
       this.user = await this.openmct.user.getCurrentUser();
     },
@@ -117,9 +116,22 @@ export default {
       this.indicator.text(pollQuestion?.question || '');
     },
     async fetchMyStatus() {
-      const activeStatusRole = await this.openmct.user.status.getStatusRoleForCurrentUser();
-      const status = await this.openmct.user.status.getStatusForRole(activeStatusRole);
+      // hide indicator for observer
+      const isStatusCapable = await this.openmct.user.canProvideStatusForRole();
+      if (!isStatusCapable) {
+        this.indicator.text('');
+        this.indicator.statusClass('hidden');
 
+        return;
+      }
+
+      const activeRole = await this.openmct.user.getActiveRole();
+      if (!activeRole) {
+        return;
+      }
+
+      this.role = activeRole;
+      const status = await this.openmct.user.status.getStatusForRole(activeRole);
       if (status !== undefined) {
         this.setStatus({ status });
       }
@@ -130,7 +142,10 @@ export default {
     subscribeToPollQuestion() {
       this.openmct.user.status.on('pollQuestionChange', this.setPollQuestion);
     },
-    setStatus({ role, status }) {
+    subscribeToRoleChange() {
+      this.openmct.user.on('roleChanged', this.fetchMyStatus);
+    },
+    setStatus({ status }) {
       status = this.applyStyling(status);
       this.selectedStatus = status.key;
       this.indicator.iconClass(status.iconClassPoll);
@@ -148,11 +163,16 @@ export default {
       return this.allStatuses.find((possibleMatch) => possibleMatch.key === statusKey);
     },
     async changeStatus() {
+      if (!this.openmct.user.canProvideStatusForRole()) {
+        this.openmct.notifications.error('Selected role is ineligible to provide operator status');
+
+        return;
+      }
+
       if (this.selectedStatus !== undefined) {
         const statusObject = this.findStatusByKey(this.selectedStatus);
 
-        const result = await this.openmct.user.status.setStatusForRole(this.role, statusObject);
-
+        const result = await this.openmct.user.status.setStatusForRole(statusObject);
         if (result === true) {
           this.openmct.notifications.info('Successfully set operator status');
         } else {

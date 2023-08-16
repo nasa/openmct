@@ -22,13 +22,11 @@
 
 <template>
   <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @onChange="onChange">
-    <div class="c-form-row__label" :title="row.description">
+    <label class="c-form-row__label" :title="row.description" :for="`form-${row.key}`">
       {{ row.name }}
-    </div>
+    </label>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
-    <div v-if="row.control" class="c-form-row__controls">
-      <div ref="rowElement"></div>
-    </div>
+    <div v-if="row.control" ref="rowElement" class="c-form-row__controls"></div>
   </div>
 </template>
 
@@ -91,7 +89,7 @@ export default {
 
     this.formControl.show(this.$refs.rowElement, this.row, this.onChange);
   },
-  destroyed() {
+  unmounted() {
     const destroy = this.formControl.destroy;
     if (destroy) {
       destroy();

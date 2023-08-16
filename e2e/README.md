@@ -72,11 +72,15 @@ Visual Testing is an essential part of our e2e strategy as it ensures that the a
 For a better understanding of the visual issues which affect Open MCT, please see our bug tracker with the `label:visual` filter applied [here](https://github.com/nasa/openmct/issues?q=label%3Abug%3Avisual+)
 To read about how to write a good visual test, please see [How to write a great Visual Test](#how-to-write-a-great-visual-test).
 
-`npm run test:e2e:visual` will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
+`npm run test:e2e:visual` commands will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
 
+ - `npm run test:e2e:visual:ci` will run against every commit and PR.
+ - `npm run test:e2e:visual:full` will run every night with additional comparisons made for Larger Displays and with the `snow` theme.
 #### Percy.io
 
-To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics)
+To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics).
+
+At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots. 
 
 ### (Advanced) Snapshot Testing
 
@@ -133,7 +137,7 @@ These tests are expected to become blocking and gating with assertions as we ext
 
 ## Test Architecture and CI
 
-### Architecture (TODO)
+### Architecture
 
 ### File Structure
 
@@ -182,6 +186,7 @@ Current list of test tags:
 |`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
 |`@unstable` | A new test or test which is known to be flaky.|
 |`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
+|`@generatedata` | Indicates that a test is used to generate testdata or test the generated test data. Usually to be associated with localstorage, but this may grow over time.|
 
 ### Continuous Integration
 
@@ -200,6 +205,7 @@ CircleCI
 - Stable e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
+- Visual tests are run in a single resolution on the default `espresso` theme
 
 #### 2. Per-Merge Testing
 
@@ -207,18 +213,19 @@ Github Actions / Workflow
 
 - Full suite against all browsers/projects. Triggered with Github Label Event 'pr:e2e'
 - CouchDB Tests. Triggered on PR Create and again with Github Label Event 'pr:e2e:couchdb'
-- Visual Tests. Triggered with Github Label Event 'pr:visual'
 
 #### 3. Scheduled / Batch Testing
 
 Nightly Testing in Circle CI
 
-- Full e2e suite against ubuntu and chrome
+- Full e2e suite against ubuntu and chrome, firefox, and an MMOC resolution profile
 - Performance tests against ubuntu and chrome
+- CouchDB suite
+- Visual Tests are run in the full profile
 
 Github Actions / Workflow
 
-- Visual Test baseline generation.
+- None at the moment
 
 #### Parallelism and Fast Feedback
 
@@ -250,7 +257,7 @@ A testcase and testsuite are to be unmarked as @unstable when:
 
 #### **What's supported:**
 
-We are leveraging the `browserslist` project to declare our supported list of browsers.
+We are leveraging the `browserslist` project to declare our supported list of browsers. We support macOS, Windows, and ubuntu 20+.
 
 #### **Where it's tested:**
 
@@ -264,10 +271,16 @@ We also have the need to execute our e2e tests across this published list of bro
   - A stable version of Chromium from the official chromium channels. This is always at least 1 version ahead of desktop chrome.
 - `playwright-chrome`
   - The stable channel of Chrome from the official chrome channels. This is always 2 versions behind chromium.
+- `playwright-firefox`
+  - Firefox Latest Stable. Modified slightly by the playwright team to support a CDP Shim.
+
+In terms of operating system testing, we're only limited by what the CI providers are able to support. The bulk of our testing is performed on the official playwright container which is based on ubuntu. Github Actions allows us to use `windows-latest` and `mac-latest` and is run as needed.
 
 #### **Mobile**
 
 We have the Mission-need to support iPad. To run our iPad suite, please see our `playwright-*.config.js` with the 'iPad' project.
+
+In general, our test suite is not designed to run against mobile devices as the mobile experience is a focused version of the application. Core functionality is missing (chiefly the 'Create' button) and so this will likely turn into a separate suite.
 
 #### **Skipping or executing tests based on browser, os, and/os browser version:**
 
@@ -314,7 +327,7 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
     - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
   - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
 
-### How to write a great test (WIP)
+### How to write a great test
 
 - Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
   - Use `waitForPlotsToRender()` before asserting against anything that is dependent upon plot series data being loaded and drawn.
@@ -328,7 +341,26 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
   await notesInput.fill(testNotes);
   ```
 
-#### How to write a great visual test (TODO)
+#### How to write a great visual test
+
+ - Generally speaking, you should avoid being "specific" in what you hope to find in the diff. Visual tests are best suited for finding unknown unknowns.
+ - These should only use functional expect statements to verify assumptions about the state
+in a test and not for functional verification of correctness. Visual tests are not supposed
+to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
+ - A great visual test controls for the variation inherent to working with time-based telemetry and clocks. We do our best to remove this variation by using `percyCSS` to ignore all possible time-based components. For more, please see our [percyCSS file](./.percy.ci.yml).
+ - Additionally, you should try the following:
+   - Use fixed-time mode of Open MCT
+   - Use the `createExampleTelemetryObject` appAction to source telemetry
+   - When using the `createDomainObjectWithDefaults` appAction, make sure to specify a `name` which is explicit to avoid the autogenerated name
+ - Very likely, your test will not need to compare changes on the tree. Keep it out of the comparison with the following
+   - `await page.goto('./#/browse/mine')` will go to the root of the main view with the tree collapsed.
+ - If you only want to compare changes on a specific component, use the /visual/component/ folder and limit the scope of the comparison to the object like so:
+   - ```
+      await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
+            scope: treePane
+        });
+    ```js
+ - The `scope` variable can be any valid css selector
 
 #### How to write a great network test
 

@@ -114,7 +114,7 @@ export default {
       this.updateGlobalFilters
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addChildren);
     this.composition.off('remove', this.removeChildren);
     this.unobserve();
@@ -136,21 +136,21 @@ export default {
       };
 
       if (metadataWithFilters.length) {
-        this.$set(this.children, keyString, childObject);
+        this.children[keyString] = childObject;
 
         metadataWithFilters.forEach((metadatum) => {
           if (!this.globalFilters[metadatum.key]) {
-            this.$set(this.globalFilters, metadatum.key, {});
+            this.globalFilters[metadatum.key] = {};
           }
 
           if (!this.globalMetadata[metadatum.key]) {
-            this.$set(this.globalMetadata, metadatum.key, metadatum);
+            this.globalMetadata[metadatum.key] = metadatum;
           }
 
           if (!hasFiltersWithKeyString) {
             if (!this.persistedFilters[keyString]) {
-              this.$set(this.persistedFilters, keyString, {});
-              this.$set(this.persistedFilters[keyString], 'useGlobal', true);
+              this.persistedFilters[keyString] = {};
+              this.persistedFilters[keyString].useGlobal = true;
               mutateFilters = true;
             }
 
@@ -173,14 +173,14 @@ export default {
 
       if (globalFiltersToRemove.length > 0) {
         globalFiltersToRemove.forEach((key) => {
-          this.$delete(this.globalFilters, key);
-          this.$delete(this.globalMetadata, key);
+          delete this.globalFilters[key];
+          delete this.globalMetadata[key];
         });
         this.mutateConfigurationGlobalFilters();
       }
 
-      this.$delete(this.children, keyString);
-      this.$delete(this.persistedFilters, keyString);
+      delete this.children[keyString];
+      delete this.persistedFilters[keyString];
       this.mutateConfigurationFilters();
     },
     getGlobalFiltersToRemove(keyString) {
@@ -239,10 +239,10 @@ export default {
           this.containsField(keyString, key)
         ) {
           if (!this.persistedFilters[keyString][key]) {
-            this.$set(this.persistedFilters[keyString], key, {});
+            this.persistedFilters[keyString][key] = {};
           }
 
-          this.$set(this.persistedFilters[keyString], key, filters[key]);
+          this.persistedFilters[keyString][key] = filters[key];
           mutateFilters = true;
         }
       });

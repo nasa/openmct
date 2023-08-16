@@ -20,16 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
- * This test suite template is to be used when verifying Test Data files found in /e2e/test-data/
- */
+import SelectionComponent from './components/SelectionComponent.vue';
+import Overlay from './Overlay';
+import mount from 'utils/mount';
 
-const { test } = require('../../baseFixtures');
+class Selection extends Overlay {
+  constructor({
+    iconClass,
+    title,
+    message,
+    selectionOptions,
+    onChange,
+    currentSelection,
+    ...options
+  }) {
+    const { vNode, destroy } = mount({
+      components: {
+        SelectionComponent: SelectionComponent
+      },
+      provide: {
+        iconClass,
+        title,
+        message,
+        selectionOptions,
+        onChange,
+        currentSelection
+      },
+      template: '<selection-component></selection-component>'
+    });
 
-test.describe('recycled_local_storage @localStorage', () => {
-  //We may want to do some additional level of verification of this file. For now, we just verify that it exists and can be used in a test suite.
-  test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
-  test('Can use recycled_local_storage file', async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
-});
+    const component = vNode.componentInstance;
+
+    super({
+      element: component.$el,
+      size: 'fit',
+      dismissable: false,
+      onChange,
+      currentSelection,
+      ...options
+    });
+
+    this.once('destroy', () => {
+      destroy();
+    });
+  }
+}
+
+export default Selection;

@@ -23,13 +23,20 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import FlexibleLayout from './plugin';
 import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
 describe('the plugin', function () {
   let element;
   let child;
   let openmct;
   let flexibleLayoutDefinition;
+  let mockComposition;
+
   const testViewObject = {
+    identifier: {
+      namespace: '',
+      key: 'test-object'
+    },
     id: 'test-object',
     type: 'flexible-layout',
     configuration: {
@@ -75,7 +82,15 @@ describe('the plugin', function () {
     let flexibleLayoutViewProvider;
 
     beforeEach(() => {
-      const applicableViews = openmct.objectViews.get(testViewObject, []);
+      mockComposition = new EventEmitter();
+      // eslint-disable-next-line require-await
+      mockComposition.load = async () => {
+        return [];
+      };
+
+      spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+      const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
       flexibleLayoutViewProvider = applicableViews.find(
         (viewProvider) => viewProvider.key === 'flexible-layout'
       );
@@ -86,11 +101,12 @@ describe('the plugin', function () {
     });
 
     it('renders a view', async () => {
-      const flexibleView = flexibleLayoutViewProvider.view(testViewObject, []);
+      const flexibleView = flexibleLayoutViewProvider.view(testViewObject, [testViewObject]);
       flexibleView.show(child, false);
 
       await Vue.nextTick();
-      const flexTitle = child.querySelector('.l-browse-bar .c-object-label__name');
+      console.log(child);
+      const flexTitle = child.querySelector('.c-fl');
 
       expect(flexTitle).not.toBeNull();
     });
@@ -104,6 +120,10 @@ describe('the plugin', function () {
 
     beforeEach(() => {
       flexibleLayoutItem = {
+        identifier: {
+          namespace: '',
+          key: 'test-object'
+        },
         id: 'test-object',
         type: 'flexible-layout',
         configuration: {

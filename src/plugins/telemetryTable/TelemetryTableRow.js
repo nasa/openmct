@@ -22,13 +22,14 @@
 
 define([], function () {
   class TelemetryTableRow {
-    constructor(datum, columns, objectKeyString, limitEvaluator) {
+    constructor(datum, columns, objectKeyString, limitEvaluator, inPlaceUpdateKey) {
       this.columns = columns;
 
       this.datum = createNormalizedDatum(datum, columns);
       this.fullDatum = datum;
       this.limitEvaluator = limitEvaluator;
       this.objectKeyString = objectKeyString;
+      this.inPlaceUpdateKey = inPlaceUpdateKey;
     }
 
     getFormattedDatum(headers) {
@@ -88,6 +89,18 @@ define([], function () {
     getContextMenuActions() {
       return ['viewDatumAction', 'viewHistoricalData'];
     }
+
+    updateWithDatum(updatesToDatum) {
+      const normalizedUpdatesToDatum = createNormalizedDatum(updatesToDatum, this.columns);
+      this.datum = {
+        ...this.datum,
+        ...normalizedUpdatesToDatum
+      };
+      this.fullDatum = {
+        ...this.fullDatum,
+        ...updatesToDatum
+      };
+    }
   }
 
   /**
@@ -101,7 +114,10 @@ define([], function () {
     const normalizedDatum = JSON.parse(JSON.stringify(datum));
 
     Object.values(columns).forEach((column) => {
-      normalizedDatum[column.getKey()] = column.getRawValue(datum);
+      const rawValue = column.getRawValue(datum);
+      if (rawValue !== undefined) {
+        normalizedDatum[column.getKey()] = rawValue;
+      }
     });
 
     return normalizedDatum;

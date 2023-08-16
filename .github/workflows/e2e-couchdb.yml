@@ -1,13 +1,17 @@
 name: 'e2e-couchdb'
 on:
+  push:
+    branches: master
   workflow_dispatch:
   pull_request:
     types:
       - labeled
       - opened
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   e2e-couchdb:
-    if: github.event.label.name == 'pr:e2e:couchdb' || github.event.action == 'opened' && github.actor == 'dependabot[bot]'
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -24,15 +28,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       
-      - run: npm install --cache ~/.npm --prefer-offline --no-audit --progress=false
+      - run: npm install --cache ~/.npm --no-audit --progress=false
 
       - name: Login to DockerHub
-        uses: docker/login-action@v2 
+        uses: docker/login-action@v2
+        continue-on-error: true
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - run: npx playwright@1.32.3 install
+      - run: npx playwright@1.36.2 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
@@ -45,6 +50,7 @@ jobs:
       - name: Run CouchDB Tests and publish to deploysentinel
         env:
           DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
 
       - name: Publish Results to Codecov.io

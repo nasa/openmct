@@ -22,7 +22,12 @@
 <template>
   <span
     :class="[controlClass, { 'c-disclosure-triangle--expanded': value }, { 'is-enabled': enabled }]"
+    tabindex="0"
+    role="button"
+    :aria-label="ariaLabelValue"
+    :aria-expanded="value ? 'true' : 'false'"
     @click="handleClick"
+    @keydown.enter="handleClick"
   ></span>
 </template>
 
@@ -42,6 +47,18 @@ export default {
     controlClass: {
       type: String,
       default: 'c-disclosure-triangle'
+    },
+    domainObject: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  computed: {
+    ariaLabelValue() {
+      const name = this.domainObject.name ? ` ${this.domainObject.name}` : '';
+      const type = this.domainObject.type ? ` ${this.domainObject.type}` : '';
+
+      return `${this.value ? 'Collapse' : 'Expand'}${name}${type}`;
     }
   },
   methods: {

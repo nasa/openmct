@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import Annotations from './AnnotationsInspectorView.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default function AnnotationsViewProvider(openmct) {
   return {
@@ -37,30 +37,38 @@ export default function AnnotationsViewProvider(openmct) {
       return selection.length;
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
-        show: function (el) {
-          component = new Vue({
-            el,
-            components: {
-              Annotations
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Annotations
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<Annotations />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<Annotations />`
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

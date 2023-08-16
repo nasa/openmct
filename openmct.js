@@ -56,6 +56,7 @@ if (document.currentScript) {
  * @property {import('./src/api/notifications/NotificationAPI').default} notifications
  * @property {import('./src/api/Editor').default} editor
  * @property {import('./src/api/overlays/OverlayAPI')} overlays
+ * @property {import('./src/api/tooltips/ToolTipAPI')} tooltips
  * @property {import('./src/api/menu/MenuAPI').default} menus
  * @property {import('./src/api/actions/ActionsAPI').default} actions
  * @property {import('./src/api/status/StatusAPI').default} status

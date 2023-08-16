@@ -19,18 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 const { test, expect, streamToString } = require('../../../../pluginFixtures');
+const { openObjectTreeContextMenu } = require('../../../../appActions');
 const {
-  openObjectTreeContextMenu,
-  createDomainObjectWithDefaults
-} = require('../../../../appActions');
-const path = require('path');
-const nbUtils = require('../../../../helper/notebookUtils');
+  lockPage,
+  dragAndDropEmbed,
+  enterTextEntry,
+  startAndAddRestrictedNotebookObject
+} = require('../../../../helper/notebookUtils');
 
 const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';
-const CUSTOM_NAME = 'CUSTOM_NAME';
 
 test.describe('Restricted Notebook', () => {
   let notebook;
@@ -68,7 +68,7 @@ test.describe('Restricted Notebook', () => {
   });
 
   test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
-    await nbUtils.enterTextEntry(page, TEST_TEXT);
+    await enterTextEntry(page, TEST_TEXT);
 
     const commitButton = page.locator('button:has-text("Commit Entries")');
     expect(await commitButton.count()).toEqual(1);
@@ -79,7 +79,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
   let notebook;
   test.beforeEach(async ({ page }) => {
     notebook = await startAndAddRestrictedNotebookObject(page);
-    await nbUtils.enterTextEntry(page, TEST_TEXT);
+    await enterTextEntry(page, TEST_TEXT);
     await lockPage(page);
 
     // open sidebar
@@ -125,7 +125,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     expect.soft(newPageCount).toEqual(1);
 
     // enter test text
-    await nbUtils.enterTextEntry(page, TEST_TEXT);
+    await enterTextEntry(page, TEST_TEXT);
 
     // expect new page to be lockable
     const commitButton = page.getByRole('button', { name: ' Commit Entries' });
@@ -134,9 +134,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     // Click the context menu button for the new page
     await page.getByTitle('Open context menu').click();
     // Delete the page
-    await page.getByRole('listitem', { name: 'Delete Page' }).click();
+    await page.getByRole('menuitem', { name: 'Delete Page' }).click();
     // Click OK button
-    await page.getByRole('button', { name: 'Ok' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // deleted page, should no longer exist
     const deletedPageElement = page.getByText(TEST_TEXT_NAME);
@@ -147,12 +147,12 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 test.describe('Restricted Notebook with a page locked and with an embed @addInit', () => {
   test.beforeEach(async ({ page }) => {
     const notebook = await startAndAddRestrictedNotebookObject(page);
-    await nbUtils.dragAndDropEmbed(page, notebook);
+    await dragAndDropEmbed(page, notebook);
   });
 
   test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
-    // Click .c-ne__embed__name .c-popup-menu-button
-    await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
+    // Click embed popup menu
+    await page.locator('.c-ne__embed__name .c-icon-button').click();
 
     const embedMenu = page.locator('body >> .c-menu');
     await expect(embedMenu).toContainText('Remove This Embed');
@@ -160,8 +160,8 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
 
   test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
     await lockPage(page);
-    // Click .c-ne__embed__name .c-popup-menu-button
-    await page.locator('.c-ne__embed__name .c-icon-button').click(); // embed popup menu
+    // Click embed popup menu
+    await page.locator('.c-ne__embed__name .c-icon-button').click();
 
     const embedMenu = page.locator('body >> .c-menu');
     await expect(embedMenu).not.toContainText('Remove This Embed');
@@ -174,7 +174,7 @@ test.describe('can export restricted notebook as text', () => {
   });
 
   test('basic functionality ', async ({ page }) => {
-    await nbUtils.enterTextEntry(page, `Foo bar entry`);
+    await enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
     await page.locator('button[title="More options"]').click();
     const downloadPromise = page.waitForEvent('download');
@@ -182,6 +182,8 @@ test.describe('can export restricted notebook as text', () => {
     await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
 
     await page.getByRole('button', { name: 'Save' }).click();
+
+    //Verify exported text as a stream of text instead of a file read from the filesystem
     const download = await downloadPromise;
     const readStream = await download.createReadStream();
     const exportedText = await streamToString(readStream);
@@ -193,26 +195,3 @@ test.describe('can export restricted notebook as text', () => {
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function startAndAddRestrictedNotebookObject(page) {
-  await page.addInitScript({
-    path: path.join(__dirname, '../../../../helper/', 'addInitRestrictedNotebook.js')
-  });
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  return createDomainObjectWithDefaults(page, { type: CUSTOM_NAME });
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function lockPage(page) {
-  const commitButton = page.locator('button:has-text("Commit Entries")');
-  await commitButton.click();
-
-  //Wait until Lock Banner is visible
-  await page.locator('text=Lock Page').click();
-}

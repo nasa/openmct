@@ -33,8 +33,8 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="ladTable in ladTableObjects">
-          <tr :key="ladTable.key" class="c-table__group-header js-lad-table-set__table-headers">
+        <template v-for="ladTable in ladTableObjects" :key="ladTable.key">
+          <tr class="c-table__group-header js-lad-table-set__table-headers">
             <td colspan="10">
               {{ ladTable.domainObject.name }}
             </td>
@@ -74,7 +74,6 @@ export default {
     return {
       ladTableObjects: [],
       ladTelemetryObjects: {},
-      compositions: [],
       viewContext: {},
       staleObjects: [],
       configuration: this.ladTableConfiguration.getConfiguration()
@@ -115,6 +114,9 @@ export default {
       return '';
     }
   },
+  created() {
+    this.compositions = [];
+  },
   mounted() {
     this.ladTableConfiguration.on('change', this.handleConfigurationChange);
     this.composition = this.openmct.composition.get(this.domainObject);
@@ -125,7 +127,7 @@ export default {
 
     this.stalenessSubscription = {};
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
     this.composition.off('add', this.addLadTable);
     this.composition.off('remove', this.removeLadTable);
@@ -147,7 +149,7 @@ export default {
       ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
       ladTable.objectPath = [domainObject, ...this.objectPath];
 
-      this.$set(this.ladTelemetryObjects, ladTable.key, []);
+      this.ladTelemetryObjects[ladTable.key] = [];
       this.ladTableObjects.push(ladTable);
 
       let composition = this.openmct.composition.get(ladTable.domainObject);
@@ -178,7 +180,7 @@ export default {
         this.unwatchStaleness(combinedKey);
       });
 
-      this.$delete(this.ladTelemetryObjects, ladTable.key);
+      delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
     },
     reorderLadTables(reorderPlan) {
@@ -201,7 +203,7 @@ export default {
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
         telemetryObjects.push(telemetryObject);
 
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
         this.stalenessSubscription[combinedKey] = {};
         this.stalenessSubscription[combinedKey].stalenessUtils = new StalenessUtils(
@@ -236,7 +238,7 @@ export default {
         this.unwatchStaleness(combinedKey);
 
         telemetryObjects.splice(index, 1);
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
       };
     },
     unwatchStaleness(combinedKey) {

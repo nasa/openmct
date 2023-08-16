@@ -80,7 +80,7 @@ test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
 test.describe('CouchDB initialization with mocked responses @couchdb', () => {
   test.use({ failOnConsoleError: false });
   test("'My Items' folder is created if it doesn't exist", async ({ page }) => {
-    const mockedMissingObjectResponsefromCouchDB = {
+    const mockedMissingObjectResponseFromCouchDB = {
       status: 404,
       contentType: 'application/json',
       body: JSON.stringify({})
@@ -92,7 +92,7 @@ test.describe('CouchDB initialization with mocked responses @couchdb', () => {
     await page.route(
       '**/mine',
       (route) => {
-        route.fulfill(mockedMissingObjectResponsefromCouchDB);
+        route.fulfill(mockedMissingObjectResponseFromCouchDB);
       },
       { times: 1 }
     );

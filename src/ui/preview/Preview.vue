@@ -83,7 +83,7 @@ export default {
 
     this.setView(this.viewProviders[0]);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.stopListeningStyles) {
       this.stopListeningStyles();
     }
@@ -97,7 +97,7 @@ export default {
       this.actionCollection.destroy();
     }
   },
-  destroyed() {
+  unmounted() {
     if (!this.existingView) {
       this.view.destroy();
     } else if (this.existingViewElement) {
@@ -134,7 +134,7 @@ export default {
 
       if (isExistingView) {
         this.view = this.existingView;
-        this.existingViewElement = this.existingView.parentElement.firstChild;
+        this.existingViewElement = this.existingView.parentElement.firstElementChild;
         this.currentViewProvider = this.viewProviders[this.existingViewIndex];
       } else {
         this.currentViewProvider = viewProvider;
@@ -156,9 +156,7 @@ export default {
       delete this.existingViewElement;
     },
     initializeViewContainer() {
-      this.viewContainer = document.createElement('div');
-      this.viewContainer.classList.add('l-angular-ov-wrapper');
-      this.$refs.objectView.append(this.viewContainer);
+      this.viewContainer = this.$refs.objectView;
     },
     getActionsCollection(view) {
       if (this.actionCollection) {

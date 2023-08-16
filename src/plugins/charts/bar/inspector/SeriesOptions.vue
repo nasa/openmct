@@ -115,7 +115,7 @@ export default {
       this.initColorAndName
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeBarStylesListener) {
       this.removeBarStylesListener();
     }

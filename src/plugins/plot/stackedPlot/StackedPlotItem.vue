@@ -23,14 +23,13 @@
   <div :aria-label="`Stacked Plot Item ${childObject.name}`"></div>
 </template>
 <script>
-import MctPlot from '../MctPlot.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import conditionalStylesMixin from './mixins/objectStyles-mixin';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import StalenessUtils from '@/utils/staleness';
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
-import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import Plot from '../Plot.vue';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],
@@ -63,7 +62,7 @@ export default {
     showLimitLineLabels: {
       type: Object,
       default() {
-        return {};
+        return undefined;
       }
     },
     colorPalette: {
@@ -80,6 +79,12 @@ export default {
           rightTickWidth: 0,
           hasMultipleLeftAxes: false
         };
+      }
+    },
+    hideLegend: {
+      type: Boolean,
+      default() {
+        return false;
       }
     }
   },
@@ -104,9 +109,15 @@ export default {
       },
       deep: true
     },
-    staleObjects() {
-      this.isStale = this.staleObjects.length > 0;
-      this.updateComponentProp('isStale', this.isStale);
+    hideLegend(newHideLegend) {
+      this.updateComponentProp('hideLegend', newHideLegend);
+    },
+    staleObjects: {
+      handler() {
+        this.isStale = this.staleObjects.length > 0;
+        this.updateComponentProp('isStale', this.isStale);
+      },
+      deep: true
     }
   },
   mounted() {
@@ -115,15 +126,15 @@ export default {
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
 
     if (this.removeSelectable) {
       this.removeSelectable();
     }
 
-    if (this.component) {
-      this.component.$destroy();
+    if (this._destroy) {
+      this._destroy();
     }
 
     this.destroyStalenessListeners();
@@ -151,8 +162,8 @@ export default {
 
       this.destroyStalenessListeners();
 
-      if (this.component) {
-        this.component.$destroy();
+      if (this._destroy) {
+        this._destroy();
         this.component = null;
         this.$el.innerHTML = '';
       }
@@ -163,7 +174,6 @@ export default {
       const onConfigLoaded = this.onConfigLoaded;
       const onCursorGuideChange = this.onCursorGuideChange;
       const onGridLinesChange = this.onGridLinesChange;
-      const setStatus = this.setStatus;
 
       const openmct = this.openmct;
       const path = this.path;
@@ -173,8 +183,6 @@ export default {
 
       const getProps = this.getProps;
       const isMissing = openmct.objects.isMissing(object);
-      let viewContainer = document.createElement('div');
-      this.$el.append(viewContainer);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object, (isStale) => {
@@ -189,61 +197,58 @@ export default {
         this.composition.load();
       }
 
-      this.component = new Vue({
-        el: viewContainer,
-        components: {
-          MctPlot,
-          ProgressBar
+      const { vNode } = mount(
+        {
+          components: {
+            Plot
+          },
+          provide: {
+            openmct,
+            domainObject: object,
+            path
+          },
+          data() {
+            return {
+              ...getProps(),
+              onYTickWidthChange,
+              onLockHighlightPointUpdated,
+              onHighlightsUpdated,
+              onConfigLoaded,
+              onCursorGuideChange,
+              onGridLinesChange,
+              isMissing,
+              loading: false
+            };
+          },
+          methods: {
+            loadingUpdated(loaded) {
+              this.loading = loaded;
+            }
+          },
+          template: `
+                  <Plot ref="plotComponent" v-if="!isMissing"
+                      :class="{'is-stale': isStale}"
+                      :grid-lines="gridLines"
+                      :hide-legend="hideLegend"
+                      :cursor-guide="cursorGuide"
+                      :parent-limit-line-labels="limitLineLabels"
+                      :options="options"
+                      :parent-y-tick-width="parentYTickWidth"
+                      :color-palette="colorPalette"
+                      @loadingUpdated="loadingUpdated"
+                      @configLoaded="onConfigLoaded"
+                      @lockHighlightPoint="onLockHighlightPointUpdated"
+                      @highlights="onHighlightsUpdated"
+                      @plotYTickWidth="onYTickWidthChange"
+                      @cursorGuide="onCursorGuideChange"
+                      @gridLines="onGridLinesChange"/>`
         },
-        provide: {
-          openmct,
-          domainObject: object,
-          path
-        },
-        data() {
-          return {
-            ...getProps(),
-            onYTickWidthChange,
-            onLockHighlightPointUpdated,
-            onHighlightsUpdated,
-            onConfigLoaded,
-            onCursorGuideChange,
-            onGridLinesChange,
-            setStatus,
-            isMissing,
-            loading: false
-          };
-        },
-        methods: {
-          loadingUpdated(loaded) {
-            this.loading = loaded;
-          }
-        },
-        template: `
-                  <div v-if="!isMissing" ref="plotWrapper"
-                      class="l-view-section u-style-receiver js-style-receiver"
-                      :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced', 'is-stale': isStale}">
-                      <progress-bar
-                          v-show="loading !== false"
-                          class="c-telemetry-table__progress-bar"
-                          :model="{progressPerc: undefined}" />
-                      <mct-plot
-                          :init-grid-lines="gridLines"
-                          :init-cursor-guide="cursorGuide"
-                          :parent-y-tick-width="parentYTickWidth"
-                          :limit-line-labels="limitLineLabels"
-                          :color-palette="colorPalette"
-                          :options="options"
-                          @plotYTickWidth="onYTickWidthChange"
-                          @lockHighlightPoint="onLockHighlightPointUpdated"
-                          @highlights="onHighlightsUpdated"
-                          @configLoaded="onConfigLoaded"
-                          @cursorGuide="onCursorGuideChange"
-                          @gridLines="onGridLinesChange"
-                          @statusUpdated="setStatus"
-                          @loadingUpdated="loadingUpdated"/>
-                  </div>`
-      });
+        {
+          app: this.openmct.app,
+          element: this.$el
+        }
+      );
+      this.component = vNode.componentInstance;
 
       if (this.isEditing) {
         this.setSelection();
@@ -315,10 +320,6 @@ export default {
     onGridLinesChange() {
       this.$emit('gridLines', ...arguments);
     },
-    setStatus(status) {
-      this.status = status;
-      this.updateComponentProp('status', status);
-    },
     setSelection() {
       let childContext = {};
       childContext.item = this.childObject;
@@ -331,12 +332,12 @@ export default {
     },
     getProps() {
       return {
+        hideLegend: this.hideLegend,
         limitLineLabels: this.showLimitLineLabels,
         gridLines: this.gridLines,
         cursorGuide: this.cursorGuide,
         parentYTickWidth: this.parentYTickWidth,
         options: this.options,
-        status: this.status,
         colorPalette: this.colorPalette,
         isStale: this.isStale
       };

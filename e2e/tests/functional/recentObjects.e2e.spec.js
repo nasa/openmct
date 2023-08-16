@@ -62,6 +62,11 @@ test.describe('Recent Objects', () => {
   test('Navigated objects show up in recents, object renames and deletions are reflected', async ({
     page
   }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6818'
+    });
+
     // Verify that both created objects appear in the list and are in the correct order
     await assertInitialRecentObjectsListState();
 
@@ -90,7 +95,6 @@ test.describe('Recent Objects', () => {
     ).toBeGreaterThan(0);
     expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
 
-    // Delete
     await page.click('button[title="Show selected item in tree"]');
     // Delete the folder via the left tree pane treeitem context menu
     await page
@@ -106,6 +110,7 @@ test.describe('Recent Objects', () => {
     await expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeHidden();
     await expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toBeHidden();
   });
+
   test('Clicking on an object in the path of a recent object navigates to the object', async ({
     page,
     openmctConfig

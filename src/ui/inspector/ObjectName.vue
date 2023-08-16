@@ -98,18 +98,25 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.updateSelection(this.openmct.selection.get());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
 
     if (this.statusUnsubscribe) {
       this.statusUnsubscribe();
+    }
+    if (this.nameUnsubscribe) {
+      this.nameUnsubscribe();
     }
   },
   methods: {
     updateSelection(selection) {
       if (this.statusUnsubscribe) {
         this.statusUnsubscribe();
-        this.statusUnsubscribe = undefined;
+        this.statusUnsubscribe = null;
+      }
+      if (this.nameUnsubscribe) {
+        this.nameUnsubscribe();
+        this.nameUnsubscribe = null;
       }
 
       if (selection.length === 0 || selection[0].length === 0) {
@@ -132,6 +139,11 @@ export default {
           this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
           this.status = this.openmct.status.get(this.keyString);
           this.statusUnsubscribe = this.openmct.status.observe(this.keyString, this.updateStatus);
+          this.nameUnsubscribe = this.openmct.objects.observe(
+            this.domainObject,
+            'name',
+            this.updateName
+          );
         } else if (selection[0][0].context.layoutItem) {
           this.layoutItem = selection[0][0].context.layoutItem;
         }
@@ -144,6 +156,9 @@ export default {
     },
     updateStatus(status) {
       this.status = status;
+    },
+    updateName(newName) {
+      this.domainObject = { ...this.domainObject, name: newName };
     }
   }
 };

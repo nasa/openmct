@@ -83,7 +83,7 @@
         <div :style="childrenHeightStyles">
           <tree-item
             v-for="(treeItem, index) in visibleItems"
-            :key="`${treeItem.navigationPath}-${index}`"
+            :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
@@ -97,7 +97,6 @@
             :loading-items="treeItemLoading"
             :targeted-path="targetedPath"
             @tree-item-mounted="scrollToCheck($event)"
-            @tree-item-destroyed="removeCompositionListenerFor($event)"
             @tree-item-action="treeItemAction(treeItem, $event)"
             @tree-item-selection="treeItemSelection(treeItem)"
             @targeted-path-animation-end="targetedPathAnimationEnd()"
@@ -119,6 +118,7 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
+import { markRaw, reactive } from 'vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -248,15 +248,21 @@ export default {
     mainTreeHeight() {
       this.updateVisibleItems();
     },
-    focusedItems() {
-      this.updateVisibleItems();
+    focusedItems: {
+      handler(val, oldVal) {
+        this.updateVisibleItems();
+      },
+      deep: true
     },
-    openTreeItems() {
-      this.setSavedOpenItems();
+    openTreeItems: {
+      handler(val, oldVal) {
+        this.setSavedOpenItems();
+      },
+      deep: true
     }
   },
   async mounted() {
-    await this.initialize();
+    this.initialize();
     await this.loadRoot();
     this.isLoading = false;
 
@@ -278,7 +284,7 @@ export default {
     this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
     this.scrollEndEvent = _.debounce(this.scrollEndEvent, 100);
   },
-  destroyed() {
+  unmounted() {
     if (this.treeResizeObserver) {
       this.treeResizeObserver.disconnect();
     }
@@ -287,7 +293,7 @@ export default {
     this.destroyMutables();
   },
   methods: {
-    async initialize() {
+    initialize() {
       this.observers = {};
       this.mutables = {};
       this.isLoading = true;
@@ -295,7 +301,8 @@ export default {
       this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
       this.treeResizeObserver.observe(this.$el);
 
-      await this.calculateHeights();
+      // need to wait for the first tick to get the height of the tree
+      this.$nextTick().then(this.calculateHeights);
 
       return;
     },
@@ -326,14 +333,15 @@ export default {
     },
     async openTreeItem(parentItem) {
       const parentPath = parentItem.navigationPath;
+      const abortSignal = this.startItemLoad(parentPath);
 
-      this.startItemLoad(parentPath);
       // pass in abort signal when functional
       const childrenItems = await this.loadAndBuildTreeItemsFor(
         parentItem.object.identifier,
-        parentItem.objectPath
+        parentItem.objectPath,
+        abortSignal
       );
-      const parentIndex = this.treeItems.indexOf(parentItem);
+      const parentIndex = this.treeItems.findIndex((item) => item.navigationPath === parentPath);
 
       // if it's not loading, it was aborted
       if (!this.isItemLoading(parentPath) || parentIndex === -1) {
@@ -342,7 +350,9 @@ export default {
 
       this.endItemLoad(parentPath);
 
-      this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(parentIndex + 1, 0, ...childrenItems);
+      this.treeItems = [...newTreeItems];
 
       if (!this.isTreeItemOpen(parentItem)) {
         this.openTreeItems.push(parentPath);
@@ -368,7 +378,7 @@ export default {
         return;
       }
 
-      this.treeItems = this.treeItems.filter((item) => {
+      const newTreeItems = this.treeItems.filter((item) => {
         const otherPath = item.navigationPath;
         if (otherPath !== path && this.isTreeItemAChildOf(otherPath, path)) {
           this.destroyObserverByPath(otherPath);
@@ -379,7 +389,10 @@ export default {
 
         return true;
       });
-      this.openTreeItems.splice(pathIndex, 1);
+      this.treeItems = [...newTreeItems];
+      const newOpenTreeItems = [...this.openTreeItems];
+      newOpenTreeItems.splice(pathIndex, 1);
+      this.openTreeItems = [...newOpenTreeItems];
       this.removeCompositionListenerFor(path);
     },
     closeTreeItem(item) {
@@ -391,12 +404,12 @@ export default {
         this.abortItemLoad(path);
       }
 
-      this.$set(this.treeItemLoading, path, new AbortController());
+      this.treeItemLoading[path] = new AbortController();
 
       return this.treeItemLoading[path].signal;
     },
     endItemLoad(path) {
-      this.$set(this.treeItemLoading, path, undefined);
+      this.treeItemLoading[path] = undefined;
       delete this.treeItemLoading[path];
     },
     abortItemLoad(path) {
@@ -589,7 +602,7 @@ export default {
         }
 
         this.compositionCollections[navigationPath] = {};
-        this.compositionCollections[navigationPath].collection = collection;
+        this.compositionCollections[navigationPath].collection = markRaw(collection);
         this.compositionCollections[navigationPath].addHandler =
           this.compositionAddHandler(navigationPath);
         this.compositionCollections[navigationPath].removeHandler =
@@ -623,14 +636,15 @@ export default {
       let objectPath = [domainObject].concat(parentObjectPath);
       let navigationPath = this.buildNavigationPath(objectPath);
 
-      return {
+      // Ensure that we create reactive objects for the tree
+      return reactive({
         id: this.openmct.objects.makeKeyString(domainObject.identifier),
         object: domainObject,
         leftOffset: (objectPath.length - 1) * TREE_ITEM_INDENT_PX + 'px',
         isNew,
         objectPath,
         navigationPath
-      };
+      });
     },
     addMutable(mutableDomainObject, parentObjectPath) {
       const objectPath = [mutableDomainObject].concat(parentObjectPath);
@@ -694,11 +708,13 @@ export default {
       });
 
       // Splice in all of the sorted descendants
-      this.treeItems.splice(
-        this.treeItems.indexOf(parentItem) + 1,
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(
+        newTreeItems.indexOf(parentItem) + 1,
         sortedTreeItems.length,
         ...sortedTreeItems
       );
+      this.treeItems = [...newTreeItems];
     },
     buildNavigationPath(objectPath) {
       return (
@@ -783,7 +799,9 @@ export default {
       }
 
       const removeIndex = this.getTreeItemIndex(item.navigationPath);
-      this.treeItems.splice(removeIndex, 1);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(removeIndex, 1);
+      this.treeItems = [...newTreeItems];
     },
     addItemToTreeBefore(addItem, beforeItem) {
       const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
@@ -796,7 +814,9 @@ export default {
       this.addItemToTree(addItem, addIndex + 1);
     },
     addItemToTree(addItem, index) {
-      this.treeItems.splice(index, 0, addItem);
+      const newTreeItems = [...this.treeItems];
+      newTreeItems.splice(index, 0, addItem);
+      this.treeItems = [...newTreeItems];
 
       if (this.isTreeItemOpen(addItem)) {
         this.openTreeItem(addItem);

@@ -20,15 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
-    :title="domainObject && domainObject.name"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
   >
-    <object-frame
+    <ObjectFrame
       v-if="domainObject"
       ref="objectFrame"
       :domain-object="domainObject"
@@ -38,7 +37,7 @@
       :layout-font-size="item.fontSize"
       :layout-font="item.font"
     />
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>
@@ -134,7 +133,7 @@ export default {
       this.openmct.objects.get(this.item.identifier).then(this.setObject);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

@@ -21,10 +21,10 @@
 -->
 <template>
   <swim-lane :is-nested="isNested" :status="status">
-    <template slot="label">
+    <template #label>
       {{ heading }}
     </template>
-    <template slot="object">
+    <template #object>
       <svg :height="height" :width="width">
         <symbol id="activity-bar-bg" :height="rowHeight" width="2" preserveAspectRatio="none">
           <rect x="0" y="0" width="100%" height="100%" fill="currentColor" />
@@ -39,7 +39,7 @@
             transform="translate(-0.5, 0)"
           />
         </symbol>
-        <template v-for="(activity, index) in activities">
+        <template v-for="(activity, index) in activities" :key="`g-${activity.clipPathId}`">
           <template v-if="clipActivityNames === true">
             <clipPath :id="activity.clipPathId" :key="activity.clipPathId">
               <rect
@@ -51,7 +51,6 @@
             </clipPath>
           </template>
           <g
-            :key="`g-${activity.clipPathId}`"
             class="c-plan__activity activity-bounds"
             @click="setSelectionForActivity(activity, $event)"
           >

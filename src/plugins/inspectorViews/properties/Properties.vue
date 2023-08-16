@@ -58,7 +58,7 @@ export default {
   inject: ['openmct'],
   data() {
     return {
-      selection: undefined
+      selection: []
     };
   },
   computed: {
@@ -220,7 +220,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.updateSelection(this.openmct.selection.get());
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
@@ -230,7 +230,22 @@ export default {
       return `detail-${component}`;
     },
     updateSelection(selection) {
-      this.selection = selection;
+      this.removeListener();
+      this.selection.splice(0, this.selection.length, ...selection);
+      if (this.domainObject) {
+        this.addListener();
+      }
+    },
+    removeListener() {
+      if (this.nameListener) {
+        this.nameListener();
+        this.nameListener = null;
+      }
+    },
+    addListener() {
+      this.nameListener = this.openmct.objects.observe(this.context?.item, 'name', (newValue) => {
+        this.context.item = { ...this.context?.item, name: newValue };
+      });
     }
   }
 };

@@ -17,11 +17,6 @@
   flex-direction: column;
   overflow: auto;
 
-  &__grid-holder,
-  &__dimensions {
-    display: none;
-  }
-
   &__dimensions {
     $b: 1px dashed $editDimensionsColor;
     border-right: $b;

@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import clockPlugin from './plugin';
+import EventEmitter from 'EventEmitter';
 
 import Vue from 'vue';
 
@@ -70,6 +71,7 @@ describe('Clock plugin:', () => {
     let clockView;
     let clockViewObject;
     let mutableClockObject;
+    let mockComposition;
 
     beforeEach(async () => {
       await setupClock(true);
@@ -85,6 +87,13 @@ describe('Clock plugin:', () => {
         }
       };
 
+      mockComposition = new EventEmitter();
+      // eslint-disable-next-line require-await
+      mockComposition.load = async () => {
+        return [];
+      };
+
+      spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
       spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(clockViewObject));
       spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
       spyOn(openmct.objects, 'supportsMutation').and.returnValue(true);
@@ -98,6 +107,7 @@ describe('Clock plugin:', () => {
       clockView.show(child);
 
       await Vue.nextTick();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
     });
 
     afterEach(() => {
@@ -222,10 +232,12 @@ describe('Clock plugin:', () => {
     it('contains text', async () => {
       await setupClock(true);
 
+      await Vue.nextTick();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
       ).element;
-
       const clockIndicatorText = clockIndicator.textContent.trim();
       const textIncludesUTC = clockIndicatorText.includes('UTC');
 

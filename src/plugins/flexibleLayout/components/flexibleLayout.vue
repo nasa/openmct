@@ -34,10 +34,9 @@
         'c-fl--rows': rowsLayout === true
       }"
     >
-      <template v-for="(container, index) in containers">
+      <template v-for="(container, index) in containers" :key="`component-${container.id}`">
         <drop-hint
           v-if="index === 0 && containers.length > 1"
-          :key="`hint-top-${container.id}`"
           class="c-fl-frame__drop-hint"
           :index="-1"
           :allow-drop="allowContainerDrop"
@@ -45,7 +44,6 @@
         />
 
         <container-component
-          :key="`component-${container.id}`"
           class="c-fl__container"
           :index="index"
           :container="container"
@@ -60,7 +58,6 @@
 
         <resize-handle
           v-if="index !== containers.length - 1"
-          :key="`handle-${container.id}`"
           :index="index"
           :orientation="rowsLayout ? 'vertical' : 'horizontal'"
           :is-editing="isEditing"
@@ -71,7 +68,6 @@
 
         <drop-hint
           v-if="containers.length > 1"
-          :key="`hint-bottom-${container.id}`"
           class="c-fl-frame__drop-hint"
           :index="index"
           :allow-drop="allowContainerDrop"
@@ -138,15 +134,16 @@ export default {
     ResizeHandle,
     DropHint
   },
-  inject: ['openmct', 'objectPath', 'layoutObject'],
+  inject: ['openmct', 'objectPath', 'domainObject'],
   props: {
     isEditing: Boolean
   },
   data() {
     return {
-      domainObject: this.layoutObject,
       newFrameLocation: [],
-      identifierMap: {}
+      identifierMap: {},
+      containers: this.domainObject.configuration.containers,
+      rowsLayout: this.domainObject.configuration.rowsLayout
     };
   },
   computed: {
@@ -157,24 +154,24 @@ export default {
         return 'Columns';
       }
     },
-    containers() {
-      return this.domainObject.configuration.containers;
-    },
-    rowsLayout() {
-      return this.domainObject.configuration.rowsLayout;
-    },
     allContainersAreEmpty() {
       return this.containers.every((container) => container.frames.length === 0);
     }
   },
-  mounted() {
+  created() {
     this.buildIdentifierMap();
     this.composition = this.openmct.composition.get(this.domainObject);
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
+    this.openmct.objects.observe(this.domainObject, 'configuration.containers', (containers) => {
+      this.containers = containers;
+    });
+    this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', (rowsLayout) => {
+      this.rowsLayout = rowsLayout;
+    });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('remove', this.removeChildObject);
     this.composition.off('add', this.addFrame);
   },
@@ -212,20 +209,16 @@ export default {
       let container = this.containers.filter((c) => c.id === containerId)[0];
       let containerIndex = this.containers.indexOf(container);
 
-      /*
-                remove associated domainObjects from composition
-            */
+      // remove associated domainObjects from composition
       container.frames.forEach((f) => {
         this.removeFromComposition(f.domainObjectIdentifier);
       });
 
       this.containers.splice(containerIndex, 1);
 
-      /*
-                add a container when there are no containers in the FL,
-                to prevent user from not being able to add a frame via
-                drag and drop.
-            */
+      // add a container when there are no containers in the FL,
+      // to prevent user from not being able to add a frame via
+      // drag and drop.
       if (this.containers.length === 0) {
         this.containers.push(new Container(100));
       }

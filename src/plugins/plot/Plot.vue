@@ -33,18 +33,23 @@
       />
       <mct-plot
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
-        :init-grid-lines="gridLines"
+        :init-grid-lines="gridLinesProp"
         :init-cursor-guide="cursorGuide"
         :options="options"
-        :limit-line-labels="limitLineLabels"
+        :limit-line-labels="limitLineLabelsProp"
+        :parent-y-tick-width="parentYTickWidth"
+        :color-palette="colorPalette"
         @loadingUpdated="loadingUpdated"
         @statusUpdated="setStatus"
         @configLoaded="updateReady"
         @lockHighlightPoint="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
+        @plotYTickWidth="onYTickWidthChange"
+        @cursorGuide="onCursorGuideChange"
+        @gridLines="onGridLinesChange"
       >
         <plot-legend
-          v-if="configReady"
+          v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
           @legendHoverChanged="legendHoverChanged"
@@ -79,14 +84,50 @@ export default {
           compact: false
         };
       }
+    },
+    gridLines: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
+    cursorGuide: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    parentLimitLineLabels: {
+      type: Object,
+      default() {
+        return undefined;
+      }
+    },
+    colorPalette: {
+      type: Object,
+      default() {
+        return undefined;
+      }
+    },
+    parentYTickWidth: {
+      type: Object,
+      default() {
+        return {
+          leftTickWidth: 0,
+          rightTickWidth: 0,
+          hasMultipleLeftAxes: false
+        };
+      }
+    },
+    hideLegend: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   data() {
     return {
-      //Don't think we need this as it appears to be stacked plot specific
-      // hideExportButtons: false
-      cursorGuide: false,
-      gridLines: !this.options.compact,
       loading: false,
       status: '',
       staleObjects: [],
@@ -99,6 +140,12 @@ export default {
     };
   },
   computed: {
+    limitLineLabelsProp() {
+      return this.parentLimitLineLabels ?? this.limitLineLabels;
+    },
+    gridLinesProp() {
+      return this.gridLines ?? !this.options.compact;
+    },
     staleClass() {
       if (this.staleObjects.length !== 0) {
         return 'is-stale';
@@ -117,13 +164,21 @@ export default {
       }
     }
   },
+  watch: {
+    gridLines(newGridLines) {
+      this.gridLines = newGridLines;
+    },
+    cursorGuide(newCursorGuide) {
+      this.cursorGuide = newCursorGuide;
+    }
+  },
   mounted() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
     this.loadComposition();
     this.stalenessSubscription = {};
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   methods: {
@@ -188,6 +243,7 @@ export default {
     },
     loadingUpdated(loading) {
       this.loading = loading;
+      this.$emit('loadingUpdated', ...arguments);
     },
     destroy() {
       if (this.stalenessSubscription) {
@@ -223,9 +279,11 @@ export default {
     },
     lockHighlightPointUpdated(data) {
       this.lockHighlightPoint = data;
+      this.$emit('lockHighlightPoint', ...arguments);
     },
     highlightsUpdated(data) {
       this.highlights = data;
+      this.$emit('highlights', ...arguments);
     },
     legendHoverChanged(data) {
       this.limitLineLabels = data;
@@ -238,6 +296,16 @@ export default {
     },
     updateReady(ready) {
       this.configReady = ready;
+      this.$emit('configLoaded', ...arguments);
+    },
+    onYTickWidthChange() {
+      this.$emit('plotYTickWidth', ...arguments);
+    },
+    onCursorGuideChange() {
+      this.$emit('cursorGuide', ...arguments);
+    },
+    onGridLinesChange() {
+      this.$emit('gridLines', ...arguments);
     }
   }
 };

@@ -23,8 +23,8 @@ import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotViewProvider from './ScatterPlotViewProvider';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
-import Vue from 'vue';
 import ScatterPlotForm from './ScatterPlotForm.vue';
+import mount from 'utils/mount';
 
 export default function () {
   return function install(openmct) {
@@ -100,24 +100,30 @@ export default function () {
   function getScatterPlotFormControl(openmct) {
     return {
       show(element, model, onChange) {
-        const rowComponent = new Vue({
-          el: element,
-          components: {
-            ScatterPlotForm
+        const { vNode } = mount(
+          {
+            el: element,
+            components: {
+              ScatterPlotForm
+            },
+            provide: {
+              openmct
+            },
+            data() {
+              return {
+                model,
+                onChange
+              };
+            },
+            template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
           },
-          provide: {
-            openmct
-          },
-          data() {
-            return {
-              model,
-              onChange
-            };
-          },
-          template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
-        });
+          {
+            app: openmct.app,
+            element
+          }
+        );
 
-        return rowComponent;
+        return vNode;
       }
     };
   }

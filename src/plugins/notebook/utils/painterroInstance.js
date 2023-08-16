@@ -26,11 +26,12 @@ const DEFAULT_CONFIG = {
 };
 
 export default class PainterroInstance {
-  constructor(element) {
+  constructor(element, openmct) {
     this.elementId = element.id;
     this.isSave = false;
     this.painterroInstance = undefined;
     this.saveCallback = undefined;
+    this.openmct = openmct;
   }
 
   dismiss() {
@@ -38,7 +39,7 @@ export default class PainterroInstance {
     this.painterroInstance.save();
   }
 
-  intialize() {
+  initialize() {
     this.config = Object.assign({}, DEFAULT_CONFIG);
 
     this.config.id = this.elementId;
@@ -67,11 +68,11 @@ export default class PainterroInstance {
             src: fullSizeImageURL,
             type: url.type,
             size: url.size,
-            modified: Date.now()
+            modified: this.openmct.time.now()
           },
           thumbnailImage: {
             src: thumbnailURL,
-            modified: Date.now()
+            modified: this.openmct.time.now()
           }
         };
 

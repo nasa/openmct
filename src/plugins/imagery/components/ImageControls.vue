@@ -149,7 +149,7 @@ export default {
     document.addEventListener('keyup', this.handleKeyUp);
     this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
   },

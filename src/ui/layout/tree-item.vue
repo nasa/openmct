@@ -44,6 +44,7 @@
       <view-control
         ref="action"
         class="c-tree__item__view-control"
+        :domain-object="node.object"
         :value="isOpen || isLoading"
         :enabled="!activeSearch && hasComposition"
         @input="itemAction()"
@@ -188,9 +189,8 @@ export default {
 
     this.$emit('tree-item-mounted', this.navigationPath);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.router.off('change:path', this.highlightIfNavigated);
-    this.$emit('tree-item-destoyed', this.navigationPath);
   },
   methods: {
     targetedPathAnimationEnd($event) {

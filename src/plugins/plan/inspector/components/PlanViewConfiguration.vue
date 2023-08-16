@@ -69,6 +69,7 @@
 </template>
 <script>
 import PlanViewConfiguration from '../../PlanViewConfiguration';
+import { markRaw } from 'vue';
 
 export default {
   components: {},
@@ -77,7 +78,7 @@ export default {
     const selection = this.openmct.selection.get();
     /** @type {import('../../../api/objects/ObjectAPI').DomainObject}  */
     const domainObject = selection[0][0].context.item;
-    const planViewConfiguration = new PlanViewConfiguration(domainObject, this.openmct);
+    const planViewConfiguration = markRaw(new PlanViewConfiguration(domainObject, this.openmct));
 
     return {
       planViewConfiguration,
@@ -94,7 +95,7 @@ export default {
     this.openmct.editor.on('isEditing', this.setIsEditing);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setIsEditing);
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
   },

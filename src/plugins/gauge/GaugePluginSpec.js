@@ -172,7 +172,7 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();
@@ -314,7 +314,7 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();
@@ -456,7 +456,7 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();
@@ -560,7 +560,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
 
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();
@@ -643,7 +643,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
 
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();
@@ -771,7 +771,7 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
         return Vue.nextTick();

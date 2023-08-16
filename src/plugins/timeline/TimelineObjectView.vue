@@ -27,6 +27,7 @@
     :min-height="item.height"
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
+    :domain-object="item.domainObject"
   >
     <template #label>
       {{ item.domainObject.name }}
@@ -84,7 +85,7 @@ export default {
       this.openmct.objects.get(this.item.domainObject.identifier).then(this.setObject);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }

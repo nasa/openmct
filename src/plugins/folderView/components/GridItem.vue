@@ -21,6 +21,7 @@
 -->
 <template>
   <a
+    ref="root"
     class="l-grid-view__item c-grid-item js-folder-child"
     :class="[
       {
@@ -30,7 +31,7 @@
       },
       statusClass
     ]"
-    @click="navigate"
+    @click="navigate($event)"
   >
     <div
       class="c-grid-item__type-icon"
@@ -69,7 +70,7 @@ export default {
     }
   },
   methods: {
-    navigate() {
+    navigate(_event) {
       this.openmct.router.navigate(this.objectLink);
     }
   }

@@ -39,7 +39,7 @@ export default class PauseTimerAction {
 
     const newConfiguration = { ...domainObject.configuration };
     newConfiguration.timerState = 'paused';
-    newConfiguration.pausedTime = new Date();
+    newConfiguration.pausedTime = new Date(this.openmct.time.now());
 
     this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
   }

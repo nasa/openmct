@@ -52,6 +52,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import { getValidatedData } from '../plan/util';
+import _ from 'lodash';
 
 const unknownObjectType = {
   definition: {
@@ -76,11 +77,12 @@ export default {
       timeOptions: this.domainObject.configuration.timeOptions
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
     this.stopFollowingTimeContext();
+    this.contentResizeObserver.disconnect();
   },
   mounted() {
     this.items = [];
@@ -92,6 +94,10 @@ export default {
       this.composition.on('reorder', this.reorder);
       this.composition.load();
     }
+
+    this.handleContentResize = _.debounce(this.handleContentResize, 500);
+    this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
+    this.contentResizeObserver.observe(this.$refs.timelineHolder);
   },
   methods: {
     addItem(domainObject) {
@@ -129,8 +135,11 @@ export default {
     reorder(reorderPlan) {
       let oldItems = this.items.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+        this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
+    },
+    handleContentResize() {
+      this.updateContentHeight();
     },
     updateContentHeight() {
       const clientHeight = this.getClientHeight();
@@ -139,11 +148,11 @@ export default {
       }
     },
     getClientHeight() {
-      let clientHeight = this.$refs.contentHolder.getBoundingClientRect().height;
+      let clientHeight = this.$refs.timelineHolder.getBoundingClientRect().height;
 
       if (!clientHeight) {
         //this is a hack - need a better way to find the parent of this component
-        let parent = this.openmct.layout.$refs.browseObject.$el;
+        let parent = this.$el.closest('.c-object-view');
         if (parent) {
           clientHeight = parent.getBoundingClientRect().height;
         }
@@ -169,11 +178,15 @@ export default {
     updateViewBounds() {
       const bounds = this.timeContext.bounds();
       this.updateContentHeight();
-      let currentTimeSystem = this.timeSystems.find(
+      let currentTimeSystemIndex = this.timeSystems.findIndex(
         (item) => item.timeSystem.key === this.openmct.time.timeSystem().key
       );
-      if (currentTimeSystem) {
+      if (currentTimeSystemIndex > -1) {
+        let currentTimeSystem = {
+          ...this.timeSystems[currentTimeSystemIndex]
+        };
         currentTimeSystem.bounds = bounds;
+        this.timeSystems.splice(currentTimeSystemIndex, 1, currentTimeSystem);
       }
     },
     setTimeContext() {

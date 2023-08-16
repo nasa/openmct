@@ -42,67 +42,48 @@
 </template>
 
 <script>
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
+import throttle from '../../../utils/throttle';
 
 const moment = require('moment-timezone');
 const momentDurationFormatSetup = require('moment-duration-format');
+const refreshRateSeconds = 2;
 
 momentDurationFormatSetup(moment);
 
 export default {
-  inject: ['openmct', 'currentView', 'objectPath'],
+  inject: ['openmct', 'currentView'],
   props: {
     domainObject: {
       type: Object,
+      required: true
+    },
+    objectPath: {
+      type: Array,
       required: true
     }
   },
   data() {
     return {
-      lastTimestamp: undefined,
-      active: true
+      configuration: this.domainObject.configuration,
+      lastTimestamp: null
     };
   },
   computed: {
-    configuration() {
-      let configuration;
-      if (this.domainObject && this.domainObject.configuration) {
-        configuration = this.domainObject.configuration;
-      }
-
-      return configuration;
-    },
-    relativeTimestamp() {
-      let relativeTimestamp;
-      if (this.configuration && this.configuration.timestamp) {
-        relativeTimestamp = moment(this.configuration.timestamp).toDate();
-      } else if (this.configuration && this.configuration.timestamp === undefined) {
-        relativeTimestamp = undefined;
-      }
-
-      return relativeTimestamp;
-    },
     timeDelta() {
-      return this.lastTimestamp - this.relativeTimestamp;
+      if (this.configuration.pausedTime) {
+        return Date.parse(this.configuration.pausedTime) - this.startTimeMs;
+      } else {
+        return this.lastTimestamp - this.startTimeMs;
+      }
+    },
+    startTimeMs() {
+      return Date.parse(this.configuration.timestamp);
     },
     timeTextValue() {
-      if (isNaN(this.timeDelta)) {
-        return null;
-      }
-
       const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
 
       return moment.duration(toWholeSeconds, 'ms').format(this.format, { trim: false });
-    },
-    pausedTime() {
-      let pausedTime;
-      if (this.configuration && this.configuration.pausedTime) {
-        pausedTime = moment(this.configuration.pausedTime).toDate();
-      } else if (this.configuration && this.configuration.pausedTime === undefined) {
-        pausedTime = undefined;
-      }
-
-      return pausedTime;
     },
     timerState() {
       let timerState = 'started';
@@ -183,16 +164,18 @@ export default {
     }
   },
   mounted() {
+    this.unobserve = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
+      this.configuration = domainObject.configuration;
+    });
     this.$nextTick(() => {
-      if (this.configuration && this.configuration.timerState === undefined) {
+      if (!this.configuration?.timerState) {
         const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
         this.triggerAction(`timer.${timerAction}`);
       }
 
-      window.requestAnimationFrame(this.tick);
-      this.unlisten = ticker.listen(() => {
-        this.openmct.objects.refresh(this.domainObject);
-      });
+      this.handleTick = raf(this.handleTick);
+      this.refreshTimerObject = throttle(this.refreshTimerObject, refreshRateSeconds * 1000);
+      this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(
         this.objectPath,
@@ -201,26 +184,19 @@ export default {
       this.showOrHideAvailableActions();
     });
   },
-  beforeDestroy() {
-    this.active = false;
-    if (this.unlisten) {
-      this.unlisten();
+  beforeUnmount() {
+    if (this.unobserve) {
+      this.unobserve();
     }
+    this.openmct.time.off('tick', this.handleTick);
   },
   methods: {
-    tick() {
-      const isTimerRunning = !['paused', 'stopped'].includes(this.timerState);
-      if (isTimerRunning) {
-        this.lastTimestamp = new Date();
-      }
-
-      if (this.timerState === 'paused' && !this.lastTimestamp) {
-        this.lastTimestamp = this.pausedTime;
-      }
-
-      if (this.active) {
-        window.requestAnimationFrame(this.tick);
-      }
+    handleTick() {
+      this.lastTimestamp = new Date(this.openmct.time.now());
+      this.refreshTimerObject();
+    },
+    refreshTimerObject() {
+      this.openmct.objects.refresh(this.domainObject);
     },
     restartTimer() {
       this.triggerAction('timer.restart');

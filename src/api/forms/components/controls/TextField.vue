@@ -23,7 +23,14 @@
 <template>
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
-      <input v-model="field" type="text" :size="model.size" @input="updateText()" />
+      <input
+        :id="`form-${model.key}`"
+        v-model="field"
+        :name="model.key"
+        type="text"
+        :size="model.size"
+        @input="updateText()"
+      />
     </span>
   </span>
 </template>

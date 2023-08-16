@@ -23,7 +23,7 @@
 const { test, expect } = require('../../pluginFixtures.js');
 const {
   createDomainObjectWithDefaults,
-  openObjectTreeContextMenu
+  renameObjectFromContextMenu
 } = require('../../appActions.js');
 
 test.describe('Main Tree', () => {
@@ -174,6 +174,42 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
+  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+    page,
+    openmctConfig
+  }) => {
+    const { myItemsFolderName } = openmctConfig;
+    let requestWasAborted = false;
+
+    page.on('requestfailed', (request) => {
+      // check if the request was aborted
+      if (request.failure().errorText === 'net::ERR_ABORTED') {
+        requestWasAborted = true;
+      }
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Foo'
+    });
+
+    // Intercept and delay request
+    const delayInMs = 500;
+
+    await page.route('**', async (route, request) => {
+      await new Promise((resolve) => setTimeout(resolve, delayInMs));
+      route.continue();
+    });
+
+    // Quickly Expand/close the root folder
+    await page
+      .getByRole('button', {
+        name: `Expand ${myItemsFolderName} folder`
+      })
+      .dblclick({ delay: 400 });
+
+    expect(requestWasAborted).toBe(true);
+  });
 });
 
 /**
@@ -212,19 +248,4 @@ async function expandTreePaneItemByName(page, name) {
     expanded: false
   });
   await treeItem.locator('.c-disclosure-triangle').click();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @param {string} url
- * @param {string} newName
- */
-async function renameObjectFromContextMenu(page, url, newName) {
-  await openObjectTreeContextMenu(page, url);
-  await page.click('li:text("Edit Properties")');
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  await page.click('[aria-label="Save"]');
 }

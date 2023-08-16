@@ -25,29 +25,37 @@
 
 <script>
 import AboutDialog from './AboutDialog.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct'],
   mounted() {
-    let branding = this.openmct.branding();
+    const branding = this.openmct.branding();
     if (branding.smallLogoImage) {
       this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
     }
   },
   methods: {
     launchAbout() {
-      let vm = new Vue({
-        components: { AboutDialog },
-        provide: {
-          openmct: this.openmct
+      const { el, destroy } = mount(
+        {
+          components: { AboutDialog },
+          provide: {
+            openmct: this.openmct
+          },
+          template: '<about-dialog></about-dialog>'
         },
-        template: '<about-dialog></about-dialog>'
-      }).$mount();
+        {
+          app: this.openmct.app
+        }
+      );
+
+      el.classList.add('u-contents');
 
       this.openmct.overlays.overlay({
-        element: vm.$el,
-        size: 'large'
+        element: el,
+        size: 'large',
+        onDestroy: destroy
       });
     }
   }

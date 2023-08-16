@@ -77,6 +77,7 @@
             <mct-chart
               :rectangles="rectangles"
               :highlights="highlights"
+              :show-limit-line-labels="limitLineLabels"
               :annotated-points="annotatedPoints"
               :annotation-selections="annotationSelections"
               :hidden-y-axis-ids="hiddenYAxisIds"
@@ -231,7 +232,7 @@ export default {
     limitLineLabels: {
       type: Object,
       default() {
-        return {};
+        return undefined;
       }
     },
     colorPalette: {
@@ -247,6 +248,7 @@ export default {
       highlights: [],
       annotatedPoints: [],
       annotationSelections: [],
+      annotationsEverLoaded: false,
       lockHighlightPoint: false,
       yKeyOptions: [],
       yAxisLabel: '',
@@ -257,7 +259,7 @@ export default {
       seriesModels: [],
       legend: {},
       pending: 0,
-      isRealTime: this.openmct.time.clock() !== undefined,
+      isRealTime: this.openmct.time.isRealTime(),
       loaded: false,
       isTimeOutOfSync: false,
       isFrozenOnMouseDown: false,
@@ -265,7 +267,8 @@ export default {
       gridLines: this.initGridLines,
       yAxes: [],
       hiddenYAxisIds: [],
-      yAxisListWithRange: []
+      yAxisListWithRange: [],
+      config: {}
     };
   },
   computed: {
@@ -349,7 +352,7 @@ export default {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
     eventHelpers.extend(this);
-    this.updateRealTime = this.updateRealTime.bind(this);
+    this.updateMode = this.updateMode.bind(this);
     this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
     this.setTimeContext = this.setTimeContext.bind(this);
 
@@ -392,15 +395,20 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', this.loadAnnotations);
+    this.$on('loadingComplete', () => {
+      if (this.annotationViewingAndEditingAllowed) {
+        this.loadAnnotations();
+      }
+    });
     this.openmct.selection.on('change', this.updateSelection);
-    this.setTimeContext();
-
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
-    this.loaded = true;
+    this.$nextTick(() => {
+      this.setTimeContext();
+      this.loaded = true;
+    });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -521,20 +529,19 @@ export default {
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
-
       this.timeContext = this.openmct.time.getContextForView(this.path);
       this.followTimeContext();
     },
     followTimeContext() {
-      this.updateDisplayBounds(this.timeContext.bounds());
-      this.timeContext.on('clock', this.updateRealTime);
-      this.timeContext.on('bounds', this.updateDisplayBounds);
+      this.updateDisplayBounds(this.timeContext.getBounds());
+      this.timeContext.on('modeChanged', this.updateMode);
+      this.timeContext.on('boundsChanged', this.updateDisplayBounds);
       this.synchronized(true);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('clock', this.updateRealTime);
-        this.timeContext.off('bounds', this.updateDisplayBounds);
+        this.timeContext.off('modeChanged', this.updateMode);
+        this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },
     getConfig() {
@@ -558,7 +565,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.seriesModels, index, series);
+      this.seriesModels[index] = series;
       this.listenTo(
         series,
         'change:xKey',
@@ -634,6 +641,7 @@ export default {
       if (rawAnnotationsForPlot) {
         this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
       }
+      this.annotationsEverLoaded = true;
     },
     loadSeriesData(series) {
       //this check ensures that duplicate requests don't happen on load
@@ -773,8 +781,8 @@ export default {
       const displayRange = series.getDisplayRange(xKey);
       this.config.xAxis.set('range', displayRange);
     },
-    updateRealTime(clock) {
-      this.isRealTime = clock !== undefined;
+    updateMode() {
+      this.isRealTime = this.timeContext.isRealTime();
     },
 
     /**
@@ -787,6 +795,7 @@ export default {
       };
       this.config.xAxis.set('range', newRange);
       if (!isTick) {
+        this.annotatedPoints = [];
         this.clearPanZoomHistory();
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
@@ -835,13 +844,13 @@ export default {
      * displays can update accordingly.
      */
     synchronized(value) {
-      const isLocalClock = this.timeContext.clock();
+      const isRealTime = this.timeContext.isRealTime();
 
       if (typeof value !== 'undefined') {
         this._synchronized = value;
         this.isTimeOutOfSync = value !== true;
 
-        const isUnsynced = isLocalClock && !value;
+        const isUnsynced = isRealTime && !value;
         this.setStatus(isUnsynced);
       }
 
@@ -1783,6 +1792,9 @@ export default {
       });
       this.config.xAxis.set('frozen', true);
       this.setStatus();
+      if (!this.annotationsEverLoaded) {
+        this.loadAnnotations();
+      }
     },
 
     resumeRealtimeData() {
@@ -1866,7 +1878,6 @@ export default {
     },
 
     synchronizeTimeConductor() {
-      this.timeContext.stopClock();
       const range = this.config.xAxis.get('displayRange');
       this.timeContext.bounds({
         start: range.min,

@@ -73,6 +73,12 @@
     <div v-if="isStackedPlotObject || !isNestedWithinAStackedPlot" class="grid-properties">
       <ul class="l-inspector-part js-legend-properties">
         <h2 class="--first" title="Legend settings for this object">Legend</h2>
+        <li v-if="isStackedPlotObject" class="grid-row">
+          <div class="grid-cell label" title="Display legends per sub plot.">
+            Show legend per plot
+          </div>
+          <div class="grid-cell value">{{ showLegendsForChildren ? 'Yes' : 'No' }}</div>
+        </li>
         <li class="grid-row">
           <div
             class="grid-cell label"
@@ -139,6 +145,7 @@ export default {
       showMinimumWhenExpanded: '',
       showMaximumWhenExpanded: '',
       showUnitsWhenExpanded: '',
+      showLegendsForChildren: '',
       loaded: false,
       plotSeries: [],
       yAxes: []
@@ -173,7 +180,7 @@ export default {
 
     this.loaded = true;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -218,6 +225,7 @@ export default {
         this.showMinimumWhenExpanded = this.config.legend.get('showMinimumWhenExpanded');
         this.showMaximumWhenExpanded = this.config.legend.get('showMaximumWhenExpanded');
         this.showUnitsWhenExpanded = this.config.legend.get('showUnitsWhenExpanded');
+        this.showLegendsForChildren = this.config.legend.get('showLegendsForChildren');
       }
     },
     getConfig() {
@@ -252,7 +260,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
-      this.$set(this.plotSeries, index, series);
+      this.plotSeries[index] = series;
       this.setYAxisLabel(yAxisId);
     },
 

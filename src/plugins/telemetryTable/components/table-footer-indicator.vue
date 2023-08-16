@@ -110,7 +110,7 @@ export default {
     this.table.configuration.on('change', this.handleConfigurationChanges);
     this.updateFilters(filters);
   },
-  destroyed() {
+  unmounted() {
     this.table.configuration.off('change', this.handleConfigurationChanges);
   },
   methods: {

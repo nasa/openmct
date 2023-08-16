@@ -124,7 +124,7 @@ export default {
     this.previewAction.on('isVisible', this.togglePreviewState);
     this.fireAnnotationSelection = this.fireAnnotationSelection.bind(this);
   },
-  destroyed() {
+  unmounted() {
     this.previewAction.off('isVisible', this.togglePreviewState);
     this.openmct.selection.off('change', this.fireAnnotationSelection);
   },
