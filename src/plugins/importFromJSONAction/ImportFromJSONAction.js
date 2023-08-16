@@ -147,6 +147,7 @@ export default class ImportAsJSONAction {
    * @returns {object}
    */
   _generateNewIdentifiers(tree, namespace) {
+    this.oldToNewIdMap = {};
     // For each domain object in the file, generate new ID, replace in tree
     Object.keys(tree.openmct).forEach((domainObjectId) => {
       const newId = {
@@ -156,10 +157,33 @@ export default class ImportAsJSONAction {
 
       const oldId = objectUtils.parseKeyString(domainObjectId);
 
-      tree = this._rewriteId(oldId, newId, tree);
+      let newIdKeyString = this.openmct.objects.makeKeyString(newId);
+      let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
+      this.oldToNewIdMap[oldIdKeyString] = newIdKeyString;
     }, this);
 
-    return tree;
+    return JSON.parse(JSON.stringify(tree), (key, value) => {
+      if (value !== undefined && value !== null) {
+        if (
+          Object.prototype.hasOwnProperty.call(value, 'key') &&
+          Object.prototype.hasOwnProperty.call(value, 'namespace')
+        ) {
+          const oldIdKeyString = this.openmct.objects.makeKeyString(value);
+          const newIdKeyString = this.oldToNewIdMap[oldIdKeyString];
+          const newId = this.openmct.objects.parseKeyString(newIdKeyString);
+
+          return newId;
+        } else if (typeof value === 'string') {
+          const possibleSubstitution = this.oldToNewIdMap[value];
+          if (possibleSubstitution !== undefined) {
+            const newId = this.openmct.objects.parseKeyString(possibleSubstitution);
+
+            return newId;
+          }
+        }
+      }
+      return value;
+    });
   }
   /**
    * @private
