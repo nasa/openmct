@@ -554,7 +554,7 @@ export default class ObjectAPI {
    */
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
-    const telemetryPath = [];
+    let telemetryPath = [];
     if (objectDetails.type === 'folder') {
       return telemetryPath;
     }
@@ -577,12 +577,9 @@ export default class ObjectAPI {
     }
 
     const telemetryPathObjects = await this.getOriginalPath(compositionElement.identifier);
-    telemetryPathObjects.reverse().forEach((pathObject) => {
-      if (pathObject.type === 'root') {
-        return;
-      }
-      telemetryPath.push(pathObject.name);
-    });
+    telemetryPath = telemetryPathObjects
+      .reverse()
+      .filter((pathObject) => pathObject.type !== 'root');
 
     return telemetryPath;
   }
