@@ -1,0 +1,17 @@
+version: 2
+snapshot:
+  widths: [1024]
+  min-height: 1440 # px
+  percyCSS: |
+    .t-indicator-clock > .label {
+      opacity: 0 !important;
+    }
+    .c-input--datetime {
+      opacity: 0 !important;
+    }
+    div.c-conductor-axis.c-conductor__ticks > svg {
+      opacity: 0 !important;
+    }
+    div.c-inspector__properties.c-inspect-properties > ul > li:nth-child(3) {
+      display: none !important;
+    }
