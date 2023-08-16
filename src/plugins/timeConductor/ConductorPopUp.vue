@@ -184,7 +184,7 @@ export default {
     this.$emit('popupLoaded');
     this.setTimeContext();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopFollowingTimeContext();
   },
   methods: {

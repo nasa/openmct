@@ -92,7 +92,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.resizeTimer);
   },
   methods: {

@@ -36,7 +36,7 @@ export default {
     this.timeConductorOptionsHolder = this.$el;
     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.clearPopup();
   },
   methods: {
