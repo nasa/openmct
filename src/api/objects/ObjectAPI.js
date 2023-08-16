@@ -555,7 +555,7 @@ export default class ObjectAPI {
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
     let telemetryPath = [];
-    if (objectDetails.type === 'folder') {
+    if (objectDetails?.type === 'folder') {
       return telemetryPath;
     }
 
