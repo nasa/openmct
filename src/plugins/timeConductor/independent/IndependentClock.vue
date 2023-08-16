@@ -75,7 +75,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   mounted: function () {
