@@ -29,6 +29,10 @@ const {
 test.describe('Flexible Layout', () => {
   let sineWaveObject;
   let clockObject;
+  let treePane;
+  let sineWaveGeneratorTreeItem;
+  let clockTreeItem;
+  let flexibleLayout;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
@@ -41,23 +45,27 @@ test.describe('Flexible Layout', () => {
     clockObject = await createDomainObjectWithDefaults(page, {
       type: 'Clock'
     });
+
+    // Create a Flexible Layout
+    flexibleLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Flexible Layout'
+    });
+
+    // Define the Sine Wave Generator and Clock tree items
+    treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+    clockTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(clockObject.name)
+    });
   });
   test('panes have the appropriate draggable attribute while in Edit and Browse modes', async ({
     page
   }) => {
-    const treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(sineWaveObject.name)
-    });
-    const clockTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(clockObject.name)
-    });
-    // Create a Flexible Layout
-    await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout'
-    });
+    await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
     await page.locator('[title="Edit"]').click();
 
@@ -78,19 +86,79 @@ test.describe('Flexible Layout', () => {
     dragWrapper = page.locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper').first();
     await expect(dragWrapper).toHaveAttribute('draggable', 'false');
   });
+  test('changing toolbar settings in edit mode is immediately reflected and persists upon save', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6942'
+    });
+
+    await page.goto(flexibleLayout.url);
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
+    // Add the Sine Wave Generator and Clock to the Flexible Layout
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+
+    // Click on the first frame to select it
+    await page.locator('.c-fl-container__frame').first().click();
+    await expect(page.locator('.c-fl-container__frame > .c-frame').first()).toHaveAttribute(
+      's-selected',
+      ''
+    );
+
+    // Assert the toolbar is visible
+    await expect(page.locator('.c-toolbar')).toBeInViewport();
+
+    // Assert the layout is in columns orientation
+    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+
+    // Change the layout to rows orientation
+    await page.getByTitle('Columns layout').click();
+
+    // Assert the layout is in rows orientation
+    expect(await page.locator('.c-fl--rows').count()).toBeGreaterThan(0);
+
+    // Assert the frame of the first item is visible
+    await expect(page.locator('.c-so-view').first()).not.toHaveClass(/c-so-view--no-frame/);
+
+    // Hide the frame of the first item
+    await page.getByTitle('Frame visible').click();
+
+    // Assert the frame is hidden
+    await expect(page.locator('.c-so-view').first()).toHaveClass(/c-so-view--no-frame/);
+
+    // Assert there are 2 containers
+    expect(await page.locator('.c-fl-container').count()).toEqual(2);
+
+    // Add a container
+    await page.getByTitle('Add Container').click();
+
+    // Assert there are 3 containers
+    expect(await page.locator('.c-fl-container').count()).toEqual(3);
+
+    // Save Flexible Layout
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Nav away and back
+    await page.goto(sineWaveObject.url);
+    await page.goto(flexibleLayout.url);
+
+    // Wait for the first frame to be visible so we know the layout has loaded
+    await expect(page.locator('.c-fl-container').nth(0)).toBeInViewport();
+
+    // Assert the settings have persisted
+    expect(await page.locator('.c-fl-container').count()).toEqual(3);
+    expect(await page.locator('.c-fl--rows').count()).toBeGreaterThan(0);
+    await expect(page.locator('.c-so-view').first()).toHaveClass(/c-so-view--no-frame/);
+  });
   test('items in a flexible layout can be removed with object tree context menu when viewing the flexible layout', async ({
     page
   }) => {
-    const treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(sineWaveObject.name)
-    });
-    // Create a Display Layout
-    await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout'
-    });
+    await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
     await page.locator('[title="Edit"]').click();
 
@@ -121,17 +189,7 @@ test.describe('Flexible Layout', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/3117'
     });
-    const treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(sineWaveObject.name)
-    });
-
-    // Create a Flexible Layout
-    const flexibleLayout = await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout'
-    });
+    await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
     await page.locator('[title="Edit"]').click();
 
@@ -167,19 +225,13 @@ test.describe('Flexible Layout', () => {
     const exampleImageryObject = await createDomainObjectWithDefaults(page, {
       type: 'Example Imagery'
     });
-    // Create a Flexible Layout
-    await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout'
-    });
-    // Edit Display Layout
+
+    await page.goto(flexibleLayout.url);
+    // Edit Flexible Layout
     await page.locator('[title="Edit"]').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-    // Add the Sine Wave Generator to the Flexible Layout and save changes
-    const treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
     const exampleImageryTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(exampleImageryObject.name)
     });

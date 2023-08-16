@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "3.0.0-SNAPSHOT",
+  "version": "3.1.0-next",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
@@ -81,7 +81,7 @@
     "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint; npm run lint:spelling",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
-    "lint": "eslint example src e2e --ext .js,.vue openmct.js --max-warnings=0",
+    "lint": "eslint example src e2e --ext .js openmct.js --max-warnings=0 && eslint example src --ext .vue",
     "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.js",

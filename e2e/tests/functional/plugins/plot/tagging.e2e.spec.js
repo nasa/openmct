@@ -29,7 +29,8 @@ const {
   createDomainObjectWithDefaults,
   setRealTimeMode,
   setFixedTimeMode,
-  waitForPlotsToRender
+  waitForPlotsToRender,
+  selectInspectorTab
 } = require('../../../../appActions');
 
 test.describe('Plot Tagging', () => {
@@ -90,8 +91,10 @@ test.describe('Plot Tagging', () => {
     await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
     const canvas = page.locator('canvas').nth(1);
-
     //Wait for canvas to stabilize.
+    await waitForPlotsToRender(page);
+
+    await expect(canvas).toBeInViewport();
     await canvas.hover({ trial: true });
 
     // click on the tagged plot point
@@ -146,7 +149,10 @@ test.describe('Plot Tagging', () => {
     // wait for plots to load
     await waitForPlotsToRender(page);
 
-    await page.getByText('Annotations').click();
+    await expect(page.getByRole('tab', { name: 'Annotations' })).not.toHaveClass(/is-current/);
+    await selectInspectorTab(page, 'Annotations');
+    await expect(page.getByRole('tab', { name: 'Annotations' })).toHaveClass(/is-current/);
+
     await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
     const canvas = page.locator('canvas').nth(1);
