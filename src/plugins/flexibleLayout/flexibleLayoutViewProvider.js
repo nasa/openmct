@@ -56,7 +56,7 @@ export default class FlexibleLayoutViewProvider {
             provide: {
               openmct,
               objectPath,
-              layoutObject: domainObject
+              domainObject
             },
             data() {
               return {

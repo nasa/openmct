@@ -134,17 +134,16 @@ export default {
     ResizeHandle,
     DropHint
   },
-  inject: ['openmct', 'objectPath', 'layoutObject'],
+  inject: ['openmct', 'objectPath', 'domainObject'],
   props: {
     isEditing: Boolean
   },
   data() {
     return {
-      domainObject: this.layoutObject,
       newFrameLocation: [],
       identifierMap: {},
-      containers: this.layoutObject.configuration.containers,
-      rowsLayout: this.layoutObject.configuration.rowsLayout
+      containers: this.domainObject.configuration.containers,
+      rowsLayout: this.domainObject.configuration.rowsLayout
     };
   },
   computed: {
@@ -165,8 +164,6 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
-  },
-  mounted() {
     this.openmct.objects.observe(this.domainObject, 'configuration.containers', (containers) => {
       this.containers = containers;
     });
