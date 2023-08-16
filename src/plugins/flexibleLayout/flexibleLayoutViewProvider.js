@@ -47,7 +47,7 @@ export default class FlexibleLayoutViewProvider {
     let component = null;
 
     return {
-      show: function (element, isEditing) {
+      show(element, isEditing) {
         const { vNode, destroy } = mount(
           {
             components: {
