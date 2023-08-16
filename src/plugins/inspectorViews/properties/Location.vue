@@ -97,6 +97,7 @@ export default {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
       if (this.nameChangeListeners[keyString]) {
         this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
       }
     },
     addNameListenerFor(domainObject) {
@@ -129,6 +130,10 @@ export default {
           key,
           objectPath: pathArray.slice(index)
         };
+      });
+
+      this.pathBreadCrumb.forEach((pathObject) => {
+        this.removeNameListenerFor(pathObject.domainObject);
       });
 
       this.pathBreadCrumb = pathBreadCrumb;

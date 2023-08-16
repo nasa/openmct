@@ -145,6 +145,7 @@ export default {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
       if (this.nameChangeListeners[keyString]) {
         this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
       }
     },
     addNameListenerFor(domainObject) {
