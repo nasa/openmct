@@ -26,7 +26,6 @@
     :class="{
       'c-selector': isSelectorTree
     }"
-    @scroll=""
   >
     <div ref="search" class="c-tree-and-search__search">
       <search
@@ -120,7 +119,6 @@ import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 import { markRaw, reactive } from 'vue';
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
@@ -134,7 +132,6 @@ export default {
     search,
     treeItem
   },
-  mixins: [tooltipHelpers],
   inject: ['openmct'],
   props: {
     isSelectorTree: {
