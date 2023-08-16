@@ -188,7 +188,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.click(`li:text("Plan")`);
 
   // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(name);
 
@@ -628,7 +628,7 @@ async function getCanvasPixels(page, canvasSelector) {
 async function renameObjectFromContextMenu(page, url, newName) {
   await openObjectTreeContextMenu(page, url);
   await page.click('li:text("Edit Properties")');
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(newName);
   await page.click('[aria-label="Save"]');

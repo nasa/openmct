@@ -50,9 +50,13 @@ test.describe('Renaming objects', () => {
 
     // Rename
     clock.name = `${clock.name}-NEW!`;
-    renameObjectFromContextMenu(page, clock.url, clock.name);
+    await renameObjectFromContextMenu(page, clock.url, clock.name);
     // check inspector for new name
-    await expect(page.locator(`.c-inspect-properties__value >> text=${clock.name}`)).toBeVisible();
+    const titleValue = await page
+      .getByLabel('Title inspector properties')
+      .getByLabel('inspector property value')
+      .textContent();
+    expect(titleValue).toBe(clock.name);
     // check browse bar for new name
     await expect(page.locator(`.l-browse-bar >> text=${clock.name}`)).toBeVisible();
     // check tree item for new name
