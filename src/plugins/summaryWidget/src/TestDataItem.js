@@ -111,7 +111,7 @@ define([
    * Register a callback with this item: supported callbacks are remove, change,
    * and duplicate
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */

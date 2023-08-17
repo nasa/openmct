@@ -48,7 +48,7 @@ test.describe('ExportAsJSON', () => {
   test.fixme(
     'Verify that the ImportAsJSON dropdown does not appear for the item X',
     async ({ page }) => {
-      // Other than non-persistible objects
+      // Other than non-persistable objects
     }
   );
 });

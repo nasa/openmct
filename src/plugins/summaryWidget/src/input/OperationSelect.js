@@ -51,8 +51,8 @@ define(['./Select', '../eventHelpers'], function (Select, eventHelpers) {
     }
 
     /**
-     * Event handler for the intial metadata load event from the associated
-     * ConditionManager. Retreives telemetry property types and updates the
+     * Event handler for the initial metadata load event from the associated
+     * ConditionManager. Retrieves telemetry property types and updates the
      * select
      * @private
      */

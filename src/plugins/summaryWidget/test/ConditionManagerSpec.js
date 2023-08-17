@@ -362,7 +362,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
       });
     });
 
-    it('populates its LAD cache with historial data on load, if available', function (done) {
+    it('populates its LAD cache with historical data on load, if available', function (done) {
       expect(telemetryRequests.length).toBe(2);
       expect(telemetryRequests[0].object).toBe(mockCompObject1);
       expect(telemetryRequests[1].object).toBe(mockCompObject2);
@@ -394,7 +394,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
     });
 
     it(
-      'evalutes a set of rules and returns the id of the' +
+      'evaluates a set of rules and returns the id of the ' +
         'last active rule, or the first if no rules are active',
       function () {
         const mockRuleOrder = ['default', 'rule0', 'rule1'];

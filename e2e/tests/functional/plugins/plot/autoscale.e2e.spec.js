@@ -24,7 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { selectInspectorTab, setTimeConductorBounds } = require('../../../../appActions');
+const { selectInspectorTab, createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
   viewport: {
@@ -34,17 +34,26 @@ test.use({
 });
 
 test.describe('Autoscale', () => {
-  test('User can set autoscale with a valid range @snapshot', async ({ page, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-
+  test('User can set autoscale with a valid range @snapshot', async ({ page }) => {
     //This is necessary due to the size of the test suite.
     test.slow();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await setTimeRange(page);
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      name: 'Test Overlay Plot',
+      type: 'Overlay Plot'
+    });
+    await createDomainObjectWithDefaults(page, {
+      name: 'Test Sine Wave Generator',
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
 
-    await createSinewaveOverlayPlot(page, myItemsFolderName);
+    // Switch to fixed time, start: 2022-03-28 22:00:00.000 UTC, end: 2022-03-28 22:00:30.000 UTC
+    await page.goto(
+      `${overlayPlot.url}?tc.mode=fixed&tc.startBound=1648591200000&tc.endBound=1648591230000&tc.timeSystem=utc&view=plot-overlay`
+    );
 
     await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
@@ -67,7 +76,7 @@ test.describe('Autoscale', () => {
     await page.locator('.c-message-banner__close-button').click();
     await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
-    // Make sure that after turning off autoscale, the user entered range values are reflexted in the ticks.
+    // Make sure that after turning off autoscale, the user entered range values are reflected in the ticks.
     await testYTicks(page, [
       '-2.00',
       '-1.50',
@@ -109,7 +118,7 @@ test.describe('Autoscale', () => {
     // Ensure the drag worked.
     await testYTicks(page, ['-0.50', '0.00', '0.50', '1.00', '1.50', '2.00', '2.50', '3.00']);
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     expect
@@ -117,72 +126,6 @@ test.describe('Autoscale', () => {
       .toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
   });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} start
- * @param {string} end
- */
-async function setTimeRange(
-  page,
-  start = '2022-03-29 22:00:00.000Z',
-  end = '2022-03-29 22:00:30.000Z'
-) {
-  // Set a specific time range for consistency, otherwise it will change
-  // on every test to a range based on the current time.
-
-  await setTimeConductorBounds(page, start, end);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- */
-async function createSinewaveOverlayPlot(page, myItemsFolderName) {
-  // click create button
-  await page.locator('button:has-text("Create")').click();
-
-  // add overlay plot with defaults
-  await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear1
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
-
-  // save (exit edit mode)
-  await page
-    .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
-    .nth(1)
-    .click();
-  await page.locator('text=Save and Finish Editing').click();
-
-  // click create button
-  await page.locator('button:has-text("Create")').click();
-
-  // add sine wave generator with defaults
-  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear1
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
-
-  // focus the overlay plot
-  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator('text=Unnamed Overlay Plot').first().click()
-  ]);
-}
 
 /**
  * @param {import('@playwright/test').Page} page

@@ -33,6 +33,10 @@ describe('the plugin', function () {
   let mockComposition;
 
   const testViewObject = {
+    identifier: {
+      namespace: '',
+      key: 'test-object'
+    },
     id: 'test-object',
     type: 'flexible-layout',
     configuration: {
@@ -116,6 +120,10 @@ describe('the plugin', function () {
 
     beforeEach(() => {
       flexibleLayoutItem = {
+        identifier: {
+          namespace: '',
+          key: 'test-object'
+        },
         id: 'test-object',
         type: 'flexible-layout',
         configuration: {

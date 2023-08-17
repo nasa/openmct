@@ -25,7 +25,7 @@
     <div class="c-inspect-properties__header">Fault Details</div>
     <ul class="c-inspect-properties__section">
       <DetailText :detail="sourceDetails" />
-      <DetailText :detail="occuredDetails" />
+      <DetailText :detail="occurredDetails" />
       <DetailText :detail="criticalityDetails" />
       <DetailText :detail="descriptionDetails" />
     </ul>
@@ -72,9 +72,9 @@ export default {
         value: this.selectedFault?.shortDescription
       };
     },
-    occuredDetails() {
+    occurredDetails() {
       return {
-        name: 'Occured',
+        name: 'Occurred',
         value: this.selectedFault?.triggerTime
       };
     },

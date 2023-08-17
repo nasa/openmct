@@ -78,6 +78,7 @@ export default {
     };
   },
   async mounted() {
+    this.nameChangeListeners = {};
     const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
     if (keyString && this.keyString !== keyString) {
@@ -108,7 +109,15 @@ export default {
         // remove ROOT and object itself from path
         this.orderedPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
       }
+      this.orderedPath.forEach((pathObject) => {
+        this.addNameListenerFor(pathObject.domainObject);
+      });
     }
+  },
+  unmounted() {
+    Object.values(this.nameChangeListeners).forEach((unlisten) => {
+      unlisten();
+    });
   },
   methods: {
     /**
@@ -120,6 +129,34 @@ export default {
       const path = `/browse/${this.openmct.objects.getRelativePath(objectPath)}`;
 
       return path.replace('ROOT/', '');
+    },
+    updateObjectPathName(keyString, newName) {
+      this.orderedPath = this.orderedPath.map((pathObject) => {
+        if (this.openmct.objects.makeKeyString(pathObject.domainObject.identifier) === keyString) {
+          return {
+            ...pathObject,
+            domainObject: { ...pathObject.domainObject, name: newName }
+          };
+        }
+        return pathObject;
+      });
+    },
+    removeNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
+      }
+    },
+    addNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (!this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString] = this.openmct.objects.observe(
+          domainObject,
+          'name',
+          this.updateObjectPathName.bind(this, keyString)
+        );
+      }
     }
   }
 };

@@ -58,7 +58,7 @@ xdescribe('Application router utility functions', () => {
     expect(searchParams.get('testParam1')).toBe('testValue1');
   });
 
-  it('The deleteSearchParam function deletes an individual search paramater in the window location hash', () => {
+  it('The deleteSearchParam function deletes an individual search parameter in the window location hash', () => {
     openmct.router.deleteSearchParam('testParam');
     const searchParams = openmct.router.getAllSearchParams();
     expect(searchParams.get('testParam')).toBe(null);
@@ -73,7 +73,7 @@ xdescribe('Application router utility functions', () => {
     expect(searchParams.get('testParam2')).toBe('testValue2');
   });
 
-  it('The setAllSearchParams function replaces all search paramaters in the window location hash', () => {
+  it('The setAllSearchParams function replaces all search parameters in the window location hash', () => {
     openmct.router.setSearchParam('testParam2', 'updatedtestValue2');
     openmct.router.setSearchParam('newTestParam3', 'newTestValue3');
 

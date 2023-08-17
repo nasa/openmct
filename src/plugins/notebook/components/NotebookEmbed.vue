@@ -231,7 +231,7 @@ export default {
         onDestroy: destroy
       });
 
-      painterroInstance.intialize();
+      painterroInstance.initialize();
 
       const fullSizeImageObjectIdentifier = this.embed.snapshot.fullSizeImageObjectIdentifier;
       if (!fullSizeImageObjectIdentifier) {

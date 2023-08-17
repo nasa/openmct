@@ -21,7 +21,10 @@
  *****************************************************************************/
 
 const { test } = require('../../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../../appActions.js');
+const {
+  expandTreePaneItemByName,
+  createDomainObjectWithDefaults
+} = require('../../../appActions.js');
 
 const percySnapshot = require('@percy/playwright');
 
@@ -88,14 +91,3 @@ test.describe('Visual - Tree Pane', () => {
     });
   });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-  const treePane = page.getByTestId('tree-pane');
-  const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-  const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-  await expandTriangle.click();
-}
