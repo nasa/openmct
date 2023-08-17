@@ -72,7 +72,7 @@
             <plot-legend-item-expanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
-              :series-object="seriesObject"
+              :series-key-string="seriesObject.keyString"
               :highlights="highlights"
               @legendHoverChanged="legendHoverChanged"
             />

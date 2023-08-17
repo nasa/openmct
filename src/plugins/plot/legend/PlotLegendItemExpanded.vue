@@ -85,12 +85,9 @@ export default {
   mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject'],
   props: {
-    seriesObject: {
-      type: Object,
-      required: true,
-      default() {
-        return {};
-      }
+    seriesKeyString: {
+      type: String,
+      required: true
     },
     highlights: {
       type: Array,
@@ -134,7 +131,7 @@ export default {
     highlights: {
       handler(newHighlights) {
         const highlightedObject = newHighlights.find(
-          (highlight) => highlight.keyString === this.seriesObject.keyString
+          (highlight) => highlight.keyString === this.seriesKey
         );
         if (newHighlights.length === 0 || highlightedObject) {
           this.initialize(highlightedObject);
@@ -144,40 +141,59 @@ export default {
     }
   },
   mounted() {
+    this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
+    this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+    this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+    this.config.series.forEach(this.onSeriesAdd, this);
     this.legend = this.config.legend;
     this.loaded = true;
-    this.listenTo(
-      this.seriesObject,
-      'change:color',
-      (newColor) => {
-        this.updateColor(newColor);
-      },
-      this
-    );
-    this.listenTo(
-      this.seriesObject,
-      'change:name',
-      () => {
-        this.updateName();
-      },
-      this
-    );
-    this.subscribeToStaleness(this.seriesObject.domainObject);
-    this.initialize();
   },
   beforeUnmount() {
     this.stopListening();
   },
   methods: {
+    onSeriesAdd(series, index) {
+      this.seriesModels[index] = series;
+      if (series.keyString === this.seriesKeyString) {
+        this.listenTo(
+          series,
+          'change:color',
+          (newColor) => {
+            this.updateColor(newColor);
+          },
+          this
+        );
+        this.listenTo(
+          series,
+          'change:name',
+          () => {
+            this.updateName();
+          },
+          this
+        );
+        this.subscribeToStaleness(series.domainObject);
+        this.initialize();
+      }
+    },
+    onSeriesRemove(series, index) {
+      this.seriesModels.splice(index, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
       return configStore.get(configId);
     },
     initialize(highlightedObject) {
-      const seriesObject = highlightedObject?.series || this.seriesObject;
+      const seriesKeyStringToUse = highlightedObject?.seriesKeyString || this.seriesKeyString;
+      const seriesObject = this.getSeries(seriesKeyStringToUse);
 
       this.isMissing = seriesObject.domainObject.status === 'missing';
       this.colorAsHexString = seriesObject.get('color').asHexString();
@@ -208,22 +224,20 @@ export default {
     updateColor(newColor) {
       this.colorAsHexString = newColor.asHexString();
     },
-    updateName(newName) {
-      this.nameWithUnit = this.seriesObject.nameWithUnit();
+    updateName() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      this.nameWithUnit = seriesObject.nameWithUnit();
     },
     toggleHover(hover) {
       this.hover = hover;
       this.$emit('legendHoverChanged', {
-        seriesKey: this.hover ? this.seriesObject.keyString : ''
+        seriesKey: this.hover ? this.seriesKeyString : ''
       });
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
-      this.buildToolTip(
-        await this.getTelemetryPathString(this.seriesObject.domainObject.identifier),
-        BELOW,
-        'seriesName'
-      );
+      const seriesIdentifier = this.openmct.objects.parseKeyString(this.seriesKeyString);
+      this.buildToolTip(await this.getTelemetryPathString(seriesIdentifier), BELOW, 'seriesName');
     }
   }
 };
