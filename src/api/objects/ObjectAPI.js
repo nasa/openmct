@@ -554,28 +554,34 @@ export default class ObjectAPI {
    */
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
-    const telemetryPath = [];
-    if (objectDetails.composition && !['folder'].includes(objectDetails.type)) {
-      let sourceTelemetry = objectDetails.composition[0];
+    let telemetryPath = [];
+    if (objectDetails?.type === 'folder') {
+      return telemetryPath;
+    }
+
+    let sourceTelemetry = null;
+    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
+      sourceTelemetry = identifier;
+    } else if (objectDetails.composition) {
+      sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
-        sourceTelemetry = objectDetails.composition.find(
-          (telemetrySource) =>
-            this.makeKeyString(telemetrySource) === this.makeKeyString(telemetryIdentifier)
+        sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
+          utils.identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
-      const compositionElement = await this.get(sourceTelemetry);
-      if (!['yamcs.telemetry', 'generator'].includes(compositionElement.type)) {
-        return telemetryPath;
-      }
-      const telemetryKey = compositionElement.identifier.key;
-      const telemetryPathObjects = await this.getOriginalPath(telemetryKey);
-      telemetryPathObjects.forEach((pathObject) => {
-        if (pathObject.type === 'root') {
-          return;
-        }
-        telemetryPath.unshift(pathObject.name);
-      });
     }
+
+    const compositionElement = await this.get(sourceTelemetry);
+    if (!['yamcs.telemetry', 'generator', 'yamcs.aggregate'].includes(compositionElement.type)) {
+      return telemetryPath;
+    }
+
+    const telemetryPathObjects = await this.getOriginalPath(compositionElement.identifier);
+    telemetryPath = telemetryPathObjects
+      .reverse()
+      .filter((pathObject) => pathObject.type !== 'root')
+      .map((pathObject) => pathObject.name);
+
     return telemetryPath;
   }
 
