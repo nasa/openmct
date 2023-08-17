@@ -40,7 +40,7 @@
     >
 
     <progress-bar
-      v-if="activeModel.progressPerc !== undefined"
+      v-if="activeModel.progressPerc !== null"
       class="c-message-banner__progress-bar"
       :model="activeModel"
     />
