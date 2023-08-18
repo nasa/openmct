@@ -22,9 +22,10 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
+import mount from 'utils/mount';
 import Layout from './Layout.vue';
 
-xdescribe('Open MCT Layout:', () => {
+describe('Open MCT Layout:', () => {
   let openmct;
   let element;
   let components;
@@ -60,6 +61,7 @@ xdescribe('Open MCT Layout:', () => {
 
       await createLayout();
       await Vue.nextTick();
+      await Vue.nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(isCollapsed(component.pane)).toBeTrue();
@@ -68,6 +70,7 @@ xdescribe('Open MCT Layout:', () => {
 
     it('on toggle collapses if expanded', async () => {
       await createLayout();
+      await Vue.nextTick();
       toggleCollapseButtons();
       await Vue.nextTick();
 
@@ -82,8 +85,8 @@ xdescribe('Open MCT Layout:', () => {
       setHideParams();
 
       await createLayout();
-      toggleExpandButtons();
       await Vue.nextTick();
+      toggleExpandButtons();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(openmct.router.getSearchParam(component.param)).not.toEqual('true');
@@ -98,7 +101,7 @@ xdescribe('Open MCT Layout:', () => {
     const child = document.createElement('div');
     el.appendChild(child);
 
-    element = await new Vue({
+    const { vNode, destroy } = mount({
       el,
       components: {
         Layout
@@ -107,7 +110,11 @@ xdescribe('Open MCT Layout:', () => {
         openmct
       },
       template: `<Layout ref="layout"/>`
-    }).$mount().$el;
+    }, {
+      element: el
+    });
+
+    element = vNode.el;
 
     setComponents();
   }
