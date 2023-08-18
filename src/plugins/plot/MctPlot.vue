@@ -185,6 +185,7 @@ import MctChart from './chart/MctChart.vue';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
 import Flatbush from 'flatbush';
+import _ from 'lodash';
 
 const OFFSET_THRESHOLD = 10;
 const AXES_PADDING = 20;
@@ -1389,7 +1390,7 @@ export default {
               if (!series) {
                 return;
               }
-              if (!annotationsBySeries[seriesId]) {
+              if (!annotationsBySeries[seriesId]){
                 annotationsBySeries[seriesId] = [];
               }
 
@@ -1407,10 +1408,7 @@ export default {
               Object.keys(pointsInBoxBySeries).forEach((seriesKeyString) => {
                 const pointsInBox = pointsInBoxBySeries[seriesKeyString];
                 if (pointsInBox && pointsInBox.length) {
-                  annotationsBySeries[seriesKeyString] = this.concatTypedArrays(
-                    annotationsBySeries[seriesKeyString],
-                    pointsInBox
-                  );
+                  annotationsBySeries[seriesKeyString].push(...pointsInBox);
                 }
               });
             }
@@ -1461,12 +1459,13 @@ export default {
         if (seriesData && seriesData.length) {
           searchResultsBySeries[seriesModel.keyString] = [];
           const rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
-          const searchResultsBuffer = new Float32Array(rangeResults.length * 2);
-          rangeResults.forEach((id, index) => {
+          rangeResults.forEach((id) => {
             const seriesDatum = seriesData[id];
             if (seriesDatum) {
-              searchResultsBuffer[index * 2] = seriesModel.getXVal(seriesDatum);
-              searchResultsBuffer[index * 2 + 1] = seriesModel.getYVal(seriesDatum);
+              const result = {
+                point: seriesDatum
+              };
+              searchResultsBySeries[seriesModel.keyString].push(result);
             }
 
             if (rawAnnotation) {
@@ -1480,24 +1479,10 @@ export default {
               seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
             }
           });
-          searchResultsBySeries[seriesModel.keyString] = this.concatTypedArrays(
-            searchResultsBySeries[seriesModel.keyString],
-            searchResultsBuffer
-          );
         }
       });
 
       return searchResultsBySeries;
-    },
-    concatTypedArrays(sourceArray, targetArray) {
-      if (!sourceArray) {
-        return targetArray;
-      }
-      const combinedArray = new Float32Array(sourceArray.length + targetArray.length);
-      combinedArray.set(sourceArray);
-      combinedArray.set(targetArray, sourceArray.length);
-
-      return combinedArray;
     },
     endAnnotationMarquee(event) {
       const boundingBoxPerYAxis = [];
@@ -1524,7 +1509,6 @@ export default {
       }
 
       this.annotationSelectionsBySeries = pointsInBoxBySeries;
-      console.debug('🤖 Found points', this.annotationSelectionsBySeries);
       this.selectNewPlotAnnotations(boundingBoxPerYAxis, this.annotationSelectionsBySeries, event);
     },
     endZoomMarquee() {
