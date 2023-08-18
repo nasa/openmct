@@ -1356,7 +1356,6 @@ export default {
       document.body.addEventListener('click', this.cancelSelection);
     },
     selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBoxBySeries, event) {
-      console.debug(`🍎 selectNewPlotAnnotations`, pointsInBoxBySeries);
       let targetDomainObjects = {};
       let targetDetails = {};
       let annotations = [];
