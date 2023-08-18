@@ -843,7 +843,6 @@ export default {
             const annotatedPointBuffer = new Float32Array(
               this.annotatedPointsBySeries[seriesKeyString].length * 2
             );
-            console.time(`🍊 Preparing to draw annotated points`);
             Object.values(this.annotatedPointsBySeries[seriesKeyString]).forEach(
               (annotatedPoint, index) => {
                 const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, seriesModel);
@@ -858,10 +857,7 @@ export default {
                 }
               }
             );
-            console.timeEnd(`🍊 Preparing to draw annotated points`);
-            console.time(`🍉 Drawing annotated points`);
             this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
-            console.timeEnd(`🍉 Drawing annotated points`);
           }
         });
       }

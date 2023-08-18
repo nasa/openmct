@@ -1390,7 +1390,9 @@ export default {
               if (!series) {
                 return;
               }
-              annotationsBySeries[seriesId] = [];
+              if (!annotationsBySeries[seriesId]){
+                annotationsBySeries[seriesId] = [];
+              }
 
               boundingBoxPerYAxis.push({
                 id: series.get('yAxisId'),
