@@ -88,7 +88,7 @@ export default {
     return {
       activeModel: {
         message: undefined,
-        progressPerc: undefined,
+        progressPerc: null,
         progressText: undefined,
         minimized: undefined,
         options: undefined
@@ -178,7 +178,7 @@ export default {
         return;
       }
 
-      if (this.activeModel.progressPerc !== undefined) {
+      if (this.activeModel.progressPerc !== null) {
         maximizedDialog = this.openmct.overlays.progressDialog({
           buttons: [minimizeButton],
           ...this.activeModel
