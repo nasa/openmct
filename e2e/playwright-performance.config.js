@@ -6,7 +6,7 @@ const CI = process.env.CI === 'true';
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
+  retries: 0, //Only for debugging purposes for trace: 'on-first-retry'
   testDir: 'tests/performance/',
   timeout: 60 * 1000,
   workers: 1, //Only run in serial with 1 worker
@@ -29,7 +29,18 @@ const config = {
     {
       name: 'chrome',
       use: {
-        browserName: 'chromium'
+        browserName: 'chromium',
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-notifications',
+            '--use-fake-ui-for-media-stream',
+            '--use-fake-device-for-media-stream',
+            '--js-flags=--no-move-object-start',
+            '--enable-precise-memory-info',
+            '--display=:100'
+          ]
+        }
       }
     }
   ],

@@ -1,0 +1,35 @@
+{
+    "app": "default-app-for-scenario",
+    "type": "scenario",
+    "interaction": "test-google-maps.js",
+    "browserInfo": {
+      "_browserVersion": "HeadlessChrome/101.0.4950.0",
+      "_puppeteerConfig": {
+        "headless": true,
+        "devtools": true,
+        "userDataDir": "/tmp/memlab/data/profile",
+        "args": [
+          "--no-sandbox",
+          "--disable-notifications",
+          "--use-fake-ui-for-media-stream",
+          "--use-fake-device-for-media-stream",
+          "--js-flags=\"--no-move-object-start\"",
+          "--enable-precise-memory-info",
+          "browser-test",
+          "--display=:100"
+        ],
+        "defaultViewport": {
+          "width": 1680,
+          "height": 1080,
+          "deviceScaleFactor": 1
+        }
+      },
+      "_consoleMessages": [
+        "console output line 1",
+        "console output line 2",
+      ]
+    },
+    "extraInfo": {
+      "command": "run --scenario /home/jacksongl/scripts/test-google-maps.js"
+    }
+  }

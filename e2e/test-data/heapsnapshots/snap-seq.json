@@ -1,0 +1,23 @@
+[
+    {
+      "name": "page-load", 
+      "snapshot": true,
+      "type": "baseline",
+      "idx": 1,
+      "JSHeapUsedSize": 88941668
+    },
+    {
+      "name": "action-on-page",
+      "snapshot": true,
+      "type": "target",
+      "idx": 2,
+      "JSHeapUsedSize": 92784609
+    },
+    {
+      "name": "revert",
+      "snapshot": true,
+      "type": "final",
+      "idx": 3,
+      "JSHeapUsedSize": 93053124
+    }
+  ]

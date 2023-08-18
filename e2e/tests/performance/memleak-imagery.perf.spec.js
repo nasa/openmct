@@ -1,121 +1,131 @@
-/*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
-
-/*
-This test suite is an initial example for memory leak testing using performance. This configuration and execution must
-be kept separate from the traditional performance measurements to avoid any "observer" effects associated with tracing
-or profiling playwright and/or the browser.
-
-Based on a pattern identified in https://github.com/trentmwillis/devtools-protocol-demos/blob/master/testing-demos/memory-leak-by-heap.js
-and https://github.com/paulirish/automated-chrome-profiling/issues/3
-
-Best path forward: https://github.com/cowchimp/headless-devtools/blob/master/src/Memory/example.js
-
-*/
-
+const fs = require('fs');
+const path = require('path');
 const { test, expect } = require('@playwright/test');
+const { findLeaks, BrowserInteractionResultReader } = require('@memlab/api');
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
+const snapshotPath = 'e2e/test-data/heapsnapshots/';
 
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Memory Performance tests', () => {
-  test.beforeEach(async ({ page, browser }, testInfo) => {
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+test.describe.only('Memory Performance tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(
+      './#/browse/mine?tc.mode=local&tc.timeSystem=utc&view=grid&tc.startDelta=1800000&tc.endDelta=30000',
+      { waitUntil: 'domcontentloaded' }
+    );
+    await page.waitForTimeout(3 * 1000);
+    await forceGC(page);
+    await captureHeapSnapshot(page, snapshotPath + 's1.heapsnapshot');
 
-    // Click a:has-text("My Items")
-    await page.locator('a:has-text("My Items")').click({
-      button: 'right'
-    });
+    // Get and compare JSHeapUsedSize at different points in the test
+    let heapSize = await getHeapSize(page);
+    console.log(`Initial JSHeapUsedSize: ${heapSize}`);
 
-    // Click text=Import from JSON
+    await page.locator('a:has-text("My Items")').click({ button: 'right' });
     await page.locator('text=Import from JSON').click();
-
-    // Upload Performance Display Layout.json
     await page.setInputFiles('#fileElem', filePath);
-
-    // Click text=OK
     await page.locator('text=OK').click();
-
     await expect(
       page.locator('a:has-text("Performance Display Layout Display Layout")')
     ).toBeVisible();
   });
 
-  test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page, browser }) => {
-    await page.goto('./', { waitUntil: 'networkidle' });
-
-    // To to Search Available after Launch
+  test('Embedded View Large for Imagery is performant in Fixed Time', async ({ page }) => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    // Fill Search input
     await page
       .locator('[aria-label="OpenMCT Search"] input[type="search"]')
       .fill('Performance Display Layout');
-    //Search Result Appears and is clicked
     await Promise.all([
       page.waitForNavigation(),
       page.locator('a:has-text("Performance Display Layout")').first().click()
     ]);
 
-    //Time to Example Imagery Frame loads within Display Layout
     await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
-    //Time to Example Imagery object loads
     await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
+    await page.waitForTimeout(3 * 1000);
+    await forceGC(page);
+    await captureHeapSnapshot(page, snapshotPath + 's2.heapsnapshot');
+    // Get and compare JSHeapUsedSize at different points in the test
+    let heapSize = await getHeapSize(page);
+    console.log(`second JSHeapUsedSize: ${heapSize}`);
+  });
 
-    const client = await page.context().newCDPSession(page);
-    await client.send('HeapProfiler.enable');
-    await client.send('HeapProfiler.startSampling');
-    // await client.send('HeapProfiler.collectGarbage');
-    await client.send('Performance.enable');
+  test.afterEach(async ({ page }) => {
+    await page.goto(
+      './#/browse/mine?tc.mode=local&tc.timeSystem=utc&view=grid&tc.startDelta=1800000&tc.endDelta=30000',
+      { waitUntil: 'domcontentloaded' }
+    );
+    await page.waitForTimeout(3 * 1000);
+    await forceGC(page);
+    await captureHeapSnapshot(page, snapshotPath + 's3.heapsnapshot');
+    // Get and compare JSHeapUsedSize at different points in the test
+    let heapSize = await getHeapSize(page);
+    console.log(`Final JSHeapUsedSize: ${heapSize}`);
 
-    let performanceMetricsBefore = await client.send('Performance.getMetrics');
-    console.log(performanceMetricsBefore.metrics);
-
-    //await client.send('Performance.disable');
-
-    //Open Large view
-    await page.locator('button:has-text("Large View")').click();
-    await client.send('HeapProfiler.takeHeapSnapshot');
-
-    //Time to Imagery Rendered in Large Frame
-    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
-
-    //Time to Example Imagery object loads
-    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
-
-    // Click Close Icon
-    await page.locator('.c-click-icon').click();
-
-    //Time to Example Imagery Frame loads within Display Layout
-    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
-    //Time to Example Imagery object loads
-    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
-
-    await client.send('HeapProfiler.collectGarbage');
-    //await client.send('Performance.enable');
-
-    let performanceMetricsAfter = await client.send('Performance.getMetrics');
-    console.log(performanceMetricsAfter.metrics);
-
-    //await client.send('Performance.disable');
+    console.log('Heap snapshot captured');
+    const reader = BrowserInteractionResultReader.from(snapshotPath);
+    console.log('reader created', JSON.stringify(reader, null, 2));
+    const leaks = await findLeaks(reader);
+    console.log(leaks);
   });
 });
+
+// Function to get JSHeapUsedSize
+function getHeapSize(page) {
+  return page.evaluate(() => {
+    if (window.performance && window.performance.memory) {
+      return window.performance.memory.usedJSHeapSize;
+    }
+    return null;
+  });
+}
+
+async function forceGC(page, repeat = 6) {
+  const client = await page.context().newCDPSession(page);
+  for (let i = 0; i < repeat; i++) {
+    await client.send('HeapProfiler.collectGarbage');
+    // wait for a while and let GC do the job
+    await page.waitForTimeout(200);
+  }
+  await page.waitForTimeout(1400);
+}
+
+async function captureHeapSnapshot(page, outputPath) {
+  const client = await page.context().newCDPSession(page);
+
+  const dir = path.dirname(outputPath);
+  console.log(`Output Path: ${outputPath}`);
+  console.log(`Directory: ${dir}`);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  const chunks = [];
+
+  function dataHandler(data) {
+    chunks.push(data.chunk);
+  }
+
+  function progressHandler(data) {
+    const percent = Math.floor((100 * data.done) / data.total);
+    console.log(`heap snapshot ${percent}% complete`);
+  }
+
+  try {
+    client.on('HeapProfiler.addHeapSnapshotChunk', dataHandler);
+    client.on('HeapProfiler.reportHeapSnapshotProgress', progressHandler);
+
+    await client.send('HeapProfiler.enable');
+    await client.send('HeapProfiler.takeHeapSnapshot', { reportProgress: true });
+
+    client.removeListener('HeapProfiler.addHeapSnapshotChunk', dataHandler);
+    client.removeListener('HeapProfiler.reportHeapSnapshotProgress', progressHandler);
+
+    const fullSnapshot = chunks.join('');
+    fs.writeFileSync(outputPath, fullSnapshot, { encoding: 'UTF-8' });
+  } catch (error) {
+    console.error('Error while capturing heap snapshot:', error);
+  } finally {
+    await client.detach();
+  }
+}
