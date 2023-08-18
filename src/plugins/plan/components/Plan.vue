@@ -133,9 +133,6 @@ export default {
     this.clipActivityNames = this.configuration.clipActivityNames;
     if (this.domainObject.type === 'plan') {
       this.planData = getValidatedData(this.domainObject);
-      if (!Object.keys(this.planData).length) {
-        this.openmct.notifications.error('Error loading JSON. Please verify JSON is valid.');
-      }
     }
 
     const canvas = document.createElement('canvas');
@@ -426,11 +423,15 @@ export default {
       const activityGroups = [];
       this.planViewConfiguration.initializeSwimlaneVisibility(groupNames);
 
-      groupNames.forEach((groupName) => {
+      for(const groupName of groupNames) {
         let activitiesByRow = {};
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
+        if (!Array.isArray(rawActivities)) {
+          this.openmct.notifications.error('Please verify JSON follows correct Schema.');
+          break;
+        }
         rawActivities.forEach((rawActivity) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
@@ -507,7 +508,7 @@ export default {
           width: swimlaneWidth,
           status: this.isNested ? '' : this.status
         });
-      });
+      }
 
       this.activityGroups = activityGroups;
     },
