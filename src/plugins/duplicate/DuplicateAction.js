@@ -35,34 +35,34 @@ export default class DuplicateAction {
     }
 
     invoke(objectPath) {
-        this.object = objectPath[0];
-        this.parent = objectPath[1];
+        const object = objectPath[0];
+        const parent = objectPath[1];
 
-        this.showForm(this.object, this.parent);
+        this.showForm(object, parent);
     }
 
-    inNavigationPath() {
+    inNavigationPath(object) {
         return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
     }
 
-    async onSave(changes) {
+    async onSave(object, parent, changes) {
         this.startTransaction();
 
-        let inNavigationPath = this.inNavigationPath();
+        let inNavigationPath = this.inNavigationPath(object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
         let duplicationTask = new DuplicateTask(this.openmct);
-        if (changes.name && (changes.name !== this.object.name)) {
+        if (changes.name && (changes.name !== object.name)) {
             duplicationTask.changeName(changes.name);
         }
 
-        const parentDomainObjectpath = changes.location || [this.parent];
-        const parent = parentDomainObjectpath[0];
+        const parentDomainObjectpath = changes.location || [parent];
+        const parentObject = parentDomainObjectpath[0];
 
-        await duplicationTask.duplicate(this.object, parent);
+        await duplicationTask.duplicate(object, parentObject);
 
         return this.saveTransaction();
     }
@@ -88,7 +88,7 @@ export default class DuplicateAction {
                             control: "locator",
                             required: true,
                             parent: parentDomainObject,
-                            validate: this.validate(parentDomainObject),
+                            validate: this.validate(domainObject, parentDomainObject),
                             key: 'location'
                         }
                     ]
@@ -97,16 +97,19 @@ export default class DuplicateAction {
         };
 
         this.openmct.forms.showForm(formStructure)
-            .then(this.onSave.bind(this));
+            .then(changes => {
+                let onSave = this.onSave.bind(this);
+                onSave(domainObject, parentDomainObject, changes);
+            });
     }
 
-    validate(currentParent) {
+    validate(domainObject, currentParent) {
         return (data) => {
             const parentCandidate = data.value[0];
 
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(domainObject.identifier);
 
             if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
                 return false;
@@ -125,7 +128,7 @@ export default class DuplicateAction {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, domainObject);
         };
     }
 
