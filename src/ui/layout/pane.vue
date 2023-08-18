@@ -115,6 +115,11 @@ export default {
         this.$el.style[this.styleProp] = savedPosition;
       }
     }
+
+    await this.$nextTick();
+    if (this.isCollapsable) {
+      this.handleHideUrl();
+    }
   },
   methods: {
     addHideParam(target) {
