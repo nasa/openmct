@@ -101,7 +101,11 @@ export default {
       type: Number,
       required: true
     },
-    multiSelect: Boolean
+    multiSelect: Boolean,
+    isEditing: {
+      type: Boolean,
+      required: true
+    }
   },
   data() {
     return {
@@ -114,7 +118,7 @@ export default {
     showFrameEdit() {
       let layoutItem = this.selection.length > 0 && this.selection[0][0].context.layoutItem;
 
-      return !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
+      return this.isEditing && !this.multiSelect && layoutItem && layoutItem.id === this.item.id;
     },
     position() {
       let { x, y, x2, y2 } = this.item;

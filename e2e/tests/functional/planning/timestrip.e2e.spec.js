@@ -73,7 +73,7 @@ const testPlan = {
 };
 
 test.describe('Time Strip', () => {
-  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Indepdenent Time Contexts @unstable', async ({
+  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts @unstable', async ({
     page
   }) => {
     test.info().annotations.push({

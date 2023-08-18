@@ -431,7 +431,7 @@ class CouchObjectProvider {
     // Dummy search function. It has to appear to support search,
     // otherwise the in-memory indexer will index all of its objects,
     // but actually search results will be provided by a separate search provider
-    // see CoucheSearchProvider.js
+    // see CouchSearchProvider.js
     return Promise.resolve([]);
   }
 

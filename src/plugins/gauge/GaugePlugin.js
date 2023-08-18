@@ -167,9 +167,11 @@ export default function () {
   };
 
   function getGaugeFormController(openmct) {
+    let destroyComponent;
+
     return {
       show(element, model, onChange) {
-        const { vNode } = mount(
+        const { vNode, destroy } = mount(
           {
             el: element,
             components: {
@@ -191,8 +193,12 @@ export default function () {
             element
           }
         );
+        destroyComponent = destroy;
 
         return vNode.componentInstance;
+      },
+      destroy() {
+        destroyComponent();
       }
     };
   }

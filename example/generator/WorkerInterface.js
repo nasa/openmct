@@ -88,10 +88,10 @@ define(['uuid'], function ({ v4: uuid }) {
   };
 
   WorkerInterface.prototype.subscribe = function (request, cb) {
-    const id = request.id;
+    const { id, loadDelay } = request;
     const messageId = this.dispatch('subscribe', request, (message) => {
       if (!this.staleTelemetryIds[id]) {
-        cb(message.data);
+        setTimeout(() => cb(message.data), Math.max(loadDelay, 0));
       }
     });
 

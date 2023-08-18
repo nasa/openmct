@@ -83,7 +83,7 @@
         <div :style="childrenHeightStyles">
           <tree-item
             v-for="(treeItem, index) in visibleItems"
-            :key="`${treeItem.navigationPath}-${index}`"
+            :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
@@ -97,7 +97,6 @@
             :loading-items="treeItemLoading"
             :targeted-path="targetedPath"
             @tree-item-mounted="scrollToCheck($event)"
-            @tree-item-destroyed="removeCompositionListenerFor($event)"
             @tree-item-action="treeItemAction(treeItem, $event)"
             @tree-item-selection="treeItemSelection(treeItem)"
             @targeted-path-animation-end="targetedPathAnimationEnd()"
