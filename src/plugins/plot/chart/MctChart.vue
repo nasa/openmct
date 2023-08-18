@@ -833,31 +833,17 @@ export default {
     },
     prepareToDrawAnnotatedPoints(yAxisId) {
       if (this.annotatedPointsBySeries && Object.values(this.annotatedPointsBySeries).length) {
-        const uniquePointsToDraw = [];
-
         Object.keys(this.annotatedPointsBySeries).forEach((seriesKeyString) => {
           const seriesModel = this.getSeries(seriesKeyString);
           const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
           if (matchesYAxis) {
             // annotation points are all within range (checked in MctPlot with FlatBush), so we don't need to check
-            const annotatedPointBuffer = new Float32Array(
-              this.annotatedPointsBySeries[seriesKeyString].length * 2
+            //console.time('🎨 drawAnnotations opengl');
+            this.drawAnnotatedPoints(
+              seriesModel,
+              toRaw(this.annotatedPointsBySeries[seriesKeyString])
             );
-            Object.values(this.annotatedPointsBySeries[seriesKeyString]).forEach(
-              (annotatedPoint, index) => {
-                const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, seriesModel);
-                const canvasYValue = this.offset[yAxisId].yVal(annotatedPoint.point, seriesModel);
-                const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
-                  return rawPoint[0] === canvasXValue && rawPoint[1] === canvasYValue;
-                });
-                if (!drawnPoint) {
-                  annotatedPointBuffer[index * 2] = canvasXValue;
-                  annotatedPointBuffer[index * 2 + 1] = canvasYValue;
-                  uniquePointsToDraw.push([canvasXValue, canvasYValue]);
-                }
-              }
-            );
-            this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
+            //console.timeEnd('🎨 drawAnnotations opengl');
           }
         });
       }
@@ -869,6 +855,7 @@ export default {
         color[3] = 0.15;
         const pointCount = annotatedPointBuffer.length / 2;
         const shape = seriesModel.get('markerShape');
+        console.debug(`🎨 drawAnnotationPoints opengl`, annotatedPointBuffer);
 
         this.drawAPI.drawPoints(annotatedPointBuffer, color, pointCount, ANNOTATION_SIZE, shape);
       }
@@ -882,24 +869,12 @@ export default {
           const seriesModel = this.getSeries(seriesKeyString);
           const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
           if (matchesYAxis) {
-            const annotationSelectionBuffer = new Float32Array(
-              this.annotationSelectionsBySeries[seriesKeyString].length * 2
+            console.time('🎨 drawAnnotationSelections opengl');
+            this.drawAnnotationSelections(
+              seriesModel,
+              toRaw(this.annotationSelectionsBySeries[seriesKeyString])
             );
-            Object.values(this.annotationSelectionsBySeries[seriesKeyString]).forEach(
-              (annotatedSelectedPoint, index) => {
-                const canvasXValue = this.offset[yAxisId].xVal(
-                  annotatedSelectedPoint.point,
-                  seriesModel
-                );
-                const canvasYValue = this.offset[yAxisId].yVal(
-                  annotatedSelectedPoint.point,
-                  seriesModel
-                );
-                annotationSelectionBuffer[index * 2] = canvasXValue;
-                annotationSelectionBuffer[index * 2 + 1] = canvasYValue;
-              }
-            );
-            this.drawAnnotationSelections(seriesModel, annotationSelectionBuffer);
+            console.timeEnd('🎨 drawAnnotationSelections opengl');
           }
         });
       }
@@ -908,6 +883,7 @@ export default {
       const color = [255, 255, 255, 1]; // white
       const pointCount = annotationSelectionBuffer.length / 2;
       const shape = seriesModel.get('markerShape');
+      console.debug(`🎨 drawAnnotationSelections opengl`, annotationSelectionBuffer);
 
       this.drawAPI.drawPoints(annotationSelectionBuffer, color, pointCount, ANNOTATION_SIZE, shape);
     },
