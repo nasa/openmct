@@ -53,11 +53,11 @@ test.describe("Plan - Check Invalid JSON Notification", () => {
     expect(await page.locator('button[aria-label="Clear all notifications"]').isVisible()).toBe(
       true
     );
-    // Click on the div with role="alert" that has "Error loading JSON. Please verify JSON is valid." text
-    await page.locator('div[role="alert"]:has-text("Error loading JSON. Please verify JSON is valid.")').click();
+    // Click on the div with role="alert" that has "Please verify JSON follows correct Schema." text
+    await page.locator('div[role="alert"]:has-text("Please verify JSON follows correct Schema.")').click();
     // Verify there is a div with role="dialog"
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
-    // Verify the div with role="dialog" contains text "Error loading JSON. Please verify JSON is valid."
-    expect(await page.locator('div[role="dialog"]').innerText()).toContain('Error loading JSON. Please verify JSON is valid.');
+    // Verify the div with role="dialog" contains text "Please verify JSON follows correct Schema."
+    expect(await page.locator('div[role="dialog"]').innerText()).toContain('Please verify JSON follows correct Schema.');
   });
 });
