@@ -1,4 +1,4 @@
-import TableComponent from './components/table.vue';
+import TableComponent from './components/Table.vue';
 import TelemetryTable from './TelemetryTable';
 import mount from 'utils/mount';
 

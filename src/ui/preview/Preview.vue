@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import PreviewHeader from './preview-header.vue';
+import PreviewHeader from './PreviewHeader.vue';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 

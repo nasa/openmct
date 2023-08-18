@@ -34,15 +34,15 @@
 </template>
 
 <script>
-import multipane from '../../../ui/layout/multipane.vue';
-import pane from '../../../ui/layout/pane.vue';
+import Multipane from '../../../ui/layout/Multipane.vue';
+import Pane from '../../../ui/layout/Pane.vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {
   components: {
-    multipane,
-    pane,
+    Multipane,
+    Pane,
     StylesView,
     SavedStylesInspectorView
   },

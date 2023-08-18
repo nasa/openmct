@@ -116,8 +116,8 @@
 
 <script>
 import _ from 'lodash';
-import treeItem from './tree-item.vue';
-import search from '../components/search.vue';
+import TreeItem from './TreeItem.vue';
+import search from '../components/Search.vue';
 import { markRaw, reactive } from 'vue';
 
 const ITEM_BUFFER = 25;
@@ -130,7 +130,7 @@ export default {
   name: 'MctTree',
   components: {
     search,
-    treeItem
+    TreeItem
   },
   inject: ['openmct'],
   props: {

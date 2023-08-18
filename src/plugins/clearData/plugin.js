@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ClearDataAction from './ClearDataAction';
-import GlobalClearIndicator from './components/globalClearIndicator.vue';
+import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 import mount from 'utils/mount';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {

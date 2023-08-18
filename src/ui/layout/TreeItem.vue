@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import viewControl from '../components/viewControl.vue';
+import viewControl from '../components/ViewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
