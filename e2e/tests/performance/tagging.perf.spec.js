@@ -32,7 +32,7 @@ const {
   waitForPlotsToRender
 } = require('../../appActions');
 
-test.describe.fixme('Plot Tagging Performance', () => {
+test.describe('Plot Tagging Performance', () => {
   /**
    * Given a canvas and a set of points, tags the points on the canvas.
    * @param {import('@playwright/test').Page} page
