@@ -644,8 +644,12 @@ export default {
         this.drawHighlights(id);
         // only draw these in fixed time mode or plot is paused
         if (this.annotationViewingAndEditingAllowed) {
+          console.time('📈 drawAnnotations');
           this.prepareToDrawAnnotatedPoints(id);
+          console.timeEnd('📈 drawAnnotations');
+          console.time('📊 drawAnnotationSelections');
           this.prepareToDrawAnnotationSelections(id);
+          console.timeEnd('📊 drawAnnotationSelections');
         }
       });
     },
@@ -832,34 +836,39 @@ export default {
       }
     },
     prepareToDrawAnnotatedPoints(yAxisId) {
-      if (this.annotatedPointsBySeries && Object.values(this.annotatedPointsBySeries).length) {
-        const uniquePointsToDraw = [];
+      if (this.annotatedPointsBySeries) {
+        const seriesKeys = Object.keys(this.annotatedPointsBySeries);
 
-        Object.keys(this.annotatedPointsBySeries).forEach((seriesKeyString) => {
-          const seriesModel = this.getSeries(seriesKeyString);
-          const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
-          if (matchesYAxis) {
-            // annotation points are all within range (checked in MctPlot with FlatBush), so we don't need to check
-            const annotatedPointBuffer = new Float32Array(
-              this.annotatedPointsBySeries[seriesKeyString].length * 2
-            );
-            Object.values(this.annotatedPointsBySeries[seriesKeyString]).forEach(
-              (annotatedPoint, index) => {
+        if (seriesKeys.length > 0) {
+          const uniquePointsToDraw = {}; // Use plain object instead of Set for faster operation
+
+          for (let i = 0; i < seriesKeys.length; i++) {
+            const seriesKeyString = seriesKeys[i];
+            const seriesModel = this.getSeries(seriesKeyString);
+            const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
+
+            if (matchesYAxis) {
+              const annotatedPoints = this.annotatedPointsBySeries[seriesKeyString];
+              const annotatedPointKeys = Object.keys(annotatedPoints); // only compute keys once
+              const annotatedPointBuffer = new Float32Array(annotatedPointKeys.length * 2);
+
+              for (let j = 0; j < annotatedPointKeys.length; j++) {
+                const annotatedPoint = annotatedPoints[annotatedPointKeys[j]];
                 const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, seriesModel);
                 const canvasYValue = this.offset[yAxisId].yVal(annotatedPoint.point, seriesModel);
-                const drawnPoint = uniquePointsToDraw.some((rawPoint) => {
-                  return rawPoint[0] === canvasXValue && rawPoint[1] === canvasYValue;
-                });
-                if (!drawnPoint) {
-                  annotatedPointBuffer[index * 2] = canvasXValue;
-                  annotatedPointBuffer[index * 2 + 1] = canvasYValue;
-                  uniquePointsToDraw.push([canvasXValue, canvasYValue]);
+                const drawnPointKey = `${canvasXValue}|${canvasYValue}`;
+
+                if (!uniquePointsToDraw[drawnPointKey]) {
+                  annotatedPointBuffer[j * 2] = canvasXValue;
+                  annotatedPointBuffer[j * 2 + 1] = canvasYValue;
+                  uniquePointsToDraw[drawnPointKey] = true;
                 }
               }
-            );
-            this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
+
+              this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
+            }
           }
-        });
+        }
       }
     },
     drawAnnotatedPoints(seriesModel, annotatedPointBuffer) {
@@ -874,35 +883,41 @@ export default {
       }
     },
     prepareToDrawAnnotationSelections(yAxisId) {
-      if (
-        this.annotationSelectionsBySeries &&
-        Object.keys(this.annotationSelectionsBySeries).length
-      ) {
-        Object.keys(this.annotationSelectionsBySeries).forEach((seriesKeyString) => {
-          const seriesModel = this.getSeries(seriesKeyString);
-          const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
-          if (matchesYAxis) {
-            const annotationSelectionBuffer = new Float32Array(
-              this.annotationSelectionsBySeries[seriesKeyString].length * 2
-            );
-            Object.values(this.annotationSelectionsBySeries[seriesKeyString]).forEach(
-              (annotatedSelectedPoint, index) => {
-                const canvasXValue = this.offset[yAxisId].xVal(
-                  annotatedSelectedPoint.point,
-                  seriesModel
-                );
-                const canvasYValue = this.offset[yAxisId].yVal(
-                  annotatedSelectedPoint.point,
-                  seriesModel
-                );
-                annotationSelectionBuffer[index * 2] = canvasXValue;
-                annotationSelectionBuffer[index * 2 + 1] = canvasYValue;
-              }
-            );
-            this.drawAnnotationSelections(seriesModel, annotationSelectionBuffer);
-          }
-        });
+      if (!this.annotationSelectionsBySeries) {
+        return;
       }
+
+      const seriesKeys = Object.keys(this.annotationSelectionsBySeries);
+      if (!seriesKeys.length) {
+        return;
+      }
+
+      seriesKeys.forEach((seriesKeyString) => {
+        const seriesModel = this.getSeries(seriesKeyString);
+        const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
+
+        if (matchesYAxis) {
+          const annotationSelections = this.annotationSelectionsBySeries[seriesKeyString];
+
+          const annotationSelectionBuffer = new Float32Array(annotationSelections.length * 2);
+
+          let index = 0;
+          for (const annotatedSelectedPoint of Object.values(annotationSelections)) {
+            const canvasXValue = this.offset[yAxisId].xVal(
+              annotatedSelectedPoint.point,
+              seriesModel
+            );
+            const canvasYValue = this.offset[yAxisId].yVal(
+              annotatedSelectedPoint.point,
+              seriesModel
+            );
+            annotationSelectionBuffer[index++] = canvasXValue;
+            annotationSelectionBuffer[index++] = canvasYValue;
+          }
+
+          this.drawAnnotationSelections(seriesModel, annotationSelectionBuffer);
+        }
+      });
     },
     drawAnnotationSelections(seriesModel, annotationSelectionBuffer) {
       const color = [255, 255, 255, 1]; // white
