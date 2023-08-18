@@ -1390,7 +1390,7 @@ export default {
               if (!series) {
                 return;
               }
-              if (!annotationsBySeries[seriesId]){
+              if (!annotationsBySeries[seriesId]) {
                 annotationsBySeries[seriesId] = [];
               }
 
