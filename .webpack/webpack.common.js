@@ -55,7 +55,7 @@ const config = {
     alias: {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
-      saveAs: 'file-saver/src/FileSaver.js',
+      //saveAs: 'file-saver/src/FileSaver.js',
       csv: 'comma-separated-values',
       EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',
@@ -124,6 +124,7 @@ const config = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
+          hotReload: false,
           compilerOptions: {
             whitespace: 'preserve',
             compatConfig: {

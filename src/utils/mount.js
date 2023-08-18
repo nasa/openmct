@@ -20,6 +20,9 @@ export default function mount(component, { props, children, element, app } = {})
     }
     el = null;
     vNode = null;
+//    if (app && app._context) {
+//      app._context.optionsCache.delete(component);
+//    }
   };
 
   return { vNode, destroy, el };

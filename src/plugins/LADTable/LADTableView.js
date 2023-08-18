@@ -23,6 +23,7 @@
 import LadTable from './components/LADTable.vue';
 import LADTableConfiguration from './LADTableConfiguration';
 import mount from 'utils/mount';
+import { markRaw } from 'vue';
 
 export default class LADTableView {
   constructor(openmct, domainObject, objectPath) {
@@ -31,26 +32,29 @@ export default class LADTableView {
     this.objectPath = objectPath;
     this.component = null;
     this._destroy = null;
+    markRaw(this);
   }
 
   show(element) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
+    const domainObject = this.domainObject;
+    const objectPath = this.objectPath;
 
     const { vNode, destroy } = mount(
       {
         el: element,
         components: {
-          LadTable
+          LadTable: Object.create(LadTable)
         },
         provide: {
           openmct: this.openmct,
-          currentView: this,
-          ladTableConfiguration
+          //currentView: markRaw(this),
+          ladTableConfiguration: markRaw(ladTableConfiguration)
         },
         data: () => {
           return {
-            domainObject: this.domainObject,
-            objectPath: this.objectPath
+            domainObject,
+            objectPath
           };
         },
         template:
@@ -77,5 +81,7 @@ export default class LADTableView {
     if (this._destroy) {
       this._destroy();
     }
+    //this.openmct.app._context.optionsCache.delete(LadTable);
+    //this.openmct.app._context.optionsCache = new WeakMap();
   }
 }

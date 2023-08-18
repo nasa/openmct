@@ -22,13 +22,14 @@
 import EventEmitter from 'EventEmitter';
 import ActionCollection from './ActionCollection';
 import _ from 'lodash';
+import { markRaw } from 'vue';
 
 class ActionsAPI extends EventEmitter {
   constructor(openmct) {
     super();
 
     this._allActions = {};
-    this._actionCollections = new WeakMap();
+    this._actionCollections = markRaw(new WeakMap());
     this._openmct = openmct;
 
     this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'export', 'import'];

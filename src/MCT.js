@@ -392,7 +392,7 @@ define([
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
         this.layout = component.$refs.layout;
-        this.app = appLayout;
+//        this.app = appLayout;
         Browse(this);
         window.addEventListener('beforeunload', this.destroy);
         this.router.start();

@@ -75,7 +75,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test('LAD table view', async ({ page }) => {
+  test.only('LAD table view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(page, 'lad-table-single-1hz-swg');
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -217,9 +217,9 @@ test.describe('Navigation memory leak is not detected in', () => {
         // eslint-disable-next-line no-undef
         window.fr = new FinalizationRegistry(resolve);
         window.fr.register(
-          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vue__,
+          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vnode.ctx.ctx,
           'navigatedObject',
-          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vue__
+          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild.__vnode.ctx.ctx
         );
       });
     });

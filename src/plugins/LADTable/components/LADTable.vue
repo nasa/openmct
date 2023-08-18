@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import Vue, { toRaw } from 'vue';
+import Vue, { toRaw, markRaw } from 'vue';
 import LadRow from './LADRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
@@ -139,8 +139,9 @@ export default {
     );
     this.initializeViewActions();
   },
-  unmounted() {
+  beforeUnmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
+    this.ladTableConfiguration.destroy();
 
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
@@ -150,6 +151,8 @@ export default {
       stalenessSubscription.unsubscribe();
       stalenessSubscription.stalenessUtils.destroy();
     });
+    this.viewActionsCollection.destroy();
+    delete this.viewActionsCollection;
   },
   methods: {
     addItem(domainObject) {

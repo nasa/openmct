@@ -13,6 +13,7 @@ const common = require('./webpack.common');
 const projectRootDir = path.resolve(__dirname, '..');
 
 module.exports = merge(common, {
+  cache: false,
   mode: 'development',
   watchOptions: {
     // Since we use require.context, webpack is watching the entire directory.
@@ -32,6 +33,7 @@ module.exports = merge(common, {
   ],
   devtool: 'eval-source-map',
   devServer: {
+    hot: false,
     devMiddleware: {
       writeToDisk: (filePathString) => {
         const filePath = path.parse(filePathString);
