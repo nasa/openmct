@@ -204,7 +204,7 @@ import moment from 'moment';
 import Vue from 'vue';
 
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
-import Compass from './Compass/Compass.vue';
+import Compass from './Compass/CompassComponent.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import imageryData from '../../imagery/mixins/imageryData';

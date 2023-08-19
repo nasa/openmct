@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GaugeComponent from './components/Gauge.vue';
+import GaugeComponent from './components/GaugeComponent.vue';
 import mount from 'utils/mount';
 
 export default function GaugeViewProvider(openmct) {

@@ -86,9 +86,9 @@
 </template>
 
 <script>
-import ToolbarColorPicker from '@/ui/toolbar/components/toolbar-color-picker.vue';
-import ToolbarButton from '@/ui/toolbar/components/toolbar-button.vue';
-import ToolbarToggleButton from '@/ui/toolbar/components/toolbar-toggle-button.vue';
+import ToolbarColorPicker from '@/ui/toolbar/components/ToolbarColorPicker.vue';
+import ToolbarButton from '@/ui/toolbar/components/ToolbarButton.vue';
+import ToolbarToggleButton from '@/ui/toolbar/components/ToolbarToggleButton.vue';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils';
 

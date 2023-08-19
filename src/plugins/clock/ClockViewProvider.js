@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Clock from './components/Clock.vue';
+import Clock from './components/ClockComponent.vue';
 import mount from 'utils/mount';
 
 export default function ClockViewProvider(openmct) {

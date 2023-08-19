@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
+import Plot from './PlotView.vue';
 import mount from 'utils/mount';
 
 export default function PlotViewProvider(openmct) {

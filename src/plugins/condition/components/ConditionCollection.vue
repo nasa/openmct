@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import Condition from './Condition.vue';
+import Condition from './ConditionItem.vue';
 import ConditionManager from '../ConditionManager';
 import StalenessUtils from '@/utils/staleness';
 

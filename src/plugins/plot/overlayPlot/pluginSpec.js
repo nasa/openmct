@@ -28,7 +28,7 @@ import {
 } from 'utils/testing';
 import PlotVuePlugin from '../plugin';
 import Vue from 'vue';
-import Plot from '../Plot.vue';
+import Plot from '../PlotView.vue';
 import configStore from '../configuration/ConfigStore';
 import EventEmitter from 'EventEmitter';
 import PlotOptions from '../inspector/PlotOptions.vue';

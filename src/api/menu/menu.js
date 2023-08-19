@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import MenuComponent from './components/Menu.vue';
+import MenuComponent from './components/MenuComponent.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
 import { h } from 'vue';
 import mount from 'utils/mount';

@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import Criterion from './Criterion.vue';
+import Criterion from './CriterionItem.vue';
 import ConditionDescription from './ConditionDescription.vue';
 import { TRIGGER, TRIGGER_LABEL } from '@/plugins/condition/utils/constants';
 import { v4 as uuid } from 'uuid';

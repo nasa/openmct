@@ -76,8 +76,8 @@
 
 <script>
 import FrameComponent from './FrameComponent.vue';
-import ResizeHandle from './resizeHandle.vue';
-import DropHint from './dropHint.vue';
+import ResizeHandle from './ResizeHandle.vue';
+import DropHint from './DropHint.vue';
 
 const MIN_FRAME_SIZE = 5;
 
@@ -111,6 +111,7 @@ export default {
       required: true
     }
   },
+  emits: ['new-frame', 'move-frame', 'persist'],
   computed: {
     frames() {
       return this.container.frames;

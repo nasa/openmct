@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Notebook from './components/Notebook.vue';
+import Notebook from './components/NotebookComponent.vue';
 import Agent from '@/utils/agent/Agent';
 import mount from 'utils/mount';
 

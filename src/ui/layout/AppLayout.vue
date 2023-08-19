@@ -154,17 +154,17 @@
 
 <script>
 import ObjectView from '../components/ObjectView.vue';
-import Inspector from '../inspector/Inspector.vue';
-import Toolbar from '../toolbar/Toolbar.vue';
+import Inspector from '../inspector/InspectorPanel.vue';
+import Toolbar from '../toolbar/ToolbarContainer.vue';
 import AppLogo from './AppLogo.vue';
 import BrowseBar from './BrowseBar.vue';
 import CreateButton from './CreateButton.vue';
 import RecentObjectsList from './RecentObjectsList.vue';
-import MctTree from './mct-tree.vue';
-import multipane from './multipane.vue';
-import pane from './pane.vue';
+import MctTree from './MctTree.vue';
+import Multipane from './MultipaneContainer.vue';
+import Pane from './PaneContainer.vue';
 import GrandSearch from './search/GrandSearch.vue';
-import Indicators from './status-bar/Indicators.vue';
+import Indicators from './status-bar/GeneralIndicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
 export default {
@@ -174,8 +174,8 @@ export default {
     ObjectView,
     CreateButton,
     GrandSearch,
-    multipane,
-    pane,
+    Multipane,
+    Pane,
     BrowseBar,
     Toolbar,
     AppLogo,

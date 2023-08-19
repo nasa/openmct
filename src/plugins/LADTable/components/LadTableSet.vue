@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import LadRow from './LADRow.vue';
+import LadRow from './LadRow.vue';
 import StalenessUtils from '@/utils/staleness';
 
 export default {

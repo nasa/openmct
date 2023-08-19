@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Licenses from './Licenses.vue';
+import Licenses from './LicensesComponent.vue';
 import mount from 'utils/mount';
 
 export default function () {

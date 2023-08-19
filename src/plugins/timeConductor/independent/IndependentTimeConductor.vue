@@ -115,6 +115,7 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     const fixedOffsets = this.openmct.time.getBounds();
     const clockOffsets = this.openmct.time.getClockOffsets();

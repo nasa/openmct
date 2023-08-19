@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Conductor from './Conductor.vue';
+import Conductor from './ConductorComponent.vue';
 import { markRaw } from 'vue';
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
 

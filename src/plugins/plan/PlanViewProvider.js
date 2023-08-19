@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './components/Plan.vue';
+import Plan from './components/PlanView.vue';
 import mount from 'utils/mount';
 
 export default function PlanViewProvider(openmct) {

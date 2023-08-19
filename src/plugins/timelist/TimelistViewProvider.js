@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Timelist from './Timelist.vue';
+import Timelist from './TimelistComponent.vue';
 import { TIMELIST_TYPE } from './constants';
 import mount from 'utils/mount';
 

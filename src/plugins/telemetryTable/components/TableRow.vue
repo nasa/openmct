@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import TableCell from './table-cell.vue';
+import TableCell from './TableCell.vue';
 
 export default {
   components: {

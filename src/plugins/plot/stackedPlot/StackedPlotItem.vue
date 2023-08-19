@@ -29,7 +29,7 @@ import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import StalenessUtils from '@/utils/staleness';
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
-import Plot from '../Plot.vue';
+import Plot from '../PlotView.vue';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],

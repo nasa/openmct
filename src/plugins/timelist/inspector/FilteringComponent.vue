@@ -43,6 +43,7 @@
 <script>
 export default {
   inject: ['openmct', 'domainObject'],
+  emits: ['updated'],
   data() {
     return {
       isEditing: this.openmct.editor.isEditing(),

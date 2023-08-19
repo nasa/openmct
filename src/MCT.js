@@ -33,7 +33,7 @@ define([
   './ui/registries/ToolbarRegistry',
   './ui/router/ApplicationRouter',
   './ui/router/Browse',
-  './ui/layout/Layout.vue',
+  './ui/layout/AppLayout.vue',
   './ui/preview/plugin',
   './api/Branding',
   './plugins/licenses/plugin',
@@ -44,6 +44,7 @@ define([
   './plugins/importFromJSONAction/plugin',
   './plugins/exportAsJSONAction/plugin',
   './ui/components/components',
+  './utils/EventBus',
   'vue'
 ], function (
   EventEmitter,
@@ -69,6 +70,7 @@ define([
   ImportFromJSONAction,
   ExportAsJSONAction,
   components,
+  EventBus,
   Vue
 ) {
   /**
@@ -389,6 +391,7 @@ define([
         },
         template: '<Layout ref="layout"></Layout>'
       });
+      appLayout.provide(EventBus);
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
         this.layout = component.$refs.layout;

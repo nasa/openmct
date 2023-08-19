@@ -48,7 +48,7 @@
 <script>
 import Moment from 'moment';
 import DetailText from './DetailText.vue';
-import Location from './Location.vue';
+import Location from './LocationComponent.vue';
 
 export default {
   components: {
