@@ -180,6 +180,8 @@ import LinearScale from './LinearScale';
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
 import configStore from './configuration/ConfigStore';
 
+import { inject } from 'vue';
+
 import MctTicks from './MctTicks.vue';
 import MctChart from './chart/MctChart.vue';
 import XAxis from './axis/XAxis.vue';
@@ -189,6 +191,8 @@ import _ from 'lodash';
 
 const OFFSET_THRESHOLD = 10;
 const AXES_PADDING = 20;
+
+const eventBus = inject('eventBus');
 
 export default {
   components: {
@@ -406,7 +410,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', () => {
+    eventBus.$on('loadingComplete', () => {
       if (this.annotationViewingAndEditingAllowed) {
         this.loadAnnotations();
       }
@@ -479,7 +483,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', () => {
+          eventBus.$once('loadingComplete', () => {
             resolve();
           });
         } else {
