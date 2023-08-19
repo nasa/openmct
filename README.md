@@ -18,7 +18,7 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
  `git clone https://github.com/nasa/openmct.git`
 
-2. Install the correct node version using [nvm](https://github.com/nvm-sh/nvm) (`nvm install`)
+2. (Optionally) Install the correct node version using [nvm](https://github.com/nvm-sh/nvm) (`nvm install`)
 3. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions.
 
  `npm install`
