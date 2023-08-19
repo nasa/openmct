@@ -58,6 +58,7 @@ export default {
       }
     }
   },
+  emits: ['clock-updated'],
   data() {
     const activeClock = this.getActiveClock();
 
@@ -109,7 +110,7 @@ export default {
       const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
       option.offsets = offsets;
 
-      this.$emit('clockUpdated', option);
+      this.$emit('clock-updated', option);
     },
     getMatchingConfig(options) {
       const matchers = {

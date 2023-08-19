@@ -101,7 +101,7 @@ export default class ConditionManager extends EventEmitter {
 
     if (Object.keys(this.telemetryObjects).length === 0) {
       // no telemetry objects
-      this.emit('noTelemetryObjects');
+      this.emit('no-telemetry-objects');
     }
   }
 
@@ -117,7 +117,7 @@ export default class ConditionManager extends EventEmitter {
 
     if (Object.keys(this.telemetryObjects).length === 0) {
       // no telemetry objects
-      this.emit('noTelemetryObjects');
+      this.emit('no-telemetry-objects');
     }
   }
 

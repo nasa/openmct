@@ -26,7 +26,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @end-move="() => $emit('end-move')"
   >
     <div
       class="c-text-view u-style-receiver js-style-receiver"
@@ -84,6 +84,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     style() {
       let size;

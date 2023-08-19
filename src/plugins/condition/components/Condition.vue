@@ -227,6 +227,14 @@ export default {
       default: 0
     }
   },
+  emits: [
+    'set-move-index',
+    'drag-complete',
+    'drop-condition',
+    'remove-condition',
+    'clone-condition',
+    'update-condition'
+  ],
   data() {
     return {
       currentCriteria: this.currentCriteria,
@@ -311,11 +319,11 @@ export default {
       event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
       event.dataTransfer.effectAllowed = 'copyMove';
       event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
-      this.$emit('setMoveIndex', this.conditionIndex);
+      this.$emit('set-move-index', this.conditionIndex);
     },
     dragEnd() {
       this.dragStarted = false;
-      this.$emit('dragComplete');
+      this.$emit('drag-complete');
     },
     dropCondition(event, targetIndex) {
       if (!this.isDragging) {
@@ -329,7 +337,7 @@ export default {
       if (this.isValidTarget(targetIndex)) {
         this.dragElement = undefined;
         this.draggingOver = false;
-        this.$emit('dropCondition', targetIndex);
+        this.$emit('drop-condition', targetIndex);
       }
     },
     dragEnter(event, targetIndex) {
@@ -357,10 +365,10 @@ export default {
     },
     destroy() {},
     removeCondition() {
-      this.$emit('removeCondition', this.condition.id);
+      this.$emit('remove-condition', this.condition.id);
     },
     cloneCondition() {
-      this.$emit('cloneCondition', {
+      this.$emit('clone-condition', {
         condition: this.condition,
         index: this.conditionIndex
       });
@@ -378,7 +386,7 @@ export default {
       this.persist();
     },
     persist() {
-      this.$emit('updateCondition', {
+      this.$emit('update-condition', {
         condition: this.condition
       });
     },

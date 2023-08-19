@@ -75,6 +75,7 @@ export default {
       }
     }
   },
+  emits: ['preview-changed'],
   computed: {
     resultName() {
       return this.result.name;

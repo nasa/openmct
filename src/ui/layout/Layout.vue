@@ -105,8 +105,8 @@
             <RecentObjectsList
               ref="recentObjectsList"
               class="l-shell__tree"
-              @openAndScrollTo="openAndScrollTo($event)"
-              @setClearButtonDisabled="setClearButtonDisabled"
+              @open-and-scroll-to="openAndScrollTo($event)"
+              @set-clear-button-disabled="setClearButtonDisabled"
             />
             <template #controls>
               <button

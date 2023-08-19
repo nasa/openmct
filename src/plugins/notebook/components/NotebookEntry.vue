@@ -110,8 +110,8 @@
               :key="embed.id"
               :embed="embed"
               :is-locked="isLocked"
-              @removeEmbed="removeEmbed"
-              @updateEmbed="updateEmbed"
+              @remove-embed="removeEmbed"
+              @update-embed="updateEmbed"
             />
           </div>
         </div>
@@ -221,6 +221,13 @@ export default {
       }
     }
   },
+  emits: [
+    'delete-entry',
+    'change-section-page',
+    'update-entry',
+    'editing-entry',
+    'entry-selection'
+  ],
   data() {
     return {
       editMode: false,
@@ -332,7 +339,7 @@ export default {
       }
     },
     deleteEntry() {
-      this.$emit('deleteEntry', this.entry.id);
+      this.$emit('delete-entry', this.entry.id);
     },
     formatValidUrls(text) {
       return text.replace(URL_REGEX, (match) => {
@@ -403,13 +410,13 @@ export default {
       return Moment.utc(unixTime).format(timeFormat);
     },
     navigateToPage() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: this.result.page.id
       });
     },
     navigateToSection() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: null
       });
@@ -451,7 +458,7 @@ export default {
 
       this.entry.modified = this.openmct.time.now();
 
-      this.$emit('updateEntry', this.entry);
+      this.$emit('update-entry', this.entry);
     },
     preventFocusIfNotSelected($event) {
       if (!this.isSelectedEntry) {
@@ -465,7 +472,7 @@ export default {
     },
     editingEntry() {
       this.editMode = true;
-      this.$emit('editingEntry');
+      this.$emit('editing-entry');
     },
     updateEntryValue($event) {
       this.editMode = false;

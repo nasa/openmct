@@ -88,6 +88,14 @@ export default {
       }
     }
   },
+  emits: [
+    'lock-highlight-point',
+    'highlights',
+    'config-loaded',
+    'cursor-guide',
+    'grid-lines',
+    'plot-y-tick-width'
+  ],
   data() {
     return {
       staleObjects: []
@@ -235,13 +243,13 @@ export default {
                       :options="options"
                       :parent-y-tick-width="parentYTickWidth"
                       :color-palette="colorPalette"
-                      @loadingUpdated="loadingUpdated"
-                      @configLoaded="onConfigLoaded"
-                      @lockHighlightPoint="onLockHighlightPointUpdated"
+                      @loading-updated="loadingUpdated"
+                      @config-loaded="onConfigLoaded"
+                      @lock-highlight-point="onLockHighlightPointUpdated"
                       @highlights="onHighlightsUpdated"
-                      @plotYTickWidth="onYTickWidthChange"
-                      @cursorGuide="onCursorGuideChange"
-                      @gridLines="onGridLinesChange"/>`
+                      @plot-y-tick-width="onYTickWidthChange"
+                      @cursor-guide="onCursorGuideChange"
+                      @grid-lines="onGridLinesChange"/>`
         },
         {
           app: this.openmct.app,
@@ -304,22 +312,22 @@ export default {
       }
     },
     onLockHighlightPointUpdated() {
-      this.$emit('lockHighlightPoint', ...arguments);
+      this.$emit('lock-highlight-point', ...arguments);
     },
     onHighlightsUpdated() {
       this.$emit('highlights', ...arguments);
     },
     onConfigLoaded() {
-      this.$emit('configLoaded', ...arguments);
+      this.$emit('config-loaded', ...arguments);
     },
     onYTickWidthChange() {
-      this.$emit('plotYTickWidth', ...arguments);
+      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
-      this.$emit('cursorGuide', ...arguments);
+      this.$emit('cursor-guide', ...arguments);
     },
     onGridLinesChange() {
-      this.$emit('gridLines', ...arguments);
+      this.$emit('grid-lines', ...arguments);
     },
     setSelection() {
       let childContext = {};

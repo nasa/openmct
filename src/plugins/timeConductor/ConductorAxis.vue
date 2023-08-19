@@ -54,6 +54,7 @@ export default {
       required: true
     }
   },
+  emits: ['pan-axis', 'end-pan', 'zoom-axis', 'end-zoom'],
   data() {
     return {
       inPanMode: false,
@@ -205,11 +206,11 @@ export default {
     },
     pan() {
       const panBounds = this.getPanBounds();
-      this.$emit('panAxis', panBounds);
+      this.$emit('pan-axis', panBounds);
     },
     endPan() {
       const panBounds = this.isChangingViewBounds() ? this.getPanBounds() : undefined;
-      this.$emit('endPan', panBounds);
+      this.$emit('end-pan', panBounds);
       this.inPanMode = false;
     },
     getPanBounds() {
@@ -231,7 +232,7 @@ export default {
         left: `${this.dragStartX - this.left}px`
       };
 
-      this.$emit('zoomAxis', {
+      this.$emit('zoom-axis', {
         start: x,
         end: x
       });
@@ -244,7 +245,7 @@ export default {
         width: `${zoomRange.end - zoomRange.start}px`
       };
 
-      this.$emit('zoomAxis', {
+      this.$emit('zoom-axis', {
         start: this.scaleToBounds(zoomRange.start),
         end: this.scaleToBounds(zoomRange.end)
       });
@@ -260,7 +261,7 @@ export default {
       }
 
       this.zoomStyle = {};
-      this.$emit('endZoom', zoomBounds);
+      this.$emit('end-zoom', zoomBounds);
     },
     getZoomRange() {
       const leftBound = this.left;

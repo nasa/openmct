@@ -52,6 +52,7 @@ export default {
       }
     }
   },
+  emits: ['annotations-changed', 'annotation-marqueed'],
   data() {
     return {
       dragging: false,
@@ -117,7 +118,7 @@ export default {
   methods: {
     onAnnotationChange(annotations) {
       this.selectedAnnotations = annotations;
-      this.$emit('annotationsChanged', annotations);
+      this.$emit('annotations-changed', annotations);
     },
     updateSelection(selection) {
       const selectionContext = selection?.[0]?.[0]?.context?.item;
@@ -376,7 +377,7 @@ export default {
       return selection;
     },
     startAnnotationDrag(event) {
-      this.$emit('annotationMarqueed');
+      this.$emit('annotation-marqueed');
       this.newAnnotationRectangle = {};
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;

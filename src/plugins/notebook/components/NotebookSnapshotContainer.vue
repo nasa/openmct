@@ -52,7 +52,7 @@
           :embed="snapshot.embedObject"
           :is-snapshot-container="true"
           :remove-action-string="'Delete Snapshot'"
-          @removeEmbed="removeSnapshot"
+          @remove-embed="removeSnapshot"
         />
       </span>
       <div v-if="!snapshots.length > 0" class="hint">

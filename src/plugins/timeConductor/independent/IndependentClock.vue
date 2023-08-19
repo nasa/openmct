@@ -57,6 +57,7 @@ export default {
       }
     }
   },
+  emits: ['independent-clock-updated'],
   data() {
     const activeClock = this.getActiveClock();
 
@@ -114,7 +115,7 @@ export default {
     setClock(clockKey) {
       this.setViewFromClock(clockKey);
 
-      this.$emit('independentClockUpdated', clockKey);
+      this.$emit('independent-clock-updated', clockKey);
     },
     setViewFromClock(clockOrKey) {
       let clock = clockOrKey;

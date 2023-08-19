@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Preview from './Preview.vue';
+import PreviewContainer from './PreviewContainer.vue';
 import mount from 'utils/mount';
 import EventEmitter from 'EventEmitter';
 
@@ -50,7 +50,7 @@ export default class PreviewAction extends EventEmitter {
     const { vNode, destroy } = mount(
       {
         components: {
-          Preview
+          PreviewContainer
         },
         provide: {
           openmct: this._openmct,
@@ -61,7 +61,7 @@ export default class PreviewAction extends EventEmitter {
             viewOptions
           };
         },
-        template: '<Preview :view-options="viewOptions"></Preview>'
+        template: '<preview-container :view-options="viewOptions"></preview-container>'
       },
       {
         app: this._openmct.app

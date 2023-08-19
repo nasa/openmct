@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Preview from '@/ui/preview/Preview.vue';
+import PreviewContainer from '@/ui/preview/PreviewContainer.vue';
 import mount from 'utils/mount';
 
 export default class ViewLargeAction {
@@ -80,7 +80,7 @@ export default class ViewLargeAction {
     const { vNode, destroy } = mount(
       {
         components: {
-          Preview
+          PreviewContainer
         },
         provide: {
           openmct: this.openmct,
@@ -91,7 +91,7 @@ export default class ViewLargeAction {
             view
           };
         },
-        template: '<Preview :existing-view="view"></Preview>'
+        template: '<preview-container :existing-view="view"></preview-container>'
       },
       {
         app: this.openmct.app

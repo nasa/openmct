@@ -44,7 +44,7 @@
           :css-class="row.cssClass"
           :first="index < 1"
           :row="row"
-          @onChange="onChange"
+          @on-change="onChange"
         />
       </div>
     </form>
@@ -93,6 +93,7 @@ export default {
       }
     }
   },
+  emits: ['on-change', 'on-cancel', 'on-save'],
   data() {
     return {
       invalidProperties: {},
@@ -143,13 +144,13 @@ export default {
     onChange(data) {
       this.invalidProperties[data.model.key] = data.invalid;
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     onCancel() {
-      this.$emit('onCancel');
+      this.$emit('on-cancel');
     },
     onSave() {
-      this.$emit('onSave');
+      this.$emit('on-save');
     }
   }
 };

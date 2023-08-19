@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import FrameComponent from './frame.vue';
+import FrameComponent from './FrameComponent.vue';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
 

@@ -85,6 +85,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       format: DATE_FORMAT,
@@ -140,7 +141,7 @@ export default {
         value: timestamp
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     resetValues() {
       this.setDatetime();

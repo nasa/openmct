@@ -120,6 +120,7 @@ export default {
       required: true
     }
   },
+  emits: ['persist', 'save-style'],
   computed: {
     itemStyle() {
       return getStylesWithoutNoneValue(this.styleItem.style);

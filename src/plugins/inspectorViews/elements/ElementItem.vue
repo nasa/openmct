@@ -74,6 +74,7 @@ export default {
       type: Boolean
     }
   },
+  emits: ['drop-custom', 'dragstart-custom'],
   data() {
     const isAlias =
       this.elementObject.location !==

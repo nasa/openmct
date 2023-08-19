@@ -115,7 +115,7 @@
           edit-title="Manually set the plot line and marker color for this series."
           view-title="The plot line and marker color for this series."
           short-label="Color"
-          @colorSet="setColor"
+          @color-set="setColor"
         />
       </li>
     </ul>
@@ -141,6 +141,7 @@ export default {
       }
     }
   },
+  emits: ['series-updated'],
   data() {
     return {
       expanded: false,
@@ -274,7 +275,7 @@ export default {
       this.series.set('color', color);
 
       if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-        this.$emit('seriesUpdated', {
+        this.$emit('series-updated', {
           identifier: this.domainObject.identifier,
           path: `series.color`,
           value: color.asHexString()
@@ -290,7 +291,7 @@ export default {
         otherSeriesWithColor.set('color', oldColor);
 
         if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-          this.$emit('seriesUpdated', {
+          this.$emit('series-updated', {
             identifier: this.domainObject.identifier,
             path: `series.color`,
             value: oldColor.asHexString()
@@ -329,7 +330,7 @@ export default {
         this.series.set(formKey, coerce(newVal, formField.coerce));
         if (path) {
           if (!this.domainObject.configuration || !this.domainObject.configuration.series) {
-            this.$emit('seriesUpdated', {
+            this.$emit('series-updated', {
               identifier: this.domainObject.identifier,
               path: `series.${formKey}`,
               value: coerce(newVal, formField.coerce)

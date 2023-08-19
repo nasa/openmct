@@ -87,7 +87,7 @@ export default class FormControl {
                 onChange
               };
             },
-            template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
+            template: `<FormControlComponent :model="model" @on-change="onChange"></FormControlComponent>`
           },
           {
             element,

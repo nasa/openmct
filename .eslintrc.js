@@ -28,8 +28,8 @@ module.exports = {
     }
   },
   rules: {
-    'vue/no-deprecated-dollar-listeners-api': 'warn',
-    'vue/no-deprecated-events-api': 'warn',
+    'vue/no-deprecated-dollar-listeners-api': 'error',
+    'vue/no-deprecated-events-api': 'error',
     'vue/no-v-for-template-key': 'off',
     'vue/no-v-for-template-key-on-child': 'error',
     'prettier/prettier': 'error',
@@ -146,15 +146,16 @@ module.exports = {
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/multi-word-component-names': 'off', // TODO enable, align with conventions
-    'vue/no-mutating-props': 'off'
+    'vue/multi-word-component-names': 'error', // TODO enable, align with conventions
+    'vue/no-mutating-props': 'off',
+    'vue/require-explicit-emits': 'error'
   },
   overrides: [
     {
       files: LEGACY_FILES,
       rules: {
         'no-unused-vars': [
-          'warn',
+          'error',
           {
             vars: 'all',
             args: 'none',

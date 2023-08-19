@@ -68,6 +68,7 @@ export default {
       default: false
     }
   },
+  emits: ['end-resizing', 'start-resizing'],
   data() {
     return {
       collapsed: false,

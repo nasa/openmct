@@ -43,7 +43,7 @@
           edit-title="Manually set the color for this bar graph series."
           view-title="The color for this bar graph series."
           short-label="Color"
-          @colorSet="setColor"
+          @color-set="setColor"
         />
       </li>
     </ul>

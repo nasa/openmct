@@ -39,16 +39,16 @@
         :is-editing="isEditing"
         :test-data="testData"
         :telemetry="telemetryObjs"
-        @updateTestData="updateTestData"
+        @update-test-data="updateTestData"
       />
       <ConditionCollection
         class="c-cs__conditions"
         :is-editing="isEditing"
         :test-data="testData"
-        @conditionSetResultUpdated="updateCurrentOutput"
-        @noTelemetryObjects="updateCurrentOutput('---')"
-        @telemetryUpdated="updateTelemetry"
-        @telemetryStaleness="handleStaleness"
+        @condition-set-result-updated="updateCurrentOutput"
+        @no-telemetry-objects="updateCurrentOutput('---')"
+        @telemetry-updated="updateTelemetry"
+        @telemetry-staleness="handleStaleness"
       />
     </div>
   </div>

@@ -125,6 +125,12 @@ export default {
       required: true
     }
   },
+  emits: [
+    'tree-item-mounted',
+    'tree-item-action',
+    'targeted-path-animation-end',
+    'tree-item-selection'
+  ],
   data() {
     this.navigationPath = this.node.navigationPath;
 

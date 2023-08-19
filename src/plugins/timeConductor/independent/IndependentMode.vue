@@ -55,6 +55,7 @@ export default {
       }
     }
   },
+  emits: ['independent-mode-updated'],
   data: function () {
     return {
       selectedMode: this.getModeMetadata(this.mode),
@@ -94,7 +95,7 @@ export default {
     setMode(mode) {
       this.setViewFromMode(mode);
 
-      this.$emit('independentModeUpdated', mode);
+      this.$emit('independent-mode-updated', mode);
     }
   }
 };

@@ -24,15 +24,15 @@
   <div class="c-faults-list-view">
     <FaultManagementSearch
       :search-term="searchTerm"
-      @filterChanged="updateFilter"
-      @updateSearchTerm="updateSearchTerm"
+      @filter-changed="updateFilter"
+      @update-search-term="updateSearchTerm"
     />
 
     <FaultManagementToolbar
       v-if="showToolbar"
       :selected-faults="selectedFaults"
-      @acknowledgeSelected="toggleAcknowledgeSelected"
-      @shelveSelected="toggleShelveSelected"
+      @acknowledge-selected="toggleAcknowledgeSelected"
+      @shelve-selected="toggleShelveSelected"
     />
 
     <div class="c-faults-list-view-header-item-container-wrapper">
@@ -41,8 +41,8 @@
           class="header"
           :selected-faults="Object.values(selectedFaults)"
           :total-faults-count="filteredFaultsList.length"
-          @selectAll="selectAll"
-          @sortChanged="sortChanged"
+          @select-all="selectAll"
+          @sort-changed="sortChanged"
         />
 
         <div class="c-faults-list-view-item-body">
@@ -52,9 +52,9 @@
               :key="fault.id"
               :fault="fault"
               :is-selected="isSelected(fault)"
-              @toggleSelected="toggleSelected"
-              @acknowledgeSelected="toggleAcknowledgeSelected"
-              @shelveSelected="toggleShelveSelected"
+              @toggle-selected="toggleSelected"
+              @acknowledge-selected="toggleAcknowledgeSelected"
+              @shelve-selected="toggleShelveSelected"
             />
           </template>
         </div>

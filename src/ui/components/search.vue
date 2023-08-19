@@ -45,6 +45,7 @@ export default {
       default: ''
     }
   },
+  emits: ['input', 'clear'],
   data: function () {
     return {
       active: false
