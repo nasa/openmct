@@ -37,9 +37,13 @@ define([], function () {
       openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
     }
 
-    function updateDocumentTitleOnNameMutation(domainObject) {
-      if (typeof domainObject.name === 'string' && domainObject.name !== document.title) {
-        document.title = domainObject.name;
+    function updateDocumentTitleOnNameMutation(newName) {
+      if (typeof newName === 'string' && newName !== document.title) {
+        document.title = newName;
+        openmct.layout.$refs.browseBar.domainObject = {
+          ...openmct.layout.$refs.browseBar.domainObject,
+          name: newName
+        };
       }
     }
 
@@ -80,7 +84,11 @@ define([], function () {
         let currentProvider = openmct.objectViews.getByProviderKey(currentViewKey);
         document.title = browseObject.name; //change document title to current object in main view
         // assign listener to global for later clearing
-        unobserve = openmct.objects.observe(browseObject, '*', updateDocumentTitleOnNameMutation);
+        unobserve = openmct.objects.observe(
+          browseObject,
+          'name',
+          updateDocumentTitleOnNameMutation
+        );
 
         if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
           viewObject(browseObject, currentProvider);
