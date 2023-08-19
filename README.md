@@ -18,11 +18,12 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
  `git clone https://github.com/nasa/openmct.git`
 
-2. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions.
+2. Install the correct node version using [nvm](https://github.com/nvm-sh/nvm) (`nvm install`)
+3. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions.
 
  `npm install`
 
-3. Run a local development server
+4. Run a local development server
 
  `npm start`
 
@@ -50,6 +51,8 @@ For more on developing with Open MCT, see our documentation for a guide on [Deve
 ## Compatibility
 
 This is a fast moving project and we do our best to test and support the widest possible range of browsers, operating systems, and nodejs APIs. We have a published list of support available in our package.json's `browserslist` key.
+
+The project uses `nvm` to ensure the node and npm version used, is coherent in all projects. Install nvm (non-windows), [here](https://github.com/nvm-sh/nvm) or the windows equivalent [here](https://github.com/coreybutler/nvm-windows)
 
 If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose)
 
