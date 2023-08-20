@@ -18,7 +18,6 @@
     "babel-plugin-istanbul": "6.1.1",
     "codecov": "3.8.3",
     "comma-separated-values": "3.6.4",
-    "concurrently": "^8.2.0",
     "copy-webpack-plugin": "11.0.0",
     "cspell": "6.31.2",
     "css-loader": "6.8.1",
