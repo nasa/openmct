@@ -164,3 +164,17 @@ You might still be using legacy API if your source code
 
 ### What should I do if I am using legacy API?
 Please refer to [the modern Open MCT API](https://nasa.github.io/openmct/documentation/). Post any questions to the [Discussions section](https://github.com/nasa/openmct/discussions) of the Open MCT GitHub repository.
+
+### Contributors
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top">
+        <img width="150" height="150" src="https://github.com/evenstensberg.png?s=150">
+        <br>
+        <a href="https://github.com/evenstensberg">Even Stensberg</a>
+      </td>
+     </tr>
+  </tbody>
+</table>
