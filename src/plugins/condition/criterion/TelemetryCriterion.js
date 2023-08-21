@@ -189,9 +189,11 @@ export default class TelemetryCriterion extends EventEmitter {
   }
 
   requestLAD(telemetryObjects, requestOptions) {
+    //We pass in the global time context here
     let options = {
       strategy: 'latest',
-      size: 1
+      size: 1,
+      timeContext: this.openmct.time.getContextForView([])
     };
 
     if (requestOptions !== undefined) {
