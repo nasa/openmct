@@ -59,13 +59,47 @@ export default {
   },
   mounted() {
     this.compositionCollections = {};
+    this.nameChangeListeners = {};
     this.openmct.router.on('change:path', this.onPathChange);
     this.getSavedRecentItems();
   },
   unmounted() {
     this.openmct.router.off('change:path', this.onPathChange);
+    Object.values(this.nameChangeListeners).forEach((unlisten) => {
+      unlisten();
+    });
   },
   methods: {
+    addNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (!this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString] = this.openmct.objects.observe(
+          domainObject,
+          'name',
+          this.updateRecentObjectName.bind(this, keyString)
+        );
+      }
+    },
+    updateRecentObjectName(keyString, newName) {
+      this.recents = this.recents.map((recentObject) => {
+        if (
+          this.openmct.objects.makeKeyString(recentObject.domainObject.identifier) === keyString
+        ) {
+          return {
+            ...recentObject,
+            domainObject: { ...recentObject.domainObject, name: newName }
+          };
+        }
+        return recentObject;
+      });
+    },
+    removeNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
+      }
+    },
     /**
      * Add a composition collection to the map and register its remove handler
      * @param {string} navigationPath
@@ -112,6 +146,7 @@ export default {
       // Get composition collections and add composition listeners for composable objects
       savedRecents.forEach((recentObject) => {
         const { domainObject, navigationPath } = recentObject;
+        this.addNameListenerFor(domainObject);
         if (this.shouldTrackCompositionFor(domainObject)) {
           this.compositionCollections[navigationPath] = {};
           this.compositionCollections[navigationPath].collection =
@@ -161,6 +196,8 @@ export default {
         return;
       }
 
+      this.addNameListenerFor(domainObject);
+
       // Move the object to the top if its already existing in the recents list
       const existingIndex = this.recents.findIndex((recentObject) => {
         return navigationPath === recentObject.navigationPath;
@@ -179,6 +216,7 @@ export default {
       while (this.recents.length > MAX_RECENT_ITEMS) {
         const poppedRecentItem = this.recents.pop();
         this.removeCompositionListenerFor(poppedRecentItem.navigationPath);
+        this.removeNameListenerFor(poppedRecentItem.domainObject);
       }
 
       this.setSavedRecentItems();
@@ -236,6 +274,9 @@ export default {
             label: 'OK',
             callback: () => {
               localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
+              Object.values(this.nameChangeListeners).forEach((unlisten) => {
+                unlisten();
+              });
               this.recents = [];
               dialog.dismiss();
               this.$emit('setClearButtonDisabled', true);
