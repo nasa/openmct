@@ -32,6 +32,7 @@ import configStore from './configuration/ConfigStore';
 import EventEmitter from 'EventEmitter';
 import PlotOptions from './inspector/PlotOptions.vue';
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import mount from 'utils/mount';
 
 const TEST_KEY_ID = 'some-other-key';
 
@@ -697,7 +698,7 @@ xdescribe('the plugin', function () {
     });
   });
 
-  xdescribe('the inspector view', () => {
+  describe('the inspector view', () => {
     let component;
     let viewComponentObject;
     let mockComposition;
@@ -799,8 +800,7 @@ xdescribe('the plugin', function () {
 
       let viewContainer = document.createElement('div');
       child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
+      const { vNode } = mount({
         components: {
           PlotOptions
         },
@@ -810,7 +810,10 @@ xdescribe('the plugin', function () {
           path: [selection[0][0].context.item, selection[0][1].context.item]
         },
         template: '<plot-options/>'
+      }, {
+        element: viewContainer
       });
+      component = vNode.componentInstance;
 
       Vue.nextTick(() => {
         viewComponentObject = component.$root.$children[0];
