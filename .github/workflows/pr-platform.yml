@@ -26,11 +26,11 @@ jobs:
           - lts/hydrogen
         architecture:
           - x64
-    
+
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -46,11 +46,11 @@ jobs:
             ${{ runner.os }}-${{ matrix.node_version }}-
 
       - run: npm install --cache ~/.npm --no-audit --progress=false
-      
+
       - run: npm test
-      
-      - run: npm run lint -- --quiet
-      
+
+      - run: npm run lint
+
       - name: Remove pr:platform label (if present)
         if: always()
         uses: actions/github-script@v6
