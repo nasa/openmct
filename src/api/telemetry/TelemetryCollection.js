@@ -92,8 +92,6 @@ export default class TelemetryCollection extends EventEmitter {
     this._requestHistoricalTelemetry();
     this._initiateSubscriptionTelemetry();
 
-    this.openmct.router.on('change:path', this._abortRequests);
-
     this.loaded = true;
   }
 
@@ -102,15 +100,16 @@ export default class TelemetryCollection extends EventEmitter {
    * to remove any listeners
    */
   destroy() {
-    this._abortRequests();
+    if (this.requestAbort) {
+      this.requestAbort.abort();
+    }
+
     this._unwatchBounds();
     this._unwatchTimeSystem();
     this._unwatchTimeModeChange();
     if (this.unsubscribe) {
       this.unsubscribe();
     }
-
-    this.openmct.router.off('change:path', this._abortRequests);
 
     this.removeAllListeners();
   }
@@ -143,7 +142,10 @@ export default class TelemetryCollection extends EventEmitter {
     options.onPartialResponse = this._processNewTelemetry.bind(this);
 
     try {
-      this._abortRequests();
+      if (this.requestAbort) {
+        this.requestAbort.abort();
+      }
+
       this.requestAbort = new AbortController();
       options.signal = this.requestAbort.signal;
       this.emit('requestStarted');
@@ -167,16 +169,6 @@ export default class TelemetryCollection extends EventEmitter {
     }
 
     this._processNewTelemetry(historicalData);
-  }
-
-  /**
-   * Abort any pending requests
-   * @private
-   */
-  _abortRequests() {
-    if (this.requestAbort) {
-      this.requestAbort.abort();
-    }
   }
 
   /**
