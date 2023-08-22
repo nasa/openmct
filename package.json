@@ -111,6 +111,7 @@
     "cov:unit:publish": "codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
     "prepare": "npm run build:prod && npx tsc"
   },
+  "homepage": "https://nasa.github.io/openmct",
   "repository": {
     "type": "git",
     "url": "https://github.com/nasa/openmct.git"
@@ -126,6 +127,12 @@
     "ios_saf >= 16",
     "Safari >= 16"
   ],
-  "author": "National Aeronautics and Space Administration",
-  "license": "Apache-2.0"
+  "author": {
+    "name": "National Aeronautics and Space Administration",
+    "url": "https://www.nasa.gov"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "nasa"
+  ]
 }
