@@ -637,7 +637,11 @@ export default {
 
       this.valueKey = this.metadata.valuesForHints(['range'])[0].source;
 
-      this.openmct.telemetry.request(domainObject, { strategy: 'latest' }).then((values) => {
+      const options = {
+        strategy: 'latest',
+        timeContext: this.openmct.time.getContextForView([])
+      };
+      this.openmct.telemetry.request(domainObject, options).then((values) => {
         const length = values.length;
         this.updateValue(values[length - 1]);
       });
