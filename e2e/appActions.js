@@ -35,6 +35,7 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
+ * @property {Object<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**
@@ -65,7 +66,10 @@ const { expect } = require('@playwright/test');
  * @param {CreateObjectOptions} options
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+  page,
+  { type, name, parent = 'mine', customParameters = {} }
+) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -92,6 +96,13 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // currently running test and its project.
     const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
     await notesInput.fill(page.testNotes);
+  }
+
+  // If there are any further parameters, fill them in
+  for (const [key, value] of Object.entries(customParameters)) {
+    const input = page.locator(`form[name="mctForm"] ${key}`);
+    await input.fill('');
+    await input.fill(value);
   }
 
   // Click OK button and wait for Navigate event
@@ -177,7 +188,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.click(`li:text("Plan")`);
 
   // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(name);
 
@@ -410,8 +421,18 @@ async function setEndOffset(page, offset) {
   await setTimeConductorOffset(page, offset);
 }
 
+/**
+ * Set the time conductor bounds in fixed time mode
+ *
+ * NOTE: Unless explicitly testing the Time Conductor itself, it is advised to instead
+ * navigate directly to the object with the desired time bounds using `navigateToObjectWithFixedTimeBounds()`.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setTimeConductorBounds(page, startDate, endDate) {
   // Bring up the time conductor popup
+  expect(await page.locator('.l-shell__time-conductor.c-compact-tc').count()).toBe(1);
   await page.click('.l-shell__time-conductor.c-compact-tc');
 
   await setTimeBounds(page, startDate, endDate);
@@ -419,20 +440,31 @@ async function setTimeConductorBounds(page, startDate, endDate) {
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the independent time conductor bounds in fixed time mode
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setIndependentTimeConductorBounds(page, startDate, endDate) {
   // Activate Independent Time Conductor in Fixed Time Mode
   await page.getByRole('switch').click();
 
   // Bring up the time conductor popup
   await page.click('.c-conductor-holder--compact .c-compact-tc');
-
-  await expect(page.locator('.itc-popout')).toBeVisible();
+  await expect(page.locator('.itc-popout')).toBeInViewport();
 
   await setTimeBounds(page, startDate, endDate);
 
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the bounds of the visible conductor in fixed time mode
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
@@ -549,6 +581,21 @@ async function getCanvasPixels(page, canvasSelector) {
   return getTelemValuePromise;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
+ * @param {string} url
+ * @param {string} newName
+ */
+async function renameObjectFromContextMenu(page, url, newName) {
+  await openObjectTreeContextMenu(page, url);
+  await page.click('li:text("Edit Properties")');
+  const nameInput = page.getByLabel('Title', { exact: true });
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  await page.click('[aria-label="Save"]');
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
   createDomainObjectWithDefaults,
@@ -567,5 +614,6 @@ module.exports = {
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
   selectInspectorTab,
-  waitForPlotsToRender
+  waitForPlotsToRender,
+  renameObjectFromContextMenu
 };

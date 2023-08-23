@@ -73,9 +73,43 @@ export default {
     }
   },
   async mounted() {
+    this.nameChangeListeners = {};
     await this.createPathBreadCrumb();
   },
+  unmounted() {
+    Object.values(this.nameChangeListeners).forEach((unlisten) => {
+      unlisten();
+    });
+  },
   methods: {
+    updateObjectPathName(keyString, newName) {
+      this.pathBreadCrumb = this.pathBreadCrumb.map((pathObject) => {
+        if (this.openmct.objects.makeKeyString(pathObject.domainObject.identifier) === keyString) {
+          return {
+            ...pathObject,
+            domainObject: { ...pathObject.domainObject, name: newName }
+          };
+        }
+        return pathObject;
+      });
+    },
+    removeNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
+      }
+    },
+    addNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (!this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString] = this.openmct.objects.observe(
+          domainObject,
+          'name',
+          this.updateObjectPathName.bind(this, keyString)
+        );
+      }
+    },
     async createPathBreadCrumb() {
       if (!this.domainObject && this.parentDomainObject) {
         this.setPathBreadCrumb([this.parentDomainObject]);
@@ -98,7 +132,15 @@ export default {
         };
       });
 
+      this.pathBreadCrumb.forEach((pathObject) => {
+        this.removeNameListenerFor(pathObject.domainObject);
+      });
+
       this.pathBreadCrumb = pathBreadCrumb;
+
+      this.pathBreadCrumb.forEach((pathObject) => {
+        this.addNameListenerFor(pathObject.domainObject);
+      });
     }
   }
 };

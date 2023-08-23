@@ -221,6 +221,8 @@ export default class DuplicateTask {
       // parse reviver to replace identifiers
       clonedParent = JSON.parse(clonedParent, (key, value) => {
         if (
+          value !== null &&
+          value !== undefined &&
           Object.prototype.hasOwnProperty.call(value, 'key') &&
           Object.prototype.hasOwnProperty.call(value, 'namespace') &&
           value.key === oldId.key &&
