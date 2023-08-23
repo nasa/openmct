@@ -18,7 +18,6 @@ if [ "${COUCH_ADMIN_PASSWORD}" ]; then
     CURL_USERPASS_ARG+=":${COUCH_ADMIN_PASSWORD}"
 fi
 
-# Functions
 resource_exists() {
     response=$(curl -u "${CURL_USERPASS_ARG}" -s -o /dev/null -I -w "%{http_code}" $1);
     if [ "200" == "${response}" ]; then
@@ -29,16 +28,16 @@ resource_exists() {
 }
 
 db_exists() {
-    resource_exists $COUCH_BASE_LOCAL/$OPENMCT_DATABASE_NAME
+    resource_exists "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"
 }
 
 create_db() {
-    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT $COUCH_BASE_LOCAL/$OPENMCT_DATABASE_NAME);
-    echo $response
+    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME");
+    echo "$response"
 }
 
 admin_user_exists() {
-    response=$(curl -su "${CURL_USERPASS_ARG}" -o /dev/null -I -w "%{http_code}" $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER);
+    response=$(curl -su "${CURL_USERPASS_ARG}" -o /dev/null -I -w "%{http_code}" "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/admins/"$COUCH_ADMIN_USER");
     if [ "200" == "${response}" ]; then
         echo "TRUE"
     else
@@ -48,26 +47,26 @@ admin_user_exists() {
 
 create_admin_user() {
     echo Creating admin user
-    curl -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/admins/$COUCH_ADMIN_USER -d \'"$COUCH_ADMIN_PASSWORD"\'
+    curl -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/admins/"$COUCH_ADMIN_USER" -d \'"$COUCH_ADMIN_PASSWORD"\'
 }
 
 is_cors_enabled() {
-    resource_exists $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors
+    resource_exists "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/httpd/enable_cors
 }
 
 enable_cors() {
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/httpd/enable_cors -d '"true"'
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/origins -d '"*"'
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/credentials -d '"true"'
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT $COUCH_BASE_LOCAL/_node/$COUCH_NODE_NAME/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/httpd/enable_cors -d '"true"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/origins -d '"*"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/credentials -d '"true"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
 }
 
 update_db_permissions() {
     local db_name=$1
     echo "Updating ${db_name} database permissions"
     response=$(curl -su "${CURL_USERPASS_ARG}" --location \
-        --request PUT $COUCH_BASE_LOCAL/$db_name/_security \
+        --request PUT "$COUCH_BASE_LOCAL"/"$db_name"/_security \
         --header 'Content-Type: application/json' \
         --data-raw '{ "admins": {"roles": []},"members": {"roles": []}}')
     if [ "{\"ok\":true}" == "${response}" ]; then
@@ -77,17 +76,24 @@ update_db_permissions() {
     fi
 }
 
-create_system_tables() {
-    local system_tables=("_users" "_replicator")
-    for table in "${system_tables[@]}"; do
-        echo "Creating $table database"
-        response=$(curl -su "${CURL_USERPASS_ARG}" -X PUT $COUCH_BASE_LOCAL/$table)
-        if [ "{\"ok\":true}" == "${response}" ]; then
-            echo "Successfully created $table database"
-        else
-            echo "Unable to create $table database"
-        fi
-    done
+create_users_table() {
+    echo "Creating _users database"
+    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT "$COUCH_BASE_LOCAL"/_users)
+    if [ "{\"ok\":true}" == "${response}" ]; then
+        echo "Successfully created _users database"
+    else
+        echo "Unable to create _users database"
+    fi
+}
+
+create_replicator_table() {
+    echo "Creating _replicator database"
+    response=$(curl -su "${CURL_USERPASS_ARG}" -XPUT "$COUCH_BASE_LOCAL"/_replicator)
+    if [ "{\"ok\":true}" == "${response}" ]; then
+        echo "Successfully created _replicator database"
+    else
+        echo "Unable to create _replicator database"
+    fi
 }
 
 # Main script execution
@@ -100,17 +106,24 @@ else
     echo "Admin user exists"
 fi
 
-# Check if system tables exist; if not, create them.
-system_tables_exist=$(resource_exists $COUCH_BASE_LOCAL/_users)
-if [ "TRUE" == "${system_tables_exist}" ]; then
-    echo "System tables exist, skipping creation"
+# Check if the _users table exists; if not, create it.
+users_table_exists=$(resource_exists "$COUCH_BASE_LOCAL"/_users)
+if [ "FALSE" == "${users_table_exists}" ]; then
+    create_users_table
 else
-    echo "Fresh install, creating system tables"
-    create_system_tables
+    echo "_users database already exists, skipping creation"
+fi
+
+# Check if the _replicator database exists; if not, create it.
+replicator_table_exists=$(resource_exists "$COUCH_BASE_LOCAL/_replicator")
+if [ "FALSE" == "${replicator_table_exists}" ]; then
+    create_replicator_table
+else
+    echo "_replicator database already exists, skipping creation"
 fi
 
 # Check if the database exists; if not, create it.
-if [ "FALSE" == $(db_exists) ]; then
+if [ "FALSE" == "$(db_exists)" ]; then
     response=$(create_db)
     if [ "{\"ok\":true}" == "${response}" ]; then
         echo "Database successfully created"
@@ -126,7 +139,7 @@ update_db_permissions "_replicator"
 update_db_permissions "${OPENMCT_DATABASE_NAME}"
 
 # Check if CORS is enabled; if not, enable it.
-if [ "FALSE" == $(is_cors_enabled) ]; then
+if [ "FALSE" == "$(is_cors_enabled)" ]; then
     echo "Enabling CORS"
     enable_cors
 else
