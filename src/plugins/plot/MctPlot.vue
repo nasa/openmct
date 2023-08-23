@@ -545,6 +545,7 @@ export default {
       }
     },
     getConfig() {
+      const identifier = this.domainObject.identifier;
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
       let config = configStore.get(configId);
       if (!config) {

@@ -103,6 +103,10 @@ export default class ObjectAPI {
     this.errors = {
       Conflict: ConflictError
     };
+    this.calls = {
+      get: {},
+      makeKeyString: {}
+    };
   }
 
   /**
@@ -177,6 +181,31 @@ export default class ObjectAPI {
    *          has been updated, or be rejected if it cannot be saved
    */
 
+  addCall(type, identifier) {
+    let keyString;
+
+    if (!identifier) {
+      throw new Error('Cannot make key string from null identifier logging');
+    }
+
+    if (typeof identifier === 'string') {
+      keyString = identifier;
+    } else if (!identifier.namespace) {
+      keyString = identifier.key;
+    } else {
+      keyString = [identifier.namespace.replace(/:/g, '\\:'), identifier.key].join(':');
+    }
+
+    
+    if (this.calls[type][keyString]) {
+      this.calls[type][keyString]++;
+    } else {
+      this.calls[type][keyString] = 1;
+    }
+
+    Object.entries(this.calls.get).forEach(([key, value]) => console.log(`get: ${key}: ${value}`));
+    Object.entries(this.calls.makeKeyString).forEach(([key, value]) => console.log(`makeKeyString: ${key}: ${value}`));
+  }
   /**
    * Delete this domain object.
    *
@@ -199,6 +228,7 @@ export default class ObjectAPI {
    *          has been saved, or be rejected if it cannot be saved
    */
   get(identifier, abortSignal, forceRemote = false) {
+    this.addCall('get', identifier);
     let keystring = this.makeKeyString(identifier);
 
     if (!forceRemote) {
@@ -729,6 +759,7 @@ export default class ObjectAPI {
    * @returns {string} A string representation of the given identifier, including namespace and key
    */
   makeKeyString(identifier) {
+    this.addCall('makeKeyString', identifier);
     return utils.makeKeyString(identifier);
   }
 

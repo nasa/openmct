@@ -25,6 +25,7 @@ import ElementsViewProvider from './elements/ElementsViewProvider';
 import PlotElementsViewProvider from './elements/PlotElementsViewProvider';
 import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
 import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
+import TestPlotViewProvider from './TestPlotViewProvider';
 
 export default function InspectorViewsPlugin() {
   return function install(openmct) {
@@ -33,5 +34,6 @@ export default function InspectorViewsPlugin() {
     openmct.inspectorViews.addProvider(new PlotElementsViewProvider(openmct));
     openmct.inspectorViews.addProvider(new StylesInspectorViewProvider(openmct));
     openmct.inspectorViews.addProvider(new AnnotationsViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new TestPlotViewProvider(openmct));
   };
 }
