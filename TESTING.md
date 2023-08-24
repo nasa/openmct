@@ -50,7 +50,7 @@ In certain circumstances, the CircleCI cache can become stale. In order to bust 
 1. Navigate to the branch in Circle CI believed to have stale cache.
 1. Click on the 'Trigger Pipeline' button.
 1. Add Parameter -> Parameter Type = boolean , Name = BUST_CACHE ,Value = true
-1. Click 'Trigger Run'
+1. Click 'Trigger Pipeline'
 
 ## Code Coverage
 
