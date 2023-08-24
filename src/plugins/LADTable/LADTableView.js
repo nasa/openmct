@@ -40,7 +40,7 @@ export default class LADTableView {
       {
         el: element,
         components: {
-          LadTable: Object.create(LadTable)
+          LadTable
         },
         provide: {
           openmct: this.openmct,
