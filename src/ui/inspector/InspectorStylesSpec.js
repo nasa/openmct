@@ -29,12 +29,12 @@ import {
   mockMultiSelectionNonSpecificStyles,
   mockStyle
 } from './InspectorStylesSpecMocks';
-import Vue from 'vue';
+import mount from 'utils/mount';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
 import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
 
-xdescribe('the inspector', () => {
+describe('the inspector', () => {
   let openmct;
   let selection;
   let stylesViewComponent;
@@ -208,13 +208,15 @@ xdescribe('the inspector', () => {
         selection,
         stylesManager
       },
-      el: element,
       components: {},
       template: `<${component.name} />`
     };
 
     config.components[component.name] = component;
 
-    return new Vue(config).$mount();
+    const { vNode } = mount(config, {
+      element
+    });
+    return vNode.componentInstance;
   }
 });
