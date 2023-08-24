@@ -47,4 +47,7 @@ codecov
 
 # :(
 package-lock.json
-e2e/test-data/heapsnapshots/*.heapsnapshot
+
+e2e/test-data/heapsnapshots/**
+!e2e/test-data/heapsnapshots/data/cur/snap-seq.json
+!e2e/test-data/heapsnapshots/data/cur/run-meta.json

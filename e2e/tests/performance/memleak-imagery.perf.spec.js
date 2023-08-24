@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const { findLeaks, BrowserInteractionResultReader } = require('@memlab/api');
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
-const snapshotPath = 'e2e/test-data/heapsnapshots/';
+const snapshotPath = 'e2e/test-data/heapsnapshots/data/cur/';
 
 test.describe.only('Memory Performance tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -57,15 +57,14 @@ test.describe.only('Memory Performance tests', () => {
     await page.waitForTimeout(3 * 1000);
     await forceGC(page);
     await captureHeapSnapshot(page, snapshotPath + 's3.heapsnapshot');
+
     // Get and compare JSHeapUsedSize at different points in the test
     let heapSize = await getHeapSize(page);
     console.log(`Final JSHeapUsedSize: ${heapSize}`);
 
-    console.log('Heap snapshot captured');
     const reader = BrowserInteractionResultReader.from(snapshotPath);
-    console.log('reader created', JSON.stringify(reader, null, 2));
     const leaks = await findLeaks(reader);
-    console.log(leaks);
+    console.log('Leaks:', leaks);
   });
 });
 
