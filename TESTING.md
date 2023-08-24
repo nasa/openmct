@@ -35,6 +35,23 @@ The unit tests can be executed in one of two ways:
 ## e2e, performance, and visual testing
 Documentation located [here](./e2e/README.md)
 
+## Working with CI
+
+We are leveraging two different CI systems.
+
+### Github Actions/Workflows
+Github Actions/Workflows are used with special triggers (i.e. github label on PR) or on platforms unavailable to circleCI (windows, macOS).
+
+### Circle CI
+The majority of our CI hours are spent on Circle CI to run per-commit and nightly work.
+
+#### Busting Cache
+In certain circumstances, the CircleCI cache can become stale. In order to bust the cache, we've implemented a runtime boolean parameter in Circle CI creatively name BUST_CACHE. To execute:
+1. Navigate to the branch in Circle CI believed to have stale cache.
+1. Click on the 'Trigger Pipeline' button.
+1. Add Parameter -> Parameter Type = boolean , Name = BUST_CACHE ,Value = true
+1. Click 'Trigger Run'
+
 ## Code Coverage
 
 * 100% statement coverage is achievable and desirable.
