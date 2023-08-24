@@ -291,13 +291,13 @@ const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
 
 export default {
   components: {
-    TelemetryTableRow,
-    TableColumnHeader,
-    search,
-    TableFooterIndicator,
-    ToggleSwitch,
-    SizingRow,
-    ProgressBar
+    TelemetryTableRow: Object.assign({}, TelemetryTableRow),
+    TableColumnHeader: Object.assign({}, TableColumnHeader),
+    search: Object.assign({}, search),
+    TableFooterIndicator: Object.assign({}, TableFooterIndicator),
+    ToggleSwitch: Object.assign({}, ToggleSwitch),
+    SizingRow: Object.assign({}, SizingRow),
+    ProgressBar: Object.assign({}, ProgressBar)
   },
   inject: ['openmct', 'objectPath', 'table', 'currentView'],
   props: {

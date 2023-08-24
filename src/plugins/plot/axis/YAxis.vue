@@ -168,6 +168,9 @@ export default {
     this.loaded = true;
     this.setUpYAxisOptions();
   },
+  beforeUnmount() {
+    this.stopListening();
+  },
   methods: {
     initAxisAndSeriesConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);

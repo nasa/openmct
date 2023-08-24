@@ -1,6 +1,7 @@
 import TableComponent from './components/table.vue';
 import TelemetryTable from './TelemetryTable';
 import mount from 'utils/mount';
+import { markRaw } from 'vue';
 
 export default class TelemetryTableView {
   constructor(openmct, domainObject, objectPath) {
@@ -9,12 +10,6 @@ export default class TelemetryTableView {
     this.objectPath = objectPath;
     this._destroy = null;
     this.component = null;
-
-    Object.defineProperty(this, 'table', {
-      value: new TelemetryTable(domainObject, openmct),
-      enumerable: false,
-      configurable: false
-    });
   }
 
   getViewContext() {
@@ -41,9 +36,14 @@ export default class TelemetryTableView {
     if (this._destroy) {
       this._destroy();
     }
+    delete this.component;
+    delete this._destroy;
+    this.openmct.app._context.optionsCache = new WeakMap();
   }
 
   show(element, editMode) {
+    const telemetryTable = markRaw(new TelemetryTable(this.domainObject, this.openmct));
+
     const { vNode, destroy } = mount(
       {
         el: element,
@@ -53,7 +53,7 @@ export default class TelemetryTableView {
         provide: {
           openmct: this.openmct,
           objectPath: this.objectPath,
-          table: this.table,
+          table: telemetryTable,
           currentView: this
         },
         data() {

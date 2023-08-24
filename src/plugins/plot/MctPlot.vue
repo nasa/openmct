@@ -993,9 +993,6 @@ export default {
 
       this.config.yAxisLabel = this.config.yAxis.get('label');
 
-      this.cursorGuideVertical = this.$refs.cursorGuideVertical;
-      this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
-
       this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
       this.yAxisListWithRange.forEach((yAxis) => {
         this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange.bind(this, yAxis.id), this);
@@ -1123,8 +1120,8 @@ export default {
     },
 
     updateCrosshairs(event) {
-      this.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
-      this.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
+      this.$refs.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
+      this.$refs.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
     },
 
     trackChartElementBounds(event) {

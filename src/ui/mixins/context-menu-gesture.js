@@ -27,6 +27,8 @@ export default {
       Object.assign(rawOldObject, rawNewObject);
     }
 
+    this.unmountObservers = [];
+
     this.objectPath.forEach((object) => {
       if (object) {
         const unobserve = this.openmct.objects.observe(
@@ -34,12 +36,15 @@ export default {
           '*',
           updateObject.bind(this, object)
         );
-        this.$once('hook:unmounted', unobserve);
+        this.unmountObservers.push(unobserve);
       }
     });
   },
   beforeUnmount() {
     this.$refs.root.removeEventListener('contextMenu', this.showContextMenu);
+    this.unmountObservers.forEach((unobserve) => unobserve());
+
+    delete this.unmountObservers;
   },
   methods: {
     showContextMenu(event) {
