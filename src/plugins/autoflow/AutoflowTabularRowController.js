@@ -68,7 +68,12 @@ define([], function () {
       this.updateRowData.bind(this)
     );
 
-    this.openmct.telemetry.request(this.domainObject, { size: 1 }).then(
+    const options = {
+      size: 1,
+      strategy: 'latest',
+      timeContext: this.openmct.time.getContextForView([])
+    };
+    this.openmct.telemetry.request(this.domainObject, options).then(
       function (history) {
         if (!this.initialized && history.length > 0) {
           this.updateRowData(history[history.length - 1]);
