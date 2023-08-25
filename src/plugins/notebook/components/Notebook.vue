@@ -619,6 +619,20 @@ export default {
       event.preventDefault();
       event.stopImmediatePropagation();
 
+      console.debug(`📊 dropped on entry`, event);
+
+      console.debug(`📊 any files on event`, event.dataTransfer.files);
+
+      const imageDropped =
+        event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
+      if (imageDropped) {
+        const image = event.dataTransfer.files[0];
+        const imageSrc = URL.createObjectURL(image);
+        const imageEmbed = `<img src="${imageSrc}" />`;
+        this.newEntry(imageEmbed);
+        return;
+      }
+
       const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
       if (snapshotId.length) {
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);

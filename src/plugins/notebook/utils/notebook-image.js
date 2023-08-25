@@ -51,22 +51,8 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
   });
 }
 
-export function saveNotebookImageDomainObject(openmct, object) {
-  return new Promise((resolve, reject) => {
-    openmct.objects
-      .save(object)
-      .then((result) => {
-        if (result) {
-          resolve(object);
-        } else {
-          reject();
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-        reject();
-      });
-  });
+export async function saveNotebookImageDomainObject(openmct, object) {
+  await openmct.objects.save(object);
 }
 
 export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
