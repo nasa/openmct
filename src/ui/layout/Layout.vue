@@ -161,8 +161,8 @@ import BrowseBar from './BrowseBar.vue';
 import CreateButton from './CreateButton.vue';
 import RecentObjectsList from './RecentObjectsList.vue';
 import MctTree from './MctTree.vue';
-import multipane from './Multipane.vue';
-import pane from './Pane.vue';
+import Multipane from './Multipane.vue';
+import Pane from './Pane.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
@@ -174,8 +174,8 @@ export default {
     ObjectView,
     CreateButton,
     GrandSearch,
-    multipane,
-    pane,
+    Multipane,
+    Pane,
     BrowseBar,
     Toolbar,
     AppLogo,
