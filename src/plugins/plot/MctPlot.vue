@@ -247,7 +247,7 @@ export default {
       altPressed: false,
       annotatedPointsBySeries: {},
       highlights: [],
-      annotationSelectionsBySeries: [],
+      annotationSelectionsBySeries: {},
       annotationsEverLoaded: false,
       lockHighlightPoint: false,
       yKeyOptions: [],
@@ -794,7 +794,7 @@ export default {
       };
       this.config.xAxis.set('range', newRange);
       if (!isTick) {
-        this.annotatedPointsBySeries = [];
+        this.annotatedPointsBySeries = {};
         this.clearPanZoomHistory();
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);

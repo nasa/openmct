@@ -177,8 +177,11 @@ export default {
         this.initialize();
       }
     },
-    onSeriesRemove(series, index) {
-      this.seriesModels.splice(index, 1);
+    onSeriesRemove(seriesToRemove) {
+      const seriesIndexToRemove = this.seriesModels.findIndex(
+        (series) => series.keyString === seriesToRemove.keyString
+      );
+      this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     getSeries(keyStringToFind) {
       const foundSeries = this.seriesModels.find((series) => {

@@ -108,7 +108,7 @@ export default {
     highlights: {
       handler(newHighlights) {
         const highlightedObject = newHighlights.find(
-          (highlight) => highlight.keyString === this.seriesKey
+          (highlight) => highlight.seriesKeyString === this.seriesKeyString
         );
         if (newHighlights.length === 0 || highlightedObject) {
           this.initialize(highlightedObject);
@@ -159,8 +159,11 @@ export default {
         this.initialize();
       }
     },
-    onSeriesRemove(series, index) {
-      this.seriesModels.splice(index, 1);
+    onSeriesRemove(seriesToRemove) {
+      const seriesIndexToRemove = this.seriesModels.findIndex(
+        (series) => series.keyString === seriesToRemove.keyString
+      );
+      this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     getSeries(keyStringToFind) {
       const foundSeries = this.seriesModels.find((series) => {

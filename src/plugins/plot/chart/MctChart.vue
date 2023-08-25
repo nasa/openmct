@@ -279,11 +279,15 @@ export default {
       this.makeChartElement(series);
       this.makeLimitLines(series);
     },
-    onSeriesRemove(series, index) {
-      this.stopListening(series);
-      this.removeChartElement(series);
+    onSeriesRemove(seriesToRemove) {
+      this.stopListening(seriesToRemove);
+      this.removeChartElement(seriesToRemove);
       this.scheduleDraw();
-      this.seriesModels.splice(index, 1);
+
+      const seriesIndexToRemove = this.seriesModels.findIndex(
+        (series) => series.keyString === seriesToRemove.keyString
+      );
+      this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     onAddPoint(point, insertIndex, series) {
       const mainYAxisId = this.config.yAxis.get('id');
@@ -692,7 +696,6 @@ export default {
       return matchesId;
     },
     drawSeries(id) {
-      //console.time('📈 drawSeries');
       const lines = this.lines.filter(this.matchByYAxisId.bind(this, id));
       lines.forEach(this.drawLine, this);
       const pointSets = this.pointSets.filter(this.matchByYAxisId.bind(this, id));
@@ -836,25 +839,26 @@ export default {
         Object.keys(this.annotatedPointsBySeries).forEach((seriesKeyString) => {
           const seriesModel = this.getSeries(seriesKeyString);
           const matchesYAxis = this.matchByYAxisId(yAxisId, { series: seriesModel });
-          if (matchesYAxis) {
-            // annotation points are all within range (checked in MctPlot with FlatBush), so we don't need to check
-            const annotatedPointBuffer = new Float32Array(
-              this.annotatedPointsBySeries[seriesKeyString].length * 2
-            );
-            Object.values(this.annotatedPointsBySeries[seriesKeyString]).forEach(
-              (annotatedPoint, index) => {
-                const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, seriesModel);
-                const canvasYValue = this.offset[yAxisId].yVal(annotatedPoint.point, seriesModel);
-                const drawnPointKey = `${canvasXValue}|${canvasYValue}`;
-                if (!uniquePointsToDraw.has(drawnPointKey)) {
-                  annotatedPointBuffer[index * 2] = canvasXValue;
-                  annotatedPointBuffer[index * 2 + 1] = canvasYValue;
-                  uniquePointsToDraw.add(drawnPointKey);
-                }
-              }
-            );
-            this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
+          if (!matchesYAxis) {
+            return;
           }
+          // annotation points are all within range (checked in MctPlot with FlatBush), so we don't need to check
+          const annotatedPointBuffer = new Float32Array(
+            this.annotatedPointsBySeries[seriesKeyString].length * 2
+          );
+          Object.values(this.annotatedPointsBySeries[seriesKeyString]).forEach(
+            (annotatedPoint, index) => {
+              const canvasXValue = this.offset[yAxisId].xVal(annotatedPoint.point, seriesModel);
+              const canvasYValue = this.offset[yAxisId].yVal(annotatedPoint.point, seriesModel);
+              const drawnPointKey = `${canvasXValue}|${canvasYValue}`;
+              if (!uniquePointsToDraw.has(drawnPointKey)) {
+                annotatedPointBuffer[index * 2] = canvasXValue;
+                annotatedPointBuffer[index * 2 + 1] = canvasYValue;
+                uniquePointsToDraw.add(drawnPointKey);
+              }
+            }
+          );
+          this.drawAnnotatedPoints(seriesModel, annotatedPointBuffer);
         });
       }
     },
