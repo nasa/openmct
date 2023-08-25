@@ -1,26 +1,25 @@
-import { h, render } from 'vue';
+import { defineComponent, createApp } from 'vue';
 
-export default function mount(component, { props, children, element, app } = {}) {
+export default function mount(component, { props, children, element } = {}) {
   let el = element;
-
-  let vNode = h(component, props, children);
-  if (app && app._context) {
-    vNode.appContext = app._context;
+  if (!el) {
+    el = document.createElement('div');
   }
-  if (el) {
-    render(vNode, el);
-  } else if (typeof document !== 'undefined') {
-    render(vNode, (el = document.createElement('div')));
-  }
+  let vueComponent = defineComponent(component);
+  let app = createApp(vueComponent);
+  let mountedComponentInstance = app.mount(el);
 
   // eslint-disable-next-line func-style
   const destroy = () => {
-    if (el) {
-      render(null, el);
-    }
-    el = null;
-    vNode = null;
+    app.unmount();
   };
 
-  return { vNode, destroy, el };
+  return {
+    vNode: {
+      componentInstance: mountedComponentInstance,
+      el: mountedComponentInstance.$el
+    },
+    destroy,
+    el
+  };
 }
