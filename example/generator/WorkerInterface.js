@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import uuid from 'uuid'
 
-define(['uuid'], function ({ v4: uuid }) {
-  function WorkerInterface(openmct, StalenessProvider) {
+export default class WorkerInterface {
+  constructor (openmct, StalenessProvider) {
     // eslint-disable-next-line no-undef
     const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
     this.StalenessProvider = StalenessProvider;
@@ -33,22 +34,22 @@ define(['uuid'], function ({ v4: uuid }) {
     this.watchStaleness();
   }
 
-  WorkerInterface.prototype.watchStaleness = function () {
+  watchStaleness () {
     this.StalenessProvider.on('stalenessEvent', ({ id, isStale }) => {
       this.staleTelemetryIds[id] = isStale;
     });
-  };
+  }
 
-  WorkerInterface.prototype.onMessage = function (message) {
+  onMessage (message) {
     message = message.data;
-    var callback = this.callbacks[message.id];
+    const callback = this.callbacks[message.id];
     if (callback) {
       callback(message);
     }
-  };
+  }
 
-  WorkerInterface.prototype.dispatch = function (request, data, callback) {
-    var message = {
+  dispatch (request, data, callback) {
+    const message = {
       request: request,
       data: data,
       id: uuid()
@@ -61,15 +62,15 @@ define(['uuid'], function ({ v4: uuid }) {
     this.worker.postMessage(message);
 
     return message.id;
-  };
+  }
 
-  WorkerInterface.prototype.request = function (request) {
-    var deferred = {};
-    var promise = new Promise(function (resolve, reject) {
+  request (request) {
+    const deferred = {};
+    const promise = new Promise(function (resolve, reject) {
       deferred.resolve = resolve;
       deferred.reject = reject;
     });
-    var messageId;
+    let messageId;
 
     let self = this;
     function callback(message) {
@@ -85,9 +86,9 @@ define(['uuid'], function ({ v4: uuid }) {
     messageId = this.dispatch('request', request, callback.bind(this));
 
     return promise;
-  };
+  }
 
-  WorkerInterface.prototype.subscribe = function (request, cb) {
+  subscribe (request, cb) {
     const { id, loadDelay } = request;
     const messageId = this.dispatch('subscribe', request, (message) => {
       if (!this.staleTelemetryIds[id]) {
@@ -101,7 +102,5 @@ define(['uuid'], function ({ v4: uuid }) {
       });
       delete this.callbacks[messageId];
     }.bind(this);
-  };
-
-  return WorkerInterface;
-});
+  }
+}

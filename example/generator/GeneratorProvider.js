@@ -19,33 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import WorkerInterface from './WorkerInterface'
 
-define(['./WorkerInterface'], function (WorkerInterface) {
-  var REQUEST_DEFAULTS = {
-    amplitude: 1,
-    period: 10,
-    offset: 0,
-    dataRateInHz: 1,
-    randomness: 0,
-    phase: 0,
-    loadDelay: 0,
-    infinityValues: false
-  };
+const REQUEST_DEFAULTS = {
+  amplitude: 1,
+  period: 10,
+  offset: 0,
+  dataRateInHz: 1,
+  randomness: 0,
+  phase: 0,
+  loadDelay: 0,
+  infinityValues: false
+}
 
-  function GeneratorProvider(openmct, StalenessProvider) {
+export default class GeneratorProvider {
+  
+  constructor(openmct, StalenessProvider){
     this.openmct = openmct;
     this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
+
+    this.supportsRequest = this.canProvideTelemetry;
+    this.supportsSubscribe = this.canProvideTelemetry;
   }
 
-  GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
+  canProvideTelemetry (domainObject) {
     return domainObject.type === 'generator';
-  };
+  }
 
-  GeneratorProvider.prototype.supportsRequest = GeneratorProvider.prototype.supportsSubscribe =
-    GeneratorProvider.prototype.canProvideTelemetry;
+  canProvideTelemetry (domainObject) {
+    return domainObject.type === 'generator';
+  }
 
-  GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
-    var props = [
+  makeWorkerRequest = function (domainObject, request) {
+    const props = [
       'amplitude',
       'period',
       'offset',
@@ -58,7 +64,7 @@ define(['./WorkerInterface'], function (WorkerInterface) {
 
     request = request || {};
 
-    var workerRequest = {};
+    const workerRequest = {};
 
     props.forEach(function (prop) {
       if (
@@ -83,21 +89,19 @@ define(['./WorkerInterface'], function (WorkerInterface) {
     workerRequest.name = domainObject.name;
 
     return workerRequest;
-  };
+  }
 
-  GeneratorProvider.prototype.request = function (domainObject, request) {
-    var workerRequest = this.makeWorkerRequest(domainObject, request);
+  request (domainObject, request) {
+    const workerRequest = this.makeWorkerRequest(domainObject, request);
     workerRequest.start = request.start;
     workerRequest.end = request.end;
 
     return this.workerInterface.request(workerRequest);
-  };
+  }
 
-  GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-    var workerRequest = this.makeWorkerRequest(domainObject, {});
+  subscribe (domainObject, callback) {
+    const workerRequest = this.makeWorkerRequest(domainObject, {});
 
     return this.workerInterface.subscribe(workerRequest, callback);
-  };
-
-  return GeneratorProvider;
-});
+  }
+}

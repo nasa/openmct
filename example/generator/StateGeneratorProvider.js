@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  function StateGeneratorProvider() {}
+export default class StateGeneratorProvider {
+  supportsSubscribe (domainObject) {
+    return domainObject.type === 'example.state-generator';
+  }
 
-  function pointForTimestamp(timestamp, duration, name) {
+  #pointForTimestamp(timestamp, duration, name) {
     return {
       name: name,
       utc: Math.floor(timestamp / duration) * duration,
@@ -31,16 +33,12 @@ define([], function () {
     };
   }
 
-  StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-    return domainObject.type === 'example.state-generator';
-  };
+  subscribe (domainObject, callback) {
+    const duration = domainObject.telemetry.duration * 1000;
 
-  StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-    var duration = domainObject.telemetry.duration * 1000;
-
-    var interval = setInterval(function () {
-      var now = Date.now();
-      var datum = pointForTimestamp(now, duration, domainObject.name);
+    const interval = setInterval(function () {
+      const now = Date.now();
+      let datum = pointForTimestamp(now, duration, domainObject.name);
       datum.value = String(datum.value);
       callback(datum);
     }, duration);
@@ -48,28 +46,26 @@ define([], function () {
     return function () {
       clearInterval(interval);
     };
-  };
+  }
 
-  StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
+  supportsRequest (domainObject, options) {
     return domainObject.type === 'example.state-generator';
-  };
+  }
 
-  StateGeneratorProvider.prototype.request = function (domainObject, options) {
-    var start = options.start;
-    var end = Math.min(Date.now(), options.end); // no future values
-    var duration = domainObject.telemetry.duration * 1000;
+  request (domainObject, options) {
+    let start = options.start;
+    const end = Math.min(Date.now(), options.end); // no future values
+    const duration = domainObject.telemetry.duration * 1000;
     if (options.strategy === 'latest' || options.size === 1) {
       start = end;
     }
 
-    var data = [];
+    const data = [];
     while (start <= end && data.length < 5000) {
       data.push(pointForTimestamp(start, duration, domainObject.name));
       start += duration;
     }
 
     return Promise.resolve(data);
-  };
-
-  return StateGeneratorProvider;
-});
+  }
+}

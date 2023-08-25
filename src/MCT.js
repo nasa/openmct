@@ -20,73 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* eslint-disable no-undef */
-define([
-  'EventEmitter',
-  './api/api',
-  './api/overlays/OverlayAPI',
-  './api/tooltips/ToolTipAPI',
-  './selection/Selection',
-  './plugins/plugins',
-  './ui/registries/ViewRegistry',
-  './plugins/imagery/plugin',
-  './ui/registries/InspectorViewRegistry',
-  './ui/registries/ToolbarRegistry',
-  './ui/router/ApplicationRouter',
-  './ui/router/Browse',
-  './ui/layout/Layout.vue',
-  './ui/preview/plugin',
-  './api/Branding',
-  './plugins/licenses/plugin',
-  './plugins/remove/plugin',
-  './plugins/move/plugin',
-  './plugins/linkAction/plugin',
-  './plugins/duplicate/plugin',
-  './plugins/importFromJSONAction/plugin',
-  './plugins/exportAsJSONAction/plugin',
-  './ui/components/components',
-  'vue'
-], function (
-  EventEmitter,
-  api,
-  OverlayAPI,
-  ToolTipAPI,
-  Selection,
-  plugins,
-  ViewRegistry,
-  ImageryPlugin,
-  InspectorViewRegistry,
-  ToolbarRegistry,
-  ApplicationRouter,
-  Browse,
-  Layout,
-  PreviewPlugin,
-  BrandingAPI,
-  LicensesPlugin,
-  RemoveActionPlugin,
-  MoveActionPlugin,
-  LinkActionPlugin,
-  DuplicateActionPlugin,
-  ImportFromJSONAction,
-  ExportAsJSONAction,
-  components,
-  Vue
-) {
-  /**
-   * Open MCT is an extensible web application for building mission
-   * control user interfaces. This module is itself an instance of
-   * [MCT]{@link module:openmct.MCT}, which provides an interface for
-   * configuring and executing the application.
-   *
-   * @exports openmct
-   */
+import EventEmitter from 'EventEmitter'
+import Vue from 'vue'
+import api from './api/api'
+import BrandingAPI from './api/Branding'
+import Layout from './ui/layout/Layout.vue'
+import DuplicateActionPlugin from './plugins/duplicate/plugin'
+import ExportAsJSONAction from './plugins/exportAsJSONAction/plugin'
+import ImageryPlugin from './plugins/imagery/plugin'
+import ImportFromJSONAction from './plugins/importFromJSONAction/plugin'
+import LinkActionPlugin from './plugins/linkAction/plugin'
+import MoveActionPlugin from './plugins/move/plugin'
+import OverlayAPI from './api/overlays/OverlayAPI'
+import RemoveActionPlugin from './plugins/remove/plugin'
+import ToolTipAPI from './api/tooltips/ToolTipAPI'
+import LicensesPlugin from './plugins/licenses/plugin'
+import plugins from './plugins/plugins'
+import Selection from './selection/Selection'
+import ApplicationRouter from './ui/router/ApplicationRouter'
+import Browse from './ui/router/Browse'
+import components from './ui/components/components'
+import PreviewPlugin from './ui/preview/plugin'
+import ToolbarRegistry from './ui/registries/ToolbarRegistry'
+import ViewRegistry from './ui/registries/ViewRegistry'
 
+/**
+ * Open MCT is an extensible web application for building mission
+ * control user interfaces. This module is itself an instance of
+ * [MCT]{@link module:openmct.MCT}, which provides an interface for
+ * configuring and executing the application.
+ *
+ * @exports openmct
+ */
+export default class MCT extends EventEmitter {
+  static MCT = MCT;
   /**
    * The Open MCT application. This may be configured by installing plugins
    * or registering extensions before the application is started.
    * @constructor
    * @memberof module:openmct
    */
-  function MCT() {
+  constructor () {
+    this.plugins = plugins;
+    this.components = components.default;
+
     EventEmitter.call(this);
     this.buildInfo = {
       version: __OPENMCT_VERSION__,
@@ -302,17 +279,12 @@ define([
     this.install(this.plugins.Gauge());
     this.install(this.plugins.InspectorViews());
   }
-
-  MCT.prototype = Object.create(EventEmitter.prototype);
-
-  MCT.prototype.MCT = MCT;
-
   /**
    * Set path to where assets are hosted.  This should be the path to main.js.
    * @memberof module:openmct.MCT#
    * @method setAssetPath
    */
-  MCT.prototype.setAssetPath = function (assetPath) {
+  setAssetPath (assetPath) {
     this._assetPath = assetPath;
   };
 
@@ -321,7 +293,7 @@ define([
    * @memberof module:openmct.MCT#
    * @method getAssetPath
    */
-  MCT.prototype.getAssetPath = function () {
+  getAssetPath () {
     const assetPathLength = this._assetPath && this._assetPath.length;
     if (!assetPathLength) {
       return '/';
@@ -343,7 +315,7 @@ define([
    * @param {HTMLElement} [domElement] the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  MCT.prototype.start = function (
+  start (
     domElement = document.body.firstElementChild,
     isHeadlessMode = false
   ) {
@@ -406,7 +378,7 @@ define([
     }
   };
 
-  MCT.prototype.startHeadless = function () {
+  startHeadless () {
     let unreachableNode = document.createElement('div');
 
     return this.start(unreachableNode, true);
@@ -419,18 +391,13 @@ define([
    *     invoked with the mct instance.
    * @memberof module:openmct.MCT#
    */
-  MCT.prototype.install = function (plugin) {
+  install (plugin) {
     plugin(this);
   };
 
-  MCT.prototype.destroy = function () {
+  destroy () {
     window.removeEventListener('beforeunload', this.destroy);
     this.emit('destroy');
     this.router.destroy();
-  };
-
-  MCT.prototype.plugins = plugins;
-  MCT.prototype.components = components.default;
-
-  return MCT;
-});
+  }
+}

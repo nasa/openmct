@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import _ from 'lodash'
 
-define(['lodash'], function (_) {
+export default class DefaultMetadataProvider {
   /**
    * This is the default metadata provider; for any object with a "telemetry"
    * property, this provider will return the value of that property as the
@@ -30,15 +31,14 @@ define(['lodash'], function (_) {
    * defined on the type.  Telemetry metadata definitions on type will be
    * depreciated in the future.
    */
-  function DefaultMetadataProvider(openmct) {
+  constructor (openmct) {
     this.openmct = openmct;
   }
-
   /**
    * Applies to any domain object with a telemetry property, or whose type
    * definition has a telemetry property.
    */
-  DefaultMetadataProvider.prototype.supportsMetadata = function (domainObject) {
+  supportsMetadata (domainObject) {
     return Boolean(domainObject.telemetry) || Boolean(this.typeHasTelemetry(domainObject));
   };
 
@@ -46,7 +46,7 @@ define(['lodash'], function (_) {
    * Retrieves valueMetadata from legacy metadata.
    * @private
    */
-  function valueMetadatasFromOldFormat(metadata) {
+  #valueMetadatasFromOldFormat(metadata) {
     const valueMetadatas = [];
 
     valueMetadatas.push({
@@ -96,7 +96,7 @@ define(['lodash'], function (_) {
   /**
    * Returns telemetry metadata for a given domain object.
    */
-  DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
+  getMetadata (domainObject) {
     const metadata = domainObject.telemetry || {};
     if (this.typeHasTelemetry(domainObject)) {
       const typeMetadata = this.openmct.types.get(domainObject.type).definition.telemetry;
@@ -114,11 +114,9 @@ define(['lodash'], function (_) {
   /**
    * @private
    */
-  DefaultMetadataProvider.prototype.typeHasTelemetry = function (domainObject) {
+  typeHasTelemetry (domainObject) {
     const type = this.openmct.types.get(domainObject.type);
 
     return Boolean(type.definition.telemetry);
-  };
-
-  return DefaultMetadataProvider;
-});
+  }
+}

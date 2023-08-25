@@ -19,65 +19,61 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define([], function () {
-  var PURPLE = {
-      sin: 2.2,
-      cos: 2.2
-    },
-    RED = {
-      sin: 0.9,
-      cos: 0.9
-    },
-    ORANGE = {
-      sin: 0.7,
-      cos: 0.7
-    },
-    YELLOW = {
-      sin: 0.5,
-      cos: 0.5
-    },
-    CYAN = {
-      sin: 0.45,
-      cos: 0.45
-    },
-    LIMITS = {
-      rh: {
-        cssClass: 'is-limit--upr is-limit--red',
-        low: RED,
-        high: Number.POSITIVE_INFINITY,
-        name: 'Red High'
-      },
-      rl: {
-        cssClass: 'is-limit--lwr is-limit--red',
-        high: -RED,
-        low: Number.NEGATIVE_INFINITY,
-        name: 'Red Low'
-      },
-      yh: {
-        cssClass: 'is-limit--upr is-limit--yellow',
-        low: YELLOW,
-        high: RED,
-        name: 'Yellow High'
-      },
-      yl: {
-        cssClass: 'is-limit--lwr is-limit--yellow',
-        low: -RED,
-        high: -YELLOW,
-        name: 'Yellow Low'
-      }
-    };
-
-  function SinewaveLimitProvider() {}
-
-  SinewaveLimitProvider.prototype.supportsLimits = function (domainObject) {
+const PURPLE = {
+  sin: 2.2,
+  cos: 2.2
+},
+RED = {
+  sin: 0.9,
+  cos: 0.9
+},
+ORANGE = {
+  sin: 0.7,
+  cos: 0.7
+},
+YELLOW = {
+  sin: 0.5,
+  cos: 0.5
+},
+CYAN = {
+  sin: 0.45,
+  cos: 0.45
+},
+LIMITS = {
+  rh: {
+    cssClass: 'is-limit--upr is-limit--red',
+    low: RED,
+    high: Number.POSITIVE_INFINITY,
+    name: 'Red High'
+  },
+  rl: {
+    cssClass: 'is-limit--lwr is-limit--red',
+    high: -RED,
+    low: Number.NEGATIVE_INFINITY,
+    name: 'Red Low'
+  },
+  yh: {
+    cssClass: 'is-limit--upr is-limit--yellow',
+    low: YELLOW,
+    high: RED,
+    name: 'Yellow High'
+  },
+  yl: {
+    cssClass: 'is-limit--lwr is-limit--yellow',
+    low: -RED,
+    high: -YELLOW,
+    name: 'Yellow Low'
+  }
+}
+export default class SinewaveLimitProvider {
+  supportsLimits (domainObject) {
     return domainObject.type === 'generator';
-  };
+  }
 
-  SinewaveLimitProvider.prototype.getLimitEvaluator = function (domainObject) {
+  getLimitEvaluator (domainObject) {
     return {
       evaluate: function (datum, valueMetadata) {
-        var range = valueMetadata && valueMetadata.key;
+        const range = valueMetadata && valueMetadata.key;
 
         if (datum[range] > RED[range]) {
           return LIMITS.rh;
@@ -96,9 +92,8 @@ define([], function () {
         }
       }
     };
-  };
-
-  SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
+  }
+  getLimits (domainObject) {
     return {
       limits: function () {
         return Promise.resolve({
@@ -160,7 +155,5 @@ define([], function () {
         });
       }
     };
-  };
-
-  return SinewaveLimitProvider;
-});
+  }
+}
