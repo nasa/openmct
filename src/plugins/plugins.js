@@ -84,7 +84,7 @@ define([
   './faultManagement/FaultManagementPlugin',
   '../../example/exampleTags/plugin',
   './inspectorViews/plugin',
-  '.nspectorDataVisualization/plugin'
+  './inspectorDataVisualization/plugin'
 ], function (
   _,
   UTCTimeSystem,

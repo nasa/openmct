@@ -24,6 +24,8 @@ import InspectorDataVisualizationViewProvider from './InspectorDataVisualization
 
 export default function (options) {
   return function (openmct) {
-    openmct.objectViews.addProvider(new InspectorDataVisualizationViewProvider(openmct, options));
+    openmct.inspectorViews.addProvider(
+      new InspectorDataVisualizationViewProvider(openmct, options)
+    );
   };
 }
