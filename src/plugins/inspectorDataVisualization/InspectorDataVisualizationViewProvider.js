@@ -54,10 +54,14 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
               provide: {
                 openmct,
                 domainObject,
-                context: dataVisualizationContext,
                 timeFormatter
               },
-              template: `<InspectorDataVisualization />`
+              data() {
+                return {
+                  context: dataVisualizationContext
+                };
+              },
+              template: `<InspectorDataVisualization :context="context" />`
             },
             {
               app: openmct.app,
