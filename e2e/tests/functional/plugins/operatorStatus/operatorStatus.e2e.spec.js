@@ -63,6 +63,11 @@ test.describe('Operator Status', () => {
     await expect(page.locator('.c-status-poll-panel')).toBeVisible();
   });
 
+  // Description should be empty https://github.com/nasa/openmct/issues/6978
+  test('no description in role selection', async ({ page }) => {
+    await expect(page.locator('.c-message__action-text')).toBeHidden();
+  });
+
   test('poll question indicator remains when blank poll set', async ({ page }) => {
     await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
     await page.locator('div[title="Set the current poll question"]').click();
