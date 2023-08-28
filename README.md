@@ -24,7 +24,7 @@ git clone https://github.com/nasa/openmct.git
 nvm install
 ```
 
-3. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions. 
+3. Install development dependencies (Note: Check the package.json engine for our tested and supported node versions): 
 
 ```
 npm install
