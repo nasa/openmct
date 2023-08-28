@@ -49,7 +49,7 @@ jobs:
 
       - run: npm test
 
-      - run: npm run ci
+      - run: npm run lint
 
       - name: Remove pr:platform label (if present)
         if: always()
