@@ -23,7 +23,7 @@
 import InspectorDataVisualizationComponent from './InspectorDataVisualizationComponent.vue';
 import mount from '../utils/mount';
 
-export default function InspectorDataVisualizationProvider(openmct, configuration) {
+export default function InspectorDataVisualizationViewProvider(openmct, configuration) {
   const { type = 'mmgis', name = 'Data Visualization' } = configuration;
 
   return {
