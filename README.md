@@ -2,7 +2,9 @@
 
 Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
-Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+> [!NOTE]
+> Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
@@ -41,8 +43,12 @@ The clearest examples for developing Open MCT plugins are in the
 [tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
-We want Open MCT to be as easy to use, install, run, and develop for as
-possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
+> [!NOTE]
+> We want Open MCT to be as easy to use, install, run, and develop for as
+> possible, and your feedback will help us get there! 
+> Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), 
+> [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), 
+> or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
 ## Developing Applications With Open MCT
 
