@@ -27,7 +27,6 @@
       :telemetry-keys="telemetryKeys"
       :placeholder-text="placeholderText"
       :description="description"
-      :options="options"
     />
   </div>
 </template>
@@ -61,8 +60,8 @@ export default {
     placeholderText() {
       return this.context.placeholderText;
     },
-    options() {
-      return this.context.options;
+    description() {
+      return this.context.description;
     }
     // location() {
     //   return this.mapContext?.location;
