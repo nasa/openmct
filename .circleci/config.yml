@@ -93,7 +93,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run lint
+      - run: npm run ci
       - generate_and_store_version_and_filesystem_artifacts
   unit-test:
     parameters:
