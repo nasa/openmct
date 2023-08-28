@@ -48,6 +48,8 @@ test.describe('Operator Status', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();
+    // Description should be empty https://github.com/nasa/openmct/issues/6978
+    await expect(page.locator('.c-message__action-text')).toBeHidden();
     // set role
     await page.getByRole('button', { name: 'Select' }).click();
     // dismiss role confirmation popup
@@ -61,11 +63,6 @@ test.describe('Operator Status', () => {
 
     // expect default status to be 'GO'
     await expect(page.locator('.c-status-poll-panel')).toBeVisible();
-  });
-
-  // Description should be empty https://github.com/nasa/openmct/issues/6978
-  test('no description in role selection', async ({ page }) => {
-    await expect(page.locator('.c-message__action-text')).toBeHidden();
   });
 
   test('poll question indicator remains when blank poll set', async ({ page }) => {
