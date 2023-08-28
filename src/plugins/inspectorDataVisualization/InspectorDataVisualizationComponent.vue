@@ -42,7 +42,7 @@ export default {
   props: {
     context: {
       type: Object,
-      default: () => {}
+      required: true
     }
   },
   data() {

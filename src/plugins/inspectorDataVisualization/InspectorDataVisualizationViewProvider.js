@@ -41,7 +41,7 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
 
       const context = selection[0][0].context;
       const domainObject = context.item;
-      const dataVisualizationContext = context.dataVisualization;
+      const dataVisualizationContext = context?.dataVisualization ?? {};
       const timeFormatter = openmct.telemetry.getFormatter('iso');
 
       return {
