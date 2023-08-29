@@ -30,10 +30,8 @@
     </div>
     <template v-if="selectedBounds !== undefined">
       <NumericData :bounds="selectedBounds" :telemetry-keys="telemetryKeys" />
+      <Imagery :bounds="selectedBounds" :options="imageryOptions"/>
     </template>
-    <!-- <NumericData v-if="selectedBounds !== undefined" :bounds="selectedBounds" :telemetry-keys="telemetryKeys" /> -->
-
-    <!-- <Imagery v-if="selectedBounds !== undefined" :bounds="selectedBounds" /> -->
   </div>
 </template>
 <script>
@@ -65,20 +63,16 @@ export default {
     placeholderText: {
       type: String,
       default: ''
+    },
+    imageryOptions: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
     return {
       selectedDataRangeIndex: 0
     };
-  },
-  watch: {
-    dataRanges: {
-      handler() {
-        console.log(`update: ${this.dataRanges}`);
-      },
-      deep: true
-    }
   },
   computed: {
     hasPlaceholderText() {
@@ -113,6 +107,14 @@ export default {
       }
 
       return this.selectedDataRange.bounds;
+    }
+  },
+  watch: {
+    dataRanges: {
+      handler() {
+        //
+      },
+      deep: true
     }
   },
   mounted() {
