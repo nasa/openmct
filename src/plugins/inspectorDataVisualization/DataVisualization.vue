@@ -4,35 +4,36 @@
       <div class="c-inspect-properties__header">Data Visualization</div>
     </div>
 
-    <div v-if="hasLocation">
-      <div v-if="hasDataRanges">
-        <div v-if="selectedDataRange !== undefined && hasDescription" class="c-inspector__data-pivot-coordinates-wrapper">
-          <span class="c-tree__item__type-icon c-object-label__type-icon" :class="description.icon"></span>
-          <span class="c-inspector__data-pivot-coordinates">
-            {{ description.text }}
-          </span>
-        </div>
+    <div v-if="hasDataRanges">
+      <div v-if="selectedDataRange !== undefined && hasDescription" class="c-inspector__data-pivot-coordinates-wrapper">
+        <span class="c-tree__item__type-icon c-object-label__type-icon" :class="description.icon"></span>
+        <span class="c-inspector__data-pivot-coordinates">
+          {{ description.text }}
+        </span>
+      </div>
 
-        <select class="c-inspector__data-pivot-range-selector" v-model="selectedDataRangeIndex">
-          <option v-for="(dataRange, index) in descendingDataRanges" :key="index" :value="index"
-            :selected="selectedDataRangeIndex === index">
-            {{ displayDataRange(dataRange) }}
-          </option>
-        </select>
-      </div>
-      <div v-else-if="dataRanges && dataRanges.length === 0" class="c-inspector__data-pivot-placeholder">
-        No data for the current {{ description.name }}
-      </div>
-      <div v-else-if="dataRanges === undefined" class="c-inspector__data-pivot-placeholder">
-        Loading...
-      </div>
+      <select class="c-inspector__data-pivot-range-selector" v-model="selectedDataRangeIndex">
+        <option v-for="(dataRange, index) in descendingDataRanges" :key="index" :value="index"
+          :selected="selectedDataRangeIndex === index">
+          {{ displayDataRange(dataRange) }}
+        </option>
+      </select>
     </div>
+    <div v-else-if="dataRanges && dataRanges.length === 0" class="c-inspector__data-pivot-placeholder">
+      No data for the current {{ description.name }}
+    </div>
+    <!-- <div v-else-if="dataRanges === undefined" class="c-inspector__data-pivot-placeholder">
+      Loading...
+    </div> -->
     <div class="c-inspector__data-pivot-placeholder" v-else-if="hasPlaceholderText">
       {{ placeholderText }}
     </div>
-    <NumericData v-if="selectedBounds !== undefined" :bounds="selectedBounds" :telemetry-keys="telemetryKeys" />
+    <template v-if="selectedBounds !== undefined">
+      <NumericData :bounds="selectedBounds" :telemetry-keys="telemetryKeys" />
+    </template>
+    <!-- <NumericData v-if="selectedBounds !== undefined" :bounds="selectedBounds" :telemetry-keys="telemetryKeys" /> -->
 
-    <Imagery v-if="selectedBounds !== undefined" :bounds="selectedBounds" />
+    <!-- <Imagery v-if="selectedBounds !== undefined" :bounds="selectedBounds" /> -->
   </div>
 </template>
 <script>
@@ -58,8 +59,8 @@ export default {
       default: () => undefined
     },
     telemetryKeys: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     placeholderText: {
       type: String,
@@ -70,6 +71,14 @@ export default {
     return {
       selectedDataRangeIndex: 0
     };
+  },
+  watch: {
+    dataRanges: {
+      handler() {
+        console.log(`update: ${this.dataRanges}`);
+      },
+      deep: true
+    }
   },
   computed: {
     hasPlaceholderText() {
@@ -106,6 +115,9 @@ export default {
       return this.selectedDataRange.bounds;
     }
   },
+  mounted() {
+    console.log(this.dataRanges);
+  },
   methods: {
     shortDate(date) {
       return date.slice(0, date.indexOf('.')).replace('T', ' ');
@@ -125,7 +137,7 @@ export default {
         && dataRange.bounds.end === selectedDataRange.bounds.end;
     }
   }
-}
+};
 </script>
 
 <style>

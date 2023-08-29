@@ -38,7 +38,7 @@ export default {
   components: {
     DataVisualization
   },
-  inject: ['openmct', 'domainObject', 'timeFormatter'],
+  inject: ['openmct', 'domainObject'],
   props: {
     context: {
       type: Object,
