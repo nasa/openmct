@@ -96,23 +96,27 @@ describe('Open MCT Layout:', () => {
     });
   });
 
+  // eslint-disable-next-line require-await
   async function createLayout() {
     const el = document.createElement('div');
     const child = document.createElement('div');
     el.appendChild(child);
 
-    const { vNode, destroy } = mount({
-      el,
-      components: {
-        Layout
+    const { vNode } = mount(
+      {
+        el,
+        components: {
+          Layout
+        },
+        provide: {
+          openmct
+        },
+        template: `<Layout ref="layout"/>`
       },
-      provide: {
-        openmct
-      },
-      template: `<Layout ref="layout"/>`
-    }, {
-      element: el
-    });
+      {
+        element: el
+      }
+    );
 
     element = vNode.el;
 

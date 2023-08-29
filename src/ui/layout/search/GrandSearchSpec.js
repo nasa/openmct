@@ -187,17 +187,20 @@ describe('GrandSearch', () => {
       document.body.appendChild(parent);
       viewContainer = document.createElement('div');
       parent.append(viewContainer);
-      const { vNode, destroy } = mount({
-        components: {
-          GrandSearch
+      const { vNode, destroy } = mount(
+        {
+          components: {
+            GrandSearch
+          },
+          provide: {
+            openmct
+          },
+          template: '<GrandSearch/>'
         },
-        provide: {
-          openmct
-        },
-        template: '<GrandSearch/>'
-      }, {
-        element: viewContainer,
-      });
+        {
+          element: viewContainer
+        }
+      );
       grandSearchComponent = vNode.componentInstance;
       _destroy = destroy;
       await Vue.nextTick();

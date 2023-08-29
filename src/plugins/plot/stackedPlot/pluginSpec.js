@@ -390,12 +390,12 @@ describe('the plugin', function () {
         max: 20
       });
       await Vue.nextTick();
-        let yAxisElement = element.querySelectorAll(
-          '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
-        );
-        expect(yAxisElement.length).toBe(1);
-        let ticks = yAxisElement[0].querySelectorAll('.gl-plot-tick');
-        expect(ticks.length).toBe(6);
+      let yAxisElement = element.querySelectorAll(
+        '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
+      );
+      expect(yAxisElement.length).toBe(1);
+      let ticks = yAxisElement[0].querySelectorAll('.gl-plot-tick');
+      expect(ticks.length).toBe(6);
     });
 
     it('Renders Y-axis options for the telemetry object', () => {
@@ -459,7 +459,7 @@ describe('the plugin', function () {
     it('removes plots from series when a telemetry object is removed', () => {
       stackedPlotObject.composition = [];
       mockCompositionList[0].emit('remove', testTelemetryObject.identifier);
-        expect(plotViewComponentObject.compositionObjects.length).toBe(0);
+      expect(plotViewComponentObject.compositionObjects.length).toBe(0);
     });
 
     it('Changes the label of the y axis when the option changes', () => {
@@ -467,7 +467,7 @@ describe('the plugin', function () {
       selectEl.value = 'Another attribute';
       selectEl.dispatchEvent(new Event('change'));
 
-        expect(config.yAxis.get('label')).toEqual('Another attribute');
+      expect(config.yAxis.get('label')).toEqual('Another attribute');
     });
 
     it('Adds a new point to the plot', () => {
@@ -477,8 +477,8 @@ describe('the plugin', function () {
         'some-key': 1,
         'some-other-key': 2
       });
-        const seriesData = config.series.models[0].getSeriesData();
-        expect(seriesData.length).toEqual(originalLength + 1);
+      const seriesData = config.series.models[0].getSeriesData();
+      expect(seriesData.length).toEqual(originalLength + 1);
     });
 
     it('updates the xscale', () => {

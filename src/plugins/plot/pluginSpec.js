@@ -461,7 +461,7 @@ describe('the plugin', function () {
 
     describe('pause and play controls', () => {
       beforeEach(() => {
-        openmct.time.setClock('local')
+        openmct.time.setClock('local');
         openmct.time.setClockOffsets({
           start: -1000,
           end: 100
@@ -493,7 +493,7 @@ describe('the plugin', function () {
 
     describe('resume actions on errant click', () => {
       beforeEach(() => {
-        openmct.time.setClock('local')
+        openmct.time.setClock('local');
         openmct.time.setClockOffsets({
           start: -1000,
           end: 100
@@ -686,9 +686,9 @@ describe('the plugin', function () {
       await Vue.nextTick();
       element.style.width = '680px';
       await resizePromise;
-        expect(
-          plotView.getComponent().$children[0].$children[1].loadSeriesData
-        ).toHaveBeenCalledTimes(1);
+      expect(
+        plotView.getComponent().$children[0].$children[1].loadSeriesData
+      ).toHaveBeenCalledTimes(1);
     });
 
     it('does not request historical data when under the threshold', (done) => {
@@ -804,19 +804,22 @@ describe('the plugin', function () {
 
       let viewContainer = document.createElement('div');
       child.append(viewContainer);
-      const { vNode } = mount({
-        components: {
-          PlotOptions
+      const { vNode } = mount(
+        {
+          components: {
+            PlotOptions
+          },
+          provide: {
+            openmct: openmct,
+            domainObject: selection[0][0].context.item,
+            path: [selection[0][0].context.item, selection[0][1].context.item]
+          },
+          template: '<plot-options/>'
         },
-        provide: {
-          openmct: openmct,
-          domainObject: selection[0][0].context.item,
-          path: [selection[0][0].context.item, selection[0][1].context.item]
-        },
-        template: '<plot-options/>'
-      }, {
-        element: viewContainer
-      });
+        {
+          element: viewContainer
+        }
+      );
       component = vNode.componentInstance;
 
       Vue.nextTick(() => {

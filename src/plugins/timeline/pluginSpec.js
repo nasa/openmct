@@ -96,8 +96,8 @@ describe('the plugin', function () {
     // Mock clientWidth value
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
       configurable: true,
-      value: 500 
-  });
+      value: 500
+    });
 
     appHolder = document.createElement('div');
     appHolder.style.width = '640px';
