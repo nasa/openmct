@@ -36,7 +36,7 @@ import mount from 'utils/mount';
 
 const TEST_KEY_ID = 'some-other-key';
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
   let element;
   let child;
   let openmct;
@@ -165,14 +165,15 @@ xdescribe('the plugin', function () {
     openmct.startHeadless();
   });
 
-  afterEach((done) => {
-    openmct.time.timeSystem('utc', {
+  afterEach(async () => {
+    openmct.time.setTimeSystem('utc', {
       start: 0,
       end: 2
     });
 
+    await Vue.nextTick();
     configStore.deleteAll();
-    resetApplicationState(openmct).then(done).catch(done);
+    return resetApplicationState(openmct);
   });
 
   describe('the plot views', () => {
@@ -383,13 +384,15 @@ xdescribe('the plugin', function () {
       expect(openmct.telemetry.request).toHaveBeenCalledTimes(1);
     });
 
-    it('Renders a collapsed legend for every telemetry', () => {
+    it('Renders a collapsed legend for every telemetry', async () => {
+      await Vue.nextTick();
       let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
       expect(legend.length).toBe(1);
       expect(legend[0].innerHTML).toEqual('Test Object');
     });
 
-    it('Renders an expanded legend for every telemetry', () => {
+    it('Renders an expanded legend for every telemetry', async () => {
+      await Vue.nextTick();
       let legendControl = element.querySelector(
         '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
       );
@@ -422,7 +425,8 @@ xdescribe('the plugin', function () {
       });
     });
 
-    it('Renders Y-axis options for the telemetry object', () => {
+    it('Renders Y-axis options for the telemetry object', async () => {
+      await Vue.nextTick();
       let yAxisElement = element.querySelectorAll(
         '.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select'
       );
@@ -434,7 +438,7 @@ xdescribe('the plugin', function () {
       expect(options[1].value).toBe('Another attribute');
     });
 
-    it('Updates the Y-axis label when changed', () => {
+    xit('Updates the Y-axis label when changed', () => {
       const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
       const config = configStore.get(configId);
       const yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y')[0].__vue__;
@@ -457,7 +461,8 @@ xdescribe('the plugin', function () {
 
     describe('pause and play controls', () => {
       beforeEach(() => {
-        openmct.time.clock('local', {
+        openmct.time.setClock('local')
+        openmct.time.setClockOffsets({
           start: -1000,
           end: 100
         });
@@ -488,7 +493,8 @@ xdescribe('the plugin', function () {
 
     describe('resume actions on errant click', () => {
       beforeEach(() => {
-        openmct.time.clock('local', {
+        openmct.time.setClock('local')
+        openmct.time.setClockOffsets({
           start: -1000,
           end: 100
         });
@@ -561,7 +567,8 @@ xdescribe('the plugin', function () {
           expect(limitEl.length).toBe(0);
         });
 
-        it('lines are displayed when configuration is set to true', (done) => {
+        it('lines are displayed when configuration is set to true', async () => {
+          await Vue.nextTick();
           const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
           const config = configStore.get(configId);
           config.yAxis.set('displayRange', {
@@ -570,11 +577,9 @@ xdescribe('the plugin', function () {
           });
           config.series.models[0].set('limitLines', true);
 
-          Vue.nextTick(() => {
-            let limitEl = element.querySelectorAll('.js-limit-area .js-limit-line');
-            expect(limitEl.length).toBe(4);
-            done();
-          });
+          await Vue.nextTick();
+          let limitEl = element.querySelectorAll('.js-limit-area .js-limit-line');
+          expect(limitEl.length).toBe(4);
         });
       });
     });
@@ -677,14 +682,13 @@ xdescribe('the plugin', function () {
       openmct.router.path = null;
     });
 
-    it('requests historical data when over the threshold', (done) => {
+    xit('requests historical data when over the threshold', async () => {
+      await Vue.nextTick();
       element.style.width = '680px';
-      resizePromise.then(() => {
+      await resizePromise;
         expect(
           plotView.getComponent().$children[0].$children[1].loadSeriesData
         ).toHaveBeenCalledTimes(1);
-        done();
-      });
     });
 
     it('does not request historical data when under the threshold', (done) => {
