@@ -95,13 +95,15 @@ test.describe('Timer with target date', () => {
 
     // Get the current timer seconds value
     const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
-    expect(page.locator('.c-timer__direction')).toHaveClass(/icon-minus/);
+    await expect(page.locator('.c-timer__direction')).toHaveClass(/icon-minus/);
 
     // Wait for the timer to count down and assert
-    await expect.poll(async () => {
-      const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
-      return Number(newTimerValue);
-    }).toBeLessThan(Number(timerSecValue));
+    await expect
+      .poll(async () => {
+        const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+        return Number(newTimerValue);
+      })
+      .toBeLessThan(Number(timerSecValue));
   });
 
   test('Can count up from a target date', async ({ page }) => {
@@ -116,13 +118,15 @@ test.describe('Timer with target date', () => {
 
     // Get the current timer seconds value
     const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
-    expect(page.locator('.c-timer__direction')).toHaveClass(/icon-plus/);
+    await expect(page.locator('.c-timer__direction')).toHaveClass(/icon-plus/);
 
     // Wait for the timer to count up and assert
-    await expect.poll(async () => {
-      const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
-      return Number(newTimerValue);
-    }).toBeGreaterThan(Number(timerSecValue));
+    await expect
+      .poll(async () => {
+        const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+        return Number(newTimerValue);
+      })
+      .toBeGreaterThan(Number(timerSecValue));
   });
 });
 
@@ -226,8 +230,8 @@ async function assertTimerStateAfterAction(page, action) {
 
 /**
  * Assert that all the major components of a timer are present in the DOM.
- * @param {import('@playwright/test').Page} page 
- * @param {import('../../../../appActions').CreatedObjectInfo} timer 
+ * @param {import('@playwright/test').Page} page
+ * @param {import('../../../../appActions').CreatedObjectInfo} timer
  */
 async function assertTimerElements(page, timer) {
   const timerElement = page.locator('.c-timer');

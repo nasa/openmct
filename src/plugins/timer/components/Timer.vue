@@ -78,7 +78,7 @@ export default {
       }
     },
     startTimeMs() {
-      if(Number.isNaN(Date.parse(this.configuration.timestamp))) {
+      if (Number.isNaN(Date.parse(this.configuration.timestamp))) {
         return this.configuration.timestamp;
       } else {
         return Date.parse(this.configuration.timestamp);
