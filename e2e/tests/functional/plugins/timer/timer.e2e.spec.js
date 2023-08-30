@@ -25,12 +25,15 @@ const {
   openObjectTreeContextMenu,
   createDomainObjectWithDefaults
 } = require('../../../../appActions');
+import { MISSION_TIME } from '../../../../constants';
 
 test.describe('Timer', () => {
   let timer;
+
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+    await assertTimerElements(page, timer);
   });
 
   test('Can perform actions on the Timer', async ({ page }) => {
@@ -60,6 +63,66 @@ test.describe('Timer', () => {
       await triggerTimerViewAction(page, 'Pause');
       await triggerTimerViewAction(page, 'Restart at 0');
     });
+  });
+});
+
+test.describe('Timer with target date', () => {
+  let timer;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+    await assertTimerElements(page, timer);
+  });
+
+  // Override clock
+  test.use({
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
+
+  test('Can count down to a target date', async ({ page }) => {
+    // Set the target date to 2024-11-24 03:30:00
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+    await page.getByPlaceholder('YYYY-MM-DD').fill('2024-11-24');
+    await page.locator('input[name="hour"]').fill('3');
+    await page.locator('input[name="min"]').fill('30');
+    await page.locator('input[name="sec"]').fill('00');
+    await page.getByLabel('Save').click();
+
+    // Get the current timer seconds value
+    const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+    expect(page.locator('.c-timer__direction')).toHaveClass(/icon-minus/);
+
+    // Wait for the timer to count down and assert
+    await expect.poll(async () => {
+      const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+      return Number(newTimerValue);
+    }).toBeLessThan(Number(timerSecValue));
+  });
+
+  test('Can count up from a target date', async ({ page }) => {
+    // Set the target date to 2020-11-23 03:30:00
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+    await page.getByPlaceholder('YYYY-MM-DD').fill('2020-11-23');
+    await page.locator('input[name="hour"]').fill('3');
+    await page.locator('input[name="min"]').fill('30');
+    await page.locator('input[name="sec"]').fill('00');
+    await page.getByLabel('Save').click();
+
+    // Get the current timer seconds value
+    const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+    expect(page.locator('.c-timer__direction')).toHaveClass(/icon-plus/);
+
+    // Wait for the timer to count up and assert
+    await expect.poll(async () => {
+      const newTimerValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
+      return Number(newTimerValue);
+    }).toBeGreaterThan(Number(timerSecValue));
   });
 });
 
@@ -141,14 +204,17 @@ function buttonTitleFromAction(action) {
  * @param {TimerAction} action
  */
 async function assertTimerStateAfterAction(page, action) {
+  const timerValue = page.locator('.c-timer__value');
   let timerStateClass;
   switch (action) {
     case 'Start':
     case 'Restart at 0':
       timerStateClass = 'is-started';
+      expect(await timerValue.innerText()).toBe('0D 00:00:00');
       break;
     case 'Stop':
       timerStateClass = 'is-stopped';
+      expect(await timerValue.innerText()).toBe('--:--:--');
       break;
     case 'Pause':
       timerStateClass = 'is-paused';
@@ -156,4 +222,24 @@ async function assertTimerStateAfterAction(page, action) {
   }
 
   await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
+}
+
+/**
+ * Assert that all the major components of a timer are present in the DOM.
+ * @param {import('@playwright/test').Page} page 
+ * @param {import('../../../../appActions').CreatedObjectInfo} timer 
+ */
+async function assertTimerElements(page, timer) {
+  const timerElement = page.locator('.c-timer');
+  const resetButton = page.locator('.c-timer__ctrl-reset');
+  const pausePlayButton = page.locator('.c-timer__ctrl-pause-play');
+  const timerDirectionIcon = page.locator('.c-timer__direction');
+  const timerValue = page.locator('.c-timer__value');
+
+  expect(await page.locator('.l-browse-bar__object-name').innerText()).toBe(timer.name);
+  expect(timerElement).toBeAttached();
+  expect(resetButton).toBeAttached();
+  expect(pausePlayButton).toBeAttached();
+  expect(timerDirectionIcon).toBeAttached();
+  expect(timerValue).toBeAttached();
 }
