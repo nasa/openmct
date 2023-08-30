@@ -240,6 +240,8 @@
     openmct.install(openmct.plugins.Timelist());
     openmct.install(openmct.plugins.BarChart());
     openmct.install(openmct.plugins.ScatterPlot());
+    openmct.install(openmct.plugins.OperatorStatus());
+    openmct.install(openmct.plugins.example.ExampleUser());
     document.addEventListener('DOMContentLoaded', function () {
       openmct.start();
     });
