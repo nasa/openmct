@@ -37,7 +37,7 @@
       ></button>
     </div>
     <div class="c-timer__direction" :class="[{ hide: !timerSign }, `icon-${timerSign}`]"></div>
-    <div class="c-timer__value">{{ timeTextValue || '--:--:--' }}</div>
+    <div class="c-timer__value">{{ timerState === 'stopped' ? '--:--:--' : timeTextValue }}</div>
   </div>
 </template>
 
@@ -78,7 +78,11 @@ export default {
       }
     },
     startTimeMs() {
-      return Date.parse(this.configuration.timestamp);
+      if(Number.isNaN(Date.parse(this.configuration.timestamp))) {
+        return this.configuration.timestamp;
+      } else {
+        return Date.parse(this.configuration.timestamp);
+      }
     },
     timeTextValue() {
       const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
