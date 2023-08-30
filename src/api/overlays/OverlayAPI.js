@@ -141,7 +141,7 @@ class OverlayAPI {
    * @see NotificationService
    *
    * @typedef options
-   * @property {number} progressPerc the initial progress value (0-100) or {string} 'unknown' for anonymous progress
+   * @property {number | null} progressPerc the initial progress value (0-100) or null for anonymous progress
    * @property {string} progressText the initial text to be shown under the progress bar
    * @property {buttons[]} buttons a list of buttons with title and callback properties that will
    * be added to the dialog.
