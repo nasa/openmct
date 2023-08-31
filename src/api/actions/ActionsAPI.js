@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import ActionCollection from './ActionCollection';
 import _ from 'lodash';
+
+import ActionCollection from './ActionCollection';
 
 class ActionsAPI extends EventEmitter {
   constructor(openmct) {

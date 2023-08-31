@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
+
 import UserIndicator from './components/UserIndicator.vue';
 
 export default function UserIndicatorPlugin() {

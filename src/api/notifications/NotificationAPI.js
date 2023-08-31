@@ -30,8 +30,8 @@
  *
  * @namespace platform/api/notifications
  */
-import moment from 'moment';
 import EventEmitter from 'eventemitter3';
+import moment from 'moment';
 
 /**
  * @typedef {object} NotificationProperties

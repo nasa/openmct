@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import JSONExporter from '/src/exporters/JSONExporter.js';
 import { v4 as uuid } from 'uuid';
+
+import JSONExporter from '/src/exporters/JSONExporter.js';
 
 export default class ExportAsJSONAction {
   constructor(openmct) {
