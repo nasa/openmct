@@ -48,17 +48,16 @@ export default class FlexibleLayoutViewProvider {
     let component = null;
 
     return {
-      show: function (element, isEditing) {
+      show(element, isEditing) {
         const { vNode, destroy } = mount(
           {
-            el: element,
             components: {
               FlexibleLayoutComponent
             },
             provide: {
-              openmct: openmct,
+              openmct,
               objectPath,
-              layoutObject: domainObject
+              domainObject
             },
             data() {
               return {
@@ -76,7 +75,7 @@ export default class FlexibleLayoutViewProvider {
         component = vNode.componentInstance;
         _destroy = destroy;
       },
-      getSelectionContext: function () {
+      getSelectionContext() {
         return {
           item: domainObject,
           addContainer: component.$refs.flexibleLayout.addContainer,
@@ -85,10 +84,10 @@ export default class FlexibleLayoutViewProvider {
           type: 'flexible-layout'
         };
       },
-      onEditModeChange: function (isEditing) {
+      onEditModeChange(isEditing) {
         component.isEditing = isEditing;
       },
-      destroy: function (element) {
+      destroy() {
         if (_destroy) {
           _destroy();
           component = null;

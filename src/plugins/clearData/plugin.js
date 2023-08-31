@@ -31,7 +31,7 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
 
   return function install(openmct) {
     if (installIndicator) {
-      const { vNode } = mount(
+      const { vNode, destroy } = mount(
         {
           components: {
             GlobalClearIndicator
@@ -50,7 +50,8 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
       let indicator = {
         element: vNode.el,
         key: 'global-clear-indicator',
-        priority: openmct.priority.DEFAULT
+        priority: openmct.priority.DEFAULT,
+        destroy: destroy
       };
 
       openmct.indicators.add(indicator);

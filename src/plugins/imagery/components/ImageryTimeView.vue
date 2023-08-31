@@ -100,6 +100,9 @@ export default {
     if (this.unlisten) {
       this.unlisten();
     }
+    if (this.destroyImageryContainer) {
+      this.destroyImageryContainer();
+    }
   },
   methods: {
     setTimeContext() {
@@ -239,7 +242,10 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        const { vNode } = mount(
+        if (this.destroyImageryContainer) {
+          this.destroyImageryContainer();
+        }
+        const { vNode, destroy } = mount(
           {
             components: {
               SwimLane
@@ -259,6 +265,7 @@ export default {
           }
         );
 
+        this.destroyImageryContainer = destroy;
         const component = vNode.componentInstance;
         this.$refs.imageryHolder.appendChild(component.$el);
 

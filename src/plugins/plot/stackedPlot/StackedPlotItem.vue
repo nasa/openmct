@@ -199,7 +199,7 @@ export default {
         this.composition.load();
       }
 
-      const { vNode } = mount(
+      const { vNode, destroy } = mount(
         {
           components: {
             Plot
@@ -251,6 +251,7 @@ export default {
         }
       );
       this.component = vNode.componentInstance;
+      this._destroy = destroy;
 
       if (this.isEditing) {
         this.setSelection();

@@ -84,13 +84,19 @@ describe('The telemetry criterion', function () {
     });
     openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
 
-    openmct.time = jasmine.createSpyObj('timeAPI', ['timeSystem', 'bounds', 'getAllTimeSystems']);
+    openmct.time = jasmine.createSpyObj('timeAPI', [
+      'timeSystem',
+      'bounds',
+      'getAllTimeSystems',
+      'getContextForView'
+    ]);
     openmct.time.timeSystem.and.returnValue({ key: 'system' });
     openmct.time.bounds.and.returnValue({
       start: 0,
       end: 1
     });
     openmct.time.getAllTimeSystems.and.returnValue([{ key: 'system' }]);
+    openmct.time.getContextForView.and.returnValue({});
 
     testCriterionDefinition = {
       id: 'test-criterion-id',

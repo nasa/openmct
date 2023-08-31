@@ -231,7 +231,22 @@ export default {
       return `detail-${component}`;
     },
     updateSelection(selection) {
+      this.removeListener();
       this.selection.splice(0, this.selection.length, ...selection);
+      if (this.domainObject) {
+        this.addListener();
+      }
+    },
+    removeListener() {
+      if (this.nameListener) {
+        this.nameListener();
+        this.nameListener = null;
+      }
+    },
+    addListener() {
+      this.nameListener = this.openmct.objects.observe(this.context?.item, 'name', (newValue) => {
+        this.context.item = { ...this.context?.item, name: newValue };
+      });
     }
   }
 };

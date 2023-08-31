@@ -91,7 +91,10 @@ export default {
       drawerElement.innerHTML = '<div></div>';
       const divElement = document.querySelector('.l-shell__drawer div');
 
-      mount(
+      if (this.destroySnapshotContainer) {
+        this.destroySnapshotContainer();
+      }
+      const { destroy } = mount(
         {
           el: divElement,
           components: {
@@ -114,6 +117,7 @@ export default {
           element: divElement
         }
       );
+      this.destroySnapshotContainer = destroy;
     },
     updateSnapshotIndicatorTitle() {
       const snapshotCount = this.snapshotContainer.getSnapshots().length;

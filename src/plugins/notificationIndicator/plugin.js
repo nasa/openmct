@@ -25,7 +25,7 @@ import NotificationIndicator from './components/NotificationIndicator.vue';
 
 export default function plugin() {
   return function install(openmct) {
-    const { vNode } = mount(
+    const { vNode, destroy } = mount(
       {
         components: {
           NotificationIndicator
@@ -43,7 +43,8 @@ export default function plugin() {
     let indicator = {
       key: 'notifications-indicator',
       element: vNode.el,
-      priority: openmct.priority.DEFAULT
+      priority: openmct.priority.DEFAULT,
+      destroy: destroy
     };
     openmct.indicators.add(indicator);
   };

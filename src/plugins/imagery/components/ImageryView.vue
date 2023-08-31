@@ -864,6 +864,7 @@ export default {
       if (this.domainObject.configuration) {
         const persistedLayers = this.domainObject.configuration.layers;
         if (!persistedLayers) {
+          this.layers.forEach((layer) => (layer.visible = false));
           return;
         }
 

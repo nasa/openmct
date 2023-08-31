@@ -82,7 +82,7 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode } = mount(
+  const { vNode, destroy } = mount(
     {
       components: {
         NotebookSnapshotIndicator
@@ -101,7 +101,8 @@ function installBaseNotebookFunctionality(openmct) {
   const indicator = {
     element: vNode.el,
     key: 'notebook-snapshot-indicator',
-    priority: openmct.priority.DEFAULT
+    priority: openmct.priority.DEFAULT,
+    destroy: destroy
   };
 
   openmct.indicators.add(indicator);
