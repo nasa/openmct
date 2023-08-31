@@ -61,10 +61,11 @@
 </template>
 <script>
 import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
-import eventHelpers from '../lib/eventHelpers';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import configStore from '../configuration/ConfigStore';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],

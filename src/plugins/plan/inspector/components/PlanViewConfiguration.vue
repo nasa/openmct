@@ -68,8 +68,9 @@
   </div>
 </template>
 <script>
-import PlanViewConfiguration from '../../PlanViewConfiguration';
 import { markRaw } from 'vue';
+
+import PlanViewConfiguration from '../../PlanViewConfiguration';
 
 export default {
   components: {},

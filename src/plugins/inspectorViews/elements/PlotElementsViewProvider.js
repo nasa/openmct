@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlotElementsPool from './PlotElementsPool.vue';
 import mount from 'utils/mount';
+
+import PlotElementsPool from './PlotElementsPool.vue';
 
 export default function PlotElementsViewProvider(openmct) {
   return {

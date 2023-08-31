@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import LadTable from './components/LadTable.vue';
 import LADTableConfiguration from './LADTableConfiguration';
-import mount from 'utils/mount';
 
 export default class LADTableView {
   constructor(openmct, domainObject, objectPath) {

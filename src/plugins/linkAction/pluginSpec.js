@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LinkActionPlugin from './plugin.js';
+import { createOpenMct, getMockObjects, resetApplicationState } from 'utils/testing';
+
 import LinkAction from './LinkAction.js';
-import { createOpenMct, resetApplicationState, getMockObjects } from 'utils/testing';
+import LinkActionPlugin from './plugin.js';
 
 describe('The Link Action plugin', () => {
   let openmct;

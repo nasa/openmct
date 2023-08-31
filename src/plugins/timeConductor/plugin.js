@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Conductor from './Conductor.vue';
 import { markRaw } from 'vue';
+
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
+import Conductor from './Conductor.vue';
 
 function isTruthy(a) {
   return Boolean(a);

@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LadTableConfigurationComponent from './components/LadTableConfiguration.vue';
 import mount from 'utils/mount';
+
+import LadTableConfigurationComponent from './components/LadTableConfiguration.vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
   return {

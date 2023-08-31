@@ -79,9 +79,10 @@
 </template>
 
 <script>
-import Condition from './Condition.vue';
-import ConditionManager from '../ConditionManager';
 import StalenessUtils from '@/utils/staleness';
+
+import ConditionManager from '../ConditionManager';
+import Condition from './Condition.vue';
 
 export default {
   components: {

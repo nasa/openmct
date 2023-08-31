@@ -52,6 +52,7 @@
 
 <script>
 import _ from 'lodash';
+
 import Search from '../../../ui/components/Search.vue';
 import ElementItem from './ElementItem.vue';
 

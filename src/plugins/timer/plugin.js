@@ -20,12 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimerViewProvider from './TimerViewProvider';
-
 import PauseTimerAction from './actions/PauseTimerAction';
 import RestartTimerAction from './actions/RestartTimerAction';
 import StartTimerAction from './actions/StartTimerAction';
 import StopTimerAction from './actions/StopTimerAction';
+import TimerViewProvider from './TimerViewProvider';
 
 export default function TimerPlugin() {
   return function install(openmct) {
