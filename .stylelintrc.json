@@ -17,6 +17,12 @@
     "keyframes-name-pattern": null,
     "function-name-case": null,
     "selector-type-case": null,
-    "value-keyword-case": null
+    "value-keyword-case": null,
+    "no-descending-specificity": [
+      true,
+      {
+        "severity": "warning"
+      }
+    ]
   }
 }
