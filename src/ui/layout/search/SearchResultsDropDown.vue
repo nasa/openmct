@@ -68,10 +68,9 @@
 </template>
 
 <script>
-import ProgressBar from '@/ui/components/ProgressBar.vue';
-
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
 import ObjectSearchResult from './ObjectSearchResult.vue';
+import ProgressBar from '@/ui/components/ProgressBar.vue';
 
 export default {
   name: 'SearchResultsDropDown',

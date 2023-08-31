@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { v4 as uuid } from 'uuid';
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
-import { v4 as uuid } from 'uuid';
 
 /**
  * @readonly

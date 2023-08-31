@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-
 import CouchDBSearchFolderPlugin from './plugin';
 
 describe('the plugin', function () {

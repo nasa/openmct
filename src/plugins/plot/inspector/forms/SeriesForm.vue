@@ -123,12 +123,10 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import ColorSwatch from '@/ui/color/ColorSwatch.vue';
-
 import { MARKER_SHAPES } from '../../draw/MarkerShapes';
-import { coerce, objectPath, validate } from './formUtil';
+import { objectPath, validate, coerce } from './formUtil';
+import _ from 'lodash';
 
 export default {
   components: {

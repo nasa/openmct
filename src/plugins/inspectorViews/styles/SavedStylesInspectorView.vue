@@ -25,9 +25,8 @@
 </template>
 
 <script>
-import mount from 'utils/mount';
-
 import SavedStylesView from './SavedStylesView.vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct', 'stylesManager'],

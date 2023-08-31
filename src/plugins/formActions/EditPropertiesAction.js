@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
-
-import CreateWizard from './CreateWizard';
 import PropertiesAction from './PropertiesAction';
+import CreateWizard from './CreateWizard';
+import _ from 'lodash';
 
 export default class EditPropertiesAction extends PropertiesAction {
   constructor(openmct) {

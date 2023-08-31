@@ -19,13 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-
+import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
+import ScatterPlotViewProvider from './ScatterPlotViewProvider';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
-import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotForm from './ScatterPlotForm.vue';
-import ScatterPlotViewProvider from './ScatterPlotViewProvider';
+import mount from 'utils/mount';
 
 export default function () {
   return function install(openmct) {

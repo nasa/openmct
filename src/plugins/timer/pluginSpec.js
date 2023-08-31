@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
-import Vue from 'vue';
-
+import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
 import timerPlugin from './plugin';
+
+import Vue from 'vue';
 
 xdescribe('Timer plugin:', () => {
   let openmct;

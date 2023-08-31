@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import { identifierToString } from '../../../../src/tools/url';
 import ObjectPath from '../../components/ObjectPath.vue';
 import PreviewAction from '../../preview/PreviewAction';
+import { identifierToString } from '../../../../src/tools/url';
 
 export default {
   name: 'AnnotationSearchResult',

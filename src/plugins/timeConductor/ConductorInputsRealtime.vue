@@ -55,10 +55,9 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import TimePopupRealtime from './timePopupRealtime.vue';
+import _ from 'lodash';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 

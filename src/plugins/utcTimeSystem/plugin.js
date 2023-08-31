@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DurationFormat from './DurationFormat';
+import UTCTimeSystem from './UTCTimeSystem';
 import LocalClock from './LocalClock';
 import UTCTimeFormat from './UTCTimeFormat';
-import UTCTimeSystem from './UTCTimeSystem';
+import DurationFormat from './DurationFormat';
 
 /**
  * Install a time system that supports UTC times. It also installs a local

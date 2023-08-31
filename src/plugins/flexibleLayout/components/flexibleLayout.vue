@@ -79,11 +79,11 @@
 </template>
 
 <script>
+import ContainerComponent from './container.vue';
 import Container from '../utils/container';
 import Frame from '../utils/frame';
-import ContainerComponent from './container.vue';
-import DropHint from './dropHint.vue';
 import ResizeHandle from './resizeHandle.vue';
+import DropHint from './dropHint.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 

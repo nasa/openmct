@@ -21,16 +21,14 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
-import ConditionManager from '@/plugins/condition/ConditionManager';
-
+import ConditionPlugin from './plugin';
 import stylesManager from '../inspectorViews/styles/StylesManager';
 import StylesView from './components/inspector/StylesView.vue';
-import ConditionPlugin from './plugin';
+import Vue from 'vue';
+import { getApplicableStylesForItem } from './utils/styleUtils';
+import ConditionManager from '@/plugins/condition/ConditionManager';
 import StyleRuleManager from './StyleRuleManager';
 import { IS_OLD_KEY } from './utils/constants';
-import { getApplicableStylesForItem } from './utils/styleUtils';
 
 describe('the plugin', function () {
   let conditionSetDefinition;

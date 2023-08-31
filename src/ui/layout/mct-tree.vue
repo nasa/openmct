@@ -116,10 +116,9 @@
 
 <script>
 import _ from 'lodash';
-import { markRaw, reactive } from 'vue';
-
-import search from '../components/search.vue';
 import treeItem from './tree-item.vue';
+import search from '../components/search.vue';
+import { markRaw, reactive } from 'vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';

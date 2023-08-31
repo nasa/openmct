@@ -36,9 +36,8 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
-
 import ActivityProperty from './ActivityProperty.vue';
+import { v4 as uuid } from 'uuid';
 
 export default {
   components: {

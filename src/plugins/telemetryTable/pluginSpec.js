@@ -19,15 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-  createMouseEvent,
-  createOpenMct,
-  resetApplicationState,
-  spyOnBuiltins
-} from 'utils/testing';
-import Vue from 'vue';
-
 import TablePlugin from './plugin.js';
+import Vue from 'vue';
+import {
+  createOpenMct,
+  createMouseEvent,
+  spyOnBuiltins,
+  resetApplicationState
+} from 'utils/testing';
 
 class MockDataTransfer {
   constructor() {

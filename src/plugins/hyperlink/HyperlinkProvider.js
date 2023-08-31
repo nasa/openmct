@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import HyperlinkLayout from './HyperlinkLayout.vue';
+import mount from 'utils/mount';
 
 export default function HyperlinkProvider(openmct) {
   return {

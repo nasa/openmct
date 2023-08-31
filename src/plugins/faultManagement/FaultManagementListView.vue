@@ -64,11 +64,12 @@
 </template>
 
 <script>
-import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
 import FaultManagementListHeader from './FaultManagementListHeader.vue';
 import FaultManagementListItem from './FaultManagementListItem.vue';
 import FaultManagementSearch from './FaultManagementSearch.vue';
 import FaultManagementToolbar from './FaultManagementToolbar.vue';
+
+import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
 
 const SEARCH_KEYS = [
   'id',

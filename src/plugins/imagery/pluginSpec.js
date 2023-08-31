@@ -20,14 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import Vue from 'vue';
 import {
   createMouseEvent,
   createOpenMct,
   resetApplicationState,
   simulateKeyEvent
 } from 'utils/testing';
-import Vue from 'vue';
-
 import ClearDataPlugin from '../clearData/plugin';
 
 const ONE_MINUTE = 1000 * 60;

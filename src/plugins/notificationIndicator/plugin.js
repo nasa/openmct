@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import mount from 'utils/mount';
-
 import NotificationIndicator from './components/NotificationIndicator.vue';
 
 export default function plugin() {

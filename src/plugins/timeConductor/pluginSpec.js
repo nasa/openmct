@@ -21,11 +21,10 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import { getPreciseDuration, millisecondsToDHMS } from '../../utils/duration';
+import { millisecondsToDHMS, getPreciseDuration } from '../../utils/duration';
 import ConductorPlugin from './plugin';
+import Vue from 'vue';
+import { FIXED_MODE_KEY } from '../../api/time/constants';
 
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = THIRTY_SECONDS * 2;

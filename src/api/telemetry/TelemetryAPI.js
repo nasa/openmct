@@ -20,14 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
-
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
 import TelemetryCollection from './TelemetryCollection';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
 import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
+import TelemetryMetadataManager from './TelemetryMetadataManager';
 import TelemetryValueFormatter from './TelemetryValueFormatter';
+import DefaultMetadataProvider from './DefaultMetadataProvider';
+import objectUtils from 'objectUtils';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext

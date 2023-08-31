@@ -155,13 +155,18 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
-
+import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
-
+import SearchResults from './SearchResults.vue';
+import Sidebar from './Sidebar.vue';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
-import objectLink from '../../../ui/mixins/object-link';
-import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+import {
+  clearDefaultNotebook,
+  getDefaultNotebook,
+  setDefaultNotebook,
+  setDefaultNotebookSectionId,
+  setDefaultNotebookPageId
+} from '../utils/notebook-storage';
 import {
   addNotebookEntry,
   createNewEmbed,
@@ -174,16 +179,10 @@ import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from '../utils/notebook-image';
-import {
-  clearDefaultNotebook,
-  getDefaultNotebook,
-  setDefaultNotebook,
-  setDefaultNotebookPageId,
-  setDefaultNotebookSectionId
-} from '../utils/notebook-storage';
-import NotebookEntry from './NotebookEntry.vue';
-import SearchResults from './SearchResults.vue';
-import Sidebar from './Sidebar.vue';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+
+import { debounce } from 'lodash';
+import objectLink from '../../../ui/mixins/object-link';
 
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));

@@ -21,10 +21,8 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-
-import { convertTemplateToHTML } from '@/utils/template/templateHelpers';
-
 import indicatorTemplate from './res/indicator-template.html';
+import { convertTemplateToHTML } from '@/utils/template/templateHelpers';
 
 const DEFAULT_ICON_CLASS = 'icon-info';
 

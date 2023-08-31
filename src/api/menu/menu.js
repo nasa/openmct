@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import mount from 'utils/mount';
-import { h } from 'vue';
-
 import MenuComponent from './components/Menu.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
+import { h } from 'vue';
+import mount from 'utils/mount';
 
 export const MENU_PLACEMENT = {
   TOP: 'top',

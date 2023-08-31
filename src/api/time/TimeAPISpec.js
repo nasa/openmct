@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct } from 'utils/testing';
-
 import TimeAPI from './TimeAPI';
+import { createOpenMct } from 'utils/testing';
 
 describe('The Time API', function () {
   let api;

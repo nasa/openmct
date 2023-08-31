@@ -48,10 +48,9 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import TimePopupFixed from './timePopupFixed.vue';
+import _ from 'lodash';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
   components: {

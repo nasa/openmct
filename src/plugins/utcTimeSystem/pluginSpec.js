@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-
 import LocalClock from './LocalClock.js';
-import UTCTimeFormat from './UTCTimeFormat.js';
 import UTCTimeSystem from './UTCTimeSystem';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import UTCTimeFormat from './UTCTimeFormat.js';
 
 describe('The UTC Time System', () => {
   const UTC_SYSTEM_AND_FORMAT_KEY = 'utc';

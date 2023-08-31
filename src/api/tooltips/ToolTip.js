@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import TooltipComponent from './components/TooltipComponent.vue';
 import EventEmitter from 'EventEmitter';
 import mount from 'utils/mount';
-
-import TooltipComponent from './components/TooltipComponent.vue';
 
 class Tooltip extends EventEmitter {
   constructor(

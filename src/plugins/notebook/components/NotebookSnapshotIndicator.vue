@@ -40,11 +40,10 @@
 </template>
 
 <script>
-import mount from 'utils/mount';
-
+import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
+import mount from 'utils/mount';
 
 export default {
   inject: ['openmct', 'snapshotContainer'],

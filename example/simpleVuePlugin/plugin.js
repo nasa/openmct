@@ -1,5 +1,4 @@
 import Vue from 'vue';
-
 import HelloWorld from './HelloWorld.vue';
 
 function SimpleVuePlugin() {

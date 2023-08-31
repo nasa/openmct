@@ -35,9 +35,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import LayoutDrag from './../LayoutDrag';
+import _ from 'lodash';
 
 export default {
   inject: ['openmct'],

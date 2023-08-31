@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '@/api/time/constants';
-import IndependentTimeContext from '@/api/time/IndependentTimeContext';
-
 import GlobalTimeContext from './GlobalTimeContext';
+import IndependentTimeContext from '@/api/time/IndependentTimeContext';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '@/api/time/constants';
 
 /**
  * The public API for setting and querying the temporal state of the

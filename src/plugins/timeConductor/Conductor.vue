@@ -74,7 +74,6 @@
 
 <script>
 import _ from 'lodash';
-
 import {
   FIXED_MODE_KEY,
   MODES,
@@ -82,14 +81,14 @@ import {
   TIME_CONTEXT_EVENTS
 } from '../../api/time/constants';
 import ConductorAxis from './ConductorAxis.vue';
-import ConductorClock from './ConductorClock.vue';
+import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
-import ConductorMode from './ConductorMode.vue';
-import ConductorModeIcon from './ConductorModeIcon.vue';
-import ConductorPopUp from './ConductorPopUp.vue';
-import conductorPopUpManager from './conductorPopUpManager';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
+import ConductorClock from './ConductorClock.vue';
+import ConductorMode from './ConductorMode.vue';
+import conductorPopUpManager from './conductorPopUpManager';
+import ConductorPopUp from './ConductorPopUp.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 

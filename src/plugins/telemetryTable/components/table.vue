@@ -273,17 +273,16 @@
 </template>
 
 <script>
-import _ from 'lodash';
-import { toRaw } from 'vue';
-
-import CSVExporter from '../../../exporters/CSVExporter.js';
-import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
-import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
-import SizingRow from './sizing-row.vue';
 import TableColumnHeader from './table-column-header.vue';
 import TableFooterIndicator from './table-footer-indicator.vue';
-import TelemetryTableRow from './table-row.vue';
+import CSVExporter from '../../../exporters/CSVExporter.js';
+import _ from 'lodash';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import SizingRow from './sizing-row.vue';
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import { toRaw } from 'vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;

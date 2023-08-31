@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import ConditionSet from './components/ConditionSet.vue';
+import mount from 'utils/mount';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 

@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StaticModelProvider from './StaticModelProvider';
 import testStaticDataEmptyNamespace from './test-data/static-provider-test-empty-namespace.json';
 import testStaticDataFooNamespace from './test-data/static-provider-test-foo-namespace.json';
+import StaticModelProvider from './StaticModelProvider';
 
 describe('StaticModelProvider', function () {
   describe('with empty namespace', function () {

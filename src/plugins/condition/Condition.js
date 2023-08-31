@@ -22,12 +22,11 @@
 
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
-
-import AllTelemetryCriterion from './criterion/AllTelemetryCriterion';
 import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants';
 import { evaluateResults } from './utils/evaluator';
 import { getLatestTimestamp } from './utils/time';
+import AllTelemetryCriterion from './criterion/AllTelemetryCriterion';
+import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants';
 
 /*
  * conditionConfiguration = {

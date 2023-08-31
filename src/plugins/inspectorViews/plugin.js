@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
+import PropertiesViewProvider from './properties/PropertiesViewProvider';
 import ElementsViewProvider from './elements/ElementsViewProvider';
 import PlotElementsViewProvider from './elements/PlotElementsViewProvider';
-import PropertiesViewProvider from './properties/PropertiesViewProvider';
 import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
+import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
 
 export default function InspectorViewsPlugin() {
   return function install(openmct) {

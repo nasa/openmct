@@ -1,10 +1,10 @@
-import { mutateObject } from './notebook-entries';
 import {
   createNotebookImageDomainObject,
   getThumbnailURLFromimageUrl,
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from './notebook-image';
+import { mutateObject } from './notebook-entries';
 
 export const IMAGE_MIGRATION_VER = 'v1';
 

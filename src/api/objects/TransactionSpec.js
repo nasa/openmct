@@ -1,6 +1,5 @@
-import utils from 'objectUtils';
-
 import Transaction from './Transaction';
+import utils from 'objectUtils';
 
 let openmct = {};
 let objectAPI;

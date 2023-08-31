@@ -26,10 +26,9 @@
 </template>
 
 <script>
+import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import * as d3Selection from 'd3-selection';
-
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
 //TODO: UI direction needed for the following property values

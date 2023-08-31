@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
 import MctTicks from '../MctTicks.vue';
+import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore';
 
 export default {
   components: {

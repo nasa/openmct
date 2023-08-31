@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 import BarGraphViewProvider from './BarGraphViewProvider';
 import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
 export default function () {
   return function install(openmct) {

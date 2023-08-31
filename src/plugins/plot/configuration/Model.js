@@ -21,9 +21,8 @@
  *****************************************************************************/
 
 import EventEmitter from 'eventemitter3';
-import _ from 'lodash';
-
 import eventHelpers from '../lib/eventHelpers';
+import _ from 'lodash';
 
 /**
  * @template {object} T

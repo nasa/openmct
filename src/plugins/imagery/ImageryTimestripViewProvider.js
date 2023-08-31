@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-
 import ImageryTimeView from './components/ImageryTimeView.vue';
+import mount from 'utils/mount';
 
 export default function ImageryTimestripViewProvider(openmct) {
   const type = 'example.imagery.time-strip.view';

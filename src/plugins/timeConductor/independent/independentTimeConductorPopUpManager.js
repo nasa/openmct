@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import debounce from '@/utils/debounce';
 import raf from '@/utils/raf';
+import debounce from '@/utils/debounce';
 
 export default {
   data() {

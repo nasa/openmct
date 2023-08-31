@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { getMockTelemetry } from 'utils/testing';
-
 import TelemetryCriterion from './TelemetryCriterion';
+import { getMockTelemetry } from 'utils/testing';
 
 let openmct = {};
 let mockListener;

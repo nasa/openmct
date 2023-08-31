@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
 import clockPlugin from './plugin';
+import EventEmitter from 'EventEmitter';
+
+import Vue from 'vue';
 
 describe('Clock plugin:', () => {
   let openmct;

@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleTagsPlugin from '../../../example/exampleTags/plugin';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import ExampleTagsPlugin from '../../../example/exampleTags/plugin';
 
 describe('The Annotation API', () => {
   let openmct;

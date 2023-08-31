@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-
 import WebPagePlugin from './plugin';
 
 function getView(openmct, domainObj, objectPath) {

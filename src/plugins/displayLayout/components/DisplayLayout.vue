@@ -73,18 +73,17 @@
 </template>
 
 <script>
-import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
-
-import BoxView from './BoxView.vue';
-import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
-import EditMarquee from './EditMarquee.vue';
-import EllipseView from './EllipseView.vue';
-import ImageView from './ImageView.vue';
-import LineView from './LineView.vue';
 import SubobjectView from './SubobjectView.vue';
 import TelemetryView from './TelemetryView.vue';
+import BoxView from './BoxView.vue';
+import EllipseView from './EllipseView.vue';
 import TextView from './TextView.vue';
+import LineView from './LineView.vue';
+import ImageView from './ImageView.vue';
+import EditMarquee from './EditMarquee.vue';
+import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
+import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
   table: (domainObject) => {

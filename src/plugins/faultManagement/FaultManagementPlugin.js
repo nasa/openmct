@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FAULT_MANAGEMENT_NAMESPACE, FAULT_MANAGEMENT_TYPE } from './constants';
-import FaultManagementInspectorViewProvider from './FaultManagementInspectorViewProvider';
-import FaultManagementObjectProvider from './FaultManagementObjectProvider';
 import FaultManagementViewProvider from './FaultManagementViewProvider';
+import FaultManagementObjectProvider from './FaultManagementObjectProvider';
+import FaultManagementInspectorViewProvider from './FaultManagementInspectorViewProvider';
+
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
 
 export default function FaultManagementPlugin() {
   return function (openmct) {

@@ -67,9 +67,9 @@
 import _ from 'lodash';
 
 import FilterSettings from './FilterSettings.vue';
-import ImageryViewMenuSwitcher from './ImageryViewMenuSwitcher.vue';
 import LayerSettings from './LayerSettings.vue';
 import ZoomSettings from './ZoomSettings.vue';
+import ImageryViewMenuSwitcher from './ImageryViewMenuSwitcher.vue';
 
 const DEFAULT_FILTER_VALUES = {
   brightness: '100',

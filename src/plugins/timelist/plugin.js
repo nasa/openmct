@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
-
+import TimelistViewProvider from './TimelistViewProvider';
 import { TIMELIST_TYPE } from './constants';
 import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider';
-import TimelistViewProvider from './TimelistViewProvider';
+import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
 
 export default function () {
   return function install(openmct) {

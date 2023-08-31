@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import Timer from './components/Timer.vue';
+import mount from 'utils/mount';
 
 export default function TimerViewProvider(openmct) {
   return {

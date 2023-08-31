@@ -61,14 +61,14 @@
 </template>
 
 <script>
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore';
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import ImageExporter from '../../../exporters/ImageExporter';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import PlotLegend from '../legend/PlotLegend.vue';
-import eventHelpers from '../lib/eventHelpers';
 import StackedPlotItem from './StackedPlotItem.vue';
+import ImageExporter from '../../../exporters/ImageExporter';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
   components: {

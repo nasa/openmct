@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
 import TimeContext from './TimeContext';
+import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.

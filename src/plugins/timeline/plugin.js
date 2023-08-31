@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineCompositionPolicy from './TimelineCompositionPolicy';
-import timelineInterceptor from './timelineInterceptor';
 import TimelineViewProvider from './TimelineViewProvider';
+import timelineInterceptor from './timelineInterceptor';
+import TimelineCompositionPolicy from './TimelineCompositionPolicy';
 
 export default function () {
   return function install(openmct) {

@@ -49,7 +49,6 @@ const BLANK_VALUE = '---';
 
 import identifierToString from '/src/tools/url';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
-
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {

@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct } from 'utils/testing';
-
 import TimeAPI from './TimeAPI';
+import { createOpenMct } from 'utils/testing';
 describe('The Independent Time API', function () {
   let api;
   let domainObjectKey;

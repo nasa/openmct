@@ -53,7 +53,6 @@
 
 <script>
 import moment from 'moment';
-
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
 import statusListener from './status-listener';

@@ -34,11 +34,10 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
-
+import toggleMixin from '../../toggle-check-box-mixin';
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 
-import toggleMixin from '../../toggle-check-box-mixin';
+import { v4 as uuid } from 'uuid';
 
 export default {
   components: {

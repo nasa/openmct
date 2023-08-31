@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
-
 import FlexibleLayoutComponent from './components/flexibleLayout.vue';
 
 const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';

@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { toRaw } from 'vue';
-
 import objectUtils from '../objects/object-utils';
 import CompositionProvider from './CompositionProvider';
+import { toRaw } from 'vue';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject

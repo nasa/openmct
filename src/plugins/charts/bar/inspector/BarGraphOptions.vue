@@ -130,9 +130,8 @@
 </template>
 
 <script>
-import ColorPalette from '@/ui/color/ColorPalette';
-
 import SeriesOptions from './SeriesOptions.vue';
+import ColorPalette from '@/ui/color/ColorPalette';
 
 export default {
   components: {

@@ -22,7 +22,6 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
-
 import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Coach McGuirk';

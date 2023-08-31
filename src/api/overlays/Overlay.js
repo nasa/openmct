@@ -1,7 +1,6 @@
+import OverlayComponent from './components/OverlayComponent.vue';
 import EventEmitter from 'EventEmitter';
 import mount from 'utils/mount';
-
-import OverlayComponent from './components/OverlayComponent.vue';
 
 const cssClasses = {
   large: 'l-overlay-large',

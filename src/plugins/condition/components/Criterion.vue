@@ -112,8 +112,8 @@
 </template>
 
 <script>
-import { IS_OLD_KEY, IS_STALE_KEY, TRIGGER_CONJUNCTION } from '../utils/constants';
-import { INPUT_TYPES, OPERATIONS } from '../utils/operations';
+import { OPERATIONS, INPUT_TYPES } from '../utils/operations';
+import { TRIGGER_CONJUNCTION, IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
 
 export default {
   inject: ['openmct'],

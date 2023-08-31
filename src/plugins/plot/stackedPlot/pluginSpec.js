@@ -20,20 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
 import {
   createMouseEvent,
   createOpenMct,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
+import PlotVuePlugin from '../plugin';
 import Vue from 'vue';
-
+import StackedPlot from './StackedPlot.vue';
 import configStore from '../configuration/ConfigStore';
+import EventEmitter from 'EventEmitter';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import PlotOptions from '../inspector/PlotOptions.vue';
-import PlotVuePlugin from '../plugin';
-import StackedPlot from './StackedPlot.vue';
 
 xdescribe('the plugin', function () {
   let element;

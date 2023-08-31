@@ -45,16 +45,16 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import toolbarButton from './components/toolbar-button.vue';
-import toolbarCheckbox from './components/toolbar-checkbox.vue';
 import toolbarColorPicker from './components/toolbar-color-picker.vue';
+import toolbarCheckbox from './components/toolbar-checkbox.vue';
 import toolbarInput from './components/toolbar-input.vue';
 import toolbarMenu from './components/toolbar-menu.vue';
 import toolbarSelectMenu from './components/toolbar-select-menu.vue';
 import toolbarSeparator from './components/toolbar-separator.vue';
 import toolbarToggleButton from './components/toolbar-toggle-button.vue';
+
+import _ from 'lodash';
 
 export default {
   components: {

@@ -62,15 +62,15 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import ConductorMode from './ConductorMode.vue';
 import ConductorClock from './ConductorClock.vue';
+import IndependentMode from './independent/IndependentMode.vue';
+import IndependentClock from './independent/IndependentClock.vue';
+import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
-import ConductorMode from './ConductorMode.vue';
-import ConductorTimeSystem from './ConductorTimeSystem.vue';
-import IndependentClock from './independent/IndependentClock.vue';
-import IndependentMode from './independent/IndependentMode.vue';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {
   components: {

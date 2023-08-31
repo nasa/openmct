@@ -22,9 +22,9 @@
 
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import {
-  FAULT_MANAGEMENT_NAMESPACE,
   FAULT_MANAGEMENT_TYPE,
-  FAULT_MANAGEMENT_VIEW
+  FAULT_MANAGEMENT_VIEW,
+  FAULT_MANAGEMENT_NAMESPACE
 } from './constants';
 
 describe('The Fault Management Plugin', () => {

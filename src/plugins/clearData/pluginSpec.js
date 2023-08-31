@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
 import ClearDataPlugin from './plugin.js';
+import Vue from 'vue';
+import { createOpenMct, resetApplicationState, createMouseEvent } from 'utils/testing';
 
 describe('The Clear Data Plugin:', () => {
   let clearDataPlugin;

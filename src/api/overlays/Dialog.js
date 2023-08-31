@@ -1,7 +1,6 @@
-import mount from 'utils/mount';
-
 import DialogComponent from './components/DialogComponent.vue';
 import Overlay from './Overlay';
+import mount from 'utils/mount';
 
 class Dialog extends Overlay {
   constructor({ iconClass, message, title, hint, timestamp, ...options }) {

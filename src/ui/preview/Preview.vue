@@ -34,10 +34,9 @@
 </template>
 
 <script>
-import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
-import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
-
 import PreviewHeader from './preview-header.vue';
+import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
+import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 
 export default {
   components: {

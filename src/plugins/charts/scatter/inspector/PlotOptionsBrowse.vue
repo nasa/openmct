@@ -42,9 +42,9 @@
 </template>
 
 <script>
+import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 import Color from '../../../../ui/color/Color';
 import ColorPalette from '../../../../ui/color/ColorPalette';
-import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 
 export default {
   components: { ColorSwatch },

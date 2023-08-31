@@ -31,9 +31,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
+import _ from 'lodash';
 
 export default {
   components: {

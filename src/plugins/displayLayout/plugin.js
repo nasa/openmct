@@ -20,15 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
-import mount from 'utils/mount';
-
-import CopyToClipboardAction from './actions/CopyToClipboardAction';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import CopyToClipboardAction from './actions/CopyToClipboardAction';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
+import objectUtils from 'objectUtils';
+import mount from 'utils/mount';
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {

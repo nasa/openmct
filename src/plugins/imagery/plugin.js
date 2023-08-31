@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageryTimestripViewProvider from './ImageryTimestripViewProvider';
 import ImageryViewProvider from './ImageryViewProvider';
+import ImageryTimestripViewProvider from './ImageryTimestripViewProvider';
 
 export default function (options) {
   return function install(openmct) {

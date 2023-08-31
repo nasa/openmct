@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
+import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
 import { NotebookPlugin } from './plugin';
+import Vue from 'vue';
 
 describe('Notebook plugin:', () => {
   let openmct;

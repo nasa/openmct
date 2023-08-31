@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
-
-import { TIME_CONTEXT_EVENTS } from '../time/constants';
+import EventEmitter from 'EventEmitter';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject

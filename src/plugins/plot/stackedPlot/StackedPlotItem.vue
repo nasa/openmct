@@ -24,14 +24,12 @@
 </template>
 <script>
 import mount from 'utils/mount';
-
-import configStore from '@/plugins/plot/configuration/ConfigStore';
-import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
+import conditionalStylesMixin from './mixins/objectStyles-mixin';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import StalenessUtils from '@/utils/staleness';
-
+import configStore from '@/plugins/plot/configuration/ConfigStore';
+import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
 import Plot from '../Plot.vue';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],

@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import momentTimezone from 'moment-timezone';
-import mount from 'utils/mount';
-
 import ClockViewProvider from './ClockViewProvider';
 import ClockIndicator from './components/ClockIndicator.vue';
+
+import momentTimezone from 'moment-timezone';
+import mount from 'utils/mount';
 
 export default function ClockPlugin(options) {
   return function install(openmct) {

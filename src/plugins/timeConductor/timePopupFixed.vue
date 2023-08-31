@@ -95,7 +95,6 @@
 
 <script>
 import _ from 'lodash';
-
 import DatePicker from './DatePicker.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';

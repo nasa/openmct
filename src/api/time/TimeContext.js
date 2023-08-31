@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-
-import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
+import { TIME_CONTEXT_EVENTS, MODES, REALTIME_MODE_KEY, FIXED_MODE_KEY } from './constants';
 
 class TimeContext extends EventEmitter {
   constructor() {

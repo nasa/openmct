@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { inRange, percentOfRange, rotate } from './utils';
+import { rotate, inRange, percentOfRange } from './utils';
 
 const COMPASS_POINTS = [
   {

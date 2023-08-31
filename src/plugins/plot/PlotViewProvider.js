@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import Plot from './Plot.vue';
+import mount from 'utils/mount';
 
 export default function PlotViewProvider(openmct) {
   function hasNumericTelemetry(domainObject) {

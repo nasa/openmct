@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import MetadataListView from './components/MetadataList.vue';
+import mount from 'utils/mount';
 
 export default class ViewDatumAction {
   constructor(openmct) {

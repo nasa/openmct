@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import AlphanumericFormat from './components/AlphanumericFormat.vue';
+
+import mount from 'utils/mount';
 
 class AlphanumericFormatView {
   constructor(openmct, domainObject, objectPath) {

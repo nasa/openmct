@@ -20,9 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import TimelineViewLayout from './TimelineViewLayout.vue';
+import mount from 'utils/mount';
 
 export default function TimelineViewProvider(openmct) {
   return {

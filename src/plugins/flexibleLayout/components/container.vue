@@ -75,9 +75,9 @@
 </template>
 
 <script>
-import DropHint from './dropHint.vue';
 import FrameComponent from './frame.vue';
 import ResizeHandle from './resizeHandle.vue';
+import DropHint from './dropHint.vue';
 
 const MIN_FRAME_SIZE = 5;
 

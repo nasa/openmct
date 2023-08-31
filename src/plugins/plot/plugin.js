@@ -19,15 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import PlotViewActions from './actions/ViewActions';
-import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
-import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider';
-import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
-import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import PlotViewProvider from './PlotViewProvider';
-import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
-import stackedPlotConfigurationInterceptor from './stackedPlot/stackedPlotConfigurationInterceptor';
+import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
+import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
+import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
+import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import PlotViewActions from './actions/ViewActions';
+import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider';
+import stackedPlotConfigurationInterceptor from './stackedPlot/stackedPlotConfigurationInterceptor';
 
 export default function () {
   return function install(openmct) {

@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
 import FaultManagementView from './FaultManagementView.vue';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
+import mount from 'utils/mount';
 
 export default class FaultManagementViewProvider {
   constructor(openmct) {

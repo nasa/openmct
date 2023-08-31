@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-
 import ClearDataAction from './ClearDataAction';
 import GlobalClearIndicator from './components/globalClearIndicator.vue';
+import mount from 'utils/mount';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {
   let installIndicator = options.indicator;

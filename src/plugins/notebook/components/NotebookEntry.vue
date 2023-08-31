@@ -138,17 +138,18 @@
 </template>
 
 <script>
-import _ from 'lodash';
-import Moment from 'moment';
-import sanitizeHtml from 'sanitize-html';
-
+import NotebookEmbed from './NotebookEmbed.vue';
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from '../utils/notebook-image';
-import NotebookEmbed from './NotebookEmbed.vue';
+
+import sanitizeHtml from 'sanitize-html';
+import _ from 'lodash';
+
+import Moment from 'moment';
 
 const SANITIZATION_SCHEMA = {
   allowedTags: [],

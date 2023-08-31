@@ -124,9 +124,9 @@
 </template>
 
 <script>
+import PlotOptionsItem from './PlotOptionsItem.vue';
 import configStore from '../configuration/ConfigStore';
 import eventHelpers from '../lib/eventHelpers';
-import PlotOptionsItem from './PlotOptionsItem.vue';
 
 export default {
   components: {

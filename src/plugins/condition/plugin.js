@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { v4 as uuid } from 'uuid';
-
+import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
-import ConditionSetViewProvider from './ConditionSetViewProvider.js';
+import { v4 as uuid } from 'uuid';
 
 export default function ConditionPlugin() {
   return function install(openmct) {

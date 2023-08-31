@@ -83,10 +83,10 @@
   </div>
 </template>
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
 import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
 import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
+import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
   components: {

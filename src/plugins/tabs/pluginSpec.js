@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-
 import TabsLayout from './plugin';
+import Vue from 'vue';
+import EventEmitter from 'EventEmitter';
 
 describe('the plugin', function () {
   let element;

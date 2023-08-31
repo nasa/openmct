@@ -1,8 +1,6 @@
-import mount from 'utils/mount';
-
 import AutoCompleteField from './components/controls/AutoCompleteField.vue';
-import CheckBoxField from './components/controls/CheckBoxField.vue';
 import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
+import CheckBoxField from './components/controls/CheckBoxField.vue';
 import Datetime from './components/controls/Datetime.vue';
 import FileInput from './components/controls/FileInput.vue';
 import Locator from './components/controls/Locator.vue';
@@ -11,6 +9,8 @@ import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
 import TextField from './components/controls/TextField.vue';
 import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
+
+import mount from 'utils/mount';
 export const DEFAULT_CONTROLS_MAP = {
   autocomplete: AutoCompleteField,
   checkbox: CheckBoxField,

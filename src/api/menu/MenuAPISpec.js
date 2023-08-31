@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
-
-import { createMouseEvent, createOpenMct, resetApplicationState } from '../../utils/testing';
-import Menu from './menu';
 import MenuAPI from './MenuAPI';
+import Menu from './menu';
+import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
+import Vue from 'vue';
 
 describe('The Menu API', () => {
   let openmct;

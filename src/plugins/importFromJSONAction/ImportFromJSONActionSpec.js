@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-
 import ImportFromJSONAction from './ImportFromJSONAction';
+
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 let openmct;
 let importFromJSONAction;

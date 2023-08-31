@@ -62,13 +62,12 @@
 </template>
 
 <script>
-import StalenessUtils from '@/utils/staleness';
-
-import ImageExporter from '../../exporters/ImageExporter';
-import ProgressBar from '../../ui/components/ProgressBar.vue';
-import PlotLegend from './legend/PlotLegend.vue';
 import eventHelpers from './lib/eventHelpers';
+import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
+import PlotLegend from './legend/PlotLegend.vue';
+import ProgressBar from '../../ui/components/ProgressBar.vue';
+import StalenessUtils from '@/utils/staleness';
 
 export default {
   components: {

@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import { SORT_ORDER_OPTIONS } from '../constants';
 import EventProperties from './EventProperties.vue';
+import { SORT_ORDER_OPTIONS } from '../constants';
 import Filtering from './Filtering.vue';
 
 const EVENT_TYPES = [

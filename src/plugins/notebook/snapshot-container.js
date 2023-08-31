@@ -1,5 +1,4 @@
 import EventEmitter from 'EventEmitter';
-
 import { EVENT_SNAPSHOTS_UPDATED } from './notebook-constants';
 const NOTEBOOK_SNAPSHOT_STORAGE = 'notebook-snapshot-storage';
 

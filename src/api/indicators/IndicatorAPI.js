@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-
 import SimpleIndicator from './SimpleIndicator';
 
 class IndicatorAPI extends EventEmitter {
