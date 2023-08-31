@@ -254,7 +254,7 @@ export default {
     },
     itemStyle(option) {
       if (option.color) {
-        return { '--optionIconColor': option.color };
+        return { '--option-icon-color': option.color };
       }
     }
   }
