@@ -1,3 +1,22 @@
 {
-  "extends": "stylelint-config-standard-scss"
+  "extends": "stylelint-config-standard-scss",
+  "rules": {
+    "scss/dollar-variable-pattern": null,
+    "selector-class-pattern": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "scss/at-mixin-pattern": null,
+    "font-family-no-missing-generic-family-keyword": [
+      true,
+      {
+        "ignoreFontFamilies": [
+          "symbolsfont"
+        ]
+      }
+    ],
+    "scss/at-function-pattern": null,
+    "keyframes-name-pattern": null,
+    "function-name-case": null,
+    "selector-type-case": null,
+    "value-keyword-case": null
+  }
 }
