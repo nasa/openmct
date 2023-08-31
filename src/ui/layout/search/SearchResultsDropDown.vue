@@ -50,7 +50,7 @@
         </div>
         <div v-if="searchLoading" class="c-gsearch__result-pane-msg">
           <div class="hint">Searching...</div>
-          <progress-bar :model="{ progressPerc: undefined }" />
+          <progress-bar :model="{ progressPerc: null }" />
         </div>
         <div
           v-if="

@@ -29,7 +29,7 @@
       <progress-bar
         v-show="!!loading"
         class="c-telemetry-table__progress-bar"
-        :model="{ progressPerc: undefined }"
+        :model="{ progressPerc: null }"
       />
       <mct-plot
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"

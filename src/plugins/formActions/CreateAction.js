@@ -70,7 +70,7 @@ export default class CreateAction extends PropertiesAction {
 
     // Show saving progress dialog
     let dialog = this.openmct.overlays.progressDialog({
-      progressPerc: 'unknown',
+      progressPerc: null,
       message:
         'Do not navigate away from this page or close this browser tab while this message is displayed.',
       iconClass: 'info',

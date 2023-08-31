@@ -135,7 +135,7 @@
       <progress-bar
         v-if="loading"
         class="c-telemetry-table__progress-bar"
-        :model="{ progressPerc: undefined }"
+        :model="{ progressPerc: null }"
       />
 
       <!-- Headers table -->

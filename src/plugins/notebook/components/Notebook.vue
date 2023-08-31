@@ -105,7 +105,7 @@
         <progress-bar
           v-if="savingTransaction"
           class="c-telemetry-table__progress-bar"
-          :model="{ progressPerc: undefined }"
+          :model="{ progressPerc: null }"
         />
         <div v-if="selectedPage && selectedPage.isLocked" class="c-notebook__page-locked">
           <div class="icon-lock"></div>
