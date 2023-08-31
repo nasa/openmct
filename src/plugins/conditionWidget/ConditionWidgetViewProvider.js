@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionWidgetComponent from './components/ConditionWidget.vue';
 import mount from 'utils/mount';
+
+import ConditionWidgetComponent from './components/ConditionWidget.vue';
 
 export default function ConditionWidget(openmct) {
   return {

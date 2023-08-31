@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
+
 import FiltersView from './components/FiltersView.vue';
 
 const FILTERS_INSPECTOR_KEY = 'filters-inspector';

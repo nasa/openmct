@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StackedPlot from './StackedPlot.vue';
 import mount from 'utils/mount';
+
+import StackedPlot from './StackedPlot.vue';
 
 export default function StackedPlotViewProvider(openmct) {
   function isCompactView(objectPath) {

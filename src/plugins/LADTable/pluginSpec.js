@@ -19,16 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadPlugin from './plugin.js';
-import Vue from 'vue';
 import {
   createOpenMct,
+  getLatestTelemetry,
   getMockObjects,
   getMockTelemetry,
-  getLatestTelemetry,
-  spyOnBuiltins,
-  resetApplicationState
+  resetApplicationState,
+  spyOnBuiltins
 } from 'utils/testing';
+import Vue from 'vue';
+
+import LadPlugin from './plugin.js';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
 const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';

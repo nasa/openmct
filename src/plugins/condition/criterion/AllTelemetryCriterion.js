@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryCriterion from './TelemetryCriterion';
-import StalenessUtils from '@/utils/staleness';
-import { evaluateResults } from '../utils/evaluator';
-import { getLatestTimestamp, checkIfOld } from '../utils/time';
 import { getOperatorText } from '@/plugins/condition/utils/operations';
+import StalenessUtils from '@/utils/staleness';
+
+import { evaluateResults } from '../utils/evaluator';
+import { checkIfOld, getLatestTimestamp } from '../utils/time';
+import TelemetryCriterion from './TelemetryCriterion';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
   /**

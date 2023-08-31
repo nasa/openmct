@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GaugeViewProvider from './GaugeViewProvider';
-import GaugeFormController from './components/GaugeFormController.vue';
 import mount from 'utils/mount';
+
+import GaugeFormController from './components/GaugeFormController.vue';
+import GaugeViewProvider from './GaugeViewProvider';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],

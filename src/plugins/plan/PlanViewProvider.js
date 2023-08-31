@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './components/Plan.vue';
 import mount from 'utils/mount';
+
+import Plan from './components/Plan.vue';
 
 export default function PlanViewProvider(openmct) {
   function isCompactView(objectPath) {

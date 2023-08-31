@@ -175,17 +175,17 @@
 </template>
 
 <script>
-import eventHelpers from './lib/eventHelpers';
-import LinearScale from './LinearScale';
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import configStore from './configuration/ConfigStore';
-
-import MctTicks from './MctTicks.vue';
-import MctChart from './chart/MctChart.vue';
-import XAxis from './axis/XAxis.vue';
-import YAxis from './axis/YAxis.vue';
 import Flatbush from 'flatbush';
 import _ from 'lodash';
+
+import XAxis from './axis/XAxis.vue';
+import YAxis from './axis/YAxis.vue';
+import MctChart from './chart/MctChart.vue';
+import configStore from './configuration/ConfigStore';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import eventHelpers from './lib/eventHelpers';
+import LinearScale from './LinearScale';
+import MctTicks from './MctTicks.vue';
 
 const OFFSET_THRESHOLD = 10;
 const AXES_PADDING = 20;

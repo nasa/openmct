@@ -137,11 +137,13 @@
 </template>
 
 <script>
-import ViewSwitcher from './ViewSwitcher.vue';
+import { toRaw } from 'vue';
+
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
-import { toRaw } from 'vue';
+import ViewSwitcher from './ViewSwitcher.vue';
 
 const SupportedViewTypes = [
   'plot-stacked',

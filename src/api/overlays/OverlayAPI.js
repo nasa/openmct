@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Overlay from './Overlay';
 import Dialog from './Dialog';
+import Overlay from './Overlay';
 import ProgressDialog from './ProgressDialog';
 import Selection from './Selection';
 

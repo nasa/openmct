@@ -53,8 +53,9 @@
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 import _ from 'lodash';
+
+import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 
 const START_HANDLE_QUADRANTS = {
   1: 'c-frame-edit__handle--sw',
