@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import FlexibleLayout from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
+import FlexibleLayout from './plugin';
 
 describe('the plugin', function () {
   let element;
@@ -33,6 +34,10 @@ describe('the plugin', function () {
   let mockComposition;
 
   const testViewObject = {
+    identifier: {
+      namespace: '',
+      key: 'test-object'
+    },
     id: 'test-object',
     type: 'flexible-layout',
     configuration: {
@@ -116,6 +121,10 @@ describe('the plugin', function () {
 
     beforeEach(() => {
       flexibleLayoutItem = {
+        identifier: {
+          namespace: '',
+          key: 'test-object'
+        },
         id: 'test-object',
         type: 'flexible-layout',
         configuration: {

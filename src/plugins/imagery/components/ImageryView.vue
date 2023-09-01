@@ -198,18 +198,18 @@
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
 import Vue from 'vue';
 
-import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import imageryData from '../../imagery/mixins/imageryData';
+import eventHelpers from '../lib/eventHelpers';
+import AnnotationsCanvas from './AnnotationsCanvas.vue';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
-import imageryData from '../../imagery/mixins/imageryData';
-import AnnotationsCanvas from './AnnotationsCanvas.vue';
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -864,6 +864,7 @@ export default {
       if (this.domainObject.configuration) {
         const persistedLayers = this.domainObject.configuration.layers;
         if (!persistedLayers) {
+          this.layers.forEach((layer) => (layer.visible = false));
           return;
         }
 

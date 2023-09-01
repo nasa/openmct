@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "3.0.0-SNAPSHOT",
+  "version": "3.1.0-next",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
@@ -19,7 +19,7 @@
     "codecov": "3.8.3",
     "comma-separated-values": "3.6.4",
     "copy-webpack-plugin": "11.0.0",
-    "cspell": "6.31.2",
+    "cspell": "7.1.1",
     "css-loader": "6.8.1",
     "d3-axis": "3.0.0",
     "d3-scale": "3.3.0",
@@ -29,6 +29,7 @@
     "eslint-plugin-compat": "4.1.4",
     "eslint-plugin-playwright": "0.12.0",
     "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-vue": "9.15.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "eventemitter3": "1.2.0",
@@ -56,6 +57,7 @@
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
+    "npm-run-all2": "6.0.6",
     "nyc": "15.1.0",
     "painterro": "1.2.78",
     "plotly.js-basic-dist": "2.20.0",
@@ -80,12 +82,13 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json ./coverage ./html-test-results ./test-results ./.nyc_output ",
-    "clean-test-lint": "npm run clean; npm install; npm run test; npm run lint; npm run lint:spelling",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
-    "lint": "eslint example src e2e --ext .js openmct.js --max-warnings=0 && eslint example src --ext .vue",
+    "lint:js": "eslint example src e2e --ext .js openmct.js --max-warnings=0",
+    "lint:vue": "eslint example src --ext .vue",
     "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore",
     "lint:markdown": "markdownlint-cli2",
+    "lint": "run-p \"lint:js -- {1}\" \"lint:vue -- {1}\" \"lint:spelling -- {1}\" --",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.js",
     "build:dev": "webpack --config ./.webpack/webpack.dev.js",
@@ -114,6 +117,7 @@
     "cov:unit:publish": "codecov --disable=gcov -f ./coverage/unit/lcov.info -F unit",
     "prepare": "npm run build:prod && npx tsc"
   },
+  "homepage": "https://nasa.github.io/openmct",
   "repository": {
     "type": "git",
     "url": "https://github.com/nasa/openmct.git"
@@ -129,6 +133,12 @@
     "ios_saf >= 16",
     "Safari >= 16"
   ],
-  "author": "",
-  "license": "Apache-2.0"
+  "author": {
+    "name": "National Aeronautics and Space Administration",
+    "url": "https://www.nasa.gov"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "nasa"
+  ]
 }

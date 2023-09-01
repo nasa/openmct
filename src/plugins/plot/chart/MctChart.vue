@@ -31,19 +31,20 @@
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
+import mount from 'utils/mount';
+import { toRaw } from 'vue';
+
+import configStore from '../configuration/ConfigStore';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import { DrawLoader } from '../draw/DrawLoader';
+import eventHelpers from '../lib/eventHelpers';
+import LimitLabel from './LimitLabel.vue';
+import LimitLine from './LimitLine.vue';
+import MCTChartAlarmLineSet from './MCTChartAlarmLineSet';
+import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
 import MCTChartLineLinear from './MCTChartLineLinear';
 import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
-import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
-import MCTChartAlarmLineSet from './MCTChartAlarmLineSet';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import LimitLine from './LimitLine.vue';
-import LimitLabel from './LimitLabel.vue';
-import mount from 'utils/mount';
-import { toRaw } from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;

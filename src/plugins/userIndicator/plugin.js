@@ -21,11 +21,12 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
+
 import UserIndicator from './components/UserIndicator.vue';
 
 export default function UserIndicatorPlugin() {
   function addIndicator(openmct) {
-    const { vNode } = mount(
+    const { vNode, destroy } = mount(
       {
         components: {
           UserIndicator
@@ -43,7 +44,8 @@ export default function UserIndicatorPlugin() {
     openmct.indicators.add({
       key: 'user-indicator',
       element: vNode.el,
-      priority: openmct.priority.HIGH
+      priority: openmct.priority.HIGH,
+      destroy: destroy
     });
   }
 

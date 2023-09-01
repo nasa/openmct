@@ -83,7 +83,7 @@
         <div :style="childrenHeightStyles">
           <tree-item
             v-for="(treeItem, index) in visibleItems"
-            :key="`${treeItem.navigationPath}-${index}`"
+            :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
@@ -116,9 +116,10 @@
 
 <script>
 import _ from 'lodash';
-import treeItem from './tree-item.vue';
-import search from '../components/search.vue';
 import { markRaw, reactive } from 'vue';
+
+import search from '../components/search.vue';
+import treeItem from './tree-item.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';

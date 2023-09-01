@@ -24,12 +24,14 @@
 </template>
 <script>
 import mount from 'utils/mount';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import StalenessUtils from '@/utils/staleness';
+
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import StalenessUtils from '@/utils/staleness';
+
 import Plot from '../Plot.vue';
+import conditionalStylesMixin from './mixins/objectStyles-mixin';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],
@@ -197,7 +199,7 @@ export default {
         this.composition.load();
       }
 
-      const { vNode } = mount(
+      const { vNode, destroy } = mount(
         {
           components: {
             Plot
@@ -249,6 +251,7 @@ export default {
         }
       );
       this.component = vNode.componentInstance;
+      this._destroy = destroy;
 
       if (this.isEditing) {
         this.setSelection();

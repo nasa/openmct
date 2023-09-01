@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DrawWebGL from './DrawWebGL';
 import Draw2D from './Draw2D';
+import DrawWebGL from './DrawWebGL';
 
 const CHARTS = [
   {

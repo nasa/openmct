@@ -29,7 +29,7 @@
       <progress-bar
         v-show="!!loading"
         class="c-telemetry-table__progress-bar"
-        :model="{ progressPerc: undefined }"
+        :model="{ progressPerc: null }"
       />
       <mct-plot
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
@@ -62,12 +62,13 @@
 </template>
 
 <script>
-import eventHelpers from './lib/eventHelpers';
-import ImageExporter from '../../exporters/ImageExporter';
-import MctPlot from './MctPlot.vue';
-import PlotLegend from './legend/PlotLegend.vue';
-import ProgressBar from '../../ui/components/ProgressBar.vue';
 import StalenessUtils from '@/utils/staleness';
+
+import ImageExporter from '../../exporters/ImageExporter';
+import ProgressBar from '../../ui/components/ProgressBar.vue';
+import PlotLegend from './legend/PlotLegend.vue';
+import eventHelpers from './lib/eventHelpers';
+import MctPlot from './MctPlot.vue';
 
 export default {
   components: {
