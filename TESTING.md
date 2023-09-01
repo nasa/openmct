@@ -62,9 +62,9 @@ Once the file is generated, it can be published to codecov with
 
 ### e2e
 
-The e2e line coverage is a bit more complex than the karma implementation. M 
+The e2e line coverage is a bit more complex than the karma implementation. 
 
-It generally follows the following flow:
+This is the general sequence of events:
 1. Each e2e suite will start the webpack.coverage.js config with the `npm run start:coverage` command which configures webpack with the `babel-plugin-istanbul` babel-loader to generate code coverage during e2e test execution.
 1. Each e2e shard will generate only a piece of the larger coverage suite. This is converted with `nyc` with the `npm run cov:e2e:report` script
 1.a Most of the tests are run in the '@stable' configuration a focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:stable:publish`.
