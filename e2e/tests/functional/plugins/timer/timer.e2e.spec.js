@@ -235,8 +235,10 @@ async function assertTimerStateAfterAction(page, action) {
  */
 async function assertTimerElements(page, timer) {
   const timerElement = page.locator('.c-timer');
-  const resetButton = page.locator('.c-timer__ctrl-reset');
-  const pausePlayButton = page.locator('.c-timer__ctrl-pause-play');
+  const resetButton = page.getByRole('button', { name: 'Reset' });
+  const pausePlayButton = page
+    .getByRole('button', { name: 'Pause' })
+    .or(page.getByRole('button', { name: 'Start' }));
   const timerDirectionIcon = page.locator('.c-timer__direction');
   const timerValue = page.locator('.c-timer__value');
 

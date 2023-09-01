@@ -25,12 +25,14 @@
     <div class="c-timer__controls">
       <button
         title="Reset"
+        aria-label="Reset"
         class="c-timer__ctrl-reset c-icon-button c-icon-button--major icon-reset"
         :class="[{ hide: timerState === 'stopped' }]"
         @click="restartTimer"
       ></button>
       <button
         :title="timerStateButtonText"
+        :aria-label="timerStateButtonText"
         class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
         :class="[timerStateButtonIcon]"
         @click="toggleStateButton"
