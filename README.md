@@ -70,9 +70,9 @@ For more on developing with Open MCT, see our documentation for a guide on [Deve
 
 This is a fast moving project and we do our best to test and support the widest possible range of browsers, operating systems, and nodejs APIs. We have a published list of support available in our package.json's `browserslist` key.
 
-The project uses `nvm` to ensure the node and npm version used, is coherent in all projects. Install nvm (non-windows), [here](https://github.com/nvm-sh/nvm) or the windows equivalent [here](https://github.com/coreybutler/nvm-windows)
+The project uses `nvm` to ensure the node and npm version used, is coherent in all projects. Install nvm (non-windows), [here](https://github.com/nvm-sh/nvm) or the windows equivalent [here](https://github.com/coreybutler/nvm-windows).
 
-If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose)
+If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose).
 
 ## Plugins
 
@@ -116,23 +116,23 @@ To run the performance tests:
 
 `npm run test:perf`
 
-The test suite is configured to all tests located in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md)
+The test suite is configured to all tests located in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md).
 
 ### Security Tests
 Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/). The list of CWE coverage items is available in the [CodeQL docs](https://codeql.github.com/codeql-query-help/javascript-cwe/). The CodeQL workflow is specified in the [CodeQL analysis file](./.github/workflows/codeql-analysis.yml) and the custom [CodeQL config](./.github/codeql/codeql-config.yml).
 
 ### Test Reporting and Code Coverage
 
-Each test suite generates a report in CircleCI. For a complete overview of testing functionality, please see our [Circle CI Test Insights Dashboard](https://app.circleci.com/insights/github/nasa/openmct/workflows/the-nightly/overview?branch=master&reporting-window=last-30-days)
+Each test suite generates a report in CircleCI. For a complete overview of testing functionality, please see our [Circle CI Test Insights Dashboard](https://app.circleci.com/insights/github/nasa/openmct/workflows/the-nightly/overview?branch=master&reporting-window=last-30-days).
 
-Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
+Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/).
 
 # Glossary
 
 Certain terms are used throughout Open MCT with consistent meanings
 or conventions. Any deviations from the below are issues and should be
 addressed (either by updating this glossary or changing code to reflect
-correct usage.) Other developer documentation, particularly in-line
+correct usage). Other developer documentation, particularly in-line
 documentation, may presume an understanding of these terms.
 
 * _plugin_: A plugin is a removable, reusable grouping of software elements.
@@ -146,8 +146,8 @@ documentation, may presume an understanding of these terms.
   with these identifiers asynchronously.
 * _description_: When used as an object property, this refers to the human-readable
   description of a thing; usually a single sentence or short paragraph.
-  (Most often used in the context of extensions, domain
-  object models, or other similar application-specific objects.)
+  Most often used in the context of extensions, domain
+  object models, or other similar application-specific objects.
 * _domain object_: A meaningful object to the user; a distinct thing in
   the work support by Open MCT. Anything that appears in the left-hand
   tree is a domain object.
@@ -155,15 +155,15 @@ documentation, may presume an understanding of these terms.
   identifies a domain object.
 * _model_: The persistent state associated with a domain object. A domain
   object's model is a JavaScript object which can be converted to JSON
-  without losing information (that is, it contains no methods.)
+  without losing information (that is, it contains no methods).
 * _name_: When used as an object property, this refers to the human-readable
-  name for a thing. (Most often used in the context of extensions, domain
-  object models, or other similar application-specific objects.)
+  name for a thing. Most often used in the context of extensions, domain
+  object models, or other similar application-specific objects.
 * _navigation_: Refers to the current state of the application with respect
   to the user's expressed interest in a specific domain object; e.g. when
   a user clicks on a domain object in the tree, they are _navigating_ to
   it, and it is thereafter considered the _navigated_ object (until the
-  user makes another such choice.)
+  user makes another such choice).
 * _namespace_: A name used to identify a persistence store. A running open MCT 
 application could potentially use multiple persistence stores, with the 
 
@@ -173,7 +173,7 @@ Support for our legacy bundle-based API, and the libraries that it was built on 
 For now if you have an Open MCT application that makes use of the legacy API, [a plugin](https://github.com/nasa/openmct-legacy-plugin) is provided that bootstraps the legacy bundling mechanism and API. This plugin will not be maintained over the long term however, and the legacy support plugin will not be tested for compatibility with future versions of Open MCT. It is provided for convenience only.
 
 ### How do I know if I am using legacy API?
-You might still be using legacy API if your source code
+You might still be using legacy API if your source code:
 
 * Contains files named bundle.js, or bundle.json,
 * Makes calls to `openmct.$injector()`, or `openmct.$angular`,
