@@ -34,7 +34,7 @@
       @mousedown="handlePanZoomClick"
     >
       <ImageControls
-      v-show="!annotationsBeingMarqueed"
+        v-show="!annotationsBeingMarqueed"
         ref="imageControls"
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
@@ -88,7 +88,7 @@
             v-if="shouldDisplayCompass"
             :image="focusedImage"
             :sized-image-dimensions="sizedImageDimensions"
-            :showCompassHUD="showCompassHUD"
+            :show-compass-h-u-d="showCompassHUD"
           />
           <AnnotationsCanvas
             v-if="shouldDisplayAnnotations"
@@ -249,7 +249,14 @@ export default {
     AnnotationsCanvas
   },
   mixins: [imageryData],
-  inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions', 'showCompassHUD'],
+  inject: [
+    'openmct',
+    'domainObject',
+    'objectPath',
+    'currentView',
+    'imageFreshnessOptions',
+    'showCompassHUD'
+  ],
   props: {
     focusedImageTimestamp: {
       type: Number,
