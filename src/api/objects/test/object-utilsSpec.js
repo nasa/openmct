@@ -1,4 +1,4 @@
-import objectUtils from './objectUtils';
+import objectUtils from 'objectUtils';
 
 describe('objectUtils', function () {
   describe('keyString util', function () {
