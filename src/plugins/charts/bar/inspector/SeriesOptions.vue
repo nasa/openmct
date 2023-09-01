@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 import Color from '@/ui/color/Color';
+import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
 export default {
   components: {

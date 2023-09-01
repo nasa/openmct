@@ -44,8 +44,9 @@
 </template>
 
 <script>
-import TagSelection from './TagSelection.vue';
 import { toRaw } from 'vue';
+
+import TagSelection from './TagSelection.vue';
 
 export default {
   components: {

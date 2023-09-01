@@ -184,10 +184,12 @@
 </template>
 
 <script>
-import Criterion from './Criterion.vue';
-import ConditionDescription from './ConditionDescription.vue';
-import { TRIGGER, TRIGGER_LABEL } from '@/plugins/condition/utils/constants';
 import { v4 as uuid } from 'uuid';
+
+import { TRIGGER, TRIGGER_LABEL } from '@/plugins/condition/utils/constants';
+
+import ConditionDescription from './ConditionDescription.vue';
+import Criterion from './Criterion.vue';
 
 export default {
   components: {

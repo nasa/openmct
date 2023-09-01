@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
+import TestData from './TestData.vue';
 
 export default {
   components: {
