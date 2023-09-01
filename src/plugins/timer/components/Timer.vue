@@ -78,11 +78,7 @@ export default {
       }
     },
     startTimeMs() {
-      if (Number.isNaN(Date.parse(this.configuration.timestamp))) {
-        return this.configuration.timestamp;
-      } else {
-        return Date.parse(this.configuration.timestamp);
-      }
+      return Date.parse(this.configuration.timestamp);
     },
     timeTextValue() {
       const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
