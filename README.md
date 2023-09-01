@@ -127,6 +127,8 @@ Each test suite generates a report in CircleCI. For a complete overview of testi
 
 Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
 
+For more on the specifics of our code coverage setup, [see](TESTING.md#code-coverage)
+
 # Glossary
 
 Certain terms are used throughout Open MCT with consistent meanings
