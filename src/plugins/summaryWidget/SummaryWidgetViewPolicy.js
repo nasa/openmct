@@ -20,20 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  /**
-   * Policy determining which views can apply to summary widget.  Disables
-   * any view other than normal summary widget view.
-   */
-  function SummaryWidgetViewPolicy() {}
+/**
+ * Policy determining which views can apply to summary widget.  Disables
+ * any view other than normal summary widget view.
+ */
+export default function SummaryWidgetViewPolicy() {}
 
-  SummaryWidgetViewPolicy.prototype.allow = function (view, domainObject) {
-    if (domainObject.getModel().type === 'summary-widget') {
-      return view.key === 'summary-widget-viewer';
-    }
+SummaryWidgetViewPolicy.prototype.allow = function (view, domainObject) {
+  if (domainObject.getModel().type === 'summary-widget') {
+    return view.key === 'summary-widget-viewer';
+  }
 
-    return true;
-  };
-
-  return SummaryWidgetViewPolicy;
-});
+  return true;
+};

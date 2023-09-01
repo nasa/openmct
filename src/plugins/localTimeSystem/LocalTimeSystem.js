@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  /**
-   * This time system supports UTC dates and provides a ticking clock source.
-   * @implements TimeSystem
-   * @constructor
-   */
-  function LocalTimeSystem() {
+/**
+ * This time system supports UTC dates and provides a ticking clock source.
+ * @implements TimeSystem
+ * @constructor
+ */
+export default class LocalTimeSystem {
+  constructor() {
     /**
      * Some metadata, which will be used to identify the time system in
      * the UI
@@ -41,6 +41,4 @@ define([], function () {
 
     this.isUTCBased = true;
   }
-
-  return LocalTimeSystem;
-});
+}

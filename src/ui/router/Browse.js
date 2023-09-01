@@ -1,159 +1,153 @@
-define([], function () {
-  return function install(openmct) {
-    let navigateCall = 0;
-    let browseObject;
-    let unobserve = undefined;
-    let currentObjectPath;
-    let isRoutingInProgress = false;
+export default function install(openmct) {
+  let navigateCall = 0;
+  let browseObject;
+  let unobserve = undefined;
+  let currentObjectPath;
+  let isRoutingInProgress = false;
 
-    openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
-    openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
-      isRoutingInProgress = true;
-      let navigatePath = results[1];
-      clearMutationListeners();
+  openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
+  openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
+    isRoutingInProgress = true;
+    let navigatePath = results[1];
+    clearMutationListeners();
 
-      navigateToPath(navigatePath, params.view);
-    });
+    navigateToPath(navigatePath, params.view);
+  });
 
-    openmct.router.on('change:params', onParamsChanged);
+  openmct.router.on('change:params', onParamsChanged);
 
-    function onParamsChanged(newParams, oldParams, changed) {
-      if (isRoutingInProgress) {
+  function onParamsChanged(newParams, oldParams, changed) {
+    if (isRoutingInProgress) {
+      return;
+    }
+
+    if (changed.view && browseObject) {
+      let provider = openmct.objectViews.getByProviderKey(changed.view);
+      viewObject(browseObject, provider);
+    }
+  }
+
+  function viewObject(object, viewProvider) {
+    currentObjectPath = openmct.router.path;
+
+    openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
+    openmct.layout.$refs.browseBar.domainObject = object;
+
+    openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
+  }
+
+  function updateDocumentTitleOnNameMutation(newName) {
+    if (typeof newName === 'string' && newName !== document.title) {
+      document.title = newName;
+      openmct.layout.$refs.browseBar.domainObject = {
+        ...openmct.layout.$refs.browseBar.domainObject,
+        name: newName
+      };
+    }
+  }
+
+  function navigateToPath(path, currentViewKey) {
+    navigateCall++;
+    let currentNavigation = navigateCall;
+
+    if (unobserve) {
+      unobserve();
+      unobserve = undefined;
+    }
+
+    //Split path into object identifiers
+    if (!Array.isArray(path)) {
+      path = path.split('/');
+    }
+
+    return pathToObjects(path).then((objects) => {
+      isRoutingInProgress = false;
+
+      if (currentNavigation !== navigateCall) {
+        return; // Prevent race.
+      }
+
+      objects = objects.reverse();
+
+      openmct.router.path = objects;
+      openmct.router.emit('afterNavigation');
+      browseObject = objects[0];
+
+      openmct.layout.$refs.browseBar.domainObject = browseObject;
+      if (!browseObject) {
+        openmct.layout.$refs.browseObject.clear();
+
         return;
       }
 
-      if (changed.view && browseObject) {
-        let provider = openmct.objectViews.getByProviderKey(changed.view);
-        viewObject(browseObject, provider);
-      }
-    }
+      let currentProvider = openmct.objectViews.getByProviderKey(currentViewKey);
+      document.title = browseObject.name; //change document title to current object in main view
+      // assign listener to global for later clearing
+      unobserve = openmct.objects.observe(browseObject, 'name', updateDocumentTitleOnNameMutation);
 
-    function viewObject(object, viewProvider) {
-      currentObjectPath = openmct.router.path;
+      if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
+        viewObject(browseObject, currentProvider);
 
-      openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
-      openmct.layout.$refs.browseBar.domainObject = object;
-
-      openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
-    }
-
-    function updateDocumentTitleOnNameMutation(newName) {
-      if (typeof newName === 'string' && newName !== document.title) {
-        document.title = newName;
-        openmct.layout.$refs.browseBar.domainObject = {
-          ...openmct.layout.$refs.browseBar.domainObject,
-          name: newName
-        };
-      }
-    }
-
-    function navigateToPath(path, currentViewKey) {
-      navigateCall++;
-      let currentNavigation = navigateCall;
-
-      if (unobserve) {
-        unobserve();
-        unobserve = undefined;
+        return;
       }
 
-      //Split path into object identifiers
-      if (!Array.isArray(path)) {
-        path = path.split('/');
+      let defaultProvider = openmct.objectViews.get(browseObject, openmct.router.path)[0];
+      if (defaultProvider) {
+        openmct.router.updateParams({
+          view: defaultProvider.key
+        });
+      } else {
+        openmct.router.updateParams({
+          view: undefined
+        });
+        openmct.layout.$refs.browseObject.clear();
       }
+    });
+  }
 
-      return pathToObjects(path).then((objects) => {
-        isRoutingInProgress = false;
-
-        if (currentNavigation !== navigateCall) {
-          return; // Prevent race.
-        }
-
-        objects = objects.reverse();
-
-        openmct.router.path = objects;
-        openmct.router.emit('afterNavigation');
-        browseObject = objects[0];
-
-        openmct.layout.$refs.browseBar.domainObject = browseObject;
-        if (!browseObject) {
-          openmct.layout.$refs.browseObject.clear();
-
-          return;
-        }
-
-        let currentProvider = openmct.objectViews.getByProviderKey(currentViewKey);
-        document.title = browseObject.name; //change document title to current object in main view
-        // assign listener to global for later clearing
-        unobserve = openmct.objects.observe(
-          browseObject,
-          'name',
-          updateDocumentTitleOnNameMutation
-        );
-
-        if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
-          viewObject(browseObject, currentProvider);
-
-          return;
-        }
-
-        let defaultProvider = openmct.objectViews.get(browseObject, openmct.router.path)[0];
-        if (defaultProvider) {
-          openmct.router.updateParams({
-            view: defaultProvider.key
-          });
+  function pathToObjects(path) {
+    return Promise.all(
+      path.map((keyString) => {
+        let identifier = openmct.objects.parseKeyString(keyString);
+        if (openmct.objects.supportsMutation(identifier)) {
+          return openmct.objects.getMutable(identifier);
         } else {
-          openmct.router.updateParams({
-            view: undefined
-          });
-          openmct.layout.$refs.browseObject.clear();
+          return openmct.objects.get(identifier);
+        }
+      })
+    );
+  }
+
+  function navigateToFirstChildOfRoot() {
+    openmct.objects
+      .get('ROOT')
+      .then((rootObject) => {
+        const composition = openmct.composition.get(rootObject);
+        if (!composition) {
+          return;
+        }
+
+        composition
+          .load()
+          .then((children) => {
+            let lastChild = children[children.length - 1];
+            if (lastChild) {
+              let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
+              openmct.router.setPath(`#/browse/${lastChildId}`);
+            }
+          })
+          .catch((e) => console.error(e));
+      })
+      .catch((e) => console.error(e));
+  }
+
+  function clearMutationListeners() {
+    if (openmct.router.path !== undefined) {
+      openmct.router.path.forEach((pathObject) => {
+        if (pathObject.isMutable) {
+          openmct.objects.destroyMutable(pathObject);
         }
       });
     }
-
-    function pathToObjects(path) {
-      return Promise.all(
-        path.map((keyString) => {
-          let identifier = openmct.objects.parseKeyString(keyString);
-          if (openmct.objects.supportsMutation(identifier)) {
-            return openmct.objects.getMutable(identifier);
-          } else {
-            return openmct.objects.get(identifier);
-          }
-        })
-      );
-    }
-
-    function navigateToFirstChildOfRoot() {
-      openmct.objects
-        .get('ROOT')
-        .then((rootObject) => {
-          const composition = openmct.composition.get(rootObject);
-          if (!composition) {
-            return;
-          }
-
-          composition
-            .load()
-            .then((children) => {
-              let lastChild = children[children.length - 1];
-              if (lastChild) {
-                let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
-                openmct.router.setPath(`#/browse/${lastChildId}`);
-              }
-            })
-            .catch((e) => console.error(e));
-        })
-        .catch((e) => console.error(e));
-    }
-
-    function clearMutationListeners() {
-      if (openmct.router.path !== undefined) {
-        openmct.router.path.forEach((pathObject) => {
-          if (pathObject.isMutable) {
-            openmct.objects.destroyMutable(pathObject);
-          }
-        });
-      }
-    }
-  };
-});
+  }
+}

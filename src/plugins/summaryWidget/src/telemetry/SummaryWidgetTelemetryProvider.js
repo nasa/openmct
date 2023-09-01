@@ -20,44 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./EvaluatorPool'], function (EvaluatorPool) {
-  function SummaryWidgetTelemetryProvider(openmct) {
-    this.pool = new EvaluatorPool(openmct);
+import EvaluatorPool from './EvaluatorPool';
+
+export default function SummaryWidgetTelemetryProvider(openmct) {
+  this.pool = new EvaluatorPool(openmct);
+}
+
+SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
+  return domainObject.type === 'summary-widget';
+};
+
+SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
+  if (options.strategy !== 'latest' && options.size !== 1) {
+    return Promise.resolve([]);
   }
 
-  SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
-    return domainObject.type === 'summary-widget';
-  };
+  const evaluator = this.pool.get(domainObject);
 
-  SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
-    if (options.strategy !== 'latest' && options.size !== 1) {
-      return Promise.resolve([]);
-    }
-
-    const evaluator = this.pool.get(domainObject);
-
-    return evaluator.requestLatest(options).then(
-      function (latestDatum) {
-        this.pool.release(evaluator);
-
-        return latestDatum ? [latestDatum] : [];
-      }.bind(this)
-    );
-  };
-
-  SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
-    return domainObject.type === 'summary-widget';
-  };
-
-  SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
-    const evaluator = this.pool.get(domainObject);
-    const unsubscribe = evaluator.subscribe(callback);
-
-    return function () {
+  return evaluator.requestLatest(options).then(
+    function (latestDatum) {
       this.pool.release(evaluator);
-      unsubscribe();
-    }.bind(this);
-  };
 
-  return SummaryWidgetTelemetryProvider;
-});
+      return latestDatum ? [latestDatum] : [];
+    }.bind(this)
+  );
+};
+
+SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
+  return domainObject.type === 'summary-widget';
+};
+
+SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
+  const evaluator = this.pool.get(domainObject);
+  const unsubscribe = evaluator.subscribe(callback);
+
+  return function () {
+    this.pool.release(evaluator);
+    unsubscribe();
+  }.bind(this);
+};

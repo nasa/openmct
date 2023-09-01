@@ -75,9 +75,9 @@ if (document.currentScript) {
  * @property {OpenMCTComponent[]} components
  */
 
-const MCT = require('./src/MCT');
+import { MCT } from './src/MCT';
 
 /** @type {OpenMCT} */
 const openmct = new MCT();
 
-module.exports = openmct;
+export default openmct;

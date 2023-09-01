@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./LADClock'], function (LADClock) {
-  return function () {
-    return function (openmct) {
-      openmct.time.addClock(new LADClock());
-    };
+import LADClock from './LADClock';
+
+export default function () {
+  return function (openmct) {
+    openmct.time.addClock(new LADClock());
   };
-});
+}

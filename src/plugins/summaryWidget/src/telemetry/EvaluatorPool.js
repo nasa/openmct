@@ -20,40 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./SummaryWidgetEvaluator', 'objectUtils'], function (SummaryWidgetEvaluator, objectUtils) {
-  function EvaluatorPool(openmct) {
-    this.openmct = openmct;
-    this.byObjectId = {};
-    this.byEvaluator = new WeakMap();
+import objectUtils from 'objectUtils';
+
+import SummaryWidgetEvaluator from './SummaryWidgetEvaluator';
+
+export default function EvaluatorPool(openmct) {
+  this.openmct = openmct;
+  this.byObjectId = {};
+  this.byEvaluator = new WeakMap();
+}
+
+EvaluatorPool.prototype.get = function (domainObject) {
+  const objectId = objectUtils.makeKeyString(domainObject.identifier);
+  let poolEntry = this.byObjectId[objectId];
+  if (!poolEntry) {
+    poolEntry = {
+      leases: 0,
+      objectId: objectId,
+      evaluator: new SummaryWidgetEvaluator(domainObject, this.openmct)
+    };
+    this.byEvaluator.set(poolEntry.evaluator, poolEntry);
+    this.byObjectId[objectId] = poolEntry;
   }
 
-  EvaluatorPool.prototype.get = function (domainObject) {
-    const objectId = objectUtils.makeKeyString(domainObject.identifier);
-    let poolEntry = this.byObjectId[objectId];
-    if (!poolEntry) {
-      poolEntry = {
-        leases: 0,
-        objectId: objectId,
-        evaluator: new SummaryWidgetEvaluator(domainObject, this.openmct)
-      };
-      this.byEvaluator.set(poolEntry.evaluator, poolEntry);
-      this.byObjectId[objectId] = poolEntry;
-    }
+  poolEntry.leases += 1;
 
-    poolEntry.leases += 1;
+  return poolEntry.evaluator;
+};
 
-    return poolEntry.evaluator;
-  };
-
-  EvaluatorPool.prototype.release = function (evaluator) {
-    const poolEntry = this.byEvaluator.get(evaluator);
-    poolEntry.leases -= 1;
-    if (poolEntry.leases === 0) {
-      evaluator.destroy();
-      this.byEvaluator.delete(evaluator);
-      delete this.byObjectId[poolEntry.objectId];
-    }
-  };
-
-  return EvaluatorPool;
-});
+EvaluatorPool.prototype.release = function (evaluator) {
+  const poolEntry = this.byEvaluator.get(evaluator);
+  poolEntry.leases -= 1;
+  if (poolEntry.leases === 0) {
+    evaluator.destroy();
+    this.byEvaluator.delete(evaluator);
+    delete this.byObjectId[poolEntry.objectId];
+  }
+};
