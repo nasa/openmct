@@ -124,7 +124,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name propertyEditors
    */
-  propretyEditors = new ViewRegistry();
+  propertyEditors = new ViewRegistry();
 
   /**
    * Registry for views which should appear in the toolbar area while
