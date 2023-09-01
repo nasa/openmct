@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 const helperFunctions = {
-  listenTo: function (object, event, callback, context) {
+  listenTo(object, event, callback, context) {
     if (!this._listeningTo) {
       this._listeningTo = [];
     }
@@ -47,7 +47,7 @@ const helperFunctions = {
     this._listeningTo.push(listener);
   },
 
-  stopListening: function (object, event, callback, context) {
+  stopListening(object, event, callback, context) {
     if (!this._listeningTo) {
       this._listeningTo = [];
     }

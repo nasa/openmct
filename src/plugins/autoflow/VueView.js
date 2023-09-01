@@ -22,13 +22,15 @@
 
 import mount from 'utils/mount';
 export default function () {
-  return function VueView(options) {
-    const { vNode, destroy } = mount(options);
+  class VueView {
+    constructor(options) {
+      const { vNode, destroy } = mount(options);
+      this.show = function (container) {
+        container.appendChild(vNode.el);
+      };
+      this.destroy = destroy;
+    }
+  }
 
-    this.show = function (container) {
-      container.appendChild(vNode.el);
-    };
-
-    this.destroy = destroy;
-  };
+  return VueView;
 }

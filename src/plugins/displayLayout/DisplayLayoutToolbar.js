@@ -165,7 +165,7 @@ export default function DisplayLayoutToolbar(openmct) {
           return {
             control: 'menu',
             domainObject: selectionPath[0].context.item,
-            method: function (option) {
+            method(option) {
               let name = option.name.toLowerCase();
               let form = DIALOG_FORM[name];
               if (form) {
@@ -236,7 +236,7 @@ export default function DisplayLayoutToolbar(openmct) {
           domainObject: selectedParent,
           icon: 'icon-trash',
           title: 'Delete the selected object',
-          method: function () {
+          method() {
             let removeItem = selectionPath[1].context.removeItem;
             let prompt = openmct.overlays.dialog({
               iconClass: 'alert',
@@ -290,7 +290,7 @@ export default function DisplayLayoutToolbar(openmct) {
               class: 'icon-arrow-double-down'
             }
           ],
-          method: function (option) {
+          method(option) {
             selectionPath[1].context.orderItem(option.value, getAllTypes(selectedObjects));
           }
         };
@@ -474,7 +474,7 @@ export default function DisplayLayoutToolbar(openmct) {
           domainObject: selectedParent,
           icon: 'icon-duplicate',
           title: 'Duplicate the selected object',
-          method: function () {
+          method() {
             let duplicateItem = selectionPath[1].context.duplicateItem;
 
             duplicateItem(selection);
@@ -574,7 +574,7 @@ export default function DisplayLayoutToolbar(openmct) {
               title: 'Switch the way this telemetry is displayed',
               label: 'View type',
               options: viewOptions,
-              method: function (option) {
+              method(option) {
                 displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
               }
             };
@@ -590,7 +590,7 @@ export default function DisplayLayoutToolbar(openmct) {
               title: 'Merge into a telemetry table or plot',
               label: 'View type',
               options: APPLICABLE_VIEWS['telemetry-view-multi'],
-              method: function (option) {
+              method(option) {
                 displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
               }
             };
@@ -603,7 +603,7 @@ export default function DisplayLayoutToolbar(openmct) {
               icon: 'icon-object',
               title: 'Merge into a stacked plot',
               options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
-              method: function (option) {
+              method(option) {
                 displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
               }
             };
@@ -627,7 +627,7 @@ export default function DisplayLayoutToolbar(openmct) {
           control: 'button',
           domainObject: displayLayoutContext.item,
           icon: ICON_GRID_SHOW,
-          method: function () {
+          metho() {
             displayLayoutContext.toggleGrid();
 
             this.icon = this.icon === ICON_GRID_SHOW ? ICON_GRID_HIDE : ICON_GRID_SHOW;
