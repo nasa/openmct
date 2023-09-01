@@ -381,6 +381,27 @@ For best practices with regards to mocking network responses, see our [couchdb.e
 
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
+- Overriding the Clock
+It is possible to override the browser clock by using the `overrideClock` fixture as such:
+
+```js
+test.describe('foo test suite', () => {
+  
+  // All subsequent tests in this suite will override the clock
+  test.use({
+    clockOptions: {
+      now: 1732413600000, // A timestamp given as milliseconds since the epoch
+      shouldAdvanceTime: true // Should the clock tick?
+    }
+  });
+
+  test('bar test', async ({ page }) => {
+    // ...
+  });
+});
+  ```
+  More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
+
 - Working with multiple pages
 There are instances where multiple browser pages will need to be opened to verify multi-page or multi-tab application behavior.
 
