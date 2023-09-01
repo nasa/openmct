@@ -627,7 +627,7 @@ export default function DisplayLayoutToolbar(openmct) {
           control: 'button',
           domainObject: displayLayoutContext.item,
           icon: ICON_GRID_SHOW,
-          metho() {
+          method() {
             displayLayoutContext.toggleGrid();
 
             this.icon = this.icon === ICON_GRID_SHOW ? ICON_GRID_HIDE : ICON_GRID_SHOW;
