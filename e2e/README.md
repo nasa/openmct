@@ -381,10 +381,12 @@ For best practices with regards to mocking network responses, see our [couchdb.e
 
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
-- Overriding the Clock
-It is possible to override the browser clock by using the `overrideClock` fixture as such:
+- Overriding the Browser's Clock
+It is possible to override the browser's clock in order to control time-based elements. To do this, use the `overrideClock` fixture as such:
 
 ```js
+const { test, expect } = require('../../pluginFixtures.js');
+
 test.describe('foo test suite', () => {
   
   // All subsequent tests in this suite will override the clock
