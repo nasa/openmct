@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Timelist from './Timelist.vue';
-import { TIMELIST_TYPE } from './constants';
 import mount from 'utils/mount';
+
+import { TIMELIST_TYPE } from './constants';
+import Timelist from './Timelist.vue';
 
 export default function TimelistViewProvider(openmct) {
   return {

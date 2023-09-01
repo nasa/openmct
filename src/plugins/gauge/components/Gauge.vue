@@ -329,9 +329,10 @@
 </template>
 
 <script>
-import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
@@ -638,7 +639,11 @@ export default {
 
       this.valueKey = this.metadata.valuesForHints(['range'])[0].source;
 
-      this.openmct.telemetry.request(domainObject, { strategy: 'latest' }).then((values) => {
+      const options = {
+        strategy: 'latest',
+        timeContext: this.openmct.time.getContextForView([])
+      };
+      this.openmct.telemetry.request(domainObject, options).then((values) => {
         const length = values.length;
         this.updateValue(values[length - 1]);
       });

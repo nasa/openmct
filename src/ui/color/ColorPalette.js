@@ -26,8 +26,8 @@
  *
  * @constructor
  */
-import { isDefaultColor, COLOR_PALETTE } from './ColorHelper';
 import Color from './Color';
+import { COLOR_PALETTE, isDefaultColor } from './ColorHelper';
 
 /**
  * A color palette stores a set of colors and allows for different

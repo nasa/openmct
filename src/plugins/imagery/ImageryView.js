@@ -1,6 +1,6 @@
-import ImageryViewComponent from './components/ImageryView.vue';
-
 import mount from 'utils/mount';
+
+import ImageryViewComponent from './components/ImageryView.vue';
 
 const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
   fadeOutDelayTime: '0s',

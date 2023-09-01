@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import _ from 'lodash';
+
+import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
 import CouchDocument from './CouchDocument';
 import CouchObjectQueue from './CouchObjectQueue';
-import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from './CouchStatusIndicator';
-import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
-import _ from 'lodash';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
 
 const REV = '_rev';
 const ID = '_id';

@@ -112,10 +112,11 @@
 </template>
 
 <script>
-import { objectPath } from './formUtil';
 import _ from 'lodash';
-import eventHelpers from '../../lib/eventHelpers';
+
 import configStore from '../../configuration/ConfigStore';
+import eventHelpers from '../../lib/eventHelpers';
+import { objectPath } from './formUtil';
 
 export default {
   inject: ['openmct', 'domainObject'],

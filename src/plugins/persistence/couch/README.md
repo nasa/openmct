@@ -43,6 +43,14 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 
 Open MCT will now use your local CouchDB container as its persistence store. Access the CouchDB instance manager by visiting <http://localhost:5984/_utils>.
 
+### Removing CouchDB Container completely
+
+To completely remove the CouchDB container and volumes:
+
+```sh
+docker stop couch-couchdb-1;docker rm couch-couchdb-1;docker volume rm couch_couchdb
+```
+
 ## macOS
 
 While we highly recommend using the CouchDB docker-compose installation, it is still possible to install CouchDB through other means.

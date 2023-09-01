@@ -20,9 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Notebook from './components/Notebook.vue';
-import Agent from '@/utils/agent/Agent';
 import mount from 'utils/mount';
+
+import Agent from '@/utils/agent/Agent';
+
+import Notebook from './components/Notebook.vue';
 
 export default class NotebookViewProvider {
   constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {

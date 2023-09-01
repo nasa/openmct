@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import { createMyItemsIdentifier, MY_ITEMS_KEY } from './createMyItemsIdentifier';
 
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;

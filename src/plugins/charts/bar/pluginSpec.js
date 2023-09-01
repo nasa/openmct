@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-import BarGraphPlugin from './plugin';
 // import BarGraph from './BarGraphPlot.vue';
 import EventEmitter from 'EventEmitter';
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './BarGraphConstants';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import BarGraphPlugin from './plugin';
 
 describe('the plugin', function () {
   let element;

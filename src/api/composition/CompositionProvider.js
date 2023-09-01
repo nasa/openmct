@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
+
 import objectUtils from '../objects/object-utils';
 
 /**
