@@ -9,7 +9,7 @@
  * @param {Object} compositionObjs The current set of composition objects to
  *                                 evaluate for 'any' and 'all' conditions
  */
-function ConditionEvaluator(subscriptionCache, compositionObjs) {
+export default function ConditionEvaluator(subscriptionCache, compositionObjs) {
   this.subscriptionCache = subscriptionCache;
   this.compositionObjs = compositionObjs;
 

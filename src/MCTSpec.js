@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import testUtils from 'utils/testing';
+import * as testUtils from 'utils/testing';
 
 import plugins from './plugins/plugins';
 

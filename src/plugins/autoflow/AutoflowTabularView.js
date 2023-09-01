@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import * as autoflowTemplate from './autoflow-tabular.html';
+import autoflowTemplate from './autoflow-tabular.html';
 import AutoflowTabularConstants from './AutoflowTabularConstants';
 import AutoflowTabularController from './AutoflowTabularController';
 import VueView from './VueView';

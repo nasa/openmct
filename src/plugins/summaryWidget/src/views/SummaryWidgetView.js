@@ -1,6 +1,6 @@
 import * as urlSanitizeLib from '@braintree/sanitize-url';
 
-import * as summaryWidgetTemplate from './summary-widget.html';
+import summaryWidgetTemplate from './summary-widget.html';
 
 const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
 

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import testingUtils from 'utils/testing';
+import * as testingUtils from 'utils/testing';
 
 import URLIndicatorPlugin from './URLIndicatorPlugin';
 

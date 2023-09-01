@@ -2,7 +2,7 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 import * as templateHelpers from '../../../utils/template/templateHelpers';
-import * as ruleTemplate from '../res/ruleTemplate.html';
+import ruleTemplate from '../res/ruleTemplate.html';
 import Condition from './Condition';
 import eventHelpers from './eventHelpers';
 import ColorPalette from './input/ColorPalette';

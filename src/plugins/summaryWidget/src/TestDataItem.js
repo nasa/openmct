@@ -1,7 +1,7 @@
 import EventEmitter from 'EventEmitter';
 
 import * as templateHelpers from '../../../utils/template/templateHelpers';
-import * as itemTemplate from '../res/testDataItemTemplate.html';
+import itemTemplate from '../res/testDataItemTemplate.html';
 import eventHelpers from './eventHelpers';
 import KeySelect from './input/KeySelect';
 import ObjectSelect from './input/ObjectSelect';

@@ -1,7 +1,7 @@
 import EventEmitter from 'EventEmitter';
 
 import * as templateHelpers from '../../../../utils/template/templateHelpers';
-import * as selectTemplate from '../../res/input/selectTemplate.html';
+import selectTemplate from '../../res/input/selectTemplate.html';
 import eventHelpers from '../eventHelpers';
 
 /**
