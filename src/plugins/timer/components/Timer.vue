@@ -173,7 +173,7 @@ export default {
     });
     this.$nextTick(() => {
       if (!this.configuration?.timerState) {
-        const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
+        const timerAction = !this.timeDelta ? 'stop' : 'start';
         this.triggerAction(`timer.${timerAction}`);
       }
 
