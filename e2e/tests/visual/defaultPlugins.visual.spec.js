@@ -29,11 +29,11 @@ are only meant to run against openmct's app.js started by `npm run start` within
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Default', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
   });
 
   test('Visual - Default Dashboard', async ({ page, theme }) => {

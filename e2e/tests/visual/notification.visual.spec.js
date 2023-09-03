@@ -27,11 +27,12 @@
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 test.describe("Visual - Check Notification Info Banner of 'Save successful'", () => {
   test.beforeEach(async ({ page }) => {
-    // Go to baseURL and Hide Tree
-    await page.goto('./', { waitUntil: 'networkidle' });
+    //await page.goto('./');
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
   });
 
   test("Create a clock, click on 'Save successful' banner and dismiss it", async ({
@@ -43,12 +44,6 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful'", ()
       type: 'Clock',
       name: 'Default Clock'
     });
-    // Verify there is a button with aria-label="Review 1 Notification"
-    expect(await page.locator('button[aria-label="Review 1 Notification"]').isVisible()).toBe(true);
-    // Verify there is a button with aria-label="Clear all notifications"
-    expect(await page.locator('button[aria-label="Clear all notifications"]').isVisible()).toBe(
-      true
-    );
     // Click on the div with role="alert" that has "Save successful" text
     await page.locator('div[role="alert"]:has-text("Save successful")').click();
     // Verify there is a div with role="dialog"

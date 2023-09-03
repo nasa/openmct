@@ -31,6 +31,7 @@ const {
   startAndAddRestrictedNotebookObject,
   enterTextEntry
 } = require('../../helper/notebookUtils');
+const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,8 +46,7 @@ test.describe('Visual - Restricted Notebook', () => {
 
 test.describe('Visual - Notebook', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
   });
   test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;

@@ -21,6 +21,7 @@
  *****************************************************************************/
 /* global __dirname */
 const path = require('path');
+const VISUAL_URL = require('../../e2e/constants').VISUAL_URL;
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -55,7 +56,7 @@ async function navigateToFaultManagementWithoutExample(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultItemInTree(page) {
-  await page.goto('./', { waitUntil: 'networkidle' });
+  await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
 
   const faultManagementTreeItem = page
     .getByRole('tree', {

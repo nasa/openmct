@@ -23,6 +23,7 @@
 const path = require('path');
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
+const { VISUAL_URL } = require('../../constants');
 
 const utils = require('../../helper/faultUtils');
 
@@ -31,7 +32,7 @@ test.describe('Fault Management Visual Tests', () => {
     await page.addInitScript({
       path: path.join(__dirname, '../../helper/', 'addInitFaultManagementPlugin.js')
     });
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
 
     await percySnapshot(page, `Fault Management icon appears in tree (theme: '${theme}')`);
   });

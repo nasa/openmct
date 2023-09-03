@@ -26,6 +26,7 @@ This test suite is dedicated to tests which verify search functionality.
 
 const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const { VISUAL_URL } = require('../../constants');
 
 const percySnapshot = require('@percy/playwright');
 
@@ -33,8 +34,7 @@ test.describe('Grand Search', () => {
   let clock;
   let displayLayout;
   test.beforeEach(async ({ page, theme }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.getByTitle('Collapse Browse Pane').click();
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
 
     displayLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',

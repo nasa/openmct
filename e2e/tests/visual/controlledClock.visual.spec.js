@@ -25,13 +25,13 @@ Collection of Visual Tests set to run with browser clock manipulate made possibl
 clockOptions plugin fixture.
 */
 
+const { VISUAL_URL } = require('../../constants');
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
   });
   test.use({
     storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
@@ -41,9 +41,7 @@ test.describe('Visual - Controlled Clock', () => {
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    // Go to baseURL
-    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-    await page.getByTitle('Collapse Browse Pane').click();
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
     await page
       .locator('a')
       .filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' })

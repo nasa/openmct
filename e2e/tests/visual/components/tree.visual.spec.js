@@ -25,13 +25,14 @@ const {
   expandTreePaneItemByName,
   createDomainObjectWithDefaults
 } = require('../../../appActions.js');
+const VISUAL_URL = require('../../../constants.js').VISUAL_URL;
 
 const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Tree Pane', () => {
   test('Tree pane in various states @unstable', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
-    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
 
     const foo = await createDomainObjectWithDefaults(page, {
       type: 'Folder',

@@ -23,13 +23,15 @@
 const { expect, test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 test.describe('Visual - LAD Table', () => {
   /** @type {import('@playwright/test').Locator} */
   let ladTable;
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+
     // Create LAD Table
     ladTable = await createDomainObjectWithDefaults(page, {
       type: 'LAD Table',
@@ -55,9 +57,6 @@ test.describe('Visual - LAD Table', () => {
   });
   test('Toggled column widths behave accordingly', async ({ page, theme }) => {
     await page.goto(ladTable.url);
-    //Close panes for visual consistency
-    await page.getByTitle('Collapse Inspect Pane').click();
-    await page.getByTitle('Collapse Browse Pane').click();
 
     await expect(page.locator('button[title="Expand Columns"]')).toBeVisible();
 
