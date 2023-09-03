@@ -20,24 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
+import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
-import NotebookViewProvider from './NotebookViewProvider';
-import NotebookType from './NotebookType';
-import SnapshotContainer from './snapshot-container';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
-
-import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import {
+  NOTEBOOK_BASE_INSTALLED,
   NOTEBOOK_TYPE,
-  RESTRICTED_NOTEBOOK_TYPE,
   NOTEBOOK_VIEW_TYPE,
-  RESTRICTED_NOTEBOOK_VIEW_TYPE,
-  NOTEBOOK_BASE_INSTALLED
+  RESTRICTED_NOTEBOOK_TYPE,
+  RESTRICTED_NOTEBOOK_VIEW_TYPE
 } from './notebook-constants';
-
-import mount from 'utils/mount';
+import NotebookType from './NotebookType';
+import NotebookViewProvider from './NotebookViewProvider';
+import SnapshotContainer from './snapshot-container';
 
 let notebookSnapshotContainer;
 function getSnapshotContainer(openmct) {
@@ -83,7 +82,7 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode } = mount(
+  const { vNode, destroy } = mount(
     {
       components: {
         NotebookSnapshotIndicator
@@ -102,7 +101,8 @@ function installBaseNotebookFunctionality(openmct) {
   const indicator = {
     element: vNode.el,
     key: 'notebook-snapshot-indicator',
-    priority: openmct.priority.DEFAULT
+    priority: openmct.priority.DEFAULT,
+    destroy: destroy
   };
 
   openmct.indicators.add(indicator);

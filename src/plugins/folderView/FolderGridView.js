@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
+
 import GridViewComponent from './components/GridView.vue';
 import { ALLOWED_FOLDER_TYPES } from './constants.js';
-import mount from 'utils/mount';
 
 export default class FolderGridView {
   constructor(openmct) {
