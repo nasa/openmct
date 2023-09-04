@@ -22,9 +22,10 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
-import GrandSearch from './GrandSearch.vue';
+
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
+import GrandSearch from './GrandSearch.vue';
 
 xdescribe('GrandSearch', () => {
   let openmct;

@@ -86,11 +86,11 @@
 </template>
 
 <script>
-import ToolbarColorPicker from '@/ui/toolbar/components/toolbar-color-picker.vue';
-import ToolbarButton from '@/ui/toolbar/components/toolbar-button.vue';
-import ToolbarToggleButton from '@/ui/toolbar/components/toolbar-toggle-button.vue';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils';
+import ToolbarButton from '@/ui/toolbar/components/toolbar-button.vue';
+import ToolbarColorPicker from '@/ui/toolbar/components/toolbar-color-picker.vue';
+import ToolbarToggleButton from '@/ui/toolbar/components/toolbar-toggle-button.vue';
 
 export default {
   name: 'StyleEditor',

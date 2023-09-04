@@ -24,8 +24,9 @@
 </template>
 
 <script>
-import AboutDialog from './AboutDialog.vue';
 import mount from 'utils/mount';
+
+import AboutDialog from './AboutDialog.vue';
 
 export default {
   inject: ['openmct'],

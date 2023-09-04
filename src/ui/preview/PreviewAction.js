@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Preview from './Preview.vue';
-import mount from 'utils/mount';
 import EventEmitter from 'EventEmitter';
+import mount from 'utils/mount';
+
+import Preview from './Preview.vue';
 
 export default class PreviewAction extends EventEmitter {
   constructor(openmct) {
