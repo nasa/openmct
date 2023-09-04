@@ -40,7 +40,7 @@
     >
 
     <progress-bar
-      v-if="activeModel.progressPerc !== null"
+      v-if="activeModel.progressPerc"
       class="c-message-banner__progress-bar"
       :model="activeModel"
     />
@@ -178,7 +178,7 @@ export default {
         return;
       }
 
-      if (this.activeModel.progressPerc !== null) {
+      if (this.activeModel.progressPerc) {
         maximizedDialog = this.openmct.overlays.progressDialog({
           buttons: [minimizeButton],
           ...this.activeModel
