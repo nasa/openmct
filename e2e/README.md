@@ -430,7 +430,7 @@ test.describe('foo test suite', () => {
   More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
 
 - Working with multiple pages
-There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended usecase. Generally pages should be used unless testing `sharedWorker` code, specifically.
+There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended use case. Generally pages should be used unless testing `sharedWorker` code, specifically.
 
 ### Reporting
 
