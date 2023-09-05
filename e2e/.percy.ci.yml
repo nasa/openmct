@@ -1,6 +1,4 @@
 version: 2
-discovery:
-  concurrency: 2
 snapshot:
   widths: [1024]
   min-height: 1440 # px
