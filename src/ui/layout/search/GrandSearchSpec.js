@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 
@@ -27,7 +28,7 @@ import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 import GrandSearch from './GrandSearch.vue';
 
-xdescribe('GrandSearch', () => {
+describe('GrandSearch', () => {
   let openmct;
   let grandSearchComponent;
   let viewContainer;
@@ -42,6 +43,7 @@ xdescribe('GrandSearch', () => {
   let originalRouterPath;
   let mockNewObject;
   let mockObjectProvider;
+  let _destroy;
 
   beforeEach((done) => {
     openmct = createOpenMct();
@@ -186,16 +188,22 @@ xdescribe('GrandSearch', () => {
       document.body.appendChild(parent);
       viewContainer = document.createElement('div');
       parent.append(viewContainer);
-      grandSearchComponent = new Vue({
-        el: viewContainer,
-        components: {
-          GrandSearch
+      const { vNode, destroy } = mount(
+        {
+          components: {
+            GrandSearch
+          },
+          provide: {
+            openmct
+          },
+          template: '<GrandSearch/>'
         },
-        provide: {
-          openmct
-        },
-        template: '<GrandSearch/>'
-      }).$mount();
+        {
+          element: viewContainer
+        }
+      );
+      grandSearchComponent = vNode.componentInstance;
+      _destroy = destroy;
       await Vue.nextTick();
       done();
     });
@@ -205,8 +213,7 @@ xdescribe('GrandSearch', () => {
   afterEach(() => {
     openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
     openmct.router.path = originalRouterPath;
-    grandSearchComponent.$destroy();
-    document.body.removeChild(parent);
+    _destroy();
 
     return resetApplicationState(openmct);
   });
@@ -278,7 +285,7 @@ xdescribe('GrandSearch', () => {
 
   it('should preview object search results in edit mode if object clicked', async () => {
     await grandSearchComponent.$children[0].searchEverything('Folder');
-    grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+    grandSearchComponent.$children[0].openmct.router.path = [mockDisplayLayout];
     await Vue.nextTick();
     const searchResults = document.querySelectorAll('[name="Test Folder"]');
     expect(searchResults.length).toBe(1);
@@ -290,7 +297,7 @@ xdescribe('GrandSearch', () => {
 
   it('should preview annotation search results in edit mode if annotation clicked', async () => {
     await grandSearchComponent.$children[0].searchEverything('Dri');
-    grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
+    grandSearchComponent.$children[0].openmct.router.path = [mockDisplayLayout];
     await Vue.nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(1);
