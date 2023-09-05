@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import BarGraphView from './BarGraphView.vue';
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import mount from 'utils/mount';
+
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import BarGraphView from './BarGraphView.vue';
 
 export default function BarGraphViewProvider(openmct) {
   function isCompactView(objectPath) {

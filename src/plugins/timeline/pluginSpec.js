@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '@/utils/testing';
-import TimelinePlugin from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import Vue from 'vue';
+
+import { createOpenMct, resetApplicationState } from '@/utils/testing';
+
+import TimelinePlugin from './plugin';
 
 describe('the plugin', function () {
   let objectDef;

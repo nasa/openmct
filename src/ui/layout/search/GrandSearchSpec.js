@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
-import GrandSearch from './GrandSearch.vue';
+
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
-import mount from 'utils/mount';
+import GrandSearch from './GrandSearch.vue';
 
 describe('GrandSearch', () => {
   let openmct;

@@ -20,19 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventEmitter from 'EventEmitter';
+import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import PlotVuePlugin from '../plugin';
 import { nextTick } from 'vue';
-import mount from 'utils/mount';
-import Plot from '../Plot.vue';
+
 import configStore from '../configuration/ConfigStore';
-import EventEmitter from 'EventEmitter';
 import PlotOptions from '../inspector/PlotOptions.vue';
+import Plot from '../Plot.vue';
+import PlotVuePlugin from '../plugin';
 
 describe('the plugin', function () {
   let element;

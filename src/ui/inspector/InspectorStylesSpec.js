@@ -20,19 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
-import {
-  mockTelemetryTableSelection,
-  mockMultiSelectionSameStyles,
-  mockMultiSelectionMixedStyles,
-  mockMultiSelectionNonSpecificStyles,
-  mockStyle
-} from './InspectorStylesSpecMocks';
-import mount from 'utils/mount';
+
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
+
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
 import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
+import {
+  mockMultiSelectionMixedStyles,
+  mockMultiSelectionNonSpecificStyles,
+  mockMultiSelectionSameStyles,
+  mockStyle,
+  mockTelemetryTableSelection
+} from './InspectorStylesSpecMocks';
 
 describe('the inspector', () => {
   let openmct;

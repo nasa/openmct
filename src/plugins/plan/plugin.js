@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewProvider from './PlanViewProvider';
+import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
 import ActivityInspectorViewProvider from './inspector/ActivityInspectorViewProvider';
 import GanttChartInspectorViewProvider from './inspector/GanttChartInspectorViewProvider';
-import ganttChartCompositionPolicy from './GanttChartCompositionPolicy';
 import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration';
+import PlanViewProvider from './PlanViewProvider';
 
 export default function (options = {}) {
   return function install(openmct) {

@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 import Condition from './Condition';
-import { TRIGGER } from './utils/constants';
 import TelemetryCriterion from './criterion/TelemetryCriterion';
+import { TRIGGER } from './utils/constants';
 
 let openmct = {};
 let testConditionDefinition;

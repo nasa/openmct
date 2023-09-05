@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 import mount from 'utils/mount';
+
+import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
 
 export default function GanttChartInspectorViewProvider(openmct) {
   return {

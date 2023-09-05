@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Compass from './Compass.vue';
 import Vue from 'vue';
+
+import Compass from './Compass.vue';
 
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';

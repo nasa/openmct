@@ -75,9 +75,10 @@
 </template>
 
 <script>
-import FilterField from './FilterField.vue';
-import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import isEmpty from 'lodash/isEmpty';
+
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import FilterField from './FilterField.vue';
 
 export default {
   components: {

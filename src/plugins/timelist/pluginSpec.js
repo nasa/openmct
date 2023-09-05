@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import TimelistPlugin from './plugin';
-import { TIMELIST_TYPE } from './constants';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
 import { FIXED_MODE_KEY } from '../../api/time/constants';
+import { TIMELIST_TYPE } from './constants';
+import TimelistPlugin from './plugin';
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 

@@ -45,6 +45,7 @@
 
 <script>
 import raf from 'utils/raf';
+
 import throttle from '../../../utils/throttle';
 
 const moment = require('moment-timezone');

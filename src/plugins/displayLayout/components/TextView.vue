@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import LayoutFrame from './LayoutFrame.vue';
 
 export default {
   makeDefinition(openmct, gridSize, element) {
