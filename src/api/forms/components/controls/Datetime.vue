@@ -123,7 +123,6 @@ export default {
     formatDatetime(timestamp = this.model.value) {
       if (!timestamp) {
         this.resetValues();
-
         return;
       }
 
@@ -137,7 +136,7 @@ export default {
 
       const data = {
         model,
-        value: timestamp
+        value: new Date(timestamp).toISOString()
       };
 
       this.$emit('onChange', data);

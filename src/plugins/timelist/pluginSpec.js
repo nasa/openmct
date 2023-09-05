@@ -34,7 +34,7 @@ const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
 const LIST_ITEM_BODY_CLASS = '.js-table__body th';
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
   let timelistDefinition;
   let element;
   let child;
