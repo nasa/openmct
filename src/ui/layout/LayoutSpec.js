@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 
 import Layout from './Layout.vue';
 
-xdescribe('Open MCT Layout:', () => {
+describe('Open MCT Layout:', () => {
   let openmct;
   let element;
   let components;
@@ -61,6 +62,7 @@ xdescribe('Open MCT Layout:', () => {
 
       await createLayout();
       await Vue.nextTick();
+      await Vue.nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(isCollapsed(component.pane)).toBeTrue();
@@ -69,6 +71,7 @@ xdescribe('Open MCT Layout:', () => {
 
     it('on toggle collapses if expanded', async () => {
       await createLayout();
+      await Vue.nextTick();
       toggleCollapseButtons();
       await Vue.nextTick();
 
@@ -83,8 +86,8 @@ xdescribe('Open MCT Layout:', () => {
       setHideParams();
 
       await createLayout();
-      toggleExpandButtons();
       await Vue.nextTick();
+      toggleExpandButtons();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(openmct.router.getSearchParam(component.param)).not.toEqual('true');
@@ -94,21 +97,29 @@ xdescribe('Open MCT Layout:', () => {
     });
   });
 
+  // eslint-disable-next-line require-await
   async function createLayout() {
     const el = document.createElement('div');
     const child = document.createElement('div');
     el.appendChild(child);
 
-    element = await new Vue({
-      el,
-      components: {
-        Layout
+    const { vNode } = mount(
+      {
+        el,
+        components: {
+          Layout
+        },
+        provide: {
+          openmct
+        },
+        template: `<Layout ref="layout"/>`
       },
-      provide: {
-        openmct
-      },
-      template: `<Layout ref="layout"/>`
-    }).$mount().$el;
+      {
+        element: el
+      }
+    );
+
+    element = vNode.el;
 
     setComponents();
   }
