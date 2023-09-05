@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import moment from 'moment';
-
 export default class StartTimerAction {
   constructor(openmct) {
     this.name = 'Start';
