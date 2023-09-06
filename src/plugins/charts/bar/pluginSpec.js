@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
-import BarGraphPlugin from './plugin';
 // import BarGraph from './BarGraphPlot.vue';
 import EventEmitter from 'EventEmitter';
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './BarGraphConstants';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import BarGraphPlugin from './plugin';
 
 describe('the plugin', function () {
   let element;
@@ -220,7 +221,7 @@ describe('the plugin', function () {
     });
   });
 
-  xdescribe('The spectral plot view for telemetry objects with array values', () => {
+  describe('The spectral plot view for telemetry objects with array values', () => {
     let barGraphObject;
     // eslint-disable-next-line no-unused-vars
     let mockComposition;
@@ -256,7 +257,7 @@ describe('the plugin', function () {
       await Vue.nextTick();
     });
 
-    it('Renders spectral plots', () => {
+    it('Renders spectral plots', async () => {
       const dotFullTelemetryObject = {
         identifier: {
           namespace: 'someNamespace',
@@ -304,11 +305,12 @@ describe('the plugin', function () {
       barGraphView.show(child, true);
       mockComposition.emit('add', dotFullTelemetryObject);
 
-      return Vue.nextTick().then(() => {
-        const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
-        expect(plotElement).not.toBeNull();
-        barGraphView.destroy();
-      });
+      await Vue.nextTick();
+      await Vue.nextTick();
+
+      const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
+      expect(plotElement).not.toBeNull();
+      barGraphView.destroy();
     });
   });
 

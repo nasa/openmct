@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Preview from '@/ui/preview/Preview.vue';
 import mount from 'utils/mount';
+
+import Preview from '@/ui/preview/Preview.vue';
 
 export default class ViewLargeAction {
   constructor(openmct) {

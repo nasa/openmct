@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import FlexibleLayout from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
+import FlexibleLayout from './plugin';
 
 describe('the plugin', function () {
   let element;

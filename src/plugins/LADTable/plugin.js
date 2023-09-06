@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LADTableViewProvider from './LADTableViewProvider';
-import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './LADTableCompositionPolicy';
 import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider';
+import LADTableSetViewProvider from './LADTableSetViewProvider';
+import LADTableViewProvider from './LADTableViewProvider';
 import LADTableViewActions from './ViewActions';
 
 export default function plugin() {

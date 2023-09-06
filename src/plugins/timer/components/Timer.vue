@@ -25,24 +25,27 @@
     <div class="c-timer__controls">
       <button
         title="Reset"
+        aria-label="Reset"
         class="c-timer__ctrl-reset c-icon-button c-icon-button--major icon-reset"
         :class="[{ hide: timerState === 'stopped' }]"
         @click="restartTimer"
       ></button>
       <button
         :title="timerStateButtonText"
+        :aria-label="timerStateButtonText"
         class="c-timer__ctrl-pause-play c-icon-button c-icon-button--major"
         :class="[timerStateButtonIcon]"
         @click="toggleStateButton"
       ></button>
     </div>
     <div class="c-timer__direction" :class="[{ hide: !timerSign }, `icon-${timerSign}`]"></div>
-    <div class="c-timer__value">{{ timeTextValue || '--:--:--' }}</div>
+    <div class="c-timer__value">{{ timerState === 'stopped' ? '--:--:--' : timeTextValue }}</div>
   </div>
 </template>
 
 <script>
 import raf from 'utils/raf';
+
 import throttle from '../../../utils/throttle';
 
 const moment = require('moment-timezone');
@@ -169,7 +172,7 @@ export default {
     });
     this.$nextTick(() => {
       if (!this.configuration?.timerState) {
-        const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
+        const timerAction = !this.timeDelta ? 'stop' : 'start';
         this.triggerAction(`timer.${timerAction}`);
       }
 

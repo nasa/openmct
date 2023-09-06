@@ -21,10 +21,11 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants';
 import StatusAPI from './StatusAPI';
-import User from './User';
 import StoragePersistance from './StoragePersistance';
+import User from './User';
 
 class UserAPI extends EventEmitter {
   /**

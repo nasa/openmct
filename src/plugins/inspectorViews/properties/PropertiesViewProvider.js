@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Properties from './Properties.vue';
 import mount from 'utils/mount';
+
+import Properties from './Properties.vue';
 
 export default function PropertiesViewProvider(openmct) {
   return {
