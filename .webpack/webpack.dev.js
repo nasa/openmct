@@ -9,10 +9,12 @@ const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 
-const common = require('./webpack.common');
+const base = require('./webpack.base');
+
 const projectRootDir = path.resolve(__dirname, '..');
 
-module.exports = merge(common, {
+module.exports = merge(base('development'), {
+  devtool: 'inline-source-map',
   mode: 'development',
   watchOptions: {
     // Since we use require.context, webpack is watching the entire directory.
@@ -26,11 +28,12 @@ module.exports = merge(common, {
     ]
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
-      __OPENMCT_ROOT_RELATIVE__: '"dist/"'
+      __OPENMCT_ROOT_RELATIVE__: '"dist/"',
+      'process.env.NODE_ENV': JSON.stringify('development')
     })
   ],
-  devtool: 'eval-source-map',
   devServer: {
     devMiddleware: {
       writeToDisk: (filePathString) => {
@@ -42,7 +45,7 @@ module.exports = merge(common, {
     },
     watchFiles: ['**/*.css'],
     static: {
-      directory: path.join(__dirname, '..', '/dist'),
+      directory: path.join(projectRootDir, 'dist'),
       publicPath: '/dist',
       watch: false
     },
@@ -54,5 +57,10 @@ module.exports = merge(common, {
         runtimeErrors: false
       }
     }
+  },
+  stats: {
+    children: true,
+    errorDetails: true,
+    errorStack: true
   }
 });
