@@ -202,7 +202,7 @@ test.describe('Example Imagery Object', () => {
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
   });
 
-  test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+  test('Can use alt+shift+drag to create a tag and ensure toolbars disappear', async ({ page }) => {
     const canvas = page.locator('canvas');
     await canvas.hover({ trial: true });
 

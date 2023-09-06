@@ -94,8 +94,8 @@
             v-if="shouldDisplayAnnotations"
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
-            @annotationMarqueeStarted="pauseAndHideImageControls"
-            @annotationMarqueeFinished="revealImageControls"
+            @annotation-marquee-started="pauseAndHideImageControls"
+            @annotation-marquee-finished="revealImageControls"
             @annotations-changed="loadAnnotations"
           />
         </div>
