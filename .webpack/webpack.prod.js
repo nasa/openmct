@@ -1,8 +1,7 @@
 /* global __dirname module */
 
 /*
-This configuration should be used for production installs.
-It is the default webpack configuration.
+Production webpack configuration.
 */
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
@@ -21,19 +20,9 @@ module.exports = merge(base('production'), {
       'process.env.NODE_ENV': JSON.stringify('production')
     })
   ],
+  // TODO (@evenstensberg): splitchunks when application is aligned towards it
   optimization: {
     runtimeChunk: false,
-    splitChunks: {
-      cacheGroups: {
-        default: false,
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
-          chunks: 'all',
-          minChunks: 2
-        }
-      }
-    },
     minimizer: [
       new TerserPlugin({
         terserOptions: {

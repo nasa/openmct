@@ -63,10 +63,5 @@ module.exports = merge(base('development'), {
     children: true,
     errorDetails: true,
     errorStack: true
-  },
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
   }
 });

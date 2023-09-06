@@ -9,6 +9,8 @@ There are separate npm scripts to use these configurations, though simply runnin
 will use the default production configuration.
 */
 const path = require('path');
+const glob = require('glob');
+
 const packageDefinition = require('../package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -94,6 +96,7 @@ const config = function (env) {
       })
     );
   }
+
   return {
     context: path.resolve(__dirname, '..'),
     entry: {
@@ -106,7 +109,8 @@ const config = function (env) {
     },
     output: {
       globalObject: 'this',
-      filename: 'js/[name].bundle.[fullhash].js',
+      // TODO (@evenstensberg): generate application in addition to local dev build
+      filename: '[name].js',
       chunkFilename: 'chunks/[name].chunk.[fullhash].js',
       path: setImportPath('dist'),
       library: 'openmct',
