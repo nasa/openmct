@@ -9,7 +9,6 @@ There are separate npm scripts to use these configurations, though simply runnin
 will use the default production configuration.
 */
 const path = require('path');
-const glob = require('glob');
 
 const packageDefinition = require('../package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
