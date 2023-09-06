@@ -28,15 +28,74 @@ try {
   console.warn(err);
 }
 
-const projectRootDir = path.resolve(__dirname, '..');
-
 function setImportPath(p) {
+  const projectRootDir = path.resolve(__dirname, '..');
   return path.resolve(projectRootDir, p);
+}
+
+let plugins = [
+  new webpack.DefinePlugin({
+    __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
+    __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
+    __OPENMCT_REVISION__: `'${gitRevision}'`,
+    __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+  }),
+  new VueLoaderPlugin(),
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: 'src/images/favicons',
+        to: 'favicons'
+      },
+      {
+        from: './index.html',
+        transform: function (content) {
+          return content.toString().replace(/dist\//g, '');
+        }
+      },
+      {
+        from: 'src/plugins/imagery/layers',
+        to: 'imagery'
+      }
+    ]
+  })
+];
+
+// Important! This loader needs to always be first in (test: /css/scss/less)
+function setCSSLoader(env) {
+  if (env === 'production') {
+    return {
+      loader: MiniCssExtractPlugin.loader
+    };
+  }
+  return {
+    loader: 'style-loader'
+  };
+}
+
+function setPostCssLoader(env) {
+  if (env === 'production') {
+    return {
+      loader: 'postcss-loader',
+      options: {
+        sourceMap: true
+      }
+    };
+  }
+  return '';
 }
 /** @type {import('webpack').Configuration} */
 const config = function (env) {
+  if (env === 'production') {
+    plugins.push(
+      new MiniCssExtractPlugin({
+        filename: 'css/[name].[contenthash].css',
+        chunkFilename: 'chunks/[id].[contenthash].css'
+      })
+    );
+  }
   return {
-    context: projectRootDir,
+    context: path.resolve(__dirname, '..'),
     entry: {
       openmct: setImportPath('openmct.js'),
       generatorWorker: setImportPath('example/generator/generatorWorker.js'),
@@ -75,79 +134,28 @@ const config = function (env) {
         utils: setImportPath('src/utils'),
         vue: setImportPath('node_modules/@vue/compat/dist/vue.esm-bundler.js')
       },
-      extensions: ['.ts', '.css', '.scss', '.js']
+      extensions: ['.ts', '.css', '.scss', '.js', '.vue']
     },
-    plugins: [
-      new webpack.DefinePlugin({
-        __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
-        __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
-        __OPENMCT_REVISION__: `'${gitRevision}'`,
-        __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
-      }),
-      new VueLoaderPlugin(),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: 'src/images/favicons',
-            to: 'favicons'
-          },
-          {
-            from: './index.html',
-            transform: function (content) {
-              return content.toString().replace(/dist\//g, '');
-            }
-          },
-          {
-            from: 'src/plugins/imagery/layers',
-            to: 'imagery'
-          }
-        ]
-      })
-    ].concat(
-      env !== 'production'
-        ? []
-        : new MiniCssExtractPlugin({
-            filename: 'css/[name].[contenthash].css',
-            chunkFilename: 'chunks/[id].[contenthash].css'
-          })
-    ),
+    plugins,
     module: {
       rules: [
         {
           test: /\.(sc|sa|c)ss$/,
           use: [
-            env !== 'production'
-              ? {
-                  loader: 'style-loader'
-                  /*     options: {
-                    esModule: false
-                  } */
-                }
-              : { loader: MiniCssExtractPlugin.loader },
-            ,
+            setCSSLoader(env),
             {
               loader: 'css-loader',
               options: {
-                sourceMap: env !== 'production',
-                url: false,
-                import: true,
-                importLoaders: 1
+                sourceMap: env !== 'production'
               }
             },
             {
               loader: 'resolve-url-loader'
             },
-            env !== 'production'
-              ? ''
-              : {
-                  loader: 'postcss-loader',
-                  options: {
-                    sourceMap: true,
-                    options: { plugins: () => [postcssPresetEnv({ stage: 0 })] }
-                  }
-                },
+            setPostCssLoader(env),
             {
               loader: 'sass-loader',
+              // resolve-url-loader needs all loaders below its decl to have sourcemaps enabled
               options: { sourceMap: true }
             }
           ]

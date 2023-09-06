@@ -4,7 +4,6 @@
 This configuration should be used for production installs.
 It is the default webpack configuration.
 */
-const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 

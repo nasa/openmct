@@ -56,11 +56,17 @@ module.exports = merge(base('development'), {
         // See: https://github.com/webpack/webpack-dev-server/issues/4771
         runtimeErrors: false
       }
-    }
+    },
+    open: true
   },
   stats: {
     children: true,
     errorDetails: true,
     errorStack: true
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   }
 });
