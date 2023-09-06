@@ -90,7 +90,7 @@ const config = function (env) {
   if (env === 'production') {
     plugins.push(
       new MiniCssExtractPlugin({
-        filename: 'css/[name].[contenthash].css',
+        filename: '[name].css',
         chunkFilename: 'chunks/[id].[contenthash].css'
       })
     );
