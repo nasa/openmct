@@ -93,7 +93,6 @@ export default {
       }
 
       return this.descendingDataRanges[this.selectedDataRangeIndex];
-      }
     },
     selectedBounds() {
       if (this.selectedDataRange === undefined) {
