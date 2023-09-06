@@ -117,24 +117,34 @@ const config = function (env) {
           test: /\.(sc|sa|c)ss$/,
           use: [
             env !== 'production'
-              ? { loader: 'style-loader' }
+              ? {
+                  loader: 'style-loader'
+                  /*     options: {
+                    esModule: false
+                  } */
+                }
               : { loader: MiniCssExtractPlugin.loader },
             ,
             {
               loader: 'css-loader',
               options: {
                 sourceMap: env !== 'production',
-                url: false
+                url: false,
+                import: true,
+                importLoaders: 1
               }
             },
             {
               loader: 'resolve-url-loader'
             },
             env !== 'production'
-              ? {}
+              ? ''
               : {
                   loader: 'postcss-loader',
-                  options: { sourceMap: true }
+                  options: {
+                    sourceMap: true,
+                    options: { plugins: () => [postcssPresetEnv({ stage: 0 })] }
+                  }
                 },
             {
               loader: 'sass-loader',
