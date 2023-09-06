@@ -88,8 +88,11 @@ export default {
       return this.dataRanges?.length > 0;
     },
     selectedDataRange() {
-      if (this.hasDataRanges && this.selectedDataRangeIndex !== undefined) {
-        return this.descendingDataRanges[this.selectedDataRangeIndex];
+      if (!this.hasDataRanges || this.selectedDataRangeIndex === undefined) {
+        return;
+      }
+
+      return this.descendingDataRanges[this.selectedDataRangeIndex];
       }
     },
     selectedBounds() {
@@ -135,67 +138,11 @@ export default {
     isSelectedDataRange(dataRange, index) {
       const selectedDataRange = this.descendingDataRanges[index];
 
-      return dataRange.bounds.start === selectedDataRange.bounds.start
-        && dataRange.bounds.end === selectedDataRange.bounds.end;
+      return (
+        dataRange.bounds.start === selectedDataRange.bounds.start &&
+        dataRange.bounds.end === selectedDataRange.bounds.end
+      );
     }
   }
 };
 </script>
-
-<style>
-.c-inspector__data-pivot {
-  margin-top: 10px;
-}
-
-.c-inspector__data-pivot-placeholder {
-  margin-top: 8px;
-}
-
-.c-inspector__data-pivot-coordinates-wrapper {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.c-inspector__data-pivot-coordinates {
-  margin-left: 6px;
-  text-transform: capitalize;
-}
-
-.c-inspector__data-pivot-range-selector {
-  margin: 10px auto;
-  height: 25px;
-  max-width: 100%;
-}
-
-.c-inspector__imagery-view {
-  margin-top: 10px;
-}
-
-.c-imagery-view__camera-image-set {
-  grid-column: 1/3;
-}
-
-.c-imagery-view__camera-image-list {
-  display: grid;
-  grid-auto-flow: column;
-  grid-gap: 10px;
-  grid-auto-columns: min-content;
-  overflow: auto;
-  white-space: nowrap;
-  margin-top: 5px;
-}
-
-.c-imagery-view__camera-image {
-  display: inline-block;
-}
-
-.c-imagery-view__camera-image img {
-  width: 70px;
-  height: 70px;
-}
-
-.c-imagery-view__camera-image-timestamp {
-  white-space: break-spaces;
-}
-</style>

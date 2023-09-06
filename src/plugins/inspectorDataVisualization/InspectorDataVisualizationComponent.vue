@@ -81,19 +81,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.c-mmgis-inspector__flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.c-mmgis-inspector__flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.c-mmgis-inspect-properties + .c-mmgis-inspect-properties {
-  margin-top: 10px;
-}
-</style>

@@ -1,8 +1,8 @@
 <template>
   <div class="c-telemetry-frame">
-    <div class="l-element-title-bar">
-      <span class="element-title">
-        <span class="title-icon icon-telemetry"></span>
+    <div class="c-telemetry-frame__title-bar">
+      <span class="c-telemetry-frame__title">
+        <span class="c-telemetry-frame__title-icon icon-telemetry"></span>
         <span class="title-text">{{ telemetryObject.name }}</span>
       </span>
       <button title="More options" class="l-browse-bar__actions c-icon-button icon-3-dots" ref="menu-button"
@@ -83,43 +83,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.c-telemetry-frame {
-  margin: 8px 0px;
-}
-
-.l-element-title-bar {
-  display: flex;
-  align-items: center;
-  margin: 6px 0px;
-}
-
-.element-title {
-  flex: 1;
-  font-size: 1.2em;
-}
-
-.title-icon {
-  margin-right: 4px;
-}
-
-.c-menu {
-  position: absolute;
-  right: 0px;
-}
-
-.c-inspector__data-pivot .c-plot {
-  position: relative;
-  min-height: 150px;
-  max-height: 200px;
-}
-
-.c-inspector__data-pivot .c-plot .c-plot--stacked-container {
-  min-height: 150px;
-}
-
-.c-inspector__numeric-data .c-inspect-properties__header {
-  margin-bottom: 10px;
-}
-</style>
