@@ -545,18 +545,6 @@ async function setTimeBounds(page, startDate, endDate) {
 }
 
 /**
- * Selects an inspector tab based on the provided tab name
- *
- * @param {import('@playwright/test').Page} page
- * @param {String} name the name of the tab
- */
-async function selectInspectorTab(page, name) {
-  const inspectorTabs = page.getByRole('tablist');
-  const inspectorTab = inspectorTabs.getByTitle(name);
-  await inspectorTab.click();
-}
-
-/**
  * Waits and asserts that all plot series data on the page
  * is loaded and drawn.
  *
@@ -674,7 +662,6 @@ module.exports = {
   setEndOffset,
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
-  selectInspectorTab,
   waitForPlotsToRender,
   renameObjectFromContextMenu
 };

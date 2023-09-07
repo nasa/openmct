@@ -31,7 +31,7 @@ const percySnapshot = require('@percy/playwright');
 
 test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
   test.use({
     storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
@@ -41,7 +41,7 @@ test.describe('Visual - Controlled Clock', () => {
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await page
       .locator('a')
       .filter({ hasText: 'Overlay Plot with Telemetry Object Overlay Plot' })

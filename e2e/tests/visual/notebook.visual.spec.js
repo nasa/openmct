@@ -22,11 +22,7 @@
 
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const {
-  selectInspectorTab,
-  expandTreePaneItemByName,
-  createDomainObjectWithDefaults
-} = require('../../appActions');
+const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const {
   startAndAddRestrictedNotebookObject,
   enterTextEntry
@@ -46,7 +42,7 @@ test.describe('Visual - Restricted Notebook', () => {
 
 test.describe('Visual - Notebook', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
   test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
@@ -76,12 +72,15 @@ test.describe('Visual - Notebook', () => {
     });
     await enterTextEntry(page, 'Entry 0');
 
-    // Click on Annotations tab
-    await selectInspectorTab(page, 'Annotations');
+    // Open the Inspector
+    await page.getByRole('button', { name: 'Inspect' }).click();
+    // Open the Annotations tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Take snapshot of the notebook with the Annotations tab opened
     await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
 
+    // Add annotation
     await page.locator('button:has-text("Add Tag")').click();
 
     // Take snapshot of the notebook with the AutoComplete field visible
