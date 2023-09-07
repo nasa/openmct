@@ -30,7 +30,7 @@ test.describe('Visual - LAD Table', () => {
   let ladTable;
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     // Create LAD Table
     ladTable = await createDomainObjectWithDefaults(page, {

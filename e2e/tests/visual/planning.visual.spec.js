@@ -34,7 +34,7 @@ const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Plan View', async ({ page, theme }) => {
@@ -54,7 +54,7 @@ test.describe('Visual - Planning', () => {
       name: 'Plan Visual Test (Draft)',
       json: examplePlanSmall
     });
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
@@ -90,7 +90,7 @@ test.describe('Visual - Planning', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {

@@ -33,7 +33,7 @@ const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Default', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Visual - Default Dashboard', async ({ page, theme }) => {

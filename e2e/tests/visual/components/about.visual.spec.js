@@ -31,7 +31,7 @@ const VISUAL_URL = require('../../../constants').VISUAL_URL;
 test.describe('Visual - Branding', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Visual - About Modal', async ({ page, theme }) => {

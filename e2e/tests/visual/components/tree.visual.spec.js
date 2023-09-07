@@ -32,7 +32,7 @@ const percySnapshot = require('@percy/playwright');
 test.describe('Visual - Tree Pane', () => {
   test('Tree pane in various states @unstable', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     const foo = await createDomainObjectWithDefaults(page, {
       type: 'Folder',

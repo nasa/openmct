@@ -34,7 +34,7 @@ test.describe('Grand Search', () => {
   let clock;
   let displayLayout;
   test.beforeEach(async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     displayLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
