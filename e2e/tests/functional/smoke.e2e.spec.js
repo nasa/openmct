@@ -50,8 +50,6 @@ test('Verify that the create button appears and that the Folder Domain Object is
 
 test('Verify that My Items Tree appears @ipad', async ({ page, openmctConfig }) => {
   const { myItemsFolderName } = openmctConfig;
-  //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
-  test.slow();
   //Go to baseURL
   await page.goto('./');
 
