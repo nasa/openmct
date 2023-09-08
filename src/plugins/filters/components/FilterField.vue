@@ -40,7 +40,7 @@
             :aria-label="label"
             :disabled="useGlobal"
             :value="persistedValue(filter)"
-            @change="updateFilterValueFromString($event, filter)"
+            @change="updateFilterValueFromString($event, filter.comparator)"
           />
         </template>
 
@@ -125,6 +125,7 @@ export default {
       }
     }
   },
+  emits: ['filterTextValueChanged', 'filterSelected', 'clearFilters', 'filterSingleSelected'],
   data() {
     return {
       isEditing: this.openmct.editor.isEditing()

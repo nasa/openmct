@@ -64,10 +64,10 @@
           :use-global="persistedFilters.useGlobal"
           :persisted-filters="updatedFilters[metadatum.key]"
           label="Specific Filter"
-          @filterSelected="updateMultipleFiltersWithSelectedValue"
-          @filterTextValueChanged="updateFiltersWithTextValue"
-          @filterSingleSelected="updateSingleSelection"
-          @clearFilters="clearFilters"
+          @filter-selected="updateMultipleFiltersWithSelectedValue"
+          @filter-text-value-changed="updateFiltersWithTextValue"
+          @filter-single-selected="updateSingleSelection"
+          @clear-filters="clearFilters"
         />
       </ul>
     </div>
@@ -98,6 +98,7 @@ export default {
       }
     }
   },
+  emits: ['updateFilters'],
   data() {
     return {
       expanded: false,

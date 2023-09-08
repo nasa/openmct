@@ -27,6 +27,7 @@ import FiltersView from './components/FiltersView.vue';
 const FILTERS_INSPECTOR_KEY = 'filters-inspector';
 export default class FiltersInspectorViewProvider {
   constructor(openmct, supportedObjectTypesArray) {
+    console.log('supported objects', supportedObjectTypesArray);
     this.openmct = openmct;
     this.supportedObjectTypesArray = supportedObjectTypesArray;
     this.key = FILTERS_INSPECTOR_KEY;
@@ -34,7 +35,7 @@ export default class FiltersInspectorViewProvider {
   }
   canView(selection) {
     const domainObject = selection?.[0]?.[0]?.context?.item;
-
+    console.log(domainObject?.name, domainObject?.type);
     return (
       domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type)
     );

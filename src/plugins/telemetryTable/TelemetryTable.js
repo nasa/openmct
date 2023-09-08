@@ -29,7 +29,8 @@ define([
   './TelemetryTableColumn',
   './TelemetryTableUnitColumn',
   './TelemetryTableConfiguration',
-  '../../utils/staleness'
+  '../../utils/staleness',
+  'vue'
 ], function (
   EventEmitter,
   _,
@@ -39,8 +40,11 @@ define([
   TelemetryTableColumn,
   TelemetryTableUnitColumn,
   TelemetryTableConfiguration,
-  StalenessUtils
+  StalenessUtils,
+  Vue
 ) {
+  const { toRaw } = Vue;
+
   class TelemetryTable extends EventEmitter {
     constructor(domainObject, openmct) {
       super();
@@ -371,6 +375,9 @@ define([
         this.domainObject.configuration &&
         this.domainObject.configuration.filters &&
         this.domainObject.configuration.filters[keyString];
+
+      // de-reactify it
+      filters = toRaw(filters);
 
       return { filters } || {};
     }

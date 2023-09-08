@@ -44,10 +44,10 @@
         :filter-field="metadatum"
         :persisted-filters="updatedFilters[metadatum.key]"
         label="Global Filter"
-        @filterSelected="updateFiltersWithSelectedValue"
-        @filterTextValueChanged="updateFiltersWithTextValue"
-        @filterSingleSelected="updateSingleSelection"
-        @clearFilters="clearFilters"
+        @filter-selected="updateFiltersWithSelectedValue"
+        @filter-text-value-changed="updateFiltersWithTextValue"
+        @filter-single-selected="updateSingleSelection"
+        @clear-filters="clearFilters"
       />
     </ul>
   </li>
@@ -73,6 +73,7 @@ export default {
       }
     }
   },
+  emits: ['persistGlobalFilters'],
   data() {
     return {
       expanded: false,
