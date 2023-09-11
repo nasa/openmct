@@ -78,13 +78,20 @@ To read about how to write a good visual test, please see [How to write a great 
 
 To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics)
 
-### (Advanced) Snapshot Testing
+### Advanced: Snapshot Testing (Not Recommended)
 
-Snapshot testing is very similar to visual testing but allows us to be more precise in detecting change without relying on a 3rd party service. Unfortuantely, this precision requires advanced test setup and teardown and so we're using this pattern as a last resort.
+While snapshot testing offers a precise way to detect changes in your application without relying on third-party services like Percy.io, we've found that it doesn't offer any advantages over visual testing in our use-cases. Therefore, snapshot testing is **not recommended** for further implementation.
 
-To give an example, if a _single_ visual test assertion for an Overlay plot is run through multiple DOM rendering engines at various viewports to see how the Plot looks. If that same test were run as a snapshot test, it could only be executed against a single browser, on a single platform (ubuntu docker container).
+#### CI vs Manual Checks
+Snapshot tests can be reliably executed in Continuous Integration (CI) environments but lack the manual oversight provided by visual testing platforms like Percy.io. This means they may miss issues that a human reviewer could catch during manual checks.
 
-Read more about [Playwright Snapshots](https://playwright.dev/docs/test-snapshots)
+#### Example
+A single visual test assertion in Percy.io can be executed across 10 different browser and resolution combinations without additional setup, providing comprehensive testing with minimal configuration. In contrast, a snapshot test is restricted to a single OS and browser resolution, requiring more effort to achieve the same level of coverage.
+
+
+#### Further Reading
+For those interested in the mechanics of snapshot testing with Playwright, you can refer to the [Playwright Snapshots Documentation](https://playwright.dev/docs/test-snapshots). However, keep in mind that we do not recommend using this approach.
+
 
 #### Open MCT's implementation
 
@@ -295,14 +302,27 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
 
 ## Test Design, Best Practices, and Tips & Tricks
 
-### Test Design (TODO)
+### Test Design
 
-- How to make tests robust to function in other contexts (VISTA, VIPER, etc.)
-  - Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`
-- How to make tests faster and more resilient
-  - When possible, navigate directly by URL:
+#### Test as the User
 
-  ```javascript
+In general, strive to test only through the UI as a user would. As stated in the [Playwright Best Practices](https://playwright.dev/docs/best-practices#test-user-visible-behavior):
+
+> "Automated tests should verify that the application code works for the end users, and avoid relying on implementation details such as things which users will not typically use, see, or even know about such as the name of a function, whether something is an array, or the CSS class of some element. The end user will see or interact with what is rendered on the page, so your test should typically only see/interact with the same rendered output."
+
+By adhering to this principle, we can create tests that are both robust and reflective of actual user experiences.
+
+#### How to make tests robust to function in other contexts (VISTA, COUCHDB, YAMCS, VIPER, etc.)
+  1. Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`. This ensures that your tests will create unique instances of objects for your test to interact with.
+  1. Do not assert on the order or structure of objects available unless you created them yourself. These tests may be used against a persistent datastore like couchdb with many objects in the tree.
+  1. Do not search for your created objects. Open MCT does not performance uniqueness checks so it's possible that your tests will break when run twice.
+  1. Avoid creating locator aliases. This likely means that you're compensating for a bad locator. Improve the application instead.
+  1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });` instead of `{ waitUntil: 'networkidle' }`. Tests run against deployments with websockets often have issues with the networkidle detection.
+  
+#### How to make tests faster and more resilient
+  1. Avoid app interaction when possible. The best way of doing this is to navigate directly by URL:
+
+  ```js
     // You can capture the CreatedObjectInfo returned from this appAction:
     const clock = await createDomainObjectWithDefaults(page, { type: 'Clock' });
 
@@ -310,12 +330,14 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
     await page.goto(clock.url);
   ```
 
-  - Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });`
+  1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });`
     - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
-  - Avoid repeated setup to test to test a single assertion. Write longer tests with multiple soft assertions.
+  1.  Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
+  This ensures that your changes will be picked up with large refactors.
 
 ### How to write a great test (WIP)
 
+- Avoid using css locators to find elements to the page. Use modern web accessible locators like `getByRole`
 - Use our [App Actions](./appActions.js) for performing common actions whenever applicable.
   - Use `waitForPlotsToRender()` before asserting against anything that is dependent upon plot series data being loaded and drawn.
 - If you create an object outside of using the `createDomainObjectWithDefaults` App Action, make sure to fill in the 'Notes' section of your object with `page.testNotes`:
@@ -328,7 +350,29 @@ Skipping based on browser version (Rarely used): <https://github.com/microsoft/p
   await notesInput.fill(testNotes);
   ```
 
-#### How to write a great visual test (TODO)
+ #### How to Write a Great Visual Test
+
+1. **Look for the Unknown Unknowns**: Avoid asserting on specific differences in the visual diff. Visual tests are most effective for identifying unknown unknowns.
+
+2. **Get the App into Interesting States**: Prioritize getting Open MCT into unusual layouts or behaviors before capturing a visual snapshot. For instance, you could open a dropdown menu.
+
+3. **Expect the Unexpected**: Use functional expect statements only to verify assumptions about the state between steps. A great visual test doesn't fail during the test itself, but rather when changes are reviewed in Percy.io.
+
+4. **Control Variability**: Account for variations inherent in working with time-based telemetry and clocks.
+  - Utilize `percyCSS` to ignore time-based elements. For more details, consult our [percyCSS file](./.percy.ci.yml).
+  - Use Open MCT's fixed-time mode.
+  - Employ the `createExampleTelemetryObject` appAction to source telemetry and specify a `name` to avoid autogenerated names.
+
+5. **Hide the Tree and Inspector**: Generally, your test will not require comparisons involving the tree and inspector. These aspects are covered in component-specific tests (explained below). To exclude them from the comparison by default, navigate to the root of the main view with the tree and inspector hidden:
+    - `await page.goto('./#/browse/mine?hideTree=true&hideInspector=true')`
+
+6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual/component/` folder and limit the scope of the comparison to that component. For instance:
+    ```js
+    await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
+        scope: treePane
+    });
+    ```
+    - Note: The `scope` variable can be any valid CSS selector.
 
 #### How to write a great network test
 
@@ -345,12 +389,35 @@ For now, our best practices exist as self-tested, living documentation in our [e
 
 For best practices with regards to mocking network responses, see our [couchdb.e2e.spec.js](./tests/functional/couchdb.e2e.spec.js) file.
 
-### Tips & Tricks (TODO)
+### Tips & Tricks
 
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
+- (Advanced) Overriding the Browser's Clock
+It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior (i.e. Tree not rendering), only use this sparingly. To do this, use the `overrideClock` fixture as such:
+
+```js
+const { test, expect } = require('../../pluginFixtures.js');
+
+test.describe('foo test suite', () => {
+  
+  // All subsequent tests in this suite will override the clock
+  test.use({
+    clockOptions: {
+      now: 1732413600000, // A timestamp given as milliseconds since the epoch
+      shouldAdvanceTime: true // Should the clock tick?
+    }
+  });
+
+  test('bar test', async ({ page }) => {
+    // ...
+  });
+});
+  ```
+  More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
+
 - Working with multiple pages
-There are instances where multiple browser pages will need to be opened to verify multi-page or multi-tab application behavior.
+There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended use case. Generally pages should be used unless testing `sharedWorker` code, specifically.
 
 ### Reporting
 

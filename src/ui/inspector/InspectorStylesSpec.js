@@ -20,8 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
+
+import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
+
+import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
+import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
 import {
   mockTelemetryTableSelection,
   mockMultiSelectionSameStyles,
@@ -34,7 +40,7 @@ import StylesView from '@/plugins/condition/components/inspector/StylesView.vue'
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
 import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
 
-xdescribe('the inspector', () => {
+describe('the inspector', () => {
   let openmct;
   let selection;
   let stylesViewComponent;
@@ -208,13 +214,15 @@ xdescribe('the inspector', () => {
         selection,
         stylesManager
       },
-      el: element,
       components: {},
       template: `<${component.name} />`
     };
 
     config.components[component.name] = component;
 
-    return new Vue(config).$mount();
+    const { vNode } = mount(config, {
+      element
+    });
+    return vNode.componentInstance;
   }
 });

@@ -172,11 +172,11 @@ export default {
       this.cursorGuide = newCursorGuide;
     }
   },
-  mounted() {
+  created() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
-    this.loadComposition();
     this.stalenessSubscription = {};
+    this.loadComposition();
   },
   beforeUnmount() {
     this.destroy();
