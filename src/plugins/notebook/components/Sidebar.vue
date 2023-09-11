@@ -88,9 +88,10 @@
 </template>
 
 <script>
-import SectionCollection from './SectionCollection.vue';
-import PageCollection from './PageCollection.vue';
 import { v4 as uuid } from 'uuid';
+
+import PageCollection from './PageCollection.vue';
+import SectionCollection from './SectionCollection.vue';
 
 export default {
   components: {

@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ScatterPlotView from './ScatterPlotView.vue';
-import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
 import mount from 'utils/mount';
+
+import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
+import ScatterPlotView from './ScatterPlotView.vue';
 
 export default function ScatterPlotViewProvider(openmct) {
   function isCompactView(objectPath) {

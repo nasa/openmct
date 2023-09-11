@@ -9,7 +9,7 @@ module.exports = {
   globals: {
     _: 'readonly'
   },
-  plugins: ['prettier'],
+  plugins: ['prettier', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
@@ -28,6 +28,8 @@ module.exports = {
     }
   },
   rules: {
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
     'vue/no-deprecated-dollar-listeners-api': 'warn',
     'vue/no-deprecated-events-api': 'warn',
     'vue/no-v-for-template-key': 'off',

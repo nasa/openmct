@@ -134,8 +134,9 @@
   </div>
 </template>
 <script>
-import { coerce, objectPath, validate } from './formUtil';
 import _ from 'lodash';
+
+import { coerce, objectPath, validate } from './formUtil';
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],

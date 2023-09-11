@@ -50,8 +50,10 @@
 
 <script>
 import Vue, { toRaw } from 'vue';
-import LadRow from './LADRow.vue';
+
 import StalenessUtils from '@/utils/staleness';
+
+import LadRow from './LADRow.vue';
 
 export default {
   components: {

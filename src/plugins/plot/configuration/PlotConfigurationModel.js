@@ -21,11 +21,11 @@
  *****************************************************************************/
 import _ from 'lodash';
 
+import LegendModel from './LegendModel';
 import Model from './Model';
 import SeriesCollection from './SeriesCollection';
 import XAxisModel from './XAxisModel';
 import YAxisModel from './YAxisModel';
-import LegendModel from './LegendModel';
 
 const MAX_Y_AXES = 3;
 const MAIN_Y_AXES_ID = 1;

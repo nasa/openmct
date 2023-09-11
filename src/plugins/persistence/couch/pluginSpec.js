@@ -19,10 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
-import CouchPlugin from './plugin.js';
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
+import Vue from 'vue';
+
 import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import CouchPlugin from './plugin.js';
 
 describe('the plugin', () => {
   let openmct;

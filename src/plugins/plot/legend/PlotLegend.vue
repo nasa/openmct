@@ -45,7 +45,7 @@
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
-          :series-object="seriesObject"
+          :series-key-string="seriesObject.keyString"
           @legendHoverChanged="legendHoverChanged"
         />
       </div>
@@ -72,7 +72,7 @@
             <plot-legend-item-expanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
-              :series-object="seriesObject"
+              :series-key-string="seriesObject.keyString"
               :highlights="highlights"
               @legendHoverChanged="legendHoverChanged"
             />
@@ -83,10 +83,10 @@
   </div>
 </template>
 <script>
-import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
-import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
 import configStore from '../configuration/ConfigStore';
 import eventHelpers from '../lib/eventHelpers';
+import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
+import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
 
 export default {
   components: {
@@ -138,17 +138,18 @@ export default {
       return this.loaded && this.legend.get('valueToShowWhenCollapsed');
     }
   },
-  mounted() {
-    this.seriesModels = [];
+  created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
     this.legend = this.config.legend;
+    this.seriesModels = [];
+    this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
+    this.initialize();
+  },
+  mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
-    this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
     this.updatePosition();
-
-    this.initialize();
   },
   beforeUnmount() {
     if (this.objectComposition) {

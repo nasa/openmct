@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Licenses from './Licenses.vue';
 import mount from 'utils/mount';
+
+import Licenses from './Licenses.vue';
 
 export default function () {
   return function install(openmct) {
