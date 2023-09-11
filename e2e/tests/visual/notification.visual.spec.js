@@ -31,7 +31,6 @@ const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 test.describe("Visual - Check Notification Info Banner of 'Save successful'", () => {
   test.beforeEach(async ({ page }) => {
-    //await page.goto('./');
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
