@@ -227,10 +227,8 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
+
   const parentUrl = await getHashUrlToDomainObject(page, parent);
-  // TODO: Make this field even more accessible
-  const name = 'VIPER Rover Heading';
-  const nameInputLocator = page.getByRole('dialog').locator('input[type="text"]');
 
   await page.goto(`${parentUrl}`);
 
@@ -238,7 +236,8 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.locator('li:has-text("Sine Wave Generator")').click();
 
-  await nameInputLocator.fill(name);
+  const name = 'VIPER Rover Heading';
+  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
 
   // Fill out the fields with default values
   await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
