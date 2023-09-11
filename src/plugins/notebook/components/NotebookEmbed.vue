@@ -49,15 +49,17 @@
 
 <script>
 import Moment from 'moment';
-import PreviewAction from '../../../ui/preview/PreviewAction';
-import RemoveDialog from '../utils/removeDialog';
-import PainterroInstance from '../utils/painterroInstance';
-import SnapshotTemplate from './snapshot-template.html';
-import objectPathToUrl from '@/tools/url';
 import mount from 'utils/mount';
+
+import objectPathToUrl from '@/tools/url';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import { updateNotebookImageDomainObject } from '../utils/notebook-image';
 import ImageExporter from '../../../exporters/ImageExporter';
+import PreviewAction from '../../../ui/preview/PreviewAction';
+import { updateNotebookImageDomainObject } from '../utils/notebook-image';
+import PainterroInstance from '../utils/painterroInstance';
+import RemoveDialog from '../utils/removeDialog';
+import SnapshotTemplate from './snapshot-template.html';
 
 export default {
   mixins: [tooltipHelpers],

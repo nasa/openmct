@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import SelectionComponent from './components/SelectionComponent.vue';
 import Overlay from './Overlay';
-import mount from 'utils/mount';
 
 class Selection extends Overlay {
   constructor({

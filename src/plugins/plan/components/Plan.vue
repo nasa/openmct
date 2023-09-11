@@ -54,11 +54,13 @@
 
 <script>
 import * as d3Scale from 'd3-scale';
-import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
-import ActivityTimeline from './ActivityTimeline.vue';
+
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import { getValidatedData, getContrastingColor } from '../util';
+
+import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
 import PlanViewConfiguration from '../PlanViewConfiguration';
+import { getContrastingColor, getValidatedData } from '../util';
+import ActivityTimeline from './ActivityTimeline.vue';
 
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;

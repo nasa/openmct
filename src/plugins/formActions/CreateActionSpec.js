@@ -19,11 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import CreateAction from './CreateAction';
-
+import { debounce } from 'lodash';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import { debounce } from 'lodash';
+import CreateAction from './CreateAction';
 
 let parentObject;
 let parentObjectPath;

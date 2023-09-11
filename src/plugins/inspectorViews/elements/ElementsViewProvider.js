@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ElementsPool from './ElementsPool.vue';
 import mount from 'utils/mount';
+
+import ElementsPool from './ElementsPool.vue';
 
 export default function ElementsViewProvider(openmct) {
   return {

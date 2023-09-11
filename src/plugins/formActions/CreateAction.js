@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PropertiesAction from './PropertiesAction';
-import CreateWizard from './CreateWizard';
-
-import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
+import { v4 as uuid } from 'uuid';
+
+import CreateWizard from './CreateWizard';
+import PropertiesAction from './PropertiesAction';
 
 export default class CreateAction extends PropertiesAction {
   #transaction;
@@ -70,7 +70,7 @@ export default class CreateAction extends PropertiesAction {
 
     // Show saving progress dialog
     let dialog = this.openmct.overlays.progressDialog({
-      progressPerc: 'unknown',
+      progressPerc: null,
       message:
         'Do not navigate away from this page or close this browser tab while this message is displayed.',
       iconClass: 'info',

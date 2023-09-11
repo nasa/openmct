@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import ObjectName from './ObjectName.vue';
 import InspectorTabs from './InspectorTabs.vue';
 import InspectorViews from './InspectorViews.vue';
+import ObjectName from './ObjectName.vue';
 
 export default {
   components: {

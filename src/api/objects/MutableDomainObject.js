@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
-import utils from './object-utils.js';
 import EventEmitter from 'EventEmitter';
+import _ from 'lodash';
+
+import utils from './object-utils.js';
 
 const ANY_OBJECT_EVENT = 'mutation';
 

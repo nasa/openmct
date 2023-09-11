@@ -20,15 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from 'objectUtils';
-import MutableDomainObject from './MutableDomainObject';
-import RootRegistry from './RootRegistry';
-import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
-import InterceptorRegistry from './InterceptorRegistry';
-import Transaction from './Transaction';
+import utils from 'objectUtils';
+
 import ConflictError from './ConflictError';
 import InMemorySearchProvider from './InMemorySearchProvider';
+import InterceptorRegistry from './InterceptorRegistry';
+import MutableDomainObject from './MutableDomainObject';
+import RootObjectProvider from './RootObjectProvider';
+import RootRegistry from './RootRegistry';
+import Transaction from './Transaction';
 
 /**
  * Uniquely identifies a domain object.
