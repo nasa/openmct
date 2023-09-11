@@ -25,7 +25,7 @@ Collection of Visual Tests set to run with browser clock manipulate made possibl
 clockOptions plugin fixture.
 */
 
-const { VISUAL_URL } = require('../../constants');
+const { VISUAL_URL, MISSION_TIME } = require('../../constants');
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
@@ -36,6 +36,7 @@ test.describe('Visual - Controlled Clock', () => {
   test.use({
     storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
     clockOptions: {
+      now: MISSION_TIME,
       shouldAdvanceTime: false //Don't advance the clock
     }
   });
