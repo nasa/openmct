@@ -227,7 +227,6 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
-
   const parentUrl = await getHashUrlToDomainObject(page, parent);
 
   await page.goto(`${parentUrl}`);
