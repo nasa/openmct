@@ -24,7 +24,12 @@ import InspectorDataVisualizationComponent from './InspectorDataVisualizationCom
 import mount from 'utils/mount';
 
 export default function InspectorDataVisualizationViewProvider(openmct, configuration) {
-  const { type = 'mmgis', name = 'Data Visualization' } = configuration;
+  const {
+    type = 'mmgis',
+    name = 'Data Visualization',
+    plotOptions,
+    imageryOptions
+  } = configuration;
 
   return {
     key: 'inspectorDataVisualizationView',
@@ -54,7 +59,9 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
               provide: {
                 openmct,
                 domainObject,
-                timeFormatter
+                timeFormatter,
+                plotOptions,
+                imageryOptions
               },
               data() {
                 return {

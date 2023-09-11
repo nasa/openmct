@@ -22,17 +22,6 @@
 <script>
 import TelemetryFrame from './TelemetryFrame.vue';
 
-const cameraSourceMap = {
-    "Aftcam_left_image": "taxonomy:~ViperGround~Images~Aftcam_left_image",
-    "Aftcam_right_image": "taxonomy:~ViperGround~Images~Aftcam_right_image",
-    "Hazcam_back_left_image": "taxonomy:~ViperGround~Images~Hazcam_back_left_image",
-    "Hazcam_back_right_image": "taxonomy:~ViperGround~Images~Hazcam_back_right_image",
-    "Hazcam_front_left_image": "taxonomy:~ViperGround~Images~Hazcam_front_left_image",
-    "Hazcam_front_right_image": "taxonomy:~ViperGround~Images~Hazcam_front_right_image",
-    "Navcam_left_image": "taxonomy:~ViperGround~Images~Navcam_left_image",
-    "Navcam_right_image":"taxonomy:~ViperGround~Images~Navcam_right_image"
-};
-
 export default {
   inject: [
     'openmct'
@@ -44,6 +33,10 @@ export default {
     bounds: {
       type: Object,
       default: () => {}
+    },
+    telemetryKeys: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -54,7 +47,7 @@ export default {
   watch: {
     bounds() {
       this.getCameraImagesInBounds();
-    },
+    }
   },
   mounted() {
     this.getCameraImagesInBounds();
@@ -63,13 +56,12 @@ export default {
     async getCameraImagesInBounds() {
       this.camerasWithImagesInBounds = [];
       this.cameraImagesList = [];
-      const { start, end } = this.bounds;
-      // const start = 1731393638000;
-      // const end = 1731393738000;
+      // const { start, end } = this.bounds;
+      const start = 1731393638000;
+      const end = 1732393738000;
       const cameraObjectPromises = [];
-      Object.entries(cameraSourceMap).forEach((cameraDetails) => {
-        const [cameraName, cameraSourcePath] = cameraDetails;
-        const cameraPromise = this.openmct.objects.get(cameraSourcePath);
+      this.telemetryKeys.forEach(telemetryKey => {
+        const cameraPromise = this.openmct.objects.get(telemetryKey);
         cameraObjectPromises.push(cameraPromise);
       });
       const cameraObjects = await Promise.all(cameraObjectPromises);

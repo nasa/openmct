@@ -21,24 +21,21 @@
  *****************************************************************************/
 
  //InspectorDataVisualizationComponent
-.c-mmgis-inspector__flex-column {
+.c-data-visualization-inspector__flex-column {
   display: flex;
   flex-direction: column;
 }
 
-.c-mmgis-inspector__flex-row {
+.c-data-visualization-inspector__flex-row {
   display: flex;
   flex-direction: row;
 }
 
-.c-mmgis-inspect-properties + .c-mmgis-inspect-properties {
+.c-data-visualization-inspect-properties + .c-data-visualization-inspect-properties {
   margin-top: 10px;
 }
 
 // DataVisualization
-.c-inspector__data-pivot {
-  margin-top: 10px;
-}
 
 .c-inspector__data-pivot-placeholder {
   margin-top: 8px;

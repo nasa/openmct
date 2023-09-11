@@ -1,10 +1,12 @@
 <template>
-  <div class="c-mmgis-inspect-properties c-inspector__data-pivot c-mmgis-inspector__flex-column">
+  <div class="c-data-visualization-inspect-properties c-inspector__data-pivot c-data-visualization-inspector__flex-column">
     <div class="c-inspect-properties">
       <div class="c-inspect-properties__header">Data Visualization</div>
     </div>
 
-    <div v-if="hasDataRanges">
+    <div v-if="isLoading" class="c-inspector__data-pivot-placeholder">Loading...</div>
+
+    <div v-else-if="hasDataRanges">
       <div v-if="selectedDataRange !== undefined && hasDescription" class="c-inspector__data-pivot-coordinates-wrapper">
         <span class="c-tree__item__type-icon c-object-label__type-icon" :class="description.icon"></span>
         <span class="c-inspector__data-pivot-coordinates">
@@ -19,18 +21,18 @@
         </option>
       </select>
     </div>
+
     <div v-else-if="dataRanges && dataRanges.length === 0" class="c-inspector__data-pivot-placeholder">
       No data for the current {{ description.name }}
     </div>
-    <!-- <div v-else-if="dataRanges === undefined" class="c-inspector__data-pivot-placeholder">
-      Loading...
-    </div> -->
-    <div class="c-inspector__data-pivot-placeholder" v-else-if="hasPlaceholderText">
+
+    <div v-else-if="hasPlaceholderText" class="c-inspector__data-pivot-placeholder">
       {{ placeholderText }}
     </div>
+
     <template v-if="selectedBounds !== undefined">
-      <NumericData :bounds="selectedBounds" :telemetry-keys="telemetryKeys" />
-      <Imagery :bounds="selectedBounds" :options="imageryOptions"/>
+      <NumericData :bounds="selectedBounds" :telemetry-keys="plotTelemetryKeys" />
+      <Imagery v-if="hasImagery" :bounds="selectedBounds" :telemetry-keys="imageryTelemetryKeys" />
     </template>
   </div>
 </template>
@@ -46,7 +48,7 @@ export default {
     NumericData,
     Imagery
   },
-  inject: ['timeFormatter'],
+  inject: ['timeFormatter', 'imageryOptions'],
   props: {
     description: {
       type: Object,
@@ -56,7 +58,7 @@ export default {
       type: Array,
       default: () => undefined
     },
-    telemetryKeys: {
+    plotTelemetryKeys: {
       type: Array,
       default: () => []
     },
@@ -64,9 +66,9 @@ export default {
       type: String,
       default: ''
     },
-    imageryOptions: {
-      type: Object,
-      default: () => {}
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -109,6 +111,12 @@ export default {
       }
 
       return this.selectedDataRange.bounds;
+    },
+    imageryTelemetryKeys() {
+      return this.imageryOptions?.telemetryKeys;
+    },
+    hasImagery() {
+      return this.imageryTelemetryKeys?.length;
     }
   },
   watch: {

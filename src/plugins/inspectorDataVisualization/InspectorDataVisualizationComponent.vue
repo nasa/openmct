@@ -21,12 +21,13 @@
 -->
 
 <template>
-  <div class="c-inspector__properties c-mmgis-inspector__properties c-mmgis-inspector__flex-column">
+  <div class="c-inspector__properties c-data-visualization-inspector__properties c-data-visualization-inspector__flex-column">
     <DataVisualization
       :data-ranges="dataRanges"
-      :telemetry-keys="telemetryKeys"
+      :plot-telemetry-keys="plotTelemetryKeys"
       :placeholder-text="placeholderText"
       :description="description"
+      :is-loading="isLoading"
     />
   </div>
 </template>
@@ -54,7 +55,7 @@ export default {
     dataRanges() {
       return this.context.dataRanges;
     },
-    telemetryKeys() {
+    plotTelemetryKeys() {
       return this.context.telemetryKeys;
     },
     placeholderText() {
@@ -62,13 +63,10 @@ export default {
     },
     description() {
       return this.context.description;
+    },
+    isLoading() {
+      return Boolean(this.context.loading);
     }
-    // location() {
-    //   return this.mapContext?.location;
-    // },
-    // layers() {
-    //   return this.mapContext?.layers;
-    // }
   },
   mounted() {
     //
