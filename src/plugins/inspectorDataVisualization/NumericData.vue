@@ -1,8 +1,6 @@
 <template>
   <div class="c-inspector__numeric-data">
-    <div class="c-inspect-properties__header">
-      Numeric Data
-    </div>
+    <div class="c-inspect-properties__header">Numeric Data</div>
 
     <div ref="numericDataView"></div>
 
@@ -17,11 +15,7 @@ import TelemetryFrame from './TelemetryFrame.vue';
 import Plot from '../plot/Plot.vue';
 
 export default {
-  inject: [
-    'openmct',
-    'domainObject',
-    'timeFormatter'
-  ],
+  inject: ['openmct', 'domainObject', 'timeFormatter'],
   props: {
     bounds: {
       type: Object,
@@ -39,8 +33,7 @@ export default {
   },
   computed: {
     hasNumericData() {
-      return this.telemetryKeys?.length > 0
-        && this.plotObjects.length > 0;
+      return this.plotObjects.length > 0;
     }
   },
   watch: {
@@ -61,11 +54,11 @@ export default {
     this.renderNumericData();
   },
   beforeUnmount() {
-    this.destroyComponent();
+    this.clearPlots();
   },
   methods: {
     renderNumericData() {
-      // this.destroyComponent();
+      this.clearPlots();
 
       this.unregisterTimeContextList = [];
       this.elementsList = [];
@@ -120,23 +113,23 @@ export default {
       this.elementsList.push(vNode.el);
       this.$refs.numericDataView.append(vNode.el);
     },
-    destroyComponent() {
-      if (this.componentsList) {
-        this.componentsList.map(destroy => destroy());
+    clearPlots() {
+      if (this.componentsList?.length) {
+        this.componentsList.forEach((destroy) => destroy());
         delete this.componentsList;
       }
 
-      if (this.elementsList) {
-        this.elementsList.map((element) => element.remove());
+      if (this.elementsList?.length) {
+        this.elementsList.forEach((element) => element.remove());
         delete this.elementsList;
       }
 
-      if (this.plotObjects) {
+      if (this.plotObjects?.length) {
         this.plotObjects = [];
       }
 
-      if (this.unregisterTimeContextList) {
-        this.unregisterTimeContextList.map((unregisterTimeContext) => unregisterTimeContext());
+      if (this.unregisterTimeContextList?.length) {
+        this.unregisterTimeContextList.forEach((unregisterTimeContext) => unregisterTimeContext());
         delete this.unregisterTimeContextList;
       }
     }
