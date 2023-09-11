@@ -139,6 +139,7 @@ export default {
 
       if (metadataWithFilters.length) {
         this.children[keyString] = childObject;
+
         metadataWithFilters.forEach((metadatum) => {
           if (!this.globalFilters[metadatum.key]) {
             this.globalFilters[metadatum.key] = {};
