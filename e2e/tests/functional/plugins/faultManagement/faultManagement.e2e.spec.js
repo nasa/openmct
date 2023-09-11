@@ -22,7 +22,6 @@
 
 const { test, expect } = require('../../../../pluginFixtures');
 const utils = require('../../../../helper/faultUtils');
-const { selectInspectorTab } = require('../../../../appActions');
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +40,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
   }) => {
     await utils.selectFaultItem(page, 1);
 
-    await selectInspectorTab(page, 'Fault Management Configuration');
+    await page.getByRole('tab', { name: 'Fault Management Configuration' }).click();
     const selectedFaultName = await page
       .locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname')
       .textContent();
@@ -66,7 +65,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     );
     expect.soft(await selectedRows.count()).toEqual(2);
 
-    await selectInspectorTab(page, 'Fault Management Configuration');
+    await page.getByRole('tab', { name: 'Fault Management Configuration' }).click();
     const firstSelectedFaultName = await selectedRows.nth(0).textContent();
     const secondSelectedFaultName = await selectedRows.nth(1).textContent();
     const firstNameInInspectorCount = await page

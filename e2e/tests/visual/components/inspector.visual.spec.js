@@ -20,34 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-Tests the branding associated with the default deployment. At least the about modal for now
-*/
-
-const { test, expect } = require('../../../pluginFixtures');
+const { test } = require('../../../pluginFixtures.js');
+const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
 const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../../constants').VISUAL_URL;
 
-test.describe('Visual - Branding', () => {
+//Declare the scope of the visual test
+const inspectorPane = '.l-shell__pane-inspector';
+
+test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
 
-  test('Visual - About Modal', async ({ page, theme }) => {
-    // Click About button
-    await page.click('.l-shell__app-logo');
+  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
+    //Expand the Inspector Pane
+    await page.getByRole('button', { name: 'Inspect' }).click();
 
-    // Modify the Build information in 'about' to be consistent run-over-run
-    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-    await expect(versionInformationLocator).toBeEnabled();
-    await versionInformationLocator.evaluate(
-      (node) =>
-        (node.innerHTML =
-          '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
-    );
+    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+    //Open Annotations Tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
-    // Take a snapshot of the About modal
-    await percySnapshot(page, `About (theme: '${theme}')`);
+    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
+      scope: inspectorPane
+    });
   });
 });
