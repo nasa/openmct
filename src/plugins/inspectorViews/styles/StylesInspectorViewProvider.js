@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import stylesManager from './StylesManager';
-import StylesInspectorView from './StylesInspectorView.vue';
 import mount from 'utils/mount';
+
+import StylesInspectorView from './StylesInspectorView.vue';
+import stylesManager from './StylesManager';
 
 const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
 

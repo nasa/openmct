@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import {
+  FAULT_MANAGEMENT_NAMESPACE,
   FAULT_MANAGEMENT_TYPE,
-  FAULT_MANAGEMENT_VIEW,
-  FAULT_MANAGEMENT_NAMESPACE
+  FAULT_MANAGEMENT_VIEW
 } from './constants';
 
 export default class FaultManagementObjectProvider {

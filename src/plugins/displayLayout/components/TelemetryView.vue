@@ -65,14 +65,15 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue';
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import {
   getDefaultNotebook,
   getNotebookSectionAndPage
 } from '@/plugins/notebook/utils/notebook-storage.js';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];

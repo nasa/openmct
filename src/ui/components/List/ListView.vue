@@ -49,9 +49,10 @@
 </template>
 
 <script>
-import ListItem from './ListItem.vue';
-import ListHeader from './ListHeader.vue';
 import _ from 'lodash';
+
+import ListHeader from './ListHeader.vue';
+import ListItem from './ListItem.vue';
 
 export default {
   components: {

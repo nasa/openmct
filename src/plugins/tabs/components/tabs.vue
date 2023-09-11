@@ -80,10 +80,11 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import _ from 'lodash';
 
 const unknownObjectType = {
   definition: {

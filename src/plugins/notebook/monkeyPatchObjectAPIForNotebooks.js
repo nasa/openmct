@@ -1,6 +1,7 @@
-import { isAnnotationType, isNotebookType, isNotebookOrAnnotationType } from './notebook-constants';
 import _ from 'lodash';
 import { toRaw } from 'vue';
+
+import { isAnnotationType, isNotebookOrAnnotationType, isNotebookType } from './notebook-constants';
 
 export default function (openmct) {
   const apiSave = openmct.objects.save.bind(openmct.objects);

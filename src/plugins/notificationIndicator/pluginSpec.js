@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import NotificationIndicatorPlugin from './plugin.js';
-import Vue from 'vue';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+import Vue from 'vue';
+
+import NotificationIndicatorPlugin from './plugin.js';
 
 describe('the plugin', () => {
   let notificationIndicatorPlugin;

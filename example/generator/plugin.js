@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import GeneratorMetadataProvider from './GeneratorMetadataProvider';
 import GeneratorProvider from './GeneratorProvider';
 import SinewaveLimitProvider from './SinewaveLimitProvider';
 import SinewaveStalenessProvider from './SinewaveStalenessProvider';
 import StateGeneratorProvider from './StateGeneratorProvider';
-import GeneratorMetadataProvider from './GeneratorMetadataProvider';
 
 export default function (openmct) {
   openmct.types.addType('example.state-generator', {

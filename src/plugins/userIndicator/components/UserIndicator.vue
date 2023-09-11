@@ -94,7 +94,7 @@ export default {
         selectionOptions,
         iconClass: 'alert',
         title: 'Select Role',
-        message: 'Please select your role for operator status.',
+        message: '',
         currentSelection: this.role,
         onChange: (event) => {
           this.inputRoleSelection = event.target.value;

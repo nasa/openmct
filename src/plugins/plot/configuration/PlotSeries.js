@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
-import Model from './Model';
-import { MARKER_SHAPES } from '../draw/MarkerShapes';
+
 import configStore from '../configuration/ConfigStore';
+import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import { symlog } from '../mathUtils';
+import Model from './Model';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
