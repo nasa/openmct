@@ -157,7 +157,7 @@ export default {
     },
     getFilterLabels(filterObject, metadatum) {
       let filterLabels = [];
-      console.log('get filter labels', Object.values(filterObject), metadatum);
+
       Object.values(filterObject).forEach((comparator) => {
         if (typeof comparator !== 'string') {
           comparator.forEach((filterValue) => {

@@ -39,7 +39,7 @@
             type="text"
             :aria-label="label"
             :disabled="useGlobal"
-            :value="persistedValue(filter)"
+            :value="persistedValue(filter.comparator)"
             @change="updateFilterValueFromString($event, filter.comparator)"
           />
         </template>
