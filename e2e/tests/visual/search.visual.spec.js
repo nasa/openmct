@@ -33,7 +33,7 @@ const percySnapshot = require('@percy/playwright');
 test.describe('Grand Search', () => {
   let clock;
   let displayLayout;
-  test.beforeEach(async ({ page, theme }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     displayLayout = await createDomainObjectWithDefaults(page, {
