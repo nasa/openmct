@@ -35,10 +35,6 @@ import {
   mockMultiSelectionNonSpecificStyles,
   mockStyle
 } from './InspectorStylesSpecMocks';
-import Vue from 'vue';
-import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
-import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
-import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
 
 describe('the inspector', () => {
   let openmct;
