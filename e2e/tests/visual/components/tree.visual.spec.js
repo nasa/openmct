@@ -26,8 +26,10 @@ const {
   createDomainObjectWithDefaults
 } = require('../../../appActions.js');
 const VISUAL_URL = require('../../../constants.js').VISUAL_URL;
-
 const percySnapshot = require('@percy/playwright');
+
+//Declare the scope of the visual test
+const treePane = "[role=tree][aria-label='Main Tree']";
 
 test.describe('Visual - Tree Pane', () => {
   test('Tree pane in various states', async ({ page, theme, openmctConfig }) => {
@@ -64,8 +66,6 @@ test.describe('Visual - Tree Pane', () => {
       type: 'Clock',
       name: 'Z Clock'
     });
-
-    const treePane = "[role=tree][aria-label='Main Tree']";
 
     await percySnapshot(page, `Tree Pane w/ collapsed tree (theme: ${theme})`, {
       scope: treePane
