@@ -21,7 +21,10 @@
 -->
 
 <template>
-  <div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
+  <div
+    class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable"
+    role="complementary"
+  >
     <span class="label c-indicator__label">
       {{ timeTextValue }}
     </span>

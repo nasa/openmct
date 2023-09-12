@@ -25,7 +25,6 @@
     <search
       ref="shell-search"
       class="c-gsearch__input"
-      tabindex="0"
       :value="searchValue"
       @input="searchEverything"
       @clear="searchEverything"

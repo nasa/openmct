@@ -120,7 +120,7 @@
           </pane>
         </multipane>
       </pane>
-      <pane class="l-shell__pane-main">
+      <pane class="l-shell__pane-main" role="main">
         <browse-bar
           ref="browseBar"
           class="l-shell__main-view-browse-bar"
