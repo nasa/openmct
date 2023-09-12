@@ -183,6 +183,9 @@ export default {
       }
     },
     async setEmbedObjectPath() {
+      if (!this.embed.domainObject) {
+        return;
+      }
       this.objectPath = await this.openmct.objects.getOriginalPath(
         this.embed.domainObject.identifier
       );

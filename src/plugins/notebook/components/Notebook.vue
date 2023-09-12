@@ -172,7 +172,9 @@ import {
 } from '../utils/notebook-entries';
 import {
   saveNotebookImageDomainObject,
-  updateNamespaceOfDomainObject
+  updateNamespaceOfDomainObject,
+  getThumbnailURLFromimageUrl,
+  createNotebookImageDomainObject
 } from '../utils/notebook-image';
 import {
   clearDefaultNotebook,
@@ -628,9 +630,25 @@ export default {
         event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
       if (imageDropped) {
         const image = event.dataTransfer.files[0];
-        const imageSrc = URL.createObjectURL(image);
-        const imageEmbed = `<img src="${imageSrc}" />`;
-        this.newEntry(imageEmbed);
+        const fullSizeImageURL = URL.createObjectURL(image);
+        console.debug(`📊 full size URL`, fullSizeImageURL);
+        const imageDomainObject = createNotebookImageDomainObject(fullSizeImageURL);
+        await saveNotebookImageDomainObject(this.openmct, imageDomainObject);
+        const imageThumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
+        const snapshot = {
+          fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+          thumbnailImage: {
+            src: imageThumbnailURL
+          }
+        };
+        const embedMetaData = {
+          bounds: this.openmct.time.bounds(),
+          link: null,
+          objectPath: null,
+          openmct: this.openmct
+        };
+        const newImageEmbed = await createNewEmbed(embedMetaData, snapshot);
+        this.newEntry(newImageEmbed);
         return;
       }
 

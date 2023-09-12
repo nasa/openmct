@@ -117,22 +117,29 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
 
 export async function createNewEmbed(snapshotMeta, snapshot = '') {
   const { bounds, link, objectPath, openmct } = snapshotMeta;
-  const domainObject = objectPath[0];
-  const domainObjectType = openmct.types.get(domainObject.type);
+  let name = null;
+  let type = null;
+  let cssClass = 'icon-object-unknown';
+  let domainObject = null;
+  let historicLink = null;
+  if (objectPath?.length > 0) {
+    domainObject = objectPath[0];
+    const domainObjectType = openmct.types.get(domainObject.type);
+    cssClass =
+      domainObjectType && domainObjectType.definition
+        ? domainObjectType.definition.cssClass
+        : 'icon-object-unknown';
+    name = domainObject.name;
+    type = domainObject.identifier.key;
+    historicLink = link
+      ? getHistoricLinkInFixedMode(openmct, bounds, link)
+      : objectLink.computed.objectLink.call({
+          objectPath,
+          openmct
+        });
+  }
 
-  const cssClass =
-    domainObjectType && domainObjectType.definition
-      ? domainObjectType.definition.cssClass
-      : 'icon-object-unknown';
   const date = openmct.time.now();
-  const historicLink = link
-    ? getHistoricLinkInFixedMode(openmct, bounds, link)
-    : objectLink.computed.objectLink.call({
-        objectPath,
-        openmct
-      });
-  const name = domainObject.name;
-  const type = domainObject.identifier.key;
   const createdBy = await getUsername(openmct);
 
   return {
