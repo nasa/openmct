@@ -78,9 +78,7 @@ export default {
     async getCameraImagesInBounds() {
       this.camerasWithImagesInBounds = [];
       this.cameraImagesList = [];
-      // const { start, end } = this.bounds;
-      const start = 1731393638000;
-      const end = 1732393738000;
+      const { start, end } = this.bounds;
       const cameraObjectPromises = [];
       this.telemetryKeys.forEach(telemetryKey => {
         const cameraPromise = this.openmct.objects.get(telemetryKey);
