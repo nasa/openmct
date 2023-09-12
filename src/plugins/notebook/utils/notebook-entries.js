@@ -120,8 +120,7 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   return params.join('&');
 }
 
-export function createNewImageEmbed(dropEvent, openmct) {
-  const image = dropEvent.dataTransfer.files[0];
+export function createNewImageEmbed(image, openmct, imageName = '') {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -143,8 +142,7 @@ export function createNewImageEmbed(dropEvent, openmct) {
         link: null,
         objectPath: null,
         openmct: openmct,
-        userImage: true,
-        imageName: image.name
+        userImage: true
       };
 
       const createdEmbed = await createNewEmbed(embedMetaData, snapshot);

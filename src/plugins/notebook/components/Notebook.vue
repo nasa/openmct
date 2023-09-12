@@ -617,20 +617,31 @@ export default {
         this.openmct.editor.cancel();
       }
     },
-    async dropOnEntry(event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    async dropOnEntry(dropEvent) {
+      dropEvent.preventDefault();
+      dropEvent.stopImmediatePropagation();
 
-      const imageDropped =
-        event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
-      if (imageDropped) {
-        const imageEmbed = await createNewImageEmbed(event, this.openmct);
+      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
+      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      if (localImageDropped) {
+        // local image dropped from disk (file)
+        const imageData = dropEvent.dataTransfer.files[0];
+        const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
         this.newEntry(imageEmbed);
-        return;
-      }
-
-      const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
-      if (snapshotId.length) {
+      } else if (imageUrl) {
+        // remote image dropped (URL)
+        try {
+          const response = await fetch(imageUrl);
+          const imageData = await response.blob();
+          const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          this.newEntry(imageEmbed);
+        } catch (error) {
+          this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
+          console.error(`Problem embedding remote image`, error);
+        }
+      } else if (snapshotId.length) {
+        // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
         this.newEntry(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
@@ -641,22 +652,21 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
+      } else {
+        // plain domain object
+        const data = event.dataTransfer.getData('openmct/domain-object-path');
+        const objectPath = JSON.parse(data);
+        const bounds = this.openmct.time.bounds();
+        const snapshotMeta = {
+          bounds,
+          link: null,
+          objectPath,
+          openmct: this.openmct
+        };
+        const embed = await createNewEmbed(snapshotMeta);
 
-        return;
+        this.newEntry(embed);
       }
-
-      const data = event.dataTransfer.getData('openmct/domain-object-path');
-      const objectPath = JSON.parse(data);
-      const bounds = this.openmct.time.bounds();
-      const snapshotMeta = {
-        bounds,
-        link: null,
-        objectPath,
-        openmct: this.openmct
-      };
-      const embed = await createNewEmbed(snapshotMeta);
-
-      this.newEntry(embed);
     },
     focusOnEntryId() {
       if (!this.focusEntryId) {
