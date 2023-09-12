@@ -172,7 +172,7 @@ import {
 } from '../utils/notebook-entries';
 import {
   createNotebookImageDomainObject,
-  getThumbnailURLFromimageUrl,
+  getThumbnailURLFromImageUrl,
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from '../utils/notebook-image';
@@ -630,27 +630,34 @@ export default {
         event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
       if (imageDropped) {
         const image = event.dataTransfer.files[0];
-        const fullSizeImageURL = URL.createObjectURL(image);
-        console.debug(`📊 full size URL`, fullSizeImageURL);
-        const imageDomainObject = createNotebookImageDomainObject(fullSizeImageURL);
-        await saveNotebookImageDomainObject(this.openmct, imageDomainObject);
-        const imageThumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
-        const snapshot = {
-          fullSizeImageObjectIdentifier: imageDomainObject.identifier,
-          thumbnailImage: {
-            src: imageThumbnailURL
-          }
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64data = reader.result;
+          const fullSizeImageURL = URL.createObjectURL(image);
+          console.debug(`📊 full size URL`, fullSizeImageURL);
+          const imageDomainObject = createNotebookImageDomainObject(base64data);
+          await saveNotebookImageDomainObject(this.openmct, imageDomainObject);
+          const imageThumbnailURL = await getThumbnailURLFromImageUrl(fullSizeImageURL);
+          const snapshot = {
+            fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+            thumbnailImage: {
+              src: imageThumbnailURL
+            }
+          };
+          const embedMetaData = {
+            bounds: this.openmct.time.bounds(),
+            link: null,
+            objectPath: null,
+            openmct: this.openmct,
+            userImage: true,
+            imageName: image.name
+          };
+          const newImageEmbed = await createNewEmbed(embedMetaData, snapshot);
+          this.newEntry(newImageEmbed);
         };
-        const embedMetaData = {
-          bounds: this.openmct.time.bounds(),
-          link: null,
-          objectPath: null,
-          openmct: this.openmct,
-          userImage: true,
-          imageName: image.name
-        };
-        const newImageEmbed = await createNewEmbed(embedMetaData, snapshot);
-        this.newEntry(newImageEmbed);
+
+        reader.onloadend.bind(this);
+        reader.readAsDataURL(image);
         return;
       }
 

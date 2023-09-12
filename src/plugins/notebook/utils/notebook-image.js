@@ -33,7 +33,7 @@ export function getThumbnailURLFromCanvas(canvas, size = DEFAULT_SIZE) {
   return thumbnailCanvas.toDataURL('image/png');
 }
 
-export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
+export function getThumbnailURLFromImageUrl(imageUrl, size = DEFAULT_SIZE) {
   return new Promise((resolve) => {
     const image = new Image();
 
