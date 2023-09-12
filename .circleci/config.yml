@@ -209,7 +209,7 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  visual-test:
+  visual-a11y-tests:
     parameters:
       node-version:
         type: string
@@ -246,7 +246,7 @@ workflows:
           suite: stable
       - perf-test:
           node-version: lts/hydrogen
-      - visual-test:
+      - visual-a11y-tests:
           name: visual-test-ci
           suite: ci
           node-version: lts/hydrogen
@@ -267,7 +267,7 @@ workflows:
           suite: full
       - perf-test:
           node-version: lts/hydrogen
-      - visual-test:
+      - visual-a11y-tests:
           name: visual-test-nightly
           suite: full
           node-version: lts/hydrogen
