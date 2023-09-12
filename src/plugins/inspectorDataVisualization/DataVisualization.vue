@@ -100,6 +100,7 @@ export default {
   },
   computed: {
     hasPlaceholderText() {
+      console.log(this.placeholderText);
       return this.placeholderText?.length > 0;
     },
     descendingDataRanges() {
