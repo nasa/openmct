@@ -143,7 +143,7 @@ import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
+import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
@@ -362,8 +362,14 @@ export default {
     async dropOnEntry($event) {
       $event.stopImmediatePropagation();
 
+      const imageDropped =
+        $event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
       const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
-      if (snapshotId.length) {
+      if (imageDropped) {
+        const imageEmbed = await createNewImageEmbed($event, this.openmct);
+        this.entry.embeds.push(imageEmbed);
+        this.manageEmbedLayout();
+      } else if (snapshotId.length) {
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
         this.entry.embeds.push(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);

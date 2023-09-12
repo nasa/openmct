@@ -165,14 +165,13 @@ import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-consta
 import {
   addNotebookEntry,
   createNewEmbed,
+  createNewImageEmbed,
   getEntryPosById,
   getNotebookEntries,
   mutateObject,
   selectEntry
 } from '../utils/notebook-entries';
 import {
-  createNotebookImageDomainObject,
-  getThumbnailURLFromImageUrl,
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from '../utils/notebook-image';
@@ -622,42 +621,11 @@ export default {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      console.debug(`📊 dropped on entry`, event);
-
-      console.debug(`📊 any files on event`, event.dataTransfer.files);
-
       const imageDropped =
         event.dataTransfer.files.length && event.dataTransfer.files[0].type.includes('image');
       if (imageDropped) {
-        const image = event.dataTransfer.files[0];
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64data = reader.result;
-          const fullSizeImageURL = URL.createObjectURL(image);
-          console.debug(`📊 full size URL`, fullSizeImageURL);
-          const imageDomainObject = createNotebookImageDomainObject(base64data);
-          await saveNotebookImageDomainObject(this.openmct, imageDomainObject);
-          const imageThumbnailURL = await getThumbnailURLFromImageUrl(fullSizeImageURL);
-          const snapshot = {
-            fullSizeImageObjectIdentifier: imageDomainObject.identifier,
-            thumbnailImage: {
-              src: imageThumbnailURL
-            }
-          };
-          const embedMetaData = {
-            bounds: this.openmct.time.bounds(),
-            link: null,
-            objectPath: null,
-            openmct: this.openmct,
-            userImage: true,
-            imageName: image.name
-          };
-          const newImageEmbed = await createNewEmbed(embedMetaData, snapshot);
-          this.newEntry(newImageEmbed);
-        };
-
-        reader.onloadend.bind(this);
-        reader.readAsDataURL(image);
+        const imageEmbed = await createNewImageEmbed(event, this.openmct);
+        this.newEntry(imageEmbed);
         return;
       }
 

@@ -1,6 +1,11 @@
 import { v4 as uuid } from 'uuid';
 
 import objectLink from '../../../ui/mixins/object-link';
+import {
+  createNotebookImageDomainObject,
+  getThumbnailURLFromImageUrl,
+  saveNotebookImageDomainObject
+} from './notebook-image';
 
 async function getUsername(openmct) {
   let username = null;
@@ -113,6 +118,41 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   });
 
   return params.join('&');
+}
+
+export function createNewImageEmbed(dropEvent, openmct) {
+  const image = dropEvent.dataTransfer.files[0];
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Data = reader.result;
+      const blobUrl = URL.createObjectURL(image);
+      const imageDomainObject = createNotebookImageDomainObject(base64Data);
+      await saveNotebookImageDomainObject(openmct, imageDomainObject);
+      const imageThumbnailURL = await getThumbnailURLFromImageUrl(blobUrl);
+
+      const snapshot = {
+        fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+        thumbnailImage: {
+          src: imageThumbnailURL
+        }
+      };
+
+      const embedMetaData = {
+        bounds: openmct.time.bounds(),
+        link: null,
+        objectPath: null,
+        openmct: openmct,
+        userImage: true,
+        imageName: image.name
+      };
+
+      const createdEmbed = await createNewEmbed(embedMetaData, snapshot);
+      resolve(createdEmbed);
+    };
+
+    reader.readAsDataURL(image);
+  });
 }
 
 export async function createNewEmbed(snapshotMeta, snapshot = '') {
