@@ -220,7 +220,7 @@ describe('the plugin', function () {
     });
   });
 
-  xdescribe('The spectral plot view for telemetry objects with array values', () => {
+  describe('The spectral plot view for telemetry objects with array values', () => {
     let barGraphObject;
     // eslint-disable-next-line no-unused-vars
     let mockComposition;
@@ -256,7 +256,7 @@ describe('the plugin', function () {
       await Vue.nextTick();
     });
 
-    it('Renders spectral plots', () => {
+    it('Renders spectral plots', async () => {
       const dotFullTelemetryObject = {
         identifier: {
           namespace: 'someNamespace',
@@ -304,11 +304,12 @@ describe('the plugin', function () {
       barGraphView.show(child, true);
       mockComposition.emit('add', dotFullTelemetryObject);
 
-      return Vue.nextTick().then(() => {
-        const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
-        expect(plotElement).not.toBeNull();
-        barGraphView.destroy();
-      });
+      await Vue.nextTick();
+      await Vue.nextTick();
+
+      const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
+      expect(plotElement).not.toBeNull();
+      barGraphView.destroy();
     });
   });
 

@@ -479,7 +479,8 @@
     "mediump",
     "sinonjs",
     "generatedata",
-    "grandsearch"
+    "grandsearch",
+    "websockets"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
