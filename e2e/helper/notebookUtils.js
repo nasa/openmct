@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { selectInspectorTab, createDomainObjectWithDefaults } = require('../appActions');
+const { createDomainObjectWithDefaults } = require('../appActions');
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
@@ -111,7 +111,7 @@ async function createNotebookAndEntry(page, iterations = 1) {
  */
 async function createNotebookEntryAndTags(page, iterations = 1) {
   const notebook = await createNotebookAndEntry(page, iterations);
-  await selectInspectorTab(page, 'Annotations');
+  await page.getByRole('tab', { name: 'Annotations' }).click();
 
   for (let iteration = 0; iteration < iterations; iteration++) {
     // Hover and click "Add Tag" button
