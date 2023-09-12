@@ -181,10 +181,10 @@ test.describe('Snapshot image tests', () => {
     const fileData = Array.from(imageArray);
 
     const dropTransfer = await page.evaluateHandle((data) => {
-      const dataTranfter = new DataTransfer();
+      const dataTransfer = new DataTransfer();
       const file = new File([new Uint8Array(data)], 'favicon-96x96.png', { type: 'image/png' });
-      dataTranfter.items.add(file);
-      return dataTranfter;
+      dataTransfer.items.add(file);
+      return dataTransfer;
     }, fileData);
 
     await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: dropTransfer });
