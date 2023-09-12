@@ -116,7 +116,7 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
 }
 
 export async function createNewEmbed(snapshotMeta, snapshot = '') {
-  const { bounds, link, objectPath, openmct } = snapshotMeta;
+  const { bounds, link, objectPath, openmct, userImage } = snapshotMeta;
   let name = null;
   let type = null;
   let cssClass = 'icon-object-unknown';
@@ -137,6 +137,9 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
           objectPath,
           openmct
         });
+  } else if (userImage) {
+    cssClass = 'icon-image';
+    name = snapshotMeta.imageName;
   }
 
   const date = openmct.time.now();

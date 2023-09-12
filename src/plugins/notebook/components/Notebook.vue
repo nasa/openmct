@@ -171,10 +171,10 @@ import {
   selectEntry
 } from '../utils/notebook-entries';
 import {
-  saveNotebookImageDomainObject,
-  updateNamespaceOfDomainObject,
+  createNotebookImageDomainObject,
   getThumbnailURLFromimageUrl,
-  createNotebookImageDomainObject
+  saveNotebookImageDomainObject,
+  updateNamespaceOfDomainObject
 } from '../utils/notebook-image';
 import {
   clearDefaultNotebook,
@@ -645,7 +645,9 @@ export default {
           bounds: this.openmct.time.bounds(),
           link: null,
           objectPath: null,
-          openmct: this.openmct
+          openmct: this.openmct,
+          userImage: true,
+          imageName: image.name
         };
         const newImageEmbed = await createNewEmbed(embedMetaData, snapshot);
         this.newEntry(newImageEmbed);
