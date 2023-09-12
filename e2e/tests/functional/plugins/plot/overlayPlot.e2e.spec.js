@@ -29,7 +29,6 @@ const { test, expect } = require('../../../../pluginFixtures');
 const {
   createDomainObjectWithDefaults,
   getCanvasPixels,
-  selectInspectorTab,
   waitForPlotsToRender
 } = require('../../../../appActions');
 
@@ -50,7 +49,7 @@ test.describe('Overlay Plot', () => {
 
     await page.goto(overlayPlot.url);
 
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // navigate to plot series color palette
     await page.click('.l-browse-bar__actions__edit');
@@ -91,7 +90,7 @@ test.describe('Overlay Plot', () => {
     await page.click('button[title="Edit"]');
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await page
       .getByRole('list', { name: 'Plot Series Properties' })
       .locator('span')
@@ -117,7 +116,7 @@ test.describe('Overlay Plot', () => {
     // Enter edit mode
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
     await page
@@ -168,7 +167,7 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     // Drag swg a, c, e into Y Axis 2
     await page
@@ -182,7 +181,7 @@ test.describe('Overlay Plot', () => {
       .dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
     // Assert that Y Axis 1 and Y Axis 2 property groups are visible only
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     const yAxis1PropertyGroup = page.locator('[aria-label="Y Axis Properties"]');
     const yAxis2PropertyGroup = page.locator('[aria-label="Y Axis 2 Properties"]');
@@ -196,7 +195,7 @@ test.describe('Overlay Plot', () => {
     const yAxis2Group = page.getByLabel('Y Axis 2');
     const yAxis3Group = page.getByLabel('Y Axis 3');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     // Drag swg b into Y Axis 3
     await page
@@ -204,14 +203,14 @@ test.describe('Overlay Plot', () => {
       .dragTo(page.locator('[aria-label="Element Item Group Y Axis 3"]'));
 
     // Assert that all Y Axis property groups are visible
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     await expect(yAxis1PropertyGroup).toBeVisible();
     await expect(yAxis2PropertyGroup).toBeVisible();
     await expect(yAxis3PropertyGroup).toBeVisible();
 
     // Verify that the elements are in the correct buckets and in the correct order
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     expect(yAxis1Group.getByRole('listitem', { name: swgD.name })).toBeTruthy();
     expect(yAxis1Group.getByRole('listitem').nth(0).getByText(swgD.name)).toBeTruthy();
@@ -242,7 +241,7 @@ test.describe('Overlay Plot', () => {
     await waitForPlotsToRender(page);
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
 

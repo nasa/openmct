@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 const { test, expect } = require('../../../pluginFixtures');
-const {
-  createPlanFromJSON,
-  createDomainObjectWithDefaults,
-  selectInspectorTab
-} = require('../../../appActions');
+const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
 const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
 const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Small2.json');
 const {
@@ -80,7 +76,7 @@ test.describe('Gantt Chart', () => {
       .locator('g')
       .filter({ hasText: new RegExp(activity.name) })
       .click();
-    await selectInspectorTab(page, 'Activity');
+    await page.getByRole('tab', { name: 'Activity' }).click();
 
     const startDateTime = await page
       .locator(

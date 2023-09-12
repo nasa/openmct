@@ -241,7 +241,6 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Can use the reset button to reset the image @unstable', async ({ page }, testInfo) => {
-    test.slow(testInfo.project === 'chrome-beta', 'This test is slow in chrome-beta');
     // Get initial image dimensions
     const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
