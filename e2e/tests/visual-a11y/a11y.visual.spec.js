@@ -23,12 +23,11 @@
 const { expect, test, generateAccessibilityReport } = require('../../avpFixtures');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 
-test.describe('a11y - Default', () => {
+test.describe('a11y - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
-  test('example using custom fixture 2 @a11y', async ({ page }, testInfo) => {
-
+  test('main view @a11y', async ({ page }, testInfo) => {
     const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
 
     expect(accessibilityScanResults.violations).toEqual([]); // 5
