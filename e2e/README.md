@@ -159,7 +159,7 @@ Our file structure follows the type of type of testing being excercised at the e
 |`./tests/functional/plugins/` | Tests which loosely test each plugin. This folder is the most likely to change. Note: some `@snapshot` tests are still contained within this structure.|
 |`./tests/framework/`          | Tests which verify that our testing framework's functionality and assumptions will continue to work based on further refactoring or Playwright version changes (e.g.: verifying custom fixtures and appActions).|
 |`./tests/performance/`        | Performance tests.|
-|`./tests/visual/`             | Visual tests.|
+|`./tests/visual-a11y/`             | Visual and a11y tests.|
 |`./appActions.js`             | Contains common methods which can be leveraged by test case authors to quickly move through the application when writing new tests.|
 |`./baseFixture.js`            | Contains base fixtures which only extend default `@playwright/test` functionality. The expectation is that these fixtures will be removed as the native Playwright API improves|
 
@@ -187,6 +187,7 @@ Current list of test tags:
 |Test Tag|Description|
 |:-:|-|
 |`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
+|`@a11y` | Test case or test suite to execute playwright-axe accessibility reports.|
 |`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
 |`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).|
@@ -379,7 +380,7 @@ By adhering to this principle, we can create tests that are both robust and refl
 5. **Hide the Tree and Inspector**: Generally, your test will not require comparisons involving the tree and inspector. These aspects are covered in component-specific tests (explained below). To exclude them from the comparison by default, navigate to the root of the main view with the tree and inspector hidden:
     - `await page.goto('./#/browse/mine?hideTree=true&hideInspector=true')`
 
-6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual/component/` folder and limit the scope of the comparison to that component. For instance:
+6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual-a11y/component/` folder and limit the scope of the comparison to that component. For instance:
     ```js
     await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
         scope: treePane
