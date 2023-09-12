@@ -85,9 +85,11 @@ export default {
       return !this.isStackedPlotObject && this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
   },
-  mounted() {
+  created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
+  },
+  mounted() {
     if (!this.isStackedPlotObject) {
       this.yAxes = [
         {
