@@ -75,7 +75,8 @@ exports.generateAccessibilityReport = async function (page, testCaseName, option
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
   let reportName = options.reportName || testCaseName;
-  let reportPath = path.join('./test-results', `${reportName}.json`);
+  let sanitizedReportName = reportName.replace(/\//g, '_');
+  let reportPath = path.join('./test-results', `${sanitizedReportName}.json`);
 
   try {
     // Ensure directory exists
