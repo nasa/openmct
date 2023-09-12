@@ -57,7 +57,9 @@ define([
         if (isIdentifier(keyString)) {
             // TODO REMOVE FOR OMM-RELEASE-5.0
             if (!keyString.namespace && keyString.key.includes(':')) {
-                console.error(`smushed key: ${keyString.key}`);
+                console.warn(`smushed key: ${keyString.key}`);
+
+                return parseKeyString(keyString.key);
             }
 
             return keyString;
