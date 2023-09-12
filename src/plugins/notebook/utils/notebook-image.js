@@ -43,7 +43,6 @@ export function getThumbnailURLFromImageUrl(imageUrl, size = DEFAULT_SIZE) {
 
     image.onload = function () {
       canvas.getContext('2d').drawImage(image, 0, 0, size.width, size.height);
-
       resolve(canvas.toDataURL('image/png'));
     };
 

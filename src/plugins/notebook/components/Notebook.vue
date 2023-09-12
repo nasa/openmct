@@ -627,7 +627,7 @@ export default {
       if (localImageDropped) {
         // local image dropped from disk (file)
         const imageData = dropEvent.dataTransfer.files[0];
-        const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
         this.newEntry(imageEmbed);
       } else if (imageUrl) {
         // remote image dropped (URL)

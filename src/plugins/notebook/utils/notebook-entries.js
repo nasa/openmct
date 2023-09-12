@@ -142,7 +142,8 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
         link: null,
         objectPath: null,
         openmct: openmct,
-        userImage: true
+        userImage: true,
+        imageName
       };
 
       const createdEmbed = await createNewEmbed(embedMetaData, snapshot);

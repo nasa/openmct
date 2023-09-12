@@ -27,7 +27,7 @@
     @mouseleave="hideToolTip"
   >
     <div v-if="embed.snapshot" class="c-ne__embed__snap-thumb" @click="openSnapshot()">
-      <img :src="thumbnailImage" />
+      <img :src="thumbnailImage" :alt="`${embed.name} thumbnail`" />
     </div>
     <div class="c-ne__embed__info">
       <div class="c-ne__embed__name">
