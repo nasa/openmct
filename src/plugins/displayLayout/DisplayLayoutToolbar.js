@@ -236,7 +236,6 @@ define(['lodash'], function (_) {
             icon: 'icon-trash',
             title: 'Delete the selected object',
             method: function () {
-              let removeItem = selectionPath[1].context.removeItem;
               let prompt = openmct.overlays.dialog({
                 iconClass: 'alert',
                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
@@ -245,7 +244,11 @@ define(['lodash'], function (_) {
                     label: 'OK',
                     emphasis: 'true',
                     callback: function () {
-                      removeItem(getAllTypes(selection));
+                      openmct.objectViews.emit(
+                        'contextAction',
+                        'removeItem',
+                        getAllTypes(selection)
+                      );
                       prompt.dismiss();
                     }
                   },
@@ -290,7 +293,12 @@ define(['lodash'], function (_) {
               }
             ],
             method: function (option) {
-              selectionPath[1].context.orderItem(option.value, getAllTypes(selectedObjects));
+              openmct.objectViews.emit(
+                'contextAction',
+                'orderItem',
+                option.value,
+                getAllTypes(selectedObjects)
+              );
             }
           };
         }
@@ -474,9 +482,7 @@ define(['lodash'], function (_) {
             icon: 'icon-duplicate',
             title: 'Duplicate the selected object',
             method: function () {
-              let duplicateItem = selectionPath[1].context.duplicateItem;
-
-              duplicateItem(selection);
+              openmct.objectViews.emit('contextAction', 'duplicateItem', selection);
             }
           };
         }
@@ -574,7 +580,13 @@ define(['lodash'], function (_) {
                 label: 'View type',
                 options: viewOptions,
                 method: function (option) {
-                  displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                  openmct.objectViews.emit(
+                    'contextAction',
+                    'switchViewType',
+                    selectedItemContext,
+                    option.value,
+                    selection
+                  );
                 }
               };
             }
@@ -590,7 +602,12 @@ define(['lodash'], function (_) {
                 label: 'View type',
                 options: APPLICABLE_VIEWS['telemetry-view-multi'],
                 method: function (option) {
-                  displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
+                  openmct.objectViews.emit(
+                    'contextAction',
+                    'mergeMultipleTelemetryViews',
+                    selection,
+                    option.value
+                  );
                 }
               };
             } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
@@ -603,7 +620,12 @@ define(['lodash'], function (_) {
                 title: 'Merge into a stacked plot',
                 options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
                 method: function (option) {
-                  displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
+                  openmct.objectViews.emit(
+                    'contextAction',
+                    'mergeMultipleOverlayPlots',
+                    selection,
+                    option.value
+                  );
                 }
               };
             }
@@ -627,7 +649,7 @@ define(['lodash'], function (_) {
             domainObject: displayLayoutContext.item,
             icon: ICON_GRID_SHOW,
             method: function () {
-              displayLayoutContext.toggleGrid();
+              openmct.objectViews.emit('contextAction', 'toggleGrid');
 
               this.icon = this.icon === ICON_GRID_SHOW ? ICON_GRID_HIDE : ICON_GRID_SHOW;
             },
@@ -653,7 +675,7 @@ define(['lodash'], function (_) {
 
         function showForm(formStructure, name, selectionPath) {
           openmct.forms.showForm(formStructure).then((changes) => {
-            selectionPath[0].context.addElement(name, changes);
+            openmct.objectViews.emit('contextAction', 'addElement', name, changes);
           });
         }
 

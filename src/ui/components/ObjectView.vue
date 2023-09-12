@@ -91,7 +91,7 @@ export default {
       return classes;
     }
   },
-  unmounted() {
+  beforeUnmount() {
     this.clear();
     if (this.releaseEditModeHandler) {
       this.releaseEditModeHandler();
@@ -137,6 +137,10 @@ export default {
     clear() {
       if (this.currentView) {
         this.currentView.destroy();
+        //now call the provider's destroy method
+        if (this.destroyView) {
+          this.destroyView();
+        }
         if (this.$refs.objectViewWrapper) {
           this.$refs.objectViewWrapper.innerHTML = '';
         }
@@ -168,6 +172,7 @@ export default {
       this.triggerUnsubscribeFromStaleness();
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      this.openmct.objectViews.off('contextAction', this.performContextAction);
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -263,12 +268,14 @@ export default {
         } else {
           this.currentView = provider.view(this.domainObject, objectPath);
         }
+        this.destroyView = provider.destroy;
 
         this.openmct.editor.on('isEditing', this.toggleEditView);
         this.releaseEditModeHandler = () =>
           this.openmct.editor.off('isEditing', this.toggleEditView);
       } else {
         this.currentView = provider.view(this.domainObject, objectPath);
+        this.destroyView = provider.destroy;
 
         if (this.currentView.onEditModeChange) {
           this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -288,6 +295,7 @@ export default {
       }
 
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on('contextAction', this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -309,10 +317,6 @@ export default {
     },
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
-
-      if (this.unlisten) {
-        this.unlisten();
-      }
 
       if (this.removeSelectable) {
         this.removeSelectable();
@@ -460,6 +464,11 @@ export default {
         if (this.currentView.onClearData) {
           this.currentView.onClearData();
         }
+      }
+    },
+    performContextAction() {
+      if (this.currentView.contextAction) {
+        this.currentView.contextAction(...arguments);
       }
     },
     isEditingAllowed() {
