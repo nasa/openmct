@@ -141,17 +141,6 @@ export default {
       return this.imageryTelemetryKeys?.length;
     }
   },
-  watch: {
-    dataRanges: {
-      handler() {
-        //
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    console.log(this.dataRanges);
-  },
   methods: {
     shortDate(date) {
       return date.slice(0, date.indexOf('.')).replace('T', ' ');
