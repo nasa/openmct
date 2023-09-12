@@ -70,7 +70,7 @@ export default {
     NumericData,
     Imagery
   },
-  inject: ['timeFormatter', 'imageryOptions'],
+  inject: ['timeFormatter', 'placeholderText', 'imageryOptions'],
   props: {
     description: {
       type: Object,
@@ -84,10 +84,6 @@ export default {
       type: Array,
       default: () => []
     },
-    placeholderText: {
-      type: String,
-      default: ''
-    },
     isLoading: {
       type: Boolean,
       default: false
@@ -100,8 +96,7 @@ export default {
   },
   computed: {
     hasPlaceholderText() {
-      console.log(this.placeholderText);
-      return this.placeholderText?.length > 0;
+      return this.placeholderText.length > 0;
     },
     descendingDataRanges() {
       return this.dataRanges?.slice().reverse();

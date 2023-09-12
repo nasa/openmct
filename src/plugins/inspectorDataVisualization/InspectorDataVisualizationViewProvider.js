@@ -27,6 +27,7 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
   const {
     type = 'mmgis',
     name = 'Data Visualization',
+    placeholderText = '',
     plotOptions,
     imageryOptions
   } = configuration;
@@ -60,6 +61,7 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
                 openmct,
                 domainObject,
                 timeFormatter,
+                placeholderText,
                 plotOptions,
                 imageryOptions
               },

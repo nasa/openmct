@@ -25,7 +25,6 @@
     <DataVisualization
       :data-ranges="dataRanges"
       :plot-telemetry-keys="plotTelemetryKeys"
-      :placeholder-text="placeholderText"
       :description="description"
       :is-loading="isLoading"
     />
@@ -52,9 +51,6 @@ export default {
     },
     plotTelemetryKeys() {
       return this.context.telemetryKeys;
-    },
-    placeholderText() {
-      return this.context.placeholderText;
     },
     description() {
       return this.context.description;
