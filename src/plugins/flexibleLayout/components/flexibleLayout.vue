@@ -164,16 +164,32 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
-    this.openmct.objects.observe(this.domainObject, 'configuration.containers', (containers) => {
-      this.containers = containers;
-    });
-    this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', (rowsLayout) => {
-      this.rowsLayout = rowsLayout;
-    });
+    this.unObserveContainers = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.containers',
+      (containers) => {
+        this.containers = containers;
+      }
+    );
+    this.unObserveRowsLayout = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.rowsLayout',
+      (rowsLayout) => {
+        this.rowsLayout = rowsLayout;
+      }
+    );
   },
   beforeUnmount() {
     this.composition.off('remove', this.removeChildObject);
     this.composition.off('add', this.addFrame);
+
+    if (this.unObserveContainers) {
+      this.unObserveContainers();
+    }
+
+    if (this.unObserveRowsLayout) {
+      this.unObserveRowsLayout();
+    }
   },
   methods: {
     containsObject(identifier) {
@@ -255,7 +271,7 @@ export default {
         container.frames.splice(frameIndex + 1, 0, frame);
         sizeItems(container.frames, frame);
 
-        this.newFrameLocation = [];
+        this.newFrameLocation.splice(0);
         this.persist(containerIndex);
         this.identifierMap[keystring] = true;
       }

@@ -195,7 +195,7 @@ export default {
     }
 
     if (this.soViewResizeObserver) {
-      this.soViewResizeObserver.disconnect();
+      this.soViewResizeObserver.unobserve(this.$refs.soView);
     }
   },
   methods: {
@@ -209,13 +209,13 @@ export default {
 
       this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.applicableActions);
+      this.updateActionItems();
     },
     unlistenToActionCollection() {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    updateActionItems(actionItems) {
+    updateActionItems() {
       const statusBarItems = this.actionCollection.getStatusBarActions();
       this.statusBarItems = this.openmct.menus.actionsToMenuItems(
         statusBarItems,

@@ -114,6 +114,13 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.editIfEditable, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.addObjectToParent);
   },
   created() {
     this.debounceUpdateView = _.debounce(this.updateView, 10);

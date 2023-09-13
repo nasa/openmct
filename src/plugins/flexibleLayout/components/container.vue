@@ -122,7 +122,6 @@ export default {
   mounted() {
     let context = {
       item: this.$parent.domainObject,
-      addContainer: this.addContainer,
       type: 'container',
       containerId: this.container.id
     };
