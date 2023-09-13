@@ -728,6 +728,7 @@ export default {
     }
 
     this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+    this.stopListening();
 
     Object.keys(this.imageryAnnotations).forEach((time) => {
       const imageAnnotationsForTime = this.imageryAnnotations[time];
@@ -876,7 +877,7 @@ export default {
         });
         this.visibleLayers = this.layers.filter((layer) => layer.visible);
       } else {
-        this.visibleLayers = [];
+        this.visibleLayers.splice(0);
         this.layers.forEach((layer) => {
           layer.visible = false;
         });
@@ -925,8 +926,8 @@ export default {
         this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
       }
 
-      this.visibleLayers = [];
-      this.layers = [];
+      this.visibleLayers.splice(0);
+      this.layers.splice(0);
     },
     // will subscribe to data for this key if not already done
     subscribeToDataForKey(key) {
@@ -1276,6 +1277,9 @@ export default {
       this.scrollHandler();
     },
     setSizedImageDimensions() {
+      if (!this.$refs.focusedImage) {
+        return;
+      }
       this.focusedImageNaturalAspectRatio =
         this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
       if (
