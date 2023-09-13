@@ -161,7 +161,8 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('flexible layout with plots of swgs', async ({ page }) => {
+  //TODO: Check why there is a leak only when limitLines are enabled
+  test.only('flexible layout with plots of swgs', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'flexible-layout-plots-memory-leak-test'

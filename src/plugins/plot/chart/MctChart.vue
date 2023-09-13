@@ -26,7 +26,20 @@
   <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
     <span v-html="canvasTemplate"></span>
-    <div ref="limitArea" class="js-limit-area"></div>
+    <div ref="limitArea" class="js-limit-area">
+      <limit-label
+        v-for="(limitLabel, index) in visibleLimitLabels"
+        :key="index"
+        :point="limitLabel.point"
+        :limit="limitLabel.limit"
+      ></limit-label>
+      <limit-line
+        v-for="(limitLine, index) in visibleLimitLines"
+        :key="index"
+        :point="limitLine.point"
+        :limit="limitLine.limit"
+      ></limit-line>
+    </div>
   </div>
 </template>
 
@@ -87,6 +100,7 @@ const HANDLED_ATTRIBUTES = {
 };
 
 export default {
+  components: { LimitLine, LimitLabel },
   inject: ['openmct', 'domainObject', 'path'],
   props: {
     rectangles: {
@@ -133,7 +147,9 @@ export default {
   data() {
     return {
       canvasTemplate:
-        '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>'
+        '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>',
+      visibleLimitLabels: [],
+      visibleLimitLines: []
     };
   },
   watch: {
@@ -706,7 +722,6 @@ export default {
       //console.timeEnd('📈 drawSeries');
     },
     updateLimitLines() {
-      Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
       this.config.series.models.forEach((series) => {
         const yAxisId = series.get('yAxisId');
 
@@ -727,8 +742,11 @@ export default {
       }
 
       let limitPointOverlap = [];
+      //reset
+      this.visibleLimitLabels.splice(0);
+      this.visibleLimitLines.splice(0);
+
       this.limitLines.forEach((limitLine) => {
-        let limitContainerEl = this.$refs.limitArea;
         limitLine.limits.forEach((limit) => {
           if (series.keyString !== limit.seriesKey) {
             return;
@@ -738,31 +756,43 @@ export default {
           if (showLabels) {
             const overlap = this.getLimitOverlap(limit, limitPointOverlap);
             limitPointOverlap.push(overlap);
-            let limitLabelEl = this.getLimitLabel(limit, overlap);
-            limitContainerEl.appendChild(limitLabelEl);
+            this.visibleLimitLabels.push(this.getLimitProps(limit, overlap));
           }
 
-          let limitEl = this.getLimitElement(limit);
-          limitContainerEl.appendChild(limitEl);
+          this.visibleLimitLines.push(this.getLimitElementProps(limit));
         }, this);
       });
     },
     showLabels(seriesKey) {
       return this.showLimitLineLabels?.seriesKey === seriesKey;
     },
+    getLimitElementProps(limit) {
+      let point = {
+        left: 0,
+        top: this.drawAPI.y(limit.point.y)
+      };
+
+      return {
+        point,
+        limit
+      };
+    },
     getLimitElement(limit) {
       let point = {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      const { vNode } = mount(LimitLine, {
+      const { vNode, destroy } = mount(LimitLine, {
         props: {
           point,
           limit
         }
       });
 
-      return vNode.el;
+      return {
+        el: vNode.el,
+        destroy
+      };
     },
     getLimitOverlap(limit, overlapMap) {
       //calculate if limit lines are too close to each other
@@ -793,19 +823,32 @@ export default {
         overlapTop: limitTop
       };
     },
+    getLimitProps(limit, overlap) {
+      let point = {
+        left: 0,
+        top: this.drawAPI.y(limit.point.y)
+      };
+      return {
+        limit: Object.assign({}, overlap, limit),
+        point
+      };
+    },
     getLimitLabel(limit, overlap) {
       let point = {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      const { vNode } = mount(LimitLabel, {
+      const { vNode, destroy } = mount(LimitLabel, {
         props: {
           limit: Object.assign({}, overlap, limit),
           point
         }
       });
 
-      return vNode.el;
+      return {
+        el: vNode.el,
+        destroy
+      };
     },
     drawAlarmPoints(alarmSet) {
       this.drawAPI.drawLimitPoints(
