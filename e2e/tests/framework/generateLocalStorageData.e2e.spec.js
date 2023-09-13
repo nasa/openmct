@@ -35,8 +35,7 @@
 const { test, expect } = require('../../pluginFixtures.js');
 const {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject,
-  selectInspectorTab
+  createExampleTelemetryObject
 } = require('../../appActions.js');
 const { MISSION_TIME } = require('../../constants.js');
 const path = require('path');
@@ -91,7 +90,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await page
       .getByRole('list', { name: 'Plot Series Properties' })
       .locator('span')
@@ -122,7 +121,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     ).toBeVisible();
 
     await page.goto(exampleTelemetry.url);
-    await selectInspectorTab(page, 'Properties');
+    await page.getByRole('tab', { name: 'Properties' }).click();
 
     // TODO: assert Example Telemetry property values
     // await page.goto(exampleTelemetry.url);
@@ -181,7 +180,7 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
     await page.locator('a').filter({ hasText: overlayPlotName }).click();
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await page
       .getByRole('list', { name: 'Plot Series Properties' })
       .locator('span')
@@ -227,7 +226,7 @@ test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorag
     await page.locator('a').filter({ hasText: plotName }).click();
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await page
       .getByRole('list', { name: 'Plot Series Properties' })
       .locator('span')

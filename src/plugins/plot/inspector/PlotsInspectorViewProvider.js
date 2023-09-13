@@ -1,5 +1,6 @@
-import PlotOptions from './PlotOptions.vue';
 import mount from 'utils/mount';
+
+import PlotOptions from './PlotOptions.vue';
 
 export default function PlotsInspectorViewProvider(openmct) {
   return {

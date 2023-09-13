@@ -1,4 +1,5 @@
 import Painterro from 'painterro';
+
 import { getThumbnailURLFromimageUrl } from './notebook-image';
 
 const DEFAULT_CONFIG = {

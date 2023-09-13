@@ -97,10 +97,11 @@
 </template>
 
 <script>
-import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import ObjectView from './ObjectView.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';

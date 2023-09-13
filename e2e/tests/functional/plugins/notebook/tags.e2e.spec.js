@@ -25,7 +25,7 @@ This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const {
   enterTextEntry,
   createNotebookAndEntry,
@@ -40,7 +40,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can load tags', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     await page.locator('button:has-text("Add Tag")').click();
 
@@ -65,7 +65,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   });
   test('Can add tags with blank entry', async ({ page }) => {
     await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     await enterTextEntry(page, '');
     await page.hover(`button:has-text("Add Tag")`);
@@ -81,7 +81,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can cancel adding tags', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Test canceling adding a tag after we click "Type to select tag"
     await page.locator('button:has-text("Add Tag")').click();
@@ -210,7 +210,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can cancel adding a tag', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Click on the "Add Tag" button
     await page.locator('button:has-text("Add Tag")').click();

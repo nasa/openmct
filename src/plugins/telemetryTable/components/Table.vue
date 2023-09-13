@@ -135,7 +135,7 @@
       <progress-bar
         v-if="loading"
         class="c-telemetry-table__progress-bar"
-        :model="{ progressPerc: undefined }"
+        :model="{ progressPerc: null }"
       />
 
       <!-- Headers table -->
@@ -278,10 +278,10 @@ import Search from '../../../ui/components/Search.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
-import _ from 'lodash';
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './SizingRow.vue';
-import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import _ from 'lodash';
 import { toRaw } from 'vue';
 
 const VISIBLE_ROW_COUNT = 100;

@@ -26,11 +26,12 @@ Tests the branding associated with the default deployment. At least the about mo
 
 const { test, expect } = require('../../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
+const VISUAL_URL = require('../../../constants').VISUAL_URL;
 
 test.describe('Visual - Branding', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Visual - About Modal', async ({ page, theme }) => {

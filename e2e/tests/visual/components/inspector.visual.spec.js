@@ -20,43 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
+const { test } = require('../../../pluginFixtures.js');
+const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
+const percySnapshot = require('@percy/playwright');
 
-import UserIndicator from './components/UserIndicator.vue';
+//Declare the scope of the visual test
+const inspectorPane = '.l-shell__pane-inspector';
 
-export default function UserIndicatorPlugin() {
-  function addIndicator(openmct) {
-    const { vNode, destroy } = mount(
-      {
-        components: {
-          UserIndicator
-        },
-        provide: {
-          openmct: openmct
-        },
-        template: '<UserIndicator />'
-      },
-      {
-        app: openmct.app
-      }
-    );
-
-    openmct.indicators.add({
-      key: 'user-indicator',
-      element: vNode.el,
-      priority: openmct.priority.HIGH,
-      destroy: destroy
-    });
-  }
-
-  return function install(openmct) {
-    if (openmct.user.hasProvider()) {
-      addIndicator(openmct);
-    } else {
-      // back up if user provider added after indicator installed
-      openmct.user.on('providerAdded', () => {
-        addIndicator(openmct);
-      });
+test.describe('Visual - Controlled Clock', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
     }
-  };
-}
+  });
+
+  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
+    //Expand the Inspector Pane
+    await page.getByRole('button', { name: 'Inspect' }).click();
+
+    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+    //Open Annotations Tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
+
+    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+  });
+});

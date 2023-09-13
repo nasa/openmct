@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Annotations from './AnnotationsInspectorView.vue';
 import mount from 'utils/mount';
+
+import Annotations from './AnnotationsInspectorView.vue';
 
 export default function AnnotationsViewProvider(openmct) {
   return {

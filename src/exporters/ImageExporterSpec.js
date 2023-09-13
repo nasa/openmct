@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageExporter from './ImageExporter';
 import { createOpenMct, resetApplicationState } from '../utils/testing';
+import ImageExporter from './ImageExporter';
 
 describe('The Image Exporter', () => {
   let openmct;

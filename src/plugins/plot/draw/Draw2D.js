@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+
 import eventHelpers from '../lib/eventHelpers';
 import { MARKER_SHAPES } from './MarkerShapes';
 /**

@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-import ListViewComponent from './components/ListView.vue';
 import Moment from 'moment';
+import mount from 'utils/mount';
+
+import ListViewComponent from './components/ListView.vue';
 import { ALLOWED_FOLDER_TYPES } from './constants.js';
 
 export default class FolderListView {

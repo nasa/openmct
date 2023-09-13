@@ -50,6 +50,7 @@
 <script>
 import TimePopupFixed from './TimePopupFixed.vue';
 import _ from 'lodash';
+
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 
 export default {

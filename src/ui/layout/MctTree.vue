@@ -117,7 +117,7 @@
 <script>
 import _ from 'lodash';
 import TreeItem from './TreeItem.vue';
-import search from '../components/Search.vue';
+import Search from '../components/Search.vue';
 import { markRaw, reactive } from 'vue';
 
 const ITEM_BUFFER = 25;
@@ -129,7 +129,7 @@ const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator
 export default {
   name: 'MctTree',
   components: {
-    search,
+    Search,
     TreeItem
   },
   inject: ['openmct'],
