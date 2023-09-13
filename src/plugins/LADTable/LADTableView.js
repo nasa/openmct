@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
+
 import LadTable from './components/LadTable.vue';
 import LADTableConfiguration from './LADTableConfiguration';
 

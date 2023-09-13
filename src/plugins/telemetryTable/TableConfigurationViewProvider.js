@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
+
 import TableConfigurationComponent from './components/TableConfiguration.vue';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 

@@ -48,8 +48,8 @@
 import _ from 'lodash';
 
 import ToolbarButton from './components/ToolbarButton.vue';
-import ToolbarColorPicker from './components/ToolbarColorPicker.vue';
 import ToolbarCheckbox from './components/ToolbarCheckbox.vue';
+import ToolbarColorPicker from './components/ToolbarColorPicker.vue';
 import ToolbarInput from './components/ToolbarInput.vue';
 import ToolbarMenu from './components/ToolbarMenu.vue';
 import ToolbarSelectMenu from './components/ToolbarSelectMenu.vue';
