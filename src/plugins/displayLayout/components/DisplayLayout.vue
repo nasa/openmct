@@ -226,7 +226,7 @@ export default {
       this.domainObject,
       'configuration.items',
       (items) => {
-        this.layoutItems = items;
+        this.layoutItems = [...items];
       }
     );
 
@@ -638,7 +638,7 @@ export default {
           return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
         }
       });
-      this.layoutItems = layoutItems;
+      this.layoutItems = [...layoutItems];
       this.mutate('configuration.items', layoutItems);
       this.clearSelection();
     },

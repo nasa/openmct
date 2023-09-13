@@ -592,8 +592,6 @@ define(['lodash'], function (_) {
             }
           } else if (selection.length > 1) {
             if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
-              let displayLayoutContext = selectionPath[1].context;
-
               return {
                 control: 'menu',
                 domainObject: selectedParent,
@@ -611,8 +609,6 @@ define(['lodash'], function (_) {
                 }
               };
             } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
-              let displayLayoutContext = selectionPath[1].context;
-
               return {
                 control: 'menu',
                 domainObject: selectedParent,
