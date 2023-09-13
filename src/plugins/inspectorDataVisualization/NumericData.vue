@@ -21,9 +21,10 @@
 -->
 
 <template>
-  <div class="c-inspect-properties c-inspector__numeric-data">
-    <div class="c-inspect-properties__header">Numeric Data</div>
-
+  <div class="c-inspector__numeric-data">
+    <div class="c-inspect-properties">
+      <div class="c-inspect-properties__header">Numeric Data</div>
+    </div>
     <div ref="numericDataView"></div>
 
     <div v-if="!hasNumericData">
