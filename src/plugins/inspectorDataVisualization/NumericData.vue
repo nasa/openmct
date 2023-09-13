@@ -49,7 +49,7 @@ export default {
     },
     noNumericDataText: {
       type: String,
-      default: 'No Numeric Data'
+      default: 'No Numeric Data to display.'
     }
   },
   data() {

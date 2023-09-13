@@ -53,7 +53,7 @@
     </div>
 
     <template v-if="selectedBounds !== undefined">
-      <NumericData :bounds="selectedBounds" :telemetry-keys="plotTelemetryKeys" />
+      <NumericData :bounds="selectedBounds" :telemetry-keys="plotTelemetryKeys" :no-numeric-data-text="noNumericDataText" />
       <Imagery v-if="hasImagery" :bounds="selectedBounds" :telemetry-keys="imageryTelemetryKeys" />
     </template>
   </div>
@@ -70,7 +70,7 @@ export default {
     NumericData,
     Imagery
   },
-  inject: ['timeFormatter', 'placeholderText', 'imageryOptions'],
+  inject: ['timeFormatter', 'placeholderText', 'plotOptions', 'imageryOptions'],
   props: {
     description: {
       type: Object,
@@ -135,6 +135,9 @@ export default {
     },
     hasImagery() {
       return this.imageryTelemetryKeys?.length;
+    },
+    noNumericDataText() {
+      return this.plotOptions?.noNumericDataText
     }
   },
   methods: {
