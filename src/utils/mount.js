@@ -1,4 +1,4 @@
-import { defineComponent, createApp } from 'vue';
+import { createApp, defineComponent } from 'vue';
 
 export default function mount(component, { props, children, element } = {}) {
   let el = element;
@@ -17,7 +17,7 @@ export default function mount(component, { props, children, element } = {}) {
   return {
     vNode: {
       componentInstance: mountedComponentInstance,
-      el: mountedComponentInstance.$el
+      el
     },
     destroy,
     el
