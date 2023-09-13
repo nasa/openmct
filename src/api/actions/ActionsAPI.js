@@ -93,7 +93,7 @@ class ActionsAPI extends EventEmitter {
     if (this._actionCollections.has(key)) {
       let actionCollection = this._actionCollections.get(key);
       actionCollection.off('destroy', this._updateCachedActionCollections);
-
+      delete actionCollection.applicableActions;
       this._actionCollections.delete(key);
     }
   }
