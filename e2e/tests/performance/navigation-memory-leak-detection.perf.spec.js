@@ -118,7 +118,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.fixme('display layout of a single SWG plot', async ({ page }) => {
+  test('display layout of a single SWG plot', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'display-layout-single-overlay-plot'
@@ -129,7 +129,7 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   //TODO: Figure out why `svg` in the CompassRose component leaks imagery
-  test('example imagery view', async ({ page }) => {
+  test.fixme('example imagery view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'example-imagery-memory-leak-test'
@@ -149,20 +149,20 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
-    page
-  }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(
-      page,
-      'display-layout-simple-telemetry'
-    );
+  test.fixme(
+    'display layout with plots of swgs, alphanumerics, and condition sets, ',
+    async ({ page }) => {
+      const result = await navigateToObjectAndDetectMemoryLeak(
+        page,
+        'display-layout-simple-telemetry'
+      );
 
-    // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
-    expect(result).toBe(true);
-  });
+      // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+      expect(result).toBe(true);
+    }
+  );
 
-  //TODO: Check why there is a leak only when limitLines are enabled
-  test.only('flexible layout with plots of swgs', async ({ page }) => {
+  test('flexible layout with plots of swgs', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'flexible-layout-plots-memory-leak-test'
@@ -172,7 +172,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('flexible layout of example imagery views', async ({ page }) => {
+  test('flexible layout of example imagery views', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'flexible-layout-images-memory-leak-test'
