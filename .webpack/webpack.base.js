@@ -29,6 +29,9 @@ try {
   console.warn(err);
 }
 
+//TODO: (@evenstensberg) bundle css in its own config
+const isModularizeCss = true;
+
 function setImportPath(p) {
   const projectRootDir = path.resolve(__dirname, '..');
   return path.resolve(projectRootDir, p);
@@ -64,7 +67,7 @@ let plugins = [
 
 // Important! This loader needs to always be first in (test: /css/scss/less)
 function setCSSLoader(env) {
-  if (env === 'production') {
+  if (isModularizeCss || env === 'production') {
     return {
       loader: MiniCssExtractPlugin.loader
     };
@@ -87,7 +90,7 @@ function setPostCssLoader(env) {
 }
 /** @type {import('webpack').Configuration} */
 const config = function (env) {
-  if (env === 'production') {
+  if (isModularizeCss || env === 'production') {
     plugins.push(
       new MiniCssExtractPlugin({
         filename: '[name].css',
