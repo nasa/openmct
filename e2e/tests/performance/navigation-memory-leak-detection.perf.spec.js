@@ -40,9 +40,12 @@ const filePath = 'e2e/test-data/memory-leak-detection.json';
  *
  */
 test.describe('Navigation memory leak is not detected in', () => {
-  test.beforeEach(async ({ page, browser }, testInfo) => {
+  test.describe.configure({
+    timeout: 45 * 1000 // 45 seconds
+  });
+  test.beforeEach(async ({ page }) => {
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Click a:has-text("My Items")
     await page.locator('a:has-text("My Items")').click({
