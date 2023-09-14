@@ -40,7 +40,7 @@
 
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import Search from '@/ui/components/search.vue';
+import Search from '@/ui/components/Search.vue';
 
 import { FILTER_ITEMS } from './constants';
 

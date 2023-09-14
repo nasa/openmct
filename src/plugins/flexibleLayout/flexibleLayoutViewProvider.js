@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import FlexibleLayoutComponent from './components/flexibleLayout.vue';
+import FlexibleLayoutComponent from './components/FlexibleLayout.vue';
 
 const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
 export default class FlexibleLayoutViewProvider {
