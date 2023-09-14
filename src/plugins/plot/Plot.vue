@@ -179,7 +179,7 @@ export default {
     this.stalenessSubscription = {};
     this.loadComposition();
   },
-  beforeUnmount() {
+  unmounted() {
     this.destroy();
   },
   methods: {
