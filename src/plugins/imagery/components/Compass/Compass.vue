@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-compass" :style="`width: 100%; height: 100%`">
-    <CompassHUD
+    <compass-hud
       :camera-angle-of-view="cameraAngleOfView"
       :heading="heading"
       :camera-azimuth="cameraAzimuth"
@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import CompassHUD from './CompassHUD.vue';
+import CompassHud from './CompassHud.vue';
 import CompassRose from './CompassRose.vue';
 import { rotate } from './utils';
 
 export default {
   components: {
-    CompassHUD,
+    CompassHud,
     CompassRose
   },
   props: {

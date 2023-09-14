@@ -58,7 +58,7 @@
 <script>
 import StalenessUtils from '@/utils/staleness';
 
-import LadRow from './LADRow.vue';
+import LadRow from './LadRow.vue';
 
 export default {
   components: {
