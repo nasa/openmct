@@ -17,7 +17,7 @@ export default function mount(component, { props, children, element } = {}) {
   return {
     vNode: {
       componentInstance: mountedComponentInstance,
-      el
+      el: mountedComponentInstance.$el
     },
     destroy,
     el
