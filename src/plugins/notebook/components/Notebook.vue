@@ -155,13 +155,11 @@
 </template>
 
 <script>
-import NotebookEntry from './NotebookEntry.vue';
-import SearchResults from './SearchResults.vue';
-import Sidebar from './Sidebar.vue';
-import Search from '@/ui/components/Search.vue';
-import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import { debounce } from 'lodash';
 
+import Search from '@/ui/components/Search.vue';
+
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import objectLink from '../../../ui/mixins/object-link';
 import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 import {
@@ -183,6 +181,9 @@ import {
   setDefaultNotebookPageId,
   setDefaultNotebookSectionId
 } from '../utils/notebook-storage';
+import NotebookEntry from './NotebookEntry.vue';
+import SearchResults from './SearchResults.vue';
+import Sidebar from './Sidebar.vue';
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }

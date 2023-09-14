@@ -1,6 +1,7 @@
+import mount from 'utils/mount';
+
 import TableComponent from './components/Table.vue';
 import TelemetryTable from './TelemetryTable';
-import mount from 'utils/mount';
 
 export default class TelemetryTableView {
   constructor(openmct, domainObject, objectPath) {

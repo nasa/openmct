@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import ViewControl from '../components/ViewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
+import ViewControl from '../components/ViewControl.vue';
 
 export default {
   name: 'TreeItem',
