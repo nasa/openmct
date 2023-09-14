@@ -82,6 +82,7 @@
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./package-lock.json ./coverage ./html-test-results ./test-results ./.nyc_output ",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.js",
+    "start:prod": "npx webpack serve --config ./.webpack/webpack.prod.js",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.js",
     "lint:js": "eslint example src e2e --ext .js openmct.js --max-warnings=0",
     "lint:vue": "eslint example src --ext .vue",

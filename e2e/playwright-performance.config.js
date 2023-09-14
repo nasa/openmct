@@ -11,7 +11,7 @@ const config = {
   timeout: 60 * 1000,
   workers: 1, //Only run in serial with 1 worker
   webServer: {
-    command: 'npm run start', //coverage not generated
+    command: 'npm run start:prod', //coverage not generated
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: !CI
@@ -20,7 +20,7 @@ const config = {
     browserName: 'chromium',
     baseURL: 'http://localhost:8080/',
     headless: CI, //Only if running locally
-    ignoreHTTPSErrors: true,
+    ignoreHTTPSErrors: false, //HTTP performance varies!
     screenshot: 'off',
     trace: 'on-first-retry',
     video: 'off',

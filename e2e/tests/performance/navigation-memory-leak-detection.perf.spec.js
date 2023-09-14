@@ -22,7 +22,7 @@
 
 const { test, expect } = require('@playwright/test');
 
-const filePath = 'e2e/test-data/memory-leak-detection.json';
+const memoryLeakFilePath = 'e2e/test-data/memory-leak-detection.json';
 /**
  * Executes tests to verify that views are not leaking memory on navigation away. This sort of
  * memory leak is generally caused by a failure to clean up registered listeners.
@@ -47,18 +47,15 @@ test.describe('Navigation memory leak is not detected in', () => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    // Click a:has-text("My Items")
     await page.locator('a:has-text("My Items")').click({
       button: 'right'
     });
 
-    // Click text=Import from JSON
     await page.locator('text=Import from JSON').click();
 
     // Upload memory-leak-detection.json
-    await page.setInputFiles('#fileElem', filePath);
+    await page.setInputFiles('#fileElem', memoryLeakFilePath);
 
-    // Click text=OK
     await page.locator('text=OK').click();
 
     await expect(page.locator('a:has-text("Memory Leak Detection")')).toBeVisible();
