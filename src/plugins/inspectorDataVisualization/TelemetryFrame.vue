@@ -27,18 +27,35 @@
         <span class="c-telemetry-frame__title-icon icon-telemetry"></span>
         <span class="title-text">{{ telemetryObject.name }}</span>
       </span>
-      <button title="More options" class="l-browse-bar__actions c-icon-button icon-3-dots" ref="menu-button"
-        @click="toggleMenu">
-      </button>
+      <button
+        ref="menu-button"
+        title="More options"
+        class="l-browse-bar__actions c-icon-button icon-3-dots"
+        @click="toggleMenu"
+      ></button>
     </div>
-    <div v-if="showMenu" class="c-menu c-menu__inspector-telemetry-options" aria-label="Telemetry Options"
-      @blur="showMenu = false">
+    <div
+      v-if="showMenu"
+      class="c-menu c-menu__inspector-telemetry-options"
+      aria-label="Telemetry Options"
+      @blur="showMenu = false"
+    >
       <ul>
-        <li v-if="telemetryObject.type === 'yamcs.telemetry'" role="menuitem" title="View Full Screen"
-          class="icon-eye-open" @click="previewTelemetry">
+        <li
+          v-if="telemetryObject.type === 'yamcs.telemetry'"
+          role="menuitem"
+          title="View Full Screen"
+          class="icon-eye-open"
+          @click="previewTelemetry"
+        >
           View Full Screen
         </li>
-        <li role="menuitem" title="Open in a new browser tab" class="icon-new-window" @click="openInNewTab">
+        <li
+          role="menuitem"
+          title="Open in a new browser tab"
+          class="icon-new-window"
+          @click="openInNewTab"
+        >
           Open In New Tab
         </li>
       </ul>
@@ -58,16 +75,16 @@ export default {
   props: {
     bounds: {
       type: Object,
-      default: () => { }
+      default: () => {}
     },
     telemetryObject: {
       type: Object,
-      default: () => { }
+      default: () => {}
     }
   },
   data() {
     return {
-      showMenu: false,
+      showMenu: false
     };
   },
   methods: {

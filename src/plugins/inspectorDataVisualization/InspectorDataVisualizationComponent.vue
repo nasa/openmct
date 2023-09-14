@@ -21,7 +21,9 @@
 -->
 
 <template>
-  <div class="c-inspector__properties c-data-visualization-inspector__properties c-data-visualization-inspector__flex-column">
+  <div
+    class="c-inspector__properties c-data-visualization-inspector__properties c-data-visualization-inspector__flex-column"
+  >
     <DataVisualization
       :data-ranges="dataRanges"
       :plot-telemetry-keys="plotTelemetryKeys"

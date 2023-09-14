@@ -21,36 +21,42 @@
 -->
 
 <template>
-<div v-if="camerasWithImagesInBounds.length > 0" class="c-inspect-properties c-inspector__imagery-view">
-  <div class="c-inspect-properties__header">
-    Imagery View
-  </div>
-  <div v-for="(camera, index) in camerasWithImagesInBounds" :key="index" class="c-imagery-view__camera-image-set">
-    <TelemetryFrame :bounds="bounds" :telemetryObject="camera">
-      <div class="c-imagery-view__camera-image-list">
-        <span v-for="(cameraImage, imageIndex) in camera.imagesInBounds" :key="imageIndex"
-          class="c-imagery-view__camera-image">
-          <img :src="cameraImage.value" />
-          <span class="c-imagery-view__camera-image-timestamp">
-            {{ cameraImage.timestamp }}
+  <div
+    v-if="camerasWithImagesInBounds.length > 0"
+    class="c-inspect-properties c-inspector__imagery-view"
+  >
+    <div class="c-inspect-properties__header">Imagery View</div>
+    <div
+      v-for="(camera, index) in camerasWithImagesInBounds"
+      :key="index"
+      class="c-imagery-view__camera-image-set"
+    >
+      <TelemetryFrame :bounds="bounds" :telemetry-object="camera">
+        <div class="c-imagery-view__camera-image-list">
+          <span
+            v-for="(cameraImage, imageIndex) in camera.imagesInBounds"
+            :key="imageIndex"
+            class="c-imagery-view__camera-image"
+          >
+            <img :src="cameraImage.value" />
+            <span class="c-imagery-view__camera-image-timestamp">
+              {{ cameraImage.timestamp }}
+            </span>
           </span>
-        </span>
-      </div>
-    </TelemetryFrame>
+        </div>
+      </TelemetryFrame>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
 import TelemetryFrame from './TelemetryFrame.vue';
 
 export default {
-  inject: [
-    'openmct'
-  ],
   components: {
     TelemetryFrame
   },
+  inject: ['openmct'],
   props: {
     bounds: {
       type: Object,
@@ -80,7 +86,7 @@ export default {
       this.cameraImagesList = [];
       const { start, end } = this.bounds;
       const cameraObjectPromises = [];
-      this.telemetryKeys.forEach(telemetryKey => {
+      this.telemetryKeys.forEach((telemetryKey) => {
         const cameraPromise = this.openmct.objects.get(telemetryKey);
         cameraObjectPromises.push(cameraPromise);
       });
@@ -88,11 +94,10 @@ export default {
 
       const cameraTelemetryPromises = [];
       cameraObjects.forEach((cameraObject) => {
-        const cameraTelemetryPromise = this.openmct.telemetry
-          .request(cameraObject, {
-            start,
-            end
-          });
+        const cameraTelemetryPromise = this.openmct.telemetry.request(cameraObject, {
+          start,
+          end
+        });
         cameraTelemetryPromises.push(cameraTelemetryPromise);
       });
       const cameraImages = await Promise.all(cameraTelemetryPromises);
@@ -104,7 +109,9 @@ export default {
       cameraObjects.forEach((cameraObject) => {
         if (cameraObject.images.length > 0) {
           const imagesInBounds = cameraObject.images.filter((imageDetails) => {
-            if (!imageDetails.timestamp) return false;
+            if (!imageDetails.timestamp) {
+              return false;
+            }
             const timestamp = Date.parse(imageDetails.timestamp);
             return timestamp >= start && timestamp <= end;
           });

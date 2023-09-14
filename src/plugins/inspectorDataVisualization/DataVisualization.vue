@@ -21,7 +21,9 @@
 -->
 
 <template>
-  <div class="c-data-visualization-inspect-properties c-inspector__data-pivot c-data-visualization-inspector__flex-column">
+  <div
+    class="c-data-visualization-inspect-properties c-inspector__data-pivot c-data-visualization-inspector__flex-column"
+  >
     <div class="c-inspect-properties">
       <div class="c-inspect-properties__header">Data Visualization</div>
     </div>
@@ -29,22 +31,35 @@
     <div v-if="isLoading" class="c-inspector__data-pivot-placeholder">Loading...</div>
 
     <div v-else-if="hasDataRanges">
-      <div v-if="selectedDataRange !== undefined && hasDescription" class="c-inspector__data-pivot-coordinates-wrapper">
-        <span class="c-tree__item__type-icon c-object-label__type-icon" :class="description.icon"></span>
+      <div
+        v-if="selectedDataRange !== undefined && hasDescription"
+        class="c-inspector__data-pivot-coordinates-wrapper"
+      >
+        <span
+          class="c-tree__item__type-icon c-object-label__type-icon"
+          :class="description.icon"
+        ></span>
         <span class="c-inspector__data-pivot-coordinates">
           {{ description.text }}
         </span>
       </div>
 
       <select class="c-inspector__data-pivot-range-selector" v-model="selectedDataRangeIndex">
-        <option v-for="(dataRange, index) in descendingDataRanges" :key="index" :value="index"
-          :selected="selectedDataRangeIndex === index">
+        <option
+          v-for="(dataRange, index) in descendingDataRanges"
+          :key="index"
+          :value="index"
+          :selected="selectedDataRangeIndex === index"
+        >
           {{ displayDataRange(dataRange) }}
         </option>
       </select>
     </div>
 
-    <div v-else-if="dataRanges && dataRanges.length === 0" class="c-inspector__data-pivot-placeholder">
+    <div
+      v-else-if="dataRanges && dataRanges.length === 0"
+      class="c-inspector__data-pivot-placeholder"
+    >
       No data for the current {{ description.name }}
     </div>
 
@@ -53,7 +68,11 @@
     </div>
 
     <template v-if="selectedBounds !== undefined">
-      <NumericData :bounds="selectedBounds" :telemetry-keys="plotTelemetryKeys" :no-numeric-data-text="noNumericDataText" />
+      <NumericData
+        :bounds="selectedBounds"
+        :telemetry-keys="plotTelemetryKeys"
+        :no-numeric-data-text="noNumericDataText"
+      />
       <Imagery v-if="hasImagery" :bounds="selectedBounds" :telemetry-keys="imageryTelemetryKeys" />
     </template>
   </div>
@@ -125,7 +144,7 @@ export default {
         return {
           start: start - TIMESTAMP_VIEW_BUFFER,
           end: end + TIMESTAMP_VIEW_BUFFER
-        }
+        };
       }
 
       return this.selectedDataRange.bounds;
@@ -137,7 +156,7 @@ export default {
       return this.imageryTelemetryKeys?.length;
     },
     noNumericDataText() {
-      return this.plotOptions?.noNumericDataText
+      return this.plotOptions?.noNumericDataText;
     }
   },
   methods: {
@@ -150,7 +169,9 @@ export default {
       if (startTime === endTime) {
         return `${this.shortDate(this.timeFormatter.format(startTime))} +/- ${timestampBufferText}`;
       }
-      return `${this.shortDate(this.timeFormatter.format(startTime))} - ${this.shortDate(this.timeFormatter.format(endTime))}`;
+      return `${this.shortDate(this.timeFormatter.format(startTime))} - ${this.shortDate(
+        this.timeFormatter.format(endTime)
+      )}`;
     },
     isSelectedDataRange(dataRange, index) {
       const selectedDataRange = this.descendingDataRanges[index];
