@@ -22,15 +22,12 @@
 
 const { test } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
-const {
-  selectInspectorTab,
-  expandTreePaneItemByName,
-  createDomainObjectWithDefaults
-} = require('../../appActions');
+const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const {
   startAndAddRestrictedNotebookObject,
   enterTextEntry
 } = require('../../helper/notebookUtils');
+const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,22 +41,25 @@ test.describe('Visual - Restricted Notebook', () => {
 });
 
 test.describe('Visual - Notebook', () => {
+  let notebook;
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    notebook = await createDomainObjectWithDefaults(page, {
+      type: 'Notebook',
+      name: 'Test Notebook'
+    });
   });
-  test('Accepts dropped objects as embeds @unstable', async ({ page, theme, openmctConfig }) => {
+  test('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
-    const notebook = await createDomainObjectWithDefaults(page, {
-      type: 'Notebook',
-      name: 'Embed Test Notebook'
-    });
     // Create Overlay Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot',
       name: 'Dropped Overlay Plot'
     });
+
+    //Open Tree
+    await page.getByRole('button', { name: 'Browse' }).click();
 
     await expandTreePaneItemByName(page, myItemsFolderName);
 
@@ -70,18 +70,19 @@ test.describe('Visual - Notebook', () => {
     await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
   });
   test("Blur 'Add tag' on Notebook", async ({ page, theme }) => {
-    await createDomainObjectWithDefaults(page, {
-      type: 'Notebook',
-      name: 'Add Tag Test Notebook'
-    });
     await enterTextEntry(page, 'Entry 0');
 
-    // Click on Annotations tab
-    await selectInspectorTab(page, 'Annotations');
+    await percySnapshot(page, `Notebook Entry (theme: '${theme}')`);
+
+    // Open the Inspector
+    await page.getByRole('button', { name: 'Inspect' }).click();
+    // Open the Annotations tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Take snapshot of the notebook with the Annotations tab opened
     await percySnapshot(page, `Notebook Annotation (theme: '${theme}')`);
 
+    // Add annotation
     await page.locator('button:has-text("Add Tag")').click();
 
     // Take snapshot of the notebook with the AutoComplete field visible

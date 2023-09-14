@@ -228,9 +228,6 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
   const parentUrl = await getHashUrlToDomainObject(page, parent);
-  // TODO: Make this field even more accessible
-  const name = 'VIPER Rover Heading';
-  const nameInputLocator = page.getByRole('dialog').locator('input[type="text"]');
 
   await page.goto(`${parentUrl}?hideTree=true`);
 
@@ -238,7 +235,8 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.locator('li:has-text("Sine Wave Generator")').click();
 
-  await nameInputLocator.fill(name);
+  const name = 'VIPER Rover Heading';
+  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
 
   // Fill out the fields with default values
   await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
@@ -520,6 +518,7 @@ async function setIndependentTimeConductorBounds(page, startDate, endDate) {
 
 /**
  * Set the bounds of the visible conductor in fixed time mode
+ * @private
  * @param {import('@playwright/test').Page} page
  * @param {string} startDate
  * @param {string} endDate
@@ -542,18 +541,6 @@ async function setTimeBounds(page, startDate, endDate) {
       .getByRole('textbox', { name: 'End time' })
       .fill(endDate.toString().substring(11, 19));
   }
-}
-
-/**
- * Selects an inspector tab based on the provided tab name
- *
- * @param {import('@playwright/test').Page} page
- * @param {String} name the name of the tab
- */
-async function selectInspectorTab(page, name) {
-  const inspectorTabs = page.getByRole('tablist');
-  const inspectorTab = inspectorTabs.getByTitle(name);
-  await inspectorTab.click();
 }
 
 /**
@@ -674,7 +661,6 @@ module.exports = {
   setEndOffset,
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
-  selectInspectorTab,
   waitForPlotsToRender,
   renameObjectFromContextMenu
 };
