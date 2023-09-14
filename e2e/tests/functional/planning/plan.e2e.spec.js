@@ -22,6 +22,7 @@
 const { test } = require('../../../pluginFixtures');
 const { createPlanFromJSON } = require('../../../appActions');
 const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
+const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Invalid.json');
 const { assertPlanActivities } = require('../../../helper/planningUtils');
 
 test.describe('Plan', () => {
@@ -35,5 +36,28 @@ test.describe('Plan', () => {
 
   test('Displays all plan events', async ({ page }) => {
     await assertPlanActivities(page, testPlan1, plan.url);
+  });
+});
+
+test.describe("Plan - Check Invalid JSON Notification", () => {
+  let plan;
+  test.beforeEach(async ({ page }) => {
+    // Go to baseURL and Hide Tree
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    plan = await createPlanFromJSON(page, {
+      json: testPlan2
+    });
+    // Verify there is a button with aria-label="Review 1 Notification"
+    expect(await page.locator('button[aria-label="Review 1 Notification"]').isVisible()).toBe(true);
+    // Verify there is a button with aria-label="Clear all notifications"
+    expect(await page.locator('button[aria-label="Clear all notifications"]').isVisible()).toBe(
+      true
+    );
+    // Click on the div with role="alert" that has "Please verify JSON follows correct Schema." text
+    await page.locator('div[role="alert"]:has-text("Please verify JSON follows correct Schema.")').click();
+    // Verify there is a div with role="dialog"
+    expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
+    // Verify the div with role="dialog" contains text "Please verify JSON follows correct Schema."
+    expect(await page.locator('div[role="dialog"]').innerText()).toContain('Please verify JSON follows correct Schema.');
   });
 });

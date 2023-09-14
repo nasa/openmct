@@ -425,11 +425,15 @@ export default {
       const activityGroups = [];
       this.planViewConfiguration.initializeSwimlaneVisibility(groupNames);
 
-      groupNames.forEach((groupName) => {
+      for(const groupName of groupNames) {
         let activitiesByRow = {};
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
+        if (!Array.isArray(rawActivities)) {
+          this.openmct.notifications.error('Please verify JSON follows correct Schema.');
+          break;
+        }
         rawActivities.forEach((rawActivity) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
@@ -506,7 +510,7 @@ export default {
           width: swimlaneWidth,
           status: this.isNested ? '' : this.status
         });
-      });
+      }
 
       this.activityGroups = activityGroups;
     },

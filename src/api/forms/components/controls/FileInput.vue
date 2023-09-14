@@ -95,6 +95,12 @@ export default {
       fileInfo.name = file.name;
       fileReader.onload = function (event) {
         fileInfo.body = event.target.result;
+        try {
+          const _ = JSON.parse(fileInfo.body);
+        } catch {
+          self.openmct.notifications.error('This file does not contain valid JSON.');
+          return;
+        }
         self.fileInfo = fileInfo;
 
         const data = {
