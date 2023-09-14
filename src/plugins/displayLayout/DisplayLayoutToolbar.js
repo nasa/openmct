@@ -170,7 +170,7 @@ define(['lodash'], function (_) {
                 if (form) {
                   showForm(form, name, selectionPath);
                 } else {
-                  selectionPath[0].context.addElement(name);
+                  openmct.objectViews.emit('contextAction', 'addElement', name);
                 }
               },
               key: 'add',
