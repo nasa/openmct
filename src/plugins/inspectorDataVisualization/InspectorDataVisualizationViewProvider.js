@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import InspectorDataVisualizationComponent from './InspectorDataVisualizationComponent.vue';
 import mount from 'utils/mount';
+
+import InspectorDataVisualizationComponent from './InspectorDataVisualizationComponent.vue';
 
 export default function InspectorDataVisualizationViewProvider(openmct, configuration) {
   const {
