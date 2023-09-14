@@ -51,7 +51,6 @@ export function getThumbnailURLFromImageUrl(imageUrl, size = DEFAULT_SIZE) {
 }
 
 export async function saveNotebookImageDomainObject(openmct, object) {
-  console.debug('🍎 Saving notebook image domain object', object);
   await openmct.objects.save(object);
 }
 

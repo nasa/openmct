@@ -654,7 +654,7 @@ export default {
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
       } else {
         // plain domain object
-        const data = event.dataTransfer.getData('openmct/domain-object-path');
+        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
         const objectPath = JSON.parse(data);
         const bounds = this.openmct.time.bounds();
         const snapshotMeta = {

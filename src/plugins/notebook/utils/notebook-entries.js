@@ -141,7 +141,7 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
         bounds: openmct.time.bounds(),
         link: null,
         objectPath: null,
-        openmct: openmct,
+        openmct,
         userImage: true,
         imageName
       };
@@ -164,10 +164,9 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
   if (objectPath?.length > 0) {
     domainObject = objectPath[0];
     const domainObjectType = openmct.types.get(domainObject.type);
-    cssClass =
-      domainObjectType && domainObjectType.definition
-        ? domainObjectType.definition.cssClass
-        : 'icon-object-unknown';
+    cssClass = domainObjectType?.definition
+      ? domainObjectType.definition.cssClass
+      : 'icon-object-unknown';
     name = domainObject.name;
     type = domainObject.identifier.key;
     historicLink = link

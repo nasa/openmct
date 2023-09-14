@@ -205,14 +205,15 @@ test.describe('Snapshot image tests', () => {
     await page.dispatchEvent('.c-snapshots', 'drop', { dataTransfer: dropTransfer });
 
     // expect two embedded images now
-    await expect(page.getByText('favicon-96x96.png').nth(1)).toBeVisible();
+    expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(2);
 
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More options').click();
 
-    await await page.getByRole('menuitem', { name: /Remove This Embed/ }).click();
+    await page.getByRole('menuitem', { name: /Remove This Embed/ }).click();
 
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
-    await expect(page.getByText('favicon-96x96.png').nth(1)).toBeHidden();
+    // expect one embedded image now as we deleted the other
+    expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(1);
   });
 });
