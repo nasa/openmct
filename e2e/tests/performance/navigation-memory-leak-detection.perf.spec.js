@@ -149,7 +149,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
+  test.fixme('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
     page
   }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
@@ -181,7 +181,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('tabbed view of display layouts and time strips', async ({ page }) => {
+  test.fixme('tabbed view of display layouts and time strips', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'tab-view-simple-memory-leak-test'
@@ -191,7 +191,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.skip('time strip view of telemetry', async ({ page }) => {
+  test.fixme('time strip view of telemetry', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'time-strip-telemetry-memory-leak-test'
