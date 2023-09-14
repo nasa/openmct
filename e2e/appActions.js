@@ -78,7 +78,7 @@ async function createDomainObjectWithDefaults(
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   //Click the Create button
   await page.click('button:has-text("Create")');
@@ -179,7 +179,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   // Click the Create button
   await page.click('button:has-text("Create")');
@@ -229,7 +229,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 async function createExampleTelemetryObject(page, parent = 'mine') {
   const parentUrl = await getHashUrlToDomainObject(page, parent);
 
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   await page.locator('button:has-text("Create")').click();
 
