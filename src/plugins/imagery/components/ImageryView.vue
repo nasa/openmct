@@ -727,7 +727,7 @@ export default {
       }
     }
 
-    this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+    // remove all eventListeners
     this.stopListening();
 
     Object.keys(this.imageryAnnotations).forEach((time) => {
@@ -877,7 +877,7 @@ export default {
         });
         this.visibleLayers = this.layers.filter((layer) => layer.visible);
       } else {
-        this.visibleLayers.splice(0);
+        this.visibleLayers = [];
         this.layers.forEach((layer) => {
           layer.visible = false;
         });
@@ -926,8 +926,8 @@ export default {
         this.openmct.objects.mutate(this.domainObject, 'configuration.layers', this.layers);
       }
 
-      this.visibleLayers.splice(0);
-      this.layers.splice(0);
+      this.visibleLayers = [];
+      this.layers = [];
     },
     // will subscribe to data for this key if not already done
     subscribeToDataForKey(key) {
