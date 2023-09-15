@@ -278,12 +278,12 @@ import { toRaw } from 'vue';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
-import search from '../../../ui/components/search.vue';
+import Search from '../../../ui/components/Search.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
-import SizingRow from './sizing-row.vue';
-import TableColumnHeader from './table-column-header.vue';
-import TableFooterIndicator from './table-footer-indicator.vue';
-import TelemetryTableRow from './table-row.vue';
+import SizingRow from './SizingRow.vue';
+import TableColumnHeader from './TableColumnHeader.vue';
+import TableFooterIndicator from './TableFooterIndicator.vue';
+import TelemetryTableRow from './TableRow.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -294,7 +294,7 @@ export default {
   components: {
     TelemetryTableRow,
     TableColumnHeader,
-    search,
+    Search,
     TableFooterIndicator,
     ToggleSwitch,
     SizingRow,

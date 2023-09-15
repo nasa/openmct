@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import TableConfigurationComponent from './components/table-configuration.vue';
+import TableConfigurationComponent from './components/TableConfiguration.vue';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 
 export default function TableConfigurationViewProvider(openmct) {

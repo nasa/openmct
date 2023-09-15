@@ -157,7 +157,7 @@
 <script>
 import { debounce } from 'lodash';
 
-import Search from '@/ui/components/search.vue';
+import Search from '@/ui/components/Search.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import objectLink from '../../../ui/mixins/object-link';
@@ -184,7 +184,6 @@ import {
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
-
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }

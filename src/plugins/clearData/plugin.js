@@ -22,7 +22,7 @@
 import mount from 'utils/mount';
 
 import ClearDataAction from './ClearDataAction';
-import GlobalClearIndicator from './components/globalClearIndicator.vue';
+import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {
   let installIndicator = options.indicator;
