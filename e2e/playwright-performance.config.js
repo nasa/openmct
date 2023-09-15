@@ -17,7 +17,7 @@ const config = {
     reuseExistingServer: false //Must be run with this option to prevent dev mode
   },
   use: {
-    browserName: 'chromium',
+    browserName: 'chromium', //This will run twice - once for each project below.
     baseURL: 'http://localhost:8080/',
     headless: CI, //Only if running locally
     ignoreHTTPSErrors: false, //HTTP performance varies!
@@ -36,7 +36,7 @@ const config = {
             '--disable-notifications',
             '--use-fake-ui-for-media-stream',
             '--use-fake-device-for-media-stream',
-            '--js-flags=--no-move-object-start',
+            '--js-flags=--no-move-object-start --expose-gc',
             '--enable-precise-memory-info',
             '--display=:100'
           ]

@@ -8,11 +8,10 @@ const CI = process.env.CI === 'true';
 const config = {
   retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
   testDir: 'tests/performance/',
-  testMatch: '*todo-tests/*.contract.performance.js',
   timeout: 60 * 1000,
   workers: 1, //Only run in serial with 1 worker
   webServer: {
-    command: 'npm run start:dev', //need development mode for performance.marks
+    command: 'npm run start', //need development mode for performance.marks
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: false
@@ -30,7 +29,10 @@ const config = {
     {
       name: 'chrome',
       use: {
-        browserName: 'chromium'
+        browserName: 'chromium',
+        launchOptions: {
+          args: ['--js-flags=--expose-gc']
+        }
       }
     }
   ],
