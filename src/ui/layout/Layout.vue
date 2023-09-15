@@ -159,9 +159,9 @@ import Toolbar from '../toolbar/Toolbar.vue';
 import AppLogo from './AppLogo.vue';
 import BrowseBar from './BrowseBar.vue';
 import CreateButton from './CreateButton.vue';
-import MctTree from './mct-tree.vue';
-import multipane from './multipane.vue';
-import pane from './pane.vue';
+import MctTree from './MctTree.vue';
+import Multipane from './Multipane.vue';
+import Pane from './Pane.vue';
 import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import Indicators from './status-bar/Indicators.vue';
@@ -174,8 +174,8 @@ export default {
     ObjectView,
     CreateButton,
     GrandSearch,
-    multipane,
-    pane,
+    Multipane,
+    Pane,
     BrowseBar,
     Toolbar,
     AppLogo,

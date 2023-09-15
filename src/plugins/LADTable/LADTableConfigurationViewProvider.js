@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import LADTableConfigurationComponent from './components/LADTableConfiguration.vue';
+import LadTableConfiguration from './components/LadTableConfiguration.vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
   return {
@@ -46,12 +46,12 @@ export default function LADTableConfigurationViewProvider(openmct) {
             {
               el: element,
               components: {
-                LADTableConfiguration: LADTableConfigurationComponent
+                LadTableConfiguration
               },
               provide: {
                 openmct
               },
-              template: '<LADTableConfiguration />'
+              template: '<LadTableConfiguration />'
             },
             {
               app: openmct.app,
