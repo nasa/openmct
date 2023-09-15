@@ -19,12 +19,14 @@ module.exports = merge(common, {
     })
   ],
   devtool: 'source-map',
-  client: {
-    progress: true,
-    overlay: {
-      // Disable overlay for runtime errors.
-      // See: https://github.com/webpack/webpack-dev-server/issues/4771
-      runtimeErrors: false
+  devServer: {
+    client: {
+      progress: true,
+      overlay: {
+        // Disable overlay for runtime errors.
+        // See: https://github.com/webpack/webpack-dev-server/issues/4771
+        runtimeErrors: false
+      }
     }
   }
 });
