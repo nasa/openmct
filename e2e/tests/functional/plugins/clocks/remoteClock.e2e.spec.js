@@ -20,22 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// FIXME: Remove this eslint exception once tests are implemented
+// Note: this is not currently possible with openmct.js. Please do not attempt to run these tests until
+// we've implemented openmct.js
+//
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../../../baseFixtures');
+// const { test, expect } = require('../../../../baseFixtures');
 
-test.describe('Remote Clock', () => {
-  // eslint-disable-next-line require-await
-  test.fixme('blocks historical requests until first tick is received', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/5221'
-    });
-    // addInitScript to with remote clock
-    // Switch time conductor mode to 'remote clock'
-    // Navigate to telemetry
-    // Verify that the plot renders historical data within the correct bounds
-    // Refresh the page
-    // Verify again that the plot renders historical data within the correct bounds
-  });
-});
+// test.describe('Remote Clock', () => {
+//   test.fixme('blocks historical requests until first tick is received', async ({ page }) => {
+//     test.info().annotations.push({
+//       type: 'issue',
+//       description: 'https://github.com/nasa/openmct/issues/5221'
+//     });
+//     // addInitScript to with remote clock
+//     // Switch time conductor mode to 'remote clock'
+//     // Navigate to telemetry
+//     // Verify that the plot renders historical data within the correct bounds
+//     // Refresh the page
+//     // Verify again that the plot renders historical data within the correct bounds
+//   });
+// });

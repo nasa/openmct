@@ -166,4 +166,13 @@ test.describe('AppActions', () => {
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
     expect(await locatorTreeCollapsedItems.count()).toBe(0);
   });
+  test.fixme('createExampleTelemetryObject', async ({ page }) => {});
+  test.fixme('createPlanFromJSON', async ({ page }) => {});
+  test.fixme('expandTreePaneItemByName', async ({ page }) => {});
+  test.fixme('getHashUrlToDomainObject', async ({ page }) => {});
+  test.fixme('getFocusedObjectUuid', async ({ page }) => {});
+  test.fixme('navigateToObjectWithFixedTimeBounds', async ({ page }) => {});
+  test.fixme('openObjectTreeContextMenu', async ({ page }) => {});
+  test.fixme('waitForPlotsToRender', async ({ page }) => {});
+  test.fixme('renameObjectFromContextMenu', async ({ page }) => {});
 });

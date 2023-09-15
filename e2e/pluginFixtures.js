@@ -27,7 +27,7 @@
  */
 
 const { test, expect, request } = require('./baseFixtures');
-// const { createDomainObjectWithDefaults } = require('./appActions');
+const { waitForPlotsToRender } = require('./appActions');
 const path = require('path');
 
 /**
@@ -142,9 +142,6 @@ exports.test = test.extend({
   }
 });
 
-exports.expect = expect;
-exports.request = request;
-
 /**
  * Takes a readable stream and returns a string.
  * @param {ReadableStream} readable - the readable stream
@@ -157,4 +154,77 @@ exports.streamToString = async function (readable) {
   }
 
   return result;
+};
+
+/**
+ * @typedef {Object} PlotPixel
+ * @property {number} r The value of the red channel (0-255)
+ * @property {number} g The value of the green channel (0-255)
+ * @property {number} b The value of the blue channel (0-255)
+ * @property {number} a The value of the alpha channel (0-255)
+ * @property {string} strValue The rgba string value of the pixel
+ */
+
+/**
+ * Wait for all plots to render and then retrieve and return an array
+ * of canvas plot pixel data (RGBA values).
+ * @param {import('@playwright/test').Page} page
+ * @param {string} canvasSelector The selector for the canvas element
+ * @return {Promise<PlotPixel[]>}
+ */
+async function getCanvasPixels(page, canvasSelector) {
+  const getTelemValuePromise = new Promise((resolve) =>
+    page.exposeFunction('getCanvasValue', resolve)
+  );
+  const canvasHandle = await page.evaluateHandle(
+    (canvas) => document.querySelector(canvas),
+    canvasSelector
+  );
+  const canvasContextHandle = await page.evaluateHandle(
+    (canvas) => canvas.getContext('2d'),
+    canvasHandle
+  );
+
+  await waitForPlotsToRender(page);
+  await page.evaluate(
+    ([canvas, ctx]) => {
+      // The document canvas is where the plot points and lines are drawn.
+      // The only way to access the canvas is using document (using page.evaluate)
+      /** @type {ImageData} */
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      /** @type {number[]} */
+      const imageDataValues = Object.values(data);
+      /** @type {PlotPixel[]} */
+      const plotPixels = [];
+      // Each pixel consists of four values within the ImageData.data array. The for loop iterates by multiples of four.
+      // The values associated with each pixel are R (red), G (green), B (blue), and A (alpha), in that order.
+      for (let i = 0; i < imageDataValues.length; ) {
+        if (imageDataValues[i] > 0) {
+          plotPixels.push({
+            r: imageDataValues[i],
+            g: imageDataValues[i + 1],
+            b: imageDataValues[i + 2],
+            a: imageDataValues[i + 3],
+            strValue: `rgb(${imageDataValues[i]}, ${imageDataValues[i + 1]}, ${
+              imageDataValues[i + 2]
+            }, ${imageDataValues[i + 3]})`
+          });
+        }
+
+        i = i + 4;
+      }
+
+      window.getCanvasValue(plotPixels);
+    },
+    [canvasHandle, canvasContextHandle]
+  );
+
+  return getTelemValuePromise;
+}
+
+// eslint-disable-next-line no-undef
+module.exports = {
+  expect,
+  request,
+  getCanvasPixels
 };

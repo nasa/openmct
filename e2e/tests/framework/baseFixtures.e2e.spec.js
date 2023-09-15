@@ -30,7 +30,8 @@ const { test } = require('../../baseFixtures.js');
 
 test.describe('baseFixtures tests', () => {
   //Skip this test for now https://github.com/nasa/openmct/issues/6785
-  test.fixme('Verify that tests fail if console.error is thrown', async ({ page }) => {
+  // eslint-disable-next-line playwright/no-skipped-test
+  test.skip('Verify that tests fail if console.error is thrown', async ({ page }) => {
     test.fail();
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
