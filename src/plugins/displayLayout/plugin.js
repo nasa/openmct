@@ -106,8 +106,6 @@ class DisplayLayoutView {
 
 export default function DisplayLayoutPlugin(options) {
   return function (openmct) {
-    let view;
-
     openmct.actions.register(new CopyToClipboardAction(openmct));
 
     openmct.objectViews.addProvider({
@@ -119,11 +117,7 @@ export default function DisplayLayoutPlugin(options) {
         return domainObject.type === 'layout';
       },
       view: function (domainObject, objectPath) {
-        view = new DisplayLayoutView(openmct, domainObject, objectPath, options);
-        return view;
-      },
-      destroy: function () {
-        view = undefined;
+        return new DisplayLayoutView(openmct, domainObject, objectPath, options);
       },
       priority() {
         return 100;
