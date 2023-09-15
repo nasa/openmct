@@ -8,18 +8,19 @@ const CI = process.env.CI === 'true';
 const config = {
   retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
   testDir: 'tests/performance/',
+  testIgnore: '*.contract.perf.spec.js', //Run everything except contract tests which require marks in dev mode
   timeout: 60 * 1000,
   workers: 1, //Only run in serial with 1 worker
   webServer: {
-    command: 'npm run start', //need development mode for performance.marks
+    command: 'npm run start:prod', //Production mode
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
-    reuseExistingServer: false
+    reuseExistingServer: false //Must be run with this option to prevent dev mode
   },
   use: {
-    browserName: 'chromium',
+    browserName: 'chromium', //This will run twice - once for each project below.
     baseURL: 'http://localhost:8080/',
-    headless: CI, //Only if running locally
+    headless: true,
     ignoreHTTPSErrors: false, //HTTP performance varies!
     screenshot: 'off',
     trace: 'on-first-retry',
@@ -27,11 +28,19 @@ const config = {
   },
   projects: [
     {
-      name: 'chrome',
+      name: 'chrome-memory',
       use: {
         browserName: 'chromium',
         launchOptions: {
-          args: ['--js-flags=--expose-gc']
+          args: [
+            '--no-sandbox',
+            '--disable-notifications',
+            '--use-fake-ui-for-media-stream',
+            '--use-fake-device-for-media-stream',
+            '--js-flags=--no-move-object-start --expose-gc',
+            '--enable-precise-memory-info',
+            '--display=:100'
+          ]
         }
       }
     }
