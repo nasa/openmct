@@ -125,6 +125,7 @@ const config = {
         loader: 'vue-loader',
         options: {
           compilerOptions: {
+            hoistStatic: false,
             whitespace: 'preserve',
             compatConfig: {
               MODE: 2
