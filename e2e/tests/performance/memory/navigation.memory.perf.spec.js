@@ -90,7 +90,7 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   //TODO: Figure out why using the `table-row` component inside the `table` component leaks TelemetryTableRow objects
-  test.fixme('telemetry table view', async ({ page }) => {
+  test('telemetry table view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'telemetry-table-single-1hz-swg'
@@ -101,7 +101,7 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   //TODO: Figure out why using the `SideBar` component inside the leaks Notebook objects
-  test.fixme('notebook view', async ({ page }) => {
+  test('notebook view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'notebook-memory-leak-detection-test'
@@ -129,7 +129,7 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   //TODO: Figure out why `svg` in the CompassRose component leaks imagery
-  test.fixme('example imagery view', async ({ page }) => {
+  test('example imagery view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'example-imagery-memory-leak-test'
@@ -149,18 +149,17 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.fixme(
-    'display layout with plots of swgs, alphanumerics, and condition sets, ',
-    async ({ page }) => {
-      const result = await navigateToObjectAndDetectMemoryLeak(
-        page,
-        'display-layout-simple-telemetry'
-      );
+  test('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
+    page
+  }) => {
+    const result = await navigateToObjectAndDetectMemoryLeak(
+      page,
+      'display-layout-simple-telemetry'
+    );
 
-      // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
-      expect(result).toBe(true);
-    }
-  );
+    // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
+    expect(result).toBe(true);
+  });
 
   test('flexible layout with plots of swgs', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
@@ -182,7 +181,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.fixme('tabbed view of display layouts and time strips', async ({ page }) => {
+  test('tabbed view of display layouts and time strips', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'tab-view-simple-memory-leak-test'
@@ -192,7 +191,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test.fixme('time strip view of telemetry', async ({ page }) => {
+  test('time strip view of telemetry', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'time-strip-telemetry-memory-leak-test'
@@ -202,6 +201,12 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
+  /**
+   *
+   * @param {import('@playwright/test').Page} page
+   * @param {*} objectName
+   * @returns
+   */
   async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     // Fill Search input
