@@ -144,10 +144,7 @@ export default {
     clear() {
       if (this.currentView) {
         this.currentView.destroy();
-        //now call the provider's destroy method
-        if (this.destroyView) {
-          this.destroyView();
-        }
+
         if (this.$refs.objectViewWrapper) {
           this.$refs.objectViewWrapper.innerHTML = '';
         }
@@ -275,14 +272,12 @@ export default {
         } else {
           this.currentView = provider.view(this.domainObject, objectPath);
         }
-        this.destroyView = provider.destroy;
 
         this.openmct.editor.on('isEditing', this.toggleEditView);
         this.releaseEditModeHandler = () =>
           this.openmct.editor.off('isEditing', this.toggleEditView);
       } else {
         this.currentView = provider.view(this.domainObject, objectPath);
-        this.destroyView = provider.destroy;
 
         if (this.currentView.onEditModeChange) {
           this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
