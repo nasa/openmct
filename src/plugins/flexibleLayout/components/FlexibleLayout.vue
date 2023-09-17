@@ -271,7 +271,7 @@ export default {
         container.frames.splice(frameIndex + 1, 0, frame);
         sizeItems(container.frames, frame);
 
-        this.newFrameLocation.splice(0);
+        this.newFrameLocation = [];
         this.persist(containerIndex);
         this.identifierMap[keystring] = true;
       }

@@ -743,8 +743,8 @@ export default {
 
       let limitPointOverlap = [];
       //reset
-      this.visibleLimitLabels.splice(0);
-      this.visibleLimitLines.splice(0);
+      this.visibleLimitLabels = [];
+      this.visibleLimitLines = [];
 
       this.limitLines.forEach((limitLine) => {
         limitLine.limits.forEach((limit) => {
