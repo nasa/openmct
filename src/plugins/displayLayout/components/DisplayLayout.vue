@@ -267,7 +267,7 @@ export default {
     },
     unwatchDisplayResize() {
       if (this.resizeObserver) {
-        this.resizeObserver.unobserve(this.$el);
+        this.resizeObserver.disconnect();
       }
     },
     addElement(itemType, element) {

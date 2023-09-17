@@ -195,7 +195,7 @@ export default {
     }
 
     if (this.soViewResizeObserver) {
-      this.soViewResizeObserver.unobserve(this.$refs.soView);
+      this.soViewResizeObserver.disconnect();
     }
   },
   methods: {
