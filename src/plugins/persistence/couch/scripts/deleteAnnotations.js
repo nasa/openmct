@@ -71,7 +71,7 @@ function processArguments() {
     switch (val) {
       case '--help':
         console.log(
-          'Usage: deleteAnnotations.js [--annotationType type] [--dbName name] <CouchDB URL> \n'
+          'Usage: deleteAnnotations.js [--annotationType type] [--dbName name] <CouchDB URL> \nFor authentication, set the environment variables COUCHDB_USERNAME and COUCHDB_PASSWORD. \n'
         );
         console.log('Annotation types: ', Object.keys(ANNOTATION_TYPES).join(', '));
         helpRequested = true;
