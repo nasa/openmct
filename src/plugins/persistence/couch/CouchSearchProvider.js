@@ -121,12 +121,15 @@ class CouchSearchProvider {
     batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
       const modelFilter = {
         model: {
-          targets: {}
+          targets: []
         }
       };
-      modelFilter.model.targets[keyString] = {
-        $exists: true
+      // TODOD: should instead should array for keystring
+
+      modelFilter.model.targets.keyString = {
+        $eq: keyString
       };
+      modelFilter.model.target
 
       filter.selector.$and[1].$or.push(modelFilter);
       lastAbortSignal = abortSignal;
@@ -142,11 +145,7 @@ class CouchSearchProvider {
     }
 
     const returnedData = await this.#bulkPromise;
-    // only return data that matches the keystring
-    const filteredByKeyString = returnedData.filter((foundAnnotation) => {
-      return foundAnnotation.targets[keyString];
-    });
-    return filteredByKeyString;
+    return returnedData;
   }
 
   searchForTags(tagsArray, abortSignal) {

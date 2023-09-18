@@ -33,7 +33,7 @@ export default class ExportNotebookAsTextAction {
   getTagsForEntry(entry, domainObjectKeyString, annotations) {
     const foundTags = [];
     annotations.forEach((annotation) => {
-      const target = annotation.targets?.[domainObjectKeyString];
+      const target = annotation.targets.find(target => target.keyString === domainObjectKeyString);
       if (target?.entryId === entry.id) {
         annotation.tags.forEach((tag) => {
           if (!foundTags.includes(tag)) {

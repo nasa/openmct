@@ -100,7 +100,7 @@ export default class AnnotationAPI extends EventEmitter {
       creatable: false,
       cssClass: 'icon-notebook',
       initialize: function (domainObject) {
-        domainObject.targets = domainObject.targets || {};
+        domainObject.targets = domainObject.targets || [];
         domainObject._deleted = domainObject._deleted || false;
         domainObject.originalContextPath = domainObject.originalContextPath || '';
         domainObject.tags = domainObject.tags || [];
@@ -120,7 +120,7 @@ export default class AnnotationAPI extends EventEmitter {
    * @property {Object<string, Object>} targets The targets ID keystrings and their specific properties.
    * For plots, this will be a bounding box, e.g.: {maxY: 100, minY: 0, maxX: 100, minX: 0}
    * For notebooks, this will be an entry ID, e.g.: {entryId: "entry-ecb158f5-d23c-45e1-a704-649b382622ba"}
-   * @property {DomainObject>} targetDomainObjects the targets ID keystrings and the domain objects this annotation points to (e.g., telemetry objects for a plot)
+   * @property {DomainObject>[]} targetDomainObjects the targets ID keystrings and the domain objects this annotation points to (e.g., telemetry objects for a plot)
    */
   /**
    * @method create
@@ -141,11 +141,11 @@ export default class AnnotationAPI extends EventEmitter {
       throw new Error(`Unknown annotation type: ${annotationType}`);
     }
 
-    if (!Object.keys(targets).length) {
+    if (!targets.length) {
       throw new Error(`At least one target is required to create an annotation`);
     }
 
-    if (!Object.keys(targetDomainObjects).length) {
+    if (!targetDomainObjects.length) {
       throw new Error(`At least one targetDomainObject is required to create an annotation`);
     }
 
@@ -363,7 +363,8 @@ export default class AnnotationAPI extends EventEmitter {
     const modelAddedToResults = await Promise.all(
       results.map(async (result) => {
         const targetModels = await Promise.all(
-          Object.keys(result.targets).map(async (targetID) => {
+          result.targets.map(async (target) => {
+            const targetID = target.keyString;
             const targetModel = await this.openmct.objects.get(targetID);
             const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
             const originalPathObjects = await this.openmct.objects.getOriginalPath(targetKeyString);
