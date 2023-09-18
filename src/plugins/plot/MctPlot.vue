@@ -885,7 +885,7 @@ export default {
     marqueeAnnotations(annotationsToSelect) {
       annotationsToSelect.forEach((annotationToSelect) => {
         annotationToSelect.targets.forEach((target) => {
-          const targetKeyString = target.keyString
+          const targetKeyString = target.keyString;
           const series = this.seriesModels.find(
             (seriesModel) => seriesModel.keyString === targetKeyString
           );
