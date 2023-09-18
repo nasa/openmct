@@ -151,3 +151,22 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 3. Navigate to: <http://127.0.0.1:5984/_utils/#database/openmct/_all_docs>
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆
+
+# Search Perfomance
+
+Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
+
+To create an index for `model.type`, you can use the following payload:
+
+```json
+{
+  "index": {
+    "fields": ["model.type"]
+  },
+  "type": "json"
+}
+```
+
+This instructs CouchDB to create an index on the `model.type` field. Once this index is created, queries that include a selector on `model.type` can use this index to retrieve results faster. 
+
+You can find more detailed information about indexing in CouchDB in the [official documentation](https://docs.couchdb.org/en/stable/api/database/find.html#db-index).
