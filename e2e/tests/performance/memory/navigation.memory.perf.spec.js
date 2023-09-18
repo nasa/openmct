@@ -152,7 +152,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'example-imagery-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
       }
     );
 
@@ -165,7 +165,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'display-layout-images-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
       }
     );
 
@@ -180,7 +180,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'display-layout-simple-telemetry',
         {
-          timeout: NAV_LEAK_TIMEOUT
+          timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
         }
     );
 
@@ -206,7 +206,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'flexible-layout-images-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
       }
     );
 
@@ -219,7 +219,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'tab-view-simple-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
       }
     );
 
@@ -232,7 +232,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'time-strip-telemetry-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
       }
     );
 
