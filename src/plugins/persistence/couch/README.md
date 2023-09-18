@@ -151,3 +151,24 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 3. Navigate to: <http://127.0.0.1:5984/_utils/#database/openmct/_all_docs>
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆
+
+# Maintenance
+
+One can delete annotations by running inside this directory (i.e., `src/plugins/persistence/couch`):
+```
+npm run deleteAnnotations:openmct -- --annotationType PIXEL_SPATIAL
+```
+
+will delete all image tags.
+
+```
+npm run deleteAnnotations:openmct 
+```
+
+will delete all tags. 
+
+```
+npm run deleteAnnotations:openmct -- --help
+```
+
+will print help options.
