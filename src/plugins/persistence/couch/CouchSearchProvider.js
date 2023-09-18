@@ -111,7 +111,13 @@ class CouchSearchProvider {
             }
           },
           {
-            $or: []
+            'model.targets': {
+              $elemMatch: {
+                keyString: {
+                  $in: []
+                }
+              }
+            }
           }
         ]
       }
@@ -119,19 +125,7 @@ class CouchSearchProvider {
     let lastAbortSignal = null;
     // TODO: should remove duplicates from batchIds
     batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
-      const modelFilter = {
-        model: {
-          targets: []
-        }
-      };
-      // TODOD: should instead should array for keystring
-
-      modelFilter.model.targets.keyString = {
-        $eq: keyString
-      };
-      modelFilter.model.target
-
-      filter.selector.$and[1].$or.push(modelFilter);
+      filter.selector.$and[1]['model.targets'].$elemMatch.keyString.$in.push(keyString);
       lastAbortSignal = abortSignal;
     });
 
@@ -159,7 +153,7 @@ class CouchSearchProvider {
           {
             'model.tags': {
               $elemMatch: {
-                $or: []
+                $in: []
               }
             }
           },
@@ -172,9 +166,7 @@ class CouchSearchProvider {
       }
     };
     tagsArray.forEach((tag) => {
-      filter.selector.$and[0]['model.tags'].$elemMatch.$or.push({
-        $eq: `${tag}`
-      });
+      filter.selector.$and[0]['model.tags'].$elemMatch.$in.push(tag);
     });
 
     return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
