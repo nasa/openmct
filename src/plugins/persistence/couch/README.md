@@ -152,7 +152,7 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆
 
-# Search Perfomance
+# Search Performance
 
 Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
 
