@@ -145,6 +145,10 @@ export default class AnnotationAPI extends EventEmitter {
       throw new Error(`At least one target is required to create an annotation`);
     }
 
+    if (targets.some((target) => !target.keyString)) {
+      throw new Error(`All targets require a keyString to create an annotation`);
+    }
+
     if (!targetDomainObjects.length) {
       throw new Error(`At least one targetDomainObject is required to create an annotation`);
     }

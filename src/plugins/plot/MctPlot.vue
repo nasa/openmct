@@ -933,17 +933,14 @@ export default {
     },
 
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      this.config.series.models.forEach((series) => {
-        targetDomainObjects[series.keyString] = series.domainObject;
+      const targetDomainObjects = this.config.series.models.map((series) => {
+        return series.domainObject;
       });
 
-      const targetDetails = {};
+      const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
-        });
+        targetDetails.push(annotation.targets);
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
           const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
@@ -1356,17 +1353,17 @@ export default {
       document.body.addEventListener('click', this.cancelSelection);
     },
     selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBoxBySeries, event) {
-      let targetDomainObjects = {};
-      let targetDetails = {};
+      let targetDomainObjects = [];
+      let targetDetails = [];
       let annotations = [];
       Object.keys(pointsInBoxBySeries).forEach((seriesKey) => {
         const seriesModel = this.getSeries(seriesKey);
         const boundingBoxWithId = boundingBoxPerYAxis.find(
           (box) => box.id === seriesModel.get('yAxisId')
         );
-        targetDetails[seriesKey] = boundingBoxWithId?.boundingBox;
+        targetDetails.push({ ...boundingBoxWithId?.boundingBox, keyString: seriesKey });
 
-        targetDomainObjects[seriesKey] = seriesModel.domainObject;
+        targetDomainObjects.push(seriesModel.domainObject);
       });
       this.selectPlotAnnotations({
         targetDetails,
@@ -1378,8 +1375,8 @@ export default {
       const annotationsBySeries = {};
       rawAnnotations.forEach((rawAnnotation) => {
         if (rawAnnotation.targets) {
-          const targetValues = Object.values(rawAnnotation.targets);
-          const targetKeys = Object.keys(rawAnnotation.targets);
+          const targetValues = rawAnnotation.targets;
+          const targetKeys = rawAnnotation.targets.map((target) => target.keyString);
           if (targetValues && targetValues.length) {
             let boundingBoxPerYAxis = [];
             targetValues.forEach((boundingBox, index) => {
