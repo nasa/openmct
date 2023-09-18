@@ -39,10 +39,9 @@ const memoryLeakFilePath = 'e2e/test-data/memory-leak-detection.json';
  * 7. Copy the exported file to ../test-data/memory-leak-detection.json
  *
  */
+
+const NAV_LEAK_TIMEOUT = 10 * 1000; // 10s
 test.describe('Navigation memory leak is not detected in', () => {
-  test.describe.configure({
-    timeout: 60 * 1000 // Some tests take up to 1 min to run
-  });
   test.beforeEach(async ({ page }) => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -62,29 +61,33 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   test('plot view', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'overlay-plot-single-1hz-swg');
-
+    const result = await navigateToObjectAndDetectMemoryLeak(page, 'overlay-plot-single-1hz-swg', {
+      timeout: NAV_LEAK_TIMEOUT
+    });
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
 
   test('stacked plot view', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'stacked-plot-single-1hz-swg');
-
+    const result = await navigateToObjectAndDetectMemoryLeak(page, 'stacked-plot-single-1hz-swg', {
+      timeout: NAV_LEAK_TIMEOUT
+    });
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
 
   test('LAD table view', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'lad-table-single-1hz-swg');
-
+    const result = await navigateToObjectAndDetectMemoryLeak(page, 'lad-table-single-1hz-swg', {
+      timeout: NAV_LEAK_TIMEOUT
+    });
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
 
   test('LAD table set', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'lad-table-set-single-1hz-swg');
-
+    const result = await navigateToObjectAndDetectMemoryLeak(page, 'lad-table-set-single-1hz-swg', {
+      timeout: NAV_LEAK_TIMEOUT
+    });
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
@@ -93,7 +96,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('telemetry table view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'telemetry-table-single-1hz-swg'
+      'telemetry-table-single-1hz-swg',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -104,7 +110,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('notebook view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'notebook-memory-leak-detection-test'
+      'notebook-memory-leak-detection-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -112,7 +121,13 @@ test.describe('Navigation memory leak is not detected in', () => {
   });
 
   test('display layout of a single SWG alphanumeric', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'display-layout-single-1hz-swg');
+    const result = await navigateToObjectAndDetectMemoryLeak(
+      page,
+      'display-layout-single-1hz-swg',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
+    );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
@@ -121,7 +136,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('display layout of a single SWG plot', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'display-layout-single-overlay-plot'
+      'display-layout-single-overlay-plot',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -132,7 +150,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('example imagery view', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'example-imagery-memory-leak-test'
+      'example-imagery-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -142,7 +163,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('display layout of example imagery views', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'display-layout-images-memory-leak-test'
+      'display-layout-images-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -154,7 +178,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'display-layout-simple-telemetry'
+      'display-layout-simple-telemetry',
+        {
+          timeout: NAV_LEAK_TIMEOUT
+        }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -164,7 +191,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('flexible layout with plots of swgs', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'flexible-layout-plots-memory-leak-test'
+      'flexible-layout-plots-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -174,7 +204,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('flexible layout of example imagery views', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'flexible-layout-images-memory-leak-test'
+      'flexible-layout-images-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -184,7 +217,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('tabbed view of display layouts and time strips', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'tab-view-simple-memory-leak-test'
+      'tab-view-simple-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
@@ -194,7 +230,10 @@ test.describe('Navigation memory leak is not detected in', () => {
   test('time strip view of telemetry', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
-      'time-strip-telemetry-memory-leak-test'
+      'time-strip-telemetry-memory-leak-test',
+      {
+        timeout: NAV_LEAK_TIMEOUT
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.

@@ -198,6 +198,8 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npm run test:perf:memory
+      - run: npm run test:perf:localhost
+      - run: npm run test:perf:contract
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
