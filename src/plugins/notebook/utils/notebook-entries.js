@@ -1,6 +1,11 @@
 import { v4 as uuid } from 'uuid';
 
 import objectLink from '../../../ui/mixins/object-link';
+import {
+  createNotebookImageDomainObject,
+  getThumbnailURLFromImageUrl,
+  saveNotebookImageDomainObject
+} from './notebook-image';
 
 async function getUsername(openmct) {
   let username = null;
@@ -116,24 +121,67 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   return params.join('&');
 }
 
-export async function createNewEmbed(snapshotMeta, snapshot = '') {
-  const { bounds, link, objectPath, openmct } = snapshotMeta;
-  const domainObject = objectPath[0];
-  const domainObjectType = openmct.types.get(domainObject.type);
+export function createNewImageEmbed(image, openmct, imageName = '') {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Data = reader.result;
+      const blobUrl = URL.createObjectURL(image);
+      const imageDomainObject = createNotebookImageDomainObject(base64Data);
+      await saveNotebookImageDomainObject(openmct, imageDomainObject);
+      const imageThumbnailURL = await getThumbnailURLFromImageUrl(blobUrl);
 
-  const cssClass =
-    domainObjectType && domainObjectType.definition
+      const snapshot = {
+        fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+        thumbnailImage: {
+          src: imageThumbnailURL
+        }
+      };
+
+      const embedMetaData = {
+        bounds: openmct.time.bounds(),
+        link: null,
+        objectPath: null,
+        openmct,
+        userImage: true,
+        imageName
+      };
+
+      const createdEmbed = await createNewEmbed(embedMetaData, snapshot);
+      resolve(createdEmbed);
+    };
+
+    reader.readAsDataURL(image);
+  });
+}
+
+export async function createNewEmbed(snapshotMeta, snapshot = '') {
+  const { bounds, link, objectPath, openmct, userImage } = snapshotMeta;
+  let name = null;
+  let type = null;
+  let cssClass = 'icon-object-unknown';
+  let domainObject = null;
+  let historicLink = null;
+  if (objectPath?.length > 0) {
+    domainObject = objectPath[0];
+    const domainObjectType = openmct.types.get(domainObject.type);
+    cssClass = domainObjectType?.definition
       ? domainObjectType.definition.cssClass
       : 'icon-object-unknown';
+    name = domainObject.name;
+    type = domainObject.identifier.key;
+    historicLink = link
+      ? getHistoricLinkInFixedMode(openmct, bounds, link)
+      : objectLink.computed.objectLink.call({
+          objectPath,
+          openmct
+        });
+  } else if (userImage) {
+    cssClass = 'icon-image';
+    name = snapshotMeta.imageName;
+  }
+
   const date = openmct.time.now();
-  const historicLink = link
-    ? getHistoricLinkInFixedMode(openmct, bounds, link)
-    : objectLink.computed.objectLink.call({
-        objectPath,
-        openmct
-      });
-  const name = domainObject.name;
-  const type = domainObject.identifier.key;
   const createdBy = await getUsername(openmct);
 
   return {

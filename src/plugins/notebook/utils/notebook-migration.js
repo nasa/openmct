@@ -1,7 +1,7 @@
 import { mutateObject } from './notebook-entries';
 import {
   createNotebookImageDomainObject,
-  getThumbnailURLFromimageUrl,
+  getThumbnailURLFromImageUrl,
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
 } from './notebook-image';
@@ -33,7 +33,7 @@ export function notebookImageMigration(openmct, domainObject) {
           const snapshot = embed.snapshot;
           const fullSizeImageURL = snapshot.src;
           if (fullSizeImageURL) {
-            const thumbnailImageURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
+            const thumbnailImageURL = await getThumbnailURLFromImageUrl(fullSizeImageURL);
             const object = createNotebookImageDomainObject(fullSizeImageURL);
             const notebookImageDomainObject = updateNamespaceOfDomainObject(
               object,

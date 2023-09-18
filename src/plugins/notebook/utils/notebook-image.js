@@ -33,7 +33,7 @@ export function getThumbnailURLFromCanvas(canvas, size = DEFAULT_SIZE) {
   return thumbnailCanvas.toDataURL('image/png');
 }
 
-export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
+export function getThumbnailURLFromImageUrl(imageUrl, size = DEFAULT_SIZE) {
   return new Promise((resolve) => {
     const image = new Image();
 
@@ -43,7 +43,6 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
 
     image.onload = function () {
       canvas.getContext('2d').drawImage(image, 0, 0, size.width, size.height);
-
       resolve(canvas.toDataURL('image/png'));
     };
 
@@ -51,22 +50,8 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
   });
 }
 
-export function saveNotebookImageDomainObject(openmct, object) {
-  return new Promise((resolve, reject) => {
-    openmct.objects
-      .save(object)
-      .then((result) => {
-        if (result) {
-          resolve(object);
-        } else {
-          reject();
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-        reject();
-      });
-  });
+export async function saveNotebookImageDomainObject(openmct, object) {
+  await openmct.objects.save(object);
 }
 
 export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
