@@ -19,44 +19,38 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
 
-import ClearDataAction from './ClearDataAction';
-import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
+const { test } = require('../../../pluginFixtures.js');
+const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
+const percySnapshot = require('@percy/playwright');
 
-export default function plugin(appliesToObjects, options = { indicator: true }) {
-  let installIndicator = options.indicator;
+//Declare the scope of the visual test
+const inspectorPane = '.l-shell__pane-inspector';
 
-  appliesToObjects = appliesToObjects || [];
-
-  return function install(openmct) {
-    if (installIndicator) {
-      const { vNode, destroy } = mount(
-        {
-          components: {
-            GlobalClearIndicator
-          },
-          provide: {
-            openmct
-          },
-          template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        },
-        {
-          app: openmct.app,
-          element: document.createElement('div')
-        }
-      );
-
-      let indicator = {
-        element: vNode.el,
-        key: 'global-clear-indicator',
-        priority: openmct.priority.DEFAULT,
-        destroy: destroy
-      };
-
-      openmct.indicators.add(indicator);
+test.describe('Visual - Controlled Clock', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
     }
+  });
 
-    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
-  };
-}
+  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
+    //Expand the Inspector Pane
+    await page.getByRole('button', { name: 'Inspect' }).click();
+
+    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+    //Open Annotations Tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
+
+    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+  });
+});

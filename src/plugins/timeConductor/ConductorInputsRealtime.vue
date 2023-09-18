@@ -58,7 +58,7 @@
 import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
-import TimePopupRealtime from './timePopupRealtime.vue';
+import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 

@@ -47,25 +47,25 @@
 <script>
 import _ from 'lodash';
 
-import toolbarButton from './components/toolbar-button.vue';
-import toolbarCheckbox from './components/toolbar-checkbox.vue';
-import toolbarColorPicker from './components/toolbar-color-picker.vue';
-import toolbarInput from './components/toolbar-input.vue';
-import toolbarMenu from './components/toolbar-menu.vue';
-import toolbarSelectMenu from './components/toolbar-select-menu.vue';
-import toolbarSeparator from './components/toolbar-separator.vue';
-import toolbarToggleButton from './components/toolbar-toggle-button.vue';
+import ToolbarButton from './components/ToolbarButton.vue';
+import ToolbarCheckbox from './components/ToolbarCheckbox.vue';
+import ToolbarColorPicker from './components/ToolbarColorPicker.vue';
+import ToolbarInput from './components/ToolbarInput.vue';
+import ToolbarMenu from './components/ToolbarMenu.vue';
+import ToolbarSelectMenu from './components/ToolbarSelectMenu.vue';
+import ToolbarSeparator from './components/ToolbarSeparator.vue';
+import ToolbarToggleButton from './components/ToolbarToggleButton.vue';
 
 export default {
   components: {
-    toolbarButton,
-    toolbarColorPicker,
-    toolbarCheckbox,
-    toolbarInput,
-    toolbarMenu,
-    toolbarSelectMenu,
-    toolbarSeparator,
-    toolbarToggleButton
+    ToolbarButton,
+    ToolbarColorPicker,
+    ToolbarCheckbox,
+    ToolbarInput,
+    ToolbarMenu,
+    ToolbarSelectMenu,
+    ToolbarSeparator,
+    ToolbarToggleButton
   },
   inject: ['openmct'],
   data: function () {

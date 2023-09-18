@@ -22,41 +22,56 @@
 
 import mount from 'utils/mount';
 
-import TableConfigurationComponent from './components/TableConfiguration.vue';
-import TelemetryTableConfiguration from './TelemetryTableConfiguration';
+import InspectorDataVisualizationComponent from './InspectorDataVisualizationComponent.vue';
 
-export default function TableConfigurationViewProvider(openmct) {
+export default function InspectorDataVisualizationViewProvider(openmct, configuration) {
+  const {
+    type = 'mmgis',
+    name = 'Data Visualization',
+    placeholderText = '',
+    plotOptions,
+    imageryOptions
+  } = configuration;
+
   return {
-    key: 'table-configuration',
-    name: 'Configuration',
-    canView: function (selection) {
-      if (selection.length !== 1 || selection[0].length === 0) {
-        return false;
-      }
+    key: 'inspectorDataVisualizationView',
+    name,
 
-      let object = selection[0][0].context.item;
+    canView(selection) {
+      const domainObject = selection?.[0]?.[0]?.context?.item;
 
-      return object && object.type === 'table';
+      return domainObject?.type === type;
     },
-    view: function (selection) {
+
+    view(selection) {
       let _destroy = null;
-      let tableConfiguration;
-      const domainObject = selection[0][0].context.item;
+
+      const context = selection[0][0].context;
+      const domainObject = context.item;
+      const dataVisualizationContext = context?.dataVisualization ?? {};
+      const timeFormatter = openmct.telemetry.getFormatter('iso');
 
       return {
-        show: function (element) {
-          tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+        show(element) {
           const { destroy } = mount(
             {
-              el: element,
               components: {
-                TableConfiguration: TableConfigurationComponent
+                InspectorDataVisualization: InspectorDataVisualizationComponent
               },
               provide: {
                 openmct,
-                tableConfiguration
+                domainObject,
+                timeFormatter,
+                placeholderText,
+                plotOptions,
+                imageryOptions
               },
-              template: '<table-configuration></table-configuration>'
+              data() {
+                return {
+                  context: dataVisualizationContext
+                };
+              },
+              template: `<InspectorDataVisualization :context="context" />`
             },
             {
               app: openmct.app,
@@ -65,18 +80,13 @@ export default function TableConfigurationViewProvider(openmct) {
           );
           _destroy = destroy;
         },
-        showTab: function (isEditing) {
-          return isEditing;
-        },
-        priority: function () {
-          return 1;
-        },
-        destroy: function () {
+        destroy() {
           if (_destroy) {
             _destroy();
           }
-
-          tableConfiguration = undefined;
+        },
+        priority() {
+          return openmct.priority.HIGH;
         }
       };
     }

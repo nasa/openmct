@@ -59,7 +59,7 @@
 <script>
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
-import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+import ViewSwitcher from '../layout/ViewSwitcher.vue';
 
 const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view'];
 

@@ -21,47 +21,44 @@
 -->
 
 <template>
-  <multipane type="vertical">
-    <pane class="c-inspector__styles">
-      <div class="u-contents">
-        <StylesView />
-      </div>
-    </pane>
-    <pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
-      <SavedStylesInspectorView />
-    </pane>
-  </multipane>
+  <div
+    class="c-inspector__properties c-data-visualization-inspector__properties c-data-visualization-inspector__flex-column"
+  >
+    <DataVisualization
+      :data-ranges="dataRanges"
+      :plot-telemetry-keys="plotTelemetryKeys"
+      :description="description"
+      :is-loading="isLoading"
+    />
+  </div>
 </template>
 
 <script>
-import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
-
-import Multipane from '../../../ui/layout/Multipane.vue';
-import Pane from '../../../ui/layout/Pane.vue';
-import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
+import DataVisualization from './DataVisualization.vue';
 
 export default {
   components: {
-    Multipane,
-    Pane,
-    StylesView,
-    SavedStylesInspectorView
+    DataVisualization
   },
-  inject: ['openmct'],
-  data() {
-    return {
-      isEditing: this.openmct.editor.isEditing()
-    };
+  inject: ['openmct', 'domainObject'],
+  props: {
+    context: {
+      type: Object,
+      required: true
+    }
   },
-  mounted() {
-    this.openmct.editor.on('isEditing', this.setEditMode);
-  },
-  beforeUnmounted() {
-    this.openmct.editor.off('isEditing', this.setEditMode);
-  },
-  methods: {
-    setEditMode(isEditing) {
-      this.isEditing = isEditing;
+  computed: {
+    dataRanges() {
+      return this.context.dataRanges;
+    },
+    plotTelemetryKeys() {
+      return this.context.telemetryKeys;
+    },
+    description() {
+      return this.context.description;
+    },
+    isLoading() {
+      return Boolean(this.context.loading);
     }
   }
 };

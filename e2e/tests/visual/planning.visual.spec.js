@@ -21,16 +21,20 @@
  *****************************************************************************/
 
 const { test } = require('../../pluginFixtures');
-const { setBoundsToSpanAllActivities } = require('../../helper/planningUtils');
+const {
+  setBoundsToSpanAllActivities,
+  setDraftStatusForPlan
+} = require('../../helper/planningUtils');
 const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
+const VISUAL_URL = require('../../constants').VISUAL_URL;
 const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Plan View', async ({ page, theme }) => {
@@ -50,8 +54,7 @@ test.describe('Visual - Planning', () => {
       name: 'Plan Visual Test (Draft)',
       json: examplePlanSmall
     });
-    await page.goto('./#/browse/mine');
-
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
@@ -87,7 +90,7 @@ test.describe('Visual - Planning', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto('./#/browse/mine');
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
@@ -95,14 +98,3 @@ test.describe('Visual - Planning', () => {
     });
   });
 });
-
-/**
- * Uses the Open MCT API to set the status of a plan to 'draft'.
- * @param {import('@playwright/test').Page} page
- * @param {import('../../appActions').CreatedObjectInfo} plan
- */
-async function setDraftStatusForPlan(page, plan) {
-  await page.evaluate(async (planObject) => {
-    await window.openmct.status.set(planObject.uuid, 'draft');
-  }, plan);
-}

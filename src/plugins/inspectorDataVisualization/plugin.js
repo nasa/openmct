@@ -19,44 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
 
-import ClearDataAction from './ClearDataAction';
-import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
+import InspectorDataVisualizationViewProvider from './InspectorDataVisualizationViewProvider';
 
-export default function plugin(appliesToObjects, options = { indicator: true }) {
-  let installIndicator = options.indicator;
-
-  appliesToObjects = appliesToObjects || [];
-
-  return function install(openmct) {
-    if (installIndicator) {
-      const { vNode, destroy } = mount(
-        {
-          components: {
-            GlobalClearIndicator
-          },
-          provide: {
-            openmct
-          },
-          template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        },
-        {
-          app: openmct.app,
-          element: document.createElement('div')
-        }
-      );
-
-      let indicator = {
-        element: vNode.el,
-        key: 'global-clear-indicator',
-        priority: openmct.priority.DEFAULT,
-        destroy: destroy
-      };
-
-      openmct.indicators.add(indicator);
-    }
-
-    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
+export default function (options) {
+  return function (openmct) {
+    openmct.inspectorViews.addProvider(
+      new InspectorDataVisualizationViewProvider(openmct, options)
+    );
   };
 }
