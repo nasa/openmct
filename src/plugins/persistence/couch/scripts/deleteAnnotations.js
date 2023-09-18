@@ -129,7 +129,7 @@ async function gatherDocumentsForDeletion({
     body.selector['model.annotationType'] = annotationType;
   }
 
-  const purgeOptions = {
+  const findOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ async function gatherDocumentsForDeletion({
   };
 
   if (username && password) {
-    purgeOptions.headers.Authorization = `Basic ${btoa(`${username}:${password}`)}`;
+    findOptions.headers.Authorization = `Basic ${btoa(`${username}:${password}`)}`;
   }
 
   while (hasMoreDocs) {
@@ -146,7 +146,7 @@ async function gatherDocumentsForDeletion({
       body.bookmark = bookmark;
     }
 
-    const res = await fetch(baseUrl, purgeOptions);
+    const res = await fetch(baseUrl, findOptions);
 
     if (!res.ok) {
       throw new Error(`Server responded with status: ${res.status}`);
