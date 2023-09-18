@@ -23,6 +23,7 @@
 <template>
   <div class="c-compass" :style="`width: 100%; height: 100%`">
     <compass-hud
+      v-if="showCompassHUD"
       :camera-angle-of-view="cameraAngleOfView"
       :heading="heading"
       :camera-azimuth="cameraAzimuth"
@@ -61,6 +62,10 @@ export default {
     },
     sizedImageDimensions: {
       type: Object,
+      required: true
+    },
+    showCompassHUD: {
+      type: Boolean,
       required: true
     }
   },

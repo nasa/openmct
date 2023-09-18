@@ -481,7 +481,7 @@ export default {
         // the annotations
         this.freeze();
         // just use first annotation
-        const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+        const boundingBoxes = selectedAnnotations[0].targets;
         let minX = Number.MAX_SAFE_INTEGER;
         let minY = Number.MAX_SAFE_INTEGER;
         let maxX = Number.MIN_SAFE_INTEGER;
@@ -884,8 +884,8 @@ export default {
 
     marqueeAnnotations(annotationsToSelect) {
       annotationsToSelect.forEach((annotationToSelect) => {
-        Object.keys(annotationToSelect.targets).forEach((targetKeyString) => {
-          const target = annotationToSelect.targets[targetKeyString];
+        annotationToSelect.targets.forEach((target) => {
+          const targetKeyString = target.keyString
           const series = this.seriesModels.find(
             (seriesModel) => seriesModel.keyString === targetKeyString
           );
