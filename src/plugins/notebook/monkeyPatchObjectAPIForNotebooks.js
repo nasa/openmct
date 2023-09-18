@@ -51,13 +51,14 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
     throw new Error("Conflict on annotation's tag has different tags than remote");
   }
 
-  Object.keys(localClonedAnnotation.targets).forEach((targetKey) => {
-    if (!remoteMutable.targets[targetKey]) {
+  localClonedAnnotation.targets.forEach((target) => {
+    const targetKey = target.keyString;
+
+    const remoteMutableTarget = remoteMutable.targets.find(target => {target.keyString === targetKey});
+    if (!remoteMutableTarget) {
       throw new Error(`Conflict on annotation's target is missing ${targetKey}`);
     }
-
-    const remoteMutableTarget = remoteMutable.targets[targetKey];
-    const localMutableTarget = localClonedAnnotation.targets[targetKey];
+    const localMutableTarget = localClonedAnnotation.targets.find(target => {target.keyString === targetKey});
 
     if (remoteMutableTarget.entryId !== localMutableTarget.entryId) {
       throw new Error(

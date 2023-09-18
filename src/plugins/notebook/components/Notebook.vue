@@ -394,8 +394,9 @@ export default {
       );
 
       foundAnnotations.forEach((foundAnnotation) => {
-        const targetId = Object.keys(foundAnnotation.targets)[0];
-        const entryId = foundAnnotation.targets[targetId].entryId;
+        const target = foundAnnotation.targets?.[0];
+        const targetId = target.keyString;
+        const entryId = target.entryId;
         if (!this.notebookAnnotations[entryId]) {
           this.notebookAnnotations[entryId] = [];
         }
