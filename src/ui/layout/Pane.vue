@@ -130,6 +130,9 @@ export default {
       this.handleHideUrl();
     }
   },
+  beforeUnmount() {
+    this.openmct.router.off('change:params', this.handleHideUrl.bind(this));
+  },
   methods: {
     addHideParam(target) {
       this.openmct.router.setSearchParam(target, 'true');
