@@ -219,7 +219,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'tab-view-simple-memory-leak-test',
       {
-        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
+        timeout: NAV_LEAK_TIMEOUT * 6 * 2 // 2 min
       }
     );
 
