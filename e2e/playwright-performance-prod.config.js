@@ -2,11 +2,9 @@
 // playwright.config.js
 // @ts-check
 
-const CI = process.env.CI === 'true';
-
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
+  retries: 0, //Only for debugging purposes for trace: 'on-first-retry'
   testDir: 'tests/performance/',
   testIgnore: '*.contract.perf.spec.js', //Run everything except contract tests which require marks in dev mode
   timeout: 60 * 1000,
@@ -18,7 +16,6 @@ const config = {
     reuseExistingServer: false //Must be run with this option to prevent dev mode
   },
   use: {
-    browserName: 'chromium', //This will run twice - once for each project below.
     baseURL: 'http://localhost:8080/',
     headless: true,
     ignoreHTTPSErrors: false, //HTTP performance varies!
@@ -29,6 +26,7 @@ const config = {
   projects: [
     {
       name: 'chrome-memory',
+      testMatch: '*.memory.perf.spec.js', //Only run memory tests
       use: {
         browserName: 'chromium',
         launchOptions: {
@@ -42,6 +40,13 @@ const config = {
             '--display=:100'
           ]
         }
+      }
+    },
+    {
+      name: 'chrome',
+      testIgnore: '*.memory.perf.spec.js', //Do not run memory tests without proper flags
+      use: {
+        browserName: 'chromium'
       }
     }
   ],

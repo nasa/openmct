@@ -2,8 +2,6 @@
 // playwright.config.js
 // @ts-check
 
-const CI = process.env.CI === 'true';
-
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
@@ -29,6 +27,7 @@ const config = {
   projects: [
     {
       name: 'chrome',
+      testIgnore: '*.memory.perf.spec.js', //Do not run memory tests without proper flags. Shouldn't get here
       use: {
         browserName: 'chromium'
       }

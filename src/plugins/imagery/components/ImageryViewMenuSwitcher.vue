@@ -28,7 +28,6 @@
       :title="title"
       @click="toggleMenu"
     />
-    <span class="c-button__label"></span>
     <div v-show="showMenu" class="c-switcher-menu__content">
       <slot></slot>
     </div>
