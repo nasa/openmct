@@ -154,7 +154,7 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 
 # Search Performance
 
-For large Open MCT installations, it may be helpful to add additonal CouchDB capablities to bear to improve performance.
+For large Open MCT installations, it may be helpful to add additional CouchDB capabilities to bear to improve performance.
 
 ## Indexing
 Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
