@@ -37,6 +37,7 @@ class CouchSearchProvider {
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
     this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+    this.useDesignDocuments = couchObjectProvider.useDesignDocuments;
     this.supportedSearchTypes = [
       this.searchTypes.OBJECTS,
       this.searchTypes.ANNOTATIONS,
@@ -102,6 +103,25 @@ class CouchSearchProvider {
   }
 
   #bulkAnnotationSearch(batchIdsToSearch) {
+    if (!batchIdsToSearch?.length) {
+      // nothing to search
+      return;
+    }
+
+    let lastAbortSignal = batchIdsToSearch[batchIdsToSearch.length - 1].abortSignal;
+
+    if (this.useDesignDocuments) {
+      const keysToSearch = batchIdsToSearch.map(({ keyString }) => keyString);
+      return this.couchObjectProvider.getObjectsByView(
+        {
+          designDoc: 'annotation_keystring_index',
+          viewName: 'by_keystring',
+          keysToSearch
+        },
+        lastAbortSignal
+      );
+    }
+
     const filter = {
       selector: {
         $and: [
@@ -122,11 +142,9 @@ class CouchSearchProvider {
         ]
       }
     };
-    let lastAbortSignal = null;
     // TODO: should remove duplicates from batchIds
     batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
       filter.selector.$and[1]['model.targets'].$elemMatch.keyString.$in.push(keyString);
-      lastAbortSignal = abortSignal;
     });
 
     return this.couchObjectProvider.getObjectsByFilter(filter, lastAbortSignal);
@@ -147,19 +165,26 @@ class CouchSearchProvider {
       return [];
     }
 
+    if (this.useDesignDocuments) {
+      return this.couchObjectProvider.getObjectsByView(
+        { designDoc: 'annotation_tags_index', viewName: 'by_tags', keysToSearch: tagsArray },
+        abortSignal
+      );
+    }
+
     const filter = {
       selector: {
         $and: [
+          {
+            'model.type': {
+              $eq: 'annotation'
+            }
+          },
           {
             'model.tags': {
               $elemMatch: {
                 $in: []
               }
-            }
-          },
-          {
-            'model.type': {
-              $eq: 'annotation'
             }
           }
         ]

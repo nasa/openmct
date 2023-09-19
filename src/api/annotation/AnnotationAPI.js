@@ -325,7 +325,10 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   #addTagMetaInformationToTags(tags) {
-    return tags.map((tagKey) => {
+    // Convert to Set and back to Array to remove duplicates
+    const uniqueTags = [...new Set(tags)];
+
+    return uniqueTags.map((tagKey) => {
       const tagModel = this.availableTags[tagKey];
       tagModel.tagID = tagKey;
 
