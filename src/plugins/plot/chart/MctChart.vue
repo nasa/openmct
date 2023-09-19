@@ -414,6 +414,8 @@ export default {
       this.stopListening();
       this.lines.forEach((line) => line.destroy());
       this.limitLines.forEach((line) => line.destroy());
+      this.pointSets.forEach((pointSet) => pointSet.destroy());
+      this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
       DrawLoader.releaseDrawAPI(this.drawAPI);
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
