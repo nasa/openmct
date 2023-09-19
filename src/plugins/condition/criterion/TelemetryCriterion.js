@@ -52,6 +52,8 @@ export default class TelemetryCriterion extends EventEmitter {
 
     this.initialize();
     this.emitEvent('criterionUpdated', this);
+
+    this.openmct.time.on('clockChanged', this.subscribeToStaleness);
   }
 
   initialize() {

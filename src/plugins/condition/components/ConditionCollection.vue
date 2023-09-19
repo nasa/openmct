@@ -79,15 +79,15 @@
 </template>
 
 <script>
-import StalenessUtils from '@/utils/staleness';
-
 import ConditionManager from '../ConditionManager';
 import Condition from './Condition.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
   components: {
     Condition
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'domainObject'],
   props: {
     isEditing: Boolean,
@@ -134,13 +134,6 @@ export default {
     if (this.stopObservingForChanges) {
       this.stopObservingForChanges();
     }
-
-    if (this.stalenessSubscription) {
-      Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-        stalenessSubscription.unsubscribe();
-        stalenessSubscription.stalenessUtils.destroy();
-      });
-    }
   },
   mounted() {
     this.composition = this.openmct.composition.get(this.domainObject);
@@ -152,7 +145,20 @@ export default {
     this.conditionManager = new ConditionManager(this.domainObject, this.openmct);
     this.conditionManager.on('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
     this.conditionManager.on('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
-    this.stalenessSubscription = {};
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject, () => {
+        this.emitStaleness({
+          keyString: domainObject.identifier,
+          stalenessResponse: { isStale: false }
+        });
+      });
+      this.subscribeToStaleness(domainObject, (stalenessResponse) => {
+        this.emitStaleness({
+          keyString: domainObject.identifier,
+          stalenessResponse: stalenessResponse
+        });
+      });
+    });
   },
   methods: {
     handleConditionSetResultUpdated(data) {
@@ -220,31 +226,16 @@ export default {
       this.telemetryObjs.push(domainObject);
       this.$emit('telemetryUpdated', this.telemetryObjs);
 
-      if (!this.stalenessSubscription[keyString]) {
-        this.stalenessSubscription[keyString] = {};
-      }
-
-      this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(
-        this.openmct,
-        domainObject
-      );
-
-      this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
+      this.subscribeToStaleness(domainObject, (stalenessResponse) => {
+        this.emitStaleness({
+          keyString,
+          stalenessResponse: stalenessResponse
+        });
       });
-      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-        domainObject,
-        (stalenessResponse) => {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
     },
     removeTelemetryObject(identifier) {
       const keyString = this.openmct.objects.makeKeyString(identifier);
+      const domainObject = this.openmct.objects.get(keyString);
       const index = this.telemetryObjs.findIndex((obj) => {
         let objId = this.openmct.objects.makeKeyString(obj.identifier);
 
@@ -255,27 +246,12 @@ export default {
         this.telemetryObjs.splice(index, 1);
       }
 
-      if (this.stalenessSubscription[keyString]) {
-        this.stalenessSubscription[keyString].unsubscribe();
-        this.stalenessSubscription[keyString].stalenessUtils.destroy();
+      this.triggerUnsubscribeFromStaleness(domainObject, () => {
         this.emitStaleness({
           keyString,
-          isStale: false
+          stalenessResponse: { isStale: false }
         });
-        delete this.stalenessSubscription[keyString];
-      }
-    },
-    handleStaleness(keyString, stalenessResponse) {
-      if (
-        this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(
-          stalenessResponse
-        )
-      ) {
-        this.emitStaleness({
-          keyString,
-          isStale: stalenessResponse.isStale
-        });
-      }
+      });
     },
     emitStaleness(stalenessObject) {
       this.$emit('telemetryStaleness', stalenessObject);

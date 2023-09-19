@@ -165,7 +165,7 @@ export default {
       }
 
       this.isStale = false;
-      this.triggerUnsubscribeFromStaleness();
+      this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
     },
