@@ -191,7 +191,7 @@ class CouchSearchProvider {
       }
     };
     tagsArray.forEach((tag) => {
-      filter.selector.$and[0]['model.tags'].$elemMatch.$in.push(tag);
+      filter.selector.$and[1]['model.tags'].$elemMatch.$in.push(tag);
     });
 
     return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
