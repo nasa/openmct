@@ -31,9 +31,8 @@
       <notification-message
         v-for="(notification, notificationIndex) in notifications"
         :key="notificationIndex"
-        :close-overlay="closeOverlay"
         :notification="notification"
-        :notifications-count="notifications.length"
+        @dismissed="notificationDismissed"
       />
     </div>
   </div>
@@ -53,12 +52,15 @@ export default {
       required: true
     }
   },
-  emits: ['clear-all', 'close'],
+  emits: ['clear-all', 'close', 'dismissed'],
   computed: {
+    notificationsCount() {
+      return this.notifications.length;
+    },
     notificationsCountDisplayMessage() {
-      return this.notifications.length > 1 || this.notifications.length === 0
-        ? `Displaying ${this.notifications.length} notifications`
-        : `Displaying ${this.notifications.length} notification`;
+      return this.notificationsCount > 1 || this.notificationsCount === 0
+        ? `Displaying ${this.notificationsCount} notifications`
+        : `Displaying ${this.notificationsCount} notification`;
     }
   },
   mounted() {
@@ -85,8 +87,12 @@ export default {
         }
       });
     },
-    closeOverlay() {
-      this.overlay.dismiss();
+    notificationDismissed() {
+      if (this.notificationsCount === 1) {
+        this.overlay.dismiss();
+      }
+
+      this.$emit('dismissed');
     }
   }
 };

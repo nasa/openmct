@@ -72,16 +72,9 @@ export default {
     notification: {
       type: Object,
       required: true
-    },
-    closeOverlay: {
-      type: Function,
-      required: true
-    },
-    notificationsCount: {
-      type: Number,
-      required: true
     }
   },
+  emits: ['dismissed'],
   data() {
     return {
       isProgressNotification: false,
@@ -98,6 +91,8 @@ export default {
     }
   },
   mounted() {
+    this.notification.once('destroy', this.dismissNotification);
+
     if (this.notification.model.progressPerc) {
       this.isProgressNotification = true;
       this.notification.on('progress', this.updateProgressBar);
@@ -110,9 +105,13 @@ export default {
     },
     dismiss() {
       this.notification.dismiss();
-      if (this.notificationsCount === 1) {
-        this.closeOverlay();
+    },
+    dismissNotification() {
+      if (this.isProgressNotification) {
+        this.notification.off('progress', this.updateProgressBar);
       }
+
+      this.$emit('dismissed');
     }
   }
 };
