@@ -58,13 +58,13 @@ export default {
   data() {
     return {
       notifications: this.openmct.notifications.notifications,
-      highest: this.openmct.notifications.highest,
+      highestSeverity: this.openmct.notifications.highest.severity,
       showNotificationsOverlay: false
     };
   },
   computed: {
     severityClass() {
-      return `s-status-${this.highest.severity}`;
+      return `s-status-${this.highestSeverity}`;
     }
   },
   mounted() {
@@ -84,7 +84,7 @@ export default {
     },
     updateNotifications() {
       this.notifications = [...this.openmct.notifications.notifications];
-      this.highest = this.openmct.notifications.highest;
+      this.highestSeverity = this.openmct.notifications.highest.severity;
     },
     notificationsCountMessage(count) {
       if (count > 1) {
