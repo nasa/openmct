@@ -123,6 +123,13 @@ export default function (openmct) {
         property: ['telemetry', 'infinityValues']
       },
       {
+        name: 'Include Very Large Values',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'veryLargeValues',
+        property: ['telemetry', 'veryLargeValues']
+      },
+      {
         name: 'Provide Staleness Updates',
         control: 'toggleSwitch',
         cssClass: 'l-input',
@@ -140,6 +147,7 @@ export default function (openmct) {
         randomness: 0,
         loadDelay: 0,
         infinityValues: false,
+        veryLargeValues: false,
         staleness: false
       };
     }

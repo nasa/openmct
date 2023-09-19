@@ -85,7 +85,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.veryLargeValues
               ),
               wavelengths: wavelengths(),
               intensities: intensities(),
@@ -96,7 +97,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.veryLargeValues
               )
             }
           });
@@ -136,6 +138,7 @@
     var randomness = request.randomness;
     var loadDelay = Math.max(request.loadDelay, 0);
     var infinityValues = request.infinityValues;
+    var veryLargeValues = request.veryLargeValues;
 
     var step = 1000 / dataRateInHz;
     var nextStep = start - (start % step) + step;
@@ -146,10 +149,10 @@
       data.push({
         utc: nextStep,
         yesterday: nextStep - 60 * 60 * 24 * 1000,
-        sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues),
+        sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues, veryLargeValues),
         wavelengths: wavelengths(),
         intensities: intensities(),
-        cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues)
+        cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues, veryLargeValues)
       });
     }
 
@@ -176,9 +179,20 @@
     });
   }
 
-  function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
-      return Number.POSITIVE_INFINITY;
+  function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues, veryLargeValues) {
+    const randomValue = Math.random();
+
+    if (infinityValues && veryLargeValues) {
+        if (randomValue < 0.33) return Number.POSITIVE_INFINITY;
+        if (randomValue < 0.66) return (randomValue > 0.5 ? -1 : 1) * 1e+177;
+        // if neither condition is met, it just proceeds to the normal return value
+    } else {
+        if (infinityValues && randomValue > 0.5) {
+            return Number.POSITIVE_INFINITY;
+        }
+        if (veryLargeValues && randomValue > 0.5) {
+            return (randomValue > 0.5 ? -1 : 1) * 1e+177;
+        }
     }
 
     return (
@@ -188,9 +202,20 @@
     );
   }
 
-  function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
-      return Number.POSITIVE_INFINITY;
+  function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues, veryLargeValues) {
+    const randomValue = Math.random();
+
+    if (infinityValues && veryLargeValues) {
+        if (randomValue < 0.33) return Number.POSITIVE_INFINITY;
+        if (randomValue < 0.66) return (randomValue > 0.5 ? -1 : 1) * 1e+177;
+        // if neither condition is met, it just proceeds to the normal return value
+    } else {
+        if (infinityValues && randomValue > 0.5) {
+            return Number.POSITIVE_INFINITY;
+        }
+        if (veryLargeValues && randomValue > 0.5) {
+            return (randomValue > 0.5 ? -1 : 1) * 1e+177;
+        }
     }
 
     return (
