@@ -24,7 +24,7 @@
     <div class="c-overlay__top-bar">
       <div class="c-overlay__dialog-title">Notifications</div>
       <div class="c-overlay__dialog-hint">
-        {{ notificationsCountDisplayMessage(notifications.length) }}
+        {{ notificationsCountDisplayMessage }}
       </div>
     </div>
     <div role="list" class="w-messages c-overlay__messages">
@@ -53,8 +53,13 @@ export default {
       required: true
     }
   },
-  data() {
-    return {};
+  emits: ['clear-all', 'close'],
+  computed: {
+    notificationsCountDisplayMessage() {
+      return this.notifications.length > 1 || this.notifications.length === 0
+        ? `Displaying ${this.notifications.length} notifications`
+        : `Displaying ${this.notifications.length} notification`;
+    }
   },
   mounted() {
     this.openOverlay();
@@ -82,13 +87,6 @@ export default {
     },
     closeOverlay() {
       this.overlay.dismiss();
-    },
-    notificationsCountDisplayMessage(count) {
-      if (count > 1 || count === 0) {
-        return `Displaying ${count} notifications`;
-      } else {
-        return `Displaying ${count} notification`;
-      }
     }
   }
 };
