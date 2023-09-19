@@ -64,25 +64,25 @@ define([
     this.valueInputs = [];
 
     const self = this;
-    
+
     /**
      * Event handler for a change in one of this conditions' custom selects
      * @param {string} value The new value of this selects
      * @param {string} property The property of this condition to modify
      * @private
-    */
+     */
     function onSelectChange(value, property) {
       if (property === 'operation') {
         self.generateValueInputs(value);
       }
-      
+
       self.eventEmitter.emit('change', {
         value: value,
         property: property,
         index: self.index
       });
     }
-    
+
     this.handleObjectChange = (value) => onSelectChange(value, 'object');
     this.handleKeyChange = (value) => onSelectChange(value, 'key');
 

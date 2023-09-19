@@ -179,9 +179,9 @@ test.describe('Navigation memory leak is not detected in', () => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'display-layout-simple-telemetry',
-        {
-          timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
-        }
+      {
+        timeout: NAV_LEAK_TIMEOUT * 6 // 1 min
+      }
     );
 
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
