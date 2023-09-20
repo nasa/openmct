@@ -56,6 +56,7 @@
 
 <script>
 import ConditionCollection from './ConditionCollection.vue';
+import TestData from './TestData.vue';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {

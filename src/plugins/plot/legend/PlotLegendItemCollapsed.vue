@@ -127,7 +127,6 @@ export default {
     this.config.series.forEach(this.onSeriesAdd, this);
     this.legend = this.config.legend;
     this.loaded = true;
-    this.subscribeToStaleness(this.seriesObject.domainObject);
     this.setupClockChangedEvent((domainObject) => {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);
