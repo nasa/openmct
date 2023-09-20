@@ -178,7 +178,7 @@ export default {
     this.stalenessSubscription = {};
     this.loadComposition();
   },
-  beforeUnmount() {
+  unmounted() {
     this.destroy();
   },
   methods: {
@@ -258,6 +258,7 @@ export default {
         this.compositionCollection.off('remove', this.removeItem);
       }
 
+      this.imageExporter = null;
       this.stopListening();
     },
     exportJPG() {

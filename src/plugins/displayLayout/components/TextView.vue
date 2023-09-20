@@ -25,18 +25,20 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @endMove="endMove"
   >
-    <div
-      class="c-text-view u-style-receiver js-style-receiver"
-      :data-font-size="item.fontSize"
-      :data-font="item.font"
-      :class="[styleClass]"
-      :style="style"
-    >
-      <div class="c-text-view__text">{{ item.text }}</div>
-    </div>
+    <template #content>
+      <div
+        class="c-text-view u-style-receiver js-style-receiver"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
+        :class="[styleClass]"
+        :style="style"
+      >
+        <div class="c-text-view__text">{{ item.text }}</div>
+      </div>
+    </template>
   </layout-frame>
 </template>
 
@@ -127,9 +129,17 @@ export default {
       this.initSelect
     );
   },
-  unmounted() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
+    }
+  },
+  methods: {
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('endMove');
     }
   }
 };

@@ -62,6 +62,20 @@ define([
   };
 
   /**
+   * Unregister a callback from this select.
+   * @param {string} event The key for the event to stop listening to
+   * @param {function} callback The function to unregister
+   * @param {Object} context A reference to a scope to use as the context for the callback function
+   */
+  Select.prototype.off = function (event, callback, context) {
+    if (this.supportedCallbacks.includes(event)) {
+      this.eventEmitter.off(event, callback, context || this);
+    } else {
+      throw new Error('Unsupported event type: ' + event);
+    }
+  };
+
+  /**
    * Update the select element in the view from the current state of the data
    * model
    */
