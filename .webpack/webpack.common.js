@@ -33,6 +33,16 @@ const projectRootDir = path.resolve(__dirname, '..');
 /** @type {import('webpack').Configuration} */
 const config = {
   context: projectRootDir,
+  devServer: {
+    client: {
+      progress: true,
+      overlay: {
+        // Disable overlay for runtime errors.
+        // See: https://github.com/webpack/webpack-dev-server/issues/4771
+        runtimeErrors: false
+      }
+    }
+  },
   entry: {
     openmct: './openmct.js',
     generatorWorker: './example/generator/generatorWorker.js',
@@ -125,6 +135,7 @@ const config = {
         loader: 'vue-loader',
         options: {
           compilerOptions: {
+            hoistStatic: false,
             whitespace: 'preserve',
             compatConfig: {
               MODE: 2

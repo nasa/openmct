@@ -44,7 +44,7 @@
         </span>
       </div>
 
-      <select class="c-inspector__data-pivot-range-selector" v-model="selectedDataRangeIndex">
+      <select v-model="selectedDataRangeIndex" class="c-inspector__data-pivot-range-selector">
         <option
           v-for="(dataRange, index) in descendingDataRanges"
           :key="index"
@@ -78,8 +78,8 @@
   </div>
 </template>
 <script>
-import NumericData from './NumericData.vue';
 import Imagery from './Imagery.vue';
+import NumericData from './NumericData.vue';
 
 const TIMESTAMP_VIEW_BUFFER = 30 * 1000;
 const timestampBufferText = `${TIMESTAMP_VIEW_BUFFER / 1000} seconds`;
