@@ -83,7 +83,8 @@ define([
   './timelist/plugin',
   './faultManagement/FaultManagementPlugin',
   '../../example/exampleTags/plugin',
-  './inspectorViews/plugin'
+  './inspectorViews/plugin',
+  './inspectorDataVisualization/plugin'
 ], function (
   _,
   UTCTimeSystem,
@@ -147,7 +148,8 @@ define([
   TimeList,
   FaultManagementPlugin,
   ExampleTags,
-  InspectorViews
+  InspectorViews,
+  InspectorDataVisualization
 ) {
   const plugins = {};
 
@@ -232,6 +234,7 @@ define([
   plugins.Gauge = GaugePlugin.default;
   plugins.Timelist = TimeList.default;
   plugins.InspectorViews = InspectorViews.default;
+  plugins.InspectorDataVisualization = InspectorDataVisualization.default;
 
   return plugins;
 });
