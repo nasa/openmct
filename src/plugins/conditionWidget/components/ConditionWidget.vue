@@ -81,7 +81,7 @@ export default {
       this.listenToConditionSetChanges();
     }
   },
-  beforeUnmount() {
+  unmounted() {
     this.stopListeningToConditionSetChanges();
   },
   methods: {

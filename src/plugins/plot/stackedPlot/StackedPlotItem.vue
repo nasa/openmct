@@ -135,6 +135,9 @@ export default {
       this.removeSelectable();
     }
 
+    const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+    configStore.deleteStore(configId);
+
     if (this._destroy) {
       this._destroy();
     }

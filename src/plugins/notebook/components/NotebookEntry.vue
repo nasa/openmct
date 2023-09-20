@@ -292,7 +292,7 @@ export default {
   },
   beforeUnmount() {
     if (this.embedsWrapperResizeObserver) {
-      this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+      this.embedsWrapperResizeObserver.disconnect();
     }
   },
   methods: {
