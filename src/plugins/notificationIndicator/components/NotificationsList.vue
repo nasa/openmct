@@ -29,8 +29,8 @@
     </div>
     <div role="list" class="w-messages c-overlay__messages">
       <notification-message
-        v-for="(notification, notificationIndex) in notifications"
-        :key="notificationIndex"
+        v-for="notification in notifications"
+        :key="notification.model.timestamp"
         :notification="notification"
         @dismissed="notificationDismissed"
       />
