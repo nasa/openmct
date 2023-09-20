@@ -134,11 +134,11 @@ npm run test:e2e:updatesnapshots
 
 ## Performance Testing
 
-The open source performance tests function mostly as a contract for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites.
+The open source performance tests function in three ways which match their naming and folder structure:
 
-They're found under `./e2e/tests/performance` and are to be executed with the following npm script:
-
-`npm run test:perf`
+`./e2e/tests/performance` - The tests at the root of this folder path detect functional changes which are mostly apparent with large performance regressions like [this](https://github.com/nasa/openmct/issues/6879). These tests run against openmct webpack in `production-mode` with the `npm run test:perf:localhost` script.
+`./e2e/tests/performance/contract/` -  These tests serve as [contracts](https://martinfowler.com/bliki/ContractTest.html) for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites. These tests run against openmct webpack in `dev-mode` with the `npm run test:perf:contract` script.
+`./e2e/tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
 
 These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
 
@@ -158,8 +158,11 @@ Our file structure follows the type of type of testing being excercised at the e
 |`./tests/functional/example/` | Tests which specifically verify the example plugins (e.g.: Sine Wave Generator).|
 |`./tests/functional/plugins/` | Tests which loosely test each plugin. This folder is the most likely to change. Note: some `@snapshot` tests are still contained within this structure.|
 |`./tests/framework/`          | Tests which verify that our testing framework's functionality and assumptions will continue to work based on further refactoring or Playwright version changes (e.g.: verifying custom fixtures and appActions).|
-|`./tests/performance/`        | Performance tests.|
+|`./tests/performance/`        | Performance tests which should be run on every commit.|
+|`./tests/performance/contract/` | A subset of performance tests which are designed to provide a contract between the open source tests which are run on every commit and the downstream tests which are run post merge and with other frameworks.|
+|`./tests/performance/memory`  | A subset of performance tests which are designed to test for memory leaks.|
 |`./tests/visual/`             | Visual tests.|
+|`./tests/visual/component/`             | Visual tests which are only run against a single component.|
 |`./appActions.js`             | Contains common methods which can be leveraged by test case authors to quickly move through the application when writing new tests.|
 |`./baseFixture.js`            | Contains base fixtures which only extend default `@playwright/test` functionality. The expectation is that these fixtures will be removed as the native Playwright API improves|
 
@@ -176,6 +179,7 @@ Open MCT is leveraging the [config file](https://playwright.dev/docs/test-config
 |`./playwright-ci.config.js` | Used when running in CI or to debug CI issues locally|
 |`./playwright-local.config.js` | Used when running locally|
 |`./playwright-performance.config.js` | Used when running performance tests in CI or locally|
+|`./playwright-performance-devmode.config.js` | Used when running performance tests in CI or locally|
 |`./playwright-visual.config.js` | Used to run the visual tests in CI or locally|
 
 #### Test Tags

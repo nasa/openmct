@@ -394,11 +394,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', () => {
-      if (this.annotationViewingAndEditingAllowed) {
-        this.loadAnnotations();
-      }
-    });
+    this.$on('loadingComplete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -413,6 +409,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
+    this.$off('loadingComplete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -467,9 +464,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', () => {
-            resolve();
-          });
+          this.$once('loadingComplete', resolve);
         } else {
           resolve();
         }
@@ -565,31 +560,10 @@ export default {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
       this.seriesModels[index] = series;
-      this.listenTo(
-        series,
-        'change:xKey',
-        (xKey) => {
-          this.setDisplayRange(series, xKey);
-        },
-        this
-      );
-      this.listenTo(
-        series,
-        'change:yKey',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:xKey', this.setDisplayRange.bind(this, series), this);
+      this.listenTo(series, 'change:yKey', this.loadSeriesData.bind(this, series), this);
 
-      this.listenTo(
-        series,
-        'change:interpolate',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:interpolate', this.loadSeriesData.bind(this, series), this);
       this.listenTo(series, 'change:yAxisId', this.updateTicksAndSeriesForYAxis, this);
 
       this.loadSeriesData(series);
@@ -619,6 +593,11 @@ export default {
       const foundYAxis = this.yAxes.find((yAxis) => yAxis.id === yAxisId);
       if (foundYAxis) {
         foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
+      }
+    },
+    loadAnnotationsIfAllowed() {
+      if (this.annotationViewingAndEditingAllowed) {
+        this.loadAnnotations();
       }
     },
     async loadAnnotations() {
@@ -992,9 +971,6 @@ export default {
 
       this.config.yAxisLabel = this.config.yAxis.get('label');
 
-      this.cursorGuideVertical = this.$refs.cursorGuideVertical;
-      this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
-
       this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
       this.yAxisListWithRange.forEach((yAxis) => {
         this.listenTo(yAxis, 'change:displayRange', this.onYAxisChange.bind(this, yAxis.id), this);
@@ -1122,8 +1098,8 @@ export default {
     },
 
     updateCrosshairs(event) {
-      this.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
-      this.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
+      this.$refs.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
+      this.$refs.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
     },
 
     trackChartElementBounds(event) {
@@ -1903,6 +1879,10 @@ export default {
       if (this.config) {
         configStore.deleteStore(this.config.id);
       }
+
+      this.config = {};
+      this.canvas = undefined;
+      this.abortController = undefined;
 
       this.stopListening();
 
