@@ -240,9 +240,6 @@ export default class Selection extends EventEmitter {
       if (context.item !== undefined && context.item.isMutable && removeMutable === true) {
         this.openmct.objects.destroyMutable(context.item);
       }
-      selectable.context = undefined;
-      selectable.element = undefined;
-      selectable = undefined;
     }.bind(this);
   }
 }
