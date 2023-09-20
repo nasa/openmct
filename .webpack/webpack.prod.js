@@ -18,15 +18,5 @@ module.exports = merge(common, {
       __OPENMCT_ROOT_RELATIVE__: '""'
     })
   ],
-  devtool: 'source-map',
-  devServer: {
-    client: {
-      progress: true,
-      overlay: {
-        // Disable overlay for runtime errors.
-        // See: https://github.com/webpack/webpack-dev-server/issues/4771
-        runtimeErrors: false
-      }
-    }
-  }
+  devtool: 'source-map'
 });
