@@ -91,7 +91,7 @@ export default {
       return classes;
     }
   },
-  unmounted() {
+  beforeUnmount() {
     this.clear();
     if (this.releaseEditModeHandler) {
       this.releaseEditModeHandler();
@@ -114,6 +114,13 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.editIfEditable, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.addObjectToParent);
   },
   created() {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
@@ -137,6 +144,7 @@ export default {
     clear() {
       if (this.currentView) {
         this.currentView.destroy();
+
         if (this.$refs.objectViewWrapper) {
           this.$refs.objectViewWrapper.innerHTML = '';
         }
@@ -168,6 +176,7 @@ export default {
       this.triggerUnsubscribeFromStaleness();
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      this.openmct.objectViews.off('contextAction', this.performContextAction);
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -288,6 +297,7 @@ export default {
       }
 
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on('contextAction', this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -309,10 +319,6 @@ export default {
     },
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
-
-      if (this.unlisten) {
-        this.unlisten();
-      }
 
       if (this.removeSelectable) {
         this.removeSelectable();
@@ -460,6 +466,11 @@ export default {
         if (this.currentView.onClearData) {
           this.currentView.onClearData();
         }
+      }
+    },
+    performContextAction() {
+      if (this.currentView.contextAction) {
+        this.currentView.contextAction(...arguments);
       }
     },
     isEditingAllowed() {

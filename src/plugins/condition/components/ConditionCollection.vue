@@ -128,6 +128,7 @@ export default {
     this.composition.off('remove', this.removeTelemetryObject);
     if (this.conditionManager) {
       this.conditionManager.off('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
+      this.conditionManager.off('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
       this.conditionManager.destroy();
     }
 
