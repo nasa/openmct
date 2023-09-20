@@ -70,10 +70,12 @@ export default {
   },
   mounted() {
     this.openmct.notifications.on('notification', this.updateNotifications);
+    this.openmct.notifications.on('add', this.updateNotifications);
     this.openmct.notifications.on('dismiss-all', this.updateNotifications);
   },
   unmounted() {
     this.openmct.notifications.off('notification', this.updateNotifications);
+    this.openmct.notifications.off('add', this.updateNotifications);
     this.openmct.notifications.off('dismiss-all', this.updateNotifications);
   },
   methods: {

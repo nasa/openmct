@@ -323,24 +323,25 @@ export default class NotificationAPI extends EventEmitter {
     notification = this._createNotification(notificationModel);
 
     this.notifications.push(notification);
+    this.emit('add', notification);
     this._setHighestSeverity();
 
     /*
-        Check if there is already an active (ie. visible) notification
-            */
+      Check if there is already an active (ie. visible) notification
+    */
     if (!this.activeNotification && !notification?.model?.options?.minimized) {
       this._setActiveNotification(notification);
     } else if (!this.activeTimeout) {
       /*
-                If there is already an active notification, time it out. If it's
-                already got a timeout in progress (either because it has had
-                timeout forced because of a queue of messages, or it had an
-                autodismiss specified), leave it to run. Otherwise force a
-                timeout.
+        If there is already an active notification, time it out. If it's
+        already got a timeout in progress (either because it has had
+        timeout forced because of a queue of messages, or it had an
+        autodismiss specified), leave it to run. Otherwise force a
+        timeout.
 
-                This notification has been added to queue and will be
-                serviced as soon as possible.
-                */
+        This notification has been added to queue and will be
+        serviced as soon as possible.
+      */
       this.activeTimeout = setTimeout(() => {
         this._dismissOrMinimize(activeNotification);
       }, DEFAULT_AUTO_DISMISS_TIMEOUT);
