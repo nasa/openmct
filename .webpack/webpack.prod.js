@@ -23,5 +23,5 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '""'
         })
     ],
-    devtool: "source-map"
+    devtool: "inline-source-map"
 });

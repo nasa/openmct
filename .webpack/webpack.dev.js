@@ -35,7 +35,7 @@ module.exports = merge(common, {
             __OPENMCT_ROOT_RELATIVE__: '"dist/"'
         })
     ],
-    devtool: "eval-source-map",
+    devtool: "inline-source-map",
     devServer: {
         devMiddleware: {
             writeToDisk: (filePathString) => {
