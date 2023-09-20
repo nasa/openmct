@@ -55,7 +55,7 @@ export default {
   mounted() {
     this.openmct.editor.on('isEditing', this.setEditMode);
   },
-  beforeUnmounted() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditMode);
   },
   methods: {

@@ -168,8 +168,10 @@ export default class PlotConfigurationModel extends Model {
   onDestroy() {
     this.xAxis.destroy();
     this.yAxis.destroy();
+    this.additionalYAxes.forEach((additionalYAxis) => additionalYAxis.destroy());
     this.series.destroy();
     this.legend.destroy();
+    this.stopListening();
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }
