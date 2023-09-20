@@ -747,11 +747,7 @@ export default {
       this.loading = loading;
     },
     handleStaleness({ keyString, stalenessResponse }) {
-      console.log('handleStaleness');
-      console.log(keyString);
-      console.log(stalenessResponse);
       this.addOrRemoveStaleObject(keyString, stalenessResponse);
-      console.log(this.staleObjects);
     },
     calculateTableSize() {
       this.$nextTick().then(this.calculateColumnWidths);

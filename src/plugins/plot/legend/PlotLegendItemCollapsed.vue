@@ -127,28 +127,11 @@ export default {
     this.config.series.forEach(this.onSeriesAdd, this);
     this.legend = this.config.legend;
     this.loaded = true;
-    this.listenTo(
-      this.seriesObject,
-      'change:color',
-      (newColor) => {
-        this.updateColor(newColor);
-      },
-      this
-    );
-    this.listenTo(
-      this.seriesObject,
-      'change:name',
-      () => {
-        this.updateName();
-      },
-      this
-    );
     this.subscribeToStaleness(this.seriesObject.domainObject);
     this.setupClockChangedEvent((domainObject) => {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);
     });
-    this.initialize();
   },
   beforeUnmount() {
     this.stopListening();

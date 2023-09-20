@@ -166,16 +166,6 @@ define([
       this.telemetryCollections[keyString].load();
 
       this.subscribeToStaleness(telemetryObject);
-
-      this.telemetryObjects[keyString] = {
-        telemetryObject,
-        keyString,
-        requestOptions,
-        columnMap,
-        limitEvaluator
-      };
-
-      this.emit('object-added', telemetryObject);
     }
 
     resubscribeAllObjectsToStaleness() {
