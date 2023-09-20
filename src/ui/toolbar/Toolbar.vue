@@ -89,7 +89,7 @@ export default {
     // for edit mode changes and update toolbars if necessary.
     this.openmct.editor.on('isEditing', this.handleEditing);
   },
-  unmounted() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.handleSelection);
     this.openmct.editor.off('isEditing', this.handleEditing);
     this.removeListeners();

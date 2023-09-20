@@ -59,4 +59,8 @@ export default class LegendModel extends Model {
       showLegendsForChildren: true
     };
   }
+
+  destroy() {
+    this.stopListening();
+  }
 }
