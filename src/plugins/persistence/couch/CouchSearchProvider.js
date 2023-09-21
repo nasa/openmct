@@ -37,6 +37,7 @@ class CouchSearchProvider {
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
     this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+    this.useDesignDocuments = couchObjectProvider.useDesignDocuments;
     this.supportedSearchTypes = [
       this.searchTypes.OBJECTS,
       this.searchTypes.ANNOTATIONS,
@@ -102,6 +103,25 @@ class CouchSearchProvider {
   }
 
   #bulkAnnotationSearch(batchIdsToSearch) {
+    if (!batchIdsToSearch?.length) {
+      // nothing to search
+      return;
+    }
+
+    let lastAbortSignal = batchIdsToSearch[batchIdsToSearch.length - 1].abortSignal;
+
+    if (this.useDesignDocuments) {
+      const keysToSearch = batchIdsToSearch.map(({ keyString }) => keyString);
+      return this.couchObjectProvider.getObjectsByView(
+        {
+          designDoc: 'annotation_keystring_index',
+          viewName: 'by_keystring',
+          keysToSearch
+        },
+        lastAbortSignal
+      );
+    }
+
     const filter = {
       selector: {
         $and: [
@@ -111,25 +131,20 @@ class CouchSearchProvider {
             }
           },
           {
-            $or: []
+            'model.targets': {
+              $elemMatch: {
+                keyString: {
+                  $in: []
+                }
+              }
+            }
           }
         ]
       }
     };
-    let lastAbortSignal = null;
     // TODO: should remove duplicates from batchIds
     batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
-      const modelFilter = {
-        model: {
-          targets: {}
-        }
-      };
-      modelFilter.model.targets[keyString] = {
-        $exists: true
-      };
-
-      filter.selector.$and[1].$or.push(modelFilter);
-      lastAbortSignal = abortSignal;
+      filter.selector.$and[1]['model.targets'].$elemMatch.keyString.$in.push(keyString);
     });
 
     return this.couchObjectProvider.getObjectsByFilter(filter, lastAbortSignal);
@@ -142,11 +157,7 @@ class CouchSearchProvider {
     }
 
     const returnedData = await this.#bulkPromise;
-    // only return data that matches the keystring
-    const filteredByKeyString = returnedData.filter((foundAnnotation) => {
-      return foundAnnotation.targets[keyString];
-    });
-    return filteredByKeyString;
+    return returnedData;
   }
 
   searchForTags(tagsArray, abortSignal) {
@@ -154,28 +165,33 @@ class CouchSearchProvider {
       return [];
     }
 
+    if (this.useDesignDocuments) {
+      return this.couchObjectProvider.getObjectsByView(
+        { designDoc: 'annotation_tags_index', viewName: 'by_tags', keysToSearch: tagsArray },
+        abortSignal
+      );
+    }
+
     const filter = {
       selector: {
         $and: [
           {
-            'model.tags': {
-              $elemMatch: {
-                $or: []
-              }
+            'model.type': {
+              $eq: 'annotation'
             }
           },
           {
-            'model.type': {
-              $eq: 'annotation'
+            'model.tags': {
+              $elemMatch: {
+                $in: []
+              }
             }
           }
         ]
       }
     };
     tagsArray.forEach((tag) => {
-      filter.selector.$and[0]['model.tags'].$elemMatch.$or.push({
-        $eq: `${tag}`
-      });
+      filter.selector.$and[1]['model.tags'].$elemMatch.$in.push(tag);
     });
 
     return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
