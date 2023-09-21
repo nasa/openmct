@@ -133,7 +133,7 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
   Add a line to install the CouchDB plugin for Open MCT:
 
   ```js
-  openmct.install(openmct.plugins.CouchDB("http://localhost:5984/openmct"));
+  openmct.install(openmct.plugins.CouchDB({url: "http://localhost:5984/openmct", useDesignDocuments: false}));
   ```
 
 # Validating a successful Installation
@@ -143,3 +143,63 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 3. Navigate to: <http://127.0.0.1:5984/_utils/#database/openmct/_all_docs>
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆
+
+# Search Performance
+
+For large Open MCT installations, it may be helpful to add additional CouchDB capabilities to bear to improve performance.
+
+## Indexing
+Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
+
+To create an index for `model.type`, you can use the following payload:
+
+```json
+{
+  "index": {
+    "fields": ["model.type", "model.tags"]
+  },
+  "name": "type_tags_index",
+  "type": "json"
+}
+```
+
+This instructs CouchDB to create an index on the `model.type` field and the `model.tags` field. Once this index is created, queries that include a selector on `model.type` and `model.tags` (like when searching for tags) can use this index to retrieve results faster.
+
+You can find more detailed information about indexing in CouchDB in the [official documentation](https://docs.couchdb.org/en/stable/api/database/find.html#db-index).
+
+## Design Documents
+
+We can also add a design document for retrieving domain objects for specific tags:
+
+```json
+{
+  "_id": "_design/annotation_tags_index",
+  "views": {
+    "by_tags": {
+      "map": "function (doc) { if (doc.model && doc.model.type === 'annotation' && doc.model.tags) { doc.model.tags.forEach(function (tag) { emit(tag, doc._id); }); } }"
+    }
+  }
+}
+```
+and can be retrieved by issuing a `GET` to http://localhost:5984/openmct/_design/annotation_tags_index/_view/by_tags?keys=["TAG_ID_TO_SEARCH_FOR"]&include_docs=true
+where `TAG_ID_TO_SEARCH_FOR` is the tag UUID we're looking for.
+
+and for targets:
+```javascript
+{
+  "_id": "_design/annotation_keystring_index",
+  "views": {
+    "by_keystring": {
+      "map": "function (doc) { if (doc.model && doc.model.type === 'annotation' && doc.model.targets) { doc.model.targets.forEach(function(target) { if(target.keyString) { emit(target.keyString, doc._id); } }); } }"
+    }
+  }
+}
+```
+and can be retrieved by issuing a `GET` to http://localhost:5984/openmct/_design/annotation_keystring_index/_view/by_keystring?keys=["KEY_STRING_TO_SEARCH_FOR"]&include_docs=true
+where `KEY_STRING_TO_SEARCH_FOR` is the UUID we're looking for.
+
+To enable them in Open MCT, we need to configure the plugin `useDesignDocuments` like so:
+
+  ```js
+  openmct.install(openmct.plugins.CouchDB({url: "http://localhost:5984/openmct", useDesignDocuments: true}));
+  ```
