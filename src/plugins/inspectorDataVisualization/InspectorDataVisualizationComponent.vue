@@ -19,62 +19,46 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+
 <template>
-  <div class="c-switcher-menu">
-    <button
-      :id="id"
-      class="c-button c-button--menu c-switcher-menu__button"
-      :class="iconClass"
-      :title="title"
-      @click="toggleMenu"
+  <div
+    class="c-inspector__properties c-data-visualization-inspector__properties c-data-visualization-inspector__flex-column"
+  >
+    <DataVisualization
+      :data-ranges="dataRanges"
+      :plot-telemetry-keys="plotTelemetryKeys"
+      :description="description"
+      :is-loading="isLoading"
     />
-    <div v-show="showMenu" class="c-switcher-menu__content">
-      <slot></slot>
-    </div>
   </div>
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
+import DataVisualization from './DataVisualization.vue';
 
 export default {
-  inject: ['openmct'],
+  components: {
+    DataVisualization
+  },
+  inject: ['openmct', 'domainObject'],
   props: {
-    iconClass: {
-      type: String,
-      default() {
-        return '';
-      }
-    },
-    title: {
-      type: String,
-      default() {
-        return '';
-      }
+    context: {
+      type: Object,
+      required: true
     }
   },
-  data() {
-    return {
-      id: uuid(),
-      showMenu: false
-    };
-  },
-  mounted() {
-    document.addEventListener('click', this.hideMenu);
-  },
-  unmounted() {
-    document.removeEventListener('click', this.hideMenu);
-  },
-  methods: {
-    toggleMenu() {
-      this.showMenu = !this.showMenu;
+  computed: {
+    dataRanges() {
+      return this.context.dataRanges;
     },
-    hideMenu(e) {
-      if (this.id === e.target.id) {
-        return;
-      }
-
-      this.showMenu = false;
+    plotTelemetryKeys() {
+      return this.context.telemetryKeys;
+    },
+    description() {
+      return this.context.description;
+    },
+    isLoading() {
+      return Boolean(this.context.loading);
     }
   }
 };

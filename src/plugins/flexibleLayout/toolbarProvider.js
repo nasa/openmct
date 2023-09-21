@@ -89,8 +89,6 @@ function ToolbarProvider(openmct) {
           control: 'button',
           domainObject: primary.context.item,
           method: function () {
-            let deleteFrameAction = tertiary.context.deleteFrame;
-
             let prompt = openmct.overlays.dialog({
               iconClass: 'alert',
               message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
@@ -99,7 +97,11 @@ function ToolbarProvider(openmct) {
                   label: 'OK',
                   emphasis: 'true',
                   callback: function () {
-                    deleteFrameAction(primary.context.frameId);
+                    openmct.objectViews.emit(
+                      'contextAction',
+                      'deleteFrame',
+                      primary.context.frameId
+                    );
                     prompt.dismiss();
                   }
                 },
@@ -136,7 +138,9 @@ function ToolbarProvider(openmct) {
         addContainer = {
           control: 'button',
           domainObject: tertiary.context.item,
-          method: tertiary.context.addContainer,
+          method: function () {
+            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          },
           key: 'add',
           icon: 'icon-plus-in-rect',
           title: 'Add Container'
@@ -152,7 +156,6 @@ function ToolbarProvider(openmct) {
           control: 'button',
           domainObject: primary.context.item,
           method: function () {
-            let removeContainer = secondary.context.deleteContainer;
             let containerId = primary.context.containerId;
 
             let prompt = openmct.overlays.dialog({
@@ -164,7 +167,7 @@ function ToolbarProvider(openmct) {
                   label: 'OK',
                   emphasis: 'true',
                   callback: function () {
-                    removeContainer(containerId);
+                    openmct.objectViews.emit('contextAction', 'deleteContainer', containerId);
                     prompt.dismiss();
                   }
                 },
@@ -185,7 +188,9 @@ function ToolbarProvider(openmct) {
         addContainer = {
           control: 'button',
           domainObject: secondary.context.item,
-          method: secondary.context.addContainer,
+          method: function () {
+            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          },
           key: 'add',
           icon: 'icon-plus-in-rect',
           title: 'Add Container'
@@ -198,7 +203,9 @@ function ToolbarProvider(openmct) {
         addContainer = {
           control: 'button',
           domainObject: primary.context.item,
-          method: primary.context.addContainer,
+          method: function () {
+            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          },
           key: 'add',
           icon: 'icon-plus-in-rect',
           title: 'Add Container'

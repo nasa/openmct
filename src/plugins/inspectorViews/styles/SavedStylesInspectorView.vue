@@ -42,6 +42,10 @@ export default {
   },
   unmounted() {
     this.openmct.selection.off('change', this.updateSelection);
+    if (this.destroy) {
+      this.destroy();
+      this.$el.innerHTML = '';
+    }
   },
   methods: {
     updateSelection(selection) {

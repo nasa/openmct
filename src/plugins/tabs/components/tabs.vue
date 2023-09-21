@@ -160,7 +160,8 @@ export default {
       this.updateInternalDomainObject
     );
 
-    this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
+    this.updateCurrentTab = this.updateCurrentTab.bind(this);
+    this.openmct.router.on('change:params', this.updateCurrentTab);
 
     this.RemoveAction = new RemoveAction(this.openmct);
     document.addEventListener('dragstart', this.dragstart);
@@ -183,7 +184,7 @@ export default {
     this.unsubscribe();
     this.clearCurrentTabIndexFromURL();
 
-    this.openmct.router.off('change:params', this.updateCurrentTab.bind(this));
+    this.openmct.router.off('change:params', this.updateCurrentTab);
 
     document.removeEventListener('dragstart', this.dragstart);
     document.removeEventListener('dragend', this.dragend);

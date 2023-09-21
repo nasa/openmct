@@ -1,3 +1,24 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2023, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 define([
   '../res/conditionTemplate.html',
   './input/ObjectSelect',
@@ -42,9 +63,6 @@ define([
     this.selects = {};
     this.valueInputs = [];
 
-    this.remove = this.remove.bind(this);
-    this.duplicate = this.duplicate.bind(this);
-
     const self = this;
 
     /**
@@ -64,6 +82,9 @@ define([
         index: self.index
       });
     }
+
+    this.handleObjectChange = (value) => onSelectChange(value, 'object');
+    this.handleKeyChange = (value) => onSelectChange(value, 'key');
 
     /**
      * Event handler for this conditions value inputs
@@ -99,12 +120,8 @@ define([
       }
     );
 
-    this.selects.object.on('change', function (value) {
-      onSelectChange(value, 'object');
-    });
-    this.selects.key.on('change', function (value) {
-      onSelectChange(value, 'key');
-    });
+    this.selects.object.on('change', this.handleObjectChange);
+    this.selects.key.on('change', this.handleKeyChange);
 
     Object.values(this.selects).forEach(function (select) {
       self.domElement.querySelector('.t-configuration').append(select.getDOM());
@@ -143,6 +160,8 @@ define([
    * remove callbacks
    */
   Condition.prototype.remove = function () {
+    this.selects.object.off('change', this.handleObjectChange);
+    this.selects.key.off('change', this.handleKeyChange);
     this.eventEmitter.emit('remove', this.index);
     this.destroy();
   };
