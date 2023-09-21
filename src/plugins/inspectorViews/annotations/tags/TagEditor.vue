@@ -68,12 +68,12 @@ export default {
       default: null
     },
     targets: {
-      type: Object,
+      type: Array,
       required: true,
       default: null
     },
     targetDomainObjects: {
-      type: Object,
+      type: Array,
       required: true,
       default: null
     },
@@ -200,11 +200,8 @@ export default {
         const contentText = `${this.annotationType} tag`;
 
         // need to get raw version of target domain objects for comparisons to work
-        const rawTargetDomainObjects = {};
-        Object.keys(this.targetDomainObjects).forEach((targetDomainObjectKey) => {
-          rawTargetDomainObjects[targetDomainObjectKey] = toRaw(
-            this.targetDomainObjects[targetDomainObjectKey]
-          );
+        const rawTargetDomainObjects = this.targetDomainObjects.map((targetDomainObject) => {
+          return toRaw(targetDomainObject);
         });
         const annotationCreationArguments = {
           name: contentText,

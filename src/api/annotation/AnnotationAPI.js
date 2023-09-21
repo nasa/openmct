@@ -100,7 +100,7 @@ export default class AnnotationAPI extends EventEmitter {
       creatable: false,
       cssClass: 'icon-notebook',
       initialize: function (domainObject) {
-        domainObject.targets = domainObject.targets || {};
+        domainObject.targets = domainObject.targets || [];
         domainObject._deleted = domainObject._deleted || false;
         domainObject.originalContextPath = domainObject.originalContextPath || '';
         domainObject.tags = domainObject.tags || [];
@@ -117,10 +117,10 @@ export default class AnnotationAPI extends EventEmitter {
    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create (e.g., PLOT_SPATIAL)
    * @property {Tag[]} tags tags to add to the annotation, e.g., SCIENCE for science related annotations
    * @property {String} contentText Some text to add to the annotation, e.g. ("This annotation is about science")
-   * @property {Object<string, Object>} targets The targets ID keystrings and their specific properties.
-   * For plots, this will be a bounding box, e.g.: {maxY: 100, minY: 0, maxX: 100, minX: 0}
+   * @property {Array<Object>} targets The targets ID keystrings and their specific properties.
+   * For plots, this will be a bounding box, e.g.: {keyString: "d8385009-789d-457b-acc7-d50ba2fd55ea", maxY: 100, minY: 0, maxX: 100, minX: 0}
    * For notebooks, this will be an entry ID, e.g.: {entryId: "entry-ecb158f5-d23c-45e1-a704-649b382622ba"}
-   * @property {DomainObject>} targetDomainObjects the targets ID keystrings and the domain objects this annotation points to (e.g., telemetry objects for a plot)
+   * @property {DomainObject>[]} targetDomainObjects the domain objects this annotation points to (e.g., telemetry objects for a plot)
    */
   /**
    * @method create
@@ -141,11 +141,15 @@ export default class AnnotationAPI extends EventEmitter {
       throw new Error(`Unknown annotation type: ${annotationType}`);
     }
 
-    if (!Object.keys(targets).length) {
+    if (!targets.length) {
       throw new Error(`At least one target is required to create an annotation`);
     }
 
-    if (!Object.keys(targetDomainObjects).length) {
+    if (targets.some((target) => !target.keyString)) {
+      throw new Error(`All targets require a keyString to create an annotation`);
+    }
+
+    if (!targetDomainObjects.length) {
       throw new Error(`At least one targetDomainObject is required to create an annotation`);
     }
 
@@ -181,7 +185,7 @@ export default class AnnotationAPI extends EventEmitter {
     const success = await this.openmct.objects.save(createdObject);
     if (success) {
       this.emit('annotationCreated', createdObject);
-      Object.values(targetDomainObjects).forEach((targetDomainObject) => {
+      targetDomainObjects.forEach((targetDomainObject) => {
         this.#updateAnnotationModified(targetDomainObject);
       });
 
@@ -321,7 +325,10 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   #addTagMetaInformationToTags(tags) {
-    return tags.map((tagKey) => {
+    // Convert to Set and back to Array to remove duplicates
+    const uniqueTags = [...new Set(tags)];
+
+    return uniqueTags.map((tagKey) => {
       const tagModel = this.availableTags[tagKey];
       tagModel.tagID = tagKey;
 
@@ -363,7 +370,8 @@ export default class AnnotationAPI extends EventEmitter {
     const modelAddedToResults = await Promise.all(
       results.map(async (result) => {
         const targetModels = await Promise.all(
-          Object.keys(result.targets).map(async (targetID) => {
+          result.targets.map(async (target) => {
+            const targetID = target.keyString;
             const targetModel = await this.openmct.objects.get(targetID);
             const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
             const originalPathObjects = await this.openmct.objects.getOriginalPath(targetKeyString);
@@ -410,13 +418,12 @@ export default class AnnotationAPI extends EventEmitter {
   #breakApartSeparateTargets(results) {
     const separateResults = [];
     results.forEach((result) => {
-      Object.keys(result.targets).forEach((targetID) => {
+      result.targets.forEach((target) => {
+        const targetID = target.keyString;
         const separatedResult = {
           ...result
         };
-        separatedResult.targets = {
-          [targetID]: result.targets[targetID]
-        };
+        separatedResult.targets = [target];
         separatedResult.targetModels = result.targetModels.filter((targetModel) => {
           const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
 
