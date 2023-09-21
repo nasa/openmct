@@ -33,6 +33,8 @@
 
 <script>
 import Flatbush from 'flatbush';
+import { toRaw } from 'vue';
+
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
 const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
@@ -71,7 +73,9 @@ export default {
         // create a flatbush index for the annotations
         const builtAnnotationsIndex = new Flatbush(this.imageryAnnotations.length);
         this.imageryAnnotations.forEach((annotation) => {
-          const annotationRectangle = annotation.targets[this.keyString].rectangle;
+          const annotationRectangle = annotation.targets.find(
+            (target) => target.keyString === this.keyString
+          )?.rectangle;
           const annotationRectangleForPixelDepth =
             this.transformRectangleToPixelDense(annotationRectangle);
           const indexNumber = builtAnnotationsIndex.add(
@@ -142,20 +146,17 @@ export default {
       this.prepareExistingAnnotationSelection(incomingSelectedAnnotations);
     },
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      targetDomainObjects[this.keyString] = this.domainObject;
-
-      const targetDetails = {};
+      const targetDetails = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
+        annotation.targets.forEach((target) => {
+          targetDetails.push(toRaw(target));
         });
       });
       this.selectedAnnotations = annotations;
       this.drawAnnotations();
 
       return {
-        targetDomainObjects,
+        targetDomainObjects: [this.domainObject],
         targetDetails
       };
     },
@@ -292,12 +293,9 @@ export default {
     createNewAnnotation() {
       this.dragging = false;
       this.selectedAnnotations = [];
-
+      this.selectedAnnotations = [];
       this.$emit('annotation-marquee-finished');
 
-      const targetDomainObjects = {};
-      targetDomainObjects[this.keyString] = this.domainObject;
-      const targetDetails = {};
       const rectangleFromCanvas = {
         x: this.newAnnotationRectangle.x,
         y: this.newAnnotationRectangle.y,
@@ -305,13 +303,16 @@ export default {
         height: this.newAnnotationRectangle.height
       };
       const rectangleWithoutPixelScale = this.transformRectangleFromPixelDense(rectangleFromCanvas);
-      targetDetails[this.keyString] = {
-        rectangle: rectangleWithoutPixelScale,
-        time: this.image.time
-      };
+      const targetDetails = [
+        {
+          rectangle: rectangleWithoutPixelScale,
+          time: this.image.time,
+          keyString: this.keyString
+        }
+      ];
       this.selectImageAnnotations({
         targetDetails,
-        targetDomainObjects,
+        targetDomainObjects: [this.domainObject],
         annotations: []
       });
     },
@@ -407,9 +408,10 @@ export default {
         if (annotation._deleted) {
           return;
         }
-        const rectangleForPixelDensity = this.transformRectangleToPixelDense(
-          annotation.targets[this.keyString].rectangle
-        );
+        const annotationRectangle = annotation.targets.find(
+          (target) => target.keyString === this.keyString
+        )?.rectangle;
+        const rectangleForPixelDensity = this.transformRectangleToPixelDense(annotationRectangle);
         if (this.isSelectedAnnotation(annotation)) {
           this.drawRectInCanvas(
             rectangleForPixelDensity,
