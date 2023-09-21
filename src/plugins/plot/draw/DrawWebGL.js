@@ -86,8 +86,8 @@ const VERTEX_SHADER = `
 function DrawWebGL(canvas, overlay) {
   this.canvas = canvas;
   this.gl =
-    this.canvas.getContext('webgl', { preserveDrawingBuffer: false }) ||
-    this.canvas.getContext('experimental-webgl', { preserveDrawingBuffer: false });
+    this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
+    this.canvas.getContext('experimental-webgl', { preserveDrawingBuffer: true });
 
   this.overlay = overlay;
   this.c2d = overlay.getContext('2d');
