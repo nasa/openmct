@@ -110,6 +110,12 @@ const config = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css'
+    }),
+    // Add a UTF-8 BOM to CSS output to avoid random mojibake
+    new webpack.BannerPlugin({
+      test: /.*Theme\.css$/,
+      raw: true,
+      banner: '@charset "UTF-8";',
     })
   ],
   module: {
