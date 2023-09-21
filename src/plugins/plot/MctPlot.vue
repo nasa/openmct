@@ -477,7 +477,7 @@ export default {
         // the annotations
         this.freeze();
         // just use first annotation
-        const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+        const boundingBoxes = selectedAnnotations[0].targets;
         let minX = Number.MAX_SAFE_INTEGER;
         let minY = Number.MAX_SAFE_INTEGER;
         let maxX = Number.MIN_SAFE_INTEGER;
@@ -864,8 +864,8 @@ export default {
 
     marqueeAnnotations(annotationsToSelect) {
       annotationsToSelect.forEach((annotationToSelect) => {
-        Object.keys(annotationToSelect.targets).forEach((targetKeyString) => {
-          const target = annotationToSelect.targets[targetKeyString];
+        annotationToSelect.targets.forEach((target) => {
+          const targetKeyString = target.keyString;
           const series = this.seriesModels.find(
             (seriesModel) => seriesModel.keyString === targetKeyString
           );
@@ -913,17 +913,14 @@ export default {
     },
 
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      this.config.series.models.forEach((series) => {
-        targetDomainObjects[series.keyString] = series.domainObject;
+      const targetDomainObjects = this.config.series.models.map((series) => {
+        return series.domainObject;
       });
 
-      const targetDetails = {};
+      const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
-        });
+        targetDetails.push(annotation.targets);
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
           const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
@@ -1330,8 +1327,8 @@ export default {
       document.body.addEventListener('click', this.cancelSelection);
     },
     selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
-      let targetDomainObjects = {};
-      let targetDetails = {};
+      let targetDomainObjects = [];
+      let targetDetails = [];
       let annotations = [];
       pointsInBox.forEach((pointInBox) => {
         if (pointInBox.length) {
@@ -1339,9 +1336,9 @@ export default {
           const boundingBoxWithId = boundingBoxPerYAxis.find(
             (box) => box.id === pointInBox[0].series.get('yAxisId')
           );
-          targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+          targetDetails.push({ ...boundingBoxWithId?.boundingBox, keyString: seriesID });
 
-          targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
+          targetDomainObjects.push(pointInBox[0].series.domainObject);
         }
       });
       this.selectPlotAnnotations({
@@ -1354,8 +1351,8 @@ export default {
       const annotationsByPoints = [];
       rawAnnotations.forEach((rawAnnotation) => {
         if (rawAnnotation.targets) {
-          const targetValues = Object.values(rawAnnotation.targets);
-          const targetKeys = Object.keys(rawAnnotation.targets);
+          const targetValues = rawAnnotation.targets;
+          const targetKeys = rawAnnotation.targets.map((target) => target.keyString);
           if (targetValues && targetValues.length) {
             let boundingBoxPerYAxis = [];
             targetValues.forEach((boundingBox, index) => {

@@ -41,7 +41,7 @@ test.describe.fixme('Plot Tagging Performance', () => {
    * @param {Number} yEnd a telemetry item with a plot
    * @returns {Promise}
    */
-  async function createTags({ page, canvas, xEnd = 700, yEnd = 480 }) {
+  async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
     await canvas.hover({ trial: true });
 
     //Alt+Shift Drag Start to select some points to tag
@@ -265,7 +265,7 @@ test.describe.fixme('Plot Tagging Performance', () => {
       page,
       canvas,
       xEnd: 700,
-      yEnd: 215
+      yEnd: 240
     });
     await basicTagsTests(page);
     await testTelemetryItem(page, alphaSineWave);

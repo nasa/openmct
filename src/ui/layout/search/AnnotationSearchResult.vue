@@ -158,24 +158,14 @@ export default {
     },
     fireAnnotationSelection() {
       this.openmct.selection.off('change', this.fireAnnotationSelection);
-
-      const targetDetails = {};
-      const targetDomainObjects = {};
-      Object.entries(this.result.targets).forEach(([key, value]) => {
-        targetDetails[key] = value;
-      });
-      this.result.targetModels.forEach((targetModel) => {
-        const keyString = this.openmct.objects.makeKeyString(targetModel.identifier);
-        targetDomainObjects[keyString] = targetModel;
-      });
       const selection = [
         {
           element: this.$el,
           context: {
             item: this.result.targetModels[0],
             type: 'annotation-search-result',
-            targetDetails,
-            targetDomainObjects,
+            targetDetails: this.result.targets,
+            targetDomainObjects: this.result.targetModels,
             annotations: [this.result],
             annotationType: this.result.annotationType,
             onAnnotationChange: () => {}
