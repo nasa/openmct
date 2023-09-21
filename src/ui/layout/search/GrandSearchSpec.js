@@ -126,11 +126,12 @@ describe('GrandSearch', () => {
         key: 'anAnnotationKey',
         namespace: 'fooNameSpace'
       },
-      targets: {
-        'fooNameSpace:some-object': {
+      targets: [
+        {
+          keyString: 'fooNameSpace:some-object',
           entryId: 'fooBarEntry'
         }
-      }
+      ]
     };
     mockNewObject = {
       type: 'folder',

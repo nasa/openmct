@@ -435,7 +435,8 @@ class InMemorySearchProvider {
   }
 
   localIndexAnnotation(objectToIndex, model) {
-    Object.keys(model.targets).forEach((targetID) => {
+    model.targets.forEach((target) => {
+      const targetID = target.keyString;
       if (!this.localIndexedAnnotationsByDomainObject[targetID]) {
         this.localIndexedAnnotationsByDomainObject[targetID] = [];
       }
