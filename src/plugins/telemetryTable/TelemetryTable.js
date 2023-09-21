@@ -202,6 +202,16 @@ define([
       this.subscribedStaleObjects.set(keyString, domainObject);
 
       this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+
+      this.telemetryObjects[keyString] = {
+        telemetryObject,
+        keyString,
+        requestOptions,
+        columnMap,
+        limitEvaluator
+      };
+
+      this.emit('object-added', telemetryObject);
     }
 
     handleStaleness(keyString, stalenessResponse, skipCheck = false) {
