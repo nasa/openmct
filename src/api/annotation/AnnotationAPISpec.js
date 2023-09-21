@@ -62,11 +62,12 @@ describe('The Annotation API', () => {
         key: 'anAnnotationKey',
         namespace: 'fooNameSpace'
       },
-      targets: {
-        'fooNameSpace:some-object': {
+      targets: [
+        {
+          keyString: 'fooNameSpace:some-object',
           entryId: 'fooBarEntry'
         }
-      }
+      ]
     };
 
     mockObjectProvider = jasmine.createSpyObj('mock provider', ['create', 'update', 'get']);
@@ -121,7 +122,7 @@ describe('The Annotation API', () => {
         tags: ['sometag'],
         contentText: 'fooContext',
         targetDomainObjects: [mockDomainObject],
-        targets: { fooTarget: {} }
+        targets: [{ keyString: 'fooTarget' }]
       };
       const annotationObject = await openmct.annotation.create(annotationCreationArguments);
       expect(annotationObject).toBeDefined();
@@ -136,7 +137,7 @@ describe('The Annotation API', () => {
         tags: ['sometag'],
         contentText: 'fooContext',
         targetDomainObjects: [mockDomainObject],
-        targets: { fooTarget: {} }
+        targets: [{ keyString: 'fooTarget' }]
       };
       openmct.annotation.setNamespaceToSaveAnnotations('fooNameSpace');
       const annotationObject = await openmct.annotation.create(annotationCreationArguments);
@@ -166,7 +167,7 @@ describe('The Annotation API', () => {
           tags: ['sometag'],
           contentText: 'fooContext',
           targetDomainObjects: [mockDomainObject],
-          targets: { fooTarget: {} }
+          targets: [{ keyString: 'fooTarget' }]
         };
         openmct.annotation.setNamespaceToSaveAnnotations('nameespaceThatDoesNotExist');
         await openmct.annotation.create(annotationCreationArguments);
@@ -183,7 +184,7 @@ describe('The Annotation API', () => {
           tags: ['sometag'],
           contentText: 'fooContext',
           targetDomainObjects: [mockDomainObject],
-          targets: { fooTarget: {} }
+          targets: [{ keyString: 'fooTarget' }]
         };
         openmct.annotation.setNamespaceToSaveAnnotations('immutableProvider');
         await openmct.annotation.create(annotationCreationArguments);
@@ -202,7 +203,7 @@ describe('The Annotation API', () => {
         annotationType: openmct.annotation.ANNOTATION_TYPES.NOTEBOOK,
         tags: ['aWonderfulTag'],
         contentText: 'fooContext',
-        targets: { 'fooNameSpace:some-object': { entryId: 'fooBarEntry' } },
+        targets: [{ keyString: 'fooNameSpace:some-object', entryId: 'fooBarEntry' }],
         targetDomainObjects: [mockDomainObject]
       };
     });
@@ -272,17 +273,19 @@ describe('The Annotation API', () => {
     let comparator;
 
     beforeEach(() => {
-      targets = {
-        fooTarget: {
+      targets = [
+        {
+          keyString: 'fooTarget',
           foo: 42
         }
-      };
-      otherTargets = {
-        fooTarget: {
+      ];
+      otherTargets = [
+        {
+          keyString: 'fooTarget',
           bar: 42
         }
-      };
-      comparator = (t1, t2) => t1.fooTarget.foo === t2.fooTarget.bar;
+      ];
+      comparator = (t1, t2) => t1[0].foo === t2[0].bar;
     });
 
     it('can add a comparator function', () => {
