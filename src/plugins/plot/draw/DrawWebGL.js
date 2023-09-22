@@ -152,9 +152,14 @@ DrawWebGL.prototype.initContext = function () {
 };
 
 DrawWebGL.prototype.destroy = function () {
+  this.stopListening();
   this.canvas = undefined;
   this.overlay = undefined;
-  this.stopListening();
+  this.gl.deleteBuffer(this.buffer);
+  this.gl.deleteProgram(this.program);
+  this.gl.deleteShader(this.vertexShader);
+  this.gl.deleteShader(this.fragmentShader);
+  this.gl = undefined;
 };
 
 // Convert from logical to physical x coordinates
