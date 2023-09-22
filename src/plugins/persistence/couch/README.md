@@ -179,7 +179,7 @@ For large Open MCT installations, it may be helpful to add additional CouchDB ca
 ## Indexing
 Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
 
-To create an index for `model.type`, you can use the following payload:
+To create an index for `model.type`, you can use the following payload [using the API](https://docs.couchdb.org/en/stable/api/database/find.html#post--db-_index):
 
 ```json
 {
@@ -197,7 +197,7 @@ You can find more detailed information about indexing in CouchDB in the [officia
 
 ## Design Documents
 
-We can also add a design document for retrieving domain objects for specific tags:
+We can also add a design document [through the API](https://docs.couchdb.org/en/stable/api/ddoc/common.html#put--db-_design-ddoc) for retrieving domain objects for specific tags:
 
 ```json
 {
