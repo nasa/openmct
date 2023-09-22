@@ -153,7 +153,6 @@ test.describe('Time conductor input fields real-time mode', () => {
     await expect(page.locator('.c-compact-tc__setting-value.icon-plus')).toContainText('00:00:01');
 
     // Verify url parameters persist after mode switch
-    await page.waitForNavigation({ waitUntil: 'networkidle' });
     expect(page.url()).toContain(`startDelta=${startDelta}`);
     expect(page.url()).toContain(`endDelta=${endDelta}`);
   });
