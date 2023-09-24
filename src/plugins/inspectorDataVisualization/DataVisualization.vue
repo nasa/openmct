@@ -78,7 +78,7 @@
   </div>
 </template>
 <script>
-import Imagery from './Imagery.vue';
+import Imagery from './DataImagery.vue';
 import NumericData from './NumericData.vue';
 
 const TIMESTAMP_VIEW_BUFFER = 30 * 1000;
