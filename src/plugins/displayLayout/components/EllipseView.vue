@@ -25,14 +25,16 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @end-move="() => $emit('end-move')"
+    @move="move"
+    @end-move="endMove"
   >
-    <div
-      class="c-ellipse-view u-style-receiver js-style-receiver"
-      :class="[styleClass]"
-      :style="style"
-    ></div>
+    <template #content>
+      <div
+        class="c-ellipse-view u-style-receiver js-style-receiver"
+        :class="[styleClass]"
+        :style="style"
+      ></div>
+    </template>
   </layout-frame>
 </template>
 
@@ -116,9 +118,17 @@ export default {
       this.initSelect
     );
   },
-  unmounted() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
+    }
+  },
+  methods: {
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('end-move');
     }
   }
 };

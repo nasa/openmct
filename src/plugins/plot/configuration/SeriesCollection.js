@@ -187,6 +187,12 @@ export default class SeriesCollection extends Collection {
       );
     })[0];
   }
+
+  destroy() {
+    super.destroy();
+    this.plot = undefined;
+    this.stopListening();
+  }
 }
 
 /**

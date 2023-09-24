@@ -43,7 +43,6 @@ define([
   './plugins/duplicate/plugin',
   './plugins/importFromJSONAction/plugin',
   './plugins/exportAsJSONAction/plugin',
-  './ui/components/components',
   './utils/EventBus',
   'vue'
 ], function (
@@ -69,7 +68,6 @@ define([
   DuplicateActionPlugin,
   ImportFromJSONAction,
   ExportAsJSONAction,
-  components,
   EventBus,
   Vue
 ) {
@@ -433,7 +431,6 @@ define([
   };
 
   MCT.prototype.plugins = plugins;
-  MCT.prototype.components = components.default;
 
   return MCT;
 });

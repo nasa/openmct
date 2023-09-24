@@ -143,7 +143,7 @@ import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
+import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
@@ -299,7 +299,7 @@ export default {
   },
   beforeUnmount() {
     if (this.embedsWrapperResizeObserver) {
-      this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+      this.embedsWrapperResizeObserver.disconnect();
     }
   },
   methods: {
@@ -366,11 +366,32 @@ export default {
         this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
       }
     },
-    async dropOnEntry($event) {
-      $event.stopImmediatePropagation();
+    async dropOnEntry(dropEvent) {
+      dropEvent.stopImmediatePropagation();
 
-      const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
-      if (snapshotId.length) {
+      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
+      const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      if (localImageDropped) {
+        // local image dropped from disk (file)
+        const imageData = dropEvent.dataTransfer.files[0];
+        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
+        this.entry.embeds.push(imageEmbed);
+        this.manageEmbedLayout();
+      } else if (imageUrl) {
+        try {
+          // remote image dropped (URL)
+          const response = await fetch(imageUrl);
+          const imageData = await response.blob();
+          const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          this.entry.embeds.push(imageEmbed);
+          this.manageEmbedLayout();
+        } catch (error) {
+          this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
+          console.error(`Problem embedding remote image`, error);
+        }
+      } else if (snapshotId.length) {
+        // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
         this.entry.embeds.push(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
@@ -382,7 +403,8 @@ export default {
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
       } else {
-        const data = $event.dataTransfer.getData('openmct/domain-object-path');
+        // plain domain object
+        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
         const objectPath = JSON.parse(data);
         await this.addNewEmbed(objectPath);
       }

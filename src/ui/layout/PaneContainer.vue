@@ -115,8 +115,9 @@ export default {
     this.styleProp = this.type === 'horizontal' ? 'width' : 'height';
   },
   created() {
+    this.handleHideUrl = this.handleHideUrl.bind(this);
     // Hide tree and/or inspector pane if specified in URL
-    this.openmct.router.on('change:params', this.handleHideUrl.bind(this));
+    this.openmct.router.on('change:params', this.handleHideUrl);
   },
   async mounted() {
     if (this.persistPosition) {
@@ -130,6 +131,9 @@ export default {
     if (this.isCollapsable) {
       this.handleHideUrl();
     }
+  },
+  beforeUnmount() {
+    this.openmct.router.off('change:params', this.handleHideUrl);
   },
   methods: {
     addHideParam(target) {

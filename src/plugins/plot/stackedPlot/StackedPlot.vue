@@ -212,6 +212,8 @@ export default {
       this.composition.off('reorder', this.compositionReorder);
 
       this.stopListening();
+      const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      configStore.deleteStore(configId);
     },
 
     addChild(child) {

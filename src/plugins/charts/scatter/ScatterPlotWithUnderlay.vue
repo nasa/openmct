@@ -116,7 +116,7 @@ export default {
     }
 
     if (this.plotResizeObserver) {
-      this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
+      this.plotResizeObserver.disconnect();
       clearTimeout(this.resizeTimer);
     }
 

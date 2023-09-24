@@ -165,6 +165,7 @@ import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-consta
 import {
   addNotebookEntry,
   createNewEmbed,
+  createNewImageEmbed,
   getEntryPosById,
   getNotebookEntries,
   mutateObject,
@@ -394,8 +395,8 @@ export default {
       );
 
       foundAnnotations.forEach((foundAnnotation) => {
-        const targetId = Object.keys(foundAnnotation.targets)[0];
-        const entryId = foundAnnotation.targets[targetId].entryId;
+        const target = foundAnnotation.targets?.[0];
+        const entryId = target.entryId;
         if (!this.notebookAnnotations[entryId]) {
           this.notebookAnnotations[entryId] = [];
         }
@@ -615,12 +616,31 @@ export default {
         this.openmct.editor.cancel();
       }
     },
-    async dropOnEntry(event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    async dropOnEntry(dropEvent) {
+      dropEvent.preventDefault();
+      dropEvent.stopImmediatePropagation();
 
-      const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
-      if (snapshotId.length) {
+      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
+      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      if (localImageDropped) {
+        // local image dropped from disk (file)
+        const imageData = dropEvent.dataTransfer.files[0];
+        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
+        this.newEntry(imageEmbed);
+      } else if (imageUrl) {
+        // remote image dropped (URL)
+        try {
+          const response = await fetch(imageUrl);
+          const imageData = await response.blob();
+          const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          this.newEntry(imageEmbed);
+        } catch (error) {
+          this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
+          console.error(`Problem embedding remote image`, error);
+        }
+      } else if (snapshotId.length) {
+        // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
         this.newEntry(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
@@ -631,22 +651,21 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
+      } else {
+        // plain domain object
+        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
+        const objectPath = JSON.parse(data);
+        const bounds = this.openmct.time.bounds();
+        const snapshotMeta = {
+          bounds,
+          link: null,
+          objectPath,
+          openmct: this.openmct
+        };
+        const embed = await createNewEmbed(snapshotMeta);
 
-        return;
+        this.newEntry(embed);
       }
-
-      const data = event.dataTransfer.getData('openmct/domain-object-path');
-      const objectPath = JSON.parse(data);
-      const bounds = this.openmct.time.bounds();
-      const snapshotMeta = {
-        bounds,
-        link: null,
-        objectPath,
-        openmct: this.openmct
-      };
-      const embed = await createNewEmbed(snapshotMeta);
-
-      this.newEntry(embed);
     },
     focusOnEntryId() {
       if (!this.focusEntryId) {

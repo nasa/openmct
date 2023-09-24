@@ -728,7 +728,8 @@ export default {
       }
     }
 
-    this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+    // remove all eventListeners
+    this.stopListening();
 
     Object.keys(this.imageryAnnotations).forEach((time) => {
       const imageAnnotationsForTime = this.imageryAnnotations[time];
@@ -1277,6 +1278,9 @@ export default {
       this.scrollHandler();
     },
     setSizedImageDimensions() {
+      if (!this.$refs.focusedImage) {
+        return;
+      }
       this.focusedImageNaturalAspectRatio =
         this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
       if (

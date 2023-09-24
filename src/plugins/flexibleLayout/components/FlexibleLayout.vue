@@ -164,16 +164,32 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
-    this.openmct.objects.observe(this.domainObject, 'configuration.containers', (containers) => {
-      this.containers = containers;
-    });
-    this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', (rowsLayout) => {
-      this.rowsLayout = rowsLayout;
-    });
+    this.unObserveContainers = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.containers',
+      (containers) => {
+        this.containers = containers;
+      }
+    );
+    this.unObserveRowsLayout = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.rowsLayout',
+      (rowsLayout) => {
+        this.rowsLayout = rowsLayout;
+      }
+    );
   },
   beforeUnmount() {
     this.composition.off('remove', this.removeChildObject);
     this.composition.off('add', this.addFrame);
+
+    if (this.unObserveContainers) {
+      this.unObserveContainers();
+    }
+
+    if (this.unObserveRowsLayout) {
+      this.unObserveRowsLayout();
+    }
   },
   methods: {
     containsObject(identifier) {
