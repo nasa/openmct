@@ -47,7 +47,7 @@
             :has-units="hasUnits"
             :is-stale="staleObjects.includes(combineKeys(ladTable.key, ladRow.key))"
             :configuration="configuration"
-            @rowContextClick="updateViewContext"
+            @row-context-click="updateViewContext"
           />
         </template>
       </tbody>

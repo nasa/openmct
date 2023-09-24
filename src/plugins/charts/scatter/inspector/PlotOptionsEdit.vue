@@ -59,7 +59,7 @@
         edit-title="Manually set the line and marker color for this plot."
         view-title="The line and marker color for this plot."
         short-label="Color"
-        @colorSet="setColor"
+        @color-set="setColor"
       />
     </ul>
   </div>

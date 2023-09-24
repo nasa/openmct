@@ -62,6 +62,7 @@ export default {
       this.$el.removeEventListener('change', this.onChange);
     }
   },
+  emits: ['change'],
   methods: {
     onChange(event) {
       this.$emit('change', event.target.value, this.options);

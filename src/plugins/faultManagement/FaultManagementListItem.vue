@@ -90,6 +90,7 @@ export default {
       }
     }
   },
+  emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected'],
   computed: {
     classesFromState() {
       const exclusiveStates = [
@@ -169,7 +170,7 @@ export default {
           name: 'Acknowledge',
           description: '',
           onItemClicked: (e) => {
-            this.$emit('acknowledgeSelected', [this.fault]);
+            this.$emit('acknowledge-selected', [this.fault]);
           }
         },
         {
@@ -177,7 +178,7 @@ export default {
           name: 'Shelve',
           description: '',
           onItemClicked: () => {
-            this.$emit('shelveSelected', [this.fault], { shelved: true });
+            this.$emit('shelve-selected', [this.fault], { shelved: true });
           }
         },
         {
@@ -186,7 +187,7 @@ export default {
           name: 'Unshelve',
           description: '',
           onItemClicked: () => {
-            this.$emit('shelveSelected', [this.fault], { shelved: false });
+            this.$emit('shelve-selected', [this.fault], { shelved: false });
           }
         }
       ];
@@ -199,7 +200,7 @@ export default {
         selected: event.target.checked
       };
 
-      this.$emit('toggleSelected', faultData);
+      this.$emit('toggle-selected', faultData);
     }
   }
 };

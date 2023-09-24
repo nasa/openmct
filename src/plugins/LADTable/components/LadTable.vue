@@ -41,7 +41,7 @@
           :has-units="hasUnits"
           :is-stale="staleObjects.includes(ladRow.key)"
           :configuration="configuration"
-          @rowContextClick="updateViewContext"
+          @row-context-click="updateViewContext"
         />
       </tbody>
     </table>

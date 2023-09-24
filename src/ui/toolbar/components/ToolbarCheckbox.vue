@@ -56,6 +56,7 @@ export default {
       uid: `mct-checkbox-id-${uniqueId}`
     };
   },
+  emits: ['change'],
   methods: {
     onChange(event) {
       this.$emit('change', event.target.checked, { ...this.options });

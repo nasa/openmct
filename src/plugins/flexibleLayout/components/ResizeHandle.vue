@@ -45,6 +45,7 @@ export default {
       default: false
     }
   },
+  emits: ['move', 'init-move', 'end-move'],
   data() {
     return {
       initialPos: 0,

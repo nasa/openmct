@@ -118,7 +118,7 @@
 import _ from 'lodash';
 import { markRaw, reactive } from 'vue';
 
-import Search from '../components/Search.vue';
+import Search from '../components/SearchComponent.vue';
 import TreeItem from './TreeItem.vue';
 
 const ITEM_BUFFER = 25;
@@ -158,6 +158,7 @@ export default {
       required: false
     }
   },
+  emits: ['tree-item-selection'],
   data() {
     return {
       isLoading: false,

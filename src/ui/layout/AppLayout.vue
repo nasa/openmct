@@ -105,8 +105,8 @@
             <RecentObjectsList
               ref="recentObjectsList"
               class="l-shell__tree"
-              @openAndScrollTo="openAndScrollTo($event)"
-              @setClearButtonDisabled="setClearButtonDisabled"
+              @open-and-scroll-to="openAndScrollTo($event)"
+              @set-clear-button-disabled="setClearButtonDisabled"
             />
             <template #controls>
               <button
@@ -154,17 +154,17 @@
 
 <script>
 import ObjectView from '../components/ObjectView.vue';
-import Inspector from '../inspector/Inspector.vue';
-import Toolbar from '../toolbar/Toolbar.vue';
+import Inspector from '../inspector/InspectorPanel.vue';
+import Toolbar from '../toolbar/ToolbarContainer.vue';
 import AppLogo from './AppLogo.vue';
 import BrowseBar from './BrowseBar.vue';
 import CreateButton from './CreateButton.vue';
 import MctTree from './MctTree.vue';
-import Multipane from './Multipane.vue';
-import Pane from './Pane.vue';
+import Multipane from './MultipaneContainer.vue';
+import Pane from './PaneContainer.vue';
 import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
-import Indicators from './status-bar/Indicators.vue';
+import Indicators from './status-bar/GeneralIndicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
 export default {

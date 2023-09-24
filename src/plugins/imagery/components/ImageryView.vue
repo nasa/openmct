@@ -38,12 +38,12 @@
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
         :layers="layers"
-        @resetImage="resetImage"
-        @panZoomUpdated="handlePanZoomUpdate"
-        @filtersUpdated="setFilters"
-        @cursorsUpdated="setCursorStates"
-        @startPan="startPan"
-        @toggleLayerVisibility="toggleLayerVisibility"
+        @reset-image="resetImage"
+        @pan-zoom-updated="handlePanZoomUpdate"
+        @filters-updated="setFilters"
+        @cursors-updated="setCursorStates"
+        @start-pan="startPan"
+        @toggle-layer-visibility="toggleLayerVisibility"
       />
       <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
@@ -92,8 +92,8 @@
             v-if="shouldDisplayAnnotations"
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
-            @annotationMarqueed="handlePauseButton(true)"
-            @annotationsChanged="loadAnnotations"
+            @annotation-marqueed="handlePauseButton(true)"
+            @annotations-changed="loadAnnotations"
           />
         </div>
       </div>
@@ -206,7 +206,7 @@ import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 import imageryData from '../../imagery/mixins/imageryData';
 import eventHelpers from '../lib/eventHelpers';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
-import Compass from './Compass/Compass.vue';
+import Compass from './Compass/CompassComponent.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
@@ -255,6 +255,7 @@ export default {
       }
     }
   },
+  emits: ['update:focused-image-timestamp'],
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -1087,7 +1088,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.$emit('update:focusedImageTimestamp', undefined);
+      this.$emit('update:focused-image-timestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;

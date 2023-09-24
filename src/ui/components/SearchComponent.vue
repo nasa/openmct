@@ -28,7 +28,7 @@
       tabindex="10000"
       type="search"
       :value="value"
-      v-on="inputListeners"
+      @input="handleInput"
     />
     <a class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
     <slot></slot>
@@ -45,22 +45,11 @@ export default {
       default: ''
     }
   },
+  emits: ['input', 'clear'],
   data: function () {
     return {
       active: false
     };
-  },
-  computed: {
-    inputListeners: function () {
-      let vm = this;
-
-      return Object.assign({}, this.$listeners, {
-        input: function (event) {
-          vm.$emit('input', event.target.value);
-          vm.active = event.target.value.length > 0;
-        }
-      });
-    }
   },
   watch: {
     value(inputValue) {
@@ -74,6 +63,10 @@ export default {
       // Clear the user's input and set 'active' to false
       this.$emit('clear', '');
       this.active = false;
+    },
+    handleInput(event) {
+      this.$emit('input', event.target.value);
+      this.active = event.target.value.length > 0;
     }
   }
 };

@@ -35,10 +35,10 @@
       ref="searchResults"
       :domain-object="domainObject"
       :results="searchResults"
-      @cancelEdit="cancelTransaction"
-      @editingEntry="startTransaction"
-      @changeSectionPage="changeSelectedSection"
-      @updateEntries="updateEntries"
+      @cancel-edit="cancelTransaction"
+      @editing-entry="startTransaction"
+      @change-section-page="changeSelectedSection"
+      @update-entries="updateEntries"
     />
     <div v-if="!search.length" class="c-notebook__body">
       <Sidebar
@@ -54,13 +54,13 @@
         :section-title="domainObject.configuration.sectionTitle"
         :sections="sections"
         :sidebar-covers-entries="sidebarCoversEntries"
-        @defaultPageDeleted="cleanupDefaultNotebook"
-        @defaultSectionDeleted="cleanupDefaultNotebook"
-        @pagesChanged="pagesChanged"
-        @selectPage="selectPage"
-        @sectionsChanged="sectionsChanged"
-        @selectSection="selectSection"
-        @toggleNav="toggleNav"
+        @default-page-deleted="cleanupDefaultNotebook"
+        @default-section-deleted="cleanupDefaultNotebook"
+        @pages-changed="pagesChanged"
+        @select-page="selectPage"
+        @sections-changed="sectionsChanged"
+        @select-section="selectSection"
+        @toggle-nav="toggleNav"
       />
       <div class="c-notebook__page-view">
         <div class="c-notebook__page-view__header">
@@ -130,10 +130,10 @@
             :read-only="false"
             :is-locked="selectedPage.isLocked"
             :selected-entry-id="selectedEntryId"
-            @cancelEdit="cancelTransaction"
-            @editingEntry="startTransaction"
-            @deleteEntry="deleteEntry"
-            @updateEntry="updateEntry"
+            @cancel-edit="cancelTransaction"
+            @editing-entry="startTransaction"
+            @delete-entry="deleteEntry"
+            @update-entry="updateEntry"
             @entry-selection="entrySelection(entry)"
           />
         </div>
@@ -157,7 +157,7 @@
 <script>
 import { debounce } from 'lodash';
 
-import Search from '@/ui/components/Search.vue';
+import Search from '@/ui/components/SearchComponent.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import objectLink from '../../../ui/mixins/object-link';
@@ -183,7 +183,7 @@ import {
 } from '../utils/notebook-storage';
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
-import Sidebar from './Sidebar.vue';
+import Sidebar from './SidebarComponent.vue';
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }

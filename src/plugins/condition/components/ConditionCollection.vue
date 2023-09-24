@@ -66,12 +66,12 @@
           :is-editing="isEditing"
           :move-index="moveIndex"
           :is-dragging="isDragging"
-          @updateCondition="updateCondition"
-          @removeCondition="removeCondition"
-          @cloneCondition="cloneCondition"
-          @setMoveIndex="setMoveIndex"
-          @dragComplete="dragComplete"
-          @dropCondition="dropCondition"
+          @update-condition="updateCondition"
+          @remove-condition="removeCondition"
+          @clone-condition="cloneCondition"
+          @set-move-index="setMoveIndex"
+          @drag-complete="dragComplete"
+          @drop-condition="dropCondition"
         />
       </div>
     </div>
@@ -82,7 +82,7 @@
 import StalenessUtils from '@/utils/staleness';
 
 import ConditionManager from '../ConditionManager';
-import Condition from './Condition.vue';
+import Condition from './ConditionItem.vue';
 
 export default {
   components: {

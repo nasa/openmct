@@ -36,8 +36,8 @@
 <script>
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
-import Multipane from '../../../ui/layout/Multipane.vue';
-import Pane from '../../../ui/layout/Pane.vue';
+import Multipane from '../../../ui/layout/MultipaneContainer.vue';
+import Pane from '../../../ui/layout/PaneContainer.vue';
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {

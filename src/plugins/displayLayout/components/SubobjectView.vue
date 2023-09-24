@@ -25,7 +25,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @end-move="() => $emit('end-move')"
   >
     <ObjectFrame
       v-if="domainObject"
@@ -101,6 +101,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   data() {
     return {
       domainObject: undefined,

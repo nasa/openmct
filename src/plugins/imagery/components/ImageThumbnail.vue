@@ -85,6 +85,7 @@ export default {
       }
     }
   },
+  emits: ['click'],
   data() {
     return {
       imgWidth: 0,

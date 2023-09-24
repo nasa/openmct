@@ -26,7 +26,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @end-move="() => $emit('end-move')"
   >
     <div
       v-if="domainObject"
@@ -124,6 +124,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move', 'format-changed', 'context-click'],
   data() {
     return {
       currentObjectPath: undefined,
@@ -337,10 +338,10 @@ export default {
     updateTelemetryFormat(format) {
       this.customStringformatter.setFormat(format);
 
-      this.$emit('formatChanged', this.item, format);
+      this.$emit('format-changed', this.item, format);
     },
     updateViewContext() {
-      this.$emit('contextClick', {
+      this.$emit('context-click', {
         viewHistoricalData: true,
         formattedValueForCopy: this.formattedValueForCopy
       });

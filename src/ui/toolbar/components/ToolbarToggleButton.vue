@@ -42,6 +42,7 @@ export default {
       required: true
     }
   },
+  emits: ['change'],
   computed: {
     nextValue() {
       let currentValue = this.options.options.filter((v) => this.options.value === v.value)[0];

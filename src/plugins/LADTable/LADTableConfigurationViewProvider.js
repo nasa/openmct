@@ -51,7 +51,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
               provide: {
                 openmct
               },
-              template: '<LadTableConfiguration />'
+              template: '<lad-table-configuration />'
             },
             {
               app: openmct.app,

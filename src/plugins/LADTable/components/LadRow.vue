@@ -79,6 +79,7 @@ export default {
       required: true
     }
   },
+  emits: ['row-context-click'],
   data() {
     return {
       datum: undefined,
@@ -232,7 +233,7 @@ export default {
       this.timestampKey = timeSystem.key;
     },
     updateViewContext() {
-      this.$emit('rowContextClick', {
+      this.$emit('row-context-click', {
         viewHistoricalData: true,
         viewDatumAction: true,
         getDatum: () => {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from '../../plugins/plot/Plot.vue';
+import Plot from '../../plugins/plot/PlotView.vue';
 import StackedPlot from '../../plugins/plot/stackedPlot/StackedPlot.vue';
 import WebPage from '../../plugins/webPage/components/WebPage.vue';
 import ObjectView from './ObjectView.vue';

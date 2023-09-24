@@ -39,20 +39,20 @@
         :limit-line-labels="limitLineLabelsProp"
         :parent-y-tick-width="parentYTickWidth"
         :color-palette="colorPalette"
-        @loadingUpdated="loadingUpdated"
-        @statusUpdated="setStatus"
-        @configLoaded="updateReady"
-        @lockHighlightPoint="lockHighlightPointUpdated"
+        @loading-updated="loadingUpdated"
+        @status-updated="setStatus"
+        @config-loaded="updateReady"
+        @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @plotYTickWidth="onYTickWidthChange"
-        @cursorGuide="onCursorGuideChange"
-        @gridLines="onGridLinesChange"
+        @plot-y-tick-width="onYTickWidthChange"
+        @cursor-guide="onCursorGuideChange"
+        @grid-lines="onGridLinesChange"
       >
         <plot-legend
           v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
-          @legendHoverChanged="legendHoverChanged"
+          @legend-hover-changed="legendHoverChanged"
           @expanded="updateExpanded"
           @position="updatePosition"
         />
@@ -127,6 +127,15 @@ export default {
       }
     }
   },
+  emits: [
+    'loading-updated',
+    'lock-highlight-point',
+    'grid-lines',
+    'highlights',
+    'config-loaded',
+    'plot-y-tick-width',
+    'cursor-guide'
+  ],
   data() {
     return {
       loading: false,
@@ -244,7 +253,7 @@ export default {
     },
     loadingUpdated(loading) {
       this.loading = loading;
-      this.$emit('loadingUpdated', ...arguments);
+      this.$emit('loading-updated', ...arguments);
     },
     destroy() {
       if (this.stalenessSubscription) {
@@ -280,7 +289,7 @@ export default {
     },
     lockHighlightPointUpdated(data) {
       this.lockHighlightPoint = data;
-      this.$emit('lockHighlightPoint', ...arguments);
+      this.$emit('lock-highlight-point', ...arguments);
     },
     highlightsUpdated(data) {
       this.highlights = data;
@@ -297,16 +306,16 @@ export default {
     },
     updateReady(ready) {
       this.configReady = ready;
-      this.$emit('configLoaded', ...arguments);
+      this.$emit('config-loaded', ...arguments);
     },
     onYTickWidthChange() {
-      this.$emit('plotYTickWidth', ...arguments);
+      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
-      this.$emit('cursorGuide', ...arguments);
+      this.$emit('cursor-guide', ...arguments);
     },
     onGridLinesChange() {
-      this.$emit('gridLines', ...arguments);
+      this.$emit('grid-lines', ...arguments);
     }
   }
 };

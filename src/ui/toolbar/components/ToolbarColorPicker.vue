@@ -153,6 +153,7 @@ export default {
       ]
     };
   },
+  emits: ['change'],
   computed: {
     nonSpecific() {
       return this.options.nonSpecific === true;
