@@ -1,6 +1,6 @@
 import mount from 'utils/mount';
 
-import TableComponent from './components/Table.vue';
+import TableComponent from './components/TableComponent.vue';
 import TelemetryTable from './TelemetryTable';
 
 export default class TelemetryTableView {

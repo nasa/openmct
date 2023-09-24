@@ -73,6 +73,7 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     return {
       index: this.domainObject.configuration[`${this.prefix}Index`],

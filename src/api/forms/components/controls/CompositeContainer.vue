@@ -28,7 +28,7 @@
       :first="index < 1"
       :value="JSON.stringify(model.value[index])"
       :item="item"
-      @onChange="onChange"
+      @on-change="onChange"
     />
   </span>
 </template>
@@ -46,12 +46,13 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   mounted() {
     this.model.items.forEach((item, index) => (item.key = `${this.model.key}.${index}`));
   },
   methods: {
     onChange(data) {
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

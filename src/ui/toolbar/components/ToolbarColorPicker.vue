@@ -67,6 +67,7 @@ export default {
       required: true
     }
   },
+  emits: ['change'],
   data() {
     return {
       colorPalette: [
@@ -153,7 +154,6 @@ export default {
       ]
     };
   },
-  emits: ['change'],
   computed: {
     nonSpecific() {
       return this.options.nonSpecific === true;

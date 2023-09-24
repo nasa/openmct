@@ -82,6 +82,7 @@ export default {
       }
     }
   },
+  emits: ['legend-hover-changed'],
   data() {
     return {
       isMissing: false,
@@ -212,7 +213,7 @@ export default {
     toggleHover(hover) {
       this.hover = hover;
       this.$emit(
-        'legendHoverChanged',
+        'legend-hover-changed',
         this.hover
           ? {
               seriesKey: this.seriesKeyString

@@ -177,7 +177,6 @@
 <script>
 import Flatbush from 'flatbush';
 import _ from 'lodash';
-
 import { inject } from 'vue';
 
 import XAxis from './axis/XAxis.vue';

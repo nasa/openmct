@@ -183,7 +183,7 @@ export default {
         y: marqueeEnd.y - marqueeStart.y
       };
 
-      this.$emit('end-rResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
+      this.$emit('end-resize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.marqueeStartPosition = undefined;

@@ -34,8 +34,9 @@
 </template>
 <script>
 import mount from 'utils/mount';
+
+import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
-import Plot from '../plot/Plot.vue';
 
 export default {
   inject: ['openmct', 'domainObject', 'timeFormatter'],
