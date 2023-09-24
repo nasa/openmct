@@ -423,7 +423,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
-    this.$off('loadingComplete', this.loadAnnotationsIfAllowed);
+    eventBus.$off('loadingComplete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
