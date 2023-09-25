@@ -177,7 +177,7 @@ export default {
       this.subscribeToStaleness(domainObject);
     });
   },
-  beforeUnmount() {
+  unmounted() {
     this.destroy();
   },
   methods: {
@@ -200,6 +200,7 @@ export default {
         this.compositionCollection.off('remove', this.unsubscribeFromObjectStaleness);
       }
 
+      this.imageExporter = null;
       this.stopListening();
     },
     exportJPG() {

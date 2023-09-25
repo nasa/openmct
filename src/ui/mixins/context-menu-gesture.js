@@ -16,6 +16,7 @@ export default {
     };
   },
   mounted() {
+    this.unobserveObjects = {};
     //TODO: touch support
     this.$nextTick(() => {
       this.$refs.root.addEventListener('contextmenu', this.showContextMenu);
@@ -29,19 +30,24 @@ export default {
 
     this.objectPath.forEach((object) => {
       if (object) {
-        const unobserve = this.openmct.objects.observe(
+        const key = this.openmct.objects.makeKeyString(object.identifier);
+        this.unobserveObjects[key] = this.openmct.objects.observe(
           object,
           '*',
           updateObject.bind(this, object)
         );
-        this.$once('hook:unmounted', unobserve);
       }
     });
   },
   beforeUnmount() {
+    this.removeListeners();
     this.$refs.root.removeEventListener('contextMenu', this.showContextMenu);
   },
   methods: {
+    removeListeners() {
+      Object.values(this.unobserveObjects).forEach((unobserve) => unobserve());
+      this.unobserveObjects = {};
+    },
     showContextMenu(event) {
       if (this.readOnly) {
         return;

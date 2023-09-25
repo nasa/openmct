@@ -66,13 +66,14 @@ export function selectEntry({
   onAnnotationChange,
   notebookAnnotations
 }) {
-  const targetDetails = {};
   const keyString = openmct.objects.makeKeyString(domainObject.identifier);
-  targetDetails[keyString] = {
-    entryId
-  };
-  const targetDomainObjects = {};
-  targetDomainObjects[keyString] = domainObject;
+  const targetDetails = [
+    {
+      entryId,
+      keyString
+    }
+  ];
+  const targetDomainObjects = [domainObject];
   openmct.selection.select(
     [
       {

@@ -142,6 +142,9 @@ export default {
           childContext.item = this.domainObject;
           childContext.type = 'frame';
           childContext.frameId = this.frame.id;
+          if (this.unsubscribeSelection) {
+            this.unsubscribeSelection();
+          }
           this.unsubscribeSelection = this.openmct.selection.selectable(
             this.$refs.frame,
             childContext,

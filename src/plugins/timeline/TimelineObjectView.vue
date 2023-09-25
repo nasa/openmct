@@ -90,6 +90,10 @@ export default {
       this.removeSelectable();
     }
 
+    if (this.removeStatusListener) {
+      this.removeStatusListener();
+    }
+
     if (this.mutablePromise) {
       this.mutablePromise.then(() => {
         this.openmct.objects.destroyMutable(this.domainObject);
