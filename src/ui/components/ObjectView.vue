@@ -172,7 +172,6 @@ export default {
         this.composition._destroy();
       }
 
-      this.isStale = false;
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
