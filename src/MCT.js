@@ -43,7 +43,7 @@ define([
   './plugins/duplicate/plugin',
   './plugins/importFromJSONAction/plugin',
   './plugins/exportAsJSONAction/plugin',
-  './utils/EventBus',
+  './utils/eventBus',
   'vue'
 ], function (
   EventEmitter,
