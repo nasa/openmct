@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StalenessUtils from '@/utils/staleness';
 import { isProxy, toRaw } from 'vue';
+
+import StalenessUtils from '@/utils/staleness';
 
 export default {
   data() {
