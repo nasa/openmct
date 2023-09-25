@@ -75,7 +75,8 @@ define([
       this.filterObserver = undefined;
 
       this.createTableRowCollections();
-      this.openmct.time.on('clockChanged', this.resubscribeAllObjectsToStaleness.bind(this));
+      this.resubscribeToStaleness = this.resubscribeAllObjectsToStaleness.bind(this);
+      this.openmct.time.on('clockChanged', this.resubscribeToStaleness);
     }
 
     /**
@@ -450,6 +451,7 @@ define([
       this.tableRows.destroy();
 
       this.tableRows.off('resetRowsFromAllData', this.resetRowsFromAllData);
+      this.openmct.time.off('clockChanged', this.resubscribeToStaleness);
 
       let keystrings = Object.keys(this.telemetryCollections);
       keystrings.forEach(this.removeTelemetryCollection);

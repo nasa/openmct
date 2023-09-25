@@ -97,6 +97,10 @@ export default class TelemetryCriterion extends EventEmitter {
       this.unsubscribeFromStaleness();
     }
 
+    if (!this.telemetryObject) {
+      return;
+    }
+
     if (!this.stalenessUtils) {
       this.stalenessUtils = new StalenessUtils(this.openmct, this.telemetryObject);
     }
@@ -334,6 +338,8 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.ageCheck) {
       delete this.ageCheck;
     }
+
+    this.openmct.time.off('clockChanged', this.subscribeToStaleness);
 
     if (this.stalenessUtils) {
       this.stalenessUtils.destroy();
