@@ -55,11 +55,7 @@
       <div class="c-ne__content">
         <template v-if="readOnly && result">
           <div :id="entry.id" class="c-ne__text highlight" tabindex="0">
-            <TextHighlight
-              :text="formatValidUrls(entry.text)"
-              :highlight="highlightText"
-              :highlight-class="'search-highlight'"
-            />
+            <TextHighlight :highlight="highlightText" :highlight-class="'search-highlight'" />
           </div>
         </template>
         <template v-else-if="!isLocked">
@@ -139,6 +135,7 @@
 
 <script>
 import _ from 'lodash';
+import { marked } from 'marked';
 import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
@@ -154,8 +151,7 @@ const SANITIZATION_SCHEMA = {
   allowedTags: [],
   allowedAttributes: {}
 };
-const URL_REGEX =
-  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -239,13 +235,13 @@ export default {
       // remove ANY tags
       const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
 
-      if (this.editMode || this.urlWhitelist.length === 0) {
+      if (this.editMode) {
         return { innerText: text };
       }
 
-      const html = this.formatValidUrls(text);
+      const markDownHtml = marked(text, { renderer: this.renderer });
 
-      return { innerHTML: html };
+      return { innerHTML: markDownHtml };
     },
     isSelectedEntry() {
       return this.selectedEntryId === this.entry.id;
@@ -277,6 +273,10 @@ export default {
     }
   },
   mounted() {
+    this.renderer = new marked.Renderer();
+    const originalLinkRenderer = this.renderer.link;
+    this.renderer.link = this.validateLink.bind(this, originalLinkRenderer);
+
     this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
 
     if (this.$refs.embedsWrapper) {
@@ -309,6 +309,22 @@ export default {
 
       this.manageEmbedLayout();
     },
+    validateLink(originalLinkRenderer, href, title, text) {
+      try {
+        const domain = new URL(href).hostname;
+        const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
+          return domain.endsWith(partialDomain);
+        });
+        if (!urlIsWhitelisted) {
+          return text;
+        }
+        const html = originalLinkRenderer.call(this.renderer, href, title, text);
+        return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
+      } catch (error) {
+        // had error parsing this URL, just return the text
+        return text;
+      }
+    },
     cancelEditMode(event) {
       const isEditing = this.openmct.editor.isEditing();
       if (isEditing) {
@@ -332,22 +348,6 @@ export default {
     },
     deleteEntry() {
       this.$emit('deleteEntry', this.entry.id);
-    },
-    formatValidUrls(text) {
-      return text.replace(URL_REGEX, (match) => {
-        const url = new URL(match);
-        const domain = url.hostname;
-        let result = match;
-        let isMatch = this.urlWhitelist.find((partialDomain) => {
-          return domain.endsWith(partialDomain);
-        });
-
-        if (isMatch) {
-          result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
-        }
-
-        return result;
-      });
     },
     manageEmbedLayout() {
       if (this.$refs.embeds) {
