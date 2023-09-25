@@ -263,7 +263,10 @@ test.describe('Display Layout', () => {
     await setFixedTimeMode(page);
     // Create another Sine Wave Generator
     const anotherSineWaveObject = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator'
+      type: 'Sine Wave Generator',
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
     });
     // Create a Display Layout
     await createDomainObjectWithDefaults(page, {
@@ -306,7 +309,8 @@ test.describe('Display Layout', () => {
     // Time to inspect some network traffic
     let networkRequests = [];
     page.on('request', (request) => {
-      const searchRequest = request.url().endsWith('_find');
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
       const fetchRequest = request.resourceType() === 'fetch';
       if (searchRequest && fetchRequest) {
         networkRequests.push(request);
@@ -322,6 +326,7 @@ test.describe('Display Layout', () => {
     expect(networkRequests.length).toBe(1);
 
     await setRealTimeMode(page);
+
     networkRequests = [];
 
     await page.reload();
