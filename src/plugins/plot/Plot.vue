@@ -197,7 +197,7 @@ export default {
     destroy() {
       if (this.compositionCollection) {
         this.compositionCollection.off('add', this.subscribeToStaleness);
-        this.compositionCollection.off('remove', this.unsubscribeFromObjectStaleness);
+        this.compositionCollection.off('remove', this.triggerUnsubscribeFromStaleness);
       }
 
       this.imageExporter = null;
