@@ -56,7 +56,7 @@ export default {
     document.addEventListener('dragend', this.unsetDragging);
     document.addEventListener('drop', this.unsetDragging);
   },
-  unmounted() {
+  beforeUnmount() {
     document.removeEventListener('dragstart', this.setDragging);
     document.removeEventListener('dragend', this.unsetDragging);
     document.removeEventListener('drop', this.unsetDragging);
