@@ -55,6 +55,7 @@ export default {
     CompassHud,
     CompassRose
   },
+  inject: ['showCompassHUD'],
   props: {
     image: {
       type: Object,
@@ -62,10 +63,6 @@ export default {
     },
     sizedImageDimensions: {
       type: Object,
-      required: true
-    },
-    showCompassHUD: {
-      type: Boolean,
       required: true
     }
   },

@@ -88,7 +88,6 @@
             v-if="shouldDisplayCompass"
             :image="focusedImage"
             :sized-image-dimensions="sizedImageDimensions"
-            :show-compass-h-u-d="showCompassHUD"
           />
           <AnnotationsCanvas
             v-if="shouldDisplayAnnotations"
