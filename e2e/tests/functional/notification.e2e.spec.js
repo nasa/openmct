@@ -28,7 +28,7 @@ const { createDomainObjectWithDefaults, createNotification } = require('../../ap
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Notifications List', () => {
-  test.fixme('Notifications can be dismissed individually', async ({ page }) => {
+  test('Notifications can be dismissed individually', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6820'
@@ -36,6 +36,8 @@ test.describe('Notifications List', () => {
 
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const notificationModal = page.locator('div[role="dialog"]');
 
     // Create an error notification with the message "Error message"
     await createNotification(page, {
@@ -55,6 +57,9 @@ test.describe('Notifications List', () => {
     // Click on button with aria-label "Review 2 Notifications"
     await page.click('button[aria-label="Review 2 Notifications"]');
 
+    // Notifications list dialog is open
+    await expect(notificationModal).toBeVisible();
+
     // Click on button with aria-label="Dismiss notification of Error message"
     await page.click('button[aria-label="Dismiss notification of Error message"]');
 
@@ -72,7 +77,7 @@ test.describe('Notifications List', () => {
     await page.click('button[aria-label="Dismiss notification of Alert message"]');
 
     // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
-    expect(await page.locator('div[role="dialog"]').count()).toBe(0);
+    await expect(notificationModal).toBeHidden();
   });
 });
 
