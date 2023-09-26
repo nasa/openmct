@@ -126,6 +126,10 @@ export default {
   },
   beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
+    if (this.composition) {
+      this.composition.off('add', this.subscribeToStaleness);
+      this.composition.off('remove', this.triggerUnsubscribeFromStaleness);
+    }
 
     if (this.removeSelectable) {
       this.removeSelectable();

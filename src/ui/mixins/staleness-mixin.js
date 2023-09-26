@@ -45,9 +45,9 @@ export default {
       );
     },
     setupClockChangedEvent(callback) {
+      this.setupClockChanged = true;
       this.compositionIteratorCallback = this.compositionIterator(callback);
       this.openmct.time.on('clockChanged', this.compositionIteratorCallback);
-      this.setupClockChanged = true;
     },
     addToCompositionMap(id, domainObject) {
       if (!this.compositionObjectMap.get(id)) {
@@ -200,7 +200,7 @@ export default {
     this.triggerUnsubscribeFromStaleness(this.compositionObjectMap.values());
 
     if (this.setupClockChanged) {
-      this.openmct.time.off('clockChanged', this.compositionIteratorCallback, this);
+      this.openmct.time.off('clockChanged', this.compositionIteratorCallback);
       this.setupClockChanged = false;
     }
   }
