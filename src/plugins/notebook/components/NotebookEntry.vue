@@ -148,8 +148,41 @@ import {
 import NotebookEmbed from './NotebookEmbed.vue';
 
 const SANITIZATION_SCHEMA = {
-  allowedTags: [],
-  allowedAttributes: {}
+  allowedTags: [
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'blockquote',
+    'p',
+    'a',
+    'ul',
+    'ol',
+    'li',
+    'b',
+    'i',
+    'strong',
+    'em',
+    'strike',
+    'code',
+    'hr',
+    'br',
+    'div',
+    'table',
+    'thead',
+    'caption',
+    'tbody',
+    'tr',
+    'th',
+    'td',
+    'pre'
+  ],
+  allowedAttributes: {
+    a: ['href', 'target', 'rel'],
+    code: ['class']
+  }
 };
 
 const UNKNOWN_USER = 'Unknown';
@@ -232,14 +265,14 @@ export default {
       return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
     },
     formattedText() {
-      // remove ANY tags
-      const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+      const text = this.entry.text;
 
       if (this.editMode) {
         return { innerText: text };
       }
 
-      const markDownHtml = marked(text, { renderer: this.renderer });
+      let markDownHtml = marked(text, { renderer: this.renderer });
+      markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
 
       return { innerHTML: markDownHtml };
     },
@@ -491,7 +524,7 @@ export default {
     updateEntryValue($event) {
       this.editMode = false;
       const value = $event.target.innerText;
-      this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+      this.entry.text = value;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {
