@@ -1,0 +1,20 @@
+changelog:
+  categories:
+    - title: 🏕 Features
+      labels:
+        - type:feature
+    - title: 🎉 Enhancements
+      labels:
+        - type:enhancement
+      exclude:
+        labels:
+          - type:feature
+    - title: 🐛 Bug Fixes
+      labels:
+        - type:bug
+    - title: 🔧 Maintenance
+      labels:
+        - type:maintenance
+    - title: 👒 Dependencies
+      labels:
+        - dependencies
