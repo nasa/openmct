@@ -148,40 +148,11 @@ import {
 import NotebookEmbed from './NotebookEmbed.vue';
 
 const SANITIZATION_SCHEMA = {
-  allowedTags: [
-    'h1',
-    'h2',
-    'h3',
-    'h4',
-    'h5',
-    'h6',
-    'blockquote',
-    'p',
-    'a',
-    'ul',
-    'ol',
-    'li',
-    'b',
-    'i',
-    'strong',
-    'em',
-    'strike',
-    'code',
-    'hr',
-    'br',
-    'div',
-    'table',
-    'thead',
-    'caption',
-    'tbody',
-    'tr',
-    'th',
-    'td',
-    'pre'
-  ],
+  allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'li', 'b', 'i', 'strong', 'em', 's', 'strike', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'del', 'ins', 'mark', 'abbr'],
   allowedAttributes: {
-    a: ['href', 'target', 'rel'],
-    code: ['class']
+    a: ['href', 'target', 'rel', 'title'],
+    code: ['class'],
+    abbr: ['title']
   }
 };
 
