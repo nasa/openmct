@@ -196,8 +196,12 @@ export default {
       }
     }
   },
-  unmount() {
-    this.triggerUnsubscribeFromStaleness(this.compositionObjectMap.values());
+  unmounted() {
+    let compositionObjects = [];
+    for (const [, object] of this.compositionObjectMap) {
+      compositionObjects.push(object);
+    }
+    this.triggerUnsubscribeFromStaleness(compositionObjects);
 
     if (this.setupClockChanged) {
       this.openmct.time.off('clockChanged', this.compositionIteratorCallback);
