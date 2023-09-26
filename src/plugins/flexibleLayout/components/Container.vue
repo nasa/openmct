@@ -75,9 +75,9 @@
 </template>
 
 <script>
-import DropHint from './dropHint.vue';
-import FrameComponent from './frame.vue';
-import ResizeHandle from './resizeHandle.vue';
+import DropHint from './DropHint.vue';
+import FrameComponent from './Frame.vue';
+import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_FRAME_SIZE = 5;
 
@@ -122,7 +122,6 @@ export default {
   mounted() {
     let context = {
       item: this.$parent.domainObject,
-      addContainer: this.addContainer,
       type: 'container',
       containerId: this.container.id
     };

@@ -186,9 +186,10 @@ export default class CompositionProvider {
       return;
     }
 
-    this.#publicAPI.objects.eventEmitter.on('mutation', this.#onMutation.bind(this));
+    const onMutation = this.#onMutation.bind(this);
+    this.#publicAPI.objects.eventEmitter.on('mutation', onMutation);
     this.topicListener = () => {
-      this.#publicAPI.objects.eventEmitter.off('mutation', this.#onMutation.bind(this));
+      this.#publicAPI.objects.eventEmitter.off('mutation', onMutation);
     };
   }
 

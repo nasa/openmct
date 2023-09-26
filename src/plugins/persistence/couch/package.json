@@ -1,0 +1,18 @@
+{
+    "name": "openmct-couch-plugin",
+    "version": "1.0.0",
+    "description": "CouchDB persistence plugin for Open MCT",
+    "dependencies": {
+        "@cloudant/couchbackup": "2.9.9"
+    },
+    "scripts": {
+        "backup:openmct": "npx couchbackup -u http://admin:password@127.0.0.1:5984/ -d openmct -o openmct-couch-backup.txt",
+        "restore:openmct": "cat openmct-couch-backup.txt | npx couchrestore -u http://admin:password@127.0.0.1:5984/ -d openmct",
+        "deleteAnnotations:openmct": "node scripts/deleteAnnotations.js $*",
+        "deleteAnnotations:openmct:NOTEBOOK": "node scripts/deleteAnnotations.js -- --annotationType NOTEBOOK",
+        "deleteAnnotations:openmct:GEOSPATIAL": "node scripts/deleteAnnotations.js -- --annotationType GEOSPATIAL",
+        "deleteAnnotations:openmct:PIXEL_SPATIAL": "node scripts/deleteAnnotations.js -- --annotationType PIXEL_SPATIAL",
+        "deleteAnnotations:openmct:TEMPORAL": "node scripts/deleteAnnotations.js -- --annotationType TEMPORAL",
+        "deleteAnnotations:openmct:PLOT_SPATIAL": "node scripts/deleteAnnotations.js -- --annotationType PLOT_SPATIAL"
+    }
+}

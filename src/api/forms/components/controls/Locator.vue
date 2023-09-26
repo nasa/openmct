@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import MctTree from '@/ui/layout/mct-tree.vue';
+import MctTree from '@/ui/layout/MctTree.vue';
 
 export default {
   components: {
