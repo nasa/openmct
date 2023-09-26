@@ -152,6 +152,26 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆
 
+# Maintenance
+
+One can delete annotations by running inside this directory (i.e., `src/plugins/persistence/couch`):
+```
+npm run deleteAnnotations:openmct:PIXEL_SPATIAL
+```
+
+will delete all image tags.
+
+```
+npm run deleteAnnotations:openmct 
+```
+
+will delete all tags. 
+
+```
+npm run deleteAnnotations:openmct -- --help
+```
+
+will print help options.
 # Search Performance
 
 For large Open MCT installations, it may be helpful to add additional CouchDB capabilities to bear to improve performance.
@@ -159,7 +179,7 @@ For large Open MCT installations, it may be helpful to add additional CouchDB ca
 ## Indexing
 Indexing the `model.type` field in CouchDB can benefit the performance of queries significantly, particularly if there are a large number of documents in the database. An index can accelerate annotation searches by reducing the number of documents that the database needs to examine.
 
-To create an index for `model.type`, you can use the following payload:
+To create an index for `model.type`, you can use the following payload [using the API](https://docs.couchdb.org/en/stable/api/database/find.html#post--db-_index):
 
 ```json
 {
@@ -177,7 +197,7 @@ You can find more detailed information about indexing in CouchDB in the [officia
 
 ## Design Documents
 
-We can also add a design document for retrieving domain objects for specific tags:
+We can also add a design document [through the API](https://docs.couchdb.org/en/stable/api/ddoc/common.html#put--db-_design-ddoc) for retrieving domain objects for specific tags:
 
 ```json
 {
