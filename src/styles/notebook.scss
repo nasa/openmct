@@ -420,6 +420,10 @@
       list-style-type: inherit;
     }
 
+    table {
+      width: auto;
+    }
+
     th, td {
       border: 1px solid rgba($colorBodyFg, 0.7);
     }
