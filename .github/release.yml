@@ -11,10 +11,13 @@ changelog:
           - type:feature
     - title: 🐛 Bug Fixes
       labels:
-        - type:bug
+        - "*"
     - title: 🔧 Maintenance
       labels:
         - type:maintenance
+    - title: ⚡ Performance
+      labels:
+        - type:performance
     - title: 👒 Dependencies
       labels:
         - dependencies
