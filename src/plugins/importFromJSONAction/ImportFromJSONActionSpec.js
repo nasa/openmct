@@ -22,10 +22,10 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import ImportFromJSONAction from './ImportFromJSONAction';
-
 let openmct;
 let importFromJSONAction;
+let folderObject;
+let unObserve;
 
 describe('The import JSON action', function () {
   beforeEach((done) => {
@@ -34,19 +34,8 @@ describe('The import JSON action', function () {
     openmct.on('start', done);
     openmct.startHeadless();
 
-    importFromJSONAction = new ImportFromJSONAction(openmct);
-  });
-
-  afterEach(() => {
-    return resetApplicationState(openmct);
-  });
-
-  it('has import as JSON action', () => {
-    expect(importFromJSONAction.key).toBe('import.JSON');
-  });
-
-  it('applies to return true for objects with composition', function () {
-    const domainObject = {
+    importFromJSONAction = openmct.actions.getAction('import.JSON');
+    folderObject = {
       composition: [],
       name: 'Unnamed Folder',
       type: 'folder',
@@ -59,8 +48,23 @@ describe('The import JSON action', function () {
         key: '84438cda-a071-48d1-b9bf-d77bd53e59ba'
       }
     };
+  });
 
-    const objectPath = [domainObject];
+  afterEach(() => {
+    importFromJSONAction = undefined;
+    folderObject = undefined;
+    unObserve?.();
+    unObserve = undefined;
+
+    return resetApplicationState(openmct);
+  });
+
+  it('has import as JSON action', () => {
+    expect(importFromJSONAction).toBeDefined();
+  });
+
+  it('applies to return true for objects with composition', function () {
+    const objectPath = [folderObject];
 
     spyOn(openmct.composition, 'get').and.returnValue(true);
 
@@ -97,26 +101,44 @@ describe('The import JSON action', function () {
   });
 
   it('calls showForm on invoke ', function () {
-    const domainObject = {
-      composition: [],
-      name: 'Unnamed Folder',
-      type: 'folder',
-      location: '9f6c9dae-51c3-401d-92f1-c812de942922',
-      modified: 1637021471624,
-      persisted: 1637021471624,
-      id: '84438cda-a071-48d1-b9bf-d77bd53e59ba',
-      identifier: {
-        namespace: '',
-        key: '84438cda-a071-48d1-b9bf-d77bd53e59ba'
-      }
-    };
-
-    const objectPath = [domainObject];
+    const objectPath = [folderObject];
 
     spyOn(openmct.forms, 'showForm').and.returnValue(Promise.resolve({}));
     spyOn(importFromJSONAction, 'onSave').and.returnValue(Promise.resolve({}));
     importFromJSONAction.invoke(objectPath);
 
     expect(openmct.forms.showForm).toHaveBeenCalled();
+  });
+
+  it('protects against prototype pollution', (done) => {
+    function returnResponseWithPrototypePollution() {
+      const pollutedResponse = {
+        selectFile: {
+          name: 'imported object',
+          body: "{\"openmct\":{\"c28d230d-e909-4a3e-9840-d9ef469dda70\":{\"identifier\":{\"key\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\",\"namespace\":\"\"},\"name\":\"Unnamed Overlay Plot\",\"type\":\"telemetry.plot.overlay\",\"composition\":[],\"configuration\":{\"series\":[]},\"modified\":1695837546833,\"location\":\"mine\",\"created\":1695837546833,\"persisted\":1695837546833,\"__proto__\":{\"toString\":\"foobar\"}}},\"rootId\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\"}"
+        }
+      };
+
+      return Promise.resolve(pollutedResponse);
+    }
+
+    function callback(newObject) {
+      let polluted = false;
+      const jsonString = JSON.stringify(newObject);
+
+      JSON.parse(jsonString, (key, value) => {
+        if (key === '__proto__') {
+          polluted = true;
+        }
+      });
+
+      expect(polluted).toBeFalse();
+      done();
+    }
+
+    spyOn(openmct.forms, 'showForm').and.callFake(returnResponseWithPrototypePollution);
+    unObserve = openmct.objects.observe(folderObject, '*', callback);
+
+    importFromJSONAction.invoke([folderObject]);
   });
 });
