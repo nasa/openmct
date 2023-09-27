@@ -135,7 +135,7 @@
 
 <script>
 import _ from 'lodash';
-import { marked } from 'marked';
+import { Marked } from 'marked';
 import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
@@ -277,7 +277,10 @@ export default {
         return { innerText: text };
       }
 
-      let markDownHtml = marked(text, { renderer: this.renderer });
+      let markDownHtml = this.marked.parse(text, {
+        breaks: true,
+        renderer: this.renderer
+      });
       markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
 
       return { innerHTML: markDownHtml };
@@ -311,8 +314,11 @@ export default {
       return text;
     }
   },
+  beforeMount() {
+    this.marked = new Marked();
+    this.renderer = new this.marked.Renderer();
+  },
   mounted() {
-    this.renderer = new marked.Renderer();
     const originalLinkRenderer = this.renderer.link;
     this.renderer.link = this.validateLink.bind(this, originalLinkRenderer);
 
