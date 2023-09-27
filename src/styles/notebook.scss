@@ -280,15 +280,30 @@
   // A Notebook entry
   $p: $interiorMarginSm;
   @include discreteItem();
+  cursor: pointer;
   display: flex;
   padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
   &:hover {
-    background: rgba($colorBodyFg, 0.2);
+    background: rgba($colorBodyFg, 0.3);
   }
 
   &.is-selected {
-    background: rgba($colorKey, 0.3);
+    background: rgba($colorKey, 0.2);
+
+    .c-ne__input {
+      cursor: text;
+
+      @include hover() {
+        &:not(:focus, .locked) {
+          background: $colorInputBg;
+        }
+      }
+
+      &:focus {
+        background: $colorInputBg;
+      }
+    }
   }
 
   &__text,
@@ -307,9 +322,6 @@
     padding: $p;
   }
 
-  &__input {
-    word-break: break-word;
-  }
   &__time-and-creator-and-delete {
     display: flex;
     align-items: center;
@@ -357,13 +369,63 @@
 
   &__text {
     min-height: 22px; // Needed in Firefox when field is blank
-
-    &:not(.highlight) {
-      white-space: pre-wrap;
-    }
+    white-space: normal;
 
     .search-highlight {
       @include searchHighlight();
+    }
+    // Resets and styling for markdown
+    h1, h2, h3, h4, h5 {
+      margin: unset !important;
+      padding: unset !important;
+    }
+
+    a {
+      text-decoration: underline;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    > * {
+      &:not(:first-child) { margin-top: $interiorMarginSm; }
+    }
+
+    p, blockquote, pre {
+      margin: 0;
+
+      &:not(:first-child) { margin-top: $interiorMarginLg; };
+    }
+
+    blockquote {
+      $m: 16px;
+      margin-left: $m;
+      margin-right: $m;
+    }
+
+    ul, ol {
+      padding: 0 0 0 16px;
+    }
+
+    ul {
+      list-style: square;
+    }
+
+    ol {
+      list-style: decimal;
+    }
+
+    li {
+      list-style-type: inherit;
+    }
+
+    th, td {
+      border: 1px solid rgba($colorBodyFg, 0.7);
+    }
+
+    th {
+      background: rgba($colorBodyFg, 0.2);
     }
   }
 
@@ -374,17 +436,8 @@
     padding-right: $p;
     overflow: unset;
     margin-bottom: $interiorMargin;
-    @include hover {
-      &:not(:focus, .locked) {
-        background: rgba($colorBodyFg, 0.1);
-      }
-    }
-
-    &:focus {
-      background: $colorInputBg;
-    }
-
-    white-space: pre-wrap;
+    text-overflow: unset;
+    white-space: unset;
   }
 
   &__save-button {
