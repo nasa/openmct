@@ -111,34 +111,35 @@ describe('The import JSON action', function () {
   });
 
   it('protects against prototype pollution', (done) => {
+    spyOn(console, 'warn');
+    spyOn(openmct.forms, 'showForm').and.callFake(returnResponseWithPrototypePollution);
+
+    unObserve = openmct.objects.observe(folderObject, '*', callback);
+
+    importFromJSONAction.invoke([folderObject]);
+
+    function callback(newObject) {
+      const hasPollutedProto =
+        Object.prototype.hasOwnProperty.call(newObject, '__proto__') ||
+        Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(newObject), 'toString');
+
+      // warning from openmct.objects.get
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(hasPollutedProto).toBeFalse();
+
+      done();
+    }
+
     function returnResponseWithPrototypePollution() {
       const pollutedResponse = {
         selectFile: {
           name: 'imported object',
+          // eslint-disable-next-line prettier/prettier
           body: "{\"openmct\":{\"c28d230d-e909-4a3e-9840-d9ef469dda70\":{\"identifier\":{\"key\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\",\"namespace\":\"\"},\"name\":\"Unnamed Overlay Plot\",\"type\":\"telemetry.plot.overlay\",\"composition\":[],\"configuration\":{\"series\":[]},\"modified\":1695837546833,\"location\":\"mine\",\"created\":1695837546833,\"persisted\":1695837546833,\"__proto__\":{\"toString\":\"foobar\"}}},\"rootId\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\"}"
         }
       };
 
       return Promise.resolve(pollutedResponse);
     }
-
-    function callback(newObject) {
-      let polluted = false;
-      const jsonString = JSON.stringify(newObject);
-
-      JSON.parse(jsonString, (key, value) => {
-        if (key === '__proto__') {
-          polluted = true;
-        }
-      });
-
-      expect(polluted).toBeFalse();
-      done();
-    }
-
-    spyOn(openmct.forms, 'showForm').and.callFake(returnResponseWithPrototypePollution);
-    unObserve = openmct.objects.observe(folderObject, '*', callback);
-
-    importFromJSONAction.invoke([folderObject]);
   });
 });
