@@ -62,8 +62,8 @@
           <div
             v-bind.prop="formattedText"
             :id="entry.id"
-            class="c-ne__text c-ne__input"
-            aria-label="Notebook Entry Input"
+            class="c-ne__text"
+            aria-label="Notebook Entry"
             tabindex="-1"
             :contenteditable="canEdit"
             @mouseover="checkEditability($event)"
@@ -72,6 +72,10 @@
             @focus="editingEntry()"
             @blur="updateEntryValue($event)"
           ></div>
+          <textarea class="c-ne__input" aria-label="Notebook Entry Input">#H1
+Some static content here in this textarea.
+        </textarea
+          >
           <div v-if="editMode" class="c-ne__save-button">
             <button class="c-button c-button--major icon-check"></button>
           </div>
