@@ -149,7 +149,7 @@ export default {
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.stopObservingSelectFile = this.openmct.objects.observe(
       this.domainObject,
-      'selectFile',
+      '*',
       this.handleSelectFileChange
     );
     this.loadComposition();
