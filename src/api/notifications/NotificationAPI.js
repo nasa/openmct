@@ -265,7 +265,7 @@ export default class NotificationAPI extends EventEmitter {
 
     this._setActiveNotification(this._selectNextNotification());
     this._setHighestSeverity();
-    notification.emit('destroy');
+    notification.emit('destroy', notification);
   }
 
   /**
@@ -323,8 +323,8 @@ export default class NotificationAPI extends EventEmitter {
     notification = this._createNotification(notificationModel);
 
     this.notifications.push(notification);
-    this.emit('add', notification);
     this._setHighestSeverity();
+    this.emit('add', notification);
 
     /*
       Check if there is already an active (ie. visible) notification
