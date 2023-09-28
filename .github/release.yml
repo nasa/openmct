@@ -14,7 +14,7 @@ changelog:
         - type:maintenance
     - title: ⚡ Performance
       labels:
-        - type:performance
+        - performance
     - title: 👒 Dependencies
       labels:
         - dependencies
