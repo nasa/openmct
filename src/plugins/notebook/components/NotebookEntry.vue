@@ -23,6 +23,7 @@
 
 <template>
   <div
+    ref="entry"
     class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
     :class="{ locked: isLocked, 'is-selected': isSelectedEntry, 'is-editing': editMode }"
@@ -60,22 +61,26 @@
         </template>
         <template v-else-if="!isLocked">
           <div
+            v-if="!editMode"
             v-bind.prop="formattedText"
             :id="entry.id"
-            class="c-ne__text"
-            aria-label="Notebook Entry"
             tabindex="-1"
-            :contenteditable="canEdit"
+            aria-label="Notebook Entry Display"
+            class="c-ne__text"
             @mouseover="checkEditability($event)"
-            @mouseleave="canEdit = true"
-            @mousedown="preventFocusIfNotSelected($event)"
-            @focus="editingEntry()"
-            @blur="updateEntryValue($event)"
+            @focus="editingEntry"
           ></div>
-          <textarea class="c-ne__input" aria-label="Notebook Entry Input">#H1
-Some static content here in this textarea.
-        </textarea
-          >
+          <textarea
+            v-else
+            :id="entry.id"
+            ref="entryInput"
+            v-model="entry.text"
+            class="c-ne__input"
+            aria-label="Notebook Entry Input"
+            tabindex="-1"
+            @mouseleave="canEdit = true"
+            @blur="updateEntryValue($event)"
+          ></textarea>
           <div v-if="editMode" class="c-ne__save-button">
             <button class="c-button c-button--major icon-check"></button>
           </div>
@@ -318,6 +323,15 @@ export default {
       return text;
     }
   },
+  watch: {
+    editMode() {
+      this.$nextTick(() => {
+        // waiting for textarea to be rendered
+        this.$refs.entryInput?.focus();
+        this.adjustTextareaHeight();
+      });
+    }
+  },
   beforeMount() {
     this.marked = new Marked();
     this.renderer = new this.marked.Renderer();
@@ -357,6 +371,12 @@ export default {
       this.entry.embeds.push(newEmbed);
 
       this.manageEmbedLayout();
+    },
+    adjustTextareaHeight() {
+      if (this.$refs.entryInput) {
+        this.$refs.entryInput.style.height = 'auto';
+        this.$refs.entryInput.style.height = `${this.$refs?.entryInput.scrollHeight}px`;
+      }
     },
     validateLink(originalLinkRenderer, href, title, text) {
       try {
@@ -466,9 +486,6 @@ export default {
 
       return position;
     },
-    forceBlur(event) {
-      event.target.blur();
-    },
     formatTime(unixTime, timeFormat) {
       return Moment.utc(unixTime).format(timeFormat);
     },
@@ -523,36 +540,30 @@ export default {
 
       this.$emit('updateEntry', this.entry);
     },
-    preventFocusIfNotSelected($event) {
-      if (!this.isSelectedEntry) {
-        $event.preventDefault();
-        // blur the previous focused entry if clicking on non selected entry input
-        const focusedElementId = document.activeElement?.id;
-        if (focusedElementId !== this.entry.id) {
-          document.activeElement.blur();
-        }
-      }
-    },
     editingEntry() {
       this.editMode = true;
+      this.selectAndEmitEntry(null, this.entry);
+      this.adjustTextareaHeight();
       this.$emit('editingEntry');
     },
     updateEntryValue($event) {
       this.editMode = false;
-      const value = $event.target.innerText;
+      const value = $event.target.value;
       this.entry.text = value;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {
       selectEntry({
-        element: event.currentTarget,
+        element: this.$refs.entry,
         entryId: entry.id,
         domainObject: this.domainObject,
         openmct: this.openmct,
         onAnnotationChange: this.timestampAndUpdate,
         notebookAnnotations: this.notebookAnnotations
       });
-      event.stopPropagation();
+      if (event) {
+        event.stopPropagation();
+      }
       this.$emit('entry-selection', this.entry);
     }
   }
