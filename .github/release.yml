@@ -9,12 +9,15 @@ changelog:
       exclude:
         labels:
           - type:feature
-    - title: 🐛 Bug Fixes
-      labels:
-        - type:bug
     - title: 🔧 Maintenance
       labels:
         - type:maintenance
+    - title: ⚡ Performance
+      labels:
+        - performance
     - title: 👒 Dependencies
       labels:
         - dependencies
+    - title: 🐛 Bug Fixes
+      labels:
+        - '*'
