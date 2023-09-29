@@ -113,7 +113,7 @@
         flex: 1 1 auto;
     }
 
-    &__page-locked,
+    &__page-locked-message,
     &__drag-area {
         border-radius: $controlCr;
         padding: 10px;
@@ -136,8 +136,7 @@
         }
 
         &:hover {
-            background: rgba($colorBodyFg, 0.1); //$colorInteriorBorder;
-            //color: $colorBodyFg;
+            background: rgba($colorBodyFg, 0.1);
         }
 
         &.drag-active,
@@ -236,7 +235,7 @@
     }
 
     /***** RESTRICTED NOTEBOOK */
-    &__page-locked {
+    &__page-locked-message {
         background: rgba($colorAlert, 0.2);
         display: flex;
         padding: 5px;
@@ -292,17 +291,16 @@
         background: rgba($colorKey, 0.2);
 
         .c-ne__text {
-            cursor: text;
+            .c-notebook--page-unlocked & {
+                cursor: text;
 
-            @include hover() {
-                &:not(:focus, .locked) {
-                    background: $colorInputBg;
+                @include hover() {
+                    &:not(:focus, .locked) {
+                        background: $colorInputBg;
+                    }
                 }
-            }
 
-            //&:focus {
-            //    background: $colorInputBg;
-            //}
+            }
         }
     }
 
