@@ -56,7 +56,11 @@
       <div class="c-ne__content">
         <template v-if="readOnly && result">
           <div :id="entry.id" class="c-ne__text highlight" tabindex="0">
-            <TextHighlight :highlight="highlightText" :highlight-class="'search-highlight'" />
+            <TextHighlight
+              :text="convertMarkDownToHtml(entry.text)"
+              :highlight="highlightText"
+              :highlight-class="'search-highlight'"
+            />
           </div>
         </template>
         <template v-else-if="!isLocked">
@@ -286,11 +290,7 @@ export default {
         return { innerText: text };
       }
 
-      let markDownHtml = this.marked.parse(text, {
-        breaks: true,
-        renderer: this.renderer
-      });
-      markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
+      const markDownHtml = this.convertMarkDownToHtml(text);
 
       return { innerHTML: markDownHtml };
     },
@@ -372,6 +372,14 @@ export default {
 
       this.manageEmbedLayout();
     },
+    convertMarkDownToHtml(text) {
+      let markDownHtml = this.marked.parse(text, {
+        breaks: true,
+        renderer: this.renderer
+      });
+      markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
+      return markDownHtml;
+    },
     adjustTextareaHeight() {
       if (this.$refs.entryInput) {
         this.$refs.entryInput.style.height = 'auto';
@@ -382,11 +390,14 @@ export default {
     validateLink(originalLinkRenderer, href, title, text) {
       try {
         const domain = new URL(href).hostname;
-        const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
-          return domain.endsWith(partialDomain);
-        });
-        if (!urlIsWhitelisted) {
-          return text;
+        if (this.urlWhitelist) {
+          // if we have a whitelist, check the list to see if this domain is whitelisted
+          const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
+            return domain.endsWith(partialDomain);
+          });
+          if (!urlIsWhitelisted) {
+            return text;
+          }
         }
         const html = originalLinkRenderer.call(this.renderer, href, title, text);
         return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
