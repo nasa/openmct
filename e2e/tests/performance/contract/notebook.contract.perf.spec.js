@@ -99,7 +99,6 @@ test.describe('Performance tests', () => {
     await client.send('Performance.enable');
     // Go to baseURL
     await page.goto('./');
-    await page.pause();
 
     // To to Search Available after Launch
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
