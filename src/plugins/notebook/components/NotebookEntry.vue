@@ -198,7 +198,7 @@ const SANITIZATION_SCHEMA = {
     'abbr'
   ],
   allowedAttributes: {
-    a: ['href', 'target', 'rel', 'title'],
+    a: ['href', 'target', 'class', 'title'],
     code: ['class'],
     abbr: ['title']
   }
@@ -396,8 +396,12 @@ export default {
         if (!urlIsWhitelisted) {
           return text;
         }
-        const html = originalLinkRenderer.call(this.renderer, href, title, text);
-        return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
+        const linkHtml = originalLinkRenderer.call(this.renderer, href, title, text);
+        const linkHtmlWithTarget = linkHtml.replace(
+          /^<a /,
+          '<a class="c-hyperlink" target="_blank"'
+        );
+        return linkHtmlWithTarget;
       } catch (error) {
         // had error parsing this URL, just return the text
         return text;
