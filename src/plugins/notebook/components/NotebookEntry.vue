@@ -554,11 +554,9 @@ export default {
       this.$emit('updateEntry', this.entry);
     },
     editingEntry(event) {
-      if (!this.isSelectedEntry) {
-        // just select the entry
-        this.selectAndEmitEntry(event, this.entry);
-      } else {
-        // we're ready to edit
+      this.selectAndEmitEntry(event, this.entry);
+      if (this.isSelectedEntry) {
+        // selected and click, so we're ready to edit
         this.selectAndEmitEntry(event, this.entry);
         this.editMode = true;
         this.adjustTextareaHeight();
@@ -567,8 +565,9 @@ export default {
     },
     updateEntryValue($event) {
       this.editMode = false;
-      const value = $event.target.value;
-      this.entry.text = value;
+      const rawEntryValue = $event.target.value;
+      const sanitizeInput = sanitizeHtml(rawEntryValue, { allowedAttributes: [], allowedTags: [] });
+      this.entry.text = sanitizeInput;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {
