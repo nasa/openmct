@@ -68,7 +68,7 @@
             aria-label="Notebook Entry Display"
             class="c-ne__text"
             @mouseover="checkEditability($event)"
-            @click="editingEntry"
+            @click="editingEntry($event)"
           ></div>
           <textarea
             v-else
@@ -541,13 +541,13 @@ export default {
 
       this.$emit('updateEntry', this.entry);
     },
-    editingEntry() {
+    editingEntry(event) {
       if (!this.isSelectedEntry) {
         // just select the entry
-        this.selectAndEmitEntry(null, this.entry);
+        this.selectAndEmitEntry(event, this.entry);
       } else {
         // we're ready to edit
-        this.selectAndEmitEntry(null, this.entry);
+        this.selectAndEmitEntry(event, this.entry);
         this.editMode = true;
         this.adjustTextareaHeight();
         this.$emit('editingEntry');
@@ -568,9 +568,7 @@ export default {
         onAnnotationChange: this.timestampAndUpdate,
         notebookAnnotations: this.notebookAnnotations
       });
-      if (event) {
-        event.stopPropagation();
-      }
+      event.stopPropagation();
       this.$emit('entry-selection', this.entry);
     }
   }

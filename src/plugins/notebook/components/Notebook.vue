@@ -19,7 +19,6 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-tabs
 <template>
   <div class="c-notebook" :class="[{ 'c-notebook--restricted': isRestricted }]">
     <div class="c-notebook__head">
