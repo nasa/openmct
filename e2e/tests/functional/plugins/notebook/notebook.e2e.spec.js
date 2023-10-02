@@ -276,11 +276,12 @@ test.describe('Notebook entry tests', () => {
   test('When a new entry is created, it should be focused and selected', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);
+    await page.pause();
 
     // Click .c-notebook__drag-area
     await page.locator('.c-notebook__drag-area').click();
-    await expect(page.locator('[aria-label="Notebook Entry Input"]')).toBeVisible();
-    await expect(page.locator('[aria-label="Notebook Entry"]')).toHaveClass(/is-selected/);
+    await expect(page.getByLabel('Notebook Entry Display')).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
   });
   test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
     page
@@ -338,6 +339,7 @@ test.describe('Notebook entry tests', () => {
   test('previous and new entries can be deleted', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);
+    await page.pause();
 
     await nbUtils.enterTextEntry(page, 'First Entry');
     await page.hover('text="First Entry"');
