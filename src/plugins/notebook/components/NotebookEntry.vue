@@ -68,7 +68,7 @@
             aria-label="Notebook Entry Display"
             class="c-ne__text"
             @mouseover="checkEditability($event)"
-            @focus="editingEntry"
+            @click="editingEntry"
           ></div>
           <textarea
             v-else
@@ -376,6 +376,7 @@ export default {
       if (this.$refs.entryInput) {
         this.$refs.entryInput.style.height = 'auto';
         this.$refs.entryInput.style.height = `${this.$refs?.entryInput.scrollHeight}px`;
+        this.$refs.entryInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     },
     validateLink(originalLinkRenderer, href, title, text) {
@@ -541,10 +542,16 @@ export default {
       this.$emit('updateEntry', this.entry);
     },
     editingEntry() {
-      this.editMode = true;
-      this.selectAndEmitEntry(null, this.entry);
-      this.adjustTextareaHeight();
-      this.$emit('editingEntry');
+      if (!this.isSelectedEntry) {
+        // just select the entry
+        this.selectAndEmitEntry(null, this.entry);
+      } else {
+        // we're ready to edit
+        this.selectAndEmitEntry(null, this.entry);
+        this.editMode = true;
+        this.adjustTextareaHeight();
+        this.$emit('editingEntry');
+      }
     },
     updateEntryValue($event) {
       this.editMode = false;
