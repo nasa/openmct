@@ -64,8 +64,8 @@
       <div
         class="c-notebook__page-view"
         :class="{
-          'c-notebook--page-locked': selectedPage.isLocked,
-          'c-notebook--page-unlocked': !selectedPage.isLocked
+          'c-notebook--page-locked': selectedPage?.isLocked,
+          'c-notebook--page-unlocked': !selectedPage?.isLocked
         }"
       >
         <div class="c-notebook__page-view__header">
