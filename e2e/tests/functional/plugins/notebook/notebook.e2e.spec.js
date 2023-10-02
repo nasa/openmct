@@ -276,7 +276,6 @@ test.describe('Notebook entry tests', () => {
   test('When a new entry is created, it should be focused and selected', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);
-    await page.pause();
 
     // Click .c-notebook__drag-area
     await page.locator('.c-notebook__drag-area').click();
@@ -339,7 +338,6 @@ test.describe('Notebook entry tests', () => {
   test('previous and new entries can be deleted', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);
-    await page.pause();
 
     await nbUtils.enterTextEntry(page, 'First Entry');
     await page.hover('text="First Entry"');
