@@ -62,11 +62,12 @@ tabs
         @selectSection="selectSection"
         @toggleNav="toggleNav"
       />
-      <div class="c-notebook__page-view"
-           :class="{
-                    'c-notebook--page-locked': selectedPage.isLocked,
-                    'c-notebook--page-unlocked': !selectedPage.isLocked
-                }"
+      <div
+        class="c-notebook__page-view"
+        :class="{
+          'c-notebook--page-locked': selectedPage.isLocked,
+          'c-notebook--page-unlocked': !selectedPage.isLocked
+        }"
       >
         <div class="c-notebook__page-view__header">
           <button
@@ -103,9 +104,9 @@ tabs
           @drop.capture="dropCapture"
           @drop="dropOnEntry($event)"
         >
-                  <span class="c-notebook__drag-area__label">
-                    To start a new entry, click here or drag and drop any object
-                  </span>
+          <span class="c-notebook__drag-area__label">
+            To start a new entry, click here or drag and drop any object
+          </span>
         </div>
         <progress-bar
           v-if="savingTransaction"
@@ -160,13 +161,13 @@ tabs
 </template>
 
 <script>
-import {debounce} from 'lodash';
+import { debounce } from 'lodash';
 
 import Search from '@/ui/components/Search.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import objectLink from '../../../ui/mixins/object-link';
-import {isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE} from '../notebook-constants';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 import {
   addNotebookEntry,
   createNewEmbed,
@@ -442,10 +443,7 @@ export default {
         });
       }
     },
-    changeSelectedSection({
-      sectionId,
-      pageId
-    }) {
+    changeSelectedSection({ sectionId, pageId }) {
       const sections = this.sections.map((s) => {
         s.isSelected = false;
 
@@ -468,7 +466,7 @@ export default {
         return s;
       });
 
-      this.sectionsChanged({sections});
+      this.sectionsChanged({ sections });
       this.resetSearch();
     },
     cleanupDefaultNotebook() {
@@ -869,10 +867,7 @@ export default {
     orientationChange() {
       this.formatSidebar();
     },
-    pagesChanged({
-      pages = [],
-      id = null
-    }) {
+    pagesChanged({ pages = [], id = null }) {
       const selectedSection = this.selectedSection;
       if (!selectedSection) {
         return;
@@ -887,7 +882,7 @@ export default {
         return section;
       });
 
-      this.sectionsChanged({sections});
+      this.sectionsChanged({ sections });
     },
     removeDefaultClass(identifier) {
       this.openmct.status.delete(identifier);
@@ -986,10 +981,7 @@ export default {
         sectionId: this.selectedSectionId
       });
     },
-    sectionsChanged({
-      sections,
-      id = undefined
-    }) {
+    sectionsChanged({ sections, id = undefined }) {
       this.sections = [...sections];
       this.startTransaction();
       mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
