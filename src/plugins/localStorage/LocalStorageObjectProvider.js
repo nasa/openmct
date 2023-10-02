@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { filter__proto__ } from '../../utils/sanitization';
+
 export default class LocalStorageObjectProvider {
   constructor(spaceKey = 'mct') {
     this.localStorage = window.localStorage;
@@ -83,7 +85,7 @@ export default class LocalStorageObjectProvider {
    * @private
    */
   getSpaceAsObject() {
-    return JSON.parse(this.getSpace());
+    return JSON.parse(this.getSpace(), filter__proto__);
   }
 
   /**
