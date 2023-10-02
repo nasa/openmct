@@ -53,7 +53,6 @@ async function dragAndDropEmbed(page, notebookObject) {
   await page.click('button[title="Show selected item in tree"]');
   // Drag and drop the SWG into the notebook
   await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
-  await commitEntry(page);
 }
 
 /**
