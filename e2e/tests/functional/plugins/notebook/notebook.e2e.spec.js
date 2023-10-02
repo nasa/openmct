@@ -517,7 +517,6 @@ test.describe('Notebook entry tests', () => {
     // Blocks
     const blockTest = '```javascript\nconst foo = "bar";\nconst bar = "foo";\n```';
     await nbUtils.enterTextEntry(page, blockTest);
-    await page.pause();
     const codeBlock = page.locator('code.language-javascript:has-text("const foo = \\"bar\\";")');
     await expect(codeBlock).toBeVisible();
   });
