@@ -390,14 +390,11 @@ export default {
     validateLink(originalLinkRenderer, href, title, text) {
       try {
         const domain = new URL(href).hostname;
-        if (this.urlWhitelist) {
-          // if we have a whitelist, check the list to see if this domain is whitelisted
-          const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
-            return domain.endsWith(partialDomain);
-          });
-          if (!urlIsWhitelisted) {
-            return text;
-          }
+        const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
+          return domain.endsWith(partialDomain);
+        });
+        if (!urlIsWhitelisted) {
+          return text;
         }
         const html = originalLinkRenderer.call(this.renderer, href, title, text);
         return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
