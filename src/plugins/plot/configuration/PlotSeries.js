@@ -135,7 +135,9 @@ export default class PlotSeries extends Model {
    * @override
    */
   destroy() {
+    //this triggers Model.destroy which in turn triggers destroy methods for other classes.
     super.destroy();
+    this.stopListening();
     this.openmct.time.off('bounds', this.updateLimits);
 
     if (this.unsubscribe) {
@@ -149,6 +151,8 @@ export default class PlotSeries extends Model {
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }
+
+    configStore.deleteStore(this.dataStoreId);
   }
 
   /**

@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import moment from 'moment';
-
 export default class StartTimerAction {
   constructor(openmct) {
     this.name = 'Start';
@@ -33,6 +31,7 @@ export default class StartTimerAction {
 
     this.openmct = openmct;
   }
+
   invoke(objectPath) {
     const domainObject = objectPath[0];
     if (!domainObject || !domainObject.configuration) {
@@ -42,27 +41,21 @@ export default class StartTimerAction {
     let { pausedTime, timestamp } = domainObject.configuration;
     const newConfiguration = { ...domainObject.configuration };
 
-    if (pausedTime) {
-      pausedTime = moment(pausedTime);
-    }
+    const now = new Date(this.openmct.time.now());
 
-    if (timestamp) {
-      timestamp = moment(timestamp);
-    }
-
-    const now = moment(new Date(this.openmct.time.now()));
     if (pausedTime) {
-      const timeShift = moment.duration(now.diff(pausedTime));
-      const shiftedTime = timestamp.add(timeShift);
-      newConfiguration.timestamp = shiftedTime.toDate();
+      const timeShift = now - new Date(pausedTime);
+      const shiftedTime = new Date(new Date(timestamp).getTime() + timeShift);
+      newConfiguration.timestamp = shiftedTime;
     } else if (!timestamp) {
-      newConfiguration.timestamp = now.toDate();
+      newConfiguration.timestamp = now;
     }
 
     newConfiguration.timerState = 'started';
     newConfiguration.pausedTime = undefined;
     this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
   }
+
   appliesTo(objectPath, view = {}) {
     const domainObject = objectPath[0];
     if (!domainObject || !domainObject.configuration) {

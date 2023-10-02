@@ -20,26 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+const { test } = require('../../../pluginFixtures.js');
+const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
+const percySnapshot = require('@percy/playwright');
 
-describe('UI Components', () => {
-  let openmct;
+//Declare the scope of the visual test
+const inspectorPane = '.l-shell__pane-inspector';
 
-  beforeEach((done) => {
-    openmct = createOpenMct();
-    openmct.on('start', done);
-    openmct.startHeadless();
+test.describe('Visual - Controlled Clock', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
   });
 
-  afterEach(() => {
-    return resetApplicationState();
-  });
+  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
+    //Expand the Inspector Pane
+    await page.getByRole('button', { name: 'Inspect' }).click();
 
-  it('are exposed to users', () => {
-    expect(openmct.components).toBeDefined();
-  });
+    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
+      scope: inspectorPane
+    });
+    //Open Annotations Tab
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
-  it('exposes the object view', () => {
-    expect(openmct.components.ObjectView).toBeDefined();
+    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
+      scope: inspectorPane
+    });
   });
 });

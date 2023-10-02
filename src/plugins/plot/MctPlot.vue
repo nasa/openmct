@@ -78,8 +78,8 @@
               :rectangles="rectangles"
               :highlights="highlights"
               :show-limit-line-labels="limitLineLabels"
-              :annotated-points="annotatedPoints"
-              :annotation-selections="annotationSelections"
+              :annotated-points-by-series="annotatedPointsBySeries"
+              :annotation-selections-by-series="annotationSelectionsBySeries"
               :hidden-y-axis-ids="hiddenYAxisIds"
               :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
               @plotReinitializeCanvas="initCanvas"
@@ -245,9 +245,9 @@ export default {
   data() {
     return {
       altPressed: false,
+      annotatedPointsBySeries: {},
       highlights: [],
-      annotatedPoints: [],
-      annotationSelections: [],
+      annotationSelectionsBySeries: {},
       annotationsEverLoaded: false,
       lockHighlightPoint: false,
       yKeyOptions: [],
@@ -256,8 +256,6 @@ export default {
       plotHistory: [],
       selectedXKeyOption: {},
       xKeyOptions: [],
-      seriesModels: [],
-      legend: {},
       pending: 0,
       isRealTime: this.openmct.time.isRealTime(),
       loaded: false,
@@ -346,6 +344,8 @@ export default {
     this.abortController = new AbortController();
   },
   mounted() {
+    this.seriesModels = [];
+    this.config = {};
     this.yAxisIdVisibility = {};
     this.offsetWidth = 0;
 
@@ -357,7 +357,6 @@ export default {
     this.setTimeContext = this.setTimeContext.bind(this);
 
     this.config = this.getConfig();
-    this.legend = this.config.legend;
     this.yAxes = [
       {
         id: this.config.yAxis.id,
@@ -395,11 +394,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', () => {
-      if (this.annotationViewingAndEditingAllowed) {
-        this.loadAnnotations();
-      }
-    });
+    this.$on('loadingComplete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -414,6 +409,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
+    this.$off('loadingComplete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -455,7 +451,7 @@ export default {
         const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
         if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
           this.rectangles = [];
-          this.annotationSelections = [];
+          this.annotationSelectionsBySeries = {};
           this.selectPlot();
           document.body.removeEventListener('click', this.cancelSelection);
         }
@@ -468,9 +464,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', () => {
-            resolve();
-          });
+          this.$once('loadingComplete', resolve);
         } else {
           resolve();
         }
@@ -482,7 +476,7 @@ export default {
         // the annotations
         this.freeze();
         // just use first annotation
-        const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+        const boundingBoxes = selectedAnnotations[0].targets;
         let minX = Number.MAX_SAFE_INTEGER;
         let minY = Number.MAX_SAFE_INTEGER;
         let maxX = Number.MIN_SAFE_INTEGER;
@@ -566,31 +560,10 @@ export default {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
       this.seriesModels[index] = series;
-      this.listenTo(
-        series,
-        'change:xKey',
-        (xKey) => {
-          this.setDisplayRange(series, xKey);
-        },
-        this
-      );
-      this.listenTo(
-        series,
-        'change:yKey',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:xKey', this.setDisplayRange.bind(this, series), this);
+      this.listenTo(series, 'change:yKey', this.loadSeriesData.bind(this, series), this);
 
-      this.listenTo(
-        series,
-        'change:interpolate',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:interpolate', this.loadSeriesData.bind(this, series), this);
       this.listenTo(series, 'change:yAxisId', this.updateTicksAndSeriesForYAxis, this);
 
       this.loadSeriesData(series);
@@ -622,6 +595,11 @@ export default {
         foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
       }
     },
+    loadAnnotationsIfAllowed() {
+      if (this.annotationViewingAndEditingAllowed) {
+        this.loadAnnotations();
+      }
+    },
     async loadAnnotations() {
       if (!this.openmct.annotation.getAvailableTags().length) {
         // don't bother loading annotations if there are no tags
@@ -639,7 +617,7 @@ export default {
         })
       );
       if (rawAnnotationsForPlot) {
-        this.annotatedPoints = this.findAnnotationPoints(rawAnnotationsForPlot);
+        this.annotatedPointsBySeries = this.findAnnotationPoints(rawAnnotationsForPlot);
       }
       this.annotationsEverLoaded = true;
     },
@@ -795,7 +773,7 @@ export default {
       };
       this.config.xAxis.set('range', newRange);
       if (!isTick) {
-        this.annotatedPoints = [];
+        this.annotatedPointsBySeries = {};
         this.clearPanZoomHistory();
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
@@ -885,8 +863,8 @@ export default {
 
     marqueeAnnotations(annotationsToSelect) {
       annotationsToSelect.forEach((annotationToSelect) => {
-        Object.keys(annotationToSelect.targets).forEach((targetKeyString) => {
-          const target = annotationToSelect.targets[targetKeyString];
+        annotationToSelect.targets.forEach((target) => {
+          const targetKeyString = target.keyString;
           const series = this.seriesModels.find(
             (seriesModel) => seriesModel.keyString === targetKeyString
           );
@@ -934,17 +912,14 @@ export default {
     },
 
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      this.config.series.models.forEach((series) => {
-        targetDomainObjects[series.keyString] = series.domainObject;
+      const targetDomainObjects = this.config.series.models.map((series) => {
+        return series.domainObject;
       });
 
-      const targetDetails = {};
+      const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
-        });
+        targetDetails.push(annotation.targets);
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
           const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
@@ -992,9 +967,6 @@ export default {
       this.initCanvas();
 
       this.config.yAxisLabel = this.config.yAxis.get('label');
-
-      this.cursorGuideVertical = this.$refs.cursorGuideVertical;
-      this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
       this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
       this.yAxisListWithRange.forEach((yAxis) => {
@@ -1123,8 +1095,8 @@ export default {
     },
 
     updateCrosshairs(event) {
-      this.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
-      this.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
+      this.$refs.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
+      this.$refs.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
     },
 
     trackChartElementBounds(event) {
@@ -1157,7 +1129,7 @@ export default {
             series.closest = series.nearestPoint(point);
 
             return {
-              series: series,
+              seriesKeyString: series.keyString,
               point: series.closest
             };
           });
@@ -1245,7 +1217,7 @@ export default {
 
     startMarquee(event, annotationEvent) {
       this.rectangles = [];
-      this.annotationSelections = [];
+      this.annotationSelectionsBySeries = {};
       this.canvas.classList.remove('plot-drag');
       this.canvas.classList.add('plot-marquee');
 
@@ -1273,7 +1245,10 @@ export default {
 
       const nearbyAnnotations = this.gatherNearbyAnnotations();
 
-      if (this.annotationViewingAndEditingAllowed && this.annotationSelections.length) {
+      if (
+        this.annotationViewingAndEditingAllowed &&
+        Object.keys(this.annotationSelectionsBySeries).length
+      ) {
         //no annotations were found, but we are adding some now
         return;
       }
@@ -1353,20 +1328,18 @@ export default {
 
       document.body.addEventListener('click', this.cancelSelection);
     },
-    selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event) {
-      let targetDomainObjects = {};
-      let targetDetails = {};
+    selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBoxBySeries, event) {
+      let targetDomainObjects = [];
+      let targetDetails = [];
       let annotations = [];
-      pointsInBox.forEach((pointInBox) => {
-        if (pointInBox.length) {
-          const seriesID = pointInBox[0].series.keyString;
-          const boundingBoxWithId = boundingBoxPerYAxis.find(
-            (box) => box.id === pointInBox[0].series.get('yAxisId')
-          );
-          targetDetails[seriesID] = boundingBoxWithId?.boundingBox;
+      Object.keys(pointsInBoxBySeries).forEach((seriesKey) => {
+        const seriesModel = this.getSeries(seriesKey);
+        const boundingBoxWithId = boundingBoxPerYAxis.find(
+          (box) => box.id === seriesModel.get('yAxisId')
+        );
+        targetDetails.push({ ...boundingBoxWithId?.boundingBox, keyString: seriesKey });
 
-          targetDomainObjects[seriesID] = pointInBox[0].series.domainObject;
-        }
+        targetDomainObjects.push(seriesModel.domainObject);
       });
       this.selectPlotAnnotations({
         targetDetails,
@@ -1375,11 +1348,11 @@ export default {
       });
     },
     findAnnotationPoints(rawAnnotations) {
-      const annotationsByPoints = [];
+      const annotationsBySeries = {};
       rawAnnotations.forEach((rawAnnotation) => {
         if (rawAnnotation.targets) {
-          const targetValues = Object.values(rawAnnotation.targets);
-          const targetKeys = Object.keys(rawAnnotation.targets);
+          const targetValues = rawAnnotation.targets;
+          const targetKeys = rawAnnotation.targets.map((target) => target.keyString);
           if (targetValues && targetValues.length) {
             let boundingBoxPerYAxis = [];
             targetValues.forEach((boundingBox, index) => {
@@ -1390,6 +1363,9 @@ export default {
               if (!series) {
                 return;
               }
+              if (!annotationsBySeries[seriesId]) {
+                annotationsBySeries[seriesId] = [];
+              }
 
               boundingBoxPerYAxis.push({
                 id: series.get('yAxisId'),
@@ -1397,15 +1373,23 @@ export default {
               });
             });
 
-            const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis, rawAnnotation);
-            if (pointsInBox && pointsInBox.length) {
-              annotationsByPoints.push(pointsInBox.flat());
+            const pointsInBoxBySeries = this.getPointsInBoxBySeries(
+              boundingBoxPerYAxis,
+              rawAnnotation
+            );
+            if (pointsInBoxBySeries && Object.values(pointsInBoxBySeries).length) {
+              Object.keys(pointsInBoxBySeries).forEach((seriesKeyString) => {
+                const pointsInBox = pointsInBoxBySeries[seriesKeyString];
+                if (pointsInBox && pointsInBox.length) {
+                  annotationsBySeries[seriesKeyString].push(...pointsInBox);
+                }
+              });
             }
           }
         }
       });
 
-      return annotationsByPoints.flat();
+      return annotationsBySeries;
     },
     searchWithFlatbush(seriesData, seriesModel, boundingBox) {
       const flatbush = new Flatbush(seriesData.length);
@@ -1425,9 +1409,15 @@ export default {
 
       return rangeResults;
     },
-    getPointsInBox(boundingBoxPerYAxis, rawAnnotation) {
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
+    getPointsInBoxBySeries(boundingBoxPerYAxis, rawAnnotation) {
       // load series models in KD-Trees
-      const seriesKDTrees = [];
+      const searchResultsBySeries = {};
       this.seriesModels.forEach((seriesModel) => {
         const boundingBoxWithId = boundingBoxPerYAxis.find(
           (box) => box.id === seriesModel.get('yAxisId')
@@ -1440,16 +1430,15 @@ export default {
 
         const seriesData = seriesModel.getSeriesData();
         if (seriesData && seriesData.length) {
-          const searchResults = [];
+          searchResultsBySeries[seriesModel.keyString] = [];
           const rangeResults = this.searchWithFlatbush(seriesData, seriesModel, boundingBox);
           rangeResults.forEach((id) => {
             const seriesDatum = seriesData[id];
             if (seriesDatum) {
               const result = {
-                series: seriesModel,
                 point: seriesDatum
               };
-              searchResults.push(result);
+              searchResultsBySeries[seriesModel.keyString].push(result);
             }
 
             if (rawAnnotation) {
@@ -1463,13 +1452,10 @@ export default {
               seriesDatum.annotationsById[annotationKeyString] = rawAnnotation;
             }
           });
-          if (searchResults.length) {
-            seriesKDTrees.push(searchResults);
-          }
         }
       });
 
-      return seriesKDTrees;
+      return searchResultsBySeries;
     },
     endAnnotationMarquee(event) {
       const boundingBoxPerYAxis = [];
@@ -1490,13 +1476,13 @@ export default {
         });
       });
 
-      const pointsInBox = this.getPointsInBox(boundingBoxPerYAxis);
-      if (!pointsInBox) {
+      const pointsInBoxBySeries = this.getPointsInBoxBySeries(boundingBoxPerYAxis);
+      if (!pointsInBoxBySeries || Object.values(pointsInBoxBySeries).length === 0) {
         return;
       }
 
-      this.annotationSelections = pointsInBox.flat();
-      this.selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBox, event);
+      this.annotationSelectionsBySeries = pointsInBoxBySeries;
+      this.selectNewPlotAnnotations(boundingBoxPerYAxis, this.annotationSelectionsBySeries, event);
     },
     endZoomMarquee() {
       const startPixels = this.marquee.startPixels;
@@ -1890,6 +1876,10 @@ export default {
       if (this.config) {
         configStore.deleteStore(this.config.id);
       }
+
+      this.config = {};
+      this.canvas = undefined;
+      this.abortController = undefined;
 
       this.stopListening();
 

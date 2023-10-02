@@ -479,7 +479,11 @@
     "mediump",
     "sinonjs",
     "generatedata",
-    "grandsearch"
+    "grandsearch",
+    "websockets",
+    "swgs",
+    "memlab",
+    "devmode"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [

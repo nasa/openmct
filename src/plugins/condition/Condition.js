@@ -66,6 +66,9 @@ export default class Condition extends EventEmitter {
 
     this.trigger = conditionConfiguration.configuration.trigger;
     this.summary = '';
+    this.handleCriterionUpdated = this.handleCriterionUpdated.bind(this);
+    this.handleOldTelemetryCriterion = this.handleOldTelemetryCriterion.bind(this);
+    this.handleTelemetryStaleness = this.handleTelemetryStaleness.bind(this);
   }
 
   updateResult(datum) {
@@ -196,15 +199,15 @@ export default class Condition extends EventEmitter {
     if (found) {
       const newCriterionConfiguration = this.generateCriterion(criterionConfiguration);
       let newCriterion = new TelemetryCriterion(newCriterionConfiguration, this.openmct);
-      newCriterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-      newCriterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-      newCriterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+      newCriterion.on('criterionUpdated', this.handleCriterionUpdated);
+      newCriterion.on('telemetryIsOld', this.handleOldTelemetryCriterion);
+      newCriterion.on('telemetryStaleness', this.handleTelemetryStaleness);
 
       let criterion = found.item;
       criterion.unsubscribe();
-      criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-      criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-      newCriterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
+      criterion.off('criterionUpdated', this.handleCriterionUpdated);
+      criterion.off('telemetryIsOld', this.handleOldTelemetryCriterion);
+      newCriterion.off('telemetryStaleness', this.handleTelemetryStaleness);
       this.criteria.splice(found.index, 1, newCriterion);
     }
   }
@@ -213,9 +216,9 @@ export default class Condition extends EventEmitter {
     let found = this.findCriterion(id);
     if (found) {
       let criterion = found.item;
-      criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
-      criterion.off('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-      criterion.off('telemetryStaleness', () => this.handleTelemetryStaleness());
+      criterion.off('criterionUpdated', this.handleCriterionUpdated);
+      criterion.off('telemetryIsOld', this.handleOldTelemetryCriterion);
+      criterion.off('telemetryStaleness', this.handleTelemetryStaleness);
       criterion.destroy();
       this.criteria.splice(found.index, 1);
 

@@ -23,11 +23,13 @@
   <div class="c-progress-bar">
     <div
       class="c-progress-bar__bar"
-      :class="{ '--indeterminate': model.progressPerc === null }"
+      :class="{ '--indeterminate': !model.progressPerc }"
       :style="styleBarWidth"
     ></div>
     <div v-if="model.progressText !== undefined" class="c-progress-bar__text">
-      <span v-if="model.progressPerc > 0">{{ model.progressPerc }}% complete.</span>
+      <span v-if="model.progressPerc && model.progressPerc > 0"
+        >{{ model.progressPerc }}% complete.</span
+      >
       {{ model.progressText }}
     </div>
   </div>
@@ -43,7 +45,7 @@ export default {
   },
   computed: {
     styleBarWidth() {
-      return this.model.progressPerc !== null ? `width: ${this.model.progressPerc}%;` : '';
+      return this.model.progressPerc ? `width: ${this.model.progressPerc}%;` : '';
     }
   }
 };
