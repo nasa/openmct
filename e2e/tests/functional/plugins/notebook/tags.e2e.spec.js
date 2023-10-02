@@ -147,16 +147,14 @@ test.describe('Tagging in Notebooks @addInit', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5823'
     });
-
     await createNotebookEntryAndTags(page);
 
     await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-    const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 1`;
-    await page.locator(entryLocator).click();
-    await page.locator(entryLocator).fill(`An entry without tags`);
-    await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
+    await page.getByLabel('Notebook Entry Display').last().click();
+    await page.getByLabel('Notebook Entry Input').fill(`An entry without tags`);
+    await page.locator('.c-ne__save-button > button').click();
 
-    await page.hover('[aria-label="Notebook Entry Input"] >> nth=1');
+    await page.hover('[aria-label="Notebook Entry Display"] >> nth=1');
     await page.locator('button[title="Delete this entry"]').last().click();
     await expect(
       page.locator('text=This action will permanently delete this entry. Do you wish to continue?')
