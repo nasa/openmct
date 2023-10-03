@@ -137,6 +137,7 @@ export default {
     }
   },
   mounted() {
+    console.log('mounted');
     this.composition = this.openmct.composition.get(this.domainObject);
     this.composition.on('add', this.addTelemetryObject);
     this.composition.on('remove', this.removeTelemetryObject);
@@ -236,23 +237,23 @@ export default {
     },
     removeTelemetryObject(identifier) {
       const keyString = this.openmct.objects.makeKeyString(identifier);
-      const domainObject = this.openmct.objects.get(keyString);
       const index = this.telemetryObjs.findIndex((obj) => {
         let objId = this.openmct.objects.makeKeyString(obj.identifier);
 
         return objId === keyString;
       });
 
-      if (index > -1) {
-        this.telemetryObjs.splice(index, 1);
-      }
-
+      const domainObject = this.telemetryObjs[index];
       this.triggerUnsubscribeFromStaleness(domainObject, () => {
         this.emitStaleness({
           keyString,
           stalenessResponse: { isStale: false }
         });
       });
+
+      if (index > -1) {
+        this.telemetryObjs.splice(index, 1);
+      }
     },
     emitStaleness(stalenessObject) {
       this.$emit('telemetryStaleness', stalenessObject);
