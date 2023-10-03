@@ -192,8 +192,6 @@ test.describe('Snapshot image tests', () => {
     // be sure that entry was created
     await expect(page.getByText('favicon-96x96.png')).toBeVisible();
 
-    // click on image (need to click twice to focus)
-    await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).click();
     await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).click();
 
     // expect large image to be displayed

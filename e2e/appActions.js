@@ -384,11 +384,13 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
-  // Switch time conductor mode
+  // Switch time conductor mode. Note, need to wait here for URL to update as the router is debounced.
   if (isFixedTimespan) {
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    await page.waitForURL(/tc\.mode=fixed/);
   } else {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    await page.waitForURL(/tc\.mode=local/);
   }
 }
 
