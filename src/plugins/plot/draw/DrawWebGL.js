@@ -152,6 +152,8 @@ DrawWebGL.prototype.initContext = function () {
 };
 
 DrawWebGL.prototype.destroy = function () {
+  this.canvas = undefined;
+  this.overlay = undefined;
   this.stopListening();
 };
 

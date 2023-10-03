@@ -19,7 +19,6 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-
 <template>
   <div class="c-notebook" :class="[{ 'c-notebook--restricted': isRestricted }]">
     <div class="c-notebook__head">
@@ -62,7 +61,13 @@
         @selectSection="selectSection"
         @toggleNav="toggleNav"
       />
-      <div class="c-notebook__page-view">
+      <div
+        class="c-notebook__page-view"
+        :class="{
+          'c-notebook--page-locked': selectedPage?.isLocked,
+          'c-notebook--page-unlocked': !selectedPage?.isLocked
+        }"
+      >
         <div class="c-notebook__page-view__header">
           <button
             class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major icon-menu-hamburger"
@@ -107,9 +112,9 @@
           class="c-telemetry-table__progress-bar"
           :model="{ progressPerc: null }"
         />
-        <div v-if="selectedPage && selectedPage.isLocked" class="c-notebook__page-locked">
+        <div v-if="selectedPage && selectedPage.isLocked" class="c-notebook__page-locked-message">
           <div class="icon-lock"></div>
-          <div class="c-notebook__page-locked__message">
+          <div class="c-notebook__page-locked-message-text">
             This page has been committed and cannot be modified or removed
           </div>
         </div>
@@ -142,7 +147,7 @@
           class="c-notebook__commit-entries-control"
         >
           <button
-            class="c-button c-button--major commit-button icon-lock"
+            class="c-button commit-button icon-lock"
             title="Commit entries and lock this page from further changes"
             @click="lockPage()"
           >
@@ -185,6 +190,7 @@ import {
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
+
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -395,8 +401,8 @@ export default {
       );
 
       foundAnnotations.forEach((foundAnnotation) => {
-        const targetId = Object.keys(foundAnnotation.targets)[0];
-        const entryId = foundAnnotation.targets[targetId].entryId;
+        const target = foundAnnotation.targets?.[0];
+        const entryId = target.entryId;
         if (!this.notebookAnnotations[entryId]) {
           this.notebookAnnotations[entryId] = [];
         }
