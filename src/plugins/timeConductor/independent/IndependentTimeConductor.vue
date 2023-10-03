@@ -81,11 +81,12 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants';
+import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
+
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
-import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
-import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
 import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager';
 

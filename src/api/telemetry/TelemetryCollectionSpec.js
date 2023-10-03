@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import { TIMESYSTEM_KEY_WARNING } from './constants';
 
 describe('Telemetry Collection', () => {

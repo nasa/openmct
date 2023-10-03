@@ -20,26 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+function filter__proto__(key, value) {
+  if (key !== '__proto__') {
+    return value;
+  }
+}
 
-describe('UI Components', () => {
-  let openmct;
-
-  beforeEach((done) => {
-    openmct = createOpenMct();
-    openmct.on('start', done);
-    openmct.startHeadless();
-  });
-
-  afterEach(() => {
-    return resetApplicationState();
-  });
-
-  it('are exposed to users', () => {
-    expect(openmct.components).toBeDefined();
-  });
-
-  it('exposes the object view', () => {
-    expect(openmct.components.ObjectView).toBeDefined();
-  });
-});
+export { filter__proto__ };

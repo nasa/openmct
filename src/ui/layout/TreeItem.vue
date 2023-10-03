@@ -62,13 +62,13 @@
 </template>
 
 <script>
-import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
+import ViewControl from '../components/ViewControl.vue';
 
 export default {
   name: 'TreeItem',
   components: {
-    viewControl,
+    ViewControl,
     ObjectLabel
   },
   inject: ['openmct'],

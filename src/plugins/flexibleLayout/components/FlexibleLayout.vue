@@ -79,11 +79,11 @@
 </template>
 
 <script>
-import ContainerComponent from './container.vue';
 import Container from '../utils/container';
 import Frame from '../utils/frame';
-import ResizeHandle from './resizeHandle.vue';
-import DropHint from './dropHint.vue';
+import ContainerComponent from './Container.vue';
+import DropHint from './DropHint.vue';
+import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -164,16 +164,32 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
-    this.openmct.objects.observe(this.domainObject, 'configuration.containers', (containers) => {
-      this.containers = containers;
-    });
-    this.openmct.objects.observe(this.domainObject, 'configuration.rowsLayout', (rowsLayout) => {
-      this.rowsLayout = rowsLayout;
-    });
+    this.unObserveContainers = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.containers',
+      (containers) => {
+        this.containers = containers;
+      }
+    );
+    this.unObserveRowsLayout = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.rowsLayout',
+      (rowsLayout) => {
+        this.rowsLayout = rowsLayout;
+      }
+    );
   },
   beforeUnmount() {
     this.composition.off('remove', this.removeChildObject);
     this.composition.off('add', this.addFrame);
+
+    if (this.unObserveContainers) {
+      this.unObserveContainers();
+    }
+
+    if (this.unObserveRowsLayout) {
+      this.unObserveRowsLayout();
+    }
   },
   methods: {
     containsObject(identifier) {

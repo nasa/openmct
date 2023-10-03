@@ -80,10 +80,11 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import _ from 'lodash';
 
 const unknownObjectType = {
   definition: {
@@ -160,7 +161,8 @@ export default {
       this.updateInternalDomainObject
     );
 
-    this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
+    this.updateCurrentTab = this.updateCurrentTab.bind(this);
+    this.openmct.router.on('change:params', this.updateCurrentTab);
 
     this.RemoveAction = new RemoveAction(this.openmct);
     document.addEventListener('dragstart', this.dragstart);
@@ -183,7 +185,7 @@ export default {
     this.unsubscribe();
     this.clearCurrentTabIndexFromURL();
 
-    this.openmct.router.off('change:params', this.updateCurrentTab.bind(this));
+    this.openmct.router.off('change:params', this.updateCurrentTab);
 
     document.removeEventListener('dragstart', this.dragstart);
     document.removeEventListener('dragend', this.dragend);

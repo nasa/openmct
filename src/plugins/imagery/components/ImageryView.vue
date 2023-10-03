@@ -34,6 +34,7 @@
       @mousedown="handlePanZoomClick"
     >
       <ImageControls
+        v-show="!annotationsBeingMarqueed"
         ref="imageControls"
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
@@ -92,8 +93,9 @@
             v-if="shouldDisplayAnnotations"
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
-            @annotationMarqueed="handlePauseButton(true)"
-            @annotationsChanged="loadAnnotations"
+            @annotation-marquee-started="pauseAndHideImageControls"
+            @annotation-marquee-finished="revealImageControls"
+            @annotations-changed="loadAnnotations"
           />
         </div>
       </div>
@@ -198,18 +200,18 @@
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
 import Vue from 'vue';
 
-import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import imageryData from '../../imagery/mixins/imageryData';
+import eventHelpers from '../lib/eventHelpers';
+import AnnotationsCanvas from './AnnotationsCanvas.vue';
 import Compass from './Compass/Compass.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
-import imageryData from '../../imagery/mixins/imageryData';
-import AnnotationsCanvas from './AnnotationsCanvas.vue';
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -246,7 +248,14 @@ export default {
     AnnotationsCanvas
   },
   mixins: [imageryData],
-  inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
+  inject: [
+    'openmct',
+    'domainObject',
+    'objectPath',
+    'currentView',
+    'imageFreshnessOptions',
+    'showCompassHUD'
+  ],
   props: {
     focusedImageTimestamp: {
       type: Number,
@@ -308,7 +317,8 @@ export default {
       imagePanned: false,
       forceShowThumbnails: false,
       animateThumbScroll: false,
-      imageryAnnotations: {}
+      imageryAnnotations: {},
+      annotationsBeingMarqueed: false
     };
   },
   computed: {
@@ -727,7 +737,8 @@ export default {
       }
     }
 
-    this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+    // remove all eventListeners
+    this.stopListening();
 
     Object.keys(this.imageryAnnotations).forEach((time) => {
       const imageAnnotationsForTime = this.imageryAnnotations[time];
@@ -750,6 +761,13 @@ export default {
         }px)`,
         transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
       };
+    },
+    pauseAndHideImageControls() {
+      this.annotationsBeingMarqueed = true;
+      this.handlePauseButton(true);
+    },
+    revealImageControls() {
+      this.annotationsBeingMarqueed = false;
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
@@ -864,6 +882,7 @@ export default {
       if (this.domainObject.configuration) {
         const persistedLayers = this.domainObject.configuration.layers;
         if (!persistedLayers) {
+          this.layers.forEach((layer) => (layer.visible = false));
           return;
         }
 
@@ -1186,7 +1205,7 @@ export default {
       this.zoomFactor = newScaleFactor;
     },
     handlePanZoomClick(e) {
-      this.$refs.imageControls.handlePanZoomClick(e);
+      this.$refs.imageControls?.handlePanZoomClick(e);
     },
     arrowDownHandler(event) {
       let key = event.keyCode;
@@ -1275,6 +1294,9 @@ export default {
       this.scrollHandler();
     },
     setSizedImageDimensions() {
+      if (!this.$refs.focusedImage) {
+        return;
+      }
       this.focusedImageNaturalAspectRatio =
         this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
       if (

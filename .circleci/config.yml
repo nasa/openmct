@@ -94,7 +94,6 @@ jobs:
       - build_and_install:
           node-version: <<parameters.node-version>>
       - run: npm run lint
-      - run: npm run lint:spelling
       - generate_and_store_version_and_filesystem_artifacts
   unit-test:
     parameters:
@@ -198,7 +197,9 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run test:perf
+      - run: npm run test:perf:memory
+      - run: npm run test:perf:localhost
+      - run: npm run test:perf:contract
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:

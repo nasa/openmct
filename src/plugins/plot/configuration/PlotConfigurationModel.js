@@ -21,11 +21,11 @@
  *****************************************************************************/
 import _ from 'lodash';
 
+import LegendModel from './LegendModel';
 import Model from './Model';
 import SeriesCollection from './SeriesCollection';
 import XAxisModel from './XAxisModel';
 import YAxisModel from './YAxisModel';
-import LegendModel from './LegendModel';
 
 const MAX_Y_AXES = 3;
 const MAIN_Y_AXES_ID = 1;
@@ -168,8 +168,10 @@ export default class PlotConfigurationModel extends Model {
   onDestroy() {
     this.xAxis.destroy();
     this.yAxis.destroy();
+    this.additionalYAxes.forEach((additionalYAxis) => additionalYAxis.destroy());
     this.series.destroy();
     this.legend.destroy();
+    this.stopListening();
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }

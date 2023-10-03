@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import BarGraphView from './BarGraphView.vue';
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import mount from 'utils/mount';
+
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import BarGraphView from './BarGraphView.vue';
 
 export default function BarGraphViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -43,17 +44,16 @@ export default function BarGraphViewProvider(openmct) {
       return domainObject && domainObject.type === BAR_GRAPH_KEY;
     },
 
-    view: function (domainObject, objectPath) {
+    view(domainObject, objectPath) {
       let _destroy = null;
       let component = null;
 
       return {
-        show: function (element) {
+        show(element) {
           let isCompact = isCompactView(objectPath);
 
           const { vNode, destroy } = mount(
             {
-              el: element,
               components: {
                 BarGraphView
               },
@@ -79,7 +79,7 @@ export default function BarGraphViewProvider(openmct) {
           _destroy = destroy;
           component = vNode.componentInstance;
         },
-        destroy: function () {
+        destroy() {
           _destroy();
         },
         onClearData() {

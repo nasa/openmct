@@ -86,16 +86,19 @@ export default {
       handler: 'updateData'
     }
   },
+  created() {
+    this.registerListeners();
+  },
   mounted() {
+    this.plotResizeObserver.observe(this.$refs.plotWrapper);
     Plotly.newPlot(this.$refs.plot, Array.from(this.data), this.getLayout(), {
       responsive: true,
       displayModeBar: false
     });
-    this.registerListeners();
   },
   beforeUnmount() {
     if (this.plotResizeObserver) {
-      this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
+      this.plotResizeObserver.disconnect();
       clearTimeout(this.resizeTimer);
     }
 
@@ -226,7 +229,6 @@ export default {
             window.dispatchEvent(new Event('resize'));
           }, 250);
         });
-        this.plotResizeObserver.observe(this.$refs.plotWrapper);
       }
     },
     reset() {

@@ -24,12 +24,14 @@
 </template>
 <script>
 import mount from 'utils/mount';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import StalenessUtils from '@/utils/staleness';
+
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import StalenessUtils from '@/utils/staleness';
+
 import Plot from '../Plot.vue';
+import conditionalStylesMixin from './mixins/objectStyles-mixin';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],
@@ -132,6 +134,9 @@ export default {
     if (this.removeSelectable) {
       this.removeSelectable();
     }
+
+    const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+    configStore.deleteStore(configId);
 
     if (this._destroy) {
       this._destroy();

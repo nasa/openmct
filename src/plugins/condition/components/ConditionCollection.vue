@@ -79,9 +79,10 @@
 </template>
 
 <script>
-import Condition from './Condition.vue';
-import ConditionManager from '../ConditionManager';
 import StalenessUtils from '@/utils/staleness';
+
+import ConditionManager from '../ConditionManager';
+import Condition from './Condition.vue';
 
 export default {
   components: {
@@ -127,6 +128,7 @@ export default {
     this.composition.off('remove', this.removeTelemetryObject);
     if (this.conditionManager) {
       this.conditionManager.off('conditionSetResultUpdated', this.handleConditionSetResultUpdated);
+      this.conditionManager.off('noTelemetryObjects', this.emitNoTelemetryObjectEvent);
       this.conditionManager.destroy();
     }
 

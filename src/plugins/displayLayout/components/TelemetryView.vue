@@ -25,54 +25,57 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @endMove="endMove"
   >
-    <div
-      v-if="domainObject"
-      ref="telemetryViewWrapper"
-      class="c-telemetry-view u-style-receiver"
-      :class="[itemClasses]"
-      :style="styleObject"
-      :data-font-size="item.fontSize"
-      :data-font="item.font"
-      @contextmenu.prevent="showContextMenu"
-      @mouseover.ctrl="showToolTip"
-      @mouseleave="hideToolTip"
-    >
-      <div class="is-status__indicator" :title="`This item is ${status}`"></div>
-      <div v-if="showLabel" class="c-telemetry-view__label">
-        <div class="c-telemetry-view__label-text">
-          {{ domainObject.name }}
-        </div>
-      </div>
-
+    <template #content>
       <div
-        v-if="showValue"
-        :title="fieldName"
-        class="c-telemetry-view__value"
-        :class="[telemetryClass]"
+        v-if="domainObject"
+        ref="telemetryViewWrapper"
+        class="c-telemetry-view u-style-receiver"
+        :class="[itemClasses]"
+        :style="styleObject"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
+        @contextmenu.prevent="showContextMenu"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
       >
-        <div class="c-telemetry-view__value-text">
-          {{ telemetryValue }}
-          <span v-if="unit && item.showUnits" class="c-telemetry-view__value-text__unit">
-            {{ unit }}
-          </span>
+        <div class="is-status__indicator" :title="`This item is ${status}`"></div>
+        <div v-if="showLabel" class="c-telemetry-view__label">
+          <div class="c-telemetry-view__label-text">
+            {{ domainObject.name }}
+          </div>
+        </div>
+
+        <div
+          v-if="showValue"
+          :title="fieldName"
+          class="c-telemetry-view__value"
+          :class="[telemetryClass]"
+        >
+          <div class="c-telemetry-view__value-text">
+            {{ telemetryValue }}
+            <span v-if="unit && item.showUnits" class="c-telemetry-view__value-text__unit">
+              {{ unit }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </layout-frame>
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue';
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
 import {
   getDefaultNotebook,
   getNotebookSectionAndPage
 } from '@/plugins/notebook/utils/notebook-storage.js';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -387,6 +390,12 @@ export default {
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(await this.getObjectPath(), BELOW, 'telemetryViewWrapper');
+    },
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('endMove');
     }
   }
 };

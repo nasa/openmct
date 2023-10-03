@@ -97,10 +97,11 @@
 </template>
 
 <script>
-import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import ObjectView from './ObjectView.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
@@ -208,13 +209,13 @@ export default {
 
       this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.applicableActions);
+      this.updateActionItems();
     },
     unlistenToActionCollection() {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    updateActionItems(actionItems) {
+    updateActionItems() {
       const statusBarItems = this.actionCollection.getStatusBarActions();
       this.statusBarItems = this.openmct.menus.actionsToMenuItems(
         statusBarItems,

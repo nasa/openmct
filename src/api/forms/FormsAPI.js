@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FormController from './FormController';
-import FormProperties from './components/FormProperties.vue';
-
 import _ from 'lodash';
 import mount from 'utils/mount';
+
+import FormProperties from './components/FormProperties.vue';
+import FormController from './FormController';
 
 export default class FormsAPI {
   constructor(openmct) {

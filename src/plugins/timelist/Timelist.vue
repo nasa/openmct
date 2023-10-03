@@ -32,13 +32,14 @@
 </template>
 
 <script>
-import { getValidatedData } from '../plan/util';
-import ListView from '../../ui/components/List/ListView.vue';
-import { getPreciseDuration } from '../../utils/duration';
-import { SORT_ORDER_OPTIONS } from './constants';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import ListView from '../../ui/components/List/ListView.vue';
+import { getPreciseDuration } from '../../utils/duration';
+import { getValidatedData } from '../plan/util';
+import { SORT_ORDER_OPTIONS } from './constants';
 
 const SCROLL_TIMEOUT = 10000;
 

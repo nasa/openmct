@@ -29,8 +29,7 @@ const {
   createDomainObjectWithDefaults,
   setRealTimeMode,
   setFixedTimeMode,
-  waitForPlotsToRender,
-  selectInspectorTab
+  waitForPlotsToRender
 } = require('../../../../appActions');
 
 test.describe('Plot Tagging', () => {
@@ -42,7 +41,7 @@ test.describe('Plot Tagging', () => {
    * @param {Number} yEnd a telemetry item with a plot
    * @returns {Promise}
    */
-  async function createTags({ page, canvas, xEnd = 700, yEnd = 480 }) {
+  async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
     await canvas.hover({ trial: true });
 
     //Alt+Shift Drag Start to select some points to tag
@@ -150,7 +149,7 @@ test.describe('Plot Tagging', () => {
     await waitForPlotsToRender(page);
 
     await expect(page.getByRole('tab', { name: 'Annotations' })).not.toHaveClass(/is-current/);
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
     await expect(page.getByRole('tab', { name: 'Annotations' })).toHaveClass(/is-current/);
 
     await expect(page.getByText('No tags to display for this item')).toBeVisible();
@@ -285,7 +284,7 @@ test.describe('Plot Tagging', () => {
       page,
       canvas,
       xEnd: 700,
-      yEnd: 215
+      yEnd: 240
     });
     await basicTagsTests(page);
     await testTelemetryItem(page, alphaSineWave);

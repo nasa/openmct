@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import BarGraph from './BarGraphPlot.vue';
 import _ from 'lodash';
+
+import BarGraph from './BarGraphPlot.vue';
 
 export default {
   components: {
