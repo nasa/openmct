@@ -32,7 +32,9 @@ function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForB
     },
     invoke: async (request) => {
       const timeContext = request?.timeContext ?? openmct.time;
-      //if we're not in realtime mode, we will use the fixed time bounds provided by the request
+
+      // Wait for initial bounds if the request is for real-time data.
+      // Otherwise, use the bounds provided by the request.
       if (timeContext.isRealTime()) {
         const { start, end } = await waitForBounds();
         remoteClockLoaded = true;
