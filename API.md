@@ -957,19 +957,23 @@ Clock offsets are only relevant when in Real-time [mode](#time-modes).
 There are two time modes in Open MCT, "Fixed" and "Real-time". In Real-time mode the 
 time bounds of the application will be updated automatically each time the clock "ticks".
 The bounds are calculated based on the current value provided by the active clock. In 
-Fixed mode, the time bounds are set for a specified time range.
+Fixed mode, the time bounds are set for a specified time range. When Open MCT is first
+initialized, it will be in Real-time mode.
 
-The `setMode` method can be used to set the current time mode. It accepts either `'realtime'`
-or `'fixed'` as arguments.
+The `setMode` method can be used to set the current time mode. It accepts a mode argument,
+`'realtime'` or `'fixed'` and it also accepts an optional [offsets](#clock-offsets)/[bounds](#time-bounds) argument dependent
+on the current mode.
 
 ``` javascript
 openmct.time.setMode('fixed');
+openmct.time.setMode('fixed', bounds); // with optional bounds
 ```
 
 or
 
 ``` javascript
 openmct.time.setMode('realtime');
+openmct.time.setMode('realtime', offsets); // with optional offsets
 ```
 
 The `getMode` method will return the current time mode, either `'realtime'` or `'fixed'`.
