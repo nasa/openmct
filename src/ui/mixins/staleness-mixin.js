@@ -40,9 +40,7 @@ export default {
   },
   methods: {
     getSubscriptionId(domainObject) {
-      return (
-        domainObject?.customKey || this.openmct?.objects.makeKeyString(domainObject.identifier)
-      );
+      return this.openmct?.objects.makeKeyString(domainObject.identifier);
     },
     setupClockChangedEvent(callback) {
       this.setupClockChanged = true;

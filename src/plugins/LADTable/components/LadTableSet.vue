@@ -45,9 +45,9 @@
             :domain-object="ladRow.domainObject"
             :path-to-table="ladTable.objectPath"
             :has-units="hasUnits"
-            :is-stale="staleObjects.includes(combineKeys(ladTable.key, ladRow.key))"
+            :is-stale="staleObjects.includes(ladRow.key)"
             :configuration="configuration"
-            @rowContextClick="updateViewContext"
+            @row-context-click="updateViewContext"
           />
         </template>
       </tbody>
@@ -56,8 +56,11 @@
 </template>
 
 <script>
-import LadRow from './LadRow.vue';
+import { toRaw } from 'vue';
+
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import LadRow from './LadRow.vue';
 
 export default {
   components: {
@@ -76,7 +79,8 @@ export default {
       ladTableObjects: [],
       ladTelemetryObjects: {},
       viewContext: {},
-      configuration: this.ladTableConfiguration.getConfiguration()
+      configuration: this.ladTableConfiguration.getConfiguration(),
+      subscribedObjects: []
     };
   },
   computed: {
@@ -168,9 +172,18 @@ export default {
       );
       let ladTable = this.ladTableObjects[index];
 
-      this.ladTelemetryObjects[ladTable.key].forEach((telemetryObject) => {
-        let combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
-        this.triggerUnsubscribeFromStaleness({ customKey: combinedKey });
+      ladTable?.domainObject?.composition.forEach((telemetryObject) => {
+        const telemetryKey = this.openmct.objects.makeKeyString(telemetryObject);
+        if (!this.subscribedObjects?.[telemetryKey]) {
+          return;
+        }
+        let subscribedObject = toRaw(this.subscribedObjects[telemetryKey]);
+        if (subscribedObject?.count > 1) {
+          subscribedObject.count -= 1;
+        } else if (subscribedObject?.count === 1) {
+          this.triggerUnsubscribeFromStaleness(subscribedObject.domainObject);
+          delete this.subscribedObjects[telemetryKey];
+        }
       });
 
       delete this.ladTelemetryObjects[ladTable.key];
@@ -191,15 +204,18 @@ export default {
         let telemetryObject = {};
         telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
         telemetryObject.domainObject = domainObject;
-        const combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
-        domainObject.customKey = combinedKey;
 
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
         telemetryObjects.push(telemetryObject);
 
         this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
-        this.subscribeToStaleness(domainObject);
+        if (!this.subscribedObjects[telemetryObject?.key]) {
+          this.subscribeToStaleness(domainObject);
+          this.subscribedObjects[telemetryObject?.key] = { count: 1, domainObject };
+        } else if (this.subscribedObjects?.[telemetryObject?.key]?.count) {
+          this.subscribedObjects[telemetryObject?.key].count += 1;
+        }
       };
     },
     removeTelemetryObject(ladTable) {
