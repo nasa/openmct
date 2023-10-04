@@ -182,3 +182,9 @@ You might still be using legacy API if your source code
 
 ### What should I do if I am using legacy API?
 Please refer to [the modern Open MCT API](https://nasa.github.io/openmct/documentation/). Post any questions to the [Discussions section](https://github.com/nasa/openmct/discussions) of the Open MCT GitHub repository.
+
+## Related Repos
+- [Open MCT YAMCS Plugin](https://github.com/akhenry/openmct-yamcs)
+- [openmct-performance](https://github.com/unlikelyzero/openmct-performance)
+- [openmct-tutorial](https://github.com/nasa/openmct-tutorial)
+- [openmct-as-a-dependency](https://github.com/unlikelyzero/openmct-as-a-dependency)
