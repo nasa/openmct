@@ -137,7 +137,6 @@ export default {
     }
   },
   mounted() {
-    console.log('mounted');
     this.composition = this.openmct.composition.get(this.domainObject);
     this.composition.on('add', this.addTelemetryObject);
     this.composition.on('remove', this.removeTelemetryObject);
