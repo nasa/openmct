@@ -28,7 +28,6 @@ import mount from 'utils/mount';
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import StalenessUtils from '@/utils/staleness';
 
 import Plot from '../Plot.vue';
 import conditionalStylesMixin from './mixins/objectStyles-mixin';
@@ -90,11 +89,6 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      staleObjects: []
-    };
-  },
   watch: {
     gridLines(newGridLines) {
       this.updateComponentProp('gridLines', newGridLines);
@@ -116,20 +110,26 @@ export default {
     },
     staleObjects: {
       handler() {
-        this.isStale = this.staleObjects.length > 0;
         this.updateComponentProp('isStale', this.isStale);
       },
       deep: true
     }
   },
   mounted() {
-    this.stalenessSubscription = {};
     this.updateView();
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
+    if (this.composition) {
+      this.composition.off('add', this.subscribeToStaleness);
+      this.composition.off('remove', this.triggerUnsubscribeFromStaleness);
+    }
 
     if (this.removeSelectable) {
       this.removeSelectable();
@@ -141,8 +141,6 @@ export default {
     if (this._destroy) {
       this._destroy();
     }
-
-    this.destroyStalenessListeners();
   },
   methods: {
     setEditState(isEditing) {
@@ -163,10 +161,6 @@ export default {
       }
     },
     updateView() {
-      this.isStale = false;
-
-      this.destroyStalenessListeners();
-
       if (this._destroy) {
         this._destroy();
         this.component = null;
@@ -190,15 +184,15 @@ export default {
       const isMissing = openmct.objects.isMissing(object);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
-        this.subscribeToStaleness(object, (isStale) => {
-          this.updateComponentProp('isStale', isStale);
+        this.subscribeToStaleness(object, (stalenessResponse) => {
+          this.updateComponentProp('isStale', stalenessResponse.isStale);
         });
       } else {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(object);
 
-        this.composition.on('add', this.watchStaleness);
-        this.composition.on('remove', this.unwatchStaleness);
+        this.composition.on('add', this.subscribeToStaleness);
+        this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
         this.composition.load();
       }
 
@@ -258,54 +252,6 @@ export default {
 
       if (this.isEditing) {
         this.setSelection();
-      }
-    },
-    watchStaleness(domainObject) {
-      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-      this.stalenessSubscription[keyString] = {};
-      this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(
-        this.openmct,
-        domainObject
-      );
-
-      this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      });
-      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-        domainObject,
-        (stalenessResponse) => {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
-    },
-    unwatchStaleness(domainObject) {
-      const SKIP_CHECK = true;
-      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-      this.stalenessSubscription[keyString].unsubscribe();
-      this.stalenessSubscription[keyString].stalenessUtils.destroy();
-      this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
-
-      delete this.stalenessSubscription[keyString];
-    },
-    handleStaleness(keyString, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(
-          stalenessResponse
-        )
-      ) {
-        const index = this.staleObjects.indexOf(keyString);
-        const foundStaleObject = index > -1;
-        if (stalenessResponse.isStale && !foundStaleObject) {
-          this.staleObjects.push(keyString);
-        } else if (!stalenessResponse.isStale && foundStaleObject) {
-          this.staleObjects.splice(index, 1);
-        }
       }
     },
     onLockHighlightPointUpdated() {
@@ -405,20 +351,6 @@ export default {
 
         return this.childObject;
       }
-    },
-    destroyStalenessListeners() {
-      this.triggerUnsubscribeFromStaleness();
-
-      if (this.composition) {
-        this.composition.off('add', this.watchStaleness);
-        this.composition.off('remove', this.unwatchStaleness);
-        this.composition = null;
-      }
-
-      Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-        stalenessSubscription.unsubscribe();
-        stalenessSubscription.stalenessUtils.destroy();
-      });
     }
   }
 };

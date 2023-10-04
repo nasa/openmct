@@ -240,6 +240,11 @@ export default {
 
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
+
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   beforeUnmount() {
     this.removeStatusListener();
