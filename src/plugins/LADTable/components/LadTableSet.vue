@@ -80,7 +80,7 @@ export default {
       ladTelemetryObjects: {},
       viewContext: {},
       configuration: this.ladTableConfiguration.getConfiguration(),
-      subscribedObjects: []
+      subscribedObjects: {}
     };
   },
   computed: {
