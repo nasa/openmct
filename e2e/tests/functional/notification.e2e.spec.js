@@ -40,84 +40,55 @@ const errorConfig = {
   message: 'Error message'
 };
 
-test.describe('Notifications API', () => {
+test.describe('Notifications list', () => {
   /** @type {import('@playwright/test').Locator} */
   let notificationsList;
 
-  test.beforeEach('Load Open MCT', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     notificationsList = page.locator('div[role="dialog"]');
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-});
-
-test.describe('Notifications List', () => {
-  /** @type {import('@playwright/test').Locator} */
-  let notificationsList;
-
-  test.beforeEach('Load Open MCT', async ({ page }) => {
-    notificationsList = page.locator('div[role="dialog"]');
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
-
-  test('Notifications can be dismissed individually', async ({ page }) => {
+  test('Notifications can be dismissed individually from the list', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6820'
     });
 
+    // Create an alert notification with the message "Alert message"
+    await createNotification(page, alertConfig);
 
     // Create an alert notification with the message "Alert message"
-    await createNotification(page, {
-      severity: 'alert',
-      message: 'Alert message'
-    });
-
-    // Create an alert notification with the message "Alert message"
-    await createNotification(page, {
-      severity: 'alert',
-      message: 'Alert message'
-    });
+    await createNotification(page, alertConfig);
 
     // Create an error notification with the message "Error message"
-    await createNotification(page, {
-      severity: 'error',
-      message: 'Error message'
-    });
+    await createNotification(page, errorConfig);
 
     // Create an alert notification with the message "Alert message"
-    await createNotification(page, {
-      severity: 'alert',
-      message: 'Alert message'
-    });
+    await createNotification(page, alertConfig);
 
     // Create an alert notification with the message "Alert message"
-    await createNotification(page, {
-      severity: 'alert',
-      message: 'Alert message'
-    });
+    await createNotification(page, alertConfig);
 
     // Verify that there is a button with aria-label "Review 2 Notifications"
-    expect(await page.locator('button[aria-label="Review 1 Notification"]').count()).toBe(1);
+    expect(await page.locator('button[aria-label="Review 5 Notifications"]').count()).toBe(1);
 
     // Click on button with aria-label "Review 1 Notification"
-    await page.click('button[aria-label="Review 1 Notification"]');
+    await page.click('button[aria-label="Review 5 Notifications"]');
 
     // Notifications list dialog is open
     await expect(notificationsList).toBeVisible();
+    expect(await notificationsList.locator('div[role="listitem"]').count()).toBe(5);
 
     // Verify there is still a notification (listitem) with the text "Alert message"
-    expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).toContain(
-      'Alert message'
+    expect(await notificationsList.locator('div[role="listitem"]').nth(2).innerText()).toContain(
+      'Error message'
     );
 
     // Click on button with aria-label="Dismiss notification of Alert message"
-    await page.click('button[aria-label="Dismiss notification of Alert message"]');
-
-    // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
-    await expect(notificationsList).toBeHidden();
+    await page.click('button[aria-label="Dismiss notification of Error message"]');
+    expect(await notificationsList.locator('div[role="listitem"]').count()).toBe(4);
   });
 
   test('When last notification dismissed, list closes automatically', async ({ page }) => {
@@ -128,18 +99,12 @@ test.describe('Notifications List', () => {
 
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-  
+
     // Create an error notification with the message "Error message"
-    await createNotification(page, {
-      severity: 'error',
-      message: 'Error message'
-    });
+    await createNotification(page, errorConfig);
 
     // Create an alert notification with the message "Alert message"
-    await createNotification(page, {
-      severity: 'alert',
-      message: 'Alert message'
-    });
+    await createNotification(page, alertConfig);
 
     // Verify that there is a button with aria-label "Review 2 Notifications"
     expect(await page.locator('button[aria-label="Review 2 Notifications"]').count()).toBe(1);
