@@ -31,6 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
+    @paste="addImageFromPaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -372,6 +373,21 @@ export default {
 
       this.manageEmbedLayout();
     },
+    async addImageFromPaste(event) {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      await Promise.all(
+        Array.from(items).map(async (item) => {
+          const isImage = item.type.includes('image') && item.kind === 'file';
+          if (isImage) {
+            const imageFile = item.getAsFile();
+            const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
+            this.entry.embeds.push(imageEmbed);
+          }
+        })
+      );
+      this.manageEmbedLayout();
+      this.timestampAndUpdate();
+    },
     convertMarkDownToHtml(text) {
       let markDownHtml = this.marked.parse(text, {
         breaks: true,
@@ -443,15 +459,27 @@ export default {
     },
     async dropOnEntry(dropEvent) {
       dropEvent.stopImmediatePropagation();
+      const dataTransferFiles = Array.from(dropEvent.dataTransfer.files);
 
-      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
+      const localImageDropped = dataTransferFiles.some((file) => file.type.includes('image'));
       const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      const domainObjectData = dropEvent.dataTransfer.getData('openmct/domain-object-path');
       const imageUrl = dropEvent.dataTransfer.getData('URL');
       if (localImageDropped) {
-        // local image dropped from disk (file)
-        const imageData = dropEvent.dataTransfer.files[0];
-        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
-        this.entry.embeds.push(imageEmbed);
+        // local image(s) dropped from disk (file)
+        await Promise.all(
+          dataTransferFiles.map(async (file) => {
+            if (file.type.includes('image')) {
+              const imageData = file;
+              const imageEmbed = await createNewImageEmbed(
+                imageData,
+                this.openmct,
+                imageData?.name
+              );
+              this.entry.embeds.push(imageEmbed);
+            }
+          })
+        );
         this.manageEmbedLayout();
       } else if (imageUrl) {
         try {
@@ -477,11 +505,18 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-      } else {
+      } else if (domainObjectData) {
         // plain domain object
-        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
-        const objectPath = JSON.parse(data);
+        const objectPath = JSON.parse(domainObjectData);
         await this.addNewEmbed(objectPath);
+      } else {
+        this.openmct.notifications.alert(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        console.warn(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        return;
       }
 
       this.timestampAndUpdate();
