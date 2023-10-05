@@ -451,7 +451,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValidFloat32(val) {
-        return val < FLOAT32_MAX || val > FLOAT32_MIN;
+        return val < FLOAT32_MAX && val > FLOAT32_MIN;
     }
 
     /**
