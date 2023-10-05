@@ -125,30 +125,35 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
-      const base64Data = reader.result;
-      const blobUrl = URL.createObjectURL(image);
-      const imageDomainObject = createNotebookImageDomainObject(base64Data);
-      await saveNotebookImageDomainObject(openmct, imageDomainObject);
-      const imageThumbnailURL = await getThumbnailURLFromImageUrl(blobUrl);
+      try {
+        const base64Data = reader.result;
+        const blobUrl = URL.createObjectURL(image);
+        const imageDomainObject = createNotebookImageDomainObject(base64Data);
+        await saveNotebookImageDomainObject(openmct, imageDomainObject);
+        const imageThumbnailURL = await getThumbnailURLFromImageUrl(blobUrl);
 
-      const snapshot = {
-        fullSizeImageObjectIdentifier: imageDomainObject.identifier,
-        thumbnailImage: {
-          src: imageThumbnailURL
-        }
-      };
+        const snapshot = {
+          fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+          thumbnailImage: {
+            src: imageThumbnailURL
+          }
+        };
 
-      const embedMetaData = {
-        bounds: openmct.time.bounds(),
-        link: null,
-        objectPath: null,
-        openmct,
-        userImage: true,
-        imageName
-      };
+        const embedMetaData = {
+          bounds: openmct.time.bounds(),
+          link: null,
+          objectPath: null,
+          openmct,
+          userImage: true,
+          imageName
+        };
 
-      const createdEmbed = await createNewEmbed(embedMetaData, snapshot);
-      resolve(createdEmbed);
+        const createdEmbed = await createNewEmbed(embedMetaData, snapshot);
+        resolve(createdEmbed);
+      } catch (error) {
+        console.error(`${error.message} - unable to embed image ${imageName}`, error);
+        openmct.notifications.error(`${error.message} -- unable to embed image ${imageName}`);
+      }
     };
 
     reader.readAsDataURL(image);

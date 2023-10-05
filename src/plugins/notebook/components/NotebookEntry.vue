@@ -374,12 +374,21 @@ export default {
       this.manageEmbedLayout();
     },
     async addImageFromPaste(event) {
-      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      const clipboardItems = Array.from(
+        (event.clipboardData || event.originalEvent.clipboardData).items
+      );
+      const hasImage = clipboardItems.some(
+        (clipboardItem) => clipboardItem.type.includes('image') && clipboardItem.kind === 'file'
+      );
+      // If the clipboard contained an image, prevent the paste event from reaching the textarea.
+      if (hasImage) {
+        event.preventDefault();
+      }
       await Promise.all(
-        Array.from(items).map(async (item) => {
-          const isImage = item.type.includes('image') && item.kind === 'file';
+        Array.from(clipboardItems).map(async (clipboardItem) => {
+          const isImage = clipboardItem.type.includes('image') && clipboardItem.kind === 'file';
           if (isImage) {
-            const imageFile = item.getAsFile();
+            const imageFile = clipboardItem.getAsFile();
             const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
             this.entry.embeds.push(imageEmbed);
           }
@@ -490,7 +499,7 @@ export default {
           this.entry.embeds.push(imageEmbed);
           this.manageEmbedLayout();
         } catch (error) {
-          this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
+          this.openmct.notifications.error(`Unable to add image: ${error.message} `);
           console.error(`Problem embedding remote image`, error);
         }
       } else if (snapshotId.length) {
@@ -510,7 +519,7 @@ export default {
         const objectPath = JSON.parse(domainObjectData);
         await this.addNewEmbed(objectPath);
       } else {
-        this.openmct.notifications.alert(
+        this.openmct.notifications.error(
           `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
         );
         console.warn(
