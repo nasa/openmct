@@ -63,6 +63,10 @@ import { symlog } from '../mathUtils';
  *
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
+
+const FLOAT32_MAX = 3.4e38;
+const FLOAT32_MIN = -3.4e38;
+
 export default class PlotSeries extends Model {
     logMode = false;
 
@@ -439,8 +443,15 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        console.log('is value invalid', val);
-        return Number.isNaN(val) || this.unPlottableValues.includes(val);
+        return Number.isNaN(val) || this.unPlottableValues.includes(val) || this.isValidFloat32(val);
+    }
+
+    /**
+     *
+     * @private
+     */
+    isValidFloat32(val) {
+        return val > FLOAT32_MAX || val < FLOAT32_MIN;
     }
 
     /**
