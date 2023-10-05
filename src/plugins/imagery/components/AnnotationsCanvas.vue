@@ -78,12 +78,21 @@ export default {
           )?.rectangle;
           const annotationRectangleForPixelDepth =
             this.transformRectangleToPixelDense(annotationRectangle);
-          const indexNumber = builtAnnotationsIndex.add(
-            annotationRectangleForPixelDepth.x,
-            annotationRectangleForPixelDepth.y,
-            annotationRectangleForPixelDepth.x + annotationRectangleForPixelDepth.width,
-            annotationRectangleForPixelDepth.y + annotationRectangleForPixelDepth.height
-          );
+          let { x, y, width, height } = annotationRectangleForPixelDepth;
+          let x2 = x + width;
+          let y2 = y + height;
+
+          // if height or width are negative, we need to adjust the x and y
+          if (width < 0) {
+            x2 = x;
+            x = x + width;
+          }
+          if (height < 0) {
+            y2 = y;
+            y = y + height;
+          }
+
+          const indexNumber = builtAnnotationsIndex.add(x, y, x2, y2);
           this.indexToAnnotationMap[indexNumber] = annotation;
         });
         builtAnnotationsIndex.finish();
@@ -103,6 +112,7 @@ export default {
     }
   },
   mounted() {
+    console.debug(`🍉 mounted`);
     this.canvas = this.$refs.canvas;
     this.context = this.canvas.getContext('2d');
 
