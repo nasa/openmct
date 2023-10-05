@@ -439,6 +439,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
+        console.log('is value invalid', val);
         return Number.isNaN(val) || this.unPlottableValues.includes(val);
     }
 
