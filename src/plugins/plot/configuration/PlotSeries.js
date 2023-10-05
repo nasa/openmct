@@ -443,7 +443,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || this.unPlottableValues.includes(val) || this.isValidFloat32(val);
+        return Number.isNaN(val) || this.unPlottableValues.includes(val) || !this.isValidFloat32(val);
     }
 
     /**
