@@ -414,7 +414,7 @@ export default class PlotSeries extends Model {
         const currentYVal = this.getYVal(point);
         const lastYVal = this.getYVal(data[insertIndex - 1]);
 
-        if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
+        if ((this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) || this.isValidFloat32(currentYVal)) {
             console.warn('[Plot] Invalid Y Values detected');
 
             return;
@@ -443,7 +443,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || this.unPlottableValues.includes(val) || this.isValidFloat32(val);
+        return Number.isNaN(val) || this.unPlottableValues.includes(val);
     }
 
     /**
