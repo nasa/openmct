@@ -177,6 +177,7 @@
 <script>
 import Flatbush from 'flatbush';
 import _ from 'lodash';
+import { useEventBus } from 'utils/useEventBus';
 
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -197,7 +198,7 @@ export default {
     MctTicks,
     MctChart
   },
-  inject: ['openmct', 'domainObject', 'path', 'eventBus'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     options: {
       type: Object,
@@ -253,6 +254,12 @@ export default {
     'lock-highlight-point',
     'status-updated'
   ],
+  setup() {
+    const { EventBus } = useEventBus();
+    return {
+      EventBus
+    };
+  },
   data() {
     return {
       altPressed: false,
@@ -405,7 +412,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.eventBus.$on('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.EventBus.$on('loading-complete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -420,7 +427,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
-    this.eventBus.$off('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.EventBus.$off('loading-complete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -475,7 +482,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.eventBus.$once('loadingComplete', resolve);
+          this.EventBus.$once('loading-complete', resolve);
         } else {
           resolve();
         }
@@ -709,7 +716,7 @@ export default {
       this.pending -= 1;
       this.updateLoading();
       if (this.pending === 0) {
-        this.$emit('loading-complete');
+        this.EventBus.$emit('loading-complete');
       }
     },
 

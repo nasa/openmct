@@ -77,7 +77,7 @@ export default {
     PlotLegend
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path', 'eventBus'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     options: {
       type: Object,

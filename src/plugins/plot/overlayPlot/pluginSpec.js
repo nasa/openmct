@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import EventBus from 'utils/eventBus';
 import mount from 'utils/mount';
 import {
   createMouseEvent,
@@ -315,7 +314,6 @@ describe('the plugin', function () {
             openmct,
             domainObject: overlayPlotObject,
             composition,
-            eventBus: EventBus,
             path: [overlayPlotObject]
           },
           template: '<plot ref="plotComponent"></plot>'
@@ -507,7 +505,6 @@ describe('the plugin', function () {
             openmct: openmct,
             domainObject: overlayPlotObject,
             composition,
-            eventBus: EventBus,
             path: [overlayPlotObject]
           },
           template: '<plot ref="plotComponent"></plot>'
