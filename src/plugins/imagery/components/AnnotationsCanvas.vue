@@ -54,7 +54,7 @@ export default {
       }
     }
   },
-  emits: ['annotations-changed', 'annotation-marqueed'],
+  emits: ['annotation-marquee-started', 'annotations-changed', 'annotation-marquee-finished'],
   data() {
     return {
       dragging: false,
@@ -293,6 +293,8 @@ export default {
     createNewAnnotation() {
       this.dragging = false;
       this.selectedAnnotations = [];
+      this.selectedAnnotations = [];
+      this.$emit('annotation-marquee-finished');
 
       const rectangleFromCanvas = {
         x: this.newAnnotationRectangle.x,
@@ -316,6 +318,7 @@ export default {
     },
     attemptToSelectExistingAnnotation(event) {
       this.dragging = false;
+      this.$emit('annotation-marquee-finished');
       // use flatbush to find annotations that are close to the click
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;
@@ -378,7 +381,7 @@ export default {
       return selection;
     },
     startAnnotationDrag(event) {
-      this.$emit('annotation-marqueed');
+      this.$emit('annotation-marquee-started');
       this.newAnnotationRectangle = {};
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;

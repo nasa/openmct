@@ -275,6 +275,7 @@
 <script>
 import _ from 'lodash';
 import { toRaw } from 'vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
@@ -300,6 +301,7 @@ export default {
     SizingRow,
     ProgressBar
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'objectPath', 'table', 'currentView'],
   props: {
     isEditing: {
@@ -371,8 +373,7 @@ export default {
       enableRegexSearch: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
-      rowContext: {},
-      staleObjects: []
+      rowContext: {}
     };
   },
   computed: {
@@ -415,7 +416,7 @@ export default {
         classes.push('is-paused');
       }
 
-      if (this.staleObjects.length !== 0) {
+      if (this.isStale) {
         classes.push('is-stale');
       }
 
@@ -746,17 +747,8 @@ export default {
     outstandingRequests(loading) {
       this.loading = loading;
     },
-    handleStaleness({ keyString, isStale }) {
-      const index = this.staleObjects.indexOf(keyString);
-      if (isStale) {
-        if (index === -1) {
-          this.staleObjects.push(keyString);
-        }
-      } else {
-        if (index !== -1) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
+    handleStaleness({ keyString, stalenessResponse }) {
+      this.addOrRemoveStaleObject(keyString, stalenessResponse);
     },
     calculateTableSize() {
       this.$nextTick().then(this.calculateColumnWidths);

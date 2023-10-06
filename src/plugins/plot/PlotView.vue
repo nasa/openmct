@@ -62,13 +62,12 @@
 </template>
 
 <script>
-import StalenessUtils from '@/utils/staleness';
-
 import ImageExporter from '../../exporters/ImageExporter';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
 import PlotLegend from './legend/PlotLegend.vue';
 import eventHelpers from './lib/eventHelpers';
 import MctPlot from './MctPlot.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
   components: {
@@ -76,6 +75,7 @@ export default {
     ProgressBar,
     PlotLegend
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'domainObject', 'path'],
   props: {
     options: {
@@ -140,7 +140,6 @@ export default {
     return {
       loading: false,
       status: '',
-      staleObjects: [],
       limitLineLabels: undefined,
       lockHighlightPoint: false,
       highlights: [],
@@ -157,11 +156,7 @@ export default {
       return this.gridLines ?? !this.options.compact;
     },
     staleClass() {
-      if (this.staleObjects.length !== 0) {
-        return 'is-stale';
-      }
-
-      return '';
+      return this.isStale ? 'is-stale' : '';
     },
     plotLegendPositionClass() {
       return this.position ? `plot-legend-${this.position}` : '';
@@ -185,8 +180,11 @@ export default {
   created() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
-    this.stalenessSubscription = {};
     this.loadComposition();
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   unmounted() {
     this.destroy();
@@ -196,59 +194,9 @@ export default {
       this.compositionCollection = this.openmct.composition.get(this.domainObject);
 
       if (this.compositionCollection) {
-        this.compositionCollection.on('add', this.addItem);
-        this.compositionCollection.on('remove', this.removeItem);
+        this.compositionCollection.on('add', this.subscribeToStaleness);
+        this.compositionCollection.on('remove', this.triggerUnsubscribeFromStaleness);
         this.compositionCollection.load();
-      }
-    },
-    addItem(object) {
-      const keystring = this.openmct.objects.makeKeyString(object.identifier);
-
-      if (!this.stalenessSubscription[keystring]) {
-        this.stalenessSubscription[keystring] = {};
-        this.stalenessSubscription[keystring].stalenessUtils = new StalenessUtils(
-          this.openmct,
-          object
-        );
-      }
-
-      this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keystring, stalenessResponse);
-        }
-      });
-      const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(
-        object,
-        (stalenessResponse) => {
-          this.handleStaleness(keystring, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keystring].unsubscribe = unsubscribeFromStaleness;
-    },
-    removeItem(object) {
-      const SKIP_CHECK = true;
-      const keystring = this.openmct.objects.makeKeyString(object);
-      this.stalenessSubscription[keystring].unsubscribe();
-      this.stalenessSubscription[keystring].stalenessUtils.destroy();
-      this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
-      delete this.stalenessSubscription[keystring];
-    },
-    handleStaleness(id, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)
-      ) {
-        const index = this.staleObjects.indexOf(id);
-        if (stalenessResponse.isStale) {
-          if (index === -1) {
-            this.staleObjects.push(id);
-          }
-        } else {
-          if (index !== -1) {
-            this.staleObjects.splice(index, 1);
-          }
-        }
       }
     },
     loadingUpdated(loading) {
@@ -256,16 +204,9 @@ export default {
       this.$emit('loading-updated', ...arguments);
     },
     destroy() {
-      if (this.stalenessSubscription) {
-        Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-          stalenessSubscription.unsubscribe();
-          stalenessSubscription.stalenessUtils.destroy();
-        });
-      }
-
       if (this.compositionCollection) {
-        this.compositionCollection.off('add', this.addItem);
-        this.compositionCollection.off('remove', this.removeItem);
+        this.compositionCollection.off('add', this.subscribeToStaleness);
+        this.compositionCollection.off('remove', this.triggerUnsubscribeFromStaleness);
       }
 
       this.imageExporter = null;

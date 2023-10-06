@@ -34,6 +34,7 @@
       @mousedown="handlePanZoomClick"
     >
       <ImageControls
+        v-show="!annotationsBeingMarqueed"
         ref="imageControls"
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
@@ -92,7 +93,8 @@
             v-if="shouldDisplayAnnotations"
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
-            @annotation-marqueed="handlePauseButton(true)"
+            @annotation-marquee-started="pauseAndHideImageControls"
+            @annotation-marquee-finished="revealImageControls"
             @annotations-changed="loadAnnotations"
           />
         </div>
@@ -246,7 +248,14 @@ export default {
     AnnotationsCanvas
   },
   mixins: [imageryData],
-  inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
+  inject: [
+    'openmct',
+    'domainObject',
+    'objectPath',
+    'currentView',
+    'imageFreshnessOptions',
+    'showCompassHUD'
+  ],
   props: {
     focusedImageTimestamp: {
       type: Number,
@@ -309,7 +318,8 @@ export default {
       imagePanned: false,
       forceShowThumbnails: false,
       animateThumbScroll: false,
-      imageryAnnotations: {}
+      imageryAnnotations: {},
+      annotationsBeingMarqueed: false
     };
   },
   computed: {
@@ -753,6 +763,13 @@ export default {
         transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
       };
     },
+    pauseAndHideImageControls() {
+      this.annotationsBeingMarqueed = true;
+      this.handlePauseButton(true);
+    },
+    revealImageControls() {
+      this.annotationsBeingMarqueed = false;
+    },
     setTimeContext() {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -1189,7 +1206,7 @@ export default {
       this.zoomFactor = newScaleFactor;
     },
     handlePanZoomClick(e) {
-      this.$refs.imageControls.handlePanZoomClick(e);
+      this.$refs.imageControls?.handlePanZoomClick(e);
     },
     arrowDownHandler(event) {
       let key = event.keyCode;

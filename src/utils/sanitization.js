@@ -20,31 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
-  let remoteClockLoaded = false;
-
-  return {
-    appliesTo: () => {
-      // Get the activeClock from the Global Time Context
-      const { activeClock } = openmct.time;
-
-      return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
-    },
-    invoke: async (request) => {
-      const timeContext = request?.timeContext ?? openmct.time;
-
-      // Wait for initial bounds if the request is for real-time data.
-      // Otherwise, use the bounds provided by the request.
-      if (timeContext.isRealTime()) {
-        const { start, end } = await waitForBounds();
-        remoteClockLoaded = true;
-        request.start = start;
-        request.end = end;
-      }
-
-      return request;
-    }
-  };
+function filter__proto__(key, value) {
+  if (key !== '__proto__') {
+    return value;
+  }
 }
 
-export default remoteClockRequestInterceptor;
+export { filter__proto__ };
