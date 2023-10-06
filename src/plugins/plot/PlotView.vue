@@ -62,12 +62,13 @@
 </template>
 
 <script>
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import ImageExporter from '../../exporters/ImageExporter';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
 import PlotLegend from './legend/PlotLegend.vue';
 import eventHelpers from './lib/eventHelpers';
 import MctPlot from './MctPlot.vue';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
   components: {
@@ -76,7 +77,7 @@ export default {
     PlotLegend
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'eventBus'],
   props: {
     options: {
       type: Object,

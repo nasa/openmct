@@ -43,7 +43,6 @@ define([
   './plugins/duplicate/plugin',
   './plugins/importFromJSONAction/plugin',
   './plugins/exportAsJSONAction/plugin',
-  './utils/eventBus',
   'vue'
 ], function (
   EventEmitter,
@@ -68,7 +67,6 @@ define([
   DuplicateActionPlugin,
   ImportFromJSONAction,
   ExportAsJSONAction,
-  EventBus,
   Vue
 ) {
   /**
@@ -389,7 +387,6 @@ define([
         },
         template: '<Layout ref="layout"></Layout>'
       });
-      appLayout.provide(EventBus);
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
         this.layout = component.$refs.layout;

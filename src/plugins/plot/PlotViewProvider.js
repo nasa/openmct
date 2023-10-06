@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventBus from 'utils/EventBus';
 import mount from 'utils/mount';
 
 import Plot from './PlotView.vue';
@@ -76,7 +77,8 @@ export default function PlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                eventBus: EventBus
               },
               data() {
                 return {

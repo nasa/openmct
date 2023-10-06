@@ -177,7 +177,6 @@
 <script>
 import Flatbush from 'flatbush';
 import _ from 'lodash';
-import { inject } from 'vue';
 
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -191,8 +190,6 @@ import MctTicks from './MctTicks.vue';
 const OFFSET_THRESHOLD = 10;
 const AXES_PADDING = 20;
 
-const eventBus = inject('eventBus');
-
 export default {
   components: {
     XAxis,
@@ -200,7 +197,7 @@ export default {
     MctTicks,
     MctChart
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'eventBus'],
   props: {
     options: {
       type: Object,
@@ -408,7 +405,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    eventBus.$on('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.eventBus.$on('loadingComplete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -423,7 +420,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
-    eventBus.$off('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.eventBus.$off('loadingComplete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -478,7 +475,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          eventBus.$once('loadingComplete', resolve);
+          this.eventBus.$once('loadingComplete', resolve);
         } else {
           resolve();
         }
