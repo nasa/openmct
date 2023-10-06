@@ -142,7 +142,7 @@ export default class ExampleUserProvider extends EventEmitter {
     status.timestamp = Date.now();
     const matchingIndex = this.statusRoleValues.findIndex((statusRole) => statusRole.role === role);
     this.statusRoleValues[matchingIndex].status = status;
-    this.emit('status-change', {
+    this.emit('statusChange', {
       role,
       status
     });
@@ -171,7 +171,7 @@ export default class ExampleUserProvider extends EventEmitter {
       question: pollQuestion,
       timestamp: Date.now()
     };
-    this.emit('poll-question-change', this.pollQuestion);
+    this.emit('pollQuestionChange', this.pollQuestion);
 
     return true;
   }
