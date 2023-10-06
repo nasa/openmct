@@ -28,6 +28,7 @@
       tabindex="10000"
       type="search"
       :value="value"
+      v-on="$attrs"
       @input="handleInput"
     />
     <a class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
@@ -55,6 +56,8 @@ export default {
     value(inputValue) {
       if (!inputValue.length) {
         this.clearInput();
+      } else {
+        this.active = true;
       }
     }
   },
@@ -66,7 +69,6 @@ export default {
     },
     handleInput(event) {
       this.$emit('input', event.target.value);
-      this.active = event.target.value.length > 0;
     }
   }
 };
