@@ -275,6 +275,7 @@
 <script>
 import _ from 'lodash';
 import { toRaw } from 'vue';
+
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
