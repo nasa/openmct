@@ -361,7 +361,7 @@ export default class PlotSeries extends Model {
         let stats = this.get('stats');
         let changed = false;
         if (!stats) {
-            if ([Infinity, -Infinity].includes(value)) {
+            if ([Infinity, -Infinity].includes(value) || !this.isValidFloat32(value)) {
                 return;
             }
 
@@ -373,13 +373,13 @@ export default class PlotSeries extends Model {
             };
             changed = true;
         } else {
-            if (stats.maxValue < value && value !== Infinity) {
+            if (stats.maxValue < value && value !== Infinity && this.isValidFloat32(value)) {
                 stats.maxValue = value;
                 stats.maxPoint = point;
                 changed = true;
             }
 
-            if (stats.minValue > value && value !== -Infinity) {
+            if (stats.minValue > value && value !== -Infinity && this.isValidFloat32(value)) {
                 stats.minValue = value;
                 stats.minPoint = point;
                 changed = true;
