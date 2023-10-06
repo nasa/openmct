@@ -214,11 +214,23 @@ test.describe('Snapshot image tests', () => {
     // expect one embedded image now as we deleted the other
     expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(1);
   });
+});
+
+test.describe('Snapshot image failure tests', () => {
+  test.use({ failOnConsoleError: false });
+  test.beforeEach(async ({ page }) => {
+    //Navigate to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create Notebook
+    await createDomainObjectWithDefaults(page, {
+      type: NOTEBOOK_NAME
+    });
+  });
 
   test('Get an error notification when dropping unknown file onto notebook entry', async ({
     page
   }) => {
-    test.use({ failOnConsoleError: false });
     // fill Uint8Array array with some garbage data
     const garbageData = new Uint8Array(100);
     const fileData = Array.from(garbageData);
@@ -239,7 +251,6 @@ test.describe('Snapshot image tests', () => {
   test('Get an error notification when dropping big files onto notebook entry', async ({
     page
   }) => {
-    test.use({ failOnConsoleError: false });
     const garbageSize = 15 * 1024 * 1024; // 15 megabytes
 
     await page.addScriptTag({
