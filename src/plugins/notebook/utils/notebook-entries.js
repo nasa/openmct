@@ -207,7 +207,7 @@ export async function addNotebookEntry(
   openmct,
   domainObject,
   notebookStorage,
-  embed = null,
+  passedEmbeds = [],
   entryText = ''
 ) {
   if (!openmct || !domainObject || !notebookStorage) {
@@ -217,7 +217,8 @@ export async function addNotebookEntry(
   const date = openmct.time.now();
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
-  const embeds = embed ? [embed] : [];
+  // if embeds isn't an array, make it one
+  const embedsNormalized = Array.isArray(passedEmbeds) ? passedEmbeds : [passedEmbeds];
 
   const id = `entry-${uuid()}`;
   const [createdBy, createdByRole] = await Promise.all([
@@ -230,7 +231,7 @@ export async function addNotebookEntry(
     createdBy,
     createdByRole,
     text: entryText,
-    embeds
+    embeds: embedsNormalized
   };
 
   const newEntries = addEntryIntoPage(notebookStorage, entries, entry);
