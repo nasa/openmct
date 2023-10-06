@@ -239,6 +239,10 @@ test.describe('Example Imagery Object', () => {
     await expect(page.getByText('Driving')).toBeHidden();
     await expect(page.getByText('Science')).toBeHidden();
 
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7083'
+    });
     // click on annotation again and expect tags to appear
     await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
     await expect(page.getByText('Driving')).toBeVisible();
