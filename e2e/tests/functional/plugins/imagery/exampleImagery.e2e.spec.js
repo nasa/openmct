@@ -209,7 +209,6 @@ test.describe('Example Imagery Object', () => {
     const canvasBoundingBox = await canvas.boundingBox();
     const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
     const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
-
     await Promise.all(tagHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     // steps not working for me here
@@ -222,7 +221,7 @@ test.describe('Example Imagery Object', () => {
     await expect(page.locator('[role="toolbar"][aria-label="Image controls"]')).toBeVisible();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stabilize.
+    // Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -234,6 +233,16 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('button', { name: /Add Tag/ }).click();
     await page.getByPlaceholder('Type to select tag').click();
     await page.getByText('Science').click();
+
+    // click on a separate part of the canvas to ensure no tags appear
+    await page.mouse.click(canvasCenterX + 100, canvasCenterY + 100);
+    await expect(page.getByText('Driving')).toBeHidden();
+    await expect(page.getByText('Science')).toBeHidden();
+
+    // click on annotation again and expect tags to appear
+    await page.mouse.click(canvasCenterX - 80, canvasCenterY - 80);
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
