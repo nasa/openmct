@@ -218,6 +218,7 @@ test.describe('Snapshot image tests', () => {
   test('Get an error notification when dropping unknown file onto notebook entry', async ({
     page
   }) => {
+    test.use({ failOnConsoleError: false });
     // fill Uint8Array array with some garbage data
     const garbageData = new Uint8Array(100);
     const fileData = Array.from(garbageData);
@@ -238,6 +239,7 @@ test.describe('Snapshot image tests', () => {
   test('Get an error notification when dropping big files onto notebook entry', async ({
     page
   }) => {
+    test.use({ failOnConsoleError: false });
     const garbageSize = 15 * 1024 * 1024; // 15 megabytes
 
     await page.addScriptTag({
