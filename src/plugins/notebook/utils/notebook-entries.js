@@ -218,7 +218,8 @@ export async function addNotebookEntry(
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
   // if embeds isn't an array, make it one
-  const embedsNormalized = Array.isArray(passedEmbeds) ? passedEmbeds : [passedEmbeds];
+  const embedsNormalized =
+    passedEmbeds && !Array.isArray(passedEmbeds) ? [passedEmbeds] : passedEmbeds;
 
   const id = `entry-${uuid()}`;
   const [createdBy, createdByRole] = await Promise.all([
