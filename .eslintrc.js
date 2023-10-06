@@ -145,15 +145,13 @@ module.exports = {
     'no-implicit-coercion': 'error',
     //https://eslint.org/docs/rules/no-unneeded-ternary
     'no-unneeded-ternary': 'error',
-    "unicorn/filename-case": [
-      "error",
+    'unicorn/filename-case': [
+      'error',
       {
-        "cases": {
-          "pascalCase": true
+        cases: {
+          pascalCase: true
         },
-        "ignore": [
-          "^.*\\.js$"
-        ]
+        ignore: ['^.*\\.js$']
       }
     ],
     'vue/first-attribute-linebreak': 'error',
@@ -161,6 +159,7 @@ module.exports = {
     'vue/singleline-html-element-content-newline': 'off',
     'vue/multi-word-component-names': 'error', // TODO enable, align with conventions
     'vue/no-mutating-props': 'off',
+    'vue/v-on-event-hyphenation': 'error',
     'vue/require-explicit-emits': 'error'
   },
   overrides: [
