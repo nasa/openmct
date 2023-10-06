@@ -611,7 +611,9 @@ export default {
       this.editMode = false;
       const rawEntryValue = $event.target.value;
       const sanitizeInput = sanitizeHtml(rawEntryValue, { allowedAttributes: [], allowedTags: [] });
-      this.entry.text = sanitizeInput;
+      // change &gt back to > for markdown to do blockquotes
+      const restoredQuoteBrackets = sanitizeInput.replace(/&gt;/g, '>');
+      this.entry.text = restoredQuoteBrackets;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {
