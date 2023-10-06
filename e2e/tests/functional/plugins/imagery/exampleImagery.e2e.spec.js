@@ -235,12 +235,12 @@ test.describe('Example Imagery Object', () => {
     await page.getByText('Science').click();
 
     // click on a separate part of the canvas to ensure no tags appear
-    await page.mouse.click(canvasCenterX + 100, canvasCenterY + 100);
+    await page.mouse.click(canvasCenterX + 10, canvasCenterY + 10);
     await expect(page.getByText('Driving')).toBeHidden();
     await expect(page.getByText('Science')).toBeHidden();
 
     // click on annotation again and expect tags to appear
-    await page.mouse.click(canvasCenterX - 80, canvasCenterY - 80);
+    await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
     await expect(page.getByText('Driving')).toBeVisible();
     await expect(page.getByText('Science')).toBeVisible();
   });
