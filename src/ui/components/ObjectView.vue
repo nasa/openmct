@@ -139,6 +139,10 @@ export default {
       this.initObjectStyles();
       this.triggerStalenessSubscribe(this.domainObject);
     }
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   methods: {
     clear() {
