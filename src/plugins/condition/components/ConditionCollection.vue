@@ -82,7 +82,7 @@
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import ConditionManager from '../ConditionManager';
-import Condition from './Condition.vue';
+import Condition from './ConditionItem.vue';
 
 export default {
   components: {
