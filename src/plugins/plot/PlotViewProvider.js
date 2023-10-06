@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventBus from 'utils/EventBus';
+import EventBus from 'utils/eventBus';
 import mount from 'utils/mount';
 
 import Plot from './PlotView.vue';
