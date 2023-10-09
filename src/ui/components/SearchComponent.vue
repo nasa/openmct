@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-search" :class="{ 'is-active': active === true }">
+  <div class="c-search" :class="{ 'is-active': active }">
     <input
       v-bind="$attrs"
       class="c-search__input"
@@ -28,16 +28,15 @@
       tabindex="10000"
       type="search"
       :value="value"
-      v-on="$attrs"
       @input="handleInput"
+      @click="handleClick"
     />
-    <a class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
+    <a v-if="value" class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
     <slot></slot>
   </div>
 </template>
 
 <script>
-/* Emits input and clear events */
 export default {
   inheritAttrs: false,
   props: {
@@ -46,7 +45,7 @@ export default {
       default: ''
     }
   },
-  emits: ['input', 'clear'],
+  emits: ['input', 'clear', 'click'],
   data: function () {
     return {
       active: false
@@ -54,11 +53,7 @@ export default {
   },
   watch: {
     value(inputValue) {
-      if (!inputValue.length) {
-        this.clearInput();
-      } else {
-        this.active = true;
-      }
+      this.active = inputValue.length > 0;
     }
   },
   methods: {
@@ -69,6 +64,9 @@ export default {
     },
     handleInput(event) {
       this.$emit('input', event.target.value);
+    },
+    handleClick() {
+      this.$emit('click');
     }
   }
 };
