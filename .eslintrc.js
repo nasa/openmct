@@ -157,10 +157,7 @@ module.exports = {
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/multi-word-component-names': 'error', // TODO enable, align with conventions
-    'vue/no-mutating-props': 'off',
-    'vue/v-on-event-hyphenation': 'error',
-    'vue/require-explicit-emits': 'error'
+    'vue/no-mutating-props': 'off' // TODO: Remove this rule and fix resulting errors
   },
   overrides: [
     {
