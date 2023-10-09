@@ -37,7 +37,7 @@
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <indicators class="l-shell__head-section l-shell__indicators" />
+      <StatusIndicators class="l-shell__head-section l-shell__indicators" />
       <button
         class="l-shell__head__collapse-button c-icon-button"
         :class="
@@ -164,8 +164,8 @@ import Multipane from './MultipaneContainer.vue';
 import Pane from './PaneContainer.vue';
 import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
-import Indicators from './status-bar/GeneralIndicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
+import StatusIndicators from './status-bar/StatusIndicators.vue';
 
 export default {
   components: {
@@ -179,7 +179,7 @@ export default {
     BrowseBar,
     Toolbar,
     AppLogo,
-    Indicators,
+    StatusIndicators,
     NotificationBanner,
     RecentObjectsList
   },
