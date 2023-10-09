@@ -202,7 +202,7 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 import imageryData from '../../imagery/mixins/imageryData';
@@ -1082,7 +1082,7 @@ export default {
         return;
       }
 
-      await Vue.nextTick();
+      await nextTick();
       if (this.$refs.thumbsWrapper) {
         this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
       }

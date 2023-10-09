@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import Vue, { toRaw } from 'vue';
+import { nextTick, toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
@@ -129,7 +129,7 @@ export default {
     this.composition.on('remove', this.removeItem);
     this.composition.on('reorder', this.reorder);
     this.composition.load();
-    await Vue.nextTick();
+    await nextTick();
     this.viewActionsCollection = this.openmct.actions.getActionsCollection(
       this.objectPath,
       this.currentView
