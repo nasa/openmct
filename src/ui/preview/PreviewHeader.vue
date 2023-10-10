@@ -101,6 +101,7 @@ export default {
       }
     }
   },
+  emits: ['set-view'],
   data() {
     return {
       type: this.openmct.types.get(this.domainObject.type),
@@ -144,7 +145,7 @@ export default {
       return items;
     },
     setView(view) {
-      this.$emit('setView', view);
+      this.$emit('set-view', view);
     },
     unlistenToActionCollection() {
       this.actionCollection.off('update', this.updateActionItems);

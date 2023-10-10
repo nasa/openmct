@@ -66,6 +66,7 @@ export default {
       required: true
     }
   },
+  emits: ['toggle-lock-compass'],
   computed: {
     hasGimble() {
       return this.cameraAzimuth !== undefined;

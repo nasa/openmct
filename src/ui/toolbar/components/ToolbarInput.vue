@@ -41,6 +41,7 @@ export default {
       }
     }
   },
+  emits: ['change'],
   data() {
     inputUniqueId++;
 

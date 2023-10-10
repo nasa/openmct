@@ -42,9 +42,9 @@
           :domain-object="domainObject"
           :sections="sections"
           :section-title="sectionTitle"
-          @defaultSectionDeleted="defaultSectionDeleted"
-          @updateSection="sectionsChanged"
-          @selectSection="selectSection"
+          @default-section-deleted="defaultSectionDeleted"
+          @update-section="sectionsChanged"
+          @select-section="selectSection"
         />
       </div>
     </div>
@@ -74,10 +74,10 @@
           :sections="sections"
           :sidebar-covers-entries="sidebarCoversEntries"
           :page-title="pageTitle"
-          @defaultPageDeleted="defaultPageDeleted"
-          @toggleNav="toggleNav"
-          @updatePage="pagesChanged"
-          @selectPage="selectPage"
+          @default-page-deleted="defaultPageDeleted"
+          @toggle-nav="toggleNav"
+          @update-page="pagesChanged"
+          @select-page="selectPage"
         />
       </div>
     </div>
@@ -156,6 +156,15 @@ export default {
       }
     }
   },
+  emits: [
+    'select-page',
+    'select-section',
+    'toggle-nav',
+    'default-section-deleted',
+    'default-page-deleted',
+    'pages-changed',
+    'sections-changed'
+  ],
   computed: {
     pages() {
       const selectedSection = this.sections.find(
@@ -197,7 +206,7 @@ export default {
         pages,
         id: newPage.id
       });
-      this.$emit('selectPage', newPage.id);
+      this.$emit('select-page', newPage.id);
     },
     addSection() {
       const newSection = this.createNewSection();
@@ -208,7 +217,7 @@ export default {
         id: newSection.id
       });
 
-      this.$emit('selectSection', newSection.id);
+      this.$emit('select-section', newSection.id);
     },
     addNewPage(newPage) {
       this.pages.forEach((page) => {
@@ -254,28 +263,28 @@ export default {
       };
     },
     defaultPageDeleted() {
-      this.$emit('defaultPageDeleted');
+      this.$emit('default-page-deleted');
     },
     defaultSectionDeleted() {
-      this.$emit('defaultSectionDeleted');
+      this.$emit('default-section-deleted');
     },
     toggleNav() {
-      this.$emit('toggleNav');
+      this.$emit('toggle-nav');
     },
     pagesChanged({ pages, id }) {
-      this.$emit('pagesChanged', {
+      this.$emit('pages-changed', {
         pages,
         id
       });
     },
     selectPage(pageId) {
-      this.$emit('selectPage', pageId);
+      this.$emit('select-page', pageId);
     },
     selectSection(sectionId) {
-      this.$emit('selectSection', sectionId);
+      this.$emit('select-section', sectionId);
     },
     sectionsChanged({ sections, id }) {
-      this.$emit('sectionsChanged', {
+      this.$emit('sections-changed', {
         sections,
         id
       });

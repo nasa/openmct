@@ -35,7 +35,7 @@
 <script>
 import mount from 'utils/mount';
 
-import Plot from '../plot/Plot.vue';
+import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
 
 export default {
