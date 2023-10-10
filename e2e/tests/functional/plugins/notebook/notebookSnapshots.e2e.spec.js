@@ -188,12 +188,11 @@ test.describe('Snapshot image tests', () => {
     }, fileData);
 
     await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: dropTransfer });
-
+    await page.locator('.c-ne__save-button > button').click();
     // be sure that entry was created
     await expect(page.getByText('favicon-96x96.png')).toBeVisible();
 
     await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).click();
-
     // expect large image to be displayed
     await expect(page.getByRole('dialog').getByText('favicon-96x96.png')).toBeVisible();
 
