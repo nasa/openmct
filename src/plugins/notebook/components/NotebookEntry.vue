@@ -369,6 +369,9 @@ export default {
         openmct: this.openmct
       };
       const newEmbed = await createNewEmbed(snapshotMeta);
+      if (!this.entry.embeds) {
+        this.entry.embeds = [];
+      }
       this.entry.embeds.push(newEmbed);
 
       this.manageEmbedLayout();
@@ -390,6 +393,9 @@ export default {
           if (isImage) {
             const imageFile = clipboardItem.getAsFile();
             const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
+            if (!this.entry.embeds) {
+              this.entry.embeds = [];
+            }
             this.entry.embeds.push(imageEmbed);
           }
         })
@@ -485,6 +491,9 @@ export default {
                 this.openmct,
                 imageData?.name
               );
+              if (!this.entry.embeds) {
+                this.entry.embeds = [];
+              }
               this.entry.embeds.push(imageEmbed);
             }
           })
@@ -496,6 +505,9 @@ export default {
           const response = await fetch(imageUrl);
           const imageData = await response.blob();
           const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          if (!this.entry.embeds) {
+            this.entry.embeds = [];
+          }
           this.entry.embeds.push(imageEmbed);
           this.manageEmbedLayout();
         } catch (error) {
@@ -505,6 +517,9 @@ export default {
       } else if (snapshotId.length) {
         // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
+        if (!this.entry.embeds) {
+          this.entry.embeds = [];
+        }
         this.entry.embeds.push(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
 

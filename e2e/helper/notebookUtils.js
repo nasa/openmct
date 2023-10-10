@@ -34,7 +34,6 @@ async function enterTextEntry(page, text) {
   await page.locator(NOTEBOOK_DROP_AREA).click();
 
   // enter text
-  await page.getByLabel('Notebook Entry Display').last().click();
   await page.getByLabel('Notebook Entry Input').last().fill(text);
   await commitEntry(page);
 }
