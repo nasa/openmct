@@ -139,6 +139,10 @@ export default {
       this.initObjectStyles();
       this.triggerStalenessSubscribe(this.domainObject);
     }
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   methods: {
     clear() {
@@ -172,8 +176,7 @@ export default {
         this.composition._destroy();
       }
 
-      this.isStale = false;
-      this.triggerUnsubscribeFromStaleness();
+      this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
       this.openmct.objectViews.off('contextAction', this.performContextAction);
