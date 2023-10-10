@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 
-import Layout from './Layout.vue';
+import Layout from './AppLayout.vue';
 
 describe('Open MCT Layout:', () => {
   let openmct;

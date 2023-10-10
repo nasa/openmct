@@ -338,7 +338,6 @@ const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
-  name: 'Gauge',
   mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject', 'composition'],
   data() {

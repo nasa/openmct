@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 
 import Agent from '@/utils/agent/Agent';
 
-import Notebook from './components/Notebook.vue';
+import Notebook from './components/NotebookComponent.vue';
 
 export default class NotebookViewProvider {
   constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {

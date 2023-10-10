@@ -45,6 +45,7 @@ export default {
       required: true
     }
   },
+  emits: ['object-drop-to'],
   data() {
     return {
       isMouseOver: false,

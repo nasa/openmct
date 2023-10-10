@@ -70,11 +70,11 @@
       :bottom="true"
       :position-x="positionX"
       :position-y="positionY"
-      @popupLoaded="initializePopup"
-      @independentModeUpdated="saveMode"
-      @independentClockUpdated="saveClock"
-      @fixedBoundsUpdated="saveFixedBounds"
-      @clockOffsetsUpdated="saveClockOffsets"
+      @popup-loaded="initializePopup"
+      @independent-mode-updated="saveMode"
+      @independent-clock-updated="saveClock"
+      @fixed-bounds-updated="saveFixedBounds"
+      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
@@ -116,6 +116,7 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     const fixedOffsets = this.openmct.time.getBounds();
     const clockOffsets = this.openmct.time.getClockOffsets();

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import Search from '../../components/Search.vue';
+import Search from '../../components/SearchComponent.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
 const SEARCH_DEBOUNCE_TIME = 200;
