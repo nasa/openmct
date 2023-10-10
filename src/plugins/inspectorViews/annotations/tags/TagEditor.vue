@@ -29,8 +29,8 @@
       :selected-tag="addedTag.newTag ? null : addedTag"
       :new-tag="addedTag.newTag"
       :added-tags="addedTags"
-      @tagRemoved="tagRemoved"
-      @tagAdded="tagAdded"
+      @tag-removed="tagRemoved"
+      @tag-added="tagAdded"
     />
     <button
       v-show="!userAddingTag && !maxTagsAdded"
@@ -84,6 +84,7 @@ export default {
       default: null
     }
   },
+  emits: ['tags-updated'],
   data() {
     return {
       addedTags: [],

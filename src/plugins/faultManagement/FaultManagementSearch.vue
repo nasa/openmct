@@ -33,14 +33,14 @@
       class="c-fault-mgmt-viewButton"
       title="View Filter"
       :model="model"
-      @onChange="onChange"
+      @on-change="onChange"
     />
   </div>
 </template>
 
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import Search from '@/ui/components/Search.vue';
+import Search from '@/ui/components/SearchComponent.vue';
 
 import { FILTER_ITEMS } from './constants';
 
@@ -56,6 +56,7 @@ export default {
       default: ''
     }
   },
+  emits: ['filter-changed', 'update-search-term'],
   data() {
     return {
       items: []
@@ -79,10 +80,10 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$emit('filterChanged', data);
+      this.$emit('filter-changed', data);
     },
     updateSearchTerm(searchTerm) {
-      this.$emit('updateSearchTerm', searchTerm);
+      this.$emit('update-search-term', searchTerm);
     }
   }
 };

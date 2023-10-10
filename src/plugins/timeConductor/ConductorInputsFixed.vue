@@ -84,6 +84,7 @@ export default {
       }
     }
   },
+  emits: ['bounds-updated', 'dismiss-inputs-fixed'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     const timeFormatter = this.getFormatter(timeSystem.timeFormat);
@@ -166,13 +167,13 @@ export default {
       }).formatter;
     },
     setBoundsFromView(bounds) {
-      this.$emit('boundsUpdated', {
+      this.$emit('bounds-updated', {
         start: bounds.start,
         end: bounds.end
       });
     },
     dismiss() {
-      this.$emit('dismissInputsFixed');
+      this.$emit('dismiss-inputs-fixed');
     }
   }
 };

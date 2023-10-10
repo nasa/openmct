@@ -47,6 +47,7 @@ export default {
       required: true
     }
   },
+  emits: ['change', 'click'],
   computed: {
     nonSpecific() {
       return this.options.nonSpecific === true;

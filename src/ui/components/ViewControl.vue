@@ -53,6 +53,7 @@ export default {
       default: () => {}
     }
   },
+  emits: ['input'],
   computed: {
     ariaLabelValue() {
       const name = this.domainObject.name ? ` ${this.domainObject.name}` : '';

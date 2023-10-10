@@ -63,6 +63,7 @@ export default {
       default: ''
     }
   },
+  emits: ['change-action-collection'],
   data() {
     return {
       domainObject: this.defaultObject

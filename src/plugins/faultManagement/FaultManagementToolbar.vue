@@ -53,6 +53,7 @@ export default {
       }
     }
   },
+  emits: ['acknowledge-selected', 'shelve-selected'],
   data() {
     return {
       disableAcknowledge: true,
@@ -82,10 +83,10 @@ export default {
   },
   methods: {
     acknowledgeSelected() {
-      this.$emit('acknowledgeSelected');
+      this.$emit('acknowledge-selected');
     },
     shelveSelected() {
-      this.$emit('shelveSelected');
+      this.$emit('shelve-selected');
     }
   }
 };

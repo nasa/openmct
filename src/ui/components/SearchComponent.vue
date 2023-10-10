@@ -19,39 +19,54 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-
 <template>
-  <span>
-    <CompositeItem
-      v-for="(item, index) in model.items"
-      :key="item.name"
-      :first="index < 1"
-      :value="JSON.stringify(model.value[index])"
-      :item="item"
-      @onChange="onChange"
+  <div class="c-search" :class="{ 'is-active': active }">
+    <input
+      v-bind="$attrs"
+      class="c-search__input"
+      aria-label="Search Input"
+      tabindex="10000"
+      type="search"
+      :value="value"
+      @input="handleInput"
+      @click="handleClick"
     />
-  </span>
+    <a v-if="value" class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
-import CompositeItem from '@/api/forms/components/controls/CompositeItem.vue';
-
 export default {
-  components: {
-    CompositeItem
-  },
+  inheritAttrs: false,
   props: {
-    model: {
-      type: Object,
-      required: true
+    value: {
+      type: String,
+      default: ''
     }
   },
-  mounted() {
-    this.model.items.forEach((item, index) => (item.key = `${this.model.key}.${index}`));
+  emits: ['input', 'clear', 'click'],
+  data: function () {
+    return {
+      active: false
+    };
+  },
+  watch: {
+    value(inputValue) {
+      this.active = inputValue.length > 0;
+    }
   },
   methods: {
-    onChange(data) {
-      this.$emit('onChange', data);
+    clearInput() {
+      // Clear the user's input and set 'active' to false
+      this.$emit('clear', '');
+      this.active = false;
+    },
+    handleInput(event) {
+      this.$emit('input', event.target.value);
+    },
+    handleClick() {
+      this.$emit('click');
     }
   }
 };
