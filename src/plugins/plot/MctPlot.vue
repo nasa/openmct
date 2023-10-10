@@ -1381,6 +1381,9 @@ export default {
               Object.keys(pointsInBoxBySeries).forEach((seriesKeyString) => {
                 const pointsInBox = pointsInBoxBySeries[seriesKeyString];
                 if (pointsInBox && pointsInBox.length) {
+                  if (!annotationsBySeries[seriesKeyString]) {
+                    annotationsBySeries[seriesKeyString] = [];
+                  }
                   annotationsBySeries[seriesKeyString].push(...pointsInBox);
                 }
               });
