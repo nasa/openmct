@@ -85,7 +85,9 @@ const config = {
       __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
-      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+      __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
+      __VUE_PROD_DEVTOOLS__: false // enable/disable devtools support in production, default: false
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({
