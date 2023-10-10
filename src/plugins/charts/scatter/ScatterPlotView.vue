@@ -31,8 +31,9 @@
 </template>
 
 <script>
-import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 import _ from 'lodash';
+
+import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
 export default {
   components: {
@@ -122,7 +123,7 @@ export default {
       this.composition.remove(telemetryObject);
     },
     addTelemetryObject(telemetryObject) {
-      // grab information we need from the added telmetry object
+      // grab information we need from the added telemetry object
       const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
       this.telemetryObjects[key] = telemetryObject;
       const metadata = this.openmct.telemetry.getMetadata(telemetryObject);

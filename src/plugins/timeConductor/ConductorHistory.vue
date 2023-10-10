@@ -41,8 +41,9 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from 'utils/duration';
-import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
+
 import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
 
 export default {
   inject: ['openmct', 'configuration'],
@@ -102,7 +103,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.updateTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.updateMode);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.addTimespan);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.addTimespan);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.updateTimeSystem);

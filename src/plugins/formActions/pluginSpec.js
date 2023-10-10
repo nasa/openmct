@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { debounce } from 'lodash';
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
-
-import { debounce } from 'lodash';
 
 describe('EditPropertiesAction plugin', () => {
   let editPropertiesAction;

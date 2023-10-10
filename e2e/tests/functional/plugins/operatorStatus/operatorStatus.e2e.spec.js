@@ -48,6 +48,8 @@ test.describe('Operator Status', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();
+    // Description should be empty https://github.com/nasa/openmct/issues/6978
+    await expect(page.locator('.c-message__action-text')).toBeHidden();
     // set role
     await page.getByRole('button', { name: 'Select' }).click();
     // dismiss role confirmation popup
@@ -157,6 +159,6 @@ test.describe('Operator Status', () => {
   });
 
   test.fixme('iterate through all possible response values', async ({ page }) => {
-    // test all possible respone values for the poll
+    // test all possible response values for the poll
   });
 });

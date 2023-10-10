@@ -35,6 +35,7 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
+ * @property {Object<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**
@@ -65,7 +66,10 @@ const { expect } = require('@playwright/test');
  * @param {CreateObjectOptions} options
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+  page,
+  { type, name, parent = 'mine', customParameters = {} }
+) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -74,7 +78,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   //Click the Create button
   await page.click('button:has-text("Create")');
@@ -92,6 +96,13 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     // currently running test and its project.
     const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
     await notesInput.fill(page.testNotes);
+  }
+
+  // If there are any further parameters, fill them in
+  for (const [key, value] of Object.entries(customParameters)) {
+    const input = page.locator(`form[name="mctForm"] ${key}`);
+    await input.fill('');
+    await input.fill(value);
   }
 
   // Click OK button and wait for Navigate event
@@ -168,7 +179,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   // Click the Create button
   await page.click('button:has-text("Create")');
@@ -177,7 +188,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.click(`li:text("Plan")`);
 
   // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
+  const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(name);
 
@@ -206,6 +217,62 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     name,
     url: objectUrl
   };
+}
+
+/**
+ * Create a standardized Telemetry Object (Sine Wave Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests).
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createExampleTelemetryObject(page, parent = 'mine') {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+  await page.goto(`${parentUrl}`);
+
+  await page.locator('button:has-text("Create")').click();
+
+  await page.locator('li:has-text("Sine Wave Generator")').click();
+
+  const name = 'VIPER Rover Heading';
+  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
+
+  // Fill out the fields with default values
+  await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
+  await page.getByRole('spinbutton', { name: 'Amplitude' }).fill('1');
+  await page.getByRole('spinbutton', { name: 'Offset' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Data Rate (hz)' }).fill('1');
+  await page.getByRole('spinbutton', { name: 'Phase (radians)' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Randomness' }).fill('0');
+  await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('0');
+
+  await page.getByRole('button', { name: 'Save' }).click();
+
+  // Wait until the URL is updated
+  await page.waitForURL(`**/${parent}/*`);
+
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name,
+    uuid,
+    url
+  };
+}
+
+/**
+ * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url The url to the domainObject
+ * @param {string | number} start The starting time bound in milliseconds since epoch
+ * @param {string | number} end The ending time bound in milliseconds since epoch
+ */
+async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
+  await page.goto(
+    `${url}?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${start}&tc.endBound=${end}`
+  );
 }
 
 /**
@@ -271,13 +338,13 @@ async function getFocusedObjectUuid(page) {
  * URLs returned will be of the form `'./browse/#/mine/<uuid0>/<uuid1>/...'`
  *
  * @param {import('@playwright/test').Page} page
- * @param {string} uuid the uuid of the object to get the url for
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier the uuid or identifier of the object to get the url for
  * @returns {Promise<string>} the url of the object
  */
-async function getHashUrlToDomainObject(page, uuid) {
-  await page.waitForLoadState('load'); //Add some determinism
-  const hashUrl = await page.evaluate(async (objectUuid) => {
-    const path = await window.openmct.objects.getOriginalPath(objectUuid);
+async function getHashUrlToDomainObject(page, identifier) {
+  await page.waitForLoadState('load');
+  const hashUrl = await page.evaluate(async (objectIdentifier) => {
+    const path = await window.openmct.objects.getOriginalPath(objectIdentifier);
     let url =
       './#/browse/' +
       [...path]
@@ -291,7 +358,7 @@ async function getHashUrlToDomainObject(page, uuid) {
     }
 
     return url;
-  }, uuid);
+  }, identifier);
 
   return hashUrl;
 }
@@ -300,6 +367,7 @@ async function getHashUrlToDomainObject(page, uuid) {
  * Utilizes the OpenMCT API to detect if the UI is in Edit mode.
  * @private
  * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
  * @return {Promise<boolean>} true if the Open MCT is in Edit Mode
  */
 async function _isInEditMode(page, identifier) {
@@ -316,11 +384,13 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
-  // Switch time conductor mode
+  // Switch time conductor mode. Note, need to wait here for URL to update as the router is debounced.
   if (isFixedTimespan) {
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    await page.waitForURL(/tc\.mode=fixed/);
   } else {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    await page.waitForURL(/tc\.mode=local/);
   }
 }
 
@@ -410,8 +480,18 @@ async function setEndOffset(page, offset) {
   await setTimeConductorOffset(page, offset);
 }
 
+/**
+ * Set the time conductor bounds in fixed time mode
+ *
+ * NOTE: Unless explicitly testing the Time Conductor itself, it is advised to instead
+ * navigate directly to the object with the desired time bounds using `navigateToObjectWithFixedTimeBounds()`.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setTimeConductorBounds(page, startDate, endDate) {
   // Bring up the time conductor popup
+  expect(await page.locator('.l-shell__time-conductor.c-compact-tc').count()).toBe(1);
   await page.click('.l-shell__time-conductor.c-compact-tc');
 
   await setTimeBounds(page, startDate, endDate);
@@ -419,20 +499,32 @@ async function setTimeConductorBounds(page, startDate, endDate) {
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the independent time conductor bounds in fixed time mode
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setIndependentTimeConductorBounds(page, startDate, endDate) {
   // Activate Independent Time Conductor in Fixed Time Mode
   await page.getByRole('switch').click();
 
   // Bring up the time conductor popup
   await page.click('.c-conductor-holder--compact .c-compact-tc');
-
-  await expect(page.locator('.itc-popout')).toBeVisible();
+  await expect(page.locator('.itc-popout')).toBeInViewport();
 
   await setTimeBounds(page, startDate, endDate);
 
   await page.keyboard.press('Enter');
 }
 
+/**
+ * Set the bounds of the visible conductor in fixed time mode
+ * @private
+ * @param {import('@playwright/test').Page} page
+ * @param {string} startDate
+ * @param {string} endDate
+ */
 async function setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
@@ -451,18 +543,6 @@ async function setTimeBounds(page, startDate, endDate) {
       .getByRole('textbox', { name: 'End time' })
       .fill(endDate.toString().substring(11, 19));
   }
-}
-
-/**
- * Selects an inspector tab based on the provided tab name
- *
- * @param {import('@playwright/test').Page} page
- * @param {String} name the name of the tab
- */
-async function selectInspectorTab(page, name) {
-  const inspectorTabs = page.getByRole('tablist');
-  const inspectorTab = inspectorTabs.getByTitle(name);
-  await inspectorTab.click();
 }
 
 /**
@@ -549,9 +629,25 @@ async function getCanvasPixels(page, canvasSelector) {
   return getTelemValuePromise;
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
+ * @param {string} url
+ * @param {string} newName
+ */
+async function renameObjectFromContextMenu(page, url, newName) {
+  await openObjectTreeContextMenu(page, url);
+  await page.click('li:text("Edit Properties")');
+  const nameInput = page.getByLabel('Title', { exact: true });
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  await page.click('[aria-label="Save"]');
+}
+
 // eslint-disable-next-line no-undef
 module.exports = {
   createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
   expandEntireTree,
@@ -559,6 +655,7 @@ module.exports = {
   getCanvasPixels,
   getHashUrlToDomainObject,
   getFocusedObjectUuid,
+  navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
@@ -566,6 +663,6 @@ module.exports = {
   setEndOffset,
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
-  selectInspectorTab,
-  waitForPlotsToRender
+  waitForPlotsToRender,
+  renameObjectFromContextMenu
 };

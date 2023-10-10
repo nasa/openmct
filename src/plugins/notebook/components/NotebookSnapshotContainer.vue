@@ -63,11 +63,11 @@
 </template>
 
 <script>
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
+import RemoveDialog from '../utils/removeDialog';
 import NotebookEmbed from './NotebookEmbed.vue';
 import PopupMenu from './PopupMenu.vue';
-import RemoveDialog from '../utils/removeDialog';
-import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 
 export default {
   components: {

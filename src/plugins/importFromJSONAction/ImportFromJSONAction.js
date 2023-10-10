@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import objectUtils from 'objectUtils';
+import { filter__proto__ } from 'utils/sanitization';
 import { v4 as uuid } from 'uuid';
 
 export default class ImportAsJSONAction {
@@ -71,8 +72,10 @@ export default class ImportAsJSONAction {
 
   onSave(object, changes) {
     const selectFile = changes.selectFile;
-    const objectTree = selectFile.body;
-    this._importObjectTree(object, JSON.parse(objectTree));
+    const jsonTree = selectFile.body;
+    const objectTree = JSON.parse(jsonTree, filter__proto__);
+
+    this._importObjectTree(object, objectTree);
   }
 
   /**

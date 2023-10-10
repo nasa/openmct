@@ -73,17 +73,18 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+
+import BoxView from './BoxView.vue';
+import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
+import EditMarquee from './EditMarquee.vue';
+import EllipseView from './EllipseView.vue';
+import ImageView from './ImageView.vue';
+import LineView from './LineView.vue';
 import SubobjectView from './SubobjectView.vue';
 import TelemetryView from './TelemetryView.vue';
-import BoxView from './BoxView.vue';
-import EllipseView from './EllipseView.vue';
 import TextView from './TextView.vue';
-import LineView from './LineView.vue';
-import ImageView from './ImageView.vue';
-import EditMarquee from './EditMarquee.vue';
-import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
-import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
   table: (domainObject) => {
@@ -144,7 +145,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
   components: components,
-  inject: ['openmct', 'objectPath', 'options', 'objectUtils', 'currentView'],
+  inject: ['openmct', 'objectPath', 'options', 'currentView'],
   props: {
     domainObject: {
       type: Object,
@@ -221,13 +222,21 @@ export default {
     this.composition.load();
     this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
 
-    this.openmct.objects.observe(this.domainObject, 'configuration.items', (items) => {
-      this.layoutItems = items;
-    });
+    this.unObserveItems = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.items',
+      (items) => {
+        this.layoutItems = [...items];
+      }
+    );
 
     this.watchDisplayResize();
   },
-  unmounted() {
+  beforeUnmount() {
+    if (this.unObserveItems) {
+      this.unObserveItems();
+    }
+    this.unwatchDisplayResize();
     this.openmct.selection.off('change', this.setSelection);
     this.composition.off('add', this.addChild);
     this.composition.off('remove', this.removeChild);
@@ -251,9 +260,15 @@ export default {
       this.$el.click();
     },
     watchDisplayResize() {
-      const resizeObserver = new ResizeObserver(() => this.updateGrid());
+      this.unwatchDisplayResize();
+      this.resizeObserver = new ResizeObserver(this.updateGrid);
 
-      resizeObserver.observe(this.$el);
+      this.resizeObserver.observe(this.$el);
+    },
+    unwatchDisplayResize() {
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+      }
     },
     addElement(itemType, element) {
       this.addItem(itemType + '-view', element);
@@ -623,7 +638,7 @@ export default {
           return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
         }
       });
-      this.layoutItems = layoutItems;
+      this.layoutItems = [...layoutItems];
       this.mutate('configuration.items', layoutItems);
       this.clearSelection();
     },

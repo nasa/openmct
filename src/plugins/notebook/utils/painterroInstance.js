@@ -1,5 +1,6 @@
 import Painterro from 'painterro';
-import { getThumbnailURLFromimageUrl } from './notebook-image';
+
+import { getThumbnailURLFromImageUrl } from './notebook-image';
 
 const DEFAULT_CONFIG = {
   activeColor: '#ff0000',
@@ -39,7 +40,7 @@ export default class PainterroInstance {
     this.painterroInstance.save();
   }
 
-  intialize() {
+  initialize() {
     this.config = Object.assign({}, DEFAULT_CONFIG);
 
     this.config.id = this.elementId;
@@ -62,7 +63,7 @@ export default class PainterroInstance {
       reader.readAsDataURL(url);
       reader.onloadend = async () => {
         const fullSizeImageURL = reader.result;
-        const thumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
+        const thumbnailURL = await getThumbnailURLFromImageUrl(fullSizeImageURL);
         const snapshotObject = {
           fullSizeImage: {
             src: fullSizeImageURL,

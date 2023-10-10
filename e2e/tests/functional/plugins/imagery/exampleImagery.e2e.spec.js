@@ -57,6 +57,10 @@ test.describe('Example Imagery Object', () => {
     await mouseZoomOnImageAndAssert(page, -2);
   });
 
+  test('Compass HUD should be hidden by default', async ({ page }) => {
+    await expect(page.locator('.c-hud')).toBeHidden();
+  });
+
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
     browserName
@@ -79,25 +83,25 @@ test.describe('Example Imagery Object', () => {
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+
+    // Adding in delay to address flakiness of ITC test-- button event handlers not registering in time
+    await expect(page.locator('#independentTCToggle')).toBeChecked();
+    await expect(page.locator('.c-compact-tc').first()).toBeVisible();
+
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await page.getByRole('textbox', { name: 'Start date' }).fill('');
+
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'Start time' }).fill('');
-    await page.getByRole('textbox', { name: 'Start time' }).type('01:01:00');
+    await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End date' }).fill('');
-    await page.getByRole('textbox', { name: 'End date' }).type('2021-12-30');
+    await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
-    await page.getByRole('textbox', { name: 'End time' }).fill('');
-    await page.getByRole('textbox', { name: 'End time' }).type('01:11:00');
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
-    // expect(await page.getByRole('button', { name: 'Submit time bounds' }).isEnabled()).toBe(true);
-    // await page.getByRole('button', { name: 'Submit time bounds' }).click();
 
     // check image date
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
@@ -106,9 +110,12 @@ test.describe('Example Imagery Object', () => {
 
     // Test independent fixed time with global realtime
     await setRealTimeMode(page);
+    await expect(
+      page.getByRole('switch', { name: 'Enable Independent Time Conductor' })
+    ).toBeEnabled();
     await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
     // check image date to be in the past
-    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+    await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
     // flip it off
     await page.getByRole('switch', { name: 'Disable Independent Time Conductor' }).click();
     // timestamp shouldn't be in the past anymore
@@ -195,23 +202,26 @@ test.describe('Example Imagery Object', () => {
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
   });
 
-  test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+  test('Can use alt+shift+drag to create a tag and ensure toolbars disappear', async ({ page }) => {
     const canvas = page.locator('canvas');
     await canvas.hover({ trial: true });
 
     const canvasBoundingBox = await canvas.boundingBox();
     const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
     const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
-
     await Promise.all(tagHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     // steps not working for me here
     await page.mouse.move(canvasCenterX - 20, canvasCenterY - 20);
     await page.mouse.move(canvasCenterX - 100, canvasCenterY - 100);
+    // toolbar should hide when we're creating annotations with a drag
+    await expect(page.locator('[role="toolbar"][aria-label="Image controls"]')).toBeHidden();
     await page.mouse.up();
+    // toolbar should reappear when we're done creating annotations
+    await expect(page.locator('[role="toolbar"][aria-label="Image controls"]')).toBeVisible();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stablize.
+    // Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -223,6 +233,20 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('button', { name: /Add Tag/ }).click();
     await page.getByPlaceholder('Type to select tag').click();
     await page.getByText('Science').click();
+
+    // click on a separate part of the canvas to ensure no tags appear
+    await page.mouse.click(canvasCenterX + 10, canvasCenterY + 10);
+    await expect(page.getByText('Driving')).toBeHidden();
+    await expect(page.getByText('Science')).toBeHidden();
+
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7083'
+    });
+    // click on annotation again and expect tags to appear
+    await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
@@ -230,7 +254,6 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Can use the reset button to reset the image @unstable', async ({ page }, testInfo) => {
-    test.slow(testInfo.project === 'chrome-beta', 'This test is slow in chrome-beta');
     // Get initial image dimensions
     const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
 
@@ -391,7 +414,7 @@ test.describe('Example Imagery in Display Layout', () => {
   /**
    * Toggle layer visibility checkbox by clicking on checkbox label
    * - should toggle checkbox and layer visibility for that image view
-   * - should NOT toggle checkbox and layer visibity for the first image view in display
+   * - should NOT toggle checkbox and layer visibility for the first image view in display
    */
   test('Toggle layer visibility by clicking on label', async ({ page }) => {
     test.info().annotations.push({

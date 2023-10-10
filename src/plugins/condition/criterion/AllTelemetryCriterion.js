@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryCriterion from './TelemetryCriterion';
-import StalenessUtils from '@/utils/staleness';
-import { evaluateResults } from '../utils/evaluator';
-import { getLatestTimestamp, checkIfOld } from '../utils/time';
 import { getOperatorText } from '@/plugins/condition/utils/operations';
+import StalenessUtils from '@/utils/staleness';
+
+import { evaluateResults } from '../utils/evaluator';
+import { checkIfOld, getLatestTimestamp } from '../utils/time';
+import TelemetryCriterion from './TelemetryCriterion';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
   /**
@@ -201,9 +202,11 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
   }
 
   requestLAD(telemetryObjects, requestOptions) {
+    //We pass in the global time context here
     let options = {
       strategy: 'latest',
-      size: 1
+      size: 1,
+      timeContext: this.openmct.time.getContextForView([])
     };
 
     if (requestOptions !== undefined) {

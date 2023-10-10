@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
+
 import DisplayLayoutPlugin from './plugin';
 
 describe('the plugin', function () {
@@ -141,7 +142,7 @@ describe('the plugin', function () {
       };
       displayLayoutItem = {
         composition: [
-          // no item in compostion, but item in configuration items
+          // no item in composition, but item in configuration items
         ],
         configuration: {
           items: [item],
@@ -165,7 +166,7 @@ describe('the plugin', function () {
       Vue.nextTick(done);
     });
 
-    it('will sync compostion and layout items', () => {
+    it('will sync composition and layout items', () => {
       expect(displayLayoutItem.configuration.items.length).toBe(0);
     });
   });

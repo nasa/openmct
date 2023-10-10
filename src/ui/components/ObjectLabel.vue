@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import ObjectLink from '../mixins/object-link';
-import ContextMenuGesture from '../mixins/context-menu-gesture';
-import PreviewAction from '../preview/PreviewAction.js';
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import ContextMenuGesture from '../mixins/context-menu-gesture';
+import ObjectLink from '../mixins/object-link';
+import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
   mixins: [ObjectLink, ContextMenuGesture, tooltipHelpers],
@@ -133,7 +133,7 @@ export default {
       }
 
       // serialize domain object anyway, because some views can drag-and-drop objects without composition
-      // (eg. notabook.)
+      // (eg. notebook.)
       event.dataTransfer.setData('openmct/domain-object-path', serializedPath);
       event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
     },

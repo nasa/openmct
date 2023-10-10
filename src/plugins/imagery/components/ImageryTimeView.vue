@@ -28,11 +28,13 @@
 
 <script>
 import * as d3Scale from 'd3-scale';
-import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import mount from 'utils/mount';
-import imageryData from '../../imagery/mixins/imageryData';
-import PreviewAction from '@/ui/preview/PreviewAction';
 import _ from 'lodash';
+import mount from 'utils/mount';
+
+import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+import PreviewAction from '@/ui/preview/PreviewAction';
+
+import imageryData from '../../imagery/mixins/imageryData';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
@@ -97,6 +99,9 @@ export default {
     this.stopFollowingTimeContext();
     if (this.unlisten) {
       this.unlisten();
+    }
+    if (this.destroyImageryContainer) {
+      this.destroyImageryContainer();
     }
   },
   methods: {
@@ -237,7 +242,10 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        const { vNode } = mount(
+        if (this.destroyImageryContainer) {
+          this.destroyImageryContainer();
+        }
+        const { vNode, destroy } = mount(
           {
             components: {
               SwimLane
@@ -257,6 +265,7 @@ export default {
           }
         );
 
+        this.destroyImageryContainer = destroy;
         const component = vNode.componentInstance;
         this.$refs.imageryHolder.appendChild(component.$el);
 

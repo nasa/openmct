@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
-import FlexibleLayoutComponent from './components/flexibleLayout.vue';
+
+import FlexibleLayoutComponent from './components/FlexibleLayout.vue';
 
 const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
 export default class FlexibleLayoutViewProvider {
@@ -47,17 +48,16 @@ export default class FlexibleLayoutViewProvider {
     let component = null;
 
     return {
-      show: function (element, isEditing) {
+      show(element, isEditing) {
         const { vNode, destroy } = mount(
           {
-            el: element,
             components: {
               FlexibleLayoutComponent
             },
             provide: {
-              openmct: openmct,
+              openmct,
               objectPath,
-              layoutObject: domainObject
+              domainObject
             },
             data() {
               return {
@@ -75,19 +75,22 @@ export default class FlexibleLayoutViewProvider {
         component = vNode.componentInstance;
         _destroy = destroy;
       },
-      getSelectionContext: function () {
+      getSelectionContext() {
         return {
           item: domainObject,
-          addContainer: component.$refs.flexibleLayout.addContainer,
-          deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-          deleteFrame: component.$refs.flexibleLayout.deleteFrame,
           type: 'flexible-layout'
         };
       },
-      onEditModeChange: function (isEditing) {
+      contextAction() {
+        const action = arguments[0];
+        if (component && component.$refs.flexibleLayout[action]) {
+          component.$refs.flexibleLayout[action](...Array.from(arguments).splice(1));
+        }
+      },
+      onEditModeChange(isEditing) {
         component.isEditing = isEditing;
       },
-      destroy: function (element) {
+      destroy() {
         if (_destroy) {
           _destroy();
           component = null;

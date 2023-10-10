@@ -55,14 +55,16 @@
 </template>
 
 <script>
-import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
+import TestData from './TestData.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
   components: {
     TestData,
     ConditionCollection
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'domainObject'],
   props: {
     isEditing: Boolean
@@ -71,14 +73,8 @@ export default {
     return {
       currentConditionOutput: '',
       telemetryObjs: [],
-      testData: {},
-      staleObjects: []
+      testData: {}
     };
-  },
-  computed: {
-    isStale() {
-      return this.staleObjects.length !== 0;
-    }
   },
   mounted() {
     this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -100,17 +96,8 @@ export default {
     updateTestData(testData) {
       this.testData = testData;
     },
-    handleStaleness({ keyString, isStale }) {
-      const index = this.staleObjects.indexOf(keyString);
-      if (isStale) {
-        if (index === -1) {
-          this.staleObjects.push(keyString);
-        }
-      } else {
-        if (index !== -1) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
+    handleStaleness({ keyString, stalenessResponse }) {
+      this.addOrRemoveStaleObject(keyString, stalenessResponse);
     }
   }
 };

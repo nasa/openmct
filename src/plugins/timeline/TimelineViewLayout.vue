@@ -48,11 +48,13 @@
 </template>
 
 <script>
-import TimelineObjectView from './TimelineObjectView.vue';
-import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import { getValidatedData } from '../plan/util';
 import _ from 'lodash';
+
+import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+
+import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
+import { getValidatedData } from '../plan/util';
+import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
   definition: {

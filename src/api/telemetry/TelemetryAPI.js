@@ -20,13 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryCollection from './TelemetryCollection';
-import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
-import TelemetryValueFormatter from './TelemetryValueFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
 import objectUtils from 'objectUtils';
+
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
+import DefaultMetadataProvider from './DefaultMetadataProvider';
+import TelemetryCollection from './TelemetryCollection';
+import TelemetryMetadataManager from './TelemetryMetadataManager';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
+import TelemetryValueFormatter from './TelemetryValueFormatter';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext
@@ -230,7 +231,7 @@ export default class TelemetryAPI {
 
   /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
-   * The request will be modifyed when it is received and will be returned in it's modified state
+   * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
@@ -269,7 +270,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Get or set greedy LAD. For stategy "latest" telemetry in
+   * Get or set greedy LAD. For strategy "latest" telemetry in
    * realtime mode the start bound will be ignored if true and
    * there is no new data to replace the existing data.
    * defaults to true
@@ -784,6 +785,7 @@ export default class TelemetryAPI {
    */
   getLimits(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
+
     if (!provider || !provider.getLimits) {
       return {
         limits: function () {
@@ -792,7 +794,23 @@ export default class TelemetryAPI {
       };
     }
 
-    return provider.getLimits(domainObject);
+    const abortController = new AbortController();
+    const options = { signal: abortController.signal };
+    this.requestAbortControllers.add(abortController);
+
+    try {
+      return provider.getLimits(domainObject, options);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        this.openmct.notifications.error(
+          'Error requesting telemetry data, see console for details'
+        );
+      }
+
+      throw new Error(error);
+    } finally {
+      this.requestAbortControllers.delete(abortController);
+    }
   }
 }
 

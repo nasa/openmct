@@ -61,14 +61,14 @@
 </template>
 
 <script>
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import configStore from '../configuration/ConfigStore';
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import PlotLegend from '../legend/PlotLegend.vue';
-import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import configStore from '../configuration/ConfigStore';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import PlotLegend from '../legend/PlotLegend.vue';
 import eventHelpers from '../lib/eventHelpers';
+import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {
   components: {
@@ -212,6 +212,8 @@ export default {
       this.composition.off('reorder', this.compositionReorder);
 
       this.stopListening();
+      const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      configStore.deleteStore(configId);
     },
 
     addChild(child) {

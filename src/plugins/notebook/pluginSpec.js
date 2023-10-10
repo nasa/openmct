@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
-import { NotebookPlugin } from './plugin';
+import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
+
+import { NotebookPlugin } from './plugin';
 
 describe('Notebook plugin:', () => {
   let openmct;
@@ -219,7 +220,7 @@ describe('Notebook plugin:', () => {
       const notebookEntryElements = element.querySelectorAll('.c-notebook__entry');
       const firstEntryText = getEntryText(0);
       expect(notebookEntryElements.length).toBe(2);
-      expect(firstEntryText.innerText).toBe('First Test Entry');
+      expect(firstEntryText.innerText.trim()).toBe('First Test Entry');
     });
 
     describe('synchronization', () => {
@@ -231,13 +232,13 @@ describe('Notebook plugin:', () => {
       });
 
       it('updates an entry when another user modifies it', () => {
-        expect(getEntryText(0).innerText).toBe('First Test Entry');
+        expect(getEntryText(0).innerText.trim()).toBe('First Test Entry');
         objectCloneToSyncFrom.configuration.entries['test-section-1']['test-page-1'][0].text =
           'Modified entry text';
         objectProviderObserver(objectCloneToSyncFrom);
 
         return Vue.nextTick().then(() => {
-          expect(getEntryText(0).innerText).toBe('Modified entry text');
+          expect(getEntryText(0).innerText.trim()).toBe('Modified entry text');
         });
       });
 

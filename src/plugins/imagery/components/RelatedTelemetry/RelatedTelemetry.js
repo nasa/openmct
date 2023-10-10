@@ -81,7 +81,7 @@ export default class RelatedTelemetry {
             this[key].realtime.telemetryObjectId &&
             this[key].realtime.telemetryObjectId !== ''
           ) {
-            await this._intializeRealtime(key);
+            await this._initializeRealtime(key);
           }
         }
       })
@@ -131,7 +131,7 @@ export default class RelatedTelemetry {
     }
   }
 
-  async _intializeRealtime(key) {
+  async _initializeRealtime(key) {
     this[key].realtimeDomainObject = await this._openmct.objects.get(
       this[key].realtime.telemetryObjectId
     );

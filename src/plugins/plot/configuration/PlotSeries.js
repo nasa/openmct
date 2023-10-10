@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
-import Model from './Model';
-import { MARKER_SHAPES } from '../draw/MarkerShapes';
+
 import configStore from '../configuration/ConfigStore';
+import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import { symlog } from '../mathUtils';
+import Model from './Model';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -134,7 +135,9 @@ export default class PlotSeries extends Model {
    * @override
    */
   destroy() {
+    //this triggers Model.destroy which in turn triggers destroy methods for other classes.
     super.destroy();
+    this.stopListening();
     this.openmct.time.off('bounds', this.updateLimits);
 
     if (this.unsubscribe) {
@@ -148,6 +151,8 @@ export default class PlotSeries extends Model {
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }
+
+    configStore.deleteStore(this.dataStoreId);
   }
 
   /**
@@ -554,7 +559,7 @@ export default class PlotSeries extends Model {
 
   /**
      * Update the series data with the given value.
-     * This return type definition is totally wrong, only covers sinwave generator. It needs to be generic.
+     * This return type definition is totally wrong, only covers sinewave generator. It needs to be generic.
      * @return-example {Array<{
             cos: number
             sin: number

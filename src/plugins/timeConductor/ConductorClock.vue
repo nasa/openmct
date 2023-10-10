@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import clockMixin from './clock-mixin';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import clockMixin from './clock-mixin';
 
 export default {
   mixins: [clockMixin],
@@ -58,7 +58,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     const activeClock = this.getActiveClock();
 
     return {
@@ -66,11 +66,11 @@ export default {
       clocks: []
     };
   },
-  mounted: function () {
+  mounted() {
     this.loadClocks(this.configuration.menuOptions);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
-  destroyed: function () {
+  unmounted() {
     this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
   },
   methods: {

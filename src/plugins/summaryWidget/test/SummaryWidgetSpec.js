@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['../src/SummaryWidget'], function (SummaryWidget) {
-  xdescribe('The Summary Widget', function () {
+  describe('The Summary Widget', function () {
     let summaryWidget;
     let mockDomainObject;
     let mockOldDomainObject;
@@ -88,7 +88,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
       summaryWidget.show(mockContainer);
     });
 
-    it('queries with legacyId', function () {
+    xit('queries with legacyId', function () {
       expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
     });
 
@@ -96,7 +96,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
       expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
     });
 
-    it('initialzes a default rule', function () {
+    it('initializes a default rule', function () {
       expect(mockDomainObject.configuration.ruleConfigById.default).toBeDefined();
       expect(mockDomainObject.configuration.ruleOrder).toEqual(['default']);
     });
@@ -143,7 +143,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
       expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
     });
 
-    it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
+    xit('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
       setTimeout(function () {
         summaryWidget.onEdit([]);
         expect(summaryWidget.editing).toEqual(false);
@@ -158,7 +158,7 @@ define(['../src/SummaryWidget'], function (SummaryWidget) {
       }, 100);
     });
 
-    it('unregisters any registered listeners on a destroy', function () {
+    xit('unregisters any registered listeners on a destroy', function () {
       setTimeout(function () {
         summaryWidget.destroy();
         expect(listenCallbackSpy).toHaveBeenCalled();

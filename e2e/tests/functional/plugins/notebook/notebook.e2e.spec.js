@@ -39,7 +39,7 @@ test.describe('Notebook CRUD Operations', () => {
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
   test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
   test.fixme('Can Delete a Notebook Object', async ({ page }) => {
-    // Other than non-persistible objects
+    // Other than non-persistable objects
   });
 });
 
@@ -279,8 +279,8 @@ test.describe('Notebook entry tests', () => {
 
     // Click .c-notebook__drag-area
     await page.locator('.c-notebook__drag-area').click();
-    await expect(page.locator('[aria-label="Notebook Entry Input"]')).toBeVisible();
-    await expect(page.locator('[aria-label="Notebook Entry"]')).toHaveClass(/is-selected/);
+    await expect(page.getByLabel('Notebook Entry Display')).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
   });
   test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
     page
@@ -369,6 +369,8 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
+    expect(await validLink.count()).toBe(1);
+
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
 
@@ -378,8 +380,6 @@ test.describe('Notebook entry tests', () => {
     // Wait for the popup to load.
     await popup.waitForLoadState();
     expect.soft(popup.url()).toContain('www.google.com');
-
-    expect(await validLink.count()).toBe(1);
   });
   test('when an invalid link is entered into a notebook entry, it does not become clickable when viewing', async ({
     page
@@ -447,6 +447,8 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
+    expect(await validLink.count()).toBe(1);
+
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
 
@@ -456,8 +458,6 @@ test.describe('Notebook entry tests', () => {
     // Wait for the popup to load.
     await popup.waitForLoadState();
     expect.soft(popup.url()).toContain('www.google.com');
-
-    expect(await validLink.count()).toBe(1);
   });
   test('when a nefarious link is entered into a notebook entry, it is sanitized when viewing', async ({
     page
@@ -481,5 +481,43 @@ test.describe('Notebook entry tests', () => {
 
     expect.soft(await sanitizedLink.count()).toBe(1);
     expect(await unsanitizedLink.count()).toBe(0);
+  });
+  test('Can add markdown to a notebook entry', async ({ page }) => {
+    await page.goto(notebookObject.url);
+
+    // Headers
+    const headerMarkdown = `# Big Header\n## Large Header\n### Medium Header\n#### Small Header`;
+    await nbUtils.enterTextEntry(page, headerMarkdown);
+    await expect(page.getByRole('heading', { name: 'Big Header' })).toBeVisible();
+
+    // Text markup
+    const markupText =
+      '**This is bold.** _This is italic_. `This is code`. ~This is strikethrough~';
+    await nbUtils.enterTextEntry(page, markupText);
+    await expect(page.locator('strong:has-text("This is bold.")')).toBeVisible();
+
+    // Tables
+    const tablesText = '|Col 1|Col 2|Col3|\n|-|-|-|\n |Value 1|Value 2|Value 3|\n';
+    await nbUtils.enterTextEntry(page, tablesText);
+    await expect(page.getByRole('cell', { name: 'Value 2' })).toBeVisible();
+
+    // Links
+    const linksText =
+      'Raw links https://www.google.com and Markdown links like [Google](https://www.google.com) work';
+    await nbUtils.enterTextEntry(page, linksText);
+    await expect(page.getByRole('link', { name: 'https://www.google.com' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Google', exact: true })).toBeVisible();
+
+    // Lists
+    const listsText = '- List item 1\n   - Item 1A \n- List Item 2\n  1. Order 1\n  1. Order 2\n';
+    await nbUtils.enterTextEntry(page, listsText);
+    const childItem = page.locator('li:has-text("List Item 2") ol li:has-text("Order 2")');
+    await expect(childItem).toBeVisible();
+
+    // Blocks
+    const blockTest = '```javascript\nconst foo = "bar";\nconst bar = "foo";\n```';
+    await nbUtils.enterTextEntry(page, blockTest);
+    const codeBlock = page.locator('code.language-javascript:has-text("const foo = \\"bar\\";")');
+    await expect(codeBlock).toBeVisible();
   });
 });

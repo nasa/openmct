@@ -329,9 +329,10 @@
 </template>
 
 <script>
-import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
@@ -540,6 +541,11 @@ export default {
 
     this.openmct.time.on('bounds', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
+
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   unmounted() {
     this.composition.off('add', this.addedToComposition);
@@ -619,7 +625,7 @@ export default {
         this.unsubscribe = null;
       }
 
-      this.triggerUnsubscribeFromStaleness();
+      this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.curVal = DEFAULT_CURRENT_VALUE;
       this.formats = null;
@@ -638,7 +644,11 @@ export default {
 
       this.valueKey = this.metadata.valuesForHints(['range'])[0].source;
 
-      this.openmct.telemetry.request(domainObject, { strategy: 'latest' }).then((values) => {
+      const options = {
+        strategy: 'latest',
+        timeContext: this.openmct.time.getContextForView([])
+      };
+      this.openmct.telemetry.request(domainObject, options).then((values) => {
         const length = values.length;
         this.updateValue(values[length - 1]);
       });

@@ -25,57 +25,12 @@ This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
-
-/**
- * Creates a notebook object and adds an entry.
- * @param {import('@playwright/test').Page} - page to load
- * @param {number} [iterations = 1] - the number of entries to create
- */
-async function createNotebookAndEntry(page, iterations = 1) {
-  const notebook = createDomainObjectWithDefaults(page, { type: 'Notebook' });
-
-  for (let iteration = 0; iteration < iterations; iteration++) {
-    await nbUtils.enterTextEntry(page, `Entry ${iteration}`);
-  }
-
-  return notebook;
-}
-
-/**
- * Creates a notebook object, adds an entry, and adds a tag.
- * @param {import('@playwright/test').Page} page
- * @param {number} [iterations = 1] - the number of entries (and tags) to create
- */
-async function createNotebookEntryAndTags(page, iterations = 1) {
-  const notebook = await createNotebookAndEntry(page, iterations);
-  await selectInspectorTab(page, 'Annotations');
-
-  for (let iteration = 0; iteration < iterations; iteration++) {
-    // Hover and click "Add Tag" button
-    // Hover is needed here to "slow down" the actions while running in headless mode
-    await page.locator(`[aria-label="Notebook Entry"] >> nth = ${iteration}`).click();
-    await page.hover(`button:has-text("Add Tag")`);
-    await page.locator(`button:has-text("Add Tag")`).click();
-
-    // Click inside the tag search input
-    await page.locator('[placeholder="Type to select tag"]').click();
-    // Select the "Driving" tag
-    await page.locator('[aria-label="Autocomplete Options"] >> text=Driving').click();
-
-    // Hover and click "Add Tag" button
-    // Hover is needed here to "slow down" the actions while running in headless mode
-    await page.hover(`button:has-text("Add Tag")`);
-    await page.locator(`button:has-text("Add Tag")`).click();
-    // Click inside the tag search input
-    await page.locator('[placeholder="Type to select tag"]').click();
-    // Select the "Science" tag
-    await page.locator('[aria-label="Autocomplete Options"] >> text=Science').click();
-  }
-
-  return notebook;
-}
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  enterTextEntry,
+  createNotebookAndEntry,
+  createNotebookEntryAndTags
+} = require('../../../../helper/notebookUtils');
 
 test.describe('Tagging in Notebooks @addInit', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,7 +40,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can load tags', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     await page.locator('button:has-text("Add Tag")').click();
 
@@ -110,9 +65,9 @@ test.describe('Tagging in Notebooks @addInit', () => {
   });
   test('Can add tags with blank entry', async ({ page }) => {
     await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
-    await nbUtils.enterTextEntry(page, '');
+    await enterTextEntry(page, '');
     await page.hover(`button:has-text("Add Tag")`);
     await page.locator(`button:has-text("Add Tag")`).click();
 
@@ -126,7 +81,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can cancel adding tags', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Test canceling adding a tag after we click "Type to select tag"
     await page.locator('button:has-text("Add Tag")').click();
@@ -192,16 +147,14 @@ test.describe('Tagging in Notebooks @addInit', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5823'
     });
-
     await createNotebookEntryAndTags(page);
 
     await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-    const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 1`;
-    await page.locator(entryLocator).click();
-    await page.locator(entryLocator).fill(`An entry without tags`);
-    await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
+    await page.getByLabel('Notebook Entry Display').last().click();
+    await page.getByLabel('Notebook Entry Input').fill(`An entry without tags`);
+    await page.locator('.c-ne__save-button > button').click();
 
-    await page.hover('[aria-label="Notebook Entry Input"] >> nth=1');
+    await page.hover('[aria-label="Notebook Entry Display"] >> nth=1');
     await page.locator('button[title="Delete this entry"]').last().click();
     await expect(
       page.locator('text=This action will permanently delete this entry. Do you wish to continue?')
@@ -255,7 +208,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can cancel adding a tag', async ({ page }) => {
     await createNotebookAndEntry(page);
 
-    await selectInspectorTab(page, 'Annotations');
+    await page.getByRole('tab', { name: 'Annotations' }).click();
 
     // Click on the "Add Tag" button
     await page.locator('button:has-text("Add Tag")').click();

@@ -62,6 +62,13 @@ export default class RemoteClock extends DefaultClock {
     this.openmct.objects
       .get(this.identifier)
       .then((domainObject) => {
+        // The start method is called when at least one listener registers with the clock.
+        // When the clock is changed, listeners are unregistered from the clock and the stop method is called.
+        // Sometimes, the objects.get call above does not resolve before the stop method is called.
+        // So when we proceed with the clock subscription below, we first need to ensure that there is at least one listener for our clock.
+        if (this.eventNames().length === 0) {
+          return;
+        }
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.timeTelemetryObject = domainObject;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);

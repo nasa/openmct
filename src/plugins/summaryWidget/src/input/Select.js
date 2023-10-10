@@ -49,7 +49,7 @@ define([
   /**
    * Register a callback with this select: supported callback is change
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -58,6 +58,20 @@ define([
       this.eventEmitter.on(event, callback, context || this);
     } else {
       throw new Error('Unsupported event type' + event);
+    }
+  };
+
+  /**
+   * Unregister a callback from this select.
+   * @param {string} event The key for the event to stop listening to
+   * @param {function} callback The function to unregister
+   * @param {Object} context A reference to a scope to use as the context for the callback function
+   */
+  Select.prototype.off = function (event, callback, context) {
+    if (this.supportedCallbacks.includes(event)) {
+      this.eventEmitter.off(event, callback, context || this);
+    } else {
+      throw new Error('Unsupported event type: ' + event);
     }
   };
 

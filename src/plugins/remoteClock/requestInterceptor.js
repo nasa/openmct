@@ -31,10 +31,16 @@ function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForB
       return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
     },
     invoke: async (request) => {
-      const { start, end } = await waitForBounds();
-      remoteClockLoaded = true;
-      request.start = start;
-      request.end = end;
+      const timeContext = request?.timeContext ?? openmct.time;
+
+      // Wait for initial bounds if the request is for real-time data.
+      // Otherwise, use the bounds provided by the request.
+      if (timeContext.isRealTime()) {
+        const { start, end } = await waitForBounds();
+        remoteClockLoaded = true;
+        request.start = start;
+        request.end = end;
+      }
 
       return request;
     }

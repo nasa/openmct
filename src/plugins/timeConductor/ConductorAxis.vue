@@ -26,11 +26,12 @@
 </template>
 
 <script>
-import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import utcMultiTimeFormat from './utcMultiTimeFormat.js';
+import * as d3Selection from 'd3-selection';
+
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -92,7 +93,7 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.resizeTimer);
   },
   methods: {

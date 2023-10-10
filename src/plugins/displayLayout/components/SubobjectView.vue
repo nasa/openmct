@@ -24,19 +24,21 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @endMove="endMove"
   >
-    <object-frame
-      v-if="domainObject"
-      ref="objectFrame"
-      :domain-object="domainObject"
-      :object-path="currentObjectPath"
-      :has-frame="item.hasFrame"
-      :show-edit-view="false"
-      :layout-font-size="item.fontSize"
-      :layout-font="item.font"
-    />
+    <template #content>
+      <ObjectFrame
+        v-if="domainObject"
+        ref="objectFrame"
+        :domain-object="domainObject"
+        :object-path="currentObjectPath"
+        :has-frame="item.hasFrame"
+        :show-edit-view="false"
+        :layout-font-size="item.fontSize"
+        :layout-font="item.font"
+      />
+    </template>
   </layout-frame>
 </template>
 
@@ -104,8 +106,7 @@ export default {
   data() {
     return {
       domainObject: undefined,
-      currentObjectPath: [],
-      mutablePromise: undefined
+      currentObjectPath: []
     };
   },
   watch: {
@@ -168,6 +169,12 @@ export default {
           delete this.immediatelySelect;
         }
       });
+    },
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('endMove');
     }
   }
 };

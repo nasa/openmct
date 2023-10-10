@@ -29,14 +29,15 @@
     }"
     :style="style"
   >
-    <slot></slot>
+    <slot name="content"></slot>
     <div class="c-frame__move-bar" @mousedown.left="startMove($event)"></div>
   </div>
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag';
 import _ from 'lodash';
+
+import LayoutDrag from './../LayoutDrag';
 
 export default {
   inject: ['openmct'],

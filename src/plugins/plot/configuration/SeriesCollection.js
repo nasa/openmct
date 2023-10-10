@@ -21,10 +21,11 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import PlotSeries from './PlotSeries';
-import Collection from './Collection';
 import Color from '@/ui/color/Color';
 import ColorPalette from '@/ui/color/ColorPalette';
+
+import Collection from './Collection';
+import PlotSeries from './PlotSeries';
 
 /**
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
@@ -126,9 +127,9 @@ export default class SeriesCollection extends Collection {
       });
 
       /*
-                    when cancelling out of edit mode, the config store and domain object are out of sync
-                    thus it is necesarry to check both and remove the models that are no longer in composition
-                */
+      when cancelling out of edit mode, the config store and domain object are out of sync
+      thus it is necessary to check both and remove the models that are no longer in composition
+      */
       if (persistedIndex === -1) {
         this.remove(this.at(configIndex));
       } else {
@@ -185,6 +186,12 @@ export default class SeriesCollection extends Collection {
         seriesIdentifier.key === identifier.key
       );
     })[0];
+  }
+
+  destroy() {
+    super.destroy();
+    this.plot = undefined;
+    this.stopListening();
   }
 }
 

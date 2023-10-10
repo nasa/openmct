@@ -2,7 +2,9 @@
 
 Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
-Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+> [!NOTE]
+> Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
@@ -14,19 +16,32 @@ Once you've created something amazing with Open MCT, showcase your work in our G
 Building and running Open MCT in your local dev environment is very easy. Be sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/) installed, then follow the directions below. Need additional information? Check out the [Getting Started](https://nasa.github.io/openmct/getting-started/) page on our website.
 (These instructions assume you are installing as a non-root user; developers have [reported issues](https://github.com/nasa/openmct/issues/1151) running these steps with root privileges.)
 
-1. Clone the source code
+1. Clone the source code:
 
- `git clone https://github.com/nasa/openmct.git`
+```
+git clone https://github.com/nasa/openmct.git
+```
 
-2. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions.
+2. (Optional) Install the correct node version using [nvm](https://github.com/nvm-sh/nvm):
 
- `npm install`
+```
+nvm install
+```
 
-3. Run a local development server
+3. Install development dependencies (Note: Check the `package.json` engine for our tested and supported node versions): 
 
- `npm start`
+```
+npm install
+```
 
-Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
+4. Run a local development server:
+
+```
+npm start
+```
+
+> [!IMPORTANT]
+> Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
 Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
 
@@ -40,8 +55,12 @@ The clearest examples for developing Open MCT plugins are in the
 [tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
-We want Open MCT to be as easy to use, install, run, and develop for as
-possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
+> [!NOTE]
+> We want Open MCT to be as easy to use, install, run, and develop for as
+> possible, and your feedback will help us get there! 
+> Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), 
+> [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), 
+> or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
 ## Developing Applications With Open MCT
 
@@ -50,6 +69,8 @@ For more on developing with Open MCT, see our documentation for a guide on [Deve
 ## Compatibility
 
 This is a fast moving project and we do our best to test and support the widest possible range of browsers, operating systems, and nodejs APIs. We have a published list of support available in our package.json's `browserslist` key.
+
+The project uses `nvm` to ensure the node and npm version used, is coherent in all projects. Install nvm (non-windows), [here](https://github.com/nvm-sh/nvm) or the windows equivalent [here](https://github.com/coreybutler/nvm-windows)
 
 If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose)
 
@@ -95,10 +116,10 @@ To run the performance tests:
 
 `npm run test:perf`
 
-The test suite is configured to all tests localed in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md)
+The test suite is configured to all tests located in `e2e/tests/` ending in `*.e2e.spec.js`. For more about the e2e test suite, please see the [README](./e2e/README.md)
 
 ### Security Tests
-Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/). The list of CWE coverage items is avaiable in the [CodeQL docs](https://codeql.github.com/codeql-query-help/javascript-cwe/). The CodeQL workflow is specified in the [CodeQL analysis file](./.github/workflows/codeql-analysis.yml) and the custom [CodeQL config](./.github/codeql/codeql-config.yml).
+Each commit is analyzed for known security vulnerabilities using [CodeQL](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/). The list of CWE coverage items is available in the [CodeQL docs](https://codeql.github.com/codeql-query-help/javascript-cwe/). The CodeQL workflow is specified in the [CodeQL analysis file](./.github/workflows/codeql-analysis.yml) and the custom [CodeQL config](./.github/codeql/codeql-config.yml).
 
 ### Test Reporting and Code Coverage
 

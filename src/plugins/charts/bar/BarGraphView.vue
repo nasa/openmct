@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import BarGraph from './BarGraphPlot.vue';
 import _ from 'lodash';
+
+import BarGraph from './BarGraphPlot.vue';
 
 export default {
   components: {
@@ -158,7 +159,7 @@ export default {
       this.composition.remove(telemetryObject);
     },
     addTelemetryObject(telemetryObject) {
-      // grab information we need from the added telmetry object
+      // grab information we need from the added telemetry object
       const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
       this.telemetryObjects[key] = telemetryObject;
       const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -188,7 +189,7 @@ export default {
         );
       }
 
-      // ask for the current telemetry data, then subcribe for changes
+      // ask for the current telemetry data, then subscribe for changes
       this.requestDataFor(telemetryObject);
       this.subscribeToObject(telemetryObject);
     },

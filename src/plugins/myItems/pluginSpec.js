@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import { createMyItemsIdentifier, MY_ITEMS_KEY } from './createMyItemsIdentifier';
 
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
@@ -51,9 +52,9 @@ describe('the plugin', () => {
 
     it('when installed, adds "My Items" to the root', async () => {
       const root = await openmct.objects.get('ROOT');
-      const rootCompostionCollection = openmct.composition.get(root);
-      const rootCompostion = await rootCompostionCollection.load();
-      let myItems = rootCompostion.filter((domainObject) => {
+      const rootCompositionCollection = openmct.composition.get(root);
+      const rootComposition = await rootCompositionCollection.load();
+      let myItems = rootComposition.filter((domainObject) => {
         return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
       })[0];
 

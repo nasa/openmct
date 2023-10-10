@@ -1,5 +1,6 @@
-import { saveAs } from 'saveAs';
 import Moment from 'moment';
+import { saveAs } from 'saveAs';
+
 import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
@@ -32,7 +33,9 @@ export default class ExportNotebookAsTextAction {
   getTagsForEntry(entry, domainObjectKeyString, annotations) {
     const foundTags = [];
     annotations.forEach((annotation) => {
-      const target = annotation.targets?.[domainObjectKeyString];
+      const target = annotation.targets.find(
+        (annotationTarget) => annotationTarget.keyString === domainObjectKeyString
+      );
       if (target?.entryId === entry.id) {
         annotation.tags.forEach((tag) => {
           if (!foundTags.includes(tag)) {
