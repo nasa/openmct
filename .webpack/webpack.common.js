@@ -77,8 +77,7 @@ const config = {
       MCT: path.join(projectRootDir, 'src/MCT'),
       testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
-      utils: path.join(projectRootDir, 'src/utils'),
-      vue: path.join(projectRootDir, 'node_modules/@vue/compat/dist/vue.esm-bundler.js'),
+      utils: path.join(projectRootDir, 'src/utils')
     }
   },
   plugins: [
@@ -115,7 +114,7 @@ const config = {
     new webpack.BannerPlugin({
       test: /.*Theme\.css$/,
       raw: true,
-      banner: '@charset "UTF-8";',
+      banner: '@charset "UTF-8";'
     })
   ],
   module: {
@@ -142,10 +141,7 @@ const config = {
         options: {
           compilerOptions: {
             hoistStatic: false,
-            whitespace: 'preserve',
-            compatConfig: {
-              MODE: 2
-            }
+            whitespace: 'preserve'
           }
         }
       },
