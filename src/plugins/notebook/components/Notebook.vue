@@ -882,6 +882,11 @@ export default {
       this.filterAndSortEntries();
       this.focusEntryId = id;
       this.selectedEntryId = id;
+
+      // put entry into edit mode
+      this.$nextTick(() => {
+        element.dispatchEvent(new Event('click'));
+      });
     },
     orientationChange() {
       this.formatSidebar();
