@@ -447,16 +447,6 @@ export default class PlotSeries extends Model {
       }
     }
 
-    // If the new point has an invalid y-value, add a duplicate of the last point first
-    if (isCurrentInvalid) {
-      data.splice(insertIndex, 0, { ...data[insertIndex - 1] });
-      insertIndex++; // Move the index forward to accommodate the new point
-      // If the last point has an invalid y-value, add a duplicate of the last point first
-    } else if (isLastInvalid) {
-      data.splice(insertIndex, 0, { ...data[insertIndex - 1] });
-      insertIndex++; // Move the index forward to accommodate the new point
-    }
-
     this.updateStats(point);
     point.mctLimitState = this.evaluate(point);
     data.splice(insertIndex, 0, point);
