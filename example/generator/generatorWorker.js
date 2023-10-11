@@ -258,9 +258,9 @@
   // Values exceeding float32 range (Positive: 3.4+38, Negative: -3.4+38)
   function getRandomFloat32OverflowValue() {
     const sign = Math.random() > 0.5 ? 1 : -1;
-    const floatBreaker = 3.4e39 + Math.random();
+    const float32Breaker = 3.4e39 + Math.random();
 
-    return sign * floatBreaker;
+    return sign * float32Breaker;
   }
 
   function wavelengths() {
