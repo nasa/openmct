@@ -28,7 +28,7 @@ import {
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
@@ -342,7 +342,7 @@ describe('the plugin', function () {
       destroyStackedPlot = destroy;
 
       await telemetryPromise;
-      await Vue.nextTick();
+      await nextTick();
       plotViewComponentObject = component.$refs.stackedPlotRef;
       const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
       config = configStore.get(configId);
@@ -390,7 +390,7 @@ describe('the plugin', function () {
         min: 10,
         max: 20
       });
-      await Vue.nextTick();
+      await nextTick();
       let yAxisElement = element.querySelectorAll(
         '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
       );
@@ -414,7 +414,7 @@ describe('the plugin', function () {
       let cursorGuide = Vue.ref(plotViewComponentObject.cursorGuide);
       expect(cursorGuide.value).toBeFalse();
       cursorGuide.value = true;
-      await Vue.nextTick();
+      await nextTick();
       let childCursorGuides = element.querySelectorAll('.c-cursor-guide--v');
       expect(childCursorGuides.length).toBe(1);
     });
@@ -435,7 +435,7 @@ describe('the plugin', function () {
       let gridLines = Vue.ref(plotViewComponentObject.gridLines);
       expect(gridLines.value).toBeTrue();
       gridLines.value = false;
-      await Vue.nextTick();
+      await nextTick();
       expect(gridLines.value).toBeFalse();
       let gridLinesContainer = element.querySelectorAll('.gl-plot-display-area .js-ticks');
       let visible = 0;
@@ -628,7 +628,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 
@@ -783,7 +783,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 
