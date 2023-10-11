@@ -255,9 +255,12 @@
     );
   }
 
+  // Values exceeding float32 range (Positive: 3.4+38, Negative: -3.4+38)
   function getRandomFloat32OverflowValue() {
-    // Values exceeding float32 range (Positive: 3.4+38, Negative: -3.4+38)
-    return (Math.random() > 0.5 ? 1 : -1) * (3.4e39 + Math.random());
+    const sign = Math.random() > 0.5 ? 1 : -1;
+    const floatBreaker = 3.4e39 + Math.random();
+
+    return sign * floatBreaker;
   }
 
   function wavelengths() {

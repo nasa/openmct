@@ -427,10 +427,8 @@ export default class PlotSeries extends Model {
     let insertIndex = data.length;
     const currentYVal = this.getYVal(point);
     const lastYVal = this.getYVal(data[insertIndex - 1]);
-    const isCurrentInvalid = this.isValueInvalid(currentYVal);
-    const isLastInvalid = this.isValueInvalid(lastYVal);
 
-    if (isCurrentInvalid && isLastInvalid) {
+    if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
       console.warn('[Plot] Invalid Y Values detected');
 
       return;
