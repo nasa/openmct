@@ -123,6 +123,13 @@ export default function (openmct) {
         property: ['telemetry', 'infinityValues']
       },
       {
+        name: 'Exceed Float32 Limits',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'exceedFloat32',
+        property: ['telemetry', 'exceedFloat32']
+      },
+      {
         name: 'Provide Staleness Updates',
         control: 'toggleSwitch',
         cssClass: 'l-input',
@@ -140,6 +147,7 @@ export default function (openmct) {
         randomness: 0,
         loadDelay: 0,
         infinityValues: false,
+        exceedFloat32: false,
         staleness: false
       };
     }

@@ -64,6 +64,10 @@ import Model from './Model';
  *
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
+
+const FLOAT32_MAX = 3.4e38;
+const FLOAT32_MIN = -3.4e38;
+
 export default class PlotSeries extends Model {
   logMode = false;
 
@@ -371,7 +375,7 @@ export default class PlotSeries extends Model {
     let stats = this.get('stats');
     let changed = false;
     if (!stats) {
-      if ([Infinity, -Infinity].includes(value)) {
+      if ([Infinity, -Infinity].includes(value) || !this.isValidFloat32(value)) {
         return;
       }
 
@@ -383,13 +387,13 @@ export default class PlotSeries extends Model {
       };
       changed = true;
     } else {
-      if (stats.maxValue < value && value !== Infinity) {
+      if (stats.maxValue < value && value !== Infinity && this.isValidFloat32(value)) {
         stats.maxValue = value;
         stats.maxPoint = point;
         changed = true;
       }
 
-      if (stats.minValue > value && value !== -Infinity) {
+      if (stats.minValue > value && value !== -Infinity && this.isValidFloat32(value)) {
         stats.minValue = value;
         stats.minPoint = point;
         changed = true;
@@ -423,8 +427,10 @@ export default class PlotSeries extends Model {
     let insertIndex = data.length;
     const currentYVal = this.getYVal(point);
     const lastYVal = this.getYVal(data[insertIndex - 1]);
+    const isCurrentInvalid = this.isValueInvalid(currentYVal);
+    const isLastInvalid = this.isValueInvalid(lastYVal);
 
-    if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
+    if (isCurrentInvalid && isLastInvalid) {
       console.warn('[Plot] Invalid Y Values detected');
 
       return;
@@ -441,6 +447,16 @@ export default class PlotSeries extends Model {
       }
     }
 
+    // If the new point has an invalid y-value, add a duplicate of the last point first
+    if (isCurrentInvalid) {
+      data.splice(insertIndex, 0, { ...data[insertIndex - 1] });
+      insertIndex++; // Move the index forward to accommodate the new point
+      // If the last point has an invalid y-value, add a duplicate of the last point first
+    } else if (isLastInvalid) {
+      data.splice(insertIndex, 0, { ...data[insertIndex - 1] });
+      insertIndex++; // Move the index forward to accommodate the new point
+    }
+
     this.updateStats(point);
     point.mctLimitState = this.evaluate(point);
     data.splice(insertIndex, 0, point);
@@ -453,7 +469,15 @@ export default class PlotSeries extends Model {
    * @private
    */
   isValueInvalid(val) {
-    return Number.isNaN(val) || this.unPlottableValues.includes(val);
+    return Number.isNaN(val) || this.unPlottableValues.includes(val) || !this.isValidFloat32(val);
+  }
+
+  /**
+   *
+   * @private
+   */
+  isValidFloat32(val) {
+    return val < FLOAT32_MAX && val > FLOAT32_MIN;
   }
 
   /**
