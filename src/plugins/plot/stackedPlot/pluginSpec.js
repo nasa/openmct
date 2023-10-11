@@ -28,7 +28,7 @@ import {
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
@@ -411,7 +411,7 @@ describe('the plugin', function () {
     });
 
     it('turns on cursor Guides all telemetry objects', async () => {
-      let cursorGuide = Vue.ref(plotViewComponentObject.cursorGuide);
+      let cursorGuide = ref(plotViewComponentObject.cursorGuide);
       expect(cursorGuide.value).toBeFalse();
       cursorGuide.value = true;
       await nextTick();
@@ -432,7 +432,7 @@ describe('the plugin', function () {
     });
 
     it('hides grid lines for all telemetry objects', async () => {
-      let gridLines = Vue.ref(plotViewComponentObject.gridLines);
+      let gridLines = ref(plotViewComponentObject.gridLines);
       expect(gridLines.value).toBeTrue();
       gridLines.value = false;
       await nextTick();
