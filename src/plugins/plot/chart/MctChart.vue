@@ -147,8 +147,6 @@ export default {
   emits: ['chart-loaded', 'plot-reinitialize-canvas'],
   data() {
     return {
-      canvasTemplate:
-        '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>',
       visibleLimitLabels: [],
       visibleLimitLines: []
     };
@@ -189,6 +187,10 @@ export default {
       },
       deep: true
     }
+  },
+  created() {
+    this.canvasTemplate =
+      '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>';
   },
   mounted() {
     eventHelpers.extend(this);
@@ -488,7 +490,10 @@ export default {
       // Have to throw away the old canvas elements and replace with new
       // canvas elements in order to get new drawing contexts.
       const div = document.createElement('div');
-      div.innerHTML = this.canvasTemplate + this.canvasTemplate;
+      div.innerHTML = `
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
       this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
