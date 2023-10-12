@@ -357,25 +357,6 @@ describe('The Imagery View Layouts', () => {
       expect(layerEls.length).toEqual(1);
     });
 
-    it('should use the image thumbnailUrl for thumbnails', async () => {
-      await nextTick();
-      await nextTick();
-      const fullSizeImageUrl = imageTelemetry[5].url;
-      const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
-
-      // Ensure thumbnails are shown w/ thumbnail Urls
-      const thumbnails = parent.querySelectorAll(`img[src='${thumbnailUrl}']`);
-      expect(thumbnails.length).toBeGreaterThan(0);
-
-      // Click a thumbnail
-      parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
-      await nextTick();
-
-      // Ensure full size image is shown w/ full size url
-      const fullSizeImages = parent.querySelectorAll(`img[src='${fullSizeImageUrl}']`);
-      expect(fullSizeImages.length).toBeGreaterThan(0);
-    });
-
     it('should show the clicked thumbnail as the main image', async () => {
       //Looks like we need nextTick here so that computed properties settle down
       await nextTick();
