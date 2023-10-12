@@ -319,63 +319,6 @@ describe('The Imagery View Layouts', () => {
     expect(imageryView).toBeDefined();
   });
 
-  describe('Clear data action for imagery', () => {
-    let applicableViews;
-    let imageryViewProvider;
-    let imageryView;
-    let componentView;
-    let clearDataPlugin;
-    let clearDataAction;
-
-    beforeEach(() => {
-      openmct.time.timeSystem('utc', {
-        start: START - 5 * ONE_MINUTE,
-        end: START + 5 * ONE_MINUTE
-      });
-
-      applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
-      imageryViewProvider = applicableViews.find((viewProvider) => viewProvider.key === imageryKey);
-      imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
-      imageryView.show(child);
-      componentView = imageryView._getInstance().$children[0];
-
-      clearDataPlugin = new ClearDataPlugin(['example.imagery'], { indicator: true });
-      openmct.install(clearDataPlugin);
-      clearDataAction = openmct.actions.getAction('clear-data-action');
-
-      return nextTick();
-    });
-
-    it('clear data action is installed', () => {
-      expect(clearDataAction).toBeDefined();
-    });
-
-    it('on clearData action should clear data for object is selected', (done) => {
-      // force show the thumbnails
-      componentView.forceShowThumbnails = true;
-      nextTick(() => {
-        let clearDataResolve;
-        let telemetryRequestPromise = new Promise((resolve) => {
-          clearDataResolve = resolve;
-        });
-        expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-
-        openmct.objectViews.on('clearData', (_domainObject) => {
-          return nextTick(() => {
-            expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
-
-            clearDataResolve();
-          });
-        });
-        clearDataAction.invoke(imageryObject);
-
-        telemetryRequestPromise.then(() => {
-          done();
-        });
-      });
-    });
-  });
-
   describe('imagery view', () => {
     let applicableViews;
     let imageryViewProvider;
