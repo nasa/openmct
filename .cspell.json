@@ -483,7 +483,11 @@
     "websockets",
     "swgs",
     "memlab",
-    "devmode"
+    "devmode",
+    "blockquote",
+    "blockquotes",
+    "Blockquote",
+    "Blockquotes"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
