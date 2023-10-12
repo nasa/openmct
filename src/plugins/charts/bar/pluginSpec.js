@@ -25,7 +25,7 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
 
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import BarGraphPlugin from './plugin';
 
 describe('the plugin', function () {
@@ -578,9 +578,7 @@ describe('the plugin', function () {
       child.append(viewContainer);
 
       const applicableViews = openmct.inspectorViews.get(selection);
-      plotInspectorView = applicableViews.filter(
-        (view) => view.name === 'Bar Graph Configuration'
-      )[0];
+      plotInspectorView = applicableViews.filter((view) => view.key === BAR_GRAPH_INSPECTOR_KEY)[0];
       plotInspectorView.show(viewContainer);
 
       await Vue.nextTick();
