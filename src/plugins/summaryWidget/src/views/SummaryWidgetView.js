@@ -1,4 +1,4 @@
-import urlSanitizeLib from '@braintree/sanitize-url';
+import * as urlSanitizeLib from '@braintree/sanitize-url';
 
 const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
 
