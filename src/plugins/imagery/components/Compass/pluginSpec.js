@@ -21,7 +21,7 @@
  *****************************************************************************/
 import Vue from 'vue';
 
-import Compass from './Compass.vue';
+import Compass from './CompassComponent.vue';
 
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';

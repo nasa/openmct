@@ -73,7 +73,7 @@ export default {
       }
     }
   },
-  emits: ['persistGlobalFilters'],
+  emits: ['persist-global-filters'],
   data() {
     return {
       expanded: false,
@@ -103,7 +103,7 @@ export default {
     },
     clearFilters(key) {
       this.updatedFilters[key] = {};
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
@@ -122,11 +122,11 @@ export default {
         this.updatedFilters[key][comparator] = [valueName];
       }
 
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateSingleSelection(key, comparator, value) {
       this.updatedFilters[key][comparator] = [value];
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
@@ -135,7 +135,7 @@ export default {
         this.updatedFilters[key][comparator] = value;
       }
 
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     }
   }
 };

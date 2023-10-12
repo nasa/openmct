@@ -175,7 +175,8 @@ test.describe('Grand Search', () => {
 
     let networkRequests = [];
     page.on('request', (request) => {
-      const searchRequest = request.url().endsWith('_find');
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
       const fetchRequest = request.resourceType() === 'fetch';
       if (searchRequest && fetchRequest) {
         networkRequests.push(request);

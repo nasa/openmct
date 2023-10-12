@@ -88,6 +88,7 @@ export default {
       }
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       hideOptions: true,
@@ -138,7 +139,7 @@ export default {
           value: newValue
         };
 
-        this.$emit('onChange', data);
+        this.$emit('on-change', data);
       }
     },
     hideOptions(newValue) {

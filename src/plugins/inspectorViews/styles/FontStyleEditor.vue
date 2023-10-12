@@ -51,6 +51,7 @@ export default {
       }
     }
   },
+  emits: ['set-font-property'],
   computed: {
     fontTypeLabel() {
       const fontType = FONTS.find((f) => f.value === this.fontStyle.font);

@@ -108,6 +108,7 @@ export default {
       }
     }
   },
+  emits: ['plot-tick-width'],
   data() {
     return {
       ticks: []
@@ -271,7 +272,7 @@ export default {
           );
 
           this.tickWidth = tickWidth;
-          this.$emit('plotTickWidth', {
+          this.$emit('plot-tick-width', {
             width: tickWidth,
             yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
           });

@@ -35,6 +35,7 @@ export default class ImageryView {
           domainObject: this.domainObject,
           objectPath: alternateObjectPath || this.objectPath,
           imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+          showCompassHUD: this.options?.showCompassHUD,
           currentView: this
         },
         data() {

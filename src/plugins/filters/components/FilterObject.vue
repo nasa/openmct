@@ -98,7 +98,7 @@ export default {
       }
     }
   },
-  emits: ['updateFilters'],
+  emits: ['update-filters'],
   data() {
     return {
       expanded: false,
@@ -162,11 +162,11 @@ export default {
         this.updatedFilters[key][comparator] = [valueName];
       }
 
-      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+      this.$emit('update-filters', this.keyString, this.updatedFilters);
     },
     clearFilters(key) {
       this.updatedFilters[key] = {};
-      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+      this.$emit('update-filters', this.keyString, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
@@ -175,15 +175,15 @@ export default {
         this.updatedFilters[key][comparator] = value;
       }
 
-      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+      this.$emit('update-filters', this.keyString, this.updatedFilters);
     },
     updateSingleSelection(key, comparator, value) {
       this.updatedFilters[key][comparator] = [value];
-      this.$emit('updateFilters', this.keyString, this.updatedFilters);
+      this.$emit('update-filters', this.keyString, this.updatedFilters);
     },
     useGlobalFilter(checked) {
       this.updatedFilters.useGlobal = checked;
-      this.$emit('updateFilters', this.keyString, this.updatedFilters, checked);
+      this.$emit('update-filters', this.keyString, this.updatedFilters, checked);
     },
     toggleIsEditing(isEditing) {
       this.isEditing = isEditing;

@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plotTickWidth="onTickWidthChange" />
+    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plot-tick-width="onTickWidthChange" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
@@ -59,6 +59,7 @@ export default {
       }
     }
   },
+  emits: ['plot-x-tick-width'],
   data() {
     return {
       selectedXKeyOptionKey: '',
@@ -138,7 +139,7 @@ export default {
         this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
     },
     onTickWidthChange(width) {
-      this.$emit('plotXTickWidth', width);
+      this.$emit('plot-x-tick-width', width);
     }
   }
 };

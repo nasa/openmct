@@ -56,6 +56,7 @@ define([
       this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
       this.telemetryObjects = {};
+      this.subscribedStaleObjects = new Map();
       this.telemetryCollections = {};
       this.delayedActions = [];
       this.outstandingRequests = 0;
@@ -75,6 +76,8 @@ define([
       this.filterObserver = undefined;
 
       this.createTableRowCollections();
+      this.resubscribeToStaleness = this.resubscribeAllObjectsToStaleness.bind(this);
+      this.openmct.time.on('clockChanged', this.resubscribeToStaleness);
     }
 
     /**
@@ -164,24 +167,7 @@ define([
       this.telemetryCollections[keyString].on('clear', this.clearData);
       this.telemetryCollections[keyString].load();
 
-      this.stalenessSubscription[keyString] = {};
-      this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils.default(
-        this.openmct,
-        telemetryObject
-      );
-      this.openmct.telemetry.isStale(telemetryObject).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      });
-      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-        telemetryObject,
-        (stalenessResponse) => {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+      this.subscribeToStaleness(telemetryObject);
 
       this.telemetryObjects[keyString] = {
         telemetryObject,
@@ -194,6 +180,42 @@ define([
       this.emit('object-added', telemetryObject);
     }
 
+    resubscribeAllObjectsToStaleness() {
+      if (!this.subscribedStaleObjects || this.subscribedStaleObjects.size < 1) {
+        return;
+      }
+      for (const [, telemetryObject] of this.subscribedStaleObjects) {
+        this.subscribeToStaleness(telemetryObject);
+      }
+    }
+
+    subscribeToStaleness(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (this.stalenessSubscription?.[keyString]) {
+        this.unsubscribeFromStaleness(domainObject.identifier);
+      }
+
+      this.stalenessSubscription[keyString] = {};
+      this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils.default(
+        this.openmct,
+        domainObject
+      );
+      this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
+        if (stalenessResponse !== undefined) {
+          this.handleStaleness(keyString, stalenessResponse);
+        }
+      });
+      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
+        domainObject,
+        (stalenessResponse) => {
+          this.handleStaleness(keyString, stalenessResponse);
+        }
+      );
+      this.subscribedStaleObjects.set(keyString, domainObject);
+
+      this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
+    }
+
     handleStaleness(keyString, stalenessResponse, skipCheck = false) {
       if (
         skipCheck ||
@@ -204,7 +226,7 @@ define([
       ) {
         this.emit('telemetry-staleness', {
           keyString,
-          isStale: stalenessResponse.isStale
+          stalenessResponse: stalenessResponse
         });
       }
     }
@@ -311,7 +333,6 @@ define([
 
     removeTelemetryObject(objectIdentifier) {
       const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
-      const SKIP_CHECK = true;
 
       this.configuration.removeColumnsForObject(objectIdentifier, true);
       this.tableRows.removeRowsByObject(keyString);
@@ -320,6 +341,13 @@ define([
       delete this.telemetryObjects[keyString];
 
       this.emit('object-removed', objectIdentifier);
+
+      this.unsubscribeFromStaleness(objectIdentifier);
+    }
+
+    unsubscribeFromStaleness(objectIdentifier) {
+      const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+      const SKIP_CHECK = true;
 
       this.stalenessSubscription[keyString].unsubscribe();
       this.stalenessSubscription[keyString].stalenessUtils.destroy();
@@ -424,6 +452,7 @@ define([
       this.tableRows.destroy();
 
       this.tableRows.off('resetRowsFromAllData', this.resetRowsFromAllData);
+      this.openmct.time.off('clockChanged', this.resubscribeToStaleness);
 
       let keystrings = Object.keys(this.telemetryCollections);
       keystrings.forEach(this.removeTelemetryCollection);

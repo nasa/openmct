@@ -96,6 +96,72 @@ create_replicator_table() {
     fi
 }
 
+add_index_and_views() {
+    echo "Adding index and views to $OPENMCT_DATABASE_NAME database"
+
+    # Add type_tags_index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request POST "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_index/\
+    --header 'Content-Type: application/json' \
+    --data '{
+        "index": {
+            "fields": ["model.type", "model.tags"]
+        },
+        "name": "type_tags_index",
+        "type": "json"
+    }')
+
+    if [[ $response =~ "\"result\":\"created\"" ]]; then
+        echo "Successfully created type_tags_index"
+    elif [[ $response =~ "\"result\":\"exists\"" ]]; then
+        echo "type_tags_index already exists, skipping creation"
+    else
+        echo "Unable to create type_tags_index"
+        echo $response
+    fi
+
+    # Add annotation_tags_index
+    response=$(curl  --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/annotation_tags_index \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "_id": "_design/annotation_tags_index",
+        "views": {
+            "by_tags": {
+                "map": "function (doc) { if (doc.model && doc.model.type === '\''annotation'\'' && doc.model.tags) { doc.model.tags.forEach(function (tag) { emit(tag, doc._id); }); } }"
+            }
+        }
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created annotation_tags_index"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "annotation_tags_index already exists, skipping creation"
+    else
+        echo "Unable to create annotation_tags_index"
+        echo $response
+    fi
+
+    # Add annotation_keystring_index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/annotation_keystring_index \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "_id": "_design/annotation_keystring_index",
+        "views": {
+            "by_keystring": {
+                "map": "function (doc) { if (doc.model && doc.model.type === '\''annotation'\'' && doc.model.targets) { doc.model.targets.forEach(function(target) { if(target.keyString) { emit(target.keyString, doc._id); } }); } }"
+            }
+        }
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created annotation_keystring_index"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "annotation_keystring_index already exists, skipping creation"
+    else
+        echo "Unable to create annotation_keystring_index"
+        echo $response
+    fi
+}
+
 # Main script execution
 
 # Check if the admin user exists; if not, create it.
@@ -145,3 +211,6 @@ if [ "FALSE" == "$(is_cors_enabled)" ]; then
 else
     echo "CORS enabled, nothing to do"
 fi
+
+# Add index and views to the database
+add_index_and_views

@@ -54,6 +54,7 @@ export default {
       }
     }
   },
+  emits: ['toggle-layer-visibility'],
   methods: {
     handleClose(e) {
       const closeButton = e.target.classList.contains('c-switcher-menu__close-button');
@@ -62,7 +63,7 @@ export default {
       }
     },
     toggleLayerVisibility(index) {
-      this.$emit('toggleLayerVisibility', index);
+      this.$emit('toggle-layer-visibility', index);
     }
   }
 };

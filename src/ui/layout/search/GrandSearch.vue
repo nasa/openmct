@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import search from '../../components/search.vue';
+import Search from '../../components/SearchComponent.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
 const SEARCH_DEBOUNCE_TIME = 200;
@@ -44,7 +44,7 @@ const SEARCH_DEBOUNCE_TIME = 200;
 export default {
   name: 'GrandSearch',
   components: {
-    search,
+    Search,
     SearchResultsDropDown
   },
   inject: ['openmct'],

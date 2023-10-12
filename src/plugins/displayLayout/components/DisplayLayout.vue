@@ -57,17 +57,17 @@
       :index="index"
       :multi-select="selectedLayoutItems.length > 1 || null"
       :is-editing="isEditing"
-      @contextClick="updateViewContext"
+      @context-click="updateViewContext"
       @move="move"
-      @endMove="endMove"
-      @endLineResize="endLineResize"
-      @formatChanged="updateTelemetryFormat"
+      @end-move="endMove"
+      @end-line-resize="endLineResize"
+      @format-changed="updateTelemetryFormat"
     />
     <edit-marquee
       v-if="showMarquee"
       :grid-size="gridSize"
       :selected-layout-items="selectedLayoutItems"
-      @endResize="endResize"
+      @end-resize="endResize"
     />
   </div>
 </template>
@@ -145,7 +145,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
   components: components,
-  inject: ['openmct', 'objectPath', 'options', 'objectUtils', 'currentView'],
+  inject: ['openmct', 'objectPath', 'options', 'currentView'],
   props: {
     domainObject: {
       type: Object,
@@ -222,13 +222,21 @@ export default {
     this.composition.load();
     this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
 
-    this.openmct.objects.observe(this.domainObject, 'configuration.items', (items) => {
-      this.layoutItems = items;
-    });
+    this.unObserveItems = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.items',
+      (items) => {
+        this.layoutItems = [...items];
+      }
+    );
 
     this.watchDisplayResize();
   },
-  unmounted() {
+  beforeUnmount() {
+    if (this.unObserveItems) {
+      this.unObserveItems();
+    }
+    this.unwatchDisplayResize();
     this.openmct.selection.off('change', this.setSelection);
     this.composition.off('add', this.addChild);
     this.composition.off('remove', this.removeChild);
@@ -252,9 +260,15 @@ export default {
       this.$el.click();
     },
     watchDisplayResize() {
-      const resizeObserver = new ResizeObserver(() => this.updateGrid());
+      this.unwatchDisplayResize();
+      this.resizeObserver = new ResizeObserver(this.updateGrid);
 
-      resizeObserver.observe(this.$el);
+      this.resizeObserver.observe(this.$el);
+    },
+    unwatchDisplayResize() {
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+      }
     },
     addElement(itemType, element) {
       this.addItem(itemType + '-view', element);
@@ -624,7 +638,7 @@ export default {
           return this.openmct.objects.makeKeyString(item.identifier) !== keyString;
         }
       });
-      this.layoutItems = layoutItems;
+      this.layoutItems = [...layoutItems];
       this.mutate('configuration.items', layoutItems);
       this.clearSelection();
     },

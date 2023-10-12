@@ -83,6 +83,7 @@ export default {
       required: true
     }
   },
+  emits: ['delete-style'],
   data() {
     return {
       expanded: false
