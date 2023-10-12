@@ -279,7 +279,7 @@ test.describe('Notebook entry tests', () => {
 
     // Click .c-notebook__drag-area
     await page.locator('.c-notebook__drag-area').click();
-    await expect(page.getByLabel('Notebook Entry Display')).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
     await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
   });
   test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
@@ -514,10 +514,23 @@ test.describe('Notebook entry tests', () => {
     const childItem = page.locator('li:has-text("List Item 2") ol li:has-text("Order 2")');
     await expect(childItem).toBeVisible();
 
-    // Blocks
-    const blockTest = '```javascript\nconst foo = "bar";\nconst bar = "foo";\n```';
-    await nbUtils.enterTextEntry(page, blockTest);
+    // Code Blocks
+    const codeblockTest = '```javascript\nconst foo = "bar";\nconst bar = "foo";\n```';
+    await nbUtils.enterTextEntry(page, codeblockTest);
     const codeBlock = page.locator('code.language-javascript:has-text("const foo = \\"bar\\";")');
     await expect(codeBlock).toBeVisible();
+
+    // Blockquotes
+    const blockquoteTest =
+      'This is a quote by Mark Twain:\n> "The man with a new idea is a crank\n>until the idea succeeds."';
+    await nbUtils.enterTextEntry(page, blockquoteTest);
+    const firstLineOfBlockquoteText = page.locator(
+      'blockquote:has-text("The man with a new idea is a crank")'
+    );
+    await expect(firstLineOfBlockquoteText).toBeVisible();
+    const secondLineOfBlockquoteText = page.locator(
+      'blockquote:has-text("until the idea succeeds")'
+    );
+    await expect(secondLineOfBlockquoteText).toBeVisible();
   });
 });
