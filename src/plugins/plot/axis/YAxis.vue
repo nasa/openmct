@@ -65,7 +65,7 @@
       :axis-type="'yAxis'"
       class="gl-plot-ticks"
       :position="'top'"
-      @plotTickWidth="onTickWidthChange"
+      @plot-tick-width="onTickWidthChange"
     />
   </div>
 </template>
@@ -120,6 +120,7 @@ export default {
       }
     }
   },
+  emits: ['plot-y-tick-width', 'toggle-axis-visibility', 'y-key-changed'],
   data() {
     return {
       yAxisLabel: 'none',
@@ -259,19 +260,19 @@ export default {
       let yAxisObject = this.yKeyOptions.filter((o) => o.name === this.yAxisLabel)[0];
 
       if (yAxisObject) {
-        this.$emit('yKeyChanged', yAxisObject.key, this.id);
+        this.$emit('y-key-changed', yAxisObject.key, this.id);
         this.yAxis.set('label', this.yAxisLabel);
       }
     },
     onTickWidthChange(data) {
-      this.$emit('plotYTickWidth', {
+      this.$emit('plot-y-tick-width', {
         width: data.width,
         yAxisId: this.id
       });
     },
     toggleSeriesVisibility() {
       this.visible = !this.visible;
-      this.$emit('toggleAxisVisibility', {
+      this.$emit('toggle-axis-visibility', {
         id: this.id,
         visible: this.visible
       });

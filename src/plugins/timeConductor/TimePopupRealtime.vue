@@ -150,6 +150,7 @@ export default {
       required: true
     }
   },
+  emits: ['update', 'dismiss'],
   data() {
     return {
       startInputHrs: '00',

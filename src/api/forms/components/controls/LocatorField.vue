@@ -42,6 +42,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   methods: {
     handleItemSelection(item) {
       const data = {
@@ -49,7 +50,7 @@ export default {
         value: item.objectPath
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

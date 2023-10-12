@@ -56,6 +56,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     size() {
       let { width, height } = this.item;
@@ -119,7 +120,7 @@ export default {
       document.body.removeEventListener('mousemove', this.continueMove);
       document.body.removeEventListener('mouseup', this.endMove);
       this.continueMove(event);
-      this.$emit('endMove');
+      this.$emit('end-move');
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.delta = undefined;

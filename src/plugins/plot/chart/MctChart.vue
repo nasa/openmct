@@ -144,6 +144,7 @@ export default {
       required: true
     }
   },
+  emits: ['chart-loaded', 'plot-reinitialize-canvas'],
   data() {
     return {
       canvasTemplate:
@@ -245,7 +246,7 @@ export default {
     this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
-    this.$emit('chartLoaded');
+    this.$emit('chart-loaded');
   },
   beforeUnmount() {
     this.destroy();
@@ -495,7 +496,7 @@ export default {
       this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
       this.overlay = overlayCanvas;
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
-      this.$emit('plotReinitializeCanvas');
+      this.$emit('plot-reinitialize-canvas');
     },
     removeChartElement(series) {
       const elements = this.seriesElements.get(toRaw(series));

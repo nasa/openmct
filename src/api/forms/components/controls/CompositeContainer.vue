@@ -19,61 +19,40 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+
 <template>
-  <div class="c-search" :class="{ 'is-active': active === true }">
-    <input
-      v-bind="$attrs"
-      class="c-search__input"
-      aria-label="Search Input"
-      tabindex="10000"
-      type="search"
-      :value="value"
-      v-on="inputListeners"
+  <span>
+    <CompositeItem
+      v-for="(item, index) in model.items"
+      :key="item.name"
+      :first="index < 1"
+      :value="JSON.stringify(model.value[index])"
+      :item="item"
+      @on-change="onChange"
     />
-    <a class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
-    <slot></slot>
-  </div>
+  </span>
 </template>
 
 <script>
-/* Emits input and clear events */
-export default {
-  inheritAttrs: false,
-  props: {
-    value: {
-      type: String,
-      default: ''
-    }
-  },
-  data: function () {
-    return {
-      active: false
-    };
-  },
-  computed: {
-    inputListeners: function () {
-      let vm = this;
+import CompositeItem from '@/api/forms/components/controls/CompositeItem.vue';
 
-      return Object.assign({}, this.$listeners, {
-        input: function (event) {
-          vm.$emit('input', event.target.value);
-          vm.active = event.target.value.length > 0;
-        }
-      });
+export default {
+  components: {
+    CompositeItem
+  },
+  props: {
+    model: {
+      type: Object,
+      required: true
     }
   },
-  watch: {
-    value(inputValue) {
-      if (!inputValue.length) {
-        this.clearInput();
-      }
-    }
+  emits: ['on-change'],
+  mounted() {
+    this.model.items.forEach((item, index) => (item.key = `${this.model.key}.${index}`));
   },
   methods: {
-    clearInput() {
-      // Clear the user's input and set 'active' to false
-      this.$emit('clear', '');
-      this.active = false;
+    onChange(data) {
+      this.$emit('on-change', data);
     }
   }
 };

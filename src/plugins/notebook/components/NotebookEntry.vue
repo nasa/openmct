@@ -119,8 +119,8 @@
               :key="embed.id"
               :embed="embed"
               :is-locked="isLocked"
-              @removeEmbed="removeEmbed"
-              @updateEmbed="updateEmbed"
+              @remove-embed="removeEmbed"
+              @update-embed="updateEmbed"
             />
           </div>
         </div>
@@ -268,6 +268,13 @@ export default {
       }
     }
   },
+  emits: [
+    'delete-entry',
+    'change-section-page',
+    'update-entry',
+    'editing-entry',
+    'entry-selection'
+  ],
   data() {
     return {
       editMode: false,
@@ -429,7 +436,7 @@ export default {
       }
     },
     deleteEntry() {
-      this.$emit('deleteEntry', this.entry.id);
+      this.$emit('delete-entry', this.entry.id);
     },
     manageEmbedLayout() {
       if (this.$refs.embeds) {
@@ -503,13 +510,13 @@ export default {
       return Moment.utc(unixTime).format(timeFormat);
     },
     navigateToPage() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: this.result.page.id
       });
     },
     navigateToSection() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: null
       });
@@ -551,7 +558,7 @@ export default {
 
       this.entry.modified = this.openmct.time.now();
 
-      this.$emit('updateEntry', this.entry);
+      this.$emit('update-entry', this.entry);
     },
     editingEntry(event) {
       this.selectAndEmitEntry(event, this.entry);
@@ -560,7 +567,7 @@ export default {
         this.selectAndEmitEntry(event, this.entry);
         this.editMode = true;
         this.adjustTextareaHeight();
-        this.$emit('editingEntry');
+        this.$emit('editing-entry');
       }
     },
     updateEntryValue($event) {

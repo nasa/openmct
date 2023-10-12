@@ -69,7 +69,7 @@
 <script>
 import { SORT_ORDER_OPTIONS } from '../constants';
 import EventProperties from './EventProperties.vue';
-import Filtering from './Filtering.vue';
+import Filtering from './FilteringComponent.vue';
 
 const EVENT_TYPES = [
   {

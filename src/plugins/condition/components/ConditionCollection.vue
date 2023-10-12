@@ -66,12 +66,12 @@
           :is-editing="isEditing"
           :move-index="moveIndex"
           :is-dragging="isDragging"
-          @updateCondition="updateCondition"
-          @removeCondition="removeCondition"
-          @cloneCondition="cloneCondition"
-          @setMoveIndex="setMoveIndex"
-          @dragComplete="dragComplete"
-          @dropCondition="dropCondition"
+          @update-condition="updateCondition"
+          @remove-condition="removeCondition"
+          @clone-condition="cloneCondition"
+          @set-move-index="setMoveIndex"
+          @drag-complete="dragComplete"
+          @drop-condition="dropCondition"
         />
       </div>
     </div>
@@ -79,9 +79,10 @@
 </template>
 
 <script>
-import ConditionManager from '../ConditionManager';
-import Condition from './Condition.vue';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import ConditionManager from '../ConditionManager';
+import Condition from './ConditionItem.vue';
 
 export default {
   components: {
@@ -102,6 +103,12 @@ export default {
       }
     }
   },
+  emits: [
+    'condition-set-result-updated',
+    'no-telemetry-objects',
+    'telemetry-updated',
+    'telemetry-staleness'
+  ],
   data() {
     return {
       expanded: true,
@@ -164,11 +171,11 @@ export default {
   methods: {
     handleConditionSetResultUpdated(data) {
       this.currentConditionId = data.conditionId;
-      this.$emit('conditionSetResultUpdated', data);
+      this.$emit('condition-set-result-updated', data);
     },
     emitNoTelemetryObjectEvent(data) {
       this.currentConditionId = '';
-      this.$emit('noTelemetryObjects');
+      this.$emit('no-telemetry-objects');
     },
     observeForChanges() {
       this.stopObservingForChanges = this.openmct.objects.observe(
@@ -225,7 +232,7 @@ export default {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
       this.telemetryObjs.push(domainObject);
-      this.$emit('telemetryUpdated', this.telemetryObjs);
+      this.$emit('telemetry-updated', this.telemetryObjs);
 
       this.subscribeToStaleness(domainObject, (stalenessResponse) => {
         this.emitStaleness({
@@ -255,7 +262,7 @@ export default {
       }
     },
     emitStaleness(stalenessObject) {
-      this.$emit('telemetryStaleness', stalenessObject);
+      this.$emit('telemetry-staleness', stalenessObject);
     },
     addCondition() {
       this.conditionManager.addCondition();
