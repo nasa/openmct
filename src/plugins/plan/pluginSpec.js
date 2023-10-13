@@ -279,7 +279,7 @@ describe('the plugin', function () {
         provide: {
           openmct: openmct
         },
-        template: '<properties/>'
+        template: '<properties ref="root"/>'
       });
       _destroy = destroy;
       component = vNode.componentInstance;
@@ -290,7 +290,7 @@ describe('the plugin', function () {
     });
 
     it('provides an inspector view with the version information if available', () => {
-      componentObject = component.$root.$children[0];
+      componentObject = component.$refs.root;
       const propertiesEls = componentObject.$el.querySelectorAll('.c-inspect-properties__row');
       const found = Array.from(propertiesEls).some((propertyEl) => {
         return (

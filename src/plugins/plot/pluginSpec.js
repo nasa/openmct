@@ -813,7 +813,7 @@ describe('the plugin', function () {
             domainObject: selection[0][0].context.item,
             path: [selection[0][0].context.item, selection[0][1].context.item]
           },
-          template: '<plot-options/>'
+          template: '<plot-options ref="root"/>'
         },
         {
           element: viewContainer
@@ -822,7 +822,7 @@ describe('the plugin', function () {
       component = vNode.componentInstance;
 
       nextTick(() => {
-        viewComponentObject = component.$root.$children[0];
+        viewComponentObject = component.$refs.root;
         done();
       });
     });
