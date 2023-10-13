@@ -29,7 +29,7 @@ export default function FaultManagementInspectorViewProvider(openmct) {
   return {
     openmct: openmct,
     key: FAULT_MANAGEMENT_INSPECTOR,
-    name: 'Fault Management Configuration',
+    name: 'Config',
     canView: (selection) => {
       if (selection.length !== 1 || selection[0].length === 0) {
         return false;
