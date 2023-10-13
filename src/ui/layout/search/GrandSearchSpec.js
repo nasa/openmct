@@ -197,7 +197,7 @@ describe('GrandSearch', () => {
           provide: {
             openmct
           },
-          template: '<GrandSearch/>'
+          template: '<GrandSearch ref="root"/>'
         },
         {
           element: viewContainer
@@ -220,7 +220,7 @@ describe('GrandSearch', () => {
   });
 
   it('should render an object search result', async () => {
-    await grandSearchComponent.$children[0].searchEverything('foo');
+    await grandSearchComponent.$refs.root.searchEverything('foo');
     await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="fooRabbitNotebook notebook result"]'
@@ -234,7 +234,7 @@ describe('GrandSearch', () => {
     composition.add(mockNewObject);
     // after adding, need to wait a beat for the folder to be indexed
     await nextTick();
-    await grandSearchComponent.$children[0].searchEverything('apple');
+    await grandSearchComponent.$refs.root.searchEverything('apple');
     await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="New Apple Test Folder folder result"]'
@@ -259,7 +259,7 @@ describe('GrandSearch', () => {
 
     const composition = openmct.composition.get(mockFolderObject);
     composition.add(mockNewObject);
-    await grandSearchComponent.$children[0].searchEverything('apple');
+    await grandSearchComponent.$refs.root.searchEverything('apple');
     await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="New Apple Test Folder folder result"]'
@@ -270,7 +270,7 @@ describe('GrandSearch', () => {
   });
 
   it('should render an annotation search result', async () => {
-    await grandSearchComponent.$children[0].searchEverything('S');
+    await grandSearchComponent.$refs.root.searchEverything('S');
     await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(2);
@@ -278,15 +278,15 @@ describe('GrandSearch', () => {
   });
 
   it('should render no annotation search results if no match', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Qbert');
+    await grandSearchComponent.$refs.root.searchEverything('Qbert');
     await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(0);
   });
 
   it('should preview object search results in edit mode if object clicked', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Folder');
-    grandSearchComponent.$children[0].openmct.router.path = [mockDisplayLayout];
+    await grandSearchComponent.$refs.root.searchEverything('Folder');
+    grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
     await nextTick();
     const searchResults = document.querySelectorAll('[name="Test Folder"]');
     expect(searchResults.length).toBe(1);
@@ -297,8 +297,8 @@ describe('GrandSearch', () => {
   });
 
   it('should preview annotation search results in edit mode if annotation clicked', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Dri');
-    grandSearchComponent.$children[0].openmct.router.path = [mockDisplayLayout];
+    await grandSearchComponent.$refs.root.searchEverything('Dri');
+    grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
     await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(1);
