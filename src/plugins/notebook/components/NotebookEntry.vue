@@ -379,7 +379,7 @@ export default {
 
       this.manageEmbedLayout();
     },
-    convertMarkDownToHtml(text) {
+    convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
         breaks: true,
         renderer: this.renderer
