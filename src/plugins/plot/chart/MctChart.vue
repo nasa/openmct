@@ -20,12 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 
-<!-- eslint-disable vue/no-v-html -->
-
 <template>
   <div class="gl-plot-chart-area">
-    <span v-html="canvasTemplate"></span>
-    <span v-html="canvasTemplate"></span>
+    <canvas :style="canvasStyle"></canvas>
+    <canvas :style="canvasStyle"></canvas>
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
@@ -151,6 +149,16 @@ export default {
       visibleLimitLines: []
     };
   },
+  computed: {
+    canvasStyle() {
+      return {
+        position: 'absolute',
+        background: 'none',
+        width: '100%',
+        height: '100%'
+      };
+    }
+  },
   watch: {
     highlights: {
       handler() {
@@ -187,10 +195,6 @@ export default {
       },
       deep: true
     }
-  },
-  created() {
-    this.canvasTemplate =
-      '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>';
   },
   mounted() {
     eventHelpers.extend(this);
