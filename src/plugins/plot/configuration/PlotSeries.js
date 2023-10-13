@@ -63,6 +63,10 @@ import { symlog } from '../mathUtils';
  *
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
+
+const FLOAT32_MAX = 3.4e38;
+const FLOAT32_MIN = -3.4e38;
+
 export default class PlotSeries extends Model {
     logMode = false;
 
@@ -357,7 +361,7 @@ export default class PlotSeries extends Model {
         let stats = this.get('stats');
         let changed = false;
         if (!stats) {
-            if ([Infinity, -Infinity].includes(value)) {
+            if ([Infinity, -Infinity].includes(value) || !this.isValidFloat32(value)) {
                 return;
             }
 
@@ -369,13 +373,13 @@ export default class PlotSeries extends Model {
             };
             changed = true;
         } else {
-            if (stats.maxValue < value && value !== Infinity) {
+            if (stats.maxValue < value && value !== Infinity && this.isValidFloat32(value)) {
                 stats.maxValue = value;
                 stats.maxPoint = point;
                 changed = true;
             }
 
-            if (stats.minValue > value && value !== -Infinity) {
+            if (stats.minValue > value && value !== -Infinity && this.isValidFloat32(value)) {
                 stats.minValue = value;
                 stats.minPoint = point;
                 changed = true;
@@ -411,7 +415,7 @@ export default class PlotSeries extends Model {
         const lastYVal = this.getYVal(data[insertIndex - 1]);
 
         if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
-            console.warn('[Plot] Invalid Y Values detected');
+            console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
 
             return;
         }
@@ -439,7 +443,15 @@ export default class PlotSeries extends Model {
      * @private
      */
     isValueInvalid(val) {
-        return Number.isNaN(val) || this.unPlottableValues.includes(val);
+        return Number.isNaN(val) || this.unPlottableValues.includes(val) || !this.isValidFloat32(val);
+    }
+
+    /**
+     *
+     * @private
+     */
+    isValidFloat32(val) {
+        return val < FLOAT32_MAX && val > FLOAT32_MIN;
     }
 
     /**
