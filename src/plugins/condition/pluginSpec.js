@@ -249,14 +249,14 @@ describe('the plugin', function () {
           selection: selection,
           stylesManager
         },
-        template: '<styles-view/>'
+        template: '<styles-view ref="root"/>'
       });
 
       component = vNode.componentInstance;
       _destroy = destroy;
 
       return nextTick().then(() => {
-        styleViewComponentObject = component.$root.$children[0];
+        styleViewComponentObject = component.$refs.root;
         styleViewComponentObject.setEditState(true);
       });
     });
@@ -574,14 +574,14 @@ describe('the plugin', function () {
           selection: selection,
           stylesManager
         },
-        template: '<styles-view/>'
+        template: '<styles-view ref="root"/>'
       });
 
       component = vNode.componentInstance;
       _destroy = destroy;
 
       return nextTick().then(() => {
-        styleViewComponentObject = component.$root.$children[0];
+        styleViewComponentObject = component.$refs.root;
         styleViewComponentObject.setEditState(true);
       });
     });

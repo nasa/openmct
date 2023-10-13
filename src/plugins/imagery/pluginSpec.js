@@ -28,8 +28,6 @@ import {
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ClearDataPlugin from '../clearData/plugin';
-
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
@@ -335,7 +333,7 @@ describe('The Imagery View Layouts', () => {
       imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
       imageryView.show(child);
 
-      imageryView._getInstance().$children[0].forceShowThumbnails = true;
+      imageryView._getInstance().$refs.ImageryContainer.forceShowThumbnails = true;
 
       return nextTick();
     });
@@ -555,8 +553,8 @@ describe('The Imagery View Layouts', () => {
 
   describe('imagery time strip view', () => {
     let applicableViews;
-    let imageryViewProvider;
-    let imageryView;
+    let imageryTimestripViewProvider;
+    let imageryTimeView;
     let componentView;
 
     beforeEach(() => {
@@ -595,10 +593,10 @@ describe('The Imagery View Layouts', () => {
           type: 'time-strip'
         }
       ]);
-      imageryViewProvider = applicableViews.find(
+      imageryTimestripViewProvider = applicableViews.find(
         (viewProvider) => viewProvider.key === imageryForTimeStripKey
       );
-      imageryView = imageryViewProvider.view(imageryObject, [
+      imageryTimeView = imageryTimestripViewProvider.view(imageryObject, [
         imageryObject,
         {
           identifier: {
@@ -608,9 +606,9 @@ describe('The Imagery View Layouts', () => {
           type: 'time-strip'
         }
       ]);
-      imageryView.show(child);
+      imageryTimeView.show(child);
 
-      componentView = imageryView.getComponent().$children[0];
+      componentView = imageryTimeView.getComponent().$refs.root;
       spyOn(componentView.previewAction, 'invoke').and.callThrough();
 
       return nextTick();

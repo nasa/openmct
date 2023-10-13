@@ -666,13 +666,13 @@ describe('the plugin', function () {
 
       plotContainerResizeObserver = new ResizeObserver(handlePlotResize);
       plotContainerResizeObserver.observe(
-        plotView.getComponent().$children[0].$children[1].$parent.$refs.plotWrapper
+        plotView.getComponent().$refs.plotComponent.$refs.plotWrapper
       );
 
       return nextTick(() => {
-        plotView.getComponent().$children[0].$children[1].stopFollowingTimeContext();
+        plotView.getComponent().$refs.plotComponent.$refs.mctPlot.stopFollowingTimeContext();
         spyOn(
-          plotView.getComponent().$children[0].$children[1],
+          plotView.getComponent().$refs.plotComponent.$refs.mctPlot,
           'loadSeriesData'
         ).and.callThrough();
       });
@@ -688,7 +688,7 @@ describe('the plugin', function () {
       element.style.width = '680px';
       await resizePromise;
       expect(
-        plotView.getComponent().$children[0].$children[1].loadSeriesData
+        plotView.getComponent().$refs.plotComponent.$refs.mctPlot.loadSeriesData
       ).toHaveBeenCalledTimes(1);
     });
 
@@ -696,7 +696,7 @@ describe('the plugin', function () {
       element.style.width = '644px';
       await resizePromise;
       expect(
-        plotView.getComponent().$children[0].$children[1].loadSeriesData
+        plotView.getComponent().$refs.plotComponent.$refs.mctPlot.loadSeriesData
       ).not.toHaveBeenCalled();
     });
   });

@@ -32,6 +32,7 @@
         :model="{ progressPerc: null }"
       />
       <mct-plot
+        ref="mctPlot"
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
         :init-grid-lines="gridLinesProp"
         :init-cursor-guide="cursorGuide"
