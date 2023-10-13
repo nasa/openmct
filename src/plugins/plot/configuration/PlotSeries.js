@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
+import _, { last } from 'lodash';
 
 import configStore from '../configuration/ConfigStore';
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
@@ -429,7 +429,7 @@ export default class PlotSeries extends Model {
     const lastYVal = this.getYVal(data[insertIndex - 1]);
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
-      console.warn('[Plot] Invalid Y Values detected');
+      console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
 
       return;
     }
