@@ -131,7 +131,6 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('new-notebook-entry-created'));
 
     // Enter Notebook Entry text
-    await page.getByLabel('Notebook Entry').last().click();
     await page.getByLabel('Notebook Entry Input').last().fill('New Entry');
     await page.locator('.c-ne__save-button').click();
     await page.evaluate(() => window.performance.mark('new-notebook-entry-filled'));

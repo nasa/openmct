@@ -188,12 +188,11 @@ test.describe('Snapshot image tests', () => {
     }, fileData);
 
     await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: dropTransfer });
-
+    await page.locator('.c-ne__save-button > button').click();
     // be sure that entry was created
     await expect(page.getByText('favicon-96x96.png')).toBeVisible();
 
     await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).click();
-
     // expect large image to be displayed
     await expect(page.getByRole('dialog').getByText('favicon-96x96.png')).toBeVisible();
 
@@ -213,5 +212,61 @@ test.describe('Snapshot image tests', () => {
 
     // expect one embedded image now as we deleted the other
     expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(1);
+  });
+});
+
+test.describe('Snapshot image failure tests', () => {
+  test.use({ failOnConsoleError: false });
+  test.beforeEach(async ({ page }) => {
+    //Navigate to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create Notebook
+    await createDomainObjectWithDefaults(page, {
+      type: NOTEBOOK_NAME
+    });
+  });
+
+  test('Get an error notification when dropping unknown file onto notebook entry', async ({
+    page
+  }) => {
+    // fill Uint8Array array with some garbage data
+    const garbageData = new Uint8Array(100);
+    const fileData = Array.from(garbageData);
+
+    const dropTransfer = await page.evaluateHandle((data) => {
+      const dataTransfer = new DataTransfer();
+      const file = new File([new Uint8Array(data)], 'someGarbage.foo', { type: 'unknown/garbage' });
+      dataTransfer.items.add(file);
+      return dataTransfer;
+    }, fileData);
+
+    await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: dropTransfer });
+
+    // should have gotten a notification from OpenMCT that we couldn't add it
+    await expect(page.getByText('Unknown object(s) dropped and cannot embed')).toBeVisible();
+  });
+
+  test('Get an error notification when dropping big files onto notebook entry', async ({
+    page
+  }) => {
+    const garbageSize = 15 * 1024 * 1024; // 15 megabytes
+
+    await page.addScriptTag({
+      // make the garbage client side
+      content: `window.bigGarbageData = new Uint8Array(${garbageSize})`
+    });
+
+    const bigDropTransfer = await page.evaluateHandle(() => {
+      const dataTransfer = new DataTransfer();
+      const file = new File([window.bigGarbageData], 'bigBoy.png', { type: 'image/png' });
+      dataTransfer.items.add(file);
+      return dataTransfer;
+    });
+
+    await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: bigDropTransfer });
+
+    // should have gotten a notification from OpenMCT that we couldn't add it as it's too big
+    await expect(page.getByText('unable to embed')).toBeVisible();
   });
 });

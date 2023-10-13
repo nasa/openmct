@@ -296,7 +296,7 @@ describe('the plugin', function () {
       ];
       const applicableInspectorViews = openmct.inspectorViews.get(selection);
       const plotInspectorView = applicableInspectorViews.find(
-        (view) => (view.name = 'Plots Configuration')
+        (view) => view.key === 'plots-inspector'
       );
 
       expect(plotInspectorView).toBeDefined();
