@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _, { last } from 'lodash';
-
 import configStore from '../configuration/ConfigStore';
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import { symlog } from '../mathUtils';
