@@ -11,8 +11,6 @@ const { merge } = require('webpack-merge');
 
 const base = require('./webpack.base');
 
-const projectRootDir = path.resolve(__dirname, '..');
-
 module.exports = merge(base('development'), {
   devtool: 'inline-source-map',
   mode: 'development',
@@ -30,25 +28,11 @@ module.exports = merge(base('development'), {
   plugins: [
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
-      __OPENMCT_ROOT_RELATIVE__: '"dist/"',
+      __OPENMCT_ROOT_RELATIVE__: '""',
       'process.env.NODE_ENV': JSON.stringify('development')
     })
   ],
   devServer: {
-    devMiddleware: {
-      writeToDisk: (filePathString) => {
-        const filePath = path.parse(filePathString);
-        const shouldWrite = !filePath.base.includes('hot-update');
-
-        return shouldWrite;
-      }
-    },
-    watchFiles: ['**/*.css'],
-    static: {
-      directory: path.join(projectRootDir, 'dist'),
-      publicPath: '/dist',
-      watch: false
-    },
     client: {
       progress: true,
       overlay: {
@@ -56,8 +40,7 @@ module.exports = merge(base('development'), {
         // See: https://github.com/webpack/webpack-dev-server/issues/4771
         runtimeErrors: false
       }
-    },
-    open: true
+    }
   },
   stats: {
     children: true,

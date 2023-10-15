@@ -118,6 +118,7 @@ export default {
       }
     }
   },
+  emits: ['date-selected'],
   data: function () {
     return {
       picker: {

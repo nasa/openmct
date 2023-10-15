@@ -57,6 +57,7 @@
 <script>
 export default {
   inject: ['dismiss', 'element', 'buttons', 'dismissable'],
+  emits: ['destroy'],
   data: function () {
     return {
       focusIndex: -1

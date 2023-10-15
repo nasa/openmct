@@ -126,6 +126,7 @@ export default {
       required: true
     }
   },
+  emits: ['series-updated'],
   data() {
     return {
       yAxis: null,
@@ -302,7 +303,7 @@ export default {
                 newVal
               );
             } else {
-              this.$emit('seriesUpdated', {
+              this.$emit('series-updated', {
                 identifier: this.domainObject.identifier,
                 path: `${this.getPrefix()}.${formKey}`,
                 id: this.id,
@@ -317,7 +318,7 @@ export default {
                 newVal
               );
             } else {
-              this.$emit('seriesUpdated', {
+              this.$emit('series-updated', {
                 identifier: this.domainObject.identifier,
                 path: `${this.getPrefix()}.${formKey}`,
                 value: newVal

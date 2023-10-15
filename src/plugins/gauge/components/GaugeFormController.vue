@@ -97,6 +97,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     this.changes = {};
 
@@ -140,7 +141,7 @@ export default {
         });
       }
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     toggleUseTelemetryLimits() {
       this.isUseTelemetryLimits = !this.isUseTelemetryLimits;
@@ -150,7 +151,7 @@ export default {
         },
         value: this.isUseTelemetryLimits
       };
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

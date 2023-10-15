@@ -45,6 +45,12 @@ let plugins = [
     __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
   }),
   new VueLoaderPlugin(),
+  // Add a UTF-8 BOM to CSS output to avoid random mojibake
+  new webpack.BannerPlugin({
+    test: /.*Theme\.css$/,
+    raw: true,
+    banner: '@charset "UTF-8";'
+  }),
   new CopyWebpackPlugin({
     patterns: [
       {
@@ -94,7 +100,7 @@ const config = function (env) {
     plugins.push(
       new MiniCssExtractPlugin({
         filename: '[name].css',
-        chunkFilename: 'chunks/[id].[contenthash].css'
+        chunkFilename: '[name].css'
       })
     );
   }
@@ -113,7 +119,6 @@ const config = function (env) {
       globalObject: 'this',
       // TODO (@evenstensberg): generate application in addition to local dev build
       filename: '[name].js',
-      chunkFilename: 'chunks/[name].chunk.[fullhash].js',
       path: setImportPath('dist'),
       library: 'openmct',
       libraryTarget: 'umd',
@@ -171,6 +176,7 @@ const config = function (env) {
           loader: 'vue-loader',
           options: {
             compilerOptions: {
+              hoistStatic: false,
               whitespace: 'preserve',
               compatConfig: {
                 MODE: 2

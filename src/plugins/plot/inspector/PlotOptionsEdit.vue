@@ -24,7 +24,7 @@
     <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
       <h2 class="--first" title="Display properties for this object">Plot Series</h2>
       <li v-for="series in plotSeries" :key="series.key">
-        <series-form :series="series" @seriesUpdated="updateSeriesConfigForObject" />
+        <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>
     <y-axis-form
@@ -33,7 +33,7 @@
       :key="`yAxis-${index}`"
       class="grid-properties js-yaxis-grid-properties"
       :y-axis="config.yAxis"
-      @seriesUpdated="updateSeriesConfigForObject"
+      @series-updated="updateSeriesConfigForObject"
     />
     <ul
       v-if="isStackedPlotObject || !isStackedPlotNestedObject"

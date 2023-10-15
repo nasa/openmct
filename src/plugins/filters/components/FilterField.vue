@@ -125,6 +125,12 @@ export default {
       }
     }
   },
+  emits: [
+    'filter-text-value-changed',
+    'filter-selected',
+    'clear-filters',
+    'filter-single-selected'
+  ],
   data() {
     return {
       isEditing: this.openmct.editor.isEditing()
@@ -151,16 +157,16 @@ export default {
       return this.persistedFilters && this.persistedFilters[comparator];
     },
     updateFilterValueFromString(event, comparator) {
-      this.$emit('filterTextValueChanged', this.filterField.key, comparator, event.target.value);
+      this.$emit('filter-text-value-changed', this.filterField.key, comparator, event.target.value);
     },
     updateFilterValueFromCheckbox(event, comparator, value) {
-      this.$emit('filterSelected', this.filterField.key, comparator, value, event.target.checked);
+      this.$emit('filter-selected', this.filterField.key, comparator, value, event.target.checked);
     },
     updateFilterValueFromDropdown(event, comparator, value) {
       if (value === 'NONE') {
-        this.$emit('clearFilters', this.filterField.key);
+        this.$emit('clear-filters', this.filterField.key);
       } else {
-        this.$emit('filterSingleSelected', this.filterField.key, comparator, value);
+        this.$emit('filter-single-selected', this.filterField.key, comparator, value);
       }
     },
     getFilterLabels(filter) {

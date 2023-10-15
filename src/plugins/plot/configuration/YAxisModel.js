@@ -384,6 +384,11 @@ export default class YAxisModel extends Model {
       range: options.model?.range
     };
   }
+
+  destroy() {
+    this.plot = undefined;
+    this.stopListening();
+  }
 }
 
 /** @typedef {any} TODO */

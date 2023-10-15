@@ -23,7 +23,7 @@ import EventEmitter from 'EventEmitter';
 import mount from 'utils/mount';
 import { h } from 'vue';
 
-import MenuComponent from './components/Menu.vue';
+import MenuComponent from './components/MenuComponent.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
 
 export const MENU_PLACEMENT = {

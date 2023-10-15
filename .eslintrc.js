@@ -9,7 +9,7 @@ module.exports = {
   globals: {
     _: 'readonly'
   },
-  plugins: ['prettier', 'simple-import-sort'],
+  plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
@@ -145,18 +145,26 @@ module.exports = {
     'no-implicit-coercion': 'error',
     //https://eslint.org/docs/rules/no-unneeded-ternary
     'no-unneeded-ternary': 'error',
+    'unicorn/filename-case': [
+      'error',
+      {
+        cases: {
+          pascalCase: true
+        },
+        ignore: ['^.*\\.js$']
+      }
+    ],
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/multi-word-component-names': 'off', // TODO enable, align with conventions
-    'vue/no-mutating-props': 'off'
+    'vue/no-mutating-props': 'off' // TODO: Remove this rule and fix resulting errors
   },
   overrides: [
     {
       files: LEGACY_FILES,
       rules: {
         'no-unused-vars': [
-          'warn',
+          'error',
           {
             vars: 'all',
             args: 'none',

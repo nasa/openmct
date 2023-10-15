@@ -24,7 +24,7 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../appActions');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
@@ -61,7 +61,7 @@ test.describe('Grand Search', () => {
       `Clock D ${myItemsFolderName} Red Folder Blue Folder`
     );
     // Click the Elements pool to dismiss the search menu
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
@@ -175,7 +175,8 @@ test.describe('Grand Search', () => {
 
     let networkRequests = [];
     page.on('request', (request) => {
-      const searchRequest = request.url().endsWith('_find');
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
       const fetchRequest = request.resourceType() === 'fetch';
       if (searchRequest && fetchRequest) {
         networkRequests.push(request);

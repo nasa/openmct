@@ -71,6 +71,7 @@ export default {
       }
     }
   },
+  emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
       isZoomed: false,
@@ -115,7 +116,7 @@ export default {
     }
 
     if (this.plotResizeObserver) {
-      this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
+      this.plotResizeObserver.disconnect();
       clearTimeout(this.resizeTimer);
     }
 

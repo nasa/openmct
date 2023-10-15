@@ -53,7 +53,7 @@
 <script>
 import _ from 'lodash';
 
-import Search from '../../../ui/components/search.vue';
+import Search from '../../../ui/components/SearchComponent.vue';
 import ElementItem from './ElementItem.vue';
 
 export default {
