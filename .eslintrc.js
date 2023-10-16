@@ -15,7 +15,8 @@ module.exports = {
     'plugin:compat/recommended',
     'plugin:vue/vue3-recommended',
     'plugin:you-dont-need-lodash-underscore/compatible',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
+    'plugin:no-unsanitized/DOM'
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
