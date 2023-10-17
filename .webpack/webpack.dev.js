@@ -28,8 +28,7 @@ module.exports = merge(base('development'), {
   plugins: [
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
-      __OPENMCT_ROOT_RELATIVE__: '""',
-      'process.env.NODE_ENV': JSON.stringify('development')
+      __OPENMCT_ROOT_RELATIVE__: '""'
     })
   ],
   devServer: {

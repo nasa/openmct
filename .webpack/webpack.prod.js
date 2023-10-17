@@ -16,8 +16,7 @@ module.exports = merge(base('production'), {
   mode: 'production',
   plugins: [
     new webpack.DefinePlugin({
-      __OPENMCT_ROOT_RELATIVE__: '""',
-      'process.env.NODE_ENV': JSON.stringify('production')
+      __OPENMCT_ROOT_RELATIVE__: '""'
     })
   ],
   // TODO (@evenstensberg): splitchunks when application is aligned towards it
