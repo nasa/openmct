@@ -32,7 +32,6 @@ export default class ImportAsJSONAction {
     this.cssClass = 'icon-import';
     this.group = 'import';
     this.priority = 2;
-    this.newObjects = [];
 
     this.openmct = openmct;
   }
@@ -83,9 +82,10 @@ export default class ImportAsJSONAction {
    * @param {object} parent
    * @param {object} tree
    * @param {object} seen
+   * @param {Array} objectsToCreate tracks objects from import json that will need to be created
    */
-  _deepInstantiate(parent, tree, seen) {
-    let objectIdentifiers = this._getObjectReferenceIds(parent);
+  _deepInstantiate(parent, tree, seen, objectsToCreate) {
+    const objectIdentifiers = this._getObjectReferenceIds(parent);
 
     if (objectIdentifiers.length) {
       const parentId = this.openmct.objects.makeKeyString(parent.identifier);
@@ -100,15 +100,16 @@ export default class ImportAsJSONAction {
         const newModel = tree[keystring];
         delete newModel.persisted;
 
-        this.newObjects.push(newModel);
+        objectsToCreate.push(newModel);
 
         // make sure there weren't any errors saving
         if (newModel) {
-          this._deepInstantiate(newModel, tree, seen);
+          this._deepInstantiate(newModel, tree, seen, objectsToCreate);
         }
       }
     }
   }
+
   /**
    * @private
    * @param {object} parent
@@ -170,19 +171,19 @@ export default class ImportAsJSONAction {
    * @param {object} objTree
    */
   async _importObjectTree(domainObject, objTree) {
+    const objectsToCreate = [];
     const namespace = domainObject.identifier.namespace;
     const tree = this._generateNewIdentifiers(objTree, namespace);
     const rootId = tree.rootId;
 
     const rootObj = tree.openmct[rootId];
     delete rootObj.persisted;
-    this.newObjects.push(rootObj);
-
+    objectsToCreate.push(rootObj);
     if (this.openmct.composition.checkPolicy(domainObject, rootObj)) {
-      this._deepInstantiate(rootObj, tree.openmct, []);
+      this._deepInstantiate(rootObj, tree.openmct, [], objectsToCreate);
 
       try {
-        await Promise.all(this.newObjects.map(this._instantiate, this));
+        await Promise.all(objectsToCreate.map(this._instantiate, this));
       } catch (error) {
         this.openmct.notifications.error('Error saving objects');
 

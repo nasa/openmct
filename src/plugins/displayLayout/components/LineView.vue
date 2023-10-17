@@ -108,6 +108,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move', 'end-line-resize'],
   data() {
     return {
       dragPosition: undefined,
@@ -318,9 +319,9 @@ export default {
       document.body.removeEventListener('mouseup', this.endDrag);
       let { x, y, x2, y2 } = this.dragPosition;
       if (!this.dragging) {
-        this.$emit('endMove');
+        this.$emit('end-move');
       } else {
-        this.$emit('endLineResize', this.item, {
+        this.$emit('end-line-resize', this.item, {
           x,
           y,
           x2,

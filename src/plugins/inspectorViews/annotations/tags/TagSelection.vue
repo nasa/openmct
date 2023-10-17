@@ -30,7 +30,7 @@
         :place-holder-text="'Type to select tag'"
         class="c-tag-selection"
         :item-css-class="'icon-circle'"
-        @onChange="tagSelected"
+        @on-change="tagSelected"
       />
     </template>
     <template v-else>
@@ -86,6 +86,7 @@ export default {
       }
     }
   },
+  emits: ['tag-removed', 'tag-added'],
   data() {
     return {};
   },
@@ -144,7 +145,7 @@ export default {
       });
     },
     removeTag() {
-      this.$emit('tagRemoved', this.selectedTag);
+      this.$emit('tag-removed', this.selectedTag);
     },
     tagSelected(autoField) {
       const tagAdded = autoField.model.options.find((option) => {
@@ -155,7 +156,7 @@ export default {
         return false;
       });
       if (tagAdded) {
-        this.$emit('tagAdded', tagAdded.id);
+        this.$emit('tag-added', tagAdded.id);
       }
     }
   }

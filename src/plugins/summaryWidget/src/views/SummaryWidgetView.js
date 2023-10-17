@@ -1,35 +1,60 @@
-define(['./summary-widget.html', '@braintree/sanitize-url'], function (
-  summaryWidgetTemplate,
-  urlSanitizeLib
-) {
-  const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
+import * as urlSanitizeLib from '@braintree/sanitize-url';
 
-  function SummaryWidgetView(domainObject, openmct) {
+const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
+
+class SummaryWidgetView {
+  #createSummaryWidgetTemplate() {
+    const anchor = document.createElement('a');
+    anchor.classList.add(
+      't-summary-widget',
+      'c-summary-widget',
+      'js-sw',
+      'u-links',
+      'u-fills-container'
+    );
+
+    const widgetIcon = document.createElement('div');
+    widgetIcon.id = 'widgetIcon';
+    widgetIcon.classList.add('c-sw__icon', 'js-sw__icon');
+    anchor.appendChild(widgetIcon);
+
+    const widgetLabel = document.createElement('div');
+    widgetLabel.id = 'widgetLabel';
+    widgetLabel.classList.add('c-sw__label', 'js-sw__label');
+    widgetLabel.textContent = 'Loading...';
+    anchor.appendChild(widgetLabel);
+
+    return anchor;
+  }
+
+  constructor(domainObject, openmct) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.hasUpdated = false;
     this.render = this.render.bind(this);
   }
 
-  SummaryWidgetView.prototype.updateState = function (datum) {
+  updateState(datum) {
     this.hasUpdated = true;
     this.widget.style.color = datum.textColor;
     this.widget.style.backgroundColor = datum.backgroundColor;
     this.widget.style.borderColor = datum.borderColor;
     this.widget.title = datum.message;
     this.label.title = datum.message;
-    this.label.innerHTML = datum.ruleLabel;
+    this.label.textContent = datum.ruleLabel;
     this.icon.className = WIDGET_ICON_CLASS + ' ' + datum.icon;
-  };
+  }
 
-  SummaryWidgetView.prototype.render = function () {
+  render() {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
 
     this.hasUpdated = false;
 
-    this.container.innerHTML = summaryWidgetTemplate;
+    const anchor = this.#createSummaryWidgetTemplate();
+    this.container.appendChild(anchor);
+
     this.widget = this.container.querySelector('a');
     this.icon = this.container.querySelector('#widgetIcon');
     this.label = this.container.querySelector('.js-sw__label');
@@ -49,33 +74,32 @@ define(['./summary-widget.html', '@braintree/sanitize-url'], function (
 
     const renderTracker = {};
     this.renderTracker = renderTracker;
+
     this.openmct.telemetry
       .request(this.domainObject, {
         strategy: 'latest',
         size: 1
       })
-      .then(
-        function (results) {
-          if (
-            this.destroyed ||
-            this.hasUpdated ||
-            this.renderTracker !== renderTracker ||
-            results.length === 0
-          ) {
-            return;
-          }
+      .then((results) => {
+        if (
+          this.destroyed ||
+          this.hasUpdated ||
+          this.renderTracker !== renderTracker ||
+          results.length === 0
+        ) {
+          return;
+        }
 
-          this.updateState(results[results.length - 1]);
-        }.bind(this)
-      );
+        this.updateState(results[results.length - 1]);
+      });
 
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
       this.updateState.bind(this)
     );
-  };
+  }
 
-  SummaryWidgetView.prototype.show = function (container) {
+  show(container) {
     this.container = container;
     this.render();
     this.removeMutationListener = this.openmct.objects.observe(
@@ -84,14 +108,14 @@ define(['./summary-widget.html', '@braintree/sanitize-url'], function (
       this.onMutation.bind(this)
     );
     this.openmct.time.on('timeSystem', this.render);
-  };
+  }
 
-  SummaryWidgetView.prototype.onMutation = function (domainObject) {
+  onMutation(domainObject) {
     this.domainObject = domainObject;
     this.render();
-  };
+  }
 
-  SummaryWidgetView.prototype.destroy = function (container) {
+  destroy() {
     this.unsubscribe();
     this.removeMutationListener();
     this.openmct.time.off('timeSystem', this.render);
@@ -100,7 +124,7 @@ define(['./summary-widget.html', '@braintree/sanitize-url'], function (
     delete this.label;
     delete this.openmct;
     delete this.domainObject;
-  };
+  }
+}
 
-  return SummaryWidgetView;
-});
+export default SummaryWidgetView;

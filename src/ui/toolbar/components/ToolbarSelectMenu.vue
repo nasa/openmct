@@ -56,6 +56,7 @@ export default {
       }
     }
   },
+  emits: ['change'],
   computed: {
     selectedName() {
       let selectedOption = this.options.options.filter((o) => o.value === this.options.value)[0];

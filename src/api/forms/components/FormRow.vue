@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @onChange="onChange">
+  <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @on-change="onChange">
     <label class="c-form-row__label" :title="row.description" :for="`form-${row.key}`">
       {{ row.name }}
     </label>
@@ -51,6 +51,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       formControl: this.openmct.forms.getFormControl(this.row.control),
@@ -101,7 +102,7 @@ export default {
       this.valid = this.validateRow(data);
       data.invalid = !this.valid;
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     validateRow(data) {
       let valid = true;

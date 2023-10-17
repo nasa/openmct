@@ -31,6 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
+    @paste="addImageFromPaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -119,8 +120,8 @@
               :key="embed.id"
               :embed="embed"
               :is-locked="isLocked"
-              @removeEmbed="removeEmbed"
-              @updateEmbed="updateEmbed"
+              @remove-embed="removeEmbed"
+              @update-embed="updateEmbed"
             />
           </div>
         </div>
@@ -268,6 +269,13 @@ export default {
       }
     }
   },
+  emits: [
+    'delete-entry',
+    'change-section-page',
+    'update-entry',
+    'editing-entry',
+    'entry-selection'
+  ],
   data() {
     return {
       editMode: false,
@@ -368,9 +376,39 @@ export default {
         openmct: this.openmct
       };
       const newEmbed = await createNewEmbed(snapshotMeta);
+      if (!this.entry.embeds) {
+        this.entry.embeds = [];
+      }
       this.entry.embeds.push(newEmbed);
 
       this.manageEmbedLayout();
+    },
+    async addImageFromPaste(event) {
+      const clipboardItems = Array.from(
+        (event.clipboardData || event.originalEvent.clipboardData).items
+      );
+      const hasImage = clipboardItems.some(
+        (clipboardItem) => clipboardItem.type.includes('image') && clipboardItem.kind === 'file'
+      );
+      // If the clipboard contained an image, prevent the paste event from reaching the textarea.
+      if (hasImage) {
+        event.preventDefault();
+      }
+      await Promise.all(
+        Array.from(clipboardItems).map(async (clipboardItem) => {
+          const isImage = clipboardItem.type.includes('image') && clipboardItem.kind === 'file';
+          if (isImage) {
+            const imageFile = clipboardItem.getAsFile();
+            const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
+            if (!this.entry.embeds) {
+              this.entry.embeds = [];
+            }
+            this.entry.embeds.push(imageEmbed);
+          }
+        })
+      );
+      this.manageEmbedLayout();
+      this.timestampAndUpdate();
     },
     convertMarkDownToHtml(text) {
       let markDownHtml = this.marked.parse(text, {
@@ -429,7 +467,7 @@ export default {
       }
     },
     deleteEntry() {
-      this.$emit('deleteEntry', this.entry.id);
+      this.$emit('delete-entry', this.entry.id);
     },
     manageEmbedLayout() {
       if (this.$refs.embeds) {
@@ -443,15 +481,30 @@ export default {
     },
     async dropOnEntry(dropEvent) {
       dropEvent.stopImmediatePropagation();
+      const dataTransferFiles = Array.from(dropEvent.dataTransfer.files);
 
-      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
+      const localImageDropped = dataTransferFiles.some((file) => file.type.includes('image'));
       const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      const domainObjectData = dropEvent.dataTransfer.getData('openmct/domain-object-path');
       const imageUrl = dropEvent.dataTransfer.getData('URL');
       if (localImageDropped) {
-        // local image dropped from disk (file)
-        const imageData = dropEvent.dataTransfer.files[0];
-        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
-        this.entry.embeds.push(imageEmbed);
+        // local image(s) dropped from disk (file)
+        await Promise.all(
+          dataTransferFiles.map(async (file) => {
+            if (file.type.includes('image')) {
+              const imageData = file;
+              const imageEmbed = await createNewImageEmbed(
+                imageData,
+                this.openmct,
+                imageData?.name
+              );
+              if (!this.entry.embeds) {
+                this.entry.embeds = [];
+              }
+              this.entry.embeds.push(imageEmbed);
+            }
+          })
+        );
         this.manageEmbedLayout();
       } else if (imageUrl) {
         try {
@@ -459,15 +512,21 @@ export default {
           const response = await fetch(imageUrl);
           const imageData = await response.blob();
           const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          if (!this.entry.embeds) {
+            this.entry.embeds = [];
+          }
           this.entry.embeds.push(imageEmbed);
           this.manageEmbedLayout();
         } catch (error) {
-          this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
+          this.openmct.notifications.error(`Unable to add image: ${error.message} `);
           console.error(`Problem embedding remote image`, error);
         }
       } else if (snapshotId.length) {
         // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
+        if (!this.entry.embeds) {
+          this.entry.embeds = [];
+        }
         this.entry.embeds.push(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
 
@@ -477,11 +536,18 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-      } else {
+      } else if (domainObjectData) {
         // plain domain object
-        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
-        const objectPath = JSON.parse(data);
+        const objectPath = JSON.parse(domainObjectData);
         await this.addNewEmbed(objectPath);
+      } else {
+        this.openmct.notifications.error(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        console.warn(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        return;
       }
 
       this.timestampAndUpdate();
@@ -503,13 +569,13 @@ export default {
       return Moment.utc(unixTime).format(timeFormat);
     },
     navigateToPage() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: this.result.page.id
       });
     },
     navigateToSection() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: null
       });
@@ -551,7 +617,7 @@ export default {
 
       this.entry.modified = this.openmct.time.now();
 
-      this.$emit('updateEntry', this.entry);
+      this.$emit('update-entry', this.entry);
     },
     editingEntry(event) {
       this.selectAndEmitEntry(event, this.entry);
@@ -560,14 +626,16 @@ export default {
         this.selectAndEmitEntry(event, this.entry);
         this.editMode = true;
         this.adjustTextareaHeight();
-        this.$emit('editingEntry');
+        this.$emit('editing-entry');
       }
     },
     updateEntryValue($event) {
       this.editMode = false;
       const rawEntryValue = $event.target.value;
       const sanitizeInput = sanitizeHtml(rawEntryValue, { allowedAttributes: [], allowedTags: [] });
-      this.entry.text = sanitizeInput;
+      // change &gt back to > for markdown to do blockquotes
+      const restoredQuoteBrackets = sanitizeInput.replace(/&gt;/g, '>');
+      this.entry.text = restoredQuoteBrackets;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {

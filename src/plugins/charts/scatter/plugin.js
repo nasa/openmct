@@ -118,7 +118,7 @@ export default function () {
                 onChange
               };
             },
-            template: `<scatter-plot-form :model="model" @onChange="onChange"></scatter-plot-form>`
+            template: `<scatter-plot-form :model="model" @on-change="onChange"></scatter-plot-form>`
           },
           {
             app: openmct.app,
