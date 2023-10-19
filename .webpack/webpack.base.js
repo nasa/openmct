@@ -28,14 +28,15 @@ try {
   console.warn(err);
 }
 
+const projectRootDir = path.resolve(__dirname, '..');
+
 function setImportPath(p) {
-  const projectRootDir = path.resolve(__dirname, '..');
   return path.resolve(projectRootDir, p);
 }
 
 /** @type {import('webpack').Configuration} */
 module.exports = {
-  context: path.resolve(__dirname, '..'),
+  context: projectRootDir,
   entry: {
     openmct: setImportPath('openmct.js'),
     generatorWorker: setImportPath('example/generator/generatorWorker.js'),
