@@ -45,6 +45,7 @@ export default {
       required: true
     }
   },
+  emits: ['select-tab'],
   data() {
     return {
       tabs: [],

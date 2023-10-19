@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Plan from './components/Plan.vue';
+import Plan from './components/PlanView.vue';
 
 export default function PlanViewProvider(openmct) {
   function isCompactView(objectPath) {

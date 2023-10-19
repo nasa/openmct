@@ -34,10 +34,10 @@
       ref="searchResults"
       :domain-object="domainObject"
       :results="searchResults"
-      @cancelEdit="cancelTransaction"
-      @editingEntry="startTransaction"
-      @changeSectionPage="changeSelectedSection"
-      @updateEntries="updateEntries"
+      @cancel-edit="cancelTransaction"
+      @editing-entry="startTransaction"
+      @change-section-page="changeSelectedSection"
+      @update-entries="updateEntries"
     />
     <div v-if="!search.length" class="c-notebook__body">
       <Sidebar
@@ -53,13 +53,13 @@
         :section-title="domainObject.configuration.sectionTitle"
         :sections="sections"
         :sidebar-covers-entries="sidebarCoversEntries"
-        @defaultPageDeleted="cleanupDefaultNotebook"
-        @defaultSectionDeleted="cleanupDefaultNotebook"
-        @pagesChanged="pagesChanged"
-        @selectPage="selectPage"
-        @sectionsChanged="sectionsChanged"
-        @selectSection="selectSection"
-        @toggleNav="toggleNav"
+        @default-page-deleted="cleanupDefaultNotebook"
+        @default-section-deleted="cleanupDefaultNotebook"
+        @pages-changed="pagesChanged"
+        @select-page="selectPage"
+        @sections-changed="sectionsChanged"
+        @select-section="selectSection"
+        @toggle-nav="toggleNav"
       />
       <div
         class="c-notebook__page-view"
@@ -135,10 +135,10 @@
             :read-only="false"
             :is-locked="selectedPage.isLocked"
             :selected-entry-id="selectedEntryId"
-            @cancelEdit="cancelTransaction"
-            @editingEntry="startTransaction"
-            @deleteEntry="deleteEntry"
-            @updateEntry="updateEntry"
+            @cancel-edit="cancelTransaction"
+            @editing-entry="startTransaction"
+            @delete-entry="deleteEntry"
+            @update-entry="updateEntry"
             @entry-selection="entrySelection(entry)"
           />
         </div>
@@ -162,7 +162,7 @@
 <script>
 import { debounce } from 'lodash';
 
-import Search from '@/ui/components/Search.vue';
+import Search from '@/ui/components/SearchComponent.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import objectLink from '../../../ui/mixins/object-link';
@@ -189,8 +189,7 @@ import {
 } from '../utils/notebook-storage';
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
-import Sidebar from './Sidebar.vue';
-
+import Sidebar from './SidebarComponent.vue';
 function objectCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -626,21 +625,35 @@ export default {
       dropEvent.preventDefault();
       dropEvent.stopImmediatePropagation();
 
-      const localImageDropped = dropEvent.dataTransfer.files?.[0]?.type.includes('image');
-      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      const dataTransferFiles = Array.from(dropEvent.dataTransfer.files);
+      const localImageDropped = dataTransferFiles.some((file) => file.type.includes('image'));
       const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      const domainObjectData = dropEvent.dataTransfer.getData('openmct/domain-object-path');
+      const imageUrl = dropEvent.dataTransfer.getData('URL');
       if (localImageDropped) {
-        // local image dropped from disk (file)
-        const imageData = dropEvent.dataTransfer.files[0];
-        const imageEmbed = await createNewImageEmbed(imageData, this.openmct, imageData?.name);
-        this.newEntry(imageEmbed);
+        // local image(s) dropped from disk (file)
+        const embeds = [];
+        await Promise.all(
+          dataTransferFiles.map(async (file) => {
+            if (file.type.includes('image')) {
+              const imageData = file;
+              const imageEmbed = await createNewImageEmbed(
+                imageData,
+                this.openmct,
+                imageData?.name
+              );
+              embeds.push(imageEmbed);
+            }
+          })
+        );
+        this.newEntry(embeds);
       } else if (imageUrl) {
         // remote image dropped (URL)
         try {
           const response = await fetch(imageUrl);
           const imageData = await response.blob();
           const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
-          this.newEntry(imageEmbed);
+          this.newEntry([imageEmbed]);
         } catch (error) {
           this.openmct.notifications.alert(`Unable to add image: ${error.message} `);
           console.error(`Problem embedding remote image`, error);
@@ -648,7 +661,7 @@ export default {
       } else if (snapshotId.length) {
         // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
-        this.newEntry(snapshot.embedObject);
+        this.newEntry([snapshot.embedObject]);
         this.snapshotContainer.removeSnapshot(snapshotId);
 
         const namespace = this.domainObject.identifier.namespace;
@@ -657,10 +670,9 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-      } else {
+      } else if (domainObjectData) {
         // plain domain object
-        const data = dropEvent.dataTransfer.getData('openmct/domain-object-path');
-        const objectPath = JSON.parse(data);
+        const objectPath = JSON.parse(domainObjectData);
         const bounds = this.openmct.time.bounds();
         const snapshotMeta = {
           bounds,
@@ -669,8 +681,15 @@ export default {
           openmct: this.openmct
         };
         const embed = await createNewEmbed(snapshotMeta);
-
-        this.newEntry(embed);
+        this.newEntry([embed]);
+      } else {
+        this.openmct.notifications.error(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        console.warn(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        return;
       }
     },
     focusOnEntryId() {
@@ -839,12 +858,12 @@ export default {
     getSelectedSectionId() {
       return this.selectedSection?.id;
     },
-    async newEntry(embed, event) {
+    async newEntry(embeds, event) {
       this.startTransaction();
       this.resetSearch();
       const notebookStorage = this.createNotebookStorageObject();
       this.updateDefaultNotebook(notebookStorage);
-      const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
+      const id = await addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embeds);
 
       const element = this.$refs.notebookEntries.querySelector(`#${id}`);
       const entryAnnotations = this.notebookAnnotations[id] ?? {};
@@ -862,6 +881,11 @@ export default {
       this.filterAndSortEntries();
       this.focusEntryId = id;
       this.selectedEntryId = id;
+
+      // put entry into edit mode
+      this.$nextTick(() => {
+        element.dispatchEvent(new Event('click'));
+      });
     },
     orientationChange() {
       this.formatSidebar();

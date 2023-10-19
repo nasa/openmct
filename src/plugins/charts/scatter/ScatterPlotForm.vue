@@ -84,6 +84,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       rangeMax: this.model.value.rangeMax,
@@ -119,7 +120,7 @@ export default {
         this.model.validate(data);
       }
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

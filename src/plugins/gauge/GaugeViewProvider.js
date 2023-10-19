@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import GaugeComponent from './components/Gauge.vue';
+import GaugeComponent from './components/GaugeComponent.vue';
 
 export default function GaugeViewProvider(openmct) {
   return {

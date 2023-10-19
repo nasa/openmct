@@ -214,7 +214,7 @@ define([
           const options = this.generateSelectOptions();
 
           newInput = document.createElement('select');
-          newInput.innerHTML = options;
+          newInput.appendChild(options);
 
           emitChange = true;
         } else {
@@ -244,12 +244,16 @@ define([
 
   Condition.prototype.generateSelectOptions = function () {
     let telemetryMetadata = this.conditionManager.getTelemetryMetadata(this.config.object);
-    let options = '';
+    let fragment = document.createDocumentFragment();
+
     telemetryMetadata[this.config.key].enumerations.forEach((enumeration) => {
-      options += '<option value="' + enumeration.value + '">' + enumeration.string + '</option>';
+      const option = document.createElement('option');
+      option.value = enumeration.value;
+      option.textContent = enumeration.string;
+      fragment.appendChild(option);
     });
 
-    return options;
+    return fragment;
   };
 
   return Condition;

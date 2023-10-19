@@ -39,20 +39,20 @@
         :limit-line-labels="limitLineLabelsProp"
         :parent-y-tick-width="parentYTickWidth"
         :color-palette="colorPalette"
-        @loadingUpdated="loadingUpdated"
-        @statusUpdated="setStatus"
-        @configLoaded="updateReady"
-        @lockHighlightPoint="lockHighlightPointUpdated"
+        @loading-updated="loadingUpdated"
+        @status-updated="setStatus"
+        @config-loaded="updateReady"
+        @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @plotYTickWidth="onYTickWidthChange"
-        @cursorGuide="onCursorGuideChange"
-        @gridLines="onGridLinesChange"
+        @plot-y-tick-width="onYTickWidthChange"
+        @cursor-guide="onCursorGuideChange"
+        @grid-lines="onGridLinesChange"
       >
         <plot-legend
           v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
-          @legendHoverChanged="legendHoverChanged"
+          @legend-hover-changed="legendHoverChanged"
           @expanded="updateExpanded"
           @position="updatePosition"
         />
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import StalenessUtils from '@/utils/staleness';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import ImageExporter from '../../exporters/ImageExporter';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
@@ -76,6 +76,7 @@ export default {
     ProgressBar,
     PlotLegend
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'domainObject', 'path'],
   props: {
     options: {
@@ -127,11 +128,19 @@ export default {
       }
     }
   },
+  emits: [
+    'loading-updated',
+    'lock-highlight-point',
+    'grid-lines',
+    'highlights',
+    'config-loaded',
+    'plot-y-tick-width',
+    'cursor-guide'
+  ],
   data() {
     return {
       loading: false,
       status: '',
-      staleObjects: [],
       limitLineLabels: undefined,
       lockHighlightPoint: false,
       highlights: [],
@@ -148,11 +157,7 @@ export default {
       return this.gridLines ?? !this.options.compact;
     },
     staleClass() {
-      if (this.staleObjects.length !== 0) {
-        return 'is-stale';
-      }
-
-      return '';
+      return this.isStale ? 'is-stale' : '';
     },
     plotLegendPositionClass() {
       return this.position ? `plot-legend-${this.position}` : '';
@@ -176,8 +181,11 @@ export default {
   created() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
-    this.stalenessSubscription = {};
     this.loadComposition();
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   unmounted() {
     this.destroy();
@@ -187,76 +195,19 @@ export default {
       this.compositionCollection = this.openmct.composition.get(this.domainObject);
 
       if (this.compositionCollection) {
-        this.compositionCollection.on('add', this.addItem);
-        this.compositionCollection.on('remove', this.removeItem);
+        this.compositionCollection.on('add', this.subscribeToStaleness);
+        this.compositionCollection.on('remove', this.triggerUnsubscribeFromStaleness);
         this.compositionCollection.load();
-      }
-    },
-    addItem(object) {
-      const keystring = this.openmct.objects.makeKeyString(object.identifier);
-
-      if (!this.stalenessSubscription[keystring]) {
-        this.stalenessSubscription[keystring] = {};
-        this.stalenessSubscription[keystring].stalenessUtils = new StalenessUtils(
-          this.openmct,
-          object
-        );
-      }
-
-      this.openmct.telemetry.isStale(object).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keystring, stalenessResponse);
-        }
-      });
-      const unsubscribeFromStaleness = this.openmct.telemetry.subscribeToStaleness(
-        object,
-        (stalenessResponse) => {
-          this.handleStaleness(keystring, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keystring].unsubscribe = unsubscribeFromStaleness;
-    },
-    removeItem(object) {
-      const SKIP_CHECK = true;
-      const keystring = this.openmct.objects.makeKeyString(object);
-      this.stalenessSubscription[keystring].unsubscribe();
-      this.stalenessSubscription[keystring].stalenessUtils.destroy();
-      this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
-      delete this.stalenessSubscription[keystring];
-    },
-    handleStaleness(id, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse, id)
-      ) {
-        const index = this.staleObjects.indexOf(id);
-        if (stalenessResponse.isStale) {
-          if (index === -1) {
-            this.staleObjects.push(id);
-          }
-        } else {
-          if (index !== -1) {
-            this.staleObjects.splice(index, 1);
-          }
-        }
       }
     },
     loadingUpdated(loading) {
       this.loading = loading;
-      this.$emit('loadingUpdated', ...arguments);
+      this.$emit('loading-updated', ...arguments);
     },
     destroy() {
-      if (this.stalenessSubscription) {
-        Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-          stalenessSubscription.unsubscribe();
-          stalenessSubscription.stalenessUtils.destroy();
-        });
-      }
-
       if (this.compositionCollection) {
-        this.compositionCollection.off('add', this.addItem);
-        this.compositionCollection.off('remove', this.removeItem);
+        this.compositionCollection.off('add', this.subscribeToStaleness);
+        this.compositionCollection.off('remove', this.triggerUnsubscribeFromStaleness);
       }
 
       this.imageExporter = null;
@@ -281,7 +232,7 @@ export default {
     },
     lockHighlightPointUpdated(data) {
       this.lockHighlightPoint = data;
-      this.$emit('lockHighlightPoint', ...arguments);
+      this.$emit('lock-highlight-point', ...arguments);
     },
     highlightsUpdated(data) {
       this.highlights = data;
@@ -298,16 +249,16 @@ export default {
     },
     updateReady(ready) {
       this.configReady = ready;
-      this.$emit('configLoaded', ...arguments);
+      this.$emit('config-loaded', ...arguments);
     },
     onYTickWidthChange() {
-      this.$emit('plotYTickWidth', ...arguments);
+      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
-      this.$emit('cursorGuide', ...arguments);
+      this.$emit('cursor-guide', ...arguments);
     },
     onGridLinesChange() {
-      this.$emit('gridLines', ...arguments);
+      this.$emit('grid-lines', ...arguments);
     }
   }
 };

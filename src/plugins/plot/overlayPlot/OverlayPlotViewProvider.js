@@ -21,7 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import Plot from '../Plot.vue';
+import Plot from '../PlotView.vue';
 
 export default function OverlayPlotViewProvider(openmct) {
   function isCompactView(objectPath) {

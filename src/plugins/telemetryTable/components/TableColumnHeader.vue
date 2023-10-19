@@ -79,6 +79,14 @@ export default {
     hotzone: Boolean,
     isEditing: Boolean
   },
+  emits: [
+    'resize-column-end',
+    'resize-column',
+    'drop-target-offset-changed',
+    'drop-target-active',
+    'reorder-column',
+    'sort'
+  ],
   computed: {
     isSortable() {
       return this.sortOptions !== undefined;
@@ -103,14 +111,14 @@ export default {
       event.preventDefault();
       event.stopPropagation();
 
-      this.$emit('resizeColumnEnd');
+      this.$emit('resize-column-end');
     },
     resizeColumn(event) {
       let delta = event.clientX - this.resizeStartX;
       let newWidth = this.resizeStartWidth + delta;
       let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth, 10);
       if (newWidth > minWidth) {
-        this.$emit('resizeColumn', this.headerKey, newWidth);
+        this.$emit('resize-column', this.headerKey, newWidth);
       }
     },
     columnMoveStart(event) {
@@ -138,11 +146,11 @@ export default {
         dropOffsetLeft = element.offsetLeft + element.offsetWidth;
       }
 
-      this.$emit('dropTargetOffsetChanged', dropOffsetLeft);
-      this.$emit('dropTargetActive', true);
+      this.$emit('drop-target-offset-changed', dropOffsetLeft);
+      this.$emit('drop-target-active', true);
     },
     hideDropTarget() {
-      this.$emit('dropTargetActive', false);
+      this.$emit('drop-target-active', false);
     },
     columnMoveEnd(event) {
       if (this.isColumnMoveEvent(event)) {
@@ -159,7 +167,7 @@ export default {
         }
 
         if (toIndex !== fromIndex) {
-          this.$emit('reorderColumn', fromIndex, toIndex);
+          this.$emit('reorder-column', fromIndex, toIndex);
         }
       }
     },
