@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import ScatterPlotPlugin from './plugin';
 import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants';
@@ -178,7 +178,7 @@ describe('the plugin', function () {
 
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     it('provides a scatter plot view', () => {
@@ -406,7 +406,7 @@ describe('the plugin', function () {
       plotInspectorView = applicableViews[0];
       plotInspectorView.show(viewContainer);
 
-      await Vue.nextTick();
+      await nextTick();
       optionsElement = element.querySelector('.c-scatter-plot-options');
     });
 

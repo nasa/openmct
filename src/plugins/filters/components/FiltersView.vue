@@ -155,11 +155,7 @@ export default {
               mutateFilters = true;
             }
 
-            this.$set(
-              this.persistedFilters[keyString],
-              metadatum.key,
-              this.globalFilters[metadatum.key]
-            );
+            this.persistedFilters[keyString][metadatum.key] = this.globalFilters[metadatum.key];
           }
         });
       }
