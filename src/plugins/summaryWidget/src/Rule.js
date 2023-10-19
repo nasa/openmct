@@ -167,7 +167,8 @@ define([
         const ruleHeader = self.domElement
           .querySelectorAll('.widget-rule-header')[0]
           .cloneNode(true);
-        indicator.innerHTML = ruleHeader;
+        indicator.textContent = '';
+        indicator.appendChild(ruleHeader);
       });
       self.widgetDnD.setDragImage(
         self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true)
@@ -239,8 +240,8 @@ define([
     this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
     this.listenTo(this.trigger, 'change', onTriggerInput);
 
-    this.title.innerHTML = self.config.name;
-    this.description.innerHTML = self.config.description;
+    this.title.innerText = self.config.name;
+    this.description.innerText = self.config.description;
     this.trigger.value = self.config.trigger;
 
     this.listenTo(this.grippy, 'mousedown', onDragStart);
@@ -456,7 +457,7 @@ define([
         const lastOfType = self.conditionArea.querySelector('li:last-of-type');
         lastOfType.parentNode.insertBefore($condition, lastOfType);
         if (loopCnt > 0) {
-          $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
+          $condition.querySelector('.t-condition-context').innerText = triggerContextStr + ' when';
         }
 
         loopCnt++;
@@ -528,7 +529,7 @@ define([
     }
 
     description = description === '' ? this.config.description : description;
-    this.description.innerHTML = self.config.description;
+    this.description.innerText = self.config.description;
     this.config.description = description;
   };
 
