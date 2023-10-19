@@ -46,6 +46,7 @@ describe('the plugin', function () {
   let twoHoursPast = now - 1000 * 60 * 60 * 2;
   let oneHourPast = now - 1000 * 60 * 60;
   let twoHoursFuture = now + 1000 * 60 * 60 * 2;
+  let threeHoursFuture = now + 1000 * 60 * 60 * 3;
   let planObject = {
     identifier: {
       key: 'test-plan-object',
@@ -68,6 +69,14 @@ describe('the plugin', function () {
             name: 'Sed ut perspiciatis',
             start: now,
             end: twoHoursFuture,
+            type: 'TEST-GROUP',
+            color: 'fuchsia',
+            textColor: 'black'
+          },
+          {
+            name: 'Sed ut perspiciatis two',
+            start: now,
+            end: threeHoursFuture,
             type: 'TEST-GROUP',
             color: 'fuchsia',
             textColor: 'black'
@@ -295,7 +304,7 @@ describe('the plugin', function () {
 
       return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(2);
+        expect(items.length).toEqual(3);
       });
     });
   });
@@ -313,7 +322,7 @@ describe('the plugin', function () {
         type: TIMELIST_TYPE,
         id: 'test-object',
         configuration: {
-          sortOrderIndex: 0,
+          sortOrderIndex: 2,
           futureEventsIndex: 1,
           futureEventsDurationIndex: 0,
           futureEventsDuration: 0,
@@ -350,7 +359,17 @@ describe('the plugin', function () {
 
       return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(1);
+        expect(items.length).toEqual(2);
+      });
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items[0].end).toEqual(threeHoursFuture);
+        expect(items[1].end).toEqual(twoHoursFuture);
       });
     });
   });
@@ -405,7 +424,7 @@ describe('the plugin', function () {
 
       return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(1);
+        expect(items.length).toEqual(2);
       });
     });
   });
