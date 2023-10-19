@@ -5,13 +5,13 @@ This configuration should be used for development purposes. It contains full sou
 devServer (which be invoked using by `npm start`), and a non-minified Vue.js distribution.
 If OpenMCT is to be used for a production server, use webpack.prod.js instead.
 */
-const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge } = require('webpack-merge');
 
 const base = require('./webpack.base');
 
-module.exports = merge(base('development'), {
+module.exports = merge(base, {
   devtool: 'inline-source-map',
   mode: 'development',
   watchOptions: {
@@ -25,10 +25,40 @@ module.exports = merge(base('development'), {
       '**/.*' // dotfiles and dotfolders
     ]
   },
+  module: {
+    rules: [
+      {
+        test: /\.(sc|sa|c)ss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'resolve-url-loader'
+          },
+          {
+            loader: 'sass-loader',
+            // resolve-url-loader needs all loaders below its decl to have sourcemaps enabled
+            options: { sourceMap: true }
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '""'
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[name].css'
     })
   ],
   devServer: {
