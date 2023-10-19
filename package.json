@@ -12,7 +12,6 @@
     "@types/eventemitter3": "1.2.0",
     "@types/jasmine": "4.3.4",
     "@types/lodash": "4.14.192",
-    "@vue/compat": "3.3.4",
     "@vue/compiler-sfc": "3.3.4",
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "6.1.1",
