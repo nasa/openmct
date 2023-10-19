@@ -761,6 +761,8 @@ export default {
         return;
       }
 
+      this.updateViewport(yAxisId);
+
       if (!this.drawAPI.origin) {
         return;
       }
