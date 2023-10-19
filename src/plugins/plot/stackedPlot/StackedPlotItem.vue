@@ -141,7 +141,7 @@ export default {
     this.openmct.editor.off('isEditing', this.setEditState);
     if (this.composition) {
       this.composition.off('add', this.subscribeToStaleness);
-      this.composition.off('remove', this.triggerUnsubscribeFromStaleness);
+      this.composition.off('remove', this.removeSubscription);
     }
 
     if (this.removeSelectable) {
@@ -172,6 +172,11 @@ export default {
       if (this.component) {
         this.component[prop] = value;
       }
+    },
+    removeSubscription(identifier) {
+      this.triggerUnsubscribeFromStaleness({
+        identifier
+      });
     },
     updateView() {
       if (this._destroy) {
@@ -205,7 +210,7 @@ export default {
         this.composition = this.openmct.composition.get(object);
 
         this.composition.on('add', this.subscribeToStaleness);
-        this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
+        this.composition.on('remove', this.removeSubscription);
         this.composition.load();
       }
 
