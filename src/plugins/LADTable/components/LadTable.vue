@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
-    <table ref="table" class="c-table c-lad-table" :class="applyLayoutClass">
+    <table class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
           <th>Name</th>
@@ -75,7 +75,6 @@ export default {
     return {
       items: [],
       viewContext: {},
-      isTableVisible: false,
       configuration: this.ladTableConfiguration.getConfiguration()
     };
   },
