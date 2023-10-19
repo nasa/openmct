@@ -141,7 +141,6 @@ export default {
     });
 
     this.initializeViewActions();
-    this.observeVisibility();
   },
   unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
@@ -158,27 +157,6 @@ export default {
 
       this.items.push(item);
       this.subscribeToStaleness(domainObject);
-    },
-    handleIntersect(entries, observer) {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting !== this.isTableVisible) {
-          // visibility state changed
-          this.isTableVisible = entry.isIntersecting; // update visibility state
-
-          console.log(`🪞 Table visibility changed. Now visible: ${this.isTableVisible}`);
-        }
-      });
-    },
-    async observeVisibility() {
-      await this.$nextTick(); // wait for the next DOM update cycle
-      let options = {
-        root: null, // use viewport as the root
-        rootMargin: '0px',
-        threshold: [0]
-      };
-
-      this.observer = new IntersectionObserver(this.handleIntersect, options);
-      this.observer.observe(this.$refs.table);
     },
     removeItem(identifier) {
       const keystring = this.openmct.objects.makeKeyString(identifier);

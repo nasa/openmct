@@ -278,6 +278,7 @@ import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
@@ -478,6 +479,7 @@ export default {
     this.filterChanged = _.debounce(this.filterChanged, 500);
   },
   mounted() {
+    this.nicelyCalled = new NicelyCalled(this.$refs.root);
     this.csvExporter = new CSVExporter();
     this.rowsAdded = _.throttle(this.rowsAdded, 200);
     this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
@@ -543,12 +545,13 @@ export default {
     this.table.configuration.destroy();
 
     this.table.destroy();
+
+    this.nicelyCalled.destroy();
   },
   methods: {
     updateVisibleRows() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.nicelyCalled.execute(() => {
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
