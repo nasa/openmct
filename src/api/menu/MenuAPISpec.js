@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from '../../utils/testing';
 import Menu from './menu';
@@ -186,7 +186,7 @@ describe('The Menu API', () => {
       superMenuItem.dispatchEvent(mouseOverEvent);
       const itemDescription = document.querySelector('.l-item-description__description');
 
-      Vue.nextTick(() => {
+      nextTick(() => {
         expect(menuElement).not.toBeNull();
         expect(itemDescription.innerText).toEqual(actionsArray[0].description);
 
