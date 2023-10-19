@@ -27,13 +27,13 @@
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
-        :key="index"
+        :key="`limitLabel-${index}`"
         :point="limitLabel.point"
         :limit="limitLabel.limit"
       ></limit-label>
       <limit-line
         v-for="(limitLine, index) in visibleLimitLines"
-        :key="index"
+        :key="`limitLine-${index}`"
         :point="limitLine.point"
         :limit="limitLine.limit"
       ></limit-line>
@@ -189,9 +189,8 @@ export default {
       handler() {
         this.hiddenYAxisIds.forEach((id) => {
           this.resetYOffsetAndSeriesDataForYAxis(id);
-          this.updateLimitLines();
         });
-        this.scheduleDraw();
+        this.scheduleDraw(true);
       },
       deep: true
     }
@@ -252,12 +251,19 @@ export default {
     this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
-    this.$emit('chart-loaded');
+    this.$emit('chartLoaded');
+
+    this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+    this.chartResizeObserver = new ResizeObserver(this.handleWindowResize);
+    this.chartResizeObserver.observe(this.$parent.$refs.chartContainer);
   },
   beforeUnmount() {
     this.destroy();
   },
   methods: {
+    handleWindowResize() {
+      this.scheduleDraw(true);
+    },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
       let config = configStore.get(configId);
@@ -399,7 +405,6 @@ export default {
 
       this.makeLimitLines(series);
       this.updateLimitLines();
-      this.scheduleDraw();
     },
     resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
       if (!oldYAxisId) {
@@ -413,8 +418,7 @@ export default {
       //Make the chart elements again for the new y-axis and offset
       this.makeChartElement(series);
       this.makeLimitLines(series);
-      this.updateLimitLines();
-      this.scheduleDraw();
+      this.scheduleDraw(true);
     },
     destroy() {
       this.isDestroyed = true;
@@ -424,6 +428,9 @@ export default {
       this.pointSets.forEach((pointSet) => pointSet.destroy());
       this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
       DrawLoader.releaseDrawAPI(this.drawAPI);
+      if (this.chartResizeObserver) {
+        this.chartResizeObserver.disconnect();
+      }
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
@@ -642,16 +649,15 @@ export default {
         return;
       }
 
-      this.updateLimitLines();
-      this.scheduleDraw();
+      this.scheduleDraw(true);
     },
-    scheduleDraw() {
+    scheduleDraw(updateLimitLines) {
       if (!this.drawScheduled) {
-        requestAnimationFrame(this.draw);
+        requestAnimationFrame(this.draw.bind(this, updateLimitLines));
         this.drawScheduled = true;
       }
     },
-    draw() {
+    draw(updateLimitLines) {
       this.drawScheduled = false;
       if (this.isDestroyed) {
         return;
@@ -679,6 +685,11 @@ export default {
           this.prepareToDrawAnnotationSelections(id);
         }
       });
+      // We must do the limit line drawing after the drawAPI has been cleared (which sets the height and width of the draw API)
+      // and the viewport is updated so that we have the right height/width for limit line x and y calculations
+      if (updateLimitLines) {
+        this.updateLimitLines();
+      }
     },
     updateViewport(yAxisId) {
       const mainYAxisId = this.config.yAxis.get('id');
@@ -731,9 +742,12 @@ export default {
       pointSets.forEach(this.drawPoints, this);
       const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
       alarmSets.forEach(this.drawAlarmPoints, this);
-      //console.timeEnd('📈 drawSeries');
     },
     updateLimitLines() {
+      //reset
+      this.visibleLimitLabels = [];
+      this.visibleLimitLines = [];
+
       this.config.series.models.forEach((series) => {
         const yAxisId = series.get('yAxisId');
 
@@ -747,16 +761,10 @@ export default {
         return;
       }
 
-      this.updateViewport(yAxisId);
-
       if (!this.drawAPI.origin) {
         return;
       }
-
       let limitPointOverlap = [];
-      //reset
-      this.visibleLimitLabels = [];
-      this.visibleLimitLines = [];
 
       this.limitLines.forEach((limitLine) => {
         limitLine.limits.forEach((limit) => {
