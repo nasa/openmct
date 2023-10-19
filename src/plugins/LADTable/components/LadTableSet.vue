@@ -192,11 +192,7 @@ export default {
     reorderLadTables(reorderPlan) {
       let oldComposition = this.ladTableObjects.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(
-          this.ladTableObjects,
-          reorderEvent.newIndex,
-          oldComposition[reorderEvent.oldIndex]
-        );
+        this.ladTableObjects[reorderEvent.newIndex] = oldComposition[reorderEvent.oldIndex];
       });
     },
     addTelemetryObject(ladTable) {

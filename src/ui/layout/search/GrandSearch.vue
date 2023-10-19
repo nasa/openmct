@@ -187,7 +187,7 @@ export default {
         const clickedPreviewClose =
           event.target.parentElement &&
           event.target.parentElement.querySelector('.js-preview-window');
-        const searchResultsDropDown = this.$refs.searchResultsDropDown._data;
+        const searchResultsDropDown = this.$refs.searchResultsDropDown._.data;
         if (
           !clickedInsideDropdown &&
           searchResultsDropDown.resultsShown &&

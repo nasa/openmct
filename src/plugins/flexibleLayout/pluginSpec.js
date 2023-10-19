@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import FlexibleLayout from './plugin';
 
@@ -105,7 +105,7 @@ describe('the plugin', function () {
       const flexibleView = flexibleLayoutViewProvider.view(testViewObject, [testViewObject]);
       flexibleView.show(child, false);
 
-      await Vue.nextTick();
+      await nextTick();
       console.log(child);
       const flexTitle = child.querySelector('.c-fl');
 

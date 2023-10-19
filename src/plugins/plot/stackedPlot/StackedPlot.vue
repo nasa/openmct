@@ -38,6 +38,7 @@
     <div class="l-view-section">
       <stacked-plot-item
         v-for="objectWrapper in compositionObjects"
+        ref="stackedPlotItems"
         :key="objectWrapper.keyString"
         class="c-plot--stacked-container"
         :child-object="objectWrapper.object"
