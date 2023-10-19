@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import clockPlugin from './plugin';
 
@@ -106,7 +106,7 @@ describe('Clock plugin:', () => {
       clockView = clockViewProvider.view(mutableClockObject);
       clockView.show(child);
 
-      await Vue.nextTick();
+      await nextTick();
       await new Promise((resolve) => requestAnimationFrame(resolve));
     });
 
@@ -232,7 +232,7 @@ describe('Clock plugin:', () => {
     it('contains text', async () => {
       await setupClock(true);
 
-      await Vue.nextTick();
+      await nextTick();
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
