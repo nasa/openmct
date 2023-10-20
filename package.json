@@ -27,7 +27,7 @@
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-compat": "4.2.0",
     "eslint-plugin-no-unsanitized": "4.0.2",
-    "eslint-plugin-playwright": "0.12.0",
+    "eslint-plugin-playwright": "0.17.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-unicorn": "44.0.2",
