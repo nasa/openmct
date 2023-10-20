@@ -5,6 +5,7 @@ This configuration should be used for development purposes. It contains full sou
 devServer (which be invoked using by `npm start`), and a non-minified Vue.js distribution.
 If OpenMCT is to be used for a production server, use webpack.prod.js instead.
 */
+const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge } = require('webpack-merge');
