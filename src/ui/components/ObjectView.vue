@@ -27,6 +27,7 @@
 
 <script>
 import _ from 'lodash';
+import { toRaw } from 'vue';
 
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
@@ -272,16 +273,16 @@ export default {
 
       if (provider.edit && this.showEditView) {
         if (this.openmct.editor.isEditing()) {
-          this.currentView = provider.edit(this.domainObject, true, objectPath);
+          this.currentView = provider.edit(toRaw(this.domainObject), true, objectPath);
         } else {
-          this.currentView = provider.view(this.domainObject, objectPath);
+          this.currentView = provider.view(toRaw(this.domainObject), objectPath);
         }
 
         this.openmct.editor.on('isEditing', this.toggleEditView);
         this.releaseEditModeHandler = () =>
           this.openmct.editor.off('isEditing', this.toggleEditView);
       } else {
-        this.currentView = provider.view(this.domainObject, objectPath);
+        this.currentView = provider.view(toRaw(this.domainObject), objectPath);
 
         if (this.currentView.onEditModeChange) {
           this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -439,7 +440,7 @@ export default {
       if (
         provider &&
         provider.canEdit &&
-        provider.canEdit(this.domainObject, objectPath) &&
+        provider.canEdit(toRaw(this.domainObject), objectPath) &&
         this.isEditingAllowed() &&
         !this.openmct.editor.isEditing()
       ) {

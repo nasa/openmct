@@ -20,16 +20,16 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-search" :class="{ 'is-active': active }">
+  <div class="c-search" v-bind="$attrs" :class="{ 'is-active': active }">
     <input
-      v-bind="$attrs"
       class="c-search__input"
       aria-label="Search Input"
       tabindex="10000"
       type="search"
       :value="value"
-      @input="handleInput"
-      @click="handleClick"
+      v-bind="$attrs"
+      @click="() => $emit('click')"
+      @input="($event) => $emit('input', $event.target.value)"
     />
     <a v-if="value" class="c-search__clear-input icon-x-in-circle" @click="clearInput"></a>
     <slot></slot>
@@ -46,7 +46,7 @@ export default {
     }
   },
   emits: ['input', 'clear', 'click'],
-  data: function () {
+  data() {
     return {
       active: false
     };
@@ -61,12 +61,6 @@ export default {
       // Clear the user's input and set 'active' to false
       this.$emit('clear', '');
       this.active = false;
-    },
-    handleInput(event) {
-      this.$emit('input', event.target.value);
-    },
-    handleClick() {
-      this.$emit('click');
     }
   }
 };
