@@ -11,6 +11,8 @@ const { merge } = require('webpack-merge');
 
 const base = require('./webpack.base');
 
+const projectRootDir = path.resolve(__dirname, '..');
+
 module.exports = merge(base, {
   devtool: 'inline-source-map',
   mode: 'development',
@@ -62,13 +64,19 @@ module.exports = merge(base, {
     })
   ],
   devServer: {
-    client: {
-      progress: true,
-      overlay: {
-        // Disable overlay for runtime errors.
-        // See: https://github.com/webpack/webpack-dev-server/issues/4771
-        runtimeErrors: false
+    devMiddleware: {
+      writeToDisk: (filePathString) => {
+        const filePath = path.parse(filePathString);
+        const shouldWrite = !filePath.base.includes('hot-update');
+
+        return shouldWrite;
       }
+    },
+    watchFiles: ['**/*.css'],
+    static: {
+      directory: path.join(projectRootDir, '/dist'),
+      publicPath: '/dist',
+      watch: false
     }
   },
   stats: {
