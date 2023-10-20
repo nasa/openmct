@@ -49,7 +49,7 @@ describe('the plugin', () => {
   let tablePlugin;
   let element;
   let child;
-  let historicalProvider;
+  let historicalTelemetryProvider;
   let originalRouterPath;
   let unlistenConfigMutation;
 
@@ -61,12 +61,12 @@ describe('the plugin', () => {
     tablePlugin = new TablePlugin();
     openmct.install(tablePlugin);
 
-    historicalProvider = {
+    historicalTelemetryProvider = {
       request: () => {
         return Promise.resolve([]);
       }
     };
-    spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
+    spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalTelemetryProvider);
 
     element = document.createElement('div');
     child = document.createElement('div');
@@ -137,11 +137,12 @@ describe('the plugin', () => {
     let tableView;
     let tableInstance;
     let mockClock;
+    let telemetryCallback;
 
     beforeEach(async () => {
       openmct.time.timeSystem('utc', {
         start: 0,
-        end: 4
+        end: 10
       });
 
       mockClock = jasmine.createSpyObj('clock', ['on', 'off', 'currentValue']);
@@ -151,7 +152,7 @@ describe('the plugin', () => {
       openmct.time.addClock(mockClock);
       openmct.time.clock('mockClock', {
         start: 0,
-        end: 4
+        end: 10
       });
 
       testTelemetryObject = {
@@ -214,7 +215,21 @@ describe('the plugin', () => {
         }
       ];
 
-      historicalProvider.request = () => Promise.resolve(testTelemetry);
+      historicalTelemetryProvider.request = () => {
+        return Promise.resolve(testTelemetry);
+      };
+
+      const realtimeTelemetryProvider = {
+        supportsSubscribe: () => true,
+        subscribe: (domainObject, passedCallback) => {
+          telemetryCallback = passedCallback;
+          return Promise.resolve(() => {});
+        }
+      };
+
+      spyOn(openmct.telemetry, 'findSubscriptionProvider').and.returnValue(
+        realtimeTelemetryProvider
+      );
 
       openmct.router.path = [testTelemetryObject];
 
@@ -254,6 +269,56 @@ describe('the plugin', () => {
       let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
       await nextTick();
       expect(rows.length).toBe(3);
+    });
+
+    it('Adds a row when updating with new telemetry', async () => {
+      let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+      await nextTick();
+      expect(rows.length).toBe(3);
+      // fire some telemetry
+      const newTelemetry = {
+        utc: 6,
+        'some-key': 'some-value 6',
+        'some-other-key': 'some-other-value 6'
+      };
+
+      // Create a spy on the addRows function.
+      spyOn(tableInstance.tableRows, 'addRows').and.callThrough();
+
+      telemetryCallback(newTelemetry);
+
+      await nextTick();
+
+      await new Promise((resolve) => {
+        // Wait for rows to render
+        const checkInterval = setInterval(() => {
+          const foundRows = element.querySelectorAll('table.c-telemetry-table__body tr');
+          if (foundRows.length === 4) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+      });
+
+      rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+      expect(rows.length).toBe(4);
+    });
+
+    it('Adds a row in place when updating with existing telemetry', async () => {
+      let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+      await nextTick();
+      expect(rows.length).toBe(3);
+      // fire some telemetry
+      const newTelemetry = {
+        utc: 2,
+        'some-key': 'some-value 2',
+        'some-other-key': 'duuuude'
+      };
+      spyOn(tableInstance.tableRows, 'getInPlaceUpdateIndex').and.returnValue(1);
+      spyOn(tableInstance.tableRows, 'updateRowInPlace').and.callThrough();
+      telemetryCallback(newTelemetry);
+
+      expect(tableInstance.tableRows.updateRowInPlace.calls.count()).toBeGreaterThan(0);
     });
 
     it('Renders a column for every item in telemetry metadata', () => {
