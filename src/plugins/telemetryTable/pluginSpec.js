@@ -279,7 +279,7 @@ describe('the plugin', () => {
       const newTelemetry = {
         utc: 2,
         'some-key': 'some-value 2',
-        'some-other-key': 'duuuude'
+        'some-other-key': 'spacecraft'
       };
       spyOn(tableInstance.tableRows, 'getInPlaceUpdateIndex').and.returnValue(1);
       spyOn(tableInstance.tableRows, 'updateRowInPlace').and.callThrough();
