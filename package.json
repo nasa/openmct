@@ -31,7 +31,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-unicorn": "44.0.2",
-    "eslint-plugin-vue": "9.15.0",
+    "eslint-plugin-vue": "9.17.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "eventemitter3": "1.2.0",
     "file-saver": "2.0.5",
