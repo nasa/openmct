@@ -78,6 +78,14 @@ module.exports = merge(base, {
       directory: path.join(projectRootDir, '/dist'),
       publicPath: '/dist',
       watch: false
+    },
+    client: {
+      progress: true,
+      overlay: {
+        // Disable overlay for runtime errors.
+        // See: https://github.com/webpack/webpack-dev-server/issues/4771
+        runtimeErrors: false
+      }
     }
   },
   stats: {
