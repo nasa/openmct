@@ -208,7 +208,6 @@ export default {
       if (this.isEditing) {
         this.filterValue = configuration.filter;
         this.hideAll = false;
-        this.setSort();
         this.listActivities();
       } else {
         this.filterValue = configuration.filter;
