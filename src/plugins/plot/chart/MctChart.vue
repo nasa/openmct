@@ -251,9 +251,9 @@ export default {
     this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
-    this.$emit('chartLoaded');
+    this.$emit('chart-loaded');
 
-    this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+    this.handleWindowResize = _.debounce(this.handleWindowResize, 250);
     this.chartResizeObserver = new ResizeObserver(this.handleWindowResize);
     this.chartResizeObserver.observe(this.$parent.$refs.chartContainer);
   },
