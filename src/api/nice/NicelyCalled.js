@@ -53,10 +53,11 @@ export default class NicelyCalled {
 
   execute(func) {
     if (this.#isIntersecting) {
-      console.debug(`🪞 calling requestAnimationFrame for ${this.#element?.className}`);
       window.requestAnimationFrame(func);
+      return true;
     } else {
       this.#lastUnfiredFunc = func;
+      return false;
     }
   }
 
