@@ -35,22 +35,20 @@ export default class NicelyCalled {
     this.#lastUnfiredFunc = null;
   }
 
-  #observerCallback = (entries) => {
-    entries.forEach((entry) => {
-      if (entry.target === this.#element) {
-        this.#isIntersecting = entry.isIntersecting;
-        console.debug(
-          `🪞 nice visibility changed on ${this.#element?.className}. Visiblity: ${
-            this.#isIntersecting
-          }`
-        );
-        if (this.#isIntersecting && this.#lastUnfiredFunc) {
-          console.debug(`🪞 flushing our last fire func as we're now visible`);
-          window.requestAnimationFrame(this.#lastUnfiredFunc);
-          this.#lastUnfiredFunc = null;
-        }
+  #observerCallback = ([entry]) => {
+    if (entry.target === this.#element) {
+      this.#isIntersecting = entry.isIntersecting;
+      console.debug(
+        `🪞 nice visibility changed on ${this.#element?.className}. Visiblity: ${
+          this.#isIntersecting
+        }`
+      );
+      if (this.#isIntersecting && this.#lastUnfiredFunc) {
+        console.debug(`🪞 flushing our last fire func as we're now visible`);
+        window.requestAnimationFrame(this.#lastUnfiredFunc);
+        this.#lastUnfiredFunc = null;
       }
-    });
+    }
   };
 
   execute(func) {
