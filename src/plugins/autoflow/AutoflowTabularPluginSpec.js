@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import AutoflowTabularConstants from './AutoflowTabularConstants';
 import AutoflowTabularPlugin from './AutoflowTabularPlugin';
@@ -175,7 +175,7 @@ xdescribe('AutoflowTabularPlugin', () => {
         view = provider.view(testObject, [testObject]);
         view.show(testContainer);
 
-        return Vue.nextTick();
+        return nextTick();
       });
 
       afterEach(() => {

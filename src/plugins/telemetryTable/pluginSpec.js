@@ -25,7 +25,7 @@ import {
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import TablePlugin from './plugin.js';
 
@@ -225,7 +225,7 @@ describe('the plugin', () => {
 
       tableInstance = tableView.getTable();
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
@@ -242,7 +242,7 @@ describe('the plugin', () => {
 
     it('Shows a progress bar while making requests', async () => {
       tableInstance.incrementOutstandingRequests();
-      await Vue.nextTick();
+      await nextTick();
 
       let progressBar = element.querySelector('.c-progress-bar');
 
@@ -252,7 +252,7 @@ describe('the plugin', () => {
 
     it('Renders a row for every telemetry datum returned', async () => {
       let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
-      await Vue.nextTick();
+      await nextTick();
       expect(rows.length).toBe(3);
     });
 
@@ -287,7 +287,7 @@ describe('the plugin', () => {
       toColumn.dispatchEvent(dragOverEvent);
       toColumn.dispatchEvent(dropEvent);
 
-      await Vue.nextTick();
+      await nextTick();
       columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
       let firstColumn = columns[0];
       let secondColumn = columns[1];
@@ -305,12 +305,12 @@ describe('the plugin', () => {
 
     it('Supports filtering telemetry by regular text search', async () => {
       tableInstance.tableRows.setColumnFilter('some-key', '1');
-      await Vue.nextTick();
+      await nextTick();
       let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
 
       expect(filteredRowElements.length).toEqual(1);
       tableInstance.tableRows.setColumnFilter('some-key', '');
-      await Vue.nextTick();
+      await nextTick();
 
       let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
       expect(allRowElements.length).toEqual(3);
@@ -318,13 +318,13 @@ describe('the plugin', () => {
 
     it('Supports filtering using Regex', async () => {
       tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value$');
-      await Vue.nextTick();
+      await nextTick();
       let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
 
       expect(filteredRowElements.length).toEqual(0);
 
       tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value');
-      await Vue.nextTick();
+      await nextTick();
       let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
 
       expect(allRowElements.length).toEqual(3);
@@ -339,7 +339,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       let tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
       expect(tableHeaderElements.length).toEqual(3);
 
@@ -350,7 +350,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
       expect(tableHeaderElements.length).toEqual(4);
     });
@@ -364,7 +364,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       let tableRowCells = element.querySelectorAll(
         'table.c-telemetry-table__body > tbody > tr:first-child td'
       );
@@ -377,7 +377,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       tableRowCells = element.querySelectorAll(
         'table.c-telemetry-table__body > tbody > tr:first-child td'
       );
@@ -391,7 +391,7 @@ describe('the plugin', () => {
       // Mark a row
       firstRow.dispatchEvent(clickEvent);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
@@ -404,13 +404,13 @@ describe('the plugin', () => {
       // Mark a row
       firstRow.dispatchEvent(clickEvent);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
       const currentBounds = openmct.time.bounds();
-      await Vue.nextTick();
+      await nextTick();
       const newBounds = {
         start: currentBounds.start,
         end: currentBounds.end - 3
@@ -418,7 +418,7 @@ describe('the plugin', () => {
 
       // Manually change the time bounds
       openmct.time.bounds(newBounds);
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is no longer paused
       expect(element.querySelector('div.c-table.is-paused')).toBeNull();
@@ -429,13 +429,13 @@ describe('the plugin', () => {
 
       // Pause by button
       viewContext.togglePauseByButton();
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
       const currentBounds = openmct.time.bounds();
-      await Vue.nextTick();
+      await nextTick();
 
       const newBounds = {
         start: currentBounds.start,
@@ -444,7 +444,7 @@ describe('the plugin', () => {
       // Manually change the time bounds
       openmct.time.bounds(newBounds);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is no longer paused
       expect(element.querySelector('div.c-table.is-paused')).toBeNull();
@@ -456,7 +456,7 @@ describe('the plugin', () => {
       // Pause by button
       viewContext.togglePauseByButton();
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table displays the correct number of rows
       let tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
@@ -468,12 +468,12 @@ describe('the plugin', () => {
       // Tick the clock
       openmct.time.tick(1);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is still paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table displays the correct number of rows
       tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');

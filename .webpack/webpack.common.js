@@ -77,8 +77,7 @@ const config = {
       MCT: path.join(projectRootDir, 'src/MCT'),
       testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
-      utils: path.join(projectRootDir, 'src/utils'),
-      vue: path.join(projectRootDir, 'node_modules/@vue/compat/dist/vue.esm-bundler.js'),
+      utils: path.join(projectRootDir, 'src/utils')
     }
   },
   plugins: [
@@ -86,7 +85,9 @@ const config = {
       __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
-      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`
+      __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+      __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
+      __VUE_PROD_DEVTOOLS__: false // enable/disable devtools support in production, default: false
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({
@@ -115,7 +116,7 @@ const config = {
     new webpack.BannerPlugin({
       test: /.*Theme\.css$/,
       raw: true,
-      banner: '@charset "UTF-8";',
+      banner: '@charset "UTF-8";'
     })
   ],
   module: {
@@ -142,10 +143,7 @@ const config = {
         options: {
           compilerOptions: {
             hoistStatic: false,
-            whitespace: 'preserve',
-            compatConfig: {
-              MODE: 2
-            }
+            whitespace: 'preserve'
           }
         }
       },

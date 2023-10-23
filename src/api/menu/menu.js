@@ -71,11 +71,6 @@ class Menu extends EventEmitter {
       },
       provide: {
         options: this.options
-      },
-      // TODO: Remove this exception upon full migration to Vue 3
-      // https://v3-migration.vuejs.org/breaking-changes/render-function-api.html#render-function-argument
-      compatConfig: {
-        RENDER_FUNCTION: false
       }
     });
 
@@ -98,11 +93,6 @@ class Menu extends EventEmitter {
       },
       provide: {
         options: this.options
-      },
-      // TODO: Remove this exception upon full migration to Vue 3
-      // https://v3-migration.vuejs.org/breaking-changes/render-function-api.html#render-function-argument
-      compatConfig: {
-        RENDER_FUNCTION: false
       }
     });
 
