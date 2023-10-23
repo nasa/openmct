@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import NotificationIndicatorPlugin from './plugin.js';
 
@@ -58,7 +58,7 @@ describe('the plugin', () => {
     beforeEach(() => {
       parentElement.append(indicatorElement);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('notifies the user of the number of notifications', () => {

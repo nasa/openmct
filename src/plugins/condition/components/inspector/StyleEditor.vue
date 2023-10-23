@@ -78,6 +78,7 @@
     <!-- Save Styles -->
     <toolbar-button
       v-if="canSaveStyle"
+      ref="saveStyleButton"
       class="c-style__toolbar-button--save c-local-controls--show-on-hover c-icon-button c-icon-button--major"
       :options="saveOptions"
       @click="saveItemStyle()"
@@ -120,6 +121,7 @@ export default {
       required: true
     }
   },
+  emits: ['persist', 'save-style'],
   computed: {
     itemStyle() {
       return getStylesWithoutNoneValue(this.styleItem.style);

@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { debounce } from 'lodash';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 let gaugeDomainObject = {
   identifier: {
@@ -174,7 +174,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -221,7 +221,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -316,7 +316,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -363,7 +363,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -458,7 +458,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -505,7 +505,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -562,7 +562,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -645,7 +645,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -773,7 +773,7 @@ describe('Gauge plugin', () => {
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
         gaugeView.show(child);
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -821,7 +821,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 });

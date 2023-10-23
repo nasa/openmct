@@ -69,11 +69,11 @@ export default {
           const label = this.activity[key].label;
           const value = String(this.activity[key].value);
 
-          this.$set(this.timeProperties, this.timeProperties.length, {
+          this.timeProperties[this.timeProperties.length] = {
             id: uuid(),
             label,
             value
-          });
+          };
         }
       });
     }

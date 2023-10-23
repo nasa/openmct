@@ -60,6 +60,7 @@ export default {
       }
     }
   },
+  emits: ['click'],
   methods: {
     onClick(option) {
       this.$emit('click', option);

@@ -28,14 +28,14 @@
     <global-filters
       :global-filters="globalFilters"
       :global-metadata="globalMetadata"
-      @persistGlobalFilters="persistGlobalFilters"
+      @persist-global-filters="persistGlobalFilters"
     />
     <filter-object
       v-for="(child, key) in children"
       :key="key"
       :filter-object="child"
       :persisted-filters="persistedFilters[key]"
-      @updateFilters="persistFilters"
+      @update-filters="persistFilters"
     />
   </ul>
 </template>
@@ -155,11 +155,7 @@ export default {
               mutateFilters = true;
             }
 
-            this.$set(
-              this.persistedFilters[keyString],
-              metadatum.key,
-              this.globalFilters[metadatum.key]
-            );
+            this.persistedFilters[keyString][metadatum.key] = this.globalFilters[metadatum.key];
           }
         });
       }

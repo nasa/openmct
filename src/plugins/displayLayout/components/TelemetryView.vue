@@ -26,7 +26,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="move"
-    @endMove="endMove"
+    @end-move="endMove"
   >
     <template #content>
       <div
@@ -126,6 +126,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move', 'format-changed', 'context-click'],
   data() {
     return {
       currentObjectPath: undefined,
@@ -240,6 +241,11 @@ export default {
 
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
+
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   beforeUnmount() {
     this.removeStatusListener();
@@ -339,10 +345,10 @@ export default {
     updateTelemetryFormat(format) {
       this.customStringformatter.setFormat(format);
 
-      this.$emit('formatChanged', this.item, format);
+      this.$emit('format-changed', this.item, format);
     },
     updateViewContext() {
-      this.$emit('contextClick', {
+      this.$emit('context-click', {
         viewHistoricalData: true,
         formattedValueForCopy: this.formattedValueForCopy
       });
@@ -395,7 +401,7 @@ export default {
       this.$emit('move', gridDelta);
     },
     endMove() {
-      this.$emit('endMove');
+      this.$emit('end-move');
     }
   }
 };

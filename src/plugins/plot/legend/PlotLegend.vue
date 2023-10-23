@@ -46,7 +46,7 @@
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
           :series-key-string="seriesObject.keyString"
-          @legendHoverChanged="legendHoverChanged"
+          @legend-hover-changed="legendHoverChanged"
         />
       </div>
       <!-- EXPANDED PLOT LEGEND -->
@@ -74,7 +74,7 @@
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
               :series-key-string="seriesObject.keyString"
               :highlights="highlights"
-              @legendHoverChanged="legendHoverChanged"
+              @legend-hover-changed="legendHoverChanged"
             />
           </tbody>
         </table>
@@ -108,6 +108,7 @@ export default {
       }
     }
   },
+  emits: ['legend-hover-changed', 'position', 'expanded'],
   data() {
     return {
       isLegendExpanded: false,
@@ -214,7 +215,7 @@ export default {
       this.$emit('expanded', this.isLegendExpanded);
     },
     legendHoverChanged(data) {
-      this.$emit('legendHoverChanged', data);
+      this.$emit('legend-hover-changed', data);
     },
     updatePosition() {
       this.$emit('position', this.legend.get('position'));
