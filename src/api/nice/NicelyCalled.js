@@ -52,9 +52,8 @@ export default class NicelyCalled {
   };
 
   execute(func) {
-    console.debug(`🪞 execution called for ${this.#element?.className}`);
-    console.debug(`🪞 going to execute ${this.#isIntersecting}`);
     if (this.#isIntersecting) {
+      console.debug(`🪞 calling requestAnimationFrame for ${this.#element?.className}`);
       window.requestAnimationFrame(func);
     } else {
       this.#lastUnfiredFunc = func;
