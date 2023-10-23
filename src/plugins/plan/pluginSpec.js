@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import Properties from '../inspectorViews/properties/PropertiesComponent.vue';
 import PlanPlugin from '../plan/plugin';
@@ -187,7 +188,7 @@ describe('the plugin', function () {
       let view = planView.view(planDomainObject, mockObjectPath);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('loads activities into the view', () => {
@@ -210,7 +211,7 @@ describe('the plugin', function () {
 
       openmct.time.bounds(bounds);
 
-      await Vue.nextTick();
+      await nextTick();
       const rectEls = element.querySelectorAll('.c-plan__contents use');
       expect(rectEls.length).toEqual(2);
       const textEls = element.querySelectorAll('.c-plan__contents text');
@@ -226,7 +227,7 @@ describe('the plugin', function () {
         'draft'
       );
 
-      await Vue.nextTick();
+      await nextTick();
       const statusEl = element.querySelector('.c-plan__contents .is-status--draft');
       expect(statusEl).toBeDefined();
     });
@@ -235,6 +236,7 @@ describe('the plugin', function () {
   describe('the plan version', () => {
     let component;
     let componentObject;
+    let _destroy;
     let testPlanObject = {
       name: 'Plan',
       type: 'plan',
@@ -267,27 +269,28 @@ describe('the plugin', function () {
         false
       );
 
-      await Vue.nextTick();
+      await nextTick();
       let viewContainer = document.createElement('div');
       child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
+      const { vNode, destroy } = mount({
         components: {
           Properties
         },
         provide: {
           openmct: openmct
         },
-        template: '<properties/>'
+        template: '<properties ref="root"/>'
       });
+      _destroy = destroy;
+      component = vNode.componentInstance;
     });
 
     afterEach(() => {
-      component.$destroy();
+      _destroy();
     });
 
     it('provides an inspector view with the version information if available', () => {
-      componentObject = component.$root.$children[0];
+      componentObject = component.$refs.root;
       const propertiesEls = componentObject.$el.querySelectorAll('.c-inspect-properties__row');
       const found = Array.from(propertiesEls).some((propertyEl) => {
         return (

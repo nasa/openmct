@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { FIXED_MODE_KEY } from '../../api/time/constants';
 import { TIMELIST_TYPE } from './constants';
@@ -210,7 +210,7 @@ describe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, []);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('displays the activities', () => {
@@ -226,7 +226,7 @@ describe('the plugin', function () {
     it('displays activity details', (done) => {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      Vue.nextTick(() => {
+      nextTick(() => {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
         expect(itemValues.length).toEqual(4);
@@ -287,13 +287,13 @@ describe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('loads the plan from composition', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
         expect(items.length).toEqual(2);
       });
@@ -342,13 +342,13 @@ describe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('activities', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
         expect(items.length).toEqual(1);
       });
@@ -397,13 +397,13 @@ describe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('hides past events', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
         expect(items.length).toEqual(1);
       });
