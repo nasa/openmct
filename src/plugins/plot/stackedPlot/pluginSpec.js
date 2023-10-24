@@ -28,7 +28,7 @@ import {
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick, ref } from 'vue';
 
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
@@ -342,7 +342,7 @@ describe('the plugin', function () {
       destroyStackedPlot = destroy;
 
       await telemetryPromise;
-      await Vue.nextTick();
+      await nextTick();
       plotViewComponentObject = component.$refs.stackedPlotRef;
       const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
       config = configStore.get(configId);
@@ -390,7 +390,7 @@ describe('the plugin', function () {
         min: 10,
         max: 20
       });
-      await Vue.nextTick();
+      await nextTick();
       let yAxisElement = element.querySelectorAll(
         '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
       );
@@ -411,10 +411,10 @@ describe('the plugin', function () {
     });
 
     it('turns on cursor Guides all telemetry objects', async () => {
-      let cursorGuide = Vue.ref(plotViewComponentObject.cursorGuide);
+      let cursorGuide = ref(plotViewComponentObject.cursorGuide);
       expect(cursorGuide.value).toBeFalse();
       cursorGuide.value = true;
-      await Vue.nextTick();
+      await nextTick();
       let childCursorGuides = element.querySelectorAll('.c-cursor-guide--v');
       expect(childCursorGuides.length).toBe(1);
     });
@@ -432,10 +432,10 @@ describe('the plugin', function () {
     });
 
     it('hides grid lines for all telemetry objects', async () => {
-      let gridLines = Vue.ref(plotViewComponentObject.gridLines);
+      let gridLines = ref(plotViewComponentObject.gridLines);
       expect(gridLines.value).toBeTrue();
       gridLines.value = false;
-      await Vue.nextTick();
+      await nextTick();
       expect(gridLines.value).toBeFalse();
       let gridLinesContainer = element.querySelectorAll('.gl-plot-display-area .js-ticks');
       let visible = 0;
@@ -488,7 +488,7 @@ describe('the plugin', function () {
         max: 10
       });
       expect(
-        plotViewComponentObject.$children[0].component.$children[0].$children[1].xScale.domain()
+        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs.mctPlot.xScale.domain()
       ).toEqual({
         min: 0,
         max: 10
@@ -505,7 +505,8 @@ describe('the plugin', function () {
       });
 
       const yAxesScales =
-        plotViewComponentObject.$children[0].component.$children[0].$children[1].yScale;
+        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs
+          .mctPlot.yScale;
       yAxesScales.forEach((yAxisScale) => {
         expect(yAxisScale.scale.domain()).toEqual({
           min: 10,
@@ -628,7 +629,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 
@@ -783,7 +784,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 

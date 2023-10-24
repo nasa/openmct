@@ -77,11 +77,11 @@ test.describe('Grand Search', () => {
 
     // Click [aria-label="OpenMCT Search"] a >> nth=0
     await page.locator('[aria-label="Search Result"] >> nth=0').click();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeInViewport();
+    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     // Fill [aria-label="OpenMCT Search"] input[type="search"]
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeInViewport();
+    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
     await page

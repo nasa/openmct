@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import ClearDataPlugin from './plugin.js';
 
@@ -213,7 +213,7 @@ describe('The Clear Data Plugin:', () => {
     });
 
     it('renders its major elements', async () => {
-      await Vue.nextTick();
+      await nextTick();
       const indicatorClass = appHolder.querySelector('.c-indicator');
       const iconClass = appHolder.querySelector('.icon-clear-data');
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');

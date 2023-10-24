@@ -410,7 +410,7 @@ export default {
       this.manageEmbedLayout();
       this.timestampAndUpdate();
     },
-    convertMarkDownToHtml(text) {
+    convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
         breaks: true,
         renderer: this.renderer
