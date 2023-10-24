@@ -26,6 +26,9 @@ export default class NicelyCalled {
   #lastUnfiredFunc;
 
   constructor(element) {
+    if (!element) {
+      throw new Error(`Nice visibility must be created with an element`);
+    }
     this.#element = element;
     this.#isIntersecting = true;
     console.debug(`🪞 nice visibility created for ${this.#element?.className}`);
