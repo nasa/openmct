@@ -40,7 +40,7 @@ const CHARTS = [
  * draw API.
  */
 
-export const DrawLoader = {
+class DrawLoader {
   /**
      * Return the first draw API available.  Returns
      * `undefined` if a draw API could not be constructed.
@@ -48,14 +48,13 @@ export const DrawLoader = {
      * @param {CanvasElement} canvas - The canvas element to attach
      the draw API to.
      */
-  getDrawAPI: function (canvas, overlay) {
+  static getDrawAPI(canvas, overlay) {
     let api;
 
-    CHARTS.forEach(function (CHART_TYPE) {
+    CHARTS.forEach((CHART_TYPE) => {
       if (api) {
         return;
       }
-
       if (CHART_TYPE.ALLOCATIONS.length >= CHART_TYPE.MAX_INSTANCES) {
         return;
       }
@@ -64,35 +63,36 @@ export const DrawLoader = {
         api = new CHART_TYPE.API(canvas, overlay);
         CHART_TYPE.ALLOCATIONS.push(api);
       } catch (e) {
-        console.warn(
-          ['Could not instantiate chart', CHART_TYPE.API.name, ';', e.message].join(' ')
-        );
+        console.warn(`Could not instantiate chart ${CHART_TYPE.API.name} - ${e.message}`);
       }
     });
-
     if (!api) {
       console.warn('Cannot initialize mct-chart.');
     }
 
     return api;
-  },
+  }
+
   /**
    * Returns a fallback draw api.
    */
-  getFallbackDrawAPI: function (canvas, overlay) {
+  static getFallbackDrawAPI(canvas, overlay) {
     const api = new CHARTS[1].API(canvas, overlay);
     CHARTS[1].ALLOCATIONS.push(api);
 
     return api;
-  },
-  releaseDrawAPI: function (api) {
-    CHARTS.forEach(function (CHART_TYPE) {
+  }
+
+  static releaseDrawAPI(api) {
+    CHARTS.forEach((CHART_TYPE) => {
       if (api instanceof CHART_TYPE.API) {
         CHART_TYPE.ALLOCATIONS.splice(CHART_TYPE.ALLOCATIONS.indexOf(api), 1);
       }
     });
+
     if (api.destroy) {
       api.destroy();
     }
   }
-};
+}
+export default DrawLoader;

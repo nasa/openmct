@@ -48,7 +48,7 @@ import { toRaw } from 'vue';
 import NicelyCalled from '../../../api/nice/NicelyCalled';
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import { DrawLoader } from '../draw/DrawLoader';
+import DrawLoader from '../draw/DrawLoader';
 import eventHelpers from '../lib/eventHelpers';
 import LimitLabel from './LimitLabel.vue';
 import LimitLine from './LimitLine.vue';

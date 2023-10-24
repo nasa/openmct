@@ -42,7 +42,7 @@ export default class NicelyCalled {
     if (entry.target === this.#element) {
       this.#isIntersecting = entry.isIntersecting;
       console.debug(
-        `🪞 nice visibility changed on ${this.#element?.className}. Visiblity: ${
+        `🪞 nice visibility changed on ${this.#element?.className}. Visibility: ${
           this.#isIntersecting
         }`
       );
