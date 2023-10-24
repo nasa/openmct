@@ -64,6 +64,7 @@ export default {
       }
     }
   },
+  emits: ['sort'],
   methods: {
     sort(property, direction) {
       this.$emit('sort', {

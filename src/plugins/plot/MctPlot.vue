@@ -39,9 +39,9 @@
           :tick-width="yAxis.tickWidth"
           :used-tick-width="plotFirstLeftTickWidth"
           :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth : plotLeftTickWidth"
-          @yKeyChanged="setYAxisKey"
-          @plotYTickWidth="onYTickWidthChange"
-          @toggleAxisVisibility="toggleSeriesForYAxis"
+          @y-key-changed="setYAxisKey"
+          @plot-y-tick-width="onYTickWidthChange"
+          @toggle-axis-visibility="toggleSeriesForYAxis"
         />
       </div>
       <div class="gl-plot-wrapper-display-area-and-x-axis" :style="xAxisStyle">
@@ -66,7 +66,7 @@
             :axis-type="'yAxis'"
             :position="'bottom'"
             :axis-id="yAxis.id"
-            @plotTickWidth="onYTickWidthChange"
+            @plot-tick-width="onYTickWidthChange"
           />
 
           <div
@@ -82,8 +82,8 @@
               :annotation-selections-by-series="annotationSelectionsBySeries"
               :hidden-y-axis-ids="hiddenYAxisIds"
               :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
-              @plotReinitializeCanvas="initCanvas"
-              @chartLoaded="initialize"
+              @plot-reinitialize-canvas="initCanvas"
+              @chart-loaded="initialize"
             />
           </div>
 
@@ -177,6 +177,7 @@
 <script>
 import Flatbush from 'flatbush';
 import _ from 'lodash';
+import { useEventBus } from 'utils/useEventBus';
 
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -241,6 +242,23 @@ export default {
         return undefined;
       }
     }
+  },
+  emits: [
+    'config-loaded',
+    'cursor-guide',
+    'grid-lines',
+    'loading-complete',
+    'loading-updated',
+    'plot-y-tick-width',
+    'highlights',
+    'lock-highlight-point',
+    'status-updated'
+  ],
+  setup() {
+    const { EventBus } = useEventBus();
+    return {
+      EventBus
+    };
   },
   data() {
     return {
@@ -376,7 +394,7 @@ export default {
       );
     }
 
-    this.$emit('configLoaded', true);
+    this.$emit('config-loaded', true);
 
     this.listenTo(this.config.series, 'add', this.addSeries, this);
     this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -394,7 +412,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.EventBus.$on('loading-complete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -409,7 +427,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
-    this.$off('loadingComplete', this.loadAnnotationsIfAllowed);
+    this.EventBus.$off('loading-complete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -464,7 +482,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', resolve);
+          this.EventBus.$once('loading-complete', resolve);
         } else {
           resolve();
         }
@@ -698,12 +716,12 @@ export default {
       this.pending -= 1;
       this.updateLoading();
       if (this.pending === 0) {
-        this.$emit('loadingComplete');
+        this.EventBus.$emit('loading-complete');
       }
     },
 
     updateLoading() {
-      this.$emit('loadingUpdated', this.pending > 0);
+      this.$emit('loading-updated', this.pending > 0);
     },
 
     updateFiltersAndResubscribe(updatedFilters) {
@@ -1022,7 +1040,7 @@ export default {
             return previous + current.tickWidth;
           }, 0);
         this.$emit(
-          'plotYTickWidth',
+          'plot-y-tick-width',
           {
             hasMultipleLeftAxes: this.hasMultipleLeftAxes,
             leftTickWidth,
@@ -1175,7 +1193,7 @@ export default {
 
       if (this.isMouseClick() && event.shiftKey) {
         this.lockHighlightPoint = !this.lockHighlightPoint;
-        this.$emit('lockHighlightPoint', this.lockHighlightPoint);
+        this.$emit('lock-highlight-point', this.lockHighlightPoint);
       }
 
       if (this.pan) {
@@ -1381,6 +1399,9 @@ export default {
               Object.keys(pointsInBoxBySeries).forEach((seriesKeyString) => {
                 const pointsInBox = pointsInBoxBySeries[seriesKeyString];
                 if (pointsInBox && pointsInBox.length) {
+                  if (!annotationsBySeries[seriesKeyString]) {
+                    annotationsBySeries[seriesKeyString] = [];
+                  }
                   annotationsBySeries[seriesKeyString].push(...pointsInBox);
                 }
               });
@@ -1904,7 +1925,7 @@ export default {
       this.openmct.objectViews.off('clearData', this.clearData);
     },
     updateStatus(status) {
-      this.$emit('statusUpdated', status);
+      this.$emit('status-updated', status);
     },
     handleWindowResize() {
       const { plotWrapper } = this.$parent.$refs;
@@ -1922,11 +1943,11 @@ export default {
     },
     toggleCursorGuide() {
       this.cursorGuide = !this.cursorGuide;
-      this.$emit('cursorGuide', this.cursorGuide);
+      this.$emit('cursor-guide', this.cursorGuide);
     },
     toggleGridLines() {
       this.gridLines = !this.gridLines;
-      this.$emit('gridLines', this.gridLines);
+      this.$emit('grid-lines', this.gridLines);
     }
   }
 };

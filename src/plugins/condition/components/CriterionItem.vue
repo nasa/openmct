@@ -136,6 +136,7 @@ export default {
       required: true
     }
   },
+  emits: ['persist'],
   data() {
     return {
       telemetryMetadataOptions: [],

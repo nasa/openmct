@@ -20,55 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
-import Timer from './components/TimerComponent.vue';
-
-export default function TimerViewProvider(openmct) {
-  return {
-    key: 'timer.view',
-    name: 'Timer',
-    cssClass: 'icon-timer',
-    canView(domainObject) {
-      return domainObject.type === 'timer';
-    },
-
-    view: function (domainObject, objectPath) {
-      let _destroy = null;
-
-      return {
-        show: function (element) {
-          const { destroy } = mount(
-            {
-              el: element,
-              components: {
-                Timer
-              },
-              provide: {
-                openmct,
-                currentView: this
-              },
-              data() {
-                return {
-                  domainObject,
-                  objectPath
-                };
-              },
-              template: '<timer :domain-object="domainObject" :object-path="objectPath" />'
-            },
-            {
-              app: openmct.app,
-              element
-            }
-          );
-          _destroy = destroy;
-        },
-        destroy: function () {
-          if (_destroy) {
-            _destroy();
-          }
-        }
-      };
-    }
-  };
+function filter__proto__(key, value) {
+  if (key !== '__proto__') {
+    return value;
+  }
 }
+
+export { filter__proto__ };

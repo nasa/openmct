@@ -28,20 +28,21 @@
     <global-filters
       :global-filters="globalFilters"
       :global-metadata="globalMetadata"
-      @persistGlobalFilters="persistGlobalFilters"
+      @persist-global-filters="persistGlobalFilters"
     />
     <filter-object
       v-for="(child, key) in children"
       :key="key"
       :filter-object="child"
       :persisted-filters="persistedFilters[key]"
-      @updateFilters="persistFilters"
+      @update-filters="persistFilters"
     />
   </ul>
 </template>
 
 <script>
 import _ from 'lodash';
+import { toRaw } from 'vue';
 
 import FilterObject from './FilterObject.vue';
 import GlobalFilters from './GlobalFilters.vue';
@@ -155,11 +156,7 @@ export default {
               mutateFilters = true;
             }
 
-            this.$set(
-              this.persistedFilters[keyString],
-              metadatum.key,
-              this.globalFilters[metadatum.key]
-            );
+            this.persistedFilters[keyString][metadatum.key] = this.globalFilters[metadatum.key];
           }
         });
       }
@@ -271,14 +268,14 @@ export default {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.filters',
-        this.persistedFilters
+        toRaw(this.persistedFilters)
       );
     },
     mutateConfigurationGlobalFilters() {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.globalFilters',
-        this.globalFilters
+        toRaw(this.globalFilters)
       );
     }
   }

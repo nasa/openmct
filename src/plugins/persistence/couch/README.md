@@ -60,21 +60,21 @@ While we highly recommend using the CouchDB docker-compose installation, it is s
 1. Install CouchDB using: `brew install couchdb`. 
 2. Edit `/usr/local/etc/local.ini` and add the following settings:
 
-  ```txt
+  ```ini
   [admins]
   admin = youradminpassword
   ```
 
   And set the server up for single node:
 
-  ```txt
+  ```ini
   [couchdb]
   single_node=true
   ```
 
   Enable CORS
 
-  ```txt
+  ```ini
   [chttpd]
   enable_cors = true
   [cors]
@@ -118,6 +118,18 @@ sh ./setup-couchdb.sh
 4. Create a database called `openmct`
 5. Navigate to <http://127.0.0.1:5984/_utils/#/database/openmct/permissions>
 6. Remove permission restrictions in CouchDB from Open MCT by deleting `_admin` roles for both `Admin` and `Member`.
+
+## Document Sizes
+CouchDB has size limits on both its internal documents, and its httpd interface. If dealing with larger documents in Open MCT (e.g., users adding images to notebook entries), you may to increase this limit. To do this, add the following to the two sections:
+```ini
+  [couchdb]
+  max_document_size = 4294967296 ; approx 4 GB
+  
+  [chttpd]
+  max_http_request_size = 4294967296 ; approx 4 GB
+```
+  
+If not present, add them under proper sections. The values are in bytes, and can be adjusted to whatever is appropriate for your use case.
 
 # Configuring Open MCT to use CouchDB
 

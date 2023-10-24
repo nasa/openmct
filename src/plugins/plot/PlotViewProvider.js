@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Plot from './Plot.vue';
+import Plot from './PlotView.vue';
 
 export default function PlotViewProvider(openmct) {
   function hasNumericTelemetry(domainObject) {

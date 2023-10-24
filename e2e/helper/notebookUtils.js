@@ -34,7 +34,7 @@ async function enterTextEntry(page, text) {
   await page.locator(NOTEBOOK_DROP_AREA).click();
 
   // enter text
-  await page.locator('[aria-label="Notebook Entry"].is-selected div.c-ne__text').fill(text);
+  await page.getByLabel('Notebook Entry Input').last().fill(text);
   await commitEntry(page);
 }
 

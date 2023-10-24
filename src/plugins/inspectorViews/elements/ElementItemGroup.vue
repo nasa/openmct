@@ -71,6 +71,7 @@ export default {
       type: Boolean
     }
   },
+  emits: ['drop-group'],
   data() {
     return {
       dragCounter: 0
