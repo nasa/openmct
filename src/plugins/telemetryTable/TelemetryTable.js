@@ -41,7 +41,6 @@ define([
   TelemetryTableConfiguration,
   StalenessUtils
 ) {
-
   class TelemetryTable extends EventEmitter {
     constructor(domainObject, openmct) {
       super();

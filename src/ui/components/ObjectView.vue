@@ -32,7 +32,6 @@ import { toRaw } from 'vue';
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import { toRaw } from 'vue'
 
 export default {
   components: {
