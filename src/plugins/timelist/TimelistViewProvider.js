@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,49 +20,56 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Timelist from './Timelist.vue';
+import mount from 'utils/mount';
+
 import { TIMELIST_TYPE } from './constants';
-import Vue from 'vue';
+import Timelist from './TimelistComponent.vue';
 
 export default function TimelistViewProvider(openmct) {
+  return {
+    key: 'timelist.view',
+    name: 'Time List',
+    cssClass: 'icon-timelist',
+    canView(domainObject) {
+      return domainObject.type === TIMELIST_TYPE;
+    },
 
-    return {
-        key: 'timelist.view',
-        name: 'Time List',
-        cssClass: 'icon-timelist',
-        canView(domainObject) {
-            return domainObject.type === TIMELIST_TYPE;
+    canEdit(domainObject) {
+      return domainObject.type === TIMELIST_TYPE;
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Timelist
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                composition: openmct.composition.get(domainObject)
+              },
+              template: '<timelist></timelist>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-
-        canEdit(domainObject) {
-            return domainObject.type === TIMELIST_TYPE;
-        },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Timelist
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath,
-                            composition: openmct.composition.get(domainObject)
-                        },
-                        template: '<timelist></timelist>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,57 +19,56 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState,
-    spyOnBuiltins
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
 
-describe("the plugin", () => {
-    let openmct;
-    let openInNewTabAction;
-    let mockObjectPath;
+describe('the plugin', () => {
+  let openmct;
+  let openInNewTabAction;
+  let mockObjectPath;
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+    openmct.on('start', done);
+    openmct.startHeadless();
 
-        openInNewTabAction = openmct.actions._allActions.newTab;
+    openInNewTabAction = openmct.actions._allActions.newTab;
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('installs the open in new tab action', () => {
+    expect(openInNewTabAction).toBeDefined();
+  });
+
+  describe('when invoked', () => {
+    beforeEach(async () => {
+      mockObjectPath = [
+        {
+          name: 'mock folder',
+          type: 'folder',
+          identifier: {
+            key: 'mock-folder',
+            namespace: ''
+          }
+        }
+      ];
+      spyOn(openmct.objects, 'get').and.returnValue(
+        Promise.resolve({
+          identifier: {
+            namespace: '',
+            key: 'test'
+          }
+        })
+      );
+      spyOnBuiltins(['open']);
+      await openInNewTabAction.invoke(mockObjectPath);
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('it opens in a new tab', () => {
+      expect(window.open).toHaveBeenCalled();
     });
-
-    it('installs the open in new tab action', () => {
-        expect(openInNewTabAction).toBeDefined();
-    });
-
-    describe('when invoked', () => {
-
-        beforeEach(async () => {
-            mockObjectPath = [{
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                }
-            }];
-            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({
-                identifier: {
-                    namespace: '',
-                    key: 'test'
-                }
-            }));
-            spyOnBuiltins(['open']);
-            await openInNewTabAction.invoke(mockObjectPath);
-        });
-
-        it('it opens in a new tab', () => {
-            expect(window.open).toHaveBeenCalled();
-        });
-    });
+  });
 });

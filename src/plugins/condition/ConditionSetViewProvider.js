@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,70 +20,80 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import ConditionSet from './components/ConditionSet.vue';
-import Vue from 'vue';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 
 export default class ConditionSetViewProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.name = 'Conditions View';
-        this.key = 'conditionSet.view';
-        this.cssClass = 'icon-conditional';
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.name = 'Conditions View';
+    this.key = 'conditionSet.view';
+    this.cssClass = 'icon-conditional';
+  }
 
-    canView(domainObject, objectPath) {
-        const isConditionSet = domainObject.type === 'conditionSet';
+  canView(domainObject, objectPath) {
+    const isConditionSet = domainObject.type === 'conditionSet';
 
-        return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
-    }
+    return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
+  }
 
-    canEdit(domainObject, objectPath) {
-        const isConditionSet = domainObject.type === 'conditionSet';
+  canEdit(domainObject, objectPath) {
+    const isConditionSet = domainObject.type === 'conditionSet';
 
-        return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
-    }
+    return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
+  }
 
-    view(domainObject, objectPath) {
-        let component;
-        const openmct = this.openmct;
+  view(domainObject, objectPath) {
+    let _destroy = null;
+    let component = null;
 
-        return {
-            show: (container, isEditing) => {
-                component = new Vue({
-                    el: container,
-                    components: {
-                        ConditionSet
-                    },
-                    provide: {
-                        openmct,
-                        domainObject,
-                        objectPath
-                    },
-                    data() {
-                        return {
-                            isEditing
-                        };
-                    },
-                    template: '<condition-set :isEditing="isEditing"></condition-set>'
-                });
+    return {
+      show: (container, isEditing) => {
+        const { vNode, destroy } = mount(
+          {
+            el: container,
+            components: {
+              ConditionSet
             },
-            onEditModeChange: (isEditing) => {
-                component.isEditing = isEditing;
+            provide: {
+              openmct: this.openmct,
+              domainObject,
+              objectPath
             },
-            destroy: () => {
-                component.$destroy();
-                component = undefined;
-            }
-        };
-    }
-
-    priority(domainObject) {
-        if (domainObject.type === 'conditionSet') {
-            return Number.MAX_VALUE;
-        } else {
-            return DEFAULT_VIEW_PRIORITY;
+            data() {
+              return {
+                isEditing
+              };
+            },
+            template: '<condition-set :isEditing="isEditing"></condition-set>'
+          },
+          {
+            app: this.openmct.app,
+            element: container
+          }
+        );
+        _destroy = destroy;
+        component = vNode.componentInstance;
+      },
+      onEditModeChange: (isEditing) => {
+        component.isEditing = isEditing;
+      },
+      destroy: () => {
+        if (_destroy) {
+          _destroy();
         }
+      }
+    };
+  }
+
+  priority(domainObject) {
+    if (domainObject.type === 'conditionSet') {
+      return Number.MAX_VALUE;
+    } else {
+      return DEFAULT_VIEW_PRIORITY;
     }
+  }
 }

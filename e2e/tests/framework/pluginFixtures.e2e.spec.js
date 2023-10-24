@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,18 +29,16 @@ const { test } = require('../../pluginFixtures.js');
 
 // eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('pluginFixtures tests', () => {
-    // test.use({ domainObjectName: 'Timer' });
-    // let timerUUID;
-
-    // test('Creates a timer object @framework @unstable', ({ domainObject }) => {
-    //     const { uuid } = domainObject;
-    //     const uuidRegexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/;
-    //     expect(uuid).toMatch(uuidRegexp);
-    //     timerUUID = uuid;
-    // });
-
-    // test('Provides same uuid for subsequent uses of the same object @framework', ({ domainObject }) => {
-    //     const { uuid } = domainObject;
-    //     expect(uuid).toEqual(timerUUID);
-    // });
+  // test.use({ domainObjectName: 'Timer' });
+  // let timerUUID;
+  // test('Creates a timer object @framework @unstable', ({ domainObject }) => {
+  //     const { uuid } = domainObject;
+  //     const uuidRegexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/;
+  //     expect(uuid).toMatch(uuidRegexp);
+  //     timerUUID = uuid;
+  // });
+  // test('Provides same uuid for subsequent uses of the same object @framework', ({ domainObject }) => {
+  //     const { uuid } = domainObject;
+  //     expect(uuid).toEqual(timerUUID);
+  // });
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const TIMESYSTEM_KEY_WARNING = 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.';
-export const TIMESYSTEM_KEY_NOTIFICATION = 'Telemetry metadata does not match the active time system.';
+export const TIMESYSTEM_KEY_WARNING =
+  'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.';
+export const TIMESYSTEM_KEY_NOTIFICATION =
+  'Telemetry metadata does not match the active time system.';
 export const LOADED_ERROR = 'Telemetry Collection has already been loaded.';

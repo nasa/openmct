@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,327 +20,370 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [
-        'lodash',
-        'EventEmitter'
-    ],
-    function (
-        _,
-        EventEmitter
-    ) {
-        /**
-         * @constructor
-         */
-        class TableRowCollection extends EventEmitter {
-            constructor() {
-                super();
+define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
+  /**
+   * @constructor
+   */
+  class TableRowCollection extends EventEmitter {
+    constructor() {
+      super();
 
-                this.rows = [];
-                this.columnFilters = {};
-                this.addRows = this.addRows.bind(this);
-                this.removeRowsByObject = this.removeRowsByObject.bind(this);
-                this.removeRowsByData = this.removeRowsByData.bind(this);
+      this.rows = [];
+      this.columnFilters = {};
+      this.addRows = this.addRows.bind(this);
+      this.removeRowsByObject = this.removeRowsByObject.bind(this);
+      this.removeRowsByData = this.removeRowsByData.bind(this);
 
-                this.clear = this.clear.bind(this);
-            }
+      this.clear = this.clear.bind(this);
+    }
 
-            removeRowsByObject(keyString) {
-                let removed = [];
+    removeRowsByObject(keyString) {
+      let removed = [];
 
-                this.rows = this.rows.filter((row) => {
-                    if (row.objectKeyString === keyString) {
-                        removed.push(row);
+      this.rows = this.rows.filter((row) => {
+        if (row.objectKeyString === keyString) {
+          removed.push(row);
 
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+          return false;
+        } else {
+          return true;
+        }
+      });
 
-                this.emit('remove', removed);
-            }
+      this.emit('remove', removed);
+    }
 
-            addRows(rows, type = 'add') {
-                if (this.sortOptions === undefined) {
-                    throw 'Please specify sort options';
-                }
+    addRows(rows) {
+      let rowsToAdd = this.filterRows(rows);
 
-                let isFilterTriggeredReset = type === 'filter';
-                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-                let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
+      this.sortAndMergeRows(rowsToAdd);
 
-                // if type is filter, then it's a reset of all rows,
-                // need to wipe current rows
-                if (isFilterTriggeredReset) {
-                    this.rows = [];
-                }
+      // we emit filter no matter what to trigger
+      // an update of visible rows
+      if (rowsToAdd.length > 0) {
+        this.emit('add', rowsToAdd);
+      }
+    }
 
-                this.sortAndMergeRows(rowsToAdd);
+    clearRowsFromTableAndFilter(rows) {
+      let rowsToAdd = this.filterRows(rows);
+      // Reset of all rows, need to wipe current rows
+      this.rows = [];
 
-                // we emit filter no matter what to trigger
-                // an update of visible rows
-                if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
-                    this.emit(type, rowsToAdd);
-                }
-            }
+      this.sortAndMergeRows(rowsToAdd);
 
-            sortAndMergeRows(rows) {
-                const sortedRowsToAdd = this.sortCollection(rows);
+      // We emit filter and update of visible rows
+      this.emit('filter', rowsToAdd);
+    }
 
-                if (this.rows.length === 0) {
-                    this.rows = sortedRowsToAdd;
+    filterRows(rows) {
+      if (Object.keys(this.columnFilters).length > 0) {
+        return rows.filter(this.matchesFilters, this);
+      }
 
-                    return;
-                }
+      return rows;
+    }
 
-                const firstIncomingRow = sortedRowsToAdd[0];
-                const lastIncomingRow = sortedRowsToAdd[sortedRowsToAdd.length - 1];
-                const firstExistingRow = this.rows[0];
-                const lastExistingRow = this.rows[this.rows.length - 1];
+    sortAndMergeRows(rows) {
+      const sortedRows = this.sortCollection(rows);
 
-                if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow)
-                    === lastIncomingRow
-                ) {
-                    this.rows = [...sortedRowsToAdd, ...this.rows];
-                } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow)
-                    === lastExistingRow
-                ) {
-                    this.rows = [...this.rows, ...sortedRowsToAdd];
-                } else {
-                    this.mergeSortedRows(sortedRowsToAdd);
-                }
-            }
+      if (this.rows.length === 0) {
+        this.rows = sortedRows;
 
-            sortCollection(rows) {
-                const sortedRows = _.orderBy(
-                    rows,
-                    row => row.getParsedValue(this.sortOptions.key), this.sortOptions.direction
-                );
+        return;
+      }
 
-                return sortedRows;
-            }
+      const firstIncomingRow = sortedRows[0];
+      const lastIncomingRow = sortedRows[sortedRows.length - 1];
+      const firstExistingRow = this.rows[0];
+      const lastExistingRow = this.rows[this.rows.length - 1];
 
-            mergeSortedRows(rows) {
-                const mergedRows = [];
-                let i = 0;
-                let j = 0;
+      if (this.firstRowInSortOrder(lastIncomingRow, firstExistingRow) === lastIncomingRow) {
+        this.insertOrUpdateRows(sortedRows, true);
+      } else if (this.firstRowInSortOrder(lastExistingRow, firstIncomingRow) === lastExistingRow) {
+        this.insertOrUpdateRows(sortedRows, false);
+      } else {
+        this.mergeSortedRows(sortedRows);
+      }
+    }
 
-                while (i < this.rows.length && j < rows.length) {
-                    const existingRow = this.rows[i];
-                    const incomingRow = rows[j];
+    getInPlaceUpdateIndex(row) {
+      const inPlaceUpdateKey = row.inPlaceUpdateKey;
+      if (!inPlaceUpdateKey) {
+        return -1;
+      }
 
-                    if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
-                        mergedRows.push(existingRow);
-                        i++;
-                    } else {
-                        mergedRows.push(incomingRow);
-                        j++;
-                    }
-                }
+      const foundIndex = this.rows.findIndex(
+        (existingRow) =>
+          existingRow.datum[inPlaceUpdateKey] &&
+          existingRow.datum[inPlaceUpdateKey] === row.datum[inPlaceUpdateKey]
+      );
 
-                // tail of existing rows is all that is left to merge
-                if (i < this.rows.length) {
-                    for (i; i < this.rows.length; i++) {
-                        mergedRows.push(this.rows[i]);
-                    }
-                }
+      return foundIndex;
+    }
 
-                // tail of incoming rows is all that is left to merge
-                if (j < rows.length) {
-                    for (j; j < rows.length; j++) {
-                        mergedRows.push(rows[j]);
-                    }
-                }
+    updateRowInPlace(row, index) {
+      const foundRow = this.rows[index];
+      foundRow.updateWithDatum(row.datum);
+      this.rows[index] = foundRow;
+    }
 
-                this.rows = mergedRows;
-            }
+    sortCollection(rows) {
+      const sortedRows = _.orderBy(
+        rows,
+        (row) => row.getParsedValue(this.sortOptions.key),
+        this.sortOptions.direction
+      );
 
-            firstRowInSortOrder(row1, row2) {
-                const val1 = this.getValueForSortColumn(row1);
-                const val2 = this.getValueForSortColumn(row2);
+      return sortedRows;
+    }
 
-                if (this.sortOptions.direction === 'asc') {
-                    return val1 <= val2 ? row1 : row2;
-                } else {
-                    return val1 >= val2 ? row1 : row2;
-                }
-            }
+    insertOrUpdateRows(rowsToAdd, addToBeginning) {
+      rowsToAdd.forEach((row) => {
+        const index = this.getInPlaceUpdateIndex(row);
+        if (index > -1) {
+          this.updateRowInPlace(row, index);
+        } else {
+          if (addToBeginning) {
+            this.rows.unshift(row);
+          } else {
+            this.rows.push(row);
+          }
+        }
+      });
+    }
 
-            removeRowsByData(data) {
-                let removed = [];
+    mergeSortedRows(incomingRows) {
+      const mergedRows = [];
+      let existingRowIndex = 0;
+      let incomingRowIndex = 0;
 
-                this.rows = this.rows.filter((row) => {
-                    if (data.includes(row.fullDatum)) {
-                        removed.push(row);
+      while (existingRowIndex < this.rows.length && incomingRowIndex < incomingRows.length) {
+        const existingRow = this.rows[existingRowIndex];
+        const incomingRow = incomingRows[incomingRowIndex];
 
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+        const inPlaceIndex = this.getInPlaceUpdateIndex(incomingRow);
+        if (inPlaceIndex > -1) {
+          this.updateRowInPlace(incomingRow, inPlaceIndex);
+          incomingRowIndex++;
+        } else {
+          if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+            mergedRows.push(existingRow);
+            existingRowIndex++;
+          } else {
+            mergedRows.push(incomingRow);
+            incomingRowIndex++;
+          }
+        }
+      }
 
-                this.emit('remove', removed);
-            }
+      // tail of existing rows is all that is left to merge
+      if (existingRowIndex < this.rows.length) {
+        for (existingRowIndex; existingRowIndex < this.rows.length; existingRowIndex++) {
+          mergedRows.push(this.rows[existingRowIndex]);
+        }
+      }
 
-            /**
-             * Sorts the telemetry collection based on the provided sort field
-             * specifier. Subsequent inserts are sorted to maintain specified sport
-             * order.
-             *
-             * @example
-             * // First build some mock telemetry for the purpose of an example
-             * let now = Date.now();
-             * let telemetry = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (value) {
-             *     return {
-             *         // define an object property to demonstrate nested paths
-             *         timestamp: {
-             *             ms: now - value * 1000,
-             *             text:
-             *         },
-             *         value: value
-             *     }
-             * });
-             * let collection = new TelemetryCollection();
-             *
-             * collection.add(telemetry);
-             *
-             * // Sort by telemetry value
-             * collection.sortBy({
-             *  key: 'value', direction: 'asc'
-             * });
-             *
-             * // Sort by ms since epoch
-             * collection.sort({
-             *  key: 'timestamp.ms',
-             *  direction: 'asc'
-             * });
-             *
-             * // Sort by 'text' attribute, descending
-             * collection.sort("timestamp.text");
-             *
-             *
-             * @param {object} sortOptions An object specifying a sort key, and direction.
-             */
-            sortBy(sortOptions) {
-                if (arguments.length > 0) {
-                    this.sortOptions = sortOptions;
-                    this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key), sortOptions.direction);
-                    this.emit('sort');
-                }
+      // tail of incoming rows is all that is left to merge
+      if (incomingRowIndex < incomingRows.length) {
+        for (incomingRowIndex; incomingRowIndex < incomingRows.length; incomingRowIndex++) {
+          mergedRows.push(incomingRows[incomingRowIndex]);
+        }
+      }
 
-                // Return duplicate to avoid direct modification of underlying object
-                return Object.assign({}, this.sortOptions);
-            }
+      this.rows = mergedRows;
+    }
 
-            setColumnFilter(columnKey, filter) {
-                filter = filter.trim().toLowerCase();
-                let wasBlank = this.columnFilters[columnKey] === undefined;
-                let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
+    firstRowInSortOrder(row1, row2) {
+      const val1 = this.getValueForSortColumn(row1);
+      const val2 = this.getValueForSortColumn(row2);
 
-                if (filter.length === 0) {
-                    delete this.columnFilters[columnKey];
-                } else {
-                    this.columnFilters[columnKey] = filter;
-                }
+      if (this.sortOptions.direction === 'asc') {
+        return val1 <= val2 ? row1 : row2;
+      } else {
+        return val1 >= val2 ? row1 : row2;
+      }
+    }
 
-                if (isSubset || wasBlank) {
-                    this.rows = this.rows.filter(this.matchesFilters, this);
-                    this.emit('filter');
-                } else {
-                    this.emit('resetRowsFromAllData');
-                }
+    removeRowsByData(data) {
+      let removed = [];
 
-            }
+      this.rows = this.rows.filter((row) => {
+        if (data.includes(row.fullDatum)) {
+          removed.push(row);
 
-            setColumnRegexFilter(columnKey, filter) {
-                filter = filter.trim();
-                this.columnFilters[columnKey] = new RegExp(filter);
+          return false;
+        } else {
+          return true;
+        }
+      });
 
-                this.emit('resetRowsFromAllData');
-            }
+      this.emit('remove', removed);
+    }
 
-            getColumnMapForObject(objectKeyString) {
-                let columns = this.configuration.getColumns();
+    /**
+     * Sorts the telemetry collection based on the provided sort field
+     * specifier. Subsequent inserts are sorted to maintain specified sport
+     * order.
+     *
+     * @example
+     * // First build some mock telemetry for the purpose of an example
+     * let now = Date.now();
+     * let telemetry = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (value) {
+     *     return {
+     *         // define an object property to demonstrate nested paths
+     *         timestamp: {
+     *             ms: now - value * 1000,
+     *             text:
+     *         },
+     *         value: value
+     *     }
+     * });
+     * let collection = new TelemetryCollection();
+     *
+     * collection.add(telemetry);
+     *
+     * // Sort by telemetry value
+     * collection.sortBy({
+     *  key: 'value', direction: 'asc'
+     * });
+     *
+     * // Sort by ms since epoch
+     * collection.sort({
+     *  key: 'timestamp.ms',
+     *  direction: 'asc'
+     * });
+     *
+     * // Sort by 'text' attribute, descending
+     * collection.sort("timestamp.text");
+     *
+     *
+     * @param {object} sortOptions An object specifying a sort key, and direction.
+     */
+    sortBy(sortOptions) {
+      if (arguments.length > 0) {
+        this.sortOptions = sortOptions;
+        this.rows = _.orderBy(
+          this.rows,
+          (row) => row.getParsedValue(sortOptions.key),
+          sortOptions.direction
+        );
+        this.emit('sort');
+      }
 
-                if (columns[objectKeyString]) {
-                    return columns[objectKeyString].reduce((map, column) => {
-                        map[column.getKey()] = column;
+      // Return duplicate to avoid direct modification of underlying object
+      return Object.assign({}, this.sortOptions);
+    }
 
-                        return map;
-                    }, {});
-                }
+    setColumnFilter(columnKey, filter) {
+      filter = filter.trim().toLowerCase();
+      let wasBlank = this.columnFilters[columnKey] === undefined;
+      let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
 
-                return {};
-            }
+      if (filter.length === 0) {
+        delete this.columnFilters[columnKey];
+      } else {
+        this.columnFilters[columnKey] = filter;
+      }
 
-            // /**
-            //  * @private
-            //  */
-            isSubsetOfCurrentFilter(columnKey, filter) {
-                if (this.columnFilters[columnKey] instanceof RegExp) {
-                    return false;
-                }
+      if (isSubset || wasBlank) {
+        this.rows = this.rows.filter(this.matchesFilters, this);
+        this.emit('filter');
+      } else {
+        this.emit('resetRowsFromAllData');
+      }
+    }
 
-                return this.columnFilters[columnKey]
-                    && filter.startsWith(this.columnFilters[columnKey])
-                    // startsWith check will otherwise fail when filter cleared
-                    // because anyString.startsWith('') === true
-                    && filter !== '';
-            }
+    setColumnRegexFilter(columnKey, filter) {
+      filter = filter.trim();
+      this.columnFilters[columnKey] = new RegExp(filter);
 
-            /**
-             * @private
-             */
-            matchesFilters(row) {
-                let doesMatchFilters = true;
-                Object.keys(this.columnFilters).forEach((key) => {
-                    if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
-                        return false;
-                    }
+      this.emit('resetRowsFromAllData');
+    }
 
-                    let formattedValue = row.getFormattedValue(key);
-                    if (formattedValue === undefined) {
-                        return false;
-                    }
+    getColumnMapForObject(objectKeyString) {
+      let columns = this.configuration.getColumns();
 
-                    if (this.columnFilters[key] instanceof RegExp) {
-                        doesMatchFilters = this.columnFilters[key].test(formattedValue);
-                    } else {
-                        doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
-                    }
-                });
+      if (columns[objectKeyString]) {
+        return columns[objectKeyString].reduce((map, column) => {
+          map[column.getKey()] = column;
 
-                return doesMatchFilters;
-            }
+          return map;
+        }, {});
+      }
 
-            rowHasColumn(row, key) {
-                return Object.prototype.hasOwnProperty.call(row.columns, key);
-            }
+      return {};
+    }
 
-            getRows() {
-                return this.rows;
-            }
+    // /**
+    //  * @private
+    //  */
+    isSubsetOfCurrentFilter(columnKey, filter) {
+      if (this.columnFilters[columnKey] instanceof RegExp) {
+        return false;
+      }
 
-            getRowsLength() {
-                return this.rows.length;
-            }
+      return (
+        this.columnFilters[columnKey] &&
+        filter.startsWith(this.columnFilters[columnKey]) &&
+        // startsWith check will otherwise fail when filter cleared
+        // because anyString.startsWith('') === true
+        filter !== ''
+      );
+    }
 
-            getValueForSortColumn(row) {
-                return row.getParsedValue(this.sortOptions.key);
-            }
-
-            clear() {
-                let removedRows = this.rows;
-                this.rows = [];
-
-                this.emit('remove', removedRows);
-            }
-
-            destroy() {
-                this.removeAllListeners();
-            }
+    /**
+     * @private
+     */
+    matchesFilters(row) {
+      let doesMatchFilters = true;
+      Object.keys(this.columnFilters).forEach((key) => {
+        if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
+          return false;
         }
 
-        return TableRowCollection;
-    });
+        let formattedValue = row.getFormattedValue(key);
+        if (formattedValue === undefined) {
+          return false;
+        }
+
+        if (this.columnFilters[key] instanceof RegExp) {
+          doesMatchFilters = this.columnFilters[key].test(formattedValue);
+        } else {
+          doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
+        }
+      });
+
+      return doesMatchFilters;
+    }
+
+    rowHasColumn(row, key) {
+      return Object.prototype.hasOwnProperty.call(row.columns, key);
+    }
+
+    getRows() {
+      return this.rows;
+    }
+
+    getRowsLength() {
+      return this.rows.length;
+    }
+
+    getValueForSortColumn(row) {
+      return row.getParsedValue(this.sortOptions.key);
+    }
+
+    clear() {
+      let removedRows = this.rows;
+      this.rows = [];
+
+      this.emit('remove', removedRows);
+    }
+
+    destroy() {
+      this.removeAllListeners();
+    }
+  }
+
+  return TableRowCollection;
+});

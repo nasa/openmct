@@ -4,6 +4,7 @@
     padding: $interiorMarginLg !important;
     display: flex !important; // Override .c-menu display: block;
     flex-direction: column;
+
     > * + * {
         margin-top: $interiorMargin;
     }
@@ -40,29 +41,34 @@
 
 /******************************************************** CALENDAR */
 .c-calendar {
+    $mutedOpacity: 0.5;
     display: grid;
     grid-template-columns: repeat(7, min-content);
     grid-template-rows: auto;
     grid-gap: 1px;
-    height: 100%;
 
-    $mutedOpacity: 0.5;
-
-    ul {
+    [class*="__row"] {
         display: contents;
-        &[class*='--header'] {
-            pointer-events: none;
-            li {
-                opacity: $mutedOpacity;
-            }
+    }
+
+    .c-calendar__row--header {
+        pointer-events: none;
+
+        .c-calendar-cell {
+            opacity: $mutedOpacity;
         }
     }
 
-    li {
+    .c-calendar-cell {
         display: flex;
         flex-direction: column;
-        justify-content: center !important;
+        align-items: center;
         padding: $interiorMargin;
+        cursor: pointer;
+
+        @include hover {
+            background: $colorMenuHovBg;
+        }
 
         &.is-in-month {
             background: $colorMenuElementHilite;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,45 +23,45 @@
 import EventEmitter from 'EventEmitter';
 
 export default class StatusAPI extends EventEmitter {
-    constructor(openmct) {
-        super();
+  constructor(openmct) {
+    super();
 
-        this._openmct = openmct;
-        this._statusCache = {};
+    this._openmct = openmct;
+    this._statusCache = {};
 
-        this.get = this.get.bind(this);
-        this.set = this.set.bind(this);
-        this.observe = this.observe.bind(this);
-    }
+    this.get = this.get.bind(this);
+    this.set = this.set.bind(this);
+    this.observe = this.observe.bind(this);
+  }
 
-    get(identifier) {
-        let keyString = this._openmct.objects.makeKeyString(identifier);
+  get(identifier) {
+    let keyString = this._openmct.objects.makeKeyString(identifier);
 
-        return this._statusCache[keyString];
-    }
+    return this._statusCache[keyString];
+  }
 
-    set(identifier, value) {
-        let keyString = this._openmct.objects.makeKeyString(identifier);
+  set(identifier, value) {
+    let keyString = this._openmct.objects.makeKeyString(identifier);
 
-        this._statusCache[keyString] = value;
-        this.emit(keyString, value);
-    }
+    this._statusCache[keyString] = value;
+    this.emit(keyString, value);
+  }
 
-    delete(identifier) {
-        let keyString = this._openmct.objects.makeKeyString(identifier);
+  delete(identifier) {
+    let keyString = this._openmct.objects.makeKeyString(identifier);
 
-        this._statusCache[keyString] = undefined;
-        this.emit(keyString, undefined);
-        delete this._statusCache[keyString];
-    }
+    this._statusCache[keyString] = undefined;
+    this.emit(keyString, undefined);
+    delete this._statusCache[keyString];
+  }
 
-    observe(identifier, callback) {
-        let key = this._openmct.objects.makeKeyString(identifier);
+  observe(identifier, callback) {
+    let key = this._openmct.objects.makeKeyString(identifier);
 
-        this.on(key, callback);
+    this.on(key, callback);
 
-        return () => {
-            this.off(key, callback);
-        };
-    }
+    return () => {
+      this.off(key, callback);
+    };
+  }
 }

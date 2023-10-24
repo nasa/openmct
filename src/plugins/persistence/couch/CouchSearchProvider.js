@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,124 +27,174 @@
 // If the above namespace is ever resolved, we can fold this search provider
 // back into the object provider.
 
+const BATCH_ANNOTATION_DEBOUNCE_MS = 100;
+
 class CouchSearchProvider {
-    constructor(couchObjectProvider) {
-        this.couchObjectProvider = couchObjectProvider;
-        this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
-        this.supportedSearchTypes = [this.searchTypes.OBJECTS, this.searchTypes.ANNOTATIONS, this.searchTypes.NOTEBOOK_ANNOTATIONS, this.searchTypes.TAGS];
-    }
+  #bulkPromise;
+  #batchIds;
+  #lastAbortSignal;
 
-    supportsSearchType(searchType) {
-        return this.supportedSearchTypes.includes(searchType);
-    }
+  constructor(couchObjectProvider) {
+    this.couchObjectProvider = couchObjectProvider;
+    this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
+    this.useDesignDocuments = couchObjectProvider.useDesignDocuments;
+    this.supportedSearchTypes = [
+      this.searchTypes.OBJECTS,
+      this.searchTypes.ANNOTATIONS,
+      this.searchTypes.TAGS
+    ];
+    this.#batchIds = [];
+    this.#bulkPromise = null;
+  }
 
-    search(query, abortSignal, searchType) {
-        if (searchType === this.searchTypes.OBJECTS) {
-            return this.searchForObjects(query, abortSignal);
-        } else if (searchType === this.searchTypes.ANNOTATIONS) {
-            return this.searchForAnnotations(query, abortSignal);
-        } else if (searchType === this.searchTypes.NOTEBOOK_ANNOTATIONS) {
-            return this.searchForNotebookAnnotations(query, abortSignal);
-        } else if (searchType === this.searchTypes.TAGS) {
-            return this.searchForTags(query, abortSignal);
-        } else {
-            throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+  supportsSearchType(searchType) {
+    return this.supportedSearchTypes.includes(searchType);
+  }
+
+  search(query, abortSignal, searchType) {
+    if (searchType === this.searchTypes.OBJECTS) {
+      return this.searchForObjects(query, abortSignal);
+    } else if (searchType === this.searchTypes.ANNOTATIONS) {
+      return this.searchForAnnotations(query, abortSignal);
+    } else if (searchType === this.searchTypes.TAGS) {
+      return this.searchForTags(query, abortSignal);
+    } else {
+      throw new Error(`🤷‍♂️ Unknown search type passed: ${searchType}`);
+    }
+  }
+
+  searchForObjects(query, abortSignal) {
+    const filter = {
+      selector: {
+        model: {
+          name: {
+            $regex: `(?i)${query}`
+          }
         }
+      }
+    };
+
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
+
+  async #deferBatchAnnotationSearch() {
+    // We until the next event loop cycle to "collect" all of the get
+    // requests triggered in this iteration of the event loop
+    await this.#waitForDebounce();
+    const batchIdsToSearch = [...this.#batchIds];
+    this.#clearBatch();
+    return this.#bulkAnnotationSearch(batchIdsToSearch);
+  }
+
+  #clearBatch() {
+    this.#batchIds = [];
+    this.#bulkPromise = undefined;
+  }
+
+  #waitForDebounce() {
+    let timeoutID;
+    clearTimeout(timeoutID);
+
+    return new Promise((resolve) => {
+      timeoutID = setTimeout(() => {
+        resolve();
+      }, BATCH_ANNOTATION_DEBOUNCE_MS);
+    });
+  }
+
+  #bulkAnnotationSearch(batchIdsToSearch) {
+    if (!batchIdsToSearch?.length) {
+      // nothing to search
+      return;
     }
 
-    searchForObjects(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
+    let lastAbortSignal = batchIdsToSearch[batchIdsToSearch.length - 1].abortSignal;
+
+    if (this.useDesignDocuments) {
+      const keysToSearch = batchIdsToSearch.map(({ keyString }) => keyString);
+      return this.couchObjectProvider.getObjectsByView(
+        {
+          designDoc: 'annotation_keystring_index',
+          viewName: 'by_keystring',
+          keysToSearch
+        },
+        lastAbortSignal
+      );
+    }
+
+    const filter = {
+      selector: {
+        $and: [
+          {
+            'model.type': {
+              $eq: 'annotation'
+            }
+          },
+          {
+            'model.targets': {
+              $elemMatch: {
+                keyString: {
+                  $in: []
                 }
+              }
             }
-        };
+          }
+        ]
+      }
+    };
+    // TODO: should remove duplicates from batchIds
+    batchIdsToSearch.forEach(({ keyString, abortSignal }) => {
+      filter.selector.$and[1]['model.targets'].$elemMatch.keyString.$in.push(keyString);
+    });
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    return this.couchObjectProvider.getObjectsByFilter(filter, lastAbortSignal);
+  }
+
+  async searchForAnnotations(keyString, abortSignal) {
+    this.#batchIds.push({ keyString, abortSignal });
+    if (!this.#bulkPromise) {
+      this.#bulkPromise = this.#deferBatchAnnotationSearch();
     }
 
-    searchForAnnotations(keyString, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model": {
-                            "targets": {
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
-            }
-        };
-        filter.selector.$and[0].model.targets[keyString] = {
-            "$exists": true
-        };
+    const returnedData = await this.#bulkPromise;
+    return returnedData;
+  }
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  searchForTags(tagsArray, abortSignal) {
+    if (!tagsArray || !tagsArray.length) {
+      return [];
     }
 
-    searchForNotebookAnnotations({targetKeyString, entryId}, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    },
-                    {
-                        "model.annotationType": {
-                            "$eq": "NOTEBOOK"
-                        }
-                    },
-                    {
-                        "model": {
-                            "targets": {
-                            }
-                        }
-                    }
-                ]
-            }
-        };
-        filter.selector.$and[2].model.targets[targetKeyString] = {
-            "entryId": {
-                "$eq": entryId
-            }
-        };
-
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    if (this.useDesignDocuments) {
+      return this.couchObjectProvider.getObjectsByView(
+        { designDoc: 'annotation_tags_index', viewName: 'by_tags', keysToSearch: tagsArray },
+        abortSignal
+      );
     }
 
-    searchForTags(tagsArray, abortSignal) {
-        const filter = {
-            "selector": {
-                "$and": [
-                    {
-                        "model.tags": {
-                            "$elemMatch": {
-                                "$eq": `${tagsArray[0]}`
-                            }
-                        }
-                    },
-                    {
-                        "model.type": {
-                            "$eq": "annotation"
-                        }
-                    }
-                ]
+    const filter = {
+      selector: {
+        $and: [
+          {
+            'model.type': {
+              $eq: 'annotation'
             }
-        };
+          },
+          {
+            'model.tags': {
+              $elemMatch: {
+                $in: []
+              }
+            }
+          }
+        ]
+      }
+    };
+    tagsArray.forEach((tag) => {
+      filter.selector.$and[1]['model.tags'].$elemMatch.$in.push(tag);
+    });
 
-        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
-    }
-
+    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+  }
 }
 export default CouchSearchProvider;

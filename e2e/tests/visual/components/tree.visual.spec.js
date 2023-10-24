@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,81 +21,78 @@
  *****************************************************************************/
 
 const { test } = require('../../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../../appActions.js');
-
+const {
+  expandTreePaneItemByName,
+  createDomainObjectWithDefaults
+} = require('../../../appActions.js');
+const VISUAL_URL = require('../../../constants.js').VISUAL_URL;
 const percySnapshot = require('@percy/playwright');
 
+//Declare the scope of the visual test
+const treePane = "[role=tree][aria-label='Main Tree']";
+
 test.describe('Visual - Tree Pane', () => {
-    test('Tree pane in various states @unstable', async ({ page, theme, openmctConfig }) => {
-        const { myItemsFolderName } = openmctConfig;
-        await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
+  test('Tree pane in various states', async ({ page, theme, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
-        const foo = await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: "Foo Folder"
-        });
+    //Open Tree
+    await page.getByRole('button', { name: 'Browse' }).click();
 
-        const bar = await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: "Bar Folder",
-            parent: foo.uuid
-        });
-
-        const baz = await createDomainObjectWithDefaults(page, {
-            type: 'Folder',
-            name: "Baz Folder",
-            parent: bar.uuid
-        });
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            name: 'A Clock'
-        });
-
-        await createDomainObjectWithDefaults(page, {
-            type: 'Clock',
-            name: 'Z Clock'
-        });
-
-        const treePane = "#tree-pane";
-
-        await percySnapshot(page, `Tree Pane w/ collapsed tree (theme: ${theme})`, {
-            scope: treePane
-        });
-
-        await expandTreePaneItemByName(page, myItemsFolderName);
-
-        await page.goto(foo.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
-        await page.goto(bar.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
-        await page.goto(baz.url);
-        await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-        await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
-
-        await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
-            scope: treePane
-        });
-
-        await expandTreePaneItemByName(page, foo.name);
-        await expandTreePaneItemByName(page, bar.name);
-        await expandTreePaneItemByName(page, baz.name);
-
-        await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
-            scope: treePane
-        });
+    //Create a Folder Structure
+    const foo = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Foo Folder'
     });
-});
 
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-    const treePane = page.locator('#tree-pane');
-    const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-    const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-    await expandTriangle.click();
-}
+    const bar = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Bar Folder',
+      parent: foo.uuid
+    });
+
+    const baz = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'Baz Folder',
+      parent: bar.uuid
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'A Clock'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'Z Clock'
+    });
+
+    await percySnapshot(page, `Tree Pane w/ collapsed tree (theme: ${theme})`, {
+      scope: treePane
+    });
+
+    await expandTreePaneItemByName(page, myItemsFolderName);
+
+    await page.goto(foo.url);
+    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
+    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.goto(bar.url);
+    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
+    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.goto(baz.url);
+    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
+    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+
+    await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
+      scope: treePane
+    });
+
+    await expandTreePaneItemByName(page, foo.name);
+    await expandTreePaneItemByName(page, bar.name);
+    await expandTreePaneItemByName(page, baz.name);
+
+    await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
+      scope: treePane
+    });
+  });
+});

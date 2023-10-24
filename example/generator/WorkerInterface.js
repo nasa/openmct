@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,82 +20,88 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'uuid'
-], function (
-    { v4: uuid }
-) {
-    function WorkerInterface(openmct) {
-        // eslint-disable-next-line no-undef
-        const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
-        this.worker = new Worker(workerUrl);
-        this.worker.onmessage = this.onMessage.bind(this);
-        this.callbacks = {};
+define(['uuid'], function ({ v4: uuid }) {
+  function WorkerInterface(openmct, StalenessProvider) {
+    // eslint-disable-next-line no-undef
+    const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
+    this.StalenessProvider = StalenessProvider;
+    this.worker = new Worker(workerUrl);
+    this.worker.onmessage = this.onMessage.bind(this);
+    this.callbacks = {};
+    this.staleTelemetryIds = {};
+
+    this.watchStaleness();
+  }
+
+  WorkerInterface.prototype.watchStaleness = function () {
+    this.StalenessProvider.on('stalenessEvent', ({ id, isStale }) => {
+      this.staleTelemetryIds[id] = isStale;
+    });
+  };
+
+  WorkerInterface.prototype.onMessage = function (message) {
+    message = message.data;
+    var callback = this.callbacks[message.id];
+    if (callback) {
+      callback(message);
+    }
+  };
+
+  WorkerInterface.prototype.dispatch = function (request, data, callback) {
+    var message = {
+      request: request,
+      data: data,
+      id: uuid()
+    };
+
+    if (callback) {
+      this.callbacks[message.id] = callback;
     }
 
-    WorkerInterface.prototype.onMessage = function (message) {
-        message = message.data;
-        var callback = this.callbacks[message.id];
-        if (callback) {
-            callback(message);
-        }
-    };
+    this.worker.postMessage(message);
 
-    WorkerInterface.prototype.dispatch = function (request, data, callback) {
-        var message = {
-            request: request,
-            data: data,
-            id: uuid()
-        };
+    return message.id;
+  };
 
-        if (callback) {
-            this.callbacks[message.id] = callback;
-        }
+  WorkerInterface.prototype.request = function (request) {
+    var deferred = {};
+    var promise = new Promise(function (resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    var messageId;
 
-        this.worker.postMessage(message);
+    let self = this;
+    function callback(message) {
+      if (message.error) {
+        deferred.reject(message.error);
+      } else {
+        deferred.resolve(message.data);
+      }
 
-        return message.id;
-    };
+      delete self.callbacks[messageId];
+    }
 
-    WorkerInterface.prototype.request = function (request) {
-        var deferred = {};
-        var promise = new Promise(function (resolve, reject) {
-            deferred.resolve = resolve;
-            deferred.reject = reject;
-        });
-        var messageId;
+    messageId = this.dispatch('request', request, callback.bind(this));
 
-        let self = this;
-        function callback(message) {
-            if (message.error) {
-                deferred.reject(message.error);
-            } else {
-                deferred.resolve(message.data);
-            }
+    return promise;
+  };
 
-            delete self.callbacks[messageId];
+  WorkerInterface.prototype.subscribe = function (request, cb) {
+    const { id, loadDelay } = request;
+    const messageId = this.dispatch('subscribe', request, (message) => {
+      if (!this.staleTelemetryIds[id]) {
+        setTimeout(() => cb(message.data), Math.max(loadDelay, 0));
+      }
+    });
 
-        }
+    return function () {
+      this.dispatch('unsubscribe', {
+        id: messageId
+      });
+      delete this.callbacks[messageId];
+    }.bind(this);
+  };
 
-        messageId = this.dispatch('request', request, callback.bind(this));
-
-        return promise;
-    };
-
-    WorkerInterface.prototype.subscribe = function (request, cb) {
-        function callback(message) {
-            cb(message.data);
-        }
-
-        var messageId = this.dispatch('subscribe', request, callback);
-
-        return function () {
-            this.dispatch('unsubscribe', {
-                id: messageId
-            });
-            delete this.callbacks[messageId];
-        }.bind(this);
-    };
-
-    return WorkerInterface;
+  return WorkerInterface;
 });

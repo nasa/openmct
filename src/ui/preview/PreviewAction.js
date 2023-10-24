@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,84 +19,91 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Preview from './Preview.vue';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import mount from 'utils/mount';
+
+import PreviewContainer from './PreviewContainer.vue';
 
 export default class PreviewAction extends EventEmitter {
-    constructor(openmct) {
-        super();
-        /**
-         * Metadata
-         */
-        this.name = 'View';
-        this.key = 'preview';
-        this.description = 'View in large dialog';
-        this.cssClass = 'icon-items-expand';
-        this.group = 'windowing';
-        this.priority = 1;
+  constructor(openmct) {
+    super();
+    /**
+     * Metadata
+     */
+    this.name = 'View';
+    this.key = 'preview';
+    this.description = 'View in large dialog';
+    this.cssClass = 'icon-items-expand';
+    this.group = 'windowing';
+    this.priority = 1;
 
-        /**
-         * Dependencies
-         */
-        this._openmct = openmct;
+    /**
+     * Dependencies
+     */
+    this._openmct = openmct;
 
-        if (PreviewAction.isVisible === undefined) {
-            PreviewAction.isVisible = false;
+    if (PreviewAction.isVisible === undefined) {
+      PreviewAction.isVisible = false;
+    }
+  }
+
+  invoke(objectPath, viewOptions) {
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          PreviewContainer
+        },
+        provide: {
+          openmct: this._openmct,
+          objectPath: objectPath
+        },
+        data() {
+          return {
+            viewOptions
+          };
+        },
+        template: '<preview-container :view-options="viewOptions"></preview-container>'
+      },
+      {
+        app: this._openmct.app
+      }
+    );
+
+    let overlay = this._openmct.overlays.overlay({
+      element: vNode.el,
+      size: 'large',
+      autoHide: false,
+      buttons: [
+        {
+          label: 'Done',
+          callback: () => overlay.dismiss()
         }
-    }
+      ],
+      onDestroy: () => {
+        PreviewAction.isVisible = false;
+        destroy();
+        this.emit('isVisible', false);
+      }
+    });
 
-    invoke(objectPath, viewOptions) {
-        let preview = new Vue({
-            components: {
-                Preview
-            },
-            provide: {
-                openmct: this._openmct,
-                objectPath: objectPath
-            },
-            data() {
-                return {
-                    viewOptions
-                };
-            },
-            template: '<Preview :view-options="viewOptions"></Preview>'
-        });
-        preview.$mount();
+    PreviewAction.isVisible = true;
+    this.emit('isVisible', true);
+  }
 
-        let overlay = this._openmct.overlays.overlay({
-            element: preview.$el,
-            size: 'large',
-            autoHide: false,
-            buttons: [
-                {
-                    label: 'Done',
-                    callback: () => overlay.dismiss()
-                }
-            ],
-            onDestroy: () => {
-                PreviewAction.isVisible = false;
-                preview.$destroy();
-                this.emit('isVisible', false);
-            }
-        });
+  appliesTo(objectPath, view = {}) {
+    const parentElement = view.parentElement;
+    const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
 
-        PreviewAction.isVisible = true;
-        this.emit('isVisible', true);
-    }
+    return (
+      !PreviewAction.isVisible &&
+      !this._openmct.router.isNavigatedObject(objectPath) &&
+      !isObjectView
+    );
+  }
 
-    appliesTo(objectPath, view = {}) {
-        const parentElement = view.parentElement;
-        const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
+  _preventPreview(objectPath) {
+    const noPreviewTypes = ['folder'];
 
-        return !PreviewAction.isVisible
-            && !this._openmct.router.isNavigatedObject(objectPath)
-            && !isObjectView;
-    }
-
-    _preventPreview(objectPath) {
-        const noPreviewTypes = ['folder'];
-
-        return noPreviewTypes.includes(objectPath[0].type);
-    }
+    return noPreviewTypes.includes(objectPath[0].type);
+  }
 }

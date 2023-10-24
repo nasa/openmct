@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,61 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './Plan.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Plan from './components/PlanView.vue';
 
 export default function PlanViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: 'plan.view',
-        name: 'Plan',
-        cssClass: 'icon-plan',
-        canView(domainObject) {
-            return domainObject.type === 'plan';
+  return {
+    key: 'plan.view',
+    name: 'Plan',
+    cssClass: 'icon-plan',
+    canView(domainObject) {
+      return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
+    },
+
+    canEdit(domainObject) {
+      return domainObject.type === 'gantt-chart';
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
+
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plan
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact,
+                    isChildObject: isCompact
+                  }
+                };
+              },
+              template: '<plan :options="options"></plan>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-
-        canEdit(domainObject) {
-            return false;
-        },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Plan
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact,
-                                    isChildObject: isCompact
-                                }
-                            };
-                        },
-                        template: '<plan :options="options"></plan>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

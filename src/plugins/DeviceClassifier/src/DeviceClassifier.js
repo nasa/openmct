@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,34 +38,34 @@
  * @param document the HTML DOM document object
  * @constructor
  */
-import DeviceMatchers from "./DeviceMatchers";
+import DeviceMatchers from './DeviceMatchers';
 
 export default (agent, document) => {
-    const body = document.body;
+  const body = document.body;
 
-    Object.keys(DeviceMatchers).forEach((key, index, array) => {
-        if (DeviceMatchers[key](agent)) {
-            body.classList.add(key);
-        }
-    });
-
-    if (agent.isMobile()) {
-        const mediaQuery = window.matchMedia("(orientation: landscape)");
-        function eventHandler(event) {
-            if (event.matches) {
-                body.classList.remove("portrait");
-                body.classList.add("landscape");
-            } else {
-                body.classList.remove("landscape");
-                body.classList.add("portrait");
-            }
-        }
-
-        if (mediaQuery.addEventListener) {
-            mediaQuery.addEventListener(`change`, eventHandler);
-        } else {
-            // Deprecated 'MediaQueryList' API, <Safari 14, IE, <Edge 16
-            mediaQuery.addListener(eventHandler);
-        }
+  Object.keys(DeviceMatchers).forEach((key, index, array) => {
+    if (DeviceMatchers[key](agent)) {
+      body.classList.add(key);
     }
+  });
+
+  if (agent.isMobile()) {
+    const mediaQuery = window.matchMedia('(orientation: landscape)');
+    function eventHandler(event) {
+      if (event.matches) {
+        body.classList.remove('portrait');
+        body.classList.add('landscape');
+      } else {
+        body.classList.remove('landscape');
+        body.classList.add('portrait');
+      }
+    }
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener(`change`, eventHandler);
+    } else {
+      // Deprecated 'MediaQueryList' API, <Safari 14, IE, <Edge 16
+      mediaQuery.addListener(eventHandler);
+    }
+  }
 };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,47 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    '../SummaryWidgetViewPolicy'
-], function (
-    SummaryWidgetViewPolicy
-) {
-
-    describe('SummaryWidgetViewPolicy', function () {
-        let policy;
-        let domainObject;
-        let view;
-        beforeEach(function () {
-            policy = new SummaryWidgetViewPolicy();
-            domainObject = jasmine.createSpyObj('domainObject', [
-                'getModel'
-            ]);
-            domainObject.getModel.and.returnValue({});
-            view = {};
-        });
-
-        it('returns true for other object types', function () {
-            domainObject.getModel.and.returnValue({
-                type: 'random'
-            });
-            expect(policy.allow(view, domainObject)).toBe(true);
-        });
-
-        it('allows summary widget view for summary widgets', function () {
-            domainObject.getModel.and.returnValue({
-                type: 'summary-widget'
-            });
-            view.key = 'summary-widget-viewer';
-            expect(policy.allow(view, domainObject)).toBe(true);
-        });
-
-        it('disallows other views for summary widgets', function () {
-            domainObject.getModel.and.returnValue({
-                type: 'summary-widget'
-            });
-            view.key = 'other view';
-            expect(policy.allow(view, domainObject)).toBe(false);
-        });
-
+define(['../SummaryWidgetViewPolicy'], function (SummaryWidgetViewPolicy) {
+  describe('SummaryWidgetViewPolicy', function () {
+    let policy;
+    let domainObject;
+    let view;
+    beforeEach(function () {
+      policy = new SummaryWidgetViewPolicy();
+      domainObject = jasmine.createSpyObj('domainObject', ['getModel']);
+      domainObject.getModel.and.returnValue({});
+      view = {};
     });
+
+    it('returns true for other object types', function () {
+      domainObject.getModel.and.returnValue({
+        type: 'random'
+      });
+      expect(policy.allow(view, domainObject)).toBe(true);
+    });
+
+    it('allows summary widget view for summary widgets', function () {
+      domainObject.getModel.and.returnValue({
+        type: 'summary-widget'
+      });
+      view.key = 'summary-widget-viewer';
+      expect(policy.allow(view, domainObject)).toBe(true);
+    });
+
+    it('disallows other views for summary widgets', function () {
+      domainObject.getModel.and.returnValue({
+        type: 'summary-widget'
+      });
+      view.key = 'other view';
+      expect(policy.allow(view, domainObject)).toBe(false);
+    });
+  });
 });

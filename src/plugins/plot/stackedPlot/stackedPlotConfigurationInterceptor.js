@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,18 +21,16 @@
  *****************************************************************************/
 
 export default function stackedPlotConfigurationInterceptor(openmct) {
+  openmct.objects.addGetInterceptor({
+    appliesTo: (identifier, domainObject) => {
+      return domainObject && domainObject.type === 'telemetry.plot.stacked';
+    },
+    invoke: (identifier, object) => {
+      if (object && object.configuration && object.configuration.series === undefined) {
+        object.configuration.series = [];
+      }
 
-    openmct.objects.addGetInterceptor({
-        appliesTo: (identifier, domainObject) => {
-            return domainObject && domainObject.type === 'telemetry.plot.stacked';
-        },
-        invoke: (identifier, object) => {
-
-            if (object && object.configuration && object.configuration.series === undefined) {
-                object.configuration.series = [];
-            }
-
-            return object;
-        }
-    });
+      return object;
+    }
+  });
 }

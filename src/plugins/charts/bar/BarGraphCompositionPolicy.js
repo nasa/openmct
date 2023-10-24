@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,31 +23,31 @@
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
 export default function BarGraphCompositionPolicy(openmct) {
-    function hasRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
+  function hasRange(metadata) {
+    const rangeValues = metadata.valuesForHints(['range']);
 
-        return rangeValues && rangeValues.length > 0;
+    return rangeValues && rangeValues.length > 0;
+  }
+
+  function hasBarGraphTelemetry(domainObject) {
+    if (!openmct.telemetry.isTelemetryObject(domainObject)) {
+      return false;
     }
 
-    function hasBarGraphTelemetry(domainObject) {
-        if (!openmct.telemetry.isTelemetryObject(domainObject)) {
-            return false;
+    let metadata = openmct.telemetry.getMetadata(domainObject);
+
+    return metadata.values().length > 0 && hasRange(metadata);
+  }
+
+  return {
+    allow: function (parent, child) {
+      if (parent.type === BAR_GRAPH_KEY) {
+        if (child.type === 'conditionSet' || !hasBarGraphTelemetry(child)) {
+          return false;
         }
+      }
 
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasRange(metadata);
+      return true;
     }
-
-    return {
-        allow: function (parent, child) {
-            if (parent.type === BAR_GRAPH_KEY) {
-                if ((child.type === 'conditionSet') || (!hasBarGraphTelemetry(child))) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    };
+  };
 }

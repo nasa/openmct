@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,43 +19,44 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
 
-define([
-    './components/globalClearIndicator.vue',
-    './ClearDataAction',
-    'vue'
-], function (
-    GlobaClearIndicator,
-    ClearDataAction,
-    Vue
-) {
-    return function plugin(appliesToObjects, options = {indicator: true}) {
-        let installIndicator = options.indicator;
+import ClearDataAction from './ClearDataAction';
+import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 
-        appliesToObjects = appliesToObjects || [];
+export default function plugin(appliesToObjects, options = { indicator: true }) {
+  let installIndicator = options.indicator;
 
-        return function install(openmct) {
-            if (installIndicator) {
-                let component = new Vue ({
-                    components: {
-                        GlobalClearIndicator: GlobaClearIndicator.default
-                    },
-                    provide: {
-                        openmct
-                    },
-                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                });
+  appliesToObjects = appliesToObjects || [];
 
-                let indicator = {
-                    element: component.$mount().$el,
-                    key: 'global-clear-indicator',
-                    priority: openmct.priority.DEFAULT
-                };
+  return function install(openmct) {
+    if (installIndicator) {
+      const { vNode, destroy } = mount(
+        {
+          components: {
+            GlobalClearIndicator
+          },
+          provide: {
+            openmct
+          },
+          template: '<GlobalClearIndicator></GlobalClearIndicator>'
+        },
+        {
+          app: openmct.app,
+          element: document.createElement('div')
+        }
+      );
 
-                openmct.indicators.add(indicator);
-            }
+      let indicator = {
+        element: vNode.el,
+        key: 'global-clear-indicator',
+        priority: openmct.priority.DEFAULT,
+        destroy: destroy
+      };
 
-            openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
-        };
-    };
-});
+      openmct.indicators.add(indicator);
+    }
+
+    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
+  };
+}

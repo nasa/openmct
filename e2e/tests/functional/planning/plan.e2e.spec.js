@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,69 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test, expect } = require('../../../pluginFixtures');
+const { test } = require('../../../pluginFixtures');
 const { createPlanFromJSON } = require('../../../appActions');
+const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
+const { assertPlanActivities } = require('../../../helper/planningUtils');
 
-const testPlan = {
-    "TEST_GROUP": [
-        {
-            "name": "Past event 1",
-            "start": 1660320408000,
-            "end": 1660343797000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
-        },
-        {
-            "name": "Past event 2",
-            "start": 1660406808000,
-            "end": 1660429160000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
-        },
-        {
-            "name": "Past event 3",
-            "start": 1660493208000,
-            "end": 1660503981000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
-        },
-        {
-            "name": "Past event 4",
-            "start": 1660579608000,
-            "end": 1660624108000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
-        },
-        {
-            "name": "Past event 5",
-            "start": 1660666008000,
-            "end": 1660681529000,
-            "type": "TEST-GROUP",
-            "color": "orange",
-            "textColor": "white"
-        }
-    ]
-};
-
-test.describe("Plan", () => {
-    test("Create a Plan and display all plan events @unstable", async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-
-        const plan = await createPlanFromJSON(page, {
-            name: 'Test Plan',
-            json: testPlan
-        });
-        const startBound = testPlan.TEST_GROUP[0].start;
-        const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
-
-        // Switch to fixed time mode with all plan events within the bounds
-        await page.goto(`${plan.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`);
-        const eventCount = await page.locator('.activity-bounds').count();
-        expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
+test.describe('Plan', () => {
+  let plan;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    plan = await createPlanFromJSON(page, {
+      json: testPlan1
     });
-});
+  });
 
+  test('Displays all plan events', async ({ page }) => {
+    await assertPlanActivities(page, testPlan1, plan.url);
+  });
+});

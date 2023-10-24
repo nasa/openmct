@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,30 +23,31 @@
 import LADTableView from './LADTableView';
 
 export default class LADTableViewProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.name = 'LAD Table';
-        this.key = 'LadTable';
-        this.cssClass = 'icon-tabular-lad';
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.name = 'LAD Table';
+    this.key = 'LadTable';
+    this.cssClass = 'icon-tabular-lad';
+  }
 
-    canView(domainObject) {
-        const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
-        const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+  canView(domainObject) {
+    const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
+    const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+    const isLadTable = domainObject.type === 'LadTable';
+    const isConditionSet = domainObject.type === 'conditionSet';
 
-        return domainObject.type === 'LadTable'
-            || (providesTelemetry && supportsComposition);
-    }
+    return !isConditionSet && (isLadTable || (providesTelemetry && supportsComposition));
+  }
 
-    canEdit(domainObject) {
-        return domainObject.type === 'LadTable';
-    }
+  canEdit(domainObject) {
+    return domainObject.type === 'LadTable';
+  }
 
-    view(domainObject, objectPath) {
-        return new LADTableView(this.openmct, domainObject, objectPath);
-    }
+  view(domainObject, objectPath) {
+    return new LADTableView(this.openmct, domainObject, objectPath);
+  }
 
-    priority(domainObject) {
-        return this.openmct.priority.HIGH;
-    }
+  priority(domainObject) {
+    return this.openmct.priority.HIGH;
+  }
 }

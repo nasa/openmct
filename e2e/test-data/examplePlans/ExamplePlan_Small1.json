@@ -1,0 +1,44 @@
+{
+  "Group 1": [
+    {
+      "name": "Past event 1",
+      "start": 1660320408000,
+      "end": 1660343797000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Past event 2",
+      "start": 1660406808000,
+      "end": 1660429160000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Past event 3",
+      "start": 1660493208000,
+      "end": 1660503981000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Past event 4",
+      "start": 1660579608000,
+      "end": 1660624108000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Past event 5",
+      "start": 1660666008000,
+      "end": 1660681529000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    }
+  ]
+}

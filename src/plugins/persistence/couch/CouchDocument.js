@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,16 +37,16 @@
  *        deleted (see CouchDB docs for _deleted)
  */
 export default function CouchDocument(id, model, rev, markDeleted) {
-    return {
-        "_id": id,
-        "_rev": rev,
-        "_deleted": markDeleted,
-        "metadata": {
-            "category": "domain object",
-            "type": model.type,
-            "owner": "admin",
-            "name": model.name
-        },
-        "model": model
-    };
+  return {
+    _id: id,
+    _rev: rev,
+    _deleted: markDeleted,
+    metadata: {
+      category: 'domain object',
+      type: model.type,
+      owner: 'admin',
+      name: model.name
+    },
+    model: model
+  };
 }

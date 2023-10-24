@@ -14,9 +14,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: lts/hydrogen
       - run: npm install
-      - run: npm test
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+          npm whoami
+          npm publish --access=public --tag unstable openmct
+      # - run: npm test
 
   publish-npm-prerelease:
     needs: build
@@ -25,9 +29,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: lts/hydrogen
           registry-url: https://registry.npmjs.org/
       - run: npm install
-      - run: npm publish --access public --tag unstable
+      - run: npm publish --access=public --tag unstable
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,170 +20,92 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import MenuComponent from './components/Menu.vue';
+import mount from 'utils/mount';
+import { h } from 'vue';
+
+import MenuComponent from './components/MenuComponent.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
-import Vue from 'vue';
 
 export const MENU_PLACEMENT = {
-    TOP: 'top',
-    TOP_LEFT: 'top-left',
-    TOP_RIGHT: 'top-right',
-    BOTTOM: 'bottom',
-    BOTTOM_LEFT: 'bottom-left',
-    BOTTOM_RIGHT: 'bottom-right',
-    LEFT: 'left',
-    RIGHT: 'right'
+  TOP: 'top',
+  TOP_LEFT: 'top-left',
+  TOP_RIGHT: 'top-right',
+  BOTTOM: 'bottom',
+  BOTTOM_LEFT: 'bottom-left',
+  BOTTOM_RIGHT: 'bottom-right',
+  LEFT: 'left',
+  RIGHT: 'right'
 };
 
 class Menu extends EventEmitter {
-    constructor(options) {
-        super();
+  constructor(options) {
+    super();
 
-        this.options = options;
-        if (options.onDestroy) {
-            this.once('destroy', options.onDestroy);
-        }
-
-        this.dismiss = this.dismiss.bind(this);
-        this.show = this.show.bind(this);
-        this.showMenu = this.showMenu.bind(this);
-        this.showSuperMenu = this.showSuperMenu.bind(this);
+    this.options = options;
+    if (options.onDestroy) {
+      this.once('destroy', options.onDestroy);
     }
 
-    dismiss() {
-        this.emit('destroy');
-        document.body.removeChild(this.component.$el);
-        document.removeEventListener('click', this.dismiss);
-        this.component.$destroy();
+    this.dismiss = this.dismiss.bind(this);
+    this.show = this.show.bind(this);
+    this.showMenu = this.showMenu.bind(this);
+    this.showSuperMenu = this.showSuperMenu.bind(this);
+  }
+
+  dismiss() {
+    if (this.destroy) {
+      this.destroy();
+      this.destroy = null;
     }
+    document.removeEventListener('click', this.dismiss);
+    this.emit('destroy');
+  }
 
-    show() {
-        this.component.$mount();
-        document.body.appendChild(this.component.$el);
-
-        let position = this._calculatePopupPosition(this.component.$el);
-
-        this.component.$el.style.left = `${position.x}px`;
-        this.component.$el.style.top = `${position.y}px`;
-
-        document.addEventListener('click', this.dismiss);
+  showMenu() {
+    if (this.destroy) {
+      return;
     }
+    const { vNode, destroy } = mount({
+      render() {
+        return h(MenuComponent);
+      },
+      provide: {
+        options: this.options
+      }
+    });
 
-    showMenu() {
-        this.component = new Vue({
-            components: {
-                MenuComponent
-            },
-            provide: {
-                options: this.options
-            },
-            template: '<menu-component />'
-        });
+    this.el = vNode.el;
+    this.destroy = destroy;
 
-        this.show();
-    }
+    this.show();
+  }
 
-    showSuperMenu() {
-        this.component = new Vue({
-            components: {
-                SuperMenuComponent
-            },
-            provide: {
-                options: this.options
-            },
-            template: '<super-menu-component />'
-        });
-
-        this.show();
-    }
-
-    /**
-     * @private
-     */
-    _calculatePopupPosition(menuElement) {
-        let menuDimensions = menuElement.getBoundingClientRect();
-
-        if (!this.options.placement) {
-            this.options.placement = MENU_PLACEMENT.BOTTOM_RIGHT;
-        }
-
-        const menuPosition = this._getMenuPositionBasedOnPlacement(menuDimensions);
-
-        return this._preventMenuOverflow(menuPosition, menuDimensions);
-    }
-
-    /**
-     * @private
-     */
-    _getMenuPositionBasedOnPlacement(menuDimensions) {
-        let eventPosX = this.options.x;
-        let eventPosY = this.options.y;
-
-        // Adjust popup menu based on placement
-        switch (this.options.placement) {
-        case MENU_PLACEMENT.TOP:
-            eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.BOTTOM:
-            eventPosX = this.options.x - Math.floor(menuDimensions.width / 2);
-            break;
-        case MENU_PLACEMENT.LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-            break;
-        case MENU_PLACEMENT.RIGHT:
-            eventPosY = this.options.y - Math.floor(menuDimensions.height / 2);
-            break;
-        case MENU_PLACEMENT.TOP_LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.TOP_RIGHT:
-            eventPosY = this.options.y - menuDimensions.height;
-            break;
-        case MENU_PLACEMENT.BOTTOM_LEFT:
-            eventPosX = this.options.x - menuDimensions.width;
-            break;
-        case MENU_PLACEMENT.BOTTOM_RIGHT:
-            break;
-        }
-
+  showSuperMenu() {
+    const { vNode, destroy } = mount({
+      data() {
         return {
-            x: eventPosX,
-            y: eventPosY
+          top: '0px',
+          left: '0px'
         };
-    }
+      },
+      render() {
+        return h(SuperMenuComponent);
+      },
+      provide: {
+        options: this.options
+      }
+    });
 
-    /**
-     * @private
-     */
-    _preventMenuOverflow(menuPosition, menuDimensions) {
-        let { x: eventPosX, y: eventPosY } = menuPosition;
-        let overflowX = (eventPosX + menuDimensions.width) - document.body.clientWidth;
-        let overflowY = (eventPosY + menuDimensions.height) - document.body.clientHeight;
+    this.el = vNode.el;
+    this.destroy = destroy;
 
-        if (overflowX > 0) {
-            eventPosX = eventPosX - overflowX;
-        }
+    this.show();
+  }
 
-        if (overflowY > 0) {
-            eventPosY = eventPosY - overflowY;
-        }
-
-        if (eventPosX < 0) {
-            eventPosX = 0;
-        }
-
-        if (eventPosY < 0) {
-            eventPosY = 0;
-        }
-
-        return {
-            x: eventPosX,
-            y: eventPosY
-        };
-    }
+  show() {
+    document.body.appendChild(this.el);
+    document.addEventListener('click', this.dismiss);
+  }
 }
 
 export default Menu;

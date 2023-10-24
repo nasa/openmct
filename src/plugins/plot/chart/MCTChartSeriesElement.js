@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,134 +24,133 @@ import eventHelpers from '../lib/eventHelpers';
 
 /** @abstract */
 export default class MCTChartSeriesElement {
-    constructor(series, chart, offset) {
-        this.series = series;
-        this.chart = chart;
-        this.offset = offset;
-        this.buffer = new Float32Array(20000);
-        this.count = 0;
+  constructor(series, chart, offset) {
+    this.series = series;
+    this.chart = chart;
+    this.offset = offset;
+    this.buffer = new Float32Array(20000);
+    this.count = 0;
 
-        eventHelpers.extend(this);
+    eventHelpers.extend(this);
 
-        this.listenTo(series, 'add', this.append, this);
-        this.listenTo(series, 'remove', this.remove, this);
-        this.listenTo(series, 'reset', this.reset, this);
-        this.listenTo(series, 'destroy', this.destroy, this);
-        this.series.getSeriesData().forEach(function (point, index) {
-            this.append(point, index, series);
-        }, this);
+    this.listenTo(series, 'add', this.append, this);
+    this.listenTo(series, 'remove', this.remove, this);
+    this.listenTo(series, 'reset', this.reset, this);
+    this.listenTo(series, 'destroy', this.destroy, this);
+    this.series.getSeriesData().forEach(function (point, index) {
+      this.append(point, index, series);
+    }, this);
+  }
+
+  getBuffer() {
+    if (this.isTempBuffer) {
+      this.buffer = new Float32Array(this.buffer);
+      this.isTempBuffer = false;
     }
 
-    getBuffer() {
-        if (this.isTempBuffer) {
-            this.buffer = new Float32Array(this.buffer);
-            this.isTempBuffer = false;
-        }
+    return this.buffer;
+  }
 
-        return this.buffer;
+  color() {
+    return this.series.get('color');
+  }
+
+  vertexCountForPointAtIndex(index) {
+    return 2;
+  }
+
+  startIndexForPointAtIndex(index) {
+    return 2 * index;
+  }
+
+  removeSegments(index, count) {
+    const target = index;
+    const start = index + count;
+    const end = this.count * 2;
+    this.buffer.copyWithin(target, start, end);
+    for (let zero = end - count; zero < end; zero++) {
+      this.buffer[zero] = 0;
+    }
+  }
+
+  /** @abstract */
+  removePoint(index) {}
+
+  /** @abstract */
+  addPoint(point, index) {}
+
+  remove(point, index, series) {
+    const vertexCount = this.vertexCountForPointAtIndex(index);
+    const removalPoint = this.startIndexForPointAtIndex(index);
+
+    this.removeSegments(removalPoint, vertexCount);
+
+    // TODO useless makePoint call?
+    this.makePoint(point, series);
+    this.removePoint(removalPoint);
+
+    this.count -= vertexCount / 2;
+  }
+
+  makePoint(point, series) {
+    if (!this.offset.xVal) {
+      this.chart.setOffset(point, undefined, series);
     }
 
-    color() {
-        return this.series.get('color');
+    return {
+      x: this.offset.xVal(point, series),
+      y: this.offset.yVal(point, series)
+    };
+  }
+
+  append(point, index, series) {
+    const pointsRequired = this.vertexCountForPointAtIndex(index);
+    const insertionPoint = this.startIndexForPointAtIndex(index);
+    this.growIfNeeded(pointsRequired);
+    this.makeInsertionPoint(insertionPoint, pointsRequired);
+    this.addPoint(this.makePoint(point, series), insertionPoint);
+    this.count += pointsRequired / 2;
+  }
+
+  makeInsertionPoint(insertionPoint, pointsRequired) {
+    if (this.count * 2 > insertionPoint) {
+      if (!this.isTempBuffer) {
+        this.buffer = Array.prototype.slice.apply(this.buffer);
+        this.isTempBuffer = true;
+      }
+
+      const target = insertionPoint + pointsRequired;
+      let start = insertionPoint;
+      for (; start < target; start++) {
+        this.buffer.splice(start, 0, 0);
+      }
     }
+  }
 
-    vertexCountForPointAtIndex(index) {
-        return 2;
+  reset() {
+    this.buffer = new Float32Array(20000);
+    this.count = 0;
+    if (this.offset.x) {
+      this.series.getSeriesData().forEach(function (point, index) {
+        this.append(point, index, this.series);
+      }, this);
     }
+  }
 
-    startIndexForPointAtIndex(index) {
-        return 2 * index;
+  growIfNeeded(pointsRequired) {
+    const remainingPoints = this.buffer.length - this.count * 2;
+    let temp;
+
+    if (remainingPoints <= pointsRequired) {
+      temp = new Float32Array(this.buffer.length + 20000);
+      temp.set(this.buffer);
+      this.buffer = temp;
     }
+  }
 
-    removeSegments(index, count) {
-        const target = index;
-        const start = index + count;
-        const end = this.count * 2;
-        this.buffer.copyWithin(target, start, end);
-        for (let zero = end - count; zero < end; zero++) {
-            this.buffer[zero] = 0;
-        }
-    }
-
-    /** @abstract */
-    removePoint(index) {}
-
-    /** @abstract */
-    addPoint(point, index) {}
-
-    remove(point, index, series) {
-        const vertexCount = this.vertexCountForPointAtIndex(index);
-        const removalPoint = this.startIndexForPointAtIndex(index);
-
-        this.removeSegments(removalPoint, vertexCount);
-
-        // TODO useless makePoint call?
-        this.makePoint(point, series);
-        this.removePoint(removalPoint);
-
-        this.count -= (vertexCount / 2);
-    }
-
-    makePoint(point, series) {
-        if (!this.offset.xVal) {
-            this.chart.setOffset(point, undefined, series);
-        }
-
-        return {
-            x: this.offset.xVal(point, series),
-            y: this.offset.yVal(point, series)
-        };
-    }
-
-    append(point, index, series) {
-        const pointsRequired = this.vertexCountForPointAtIndex(index);
-        const insertionPoint = this.startIndexForPointAtIndex(index);
-        this.growIfNeeded(pointsRequired);
-        this.makeInsertionPoint(insertionPoint, pointsRequired);
-        this.addPoint(this.makePoint(point, series), insertionPoint);
-        this.count += (pointsRequired / 2);
-    }
-
-    makeInsertionPoint(insertionPoint, pointsRequired) {
-        if (this.count * 2 > insertionPoint) {
-            if (!this.isTempBuffer) {
-                this.buffer = Array.prototype.slice.apply(this.buffer);
-                this.isTempBuffer = true;
-            }
-
-            const target = insertionPoint + pointsRequired;
-            let start = insertionPoint;
-            for (; start < target; start++) {
-                this.buffer.splice(start, 0, 0);
-            }
-        }
-    }
-
-    reset() {
-        this.buffer = new Float32Array(20000);
-        this.count = 0;
-        if (this.offset.x) {
-            this.series.getSeriesData().forEach(function (point, index) {
-                this.append(point, index, this.series);
-            }, this);
-        }
-    }
-
-    growIfNeeded(pointsRequired) {
-        const remainingPoints = this.buffer.length - this.count * 2;
-        let temp;
-
-        if (remainingPoints <= pointsRequired) {
-            temp = new Float32Array(this.buffer.length + 20000);
-            temp.set(this.buffer);
-            this.buffer = temp;
-        }
-    }
-
-    destroy() {
-        this.stopListening();
-    }
-
+  destroy() {
+    this.stopListening();
+  }
 }
 
 /** @typedef {any} TODO */

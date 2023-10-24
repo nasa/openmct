@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,53 +27,53 @@
  */
 
 class LinearScale {
-    constructor(domain) {
-        this.domain(domain);
+  constructor(domain) {
+    this.domain(domain);
+  }
+
+  domain(newDomain) {
+    if (newDomain) {
+      this._domain = newDomain;
+      this._domainDenominator = newDomain.max - newDomain.min;
     }
 
-    domain(newDomain) {
-        if (newDomain) {
-            this._domain = newDomain;
-            this._domainDenominator = newDomain.max - newDomain.min;
-        }
+    return this._domain;
+  }
 
-        return this._domain;
+  range(newRange) {
+    if (newRange) {
+      this._range = newRange;
+      this._rangeDenominator = newRange.max - newRange.min;
     }
 
-    range(newRange) {
-        if (newRange) {
-            this._range = newRange;
-            this._rangeDenominator = newRange.max - newRange.min;
-        }
+    return this._range;
+  }
 
-        return this._range;
+  scale(domainValue) {
+    if (!this._domain || !this._range) {
+      return;
     }
 
-    scale(domainValue) {
-        if (!this._domain || !this._range) {
-            return;
-        }
+    const domainOffset = domainValue - this._domain.min;
+    const rangeFraction = domainOffset - this._domainDenominator;
+    const rangeOffset = rangeFraction * this._rangeDenominator;
+    const rangeValue = rangeOffset + this._range.min;
 
-        const domainOffset = domainValue - this._domain.min;
-        const rangeFraction = domainOffset - this._domainDenominator;
-        const rangeOffset = rangeFraction * this._rangeDenominator;
-        const rangeValue = rangeOffset + this._range.min;
+    return rangeValue;
+  }
 
-        return rangeValue;
+  invert(rangeValue) {
+    if (!this._domain || !this._range) {
+      return;
     }
 
-    invert(rangeValue) {
-        if (!this._domain || !this._range) {
-            return;
-        }
+    const rangeOffset = rangeValue - this._range.min;
+    const domainFraction = rangeOffset / this._rangeDenominator;
+    const domainOffset = domainFraction * this._domainDenominator;
+    const domainValue = domainOffset + this._domain.min;
 
-        const rangeOffset = rangeValue - this._range.min;
-        const domainFraction = rangeOffset / this._rangeDenominator;
-        const domainOffset = domainFraction * this._domainDenominator;
-        const domainValue = domainOffset + this._domain.min;
-
-        return domainValue;
-    }
+    return domainValue;
+  }
 }
 
 export default LinearScale;

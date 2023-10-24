@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,59 +19,73 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
+
 import ImageryTimeView from './components/ImageryTimeView.vue';
-import Vue from "vue";
 
 export default function ImageryTimestripViewProvider(openmct) {
-    const type = 'example.imagery.time-strip.view';
+  const type = 'example.imagery.time-strip.view';
 
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        return metadata.valuesForHints(['image']).length > 0;
+  function hasImageTelemetry(domainObject) {
+    const metadata = openmct.telemetry.getMetadata(domainObject);
+    if (!metadata) {
+      return false;
     }
 
-    return {
-        key: type,
-        name: 'Imagery Timestrip View',
-        cssClass: 'icon-image',
-        canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+    return metadata.valuesForHints(['image']).length > 0;
+  }
 
-            return hasImageTelemetry(domainObject) && isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  return {
+    key: type,
+    name: 'Imagery Timestrip View',
+    cssClass: 'icon-image',
+    canView: function (domainObject, objectPath) {
+      let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
+
+      return (
+        hasImageTelemetry(domainObject) &&
+        isChildOfTimeStrip &&
+        !openmct.router.isNavigatedObject(objectPath)
+      );
+    },
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
+
+      return {
+        show: function (element) {
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                ImageryTimeView
+              },
+              provide: {
+                openmct: openmct,
+                domainObject: domainObject,
+                objectPath: objectPath
+              },
+              template: '<imagery-time-view ref="root"></imagery-time-view>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
-        view: function (domainObject, objectPath) {
-            let component;
 
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            ImageryTimeView
-                        },
-                        provide: {
-                            openmct: openmct,
-                            domainObject: domainObject,
-                            objectPath: objectPath
-                        },
-                        template: '<imagery-time-view></imagery-time-view>'
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
+        },
 
-                    });
-                },
-
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                },
-
-                getComponent() {
-                    return component;
-                }
-            };
+        getComponent() {
+          return component;
         }
-    };
+      };
+    }
+  };
 }

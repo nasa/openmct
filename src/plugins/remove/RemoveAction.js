@@ -19,117 +19,146 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+const SPECIAL_MESSAGE_TYPES = ['layout', 'flexible-layout'];
+
 export default class RemoveAction {
-    constructor(openmct) {
-        this.name = 'Remove';
-        this.key = 'remove';
-        this.description = 'Remove this object from its containing object.';
-        this.cssClass = "icon-trash";
-        this.group = "action";
-        this.priority = 1;
+  #transaction;
 
-        this.openmct = openmct;
+  constructor(openmct) {
+    this.name = 'Remove';
+    this.key = 'remove';
+    this.description = 'Remove this object from its containing object.';
+    this.cssClass = 'icon-trash';
+    this.group = 'action';
+    this.priority = 1;
+
+    this.openmct = openmct;
+
+    this.removeFromComposition = this.removeFromComposition.bind(this); // for access to private transaction variable
+    this.#transaction = null;
+  }
+
+  async invoke(objectPath) {
+    const child = objectPath[0];
+    const parent = objectPath[1];
+
+    try {
+      await this.showConfirmDialog(child, parent);
+    } catch (error) {
+      return; // form canceled, exit invoke
     }
 
-    invoke(objectPath) {
-        let object = objectPath[0];
-        let parent = objectPath[1];
-        this.showConfirmDialog(object).then(() => {
-            this.removeFromComposition(parent, object);
-            if (this.inNavigationPath(object)) {
-                this.navigateTo(objectPath.slice(1));
+    await this.removeFromComposition(parent, child, objectPath);
+
+    if (this.inNavigationPath(child)) {
+      this.navigateTo(objectPath.slice(1));
+    }
+  }
+
+  showConfirmDialog(child, parent) {
+    let message =
+      'Warning! This action will remove this object. Are you sure you want to continue?';
+
+    if (SPECIAL_MESSAGE_TYPES.includes(parent.type)) {
+      const type = this.openmct.types.get(parent.type);
+      const typeName = type.definition.name;
+
+      message = `Warning! This action will remove this item from the ${typeName}. Are you sure you want to continue?`;
+    }
+
+    return new Promise((resolve, reject) => {
+      const dialog = this.openmct.overlays.dialog({
+        title: `Remove ${child.name}`,
+        iconClass: 'alert',
+        message,
+        buttons: [
+          {
+            label: 'OK',
+            callback: () => {
+              dialog.dismiss();
+              resolve();
             }
-        }).catch(() => {});
-    }
-
-    showConfirmDialog(object) {
-        return new Promise((resolve, reject) => {
-            let dialog = this.openmct.overlays.dialog({
-                title: `Remove ${object.name}`,
-                iconClass: 'alert',
-                message: 'Warning! This action will remove this object. Are you sure you want to continue?',
-                buttons: [
-                    {
-                        label: 'OK',
-                        callback: () => {
-                            dialog.dismiss();
-                            resolve();
-                        }
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => {
-                            dialog.dismiss();
-                            reject();
-                        }
-                    }
-                ]
-            });
-        });
-    }
-
-    inNavigationPath(object) {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
-    }
-
-    navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this.openmct.objects.makeKeyString(object.identifier))
-            .join("/");
-
-        this.openmct.router.navigate('#/browse/' + urlPath);
-    }
-
-    removeFromComposition(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
-
-        this.openmct.objects.mutate(parent, 'composition', composition);
-
-        if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
-
-        if (!this.isAlias(child, parent)) {
-            this.openmct.objects.mutate(child, 'location', null);
-        }
-    }
-
-    isAlias(child, parent) {
-        if (parent === undefined) {
-            // then it's a root item, not an alias
-            return false;
-        }
-
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const childLocation = child.location;
-
-        return childLocation !== parentKeyString;
-    }
-
-    appliesTo(objectPath) {
-        const parent = objectPath[1];
-        const parentType = parent && this.openmct.types.get(parent.type);
-        const child = objectPath[0];
-        const locked = child.locked ? child.locked : parent && parent.locked;
-        const isEditing = this.openmct.editor.isEditing();
-        const isPersistable = this.openmct.objects.isPersistable(child.identifier);
-        const isAlias = this.isAlias(child, parent);
-
-        if (locked || (!isPersistable && !isAlias)) {
-            return false;
-        }
-
-        if (isEditing) {
-            if (this.openmct.router.isNavigatedObject(objectPath)) {
-                return false;
+          },
+          {
+            label: 'Cancel',
+            callback: () => {
+              dialog.dismiss();
+              reject();
             }
-        }
+          }
+        ]
+      });
+    });
+  }
 
-        return parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
+  inNavigationPath(object) {
+    return this.openmct.router.path.some((objectInPath) =>
+      this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier)
+    );
+  }
+
+  navigateTo(objectPath) {
+    let urlPath = objectPath
+      .reverse()
+      .map((object) => this.openmct.objects.makeKeyString(object.identifier))
+      .join('/');
+
+    this.openmct.router.navigate('#/browse/' + urlPath);
+  }
+
+  async removeFromComposition(parent, child, objectPath) {
+    this.startTransaction();
+
+    const composition = this.openmct.composition.get(parent);
+    composition.remove(child);
+
+    if (!this.openmct.objects.isObjectPathToALink(child, objectPath)) {
+      this.openmct.objects.mutate(child, 'location', null);
     }
+
+    if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
+      this.openmct.editor.save();
+    }
+
+    await this.saveTransaction();
+  }
+
+  appliesTo(objectPath) {
+    const parent = objectPath[1];
+    const parentType = parent && this.openmct.types.get(parent.type);
+    const child = objectPath[0];
+    const locked = child.locked ? child.locked : parent && parent.locked;
+    const isEditing = this.openmct.editor.isEditing();
+    const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+    const isLink = this.openmct.objects.isObjectPathToALink(child, objectPath);
+
+    if (!isLink && (locked || !isPersistable)) {
+      return false;
+    }
+
+    if (isEditing) {
+      if (this.openmct.router.isNavigatedObject(objectPath)) {
+        return false;
+      }
+    }
+
+    return parentType?.definition.creatable && Array.isArray(parent?.composition);
+  }
+
+  startTransaction() {
+    if (!this.openmct.objects.isTransactionActive()) {
+      this.#transaction = this.openmct.objects.startTransaction();
+    }
+  }
+
+  async saveTransaction() {
+    if (!this.#transaction) {
+      return;
+    }
+
+    await this.#transaction.commit();
+    this.openmct.objects.endTransaction();
+    this.#transaction = null;
+  }
 }

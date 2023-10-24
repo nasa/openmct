@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DefaultClock from "../../utils/clock/DefaultClock";
+import DefaultClock from '../../utils/clock/DefaultClock';
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
  * application based on UTC time values provided by a ticking local clock,
@@ -30,33 +30,33 @@ import DefaultClock from "../../utils/clock/DefaultClock";
  */
 
 export default class LocalClock extends DefaultClock {
-    constructor(period = 100) {
-        super();
+  constructor(period = 100) {
+    super();
 
-        this.key = 'local';
-        this.name = 'Local Clock';
-        this.description = "Provides UTC timestamps every second from the local system clock.";
+    this.key = 'local';
+    this.name = 'Local Clock';
+    this.description = 'Provides UTC timestamps every second from the local system clock.';
 
-        this.period = period;
-        this.timeoutHandle = undefined;
-        this.lastTick = Date.now();
+    this.period = period;
+    this.timeoutHandle = undefined;
+    this.lastTick = Date.now();
+  }
+
+  start() {
+    super.tick(this.lastTick);
+    this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+  }
+
+  stop() {
+    if (this.timeoutHandle) {
+      clearTimeout(this.timeoutHandle);
+      this.timeoutHandle = undefined;
     }
+  }
 
-    start() {
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    }
-
-    stop() {
-        if (this.timeoutHandle) {
-            clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = undefined;
-        }
-    }
-
-    tick() {
-        const now = Date.now();
-        super.tick(now);
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    }
-
+  tick() {
+    const now = Date.now();
+    super.tick(now);
+    this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+  }
 }

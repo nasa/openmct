@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const OLD_ROOT_NAME = 'Open MCT';
 const NEW_ROOT_NAME = 'not_a_root';
@@ -30,48 +27,46 @@ const NEW_ROOT_NAME = 'not_a_root';
 let openmct;
 
 describe('the DefaultRootNamePlugin', () => {
-    describe('without DefaultRootNamePlugin', () => {
-        beforeEach((done) => {
-            openmct = createOpenMct();
+  describe('without DefaultRootNamePlugin', () => {
+    beforeEach((done) => {
+      openmct = createOpenMct();
 
-            openmct.on('start', done);
-            openmct.startHeadless();
-        });
-
-        afterEach(() => {
-            return resetApplicationState(openmct);
-        });
-
-        it('does not changes root name', (done) => {
-            openmct.objects.getRoot()
-                .then(object => {
-                    expect(object.name).toEqual(OLD_ROOT_NAME);
-
-                    done();
-                });
-        });
+      openmct.on('start', done);
+      openmct.startHeadless();
     });
 
-    describe('with DefaultRootNamePlugin', () => {
-        beforeEach((done) => {
-            openmct = createOpenMct();
-
-            openmct.install(openmct.plugins.DefaultRootName(NEW_ROOT_NAME));
-            openmct.on('start', done);
-            openmct.startHeadless();
-        });
-
-        afterEach(() => {
-            return resetApplicationState(openmct);
-        });
-
-        it('changes root name', (done) => {
-            openmct.objects.getRoot()
-                .then(object => {
-                    expect(object.name).toEqual(NEW_ROOT_NAME);
-
-                    done();
-                });
-        });
+    afterEach(() => {
+      return resetApplicationState(openmct);
     });
+
+    it('does not changes root name', (done) => {
+      openmct.objects.getRoot().then((object) => {
+        expect(object.name).toEqual(OLD_ROOT_NAME);
+
+        done();
+      });
+    });
+  });
+
+  describe('with DefaultRootNamePlugin', () => {
+    beforeEach((done) => {
+      openmct = createOpenMct();
+
+      openmct.install(openmct.plugins.DefaultRootName(NEW_ROOT_NAME));
+      openmct.on('start', done);
+      openmct.startHeadless();
+    });
+
+    afterEach(() => {
+      return resetApplicationState(openmct);
+    });
+
+    it('changes root name', (done) => {
+      openmct.objects.getRoot().then((object) => {
+        expect(object.name).toEqual(NEW_ROOT_NAME);
+
+        done();
+      });
+    });
+  });
 });

@@ -1,35 +1,62 @@
+/*****************************************************************************
+* Open MCT, Copyright (c) 2014-2023, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
+
 .c-swimlane {
-    display: grid;
-    grid-template-columns: 100px 100px 1fr;
-    grid-column-gap: 1px;
-    grid-row-gap: 1px;
-    margin-bottom: 1px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 100px 100px 1fr;
+  grid-column-gap: 1px;
+  grid-row-gap: 1px;
+  margin-bottom: 1px;
+  width: 100%;
 
-    &.is-status--draft {
-        background: rgba($colorAlert, 0.2);
+  &.is-status--draft {
+    background: rgba($colorAlert, 0.2);
+  }
+
+  [class*='__lane-label'] {
+    background: rgba($colorBodyFg, 0.2);
+    color: $colorBodyFg;
+    padding: $interiorMarginSm;
+  }
+
+  [class*='--span-cols'] {
+    grid-column: span 2;
+  }
+
+  &__lane-object {
+    background: rgba(black, 0.1);
+
+    .c-plan {
+      display: contents;
     }
 
-    [class*='__lane-label'] {
-        background: rgba($colorBodyFg, 0.2);
-        color: $colorBodyFg;
-        padding: $interiorMarginSm;
-    }
+    @include smallerControlButtons;
+  }
 
-    [class*='--span-cols'] {
-        grid-column: span 2;
-    }
-
-    &__lane-object {
-        background: rgba(black, 0.1);
-
-        .c-plan {
-            display: contents;
-        }
-
-        @include smallerControlButtons;
-    }
-
-    // Yet more brittle special case selecting...
-    .is-object-type-plan { display: contents; }
+  // Yet more brittle special case selecting...
+  .is-object-type-plan {
+    display: contents;
+  }
+  .is-object-type-gantt-chart {
+    display: contents;
+  }
 }

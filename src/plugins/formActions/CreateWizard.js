@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,121 +21,125 @@
  *****************************************************************************/
 
 export default class CreateWizard {
-    constructor(openmct, domainObject, parent) {
-        this.openmct = openmct;
+  constructor(openmct, domainObject, parent) {
+    this.openmct = openmct;
 
-        this.domainObject = domainObject;
-        this.type = openmct.types.get(domainObject.type);
+    this.domainObject = domainObject;
+    this.type = openmct.types.get(domainObject.type);
 
-        this.model = domainObject;
-        this.parent = parent;
-        this.properties = this.type.definition.form || [];
-    }
+    this.model = domainObject;
+    this.parent = parent;
+    this.properties = this.type.definition.form || [];
+  }
 
-    addNotes(sections) {
-        const row = {
-            control: 'textarea',
-            cssClass: 'l-input-lg',
-            key: 'notes',
-            name: 'Notes',
-            required: false,
-            value: this.domainObject.notes
-        };
+  addNotes(sections) {
+    const row = {
+      control: 'textarea',
+      cssClass: 'l-input-lg',
+      key: 'notes',
+      name: 'Notes',
+      required: false,
+      value: this.domainObject.notes
+    };
 
-        sections.forEach(section => {
-            if (section.name !== 'Properties') {
-                return;
-            }
+    sections.forEach((section) => {
+      if (section.name !== 'Properties') {
+        return;
+      }
 
-            section.rows.unshift(row);
-        });
-    }
+      section.rows.unshift(row);
+    });
+  }
 
-    addTitle(sections) {
-        const row = {
-            control: 'textfield',
-            cssClass: 'l-input-lg',
-            key: 'name',
-            name: 'Title',
-            pattern: `\\S+`,
+  addTitle(sections) {
+    const row = {
+      control: 'textfield',
+      cssClass: 'l-input-lg',
+      key: 'name',
+      name: 'Title',
+      pattern: `\\S+`,
+      required: true,
+      value: this.domainObject.name
+    };
+
+    sections.forEach((section) => {
+      if (section.name !== 'Properties') {
+        return;
+      }
+
+      section.rows.unshift(row);
+    });
+  }
+
+  /**
+   * Get the form model for this wizard; this is a description
+   * that will be rendered to an HTML form. See the
+   * platform/forms bundle
+   * @param {boolean} includeLocation if true, a 'location' section
+   * will be included that will allow the user to select the location
+   * of the newly created object, otherwise the .location property of
+   * the model will be used.
+   */
+  getFormStructure(includeLocation) {
+    let sections = [];
+    let domainObject = this.domainObject;
+    let self = this;
+
+    sections.push({
+      name: 'Properties',
+      rows: this.properties
+        .map((property) => {
+          const row = JSON.parse(JSON.stringify(property));
+          row.value = this.getValue(row);
+          if (property.validate) {
+            row.validate = property.validate;
+          }
+
+          return row;
+        })
+        .filter((row) => row && row.control)
+    });
+
+    this.addNotes(sections);
+    this.addTitle(sections);
+
+    // Ensure there is always a 'save in' section
+    if (includeLocation) {
+      function validateLocation(data) {
+        const policyCheck = self.openmct.composition.checkPolicy(data.value[0], domainObject);
+        const parentIsPersistable = self.openmct.objects.isPersistable(data.value[0].identifier);
+
+        return policyCheck && parentIsPersistable;
+      }
+
+      sections.push({
+        name: 'Location',
+        cssClass: 'grows',
+        rows: [
+          {
+            name: 'Save In',
+            cssClass: 'grows',
+            control: 'locator',
+            domainObject,
             required: true,
-            value: this.domainObject.name
-        };
-
-        sections.forEach(section => {
-            if (section.name !== 'Properties') {
-                return;
-            }
-
-            section.rows.unshift(row);
-        });
+            parent: this.parent,
+            validate: validateLocation.bind(this),
+            key: 'location'
+          }
+        ]
+      });
     }
 
-    /**
-     * Get the form model for this wizard; this is a description
-     * that will be rendered to an HTML form. See the
-     * platform/forms bundle
-     * @param {boolean} includeLocation if true, a 'location' section
-     * will be included that will allow the user to select the location
-     * of the newly created object, otherwise the .location property of
-     * the model will be used.
-     */
-    getFormStructure(includeLocation) {
-        let sections = [];
-        let domainObject = this.domainObject;
-        let self = this;
+    return {
+      sections
+    };
+  }
 
-        sections.push({
-            name: 'Properties',
-            rows: this.properties.map(property => {
-                const row = JSON.parse(JSON.stringify(property));
-                row.value = this.getValue(row);
-                if (property.validate) {
-                    row.validate = property.validate;
-                }
-
-                return row;
-            }).filter(row => row && row.control)
-        });
-
-        this.addNotes(sections);
-        this.addTitle(sections);
-
-        // Ensure there is always a 'save in' section
-        if (includeLocation) {
-            function validateLocation(data) {
-                const policyCheck = self.openmct.composition.checkPolicy(data.value[0], domainObject);
-                const parentIsPersistable = self.openmct.objects.isPersistable(data.value[0].identifier);
-
-                return policyCheck && parentIsPersistable;
-            }
-
-            sections.push({
-                name: 'Location',
-                cssClass: 'grows',
-                rows: [{
-                    name: 'Save In',
-                    cssClass: 'grows',
-                    control: 'locator',
-                    domainObject,
-                    required: true,
-                    parent: this.parent,
-                    validate: validateLocation.bind(this),
-                    key: 'location'
-                }]
-            });
-        }
-
-        return {
-            sections
-        };
+  getValue(row) {
+    if (row.property) {
+      return row.property.reduce((acc, property) => acc && acc[property], this.domainObject);
+    } else {
+      return this.domainObject[row.key];
     }
-
-    getValue(row) {
-        if (row.property) {
-            return row.property.reduce((acc, property) => acc && acc[property], this.domainObject);
-        } else {
-            return this.domainObject[row.key];
-        }
-    }
+  }
 }

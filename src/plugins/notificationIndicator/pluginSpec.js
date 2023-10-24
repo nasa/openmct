@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,53 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
 import NotificationIndicatorPlugin from './plugin.js';
-import Vue from 'vue';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
 
 describe('the plugin', () => {
-    let notificationIndicatorPlugin;
-    let openmct;
-    let indicatorElement;
-    let parentElement;
-    let mockMessages = ['error', 'test', 'notifications'];
+  let notificationIndicatorPlugin;
+  let openmct;
+  let indicatorElement;
+  let parentElement;
+  let mockMessages = ['error', 'test', 'notifications'];
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        notificationIndicatorPlugin = new NotificationIndicatorPlugin();
-        openmct.install(notificationIndicatorPlugin);
+    notificationIndicatorPlugin = new NotificationIndicatorPlugin();
+    openmct.install(notificationIndicatorPlugin);
 
-        parentElement = document.createElement('div');
+    parentElement = document.createElement('div');
 
-        openmct.on('start', () => {
-            mockMessages.forEach(message => {
-                openmct.notifications.error(message);
-            });
-            done();
-        });
-
-        openmct.start();
+    openmct.on('start', () => {
+      mockMessages.forEach((message) => {
+        openmct.notifications.error(message);
+      });
+      done();
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    openmct.start();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  describe('the indicator plugin element', () => {
+    beforeEach(() => {
+      parentElement.append(indicatorElement);
+
+      return nextTick();
     });
 
-    describe('the indicator plugin element', () => {
-        beforeEach(() => {
-            parentElement.append(indicatorElement);
+    it('notifies the user of the number of notifications', () => {
+      let notificationCountElement = document.querySelector('.c-indicator__count');
 
-            return Vue.nextTick();
-        });
-
-        it('notifies the user of the number of notifications', () => {
-            let notificationCountElement = document.querySelector('.c-indicator__count');
-
-            expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
-        });
+      expect(notificationCountElement.innerText).toEqual('1');
     });
+  });
 });

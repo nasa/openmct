@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,25 +35,24 @@ Make no assumptions about the order that elements appear in the DOM.
 
 const { test, expect } = require('../../pluginFixtures');
 
-test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
+test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({
+  page
+}) => {
+  //Go to baseURL
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    //Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+  //Click the Create button
+  await page.click('button:has-text("Create")');
 
-    //Click the Create button
-    await page.click('button:has-text("Create")');
-
-    // Verify that Create Folder appears in the dropdown
-    await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
+  // Verify that Create Folder appears in the dropdown
+  await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
 });
 
 test('Verify that My Items Tree appears @ipad', async ({ page, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-    //Test.slow annotation is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
-    test.slow();
-    //Go to baseURL
-    await page.goto('./');
+  const { myItemsFolderName } = openmctConfig;
+  //Go to baseURL
+  await page.goto('./');
 
-    //My Items to be visible
-    await expect(page.locator(`a:has-text("${myItemsFolderName}")`)).toBeEnabled();
+  //My Items to be visible
+  await expect(page.locator(`a:has-text("${myItemsFolderName}")`)).toBeEnabled();
 });

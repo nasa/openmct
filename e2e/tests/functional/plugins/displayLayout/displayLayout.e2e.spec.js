@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,142 +21,322 @@
  *****************************************************************************/
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setStartOffset, setFixedTimeMode, setRealTimeMode } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  setStartOffset,
+  setFixedTimeMode,
+  setRealTimeMode,
+  setIndependentTimeConductorBounds
+} = require('../../../../appActions');
 
-test.describe('Testing Display Layout @unstable', () => {
-    let sineWaveObject;
-    test.beforeEach(async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
-        await setRealTimeMode(page);
+test.describe('Display Layout', () => {
+  /** @type {import('../../../../appActions').CreatedObjectInfo} */
+  let sineWaveObject;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await setRealTimeMode(page);
 
-        // Create Sine Wave Generator
-        sineWaveObject = await createDomainObjectWithDefaults(page, {
-            type: 'Sine Wave Generator',
-            name: "Test Sine Wave Generator"
-        });
+    // Create Sine Wave Generator
+    sineWaveObject = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
     });
-    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({ page }) => {
-        // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
-        });
-        // Edit Display Layout
-        await page.locator('[title="Edit"]').click();
-
-        // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
-        await page.locator('button[title="Save"]').click();
-        await page.locator('text=Save and Finish Editing').click();
-
-        // Subscribe to the Sine Wave Generator data
-        // On getting data, check if the value found in the  Display Layout is the most recent value
-        // from the Sine Wave Generator
-        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-        const formattedTelemetryValue = await getTelemValuePromise;
-        const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
-        const displayLayoutValue = await displayLayoutValuePromise.textContent();
-        const trimmedDisplayValue = displayLayoutValue.trim();
-
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+  });
+  test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({
+    page
+  }) => {
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
     });
-    test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({ page }) => {
-        // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
-        });
-        // Edit Display Layout
-        await page.locator('[title="Edit"]').click();
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
 
-        // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
-        await page.locator('button[title="Save"]').click();
-        await page.locator('text=Save and Finish Editing').click();
-
-        // Subscribe to the Sine Wave Generator data
-        const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-        // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
-        await setStartOffset(page, { mins: '1' });
-        await setFixedTimeMode(page);
-
-        // On getting data, check if the value found in the Display Layout is the most recent value
-        // from the Sine Wave Generator
-        const formattedTelemetryValue = await getTelemValuePromise;
-        const displayLayoutValuePromise = await page.waitForSelector(`text="${formattedTelemetryValue}"`);
-        const displayLayoutValue = await displayLayoutValuePromise.textContent();
-        const trimmedDisplayValue = displayLayoutValue.trim();
-
-        await expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
     });
-    test('items in a display layout can be removed with object tree context menu when viewing the display layout', async ({ page }) => {
-        // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
-        });
-        // Edit Display Layout
-        await page.locator('[title="Edit"]').click();
-
-        // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
-        await page.locator('button[title="Save"]').click();
-        await page.locator('text=Save and Finish Editing').click();
-
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
-
-        // Expand the Display Layout so we can remove the sine wave generator
-        await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
-
-        // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').first().click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
-
-        // delete
-
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
     });
-    test('items in a display layout can be removed with object tree context menu when viewing another item', async ({ page }) => {
-        // Create a Display Layout
-        await createDomainObjectWithDefaults(page, {
-            type: 'Display Layout',
-            name: "Test Display Layout"
-        });
-        // Edit Display Layout
-        await page.locator('[title="Edit"]').click();
+    const layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
 
-        // Expand the 'My Items' folder in the left tree
-        await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-        // Add the Sine Wave Generator to the Display Layout and save changes
-        await page.dragAndDrop('text=Test Sine Wave Generator', '.l-layout__grid-holder');
-        await page.locator('button[title="Save"]').click();
-        await page.locator('text=Save and Finish Editing').click();
+    // Subscribe to the Sine Wave Generator data
+    // On getting data, check if the value found in the  Display Layout is the most recent value
+    // from the Sine Wave Generator
+    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const formattedTelemetryValue = getTelemValuePromise;
+    const displayLayoutValuePromise = await page.waitForSelector(
+      `text="${formattedTelemetryValue}"`
+    );
+    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const trimmedDisplayValue = displayLayoutValue.trim();
 
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
-
-        // Expand the Display Layout so we can remove the sine wave generator
-        await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
-
-        // Click the original Sine Wave Generator to navigate away from the Display Layout
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Sine Wave Generator")').click();
-
-        // Bring up context menu and remove
-        await page.locator('.c-tree__item.is-alias .c-tree__item__name:text("Test Sine Wave Generator")').click({ button: 'right' });
-        await page.locator('text=Remove').click();
-        await page.locator('text=OK').click();
-
-        // navigate back to the display layout to confirm it has been removed
-        await page.locator('.c-tree__item .c-tree__item__name:text("Test Display Layout")').click();
-
-        expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+    expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+  });
+  test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({
+    page
+  }) => {
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
     });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+    const layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    // Subscribe to the Sine Wave Generator data
+    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
+    await setStartOffset(page, { mins: '1' });
+    await setFixedTimeMode(page);
+
+    // On getting data, check if the value found in the Display Layout is the most recent value
+    // from the Sine Wave Generator
+    const formattedTelemetryValue = getTelemValuePromise;
+    const displayLayoutValuePromise = await page.waitForSelector(
+      `text="${formattedTelemetryValue}"`
+    );
+    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const trimmedDisplayValue = displayLayoutValue.trim();
+
+    expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+  });
+  test('items in a display layout can be removed with object tree context menu when viewing the display layout', async ({
+    page
+  }) => {
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+    const layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
+
+    // Expand the Display Layout so we can remove the sine wave generator
+    await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
+
+    // Bring up context menu and remove
+    await sineWaveGeneratorTreeItem.nth(1).click({ button: 'right' });
+    await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+    await page.locator('button:has-text("OK")').click();
+
+    // delete
+
+    expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+  });
+  test('items in a display layout can be removed with object tree context menu when viewing another item', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/3117'
+    });
+    // Create a Display Layout
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+    const layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
+
+    // Expand the Display Layout so we can remove the sine wave generator
+    await page.locator('.c-tree__item.is-navigated-object .c-disclosure-triangle').click();
+
+    // Go to the original Sine Wave Generator to navigate away from the Display Layout
+    await page.goto(sineWaveObject.url);
+
+    // Bring up context menu and remove
+    await sineWaveGeneratorTreeItem.first().click({ button: 'right' });
+    await page.locator('li[role="menuitem"]:has-text("Remove")').click();
+    await page.locator('button:has-text("OK")').click();
+
+    // navigate back to the display layout to confirm it has been removed
+    await page.goto(displayLayout.url);
+
+    expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
+  });
+
+  test('independent time works with display layouts and its children', async ({ page }) => {
+    await setFixedTimeMode(page);
+    // Create Example Imagery
+    const exampleImageryObject = await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery'
+    });
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const exampleImageryTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(exampleImageryObject.name)
+    });
+    let layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+
+    //adjust so that we can see the independent time conductor toggle
+    // Adjust object height
+    await page.locator('div[title="Resize object height"] > input').click();
+    await page.locator('div[title="Resize object height"] > input').fill('70');
+
+    // Adjust object width
+    await page.locator('div[title="Resize object width"] > input').click();
+    await page.locator('div[title="Resize object width"] > input').fill('70');
+
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    const startDate = '2021-12-30 01:01:00.000Z';
+    const endDate = '2021-12-30 01:11:00.000Z';
+    await setIndependentTimeConductorBounds(page, startDate, endDate);
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByRole('switch').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+  });
+
+  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
+    page
+  }) => {
+    await setFixedTimeMode(page);
+    // Create another Sine Wave Generator
+    const anotherSineWaveObject = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
+    });
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+
+    let layoutGridHolder = page.locator('.l-layout__grid-holder');
+    // eslint-disable-next-line playwright/no-force-option
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+
+    await page.getByText('View type').click();
+    await page.getByText('Overlay Plot').click();
+
+    const anotherSineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(anotherSineWaveObject.name)
+    });
+    layoutGridHolder = page.locator('.l-layout__grid-holder');
+    // eslint-disable-next-line playwright/no-force-option
+    await anotherSineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+
+    await page.getByText('View type').click();
+    await page.getByText('Overlay Plot').click();
+
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    // Time to inspect some network traffic
+    let networkRequests = [];
+    page.on('request', (request) => {
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
+      const fetchRequest = request.resourceType() === 'fetch';
+      if (searchRequest && fetchRequest) {
+        networkRequests.push(request);
+      }
+    });
+
+    await page.reload();
+
+    // wait for annotations requests to be batched and requested
+    await page.waitForLoadState('networkidle');
+    // Network requests for the composite telemetry with multiple items should be:
+    // 1.  a single batched request for annotations
+    expect(networkRequests.length).toBe(1);
+
+    await setRealTimeMode(page);
+
+    networkRequests = [];
+
+    await page.reload();
+
+    // wait for annotations to not load (if we have any, we've got a problem)
+    await page.waitForLoadState('networkidle');
+
+    // In real time mode, we don't fetch annotations at all
+    expect(networkRequests.length).toBe(0);
+  });
 });
 
 /**
@@ -169,18 +349,20 @@ test.describe('Testing Display Layout @unstable', () => {
  * @returns {Promise<string>} the formatted sin telemetry value
  */
 async function subscribeToTelemetry(page, objectIdentifier) {
-    const getTelemValuePromise = new Promise(resolve => page.exposeFunction('getTelemValue', resolve));
+  const getTelemValuePromise = new Promise((resolve) =>
+    page.exposeFunction('getTelemValue', resolve)
+  );
 
-    await page.evaluate(async (telemetryIdentifier) => {
-        const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
-        const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
-        const formats = await window.openmct.telemetry.getFormatMap(metadata);
-        window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
-            const sinVal = obj.sin;
-            const formattedSinVal = formats.sin.format(sinVal);
-            window.getTelemValue(formattedSinVal);
-        });
-    }, objectIdentifier);
+  await page.evaluate(async (telemetryIdentifier) => {
+    const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
+    const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
+    const formats = await window.openmct.telemetry.getFormatMap(metadata);
+    window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
+      const sinVal = obj.sin;
+      const formattedSinVal = formats.sin.format(sinVal);
+      window.getTelemValue(formattedSinVal);
+    });
+  }, objectIdentifier);
 
-    return getTelemValuePromise;
+  return getTelemValuePromise;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,75 +19,73 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("the plugin", () => {
-    let openmct;
-    let viewDatumAction;
-    let mockObjectPath;
-    let mockView;
-    let mockDatum;
+describe('the plugin', () => {
+  let openmct;
+  let viewDatumAction;
+  let mockObjectPath;
+  let mockView;
+  let mockDatum;
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+    openmct.on('start', done);
+    openmct.startHeadless();
 
-        viewDatumAction = openmct.actions._allActions.viewDatumAction;
+    viewDatumAction = openmct.actions._allActions.viewDatumAction;
 
-        mockObjectPath = [{
-            name: 'mock object',
-            type: 'telemetry-table',
-            identifier: {
-                key: 'mock-object',
-                namespace: ''
+    mockObjectPath = [
+      {
+        name: 'mock object',
+        type: 'telemetry-table',
+        identifier: {
+          key: 'mock-object',
+          namespace: ''
+        }
+      }
+    ];
+
+    mockDatum = {
+      time: 123456789,
+      sin: 0.4455512,
+      cos: 0.4455512
+    };
+
+    mockView = {
+      getViewContext: () => {
+        return {
+          row: {
+            viewDatumAction: true,
+            getDatum: () => {
+              return mockDatum;
             }
-        }];
-
-        mockDatum = {
-            time: 123456789,
-            sin: 0.4455512,
-            cos: 0.4455512
+          }
         };
+      }
+    };
+  });
 
-        mockView = {
-            getViewContext: () => {
-                return {
-                    row: {
-                        viewDatumAction: true,
-                        getDatum: () => {
-                            return mockDatum;
-                        }
-                    }
-                };
-            }
-        };
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('installs the view datum action', () => {
+    expect(viewDatumAction).toBeDefined();
+  });
+
+  describe('when invoked', () => {
+    beforeEach(() => {
+      openmct.overlays.overlay = function (options) {};
+
+      spyOn(openmct.overlays, 'overlay');
+
+      viewDatumAction.invoke(mockObjectPath, mockView);
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('creates an overlay', () => {
+      expect(openmct.overlays.overlay).toHaveBeenCalled();
     });
-
-    it('installs the view datum action', () => {
-        expect(viewDatumAction).toBeDefined();
-    });
-
-    describe('when invoked', () => {
-
-        beforeEach(() => {
-            openmct.overlays.overlay = function (options) {};
-
-            spyOn(openmct.overlays, 'overlay');
-
-            viewDatumAction.invoke(mockObjectPath, mockView);
-        });
-
-        it('creates an overlay', () => {
-            expect(openmct.overlays.overlay).toHaveBeenCalled();
-        });
-    });
+  });
 });

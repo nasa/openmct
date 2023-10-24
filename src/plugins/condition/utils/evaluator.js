@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,51 +19,51 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { TRIGGER } from "./constants";
+import { TRIGGER } from './constants';
 
 export function evaluateResults(results, trigger) {
-    if (trigger && trigger === TRIGGER.XOR) {
-        return matchExact(results, 1);
-    } else if (trigger && trigger === TRIGGER.NOT) {
-        return matchExact(results, 0);
-    } else if (trigger && trigger === TRIGGER.ALL) {
-        return matchAll(results);
-    } else {
-        return matchAny(results);
-    }
+  if (trigger && trigger === TRIGGER.XOR) {
+    return matchExact(results, 1);
+  } else if (trigger && trigger === TRIGGER.NOT) {
+    return matchExact(results, 0);
+  } else if (trigger && trigger === TRIGGER.ALL) {
+    return matchAll(results);
+  } else {
+    return matchAny(results);
+  }
 }
 
 function matchAll(results) {
-    for (let result of results) {
-        if (result !== true) {
-            return false;
-        }
+  for (let result of results) {
+    if (result !== true) {
+      return false;
     }
+  }
 
-    return true;
+  return true;
 }
 
 function matchAny(results) {
-    for (let result of results) {
-        if (result === true) {
-            return true;
-        }
+  for (let result of results) {
+    if (result === true) {
+      return true;
     }
+  }
 
-    return false;
+  return false;
 }
 
 function matchExact(results, target) {
-    let matches = 0;
-    for (let result of results) {
-        if (result === true) {
-            matches++;
-        }
-
-        if (matches > target) {
-            return false;
-        }
+  let matches = 0;
+  for (let result of results) {
+    if (result === true) {
+      matches++;
     }
 
-    return matches === target;
+    if (matches > target) {
+      return false;
+    }
+  }
+
+  return matches === target;
 }

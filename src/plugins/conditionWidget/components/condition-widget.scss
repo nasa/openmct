@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,44 +21,59 @@
  *****************************************************************************/
 
 .c-condition-widget {
-    $shdwSize: 3px;
-    @include userSelectNone();
-    background-color: rgba($colorBodyFg, 0.1); // Give a little presence if the user hasn't defined a fill color
-    border-radius: $basicCr;
-    border: 1px solid transparent;
-    display: inline-block;
-    padding: $interiorMarginLg $interiorMarginLg * 2;
+  $shdwSize: 3px;
+  @include userSelectNone();
+  background-color: rgba(
+    $colorBodyFg,
+    0.1
+  ); // Give a little presence if the user hasn't defined a fill color
+  border-radius: $basicCr;
+  border: 1px solid transparent;
+  display: block;
+  max-width: max-content;
+
+  a {
+    display: block;
+    color: inherit;
+  }
 }
 
-a.c-condition-widget {
-    // Widget is conditionally made into a <a> when URL property has been defined
-    cursor: pointer !important;
-    pointer-events: inherit;
+.c-condition-widget__label {
+  // Either a <div> or an <a> tag
+  padding: $interiorMargin $interiorMargin * 1.5;
+  text-align: center;
+  white-space: normal;
 }
 
 // Make Condition Widget expand when in a hidden frame Layout context
 // For both static and Flexible Layouts
 .c-so-view--conditionWidget.c-so-view--no-frame {
-    .c-condition-widget {
-        @include abs();
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
+  .c-condition-widget {
+    @include abs();
+    max-width: unset;
 
-    .c-so-view__frame-controls { display: none; }
+    &__label-wrapper {
+      @include abs();
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .c-so-view__frame-controls {
+    display: none;
+  }
 }
 
 // Add some margin when a Condition Widget is in a Flexible Layout
 .c-fl .c-so-view--no-frame .c-condition-widget {
-    @include abs(1px);
+  @include abs(1px);
 }
 
 // When the widget is in the main view, center it in the space
 .l-shell__main-container > * > .c-condition-widget {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

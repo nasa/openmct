@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import ViewLargeAction from './viewLargeAction.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        openmct.actions.register(new ViewLargeAction(openmct));
-    };
+  return function install(openmct) {
+    openmct.actions.register(new ViewLargeAction(openmct));
+  };
 }

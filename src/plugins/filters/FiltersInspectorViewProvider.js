@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,56 +20,71 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/FiltersView.vue',
-    'vue'
-], function (
-    FiltersView,
-    Vue
-) {
+import mount from 'utils/mount';
 
-    function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
-        return {
-            key: 'filters-inspector',
-            name: 'Filters Inspector View',
-            canView: function (selection) {
-                if (selection.length === 0 || selection[0].length === 0) {
-                    return false;
-                }
+import FiltersView from './components/FiltersView.vue';
 
-                let object = selection[0][0].context.item;
+const FILTERS_INSPECTOR_KEY = 'filters-inspector';
+export default class FiltersInspectorViewProvider {
+  constructor(openmct, supportedObjectTypesArray) {
+    this.openmct = openmct;
+    this.supportedObjectTypesArray = supportedObjectTypesArray;
+    this.key = FILTERS_INSPECTOR_KEY;
+    this.name = 'Filters';
+  }
+  canView(selection) {
+    const domainObject = selection?.[0]?.[0]?.context?.item;
 
-                return object && supportedObjectTypesArray.some(type => object.type === type);
+    return (
+      domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type)
+    );
+  }
+  view(selection) {
+    let openmct = this.openmct;
+    let _destroy = null;
+
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
+    return {
+      show: function (element) {
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FiltersView
             },
-            view: function (selection) {
-                let component;
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                FiltersView: FiltersView.default
-                            },
-                            provide: {
-                                openmct
-                            },
-                            template: '<filters-view></filters-view>'
-                        });
-                    },
-                    destroy: function () {
-                        if (component) {
-                            component.$destroy();
-                            component = undefined;
-                        }
-                    }
-                };
+            provide: {
+              openmct: openmct
             },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
+            template: '<filters-view></filters-view>'
+          },
+          {
+            app: openmct.app,
+            element
+          }
+        );
+        _destroy = destroy;
+      },
+      showTab: function (isEditing) {
+        if (isEditing) {
+          return true;
+        }
 
-    return FiltersInspectorViewProvider;
-});
+        const metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadataWithFilters = metadata
+          ? metadata.valueMetadatas.filter((value) => value.filters)
+          : [];
+
+        return metadataWithFilters.length;
+      },
+      priority: function () {
+        return openmct.priority.DEFAULT;
+      },
+      destroy: function () {
+        if (_destroy) {
+          _destroy();
+        }
+      }
+    };
+  }
+}

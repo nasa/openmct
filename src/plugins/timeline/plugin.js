@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,29 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import TimelineCompositionPolicy from './TimelineCompositionPolicy';
+import timelineInterceptor from './timelineInterceptor';
 import TimelineViewProvider from './TimelineViewProvider';
-import timelineInterceptor from "./timelineInterceptor";
-import TimelineCompositionPolicy from "./TimelineCompositionPolicy";
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType('time-strip', {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'Compose and display time-based telemetry and other object types in a timeline-like view.',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    useIndependentTime: false
-                };
-            }
-        });
-        timelineInterceptor(openmct);
-        openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
+  return function install(openmct) {
+    openmct.types.addType('time-strip', {
+      name: 'Time Strip',
+      key: 'time-strip',
+      description:
+        'Compose and display time-based telemetry and other object types in a timeline-like view.',
+      creatable: true,
+      cssClass: 'icon-timeline',
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+        domainObject.configuration = {
+          useIndependentTime: false
+        };
+      }
+    });
+    timelineInterceptor(openmct);
+    openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-    };
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
+  };
 }
-

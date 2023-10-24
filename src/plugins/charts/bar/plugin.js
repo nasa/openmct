@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,36 +19,35 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 import BarGraphViewProvider from './BarGraphViewProvider';
 import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
-import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType(BAR_GRAPH_KEY, {
-            key: BAR_GRAPH_KEY,
-            name: "Graph",
-            cssClass: "icon-bar-chart",
-            description: "Visualize data as a bar or line graph.",
-            creatable: true,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    barStyles: { series: {} },
-                    axes: {},
-                    useInterpolation: 'linear',
-                    useBar: true
-                };
-            },
-            priority: 891
-        });
+  return function install(openmct) {
+    openmct.types.addType(BAR_GRAPH_KEY, {
+      key: BAR_GRAPH_KEY,
+      name: 'Graph',
+      cssClass: 'icon-bar-chart',
+      description: 'Visualize data as a bar or line graph.',
+      creatable: true,
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+        domainObject.configuration = {
+          barStyles: { series: {} },
+          axes: {},
+          useInterpolation: 'linear',
+          useBar: true
+        };
+      },
+      priority: 891
+    });
 
-        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
+    openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
-        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
 
-        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
-    };
+    openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
+  };
 }
-

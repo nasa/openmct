@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,121 +21,120 @@
  *****************************************************************************/
 
 import EventEmitter from 'eventemitter3';
-import eventHelpers from "../lib/eventHelpers";
 import _ from 'lodash';
+
+import eventHelpers from '../lib/eventHelpers';
 
 /**
  * @template {object} T
  * @template {object} O
  */
 export default class Model extends EventEmitter {
-    /**
-     * @param {ModelOptions<T, O>} options
-     */
-    constructor(options) {
-        super();
-        Object.defineProperty(this, '_events', {
-            value: this._events,
-            enumerable: false,
-            configurable: false,
-            writable: true
-        });
+  /**
+   * @param {ModelOptions<T, O>} options
+   */
+  constructor(options) {
+    super();
+    Object.defineProperty(this, '_events', {
+      value: this._events,
+      enumerable: false,
+      configurable: false,
+      writable: true
+    });
 
-        //need to do this as we're already extending EventEmitter
-        eventHelpers.extend(this);
+    //need to do this as we're already extending EventEmitter
+    eventHelpers.extend(this);
 
-        if (!options) {
-            options = {};
-        }
-
-        // FIXME: this.id is defined as a method further below, but here it is
-        // assigned a possibly-undefined value. Is this code unused?
-        this.id = options.id;
-
-        /** @type {ModelType<T>} */
-        this.model = options.model;
-        this.collection = options.collection;
-        const defaults = this.defaultModel(options);
-        if (!this.model) {
-            this.model = options.model = defaults;
-        } else {
-            _.defaultsDeep(this.model, defaults);
-        }
-
-        this.initialize(options);
-
-        /** @type {keyof ModelType<T> } */
-        this.idAttr = 'id';
+    if (!options) {
+      options = {};
     }
 
-    /**
-     * @param {ModelOptions<T, O>} options
-     * @returns {ModelType<T>}
-     */
-    defaultModel(options) {
-        return {};
+    // FIXME: this.id is defined as a method further below, but here it is
+    // assigned a possibly-undefined value. Is this code unused?
+    this.id = options.id;
+
+    /** @type {ModelType<T>} */
+    this.model = options.model;
+    this.collection = options.collection;
+    const defaults = this.defaultModel(options);
+    if (!this.model) {
+      this.model = options.model = defaults;
+    } else {
+      _.defaultsDeep(this.model, defaults);
     }
 
-    /**
-     * @abstract
-     * @param {ModelOptions<T, O>} options
-     */
-    initialize(options) {
+    this.initialize(options);
 
-    }
+    /** @type {keyof ModelType<T> } */
+    this.idAttr = 'id';
+  }
 
-    /**
-     * Destroy the model, removing all listeners and subscriptions.
-     */
-    destroy() {
-        this.emit('destroy');
-        this.removeAllListeners();
-    }
+  /**
+   * @param {ModelOptions<T, O>} options
+   * @returns {ModelType<T>}
+   */
+  defaultModel(options) {
+    return {};
+  }
 
-    id() {
-        return this.get(this.idAttr);
-    }
+  /**
+   * @abstract
+   * @param {ModelOptions<T, O>} options
+   */
+  initialize(options) {}
 
-    /**
-     * @template {keyof ModelType<T>} K
-     * @param {K} attribute
-     * @returns {ModelType<T>[K]}
-     */
-    get(attribute) {
-        return this.model[attribute];
-    }
+  /**
+   * Destroy the model, removing all listeners and subscriptions.
+   */
+  destroy() {
+    this.emit('destroy');
+    this.removeAllListeners();
+  }
 
-    /**
-     * @template {keyof ModelType<T>} K
-     * @param {K} attribute
-     * @returns boolean
-     */
-    has(attribute) {
-        return _.has(this.model, attribute);
-    }
+  id() {
+    return this.get(this.idAttr);
+  }
 
-    /**
-     * @template {keyof ModelType<T>} K
-     * @param {K} attribute
-     * @param {ModelType<T>[K]} value
-     */
-    set(attribute, value) {
-        const oldValue = this.model[attribute];
-        this.model[attribute] = value;
-        this.emit('change', attribute, value, oldValue, this);
-        this.emit('change:' + attribute, value, oldValue, this);
-    }
+  /**
+   * @template {keyof ModelType<T>} K
+   * @param {K} attribute
+   * @returns {ModelType<T>[K]}
+   */
+  get(attribute) {
+    return this.model[attribute];
+  }
 
-    /**
-     * @template {keyof ModelType<T>} K
-     * @param {K} attribute
-     */
-    unset(attribute) {
-        const oldValue = this.model[attribute];
-        delete this.model[attribute];
-        this.emit('change', attribute, undefined, oldValue, this);
-        this.emit('change:' + attribute, undefined, oldValue, this);
-    }
+  /**
+   * @template {keyof ModelType<T>} K
+   * @param {K} attribute
+   * @returns boolean
+   */
+  has(attribute) {
+    return _.has(this.model, attribute);
+  }
+
+  /**
+   * @template {keyof ModelType<T>} K
+   * @param {K} attribute
+   * @param {ModelType<T>[K]} value
+   */
+  set(attribute, value) {
+    const oldValue = this.model[attribute];
+    this.model[attribute] = value;
+    this.emit('change', attribute, value, oldValue, this);
+    this.emit('change:' + attribute, value, oldValue, this);
+  }
+
+  /**
+   * @template {keyof ModelType<T>} K
+   * @param {K} attribute
+   */
+  unset(attribute) {
+    const oldValue = this.model[attribute];
+    delete this.model[attribute];
+    this.emit('change', attribute, undefined, oldValue, this);
+    this.emit('change:' + attribute, undefined, oldValue, this);
+  }
 }
 
 /** @typedef {any} TODO */

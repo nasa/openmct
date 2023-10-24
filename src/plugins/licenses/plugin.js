@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,20 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Licenses from './Licenses.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Licenses from './LicensesComponent.vue';
 
 export default function () {
-    return function install(openmct) {
-        openmct.router.route(/^\/licenses$/, () => {
-            let licensesVm = new Vue(Licenses).$mount();
+  return function install(openmct) {
+    openmct.router.route(/^\/licenses$/, () => {
+      const { vNode, destroy } = mount(Licenses, { app: openmct.app });
 
-            openmct.overlays.overlay({
-                element: licensesVm.$el,
-                size: 'fullscreen',
-                dismissable: false,
-                onDestroy: () => licensesVm.$destroy()
-            });
-        });
-    };
+      openmct.overlays.overlay({
+        element: vNode.el,
+        size: 'fullscreen',
+        dismissable: false,
+        onDestroy: destroy
+      });
+    });
+  };
 }

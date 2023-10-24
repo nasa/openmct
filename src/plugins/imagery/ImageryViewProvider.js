@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,28 +22,31 @@
 import ImageryView from './ImageryView';
 
 export default function ImageryViewProvider(openmct, options) {
-    const type = 'example.imagery';
+  const type = 'example.imagery';
 
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        return metadata.valuesForHints(['image']).length > 0;
+  function hasImageTelemetry(domainObject) {
+    const metadata = openmct.telemetry.getMetadata(domainObject);
+    if (!metadata) {
+      return false;
     }
 
-    return {
-        key: type,
-        name: 'Imagery Layout',
-        cssClass: 'icon-image',
-        canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+    return metadata.valuesForHints(['image']).length > 0;
+  }
 
-            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
-        },
-        view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath, options);
-        }
-    };
+  return {
+    key: type,
+    name: 'Imagery Layout',
+    cssClass: 'icon-image',
+    canView: function (domainObject, objectPath) {
+      let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
+
+      return (
+        hasImageTelemetry(domainObject) &&
+        (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath))
+      );
+    },
+    view: function (domainObject, objectPath) {
+      return new ImageryView(openmct, domainObject, objectPath, options);
+    }
+  };
 }

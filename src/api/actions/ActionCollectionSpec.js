@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,212 +20,215 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ActionCollection from './ActionCollection';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import ActionCollection from './ActionCollection';
 
 describe('The ActionCollection', () => {
-    let openmct;
-    let actionCollection;
-    let mockApplicableActions;
-    let mockObjectPath;
-    let mockView;
+  let openmct;
+  let actionCollection;
+  let mockApplicableActions;
+  let mockObjectPath;
+  let mockView;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+  beforeEach(() => {
+    openmct = createOpenMct();
 
-        mockObjectPath = [
-            {
-                name: 'mock folder',
-                type: 'fake-folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                }
-            },
-            {
-                name: 'mock parent folder',
-                type: 'fake-folder',
-                identifier: {
-                    key: 'mock-parent-folder',
-                    namespace: ''
-                }
-            }
-        ];
-        openmct.objects.addProvider('', jasmine.createSpyObj('mockMutableObjectProvider', [
-            'create',
-            'update'
-        ]));
-        mockView = {
-            getViewContext: () => {
-                return {
-                    onlyAppliesToTestCase: true
-                };
-            }
+    mockObjectPath = [
+      {
+        name: 'mock folder',
+        type: 'fake-folder',
+        identifier: {
+          key: 'mock-folder',
+          namespace: ''
+        }
+      },
+      {
+        name: 'mock parent folder',
+        type: 'fake-folder',
+        identifier: {
+          key: 'mock-parent-folder',
+          namespace: ''
+        }
+      }
+    ];
+    openmct.objects.addProvider(
+      '',
+      jasmine.createSpyObj('mockMutableObjectProvider', ['create', 'update'])
+    );
+    mockView = {
+      getViewContext: () => {
+        return {
+          onlyAppliesToTestCase: true
         };
-        mockApplicableActions = {
-            'test-action-object-path': {
-                name: 'Test Action Object Path',
-                key: 'test-action-object-path',
-                cssClass: 'test-action-object-path',
-                description: 'This is a test action for object path',
-                group: 'action',
-                priority: 9,
-                appliesTo: (objectPath) => {
-                    if (objectPath.length) {
-                        return objectPath[0].type === 'fake-folder';
-                    }
+      }
+    };
+    mockApplicableActions = {
+      'test-action-object-path': {
+        name: 'Test Action Object Path',
+        key: 'test-action-object-path',
+        cssClass: 'test-action-object-path',
+        description: 'This is a test action for object path',
+        group: 'action',
+        priority: 9,
+        appliesTo: (objectPath) => {
+          if (objectPath.length) {
+            return objectPath[0].type === 'fake-folder';
+          }
 
-                    return false;
-                },
-                invoke: () => {
-                }
-            },
-            'test-action-view': {
-                name: 'Test Action View',
-                key: 'test-action-view',
-                cssClass: 'test-action-view',
-                description: 'This is a test action for view',
-                group: 'action',
-                priority: 9,
-                showInStatusBar: true,
-                appliesTo: (objectPath, view = {}) => {
-                    if (view.getViewContext) {
-                        let viewContext = view.getViewContext();
+          return false;
+        },
+        invoke: () => {}
+      },
+      'test-action-view': {
+        name: 'Test Action View',
+        key: 'test-action-view',
+        cssClass: 'test-action-view',
+        description: 'This is a test action for view',
+        group: 'action',
+        priority: 9,
+        showInStatusBar: true,
+        appliesTo: (objectPath, view = {}) => {
+          if (view.getViewContext) {
+            let viewContext = view.getViewContext();
 
-                        return viewContext.onlyAppliesToTestCase;
-                    }
+            return viewContext.onlyAppliesToTestCase;
+          }
 
-                    return false;
-                },
-                invoke: () => {
-                }
-            }
-        };
+          return false;
+        },
+        invoke: () => {}
+      }
+    };
 
-        actionCollection = new ActionCollection(mockApplicableActions, mockObjectPath, mockView, openmct);
+    actionCollection = new ActionCollection(
+      mockApplicableActions,
+      mockObjectPath,
+      mockView,
+      openmct
+    );
+  });
+
+  afterEach(() => {
+    actionCollection.destroy();
+
+    return resetApplicationState(openmct);
+  });
+
+  describe('disable method invoked with action keys', () => {
+    it('marks those actions as isDisabled', () => {
+      let actionKey = 'test-action-object-path';
+      let actionsObject = actionCollection.getActionsObject();
+      let action = actionsObject[actionKey];
+
+      expect(action.isDisabled).toBeFalsy();
+
+      actionCollection.disable([actionKey]);
+      actionsObject = actionCollection.getActionsObject();
+      action = actionsObject[actionKey];
+
+      expect(action.isDisabled).toBeTrue();
     });
+  });
 
-    afterEach(() => {
-        actionCollection.destroy();
+  describe('enable method invoked with action keys', () => {
+    it('marks the isDisabled property as false', () => {
+      let actionKey = 'test-action-object-path';
 
-        return resetApplicationState(openmct);
+      actionCollection.disable([actionKey]);
+
+      let actionsObject = actionCollection.getActionsObject();
+      let action = actionsObject[actionKey];
+
+      expect(action.isDisabled).toBeTrue();
+
+      actionCollection.enable([actionKey]);
+      actionsObject = actionCollection.getActionsObject();
+      action = actionsObject[actionKey];
+
+      expect(action.isDisabled).toBeFalse();
     });
+  });
 
-    describe("disable method invoked with action keys", () => {
-        it("marks those actions as isDisabled", () => {
-            let actionKey = 'test-action-object-path';
-            let actionsObject = actionCollection.getActionsObject();
-            let action = actionsObject[actionKey];
+  describe('hide method invoked with action keys', () => {
+    it('marks those actions as isHidden', () => {
+      let actionKey = 'test-action-object-path';
+      let actionsObject = actionCollection.getActionsObject();
+      let action = actionsObject[actionKey];
 
-            expect(action.isDisabled).toBeFalsy();
+      expect(action.isHidden).toBeFalsy();
 
-            actionCollection.disable([actionKey]);
-            actionsObject = actionCollection.getActionsObject();
-            action = actionsObject[actionKey];
+      actionCollection.hide([actionKey]);
+      actionsObject = actionCollection.getActionsObject();
+      action = actionsObject[actionKey];
 
-            expect(action.isDisabled).toBeTrue();
-        });
+      expect(action.isHidden).toBeTrue();
     });
+  });
 
-    describe("enable method invoked with action keys", () => {
-        it("marks the isDisabled property as false", () => {
-            let actionKey = 'test-action-object-path';
+  describe('show method invoked with action keys', () => {
+    it('marks the isHidden property as false', () => {
+      let actionKey = 'test-action-object-path';
 
-            actionCollection.disable([actionKey]);
+      actionCollection.hide([actionKey]);
 
-            let actionsObject = actionCollection.getActionsObject();
-            let action = actionsObject[actionKey];
+      let actionsObject = actionCollection.getActionsObject();
+      let action = actionsObject[actionKey];
 
-            expect(action.isDisabled).toBeTrue();
+      expect(action.isHidden).toBeTrue();
 
-            actionCollection.enable([actionKey]);
-            actionsObject = actionCollection.getActionsObject();
-            action = actionsObject[actionKey];
+      actionCollection.show([actionKey]);
+      actionsObject = actionCollection.getActionsObject();
+      action = actionsObject[actionKey];
 
-            expect(action.isDisabled).toBeFalse();
-        });
+      expect(action.isHidden).toBeFalse();
     });
+  });
 
-    describe("hide method invoked with action keys", () => {
-        it("marks those actions as isHidden", () => {
-            let actionKey = 'test-action-object-path';
-            let actionsObject = actionCollection.getActionsObject();
-            let action = actionsObject[actionKey];
+  describe('getVisibleActions method', () => {
+    it('returns an array of non hidden actions', () => {
+      let action1Key = 'test-action-object-path';
+      let action2Key = 'test-action-view';
 
-            expect(action.isHidden).toBeFalsy();
+      actionCollection.hide([action1Key]);
 
-            actionCollection.hide([actionKey]);
-            actionsObject = actionCollection.getActionsObject();
-            action = actionsObject[actionKey];
+      let visibleActions = actionCollection.getVisibleActions();
 
-            expect(action.isHidden).toBeTrue();
-        });
+      expect(Array.isArray(visibleActions)).toBeTrue();
+      expect(visibleActions.length).toEqual(1);
+      expect(visibleActions[0].key).toEqual(action2Key);
+
+      actionCollection.show([action1Key]);
+      visibleActions = actionCollection.getVisibleActions();
+
+      expect(visibleActions.length).toEqual(2);
     });
+  });
 
-    describe("show method invoked with action keys", () => {
-        it("marks the isHidden property as false", () => {
-            let actionKey = 'test-action-object-path';
+  describe('getStatusBarActions method', () => {
+    it('returns an array of non disabled, non hidden statusBar actions', () => {
+      let action2Key = 'test-action-view';
 
-            actionCollection.hide([actionKey]);
+      let statusBarActions = actionCollection.getStatusBarActions();
 
-            let actionsObject = actionCollection.getActionsObject();
-            let action = actionsObject[actionKey];
+      expect(Array.isArray(statusBarActions)).toBeTrue();
+      expect(statusBarActions.length).toEqual(1);
+      expect(statusBarActions[0].key).toEqual(action2Key);
 
-            expect(action.isHidden).toBeTrue();
+      actionCollection.disable([action2Key]);
+      statusBarActions = actionCollection.getStatusBarActions();
 
-            actionCollection.show([actionKey]);
-            actionsObject = actionCollection.getActionsObject();
-            action = actionsObject[actionKey];
+      expect(statusBarActions.length).toEqual(0);
 
-            expect(action.isHidden).toBeFalse();
-        });
+      actionCollection.enable([action2Key]);
+      statusBarActions = actionCollection.getStatusBarActions();
+
+      expect(statusBarActions.length).toEqual(1);
+      expect(statusBarActions[0].key).toEqual(action2Key);
+
+      actionCollection.hide([action2Key]);
+      statusBarActions = actionCollection.getStatusBarActions();
+
+      expect(statusBarActions.length).toEqual(0);
     });
-
-    describe("getVisibleActions method", () => {
-        it("returns an array of non hidden actions", () => {
-            let action1Key = 'test-action-object-path';
-            let action2Key = 'test-action-view';
-
-            actionCollection.hide([action1Key]);
-
-            let visibleActions = actionCollection.getVisibleActions();
-
-            expect(Array.isArray(visibleActions)).toBeTrue();
-            expect(visibleActions.length).toEqual(1);
-            expect(visibleActions[0].key).toEqual(action2Key);
-
-            actionCollection.show([action1Key]);
-            visibleActions = actionCollection.getVisibleActions();
-
-            expect(visibleActions.length).toEqual(2);
-        });
-    });
-
-    describe("getStatusBarActions method", () => {
-        it("returns an array of non disabled, non hidden statusBar actions", () => {
-            let action2Key = 'test-action-view';
-
-            let statusBarActions = actionCollection.getStatusBarActions();
-
-            expect(Array.isArray(statusBarActions)).toBeTrue();
-            expect(statusBarActions.length).toEqual(1);
-            expect(statusBarActions[0].key).toEqual(action2Key);
-
-            actionCollection.disable([action2Key]);
-            statusBarActions = actionCollection.getStatusBarActions();
-
-            expect(statusBarActions.length).toEqual(0);
-
-            actionCollection.enable([action2Key]);
-            statusBarActions = actionCollection.getStatusBarActions();
-
-            expect(statusBarActions.length).toEqual(1);
-            expect(statusBarActions[0].key).toEqual(action2Key);
-
-            actionCollection.hide([action2Key]);
-            statusBarActions = actionCollection.getStatusBarActions();
-
-            expect(statusBarActions.length).toEqual(0);
-        });
-    });
+  });
 });

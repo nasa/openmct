@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,40 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Clock from './components/Clock.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Clock from './components/ClockComponent.vue';
 
 export default function ClockViewProvider(openmct) {
-    return {
-        key: 'clock.view',
-        name: 'Clock',
-        cssClass: 'icon-clock',
-        canView(domainObject) {
-            return domainObject.type === 'clock';
+  return {
+    key: 'clock.view',
+    name: 'Clock',
+    cssClass: 'icon-clock',
+    canView(domainObject) {
+      return domainObject.type === 'clock';
+    },
+
+    view: function (domainObject) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Clock
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<clock />'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-
-        view: function (domainObject) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Clock
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: '<clock />'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

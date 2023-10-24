@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,67 +19,77 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
 
-import Plot from '../Plot.vue';
-import Vue from 'vue';
+import Plot from '../PlotView.vue';
 
 export default function OverlayPlotViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: 'plot-overlay',
-        name: 'Overlay Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.overlay';
+  return {
+    key: 'plot-overlay',
+    name: 'Overlay Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.overlay';
+    },
+
+    canEdit(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.overlay';
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
+
+      return {
+        show: function (element) {
+          let isCompact = isCompactView(objectPath);
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<plot ref="plotComponent" :options="options"></plot>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
+        getViewContext() {
+          if (!component) {
+            return {};
+          }
 
-        canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.overlay';
+          return component.$refs.plotComponent.getViewContext();
         },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Plot
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<plot ref="plotComponent" :options="options"></plot>'
-                    });
-                },
-                getViewContext() {
-                    if (!component) {
-                        return {};
-                    }
-
-                    return component.$refs.plotComponent.getViewContext();
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

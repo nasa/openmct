@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,44 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './tabs'
-], function (
-    Tabs
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new Tabs(openmct));
+define(['./tabs'], function (Tabs) {
+  return function plugin() {
+    return function install(openmct) {
+      openmct.objectViews.addProvider(new Tabs.default(openmct));
 
-            openmct.types.addType('tabs', {
-                name: "Tabs View",
-                description: 'Add multiple objects of any type to this view, and quickly navigate between them with tabs',
-                creatable: true,
-                cssClass: 'icon-tabs-view',
-                initialize(domainObject) {
-                    domainObject.composition = [];
-                    domainObject.keep_alive = true;
-                },
-                form: [
-                    {
-                        "key": "keep_alive",
-                        "name": "Eager Load Tabs",
-                        "control": "select",
-                        "options": [
-                            {
-                                'name': 'True',
-                                'value': true
-                            },
-                            {
-                                'name': 'False',
-                                'value': false
-                            }
-                        ],
-                        "required": true,
-                        "cssClass": "l-input"
-                    }
-                ]
-            });
-        };
+      openmct.types.addType('tabs', {
+        name: 'Tabs View',
+        description: 'Quickly navigate between multiple objects of any type using tabs.',
+        creatable: true,
+        cssClass: 'icon-tabs-view',
+        initialize(domainObject) {
+          domainObject.composition = [];
+          domainObject.keep_alive = true;
+        },
+        form: [
+          {
+            key: 'keep_alive',
+            name: 'Eager Load Tabs',
+            control: 'select',
+            options: [
+              {
+                name: 'True',
+                value: true
+              },
+              {
+                name: 'False',
+                value: false
+              }
+            ],
+            required: true,
+            cssClass: 'l-input'
+          }
+        ]
+      });
     };
+  };
 });

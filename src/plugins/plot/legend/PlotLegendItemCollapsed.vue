@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,123 +20,220 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
+  <div
     class="plot-legend-item"
     :class="{
-        'is-status--missing': isMissing
+      'is-stale': isStale,
+      'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
     @mouseleave="toggleHover(false)"
->
-    <div class="plot-series-swatch-and-name">
-        <span
-            class="plot-series-color-swatch"
-            :style="{ 'background-color': colorAsHexString }"
-        >
-        </span>
-        <span
-            class="is-status__indicator"
-            title="This item is missing or suspect"
-        ></span>
-        <span class="plot-series-name">{{ nameWithUnit }}</span>
+  >
+    <div
+      ref="series"
+      class="plot-series-swatch-and-name"
+      @mouseover.ctrl="showToolTip"
+      @mouseleave="hideToolTip"
+    >
+      <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }">
+      </span>
+      <span class="is-status__indicator" title="This item is missing or suspect"></span>
+      <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
     <div
-        v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none' && valueToShowWhenCollapsed !== 'unit')"
-        class="plot-series-value hover-value-enabled"
-        :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
+      v-show="
+        !!highlights.length &&
+        valueToShowWhenCollapsed !== 'none' &&
+        valueToShowWhenCollapsed !== 'unit'
+      "
+      class="plot-series-value hover-value-enabled"
+      :class="[
+        { 'cursor-hover': notNearest },
+        valueToDisplayWhenCollapsedClass,
+        mctLimitStateClass
+      ]"
     >
-        <span v-if="valueToShowWhenCollapsed === 'nearestValue'">{{ formattedYValue }}</span>
-        <span v-else-if="valueToShowWhenCollapsed === 'nearestTimestamp'">{{ formattedXValue }}</span>
-        <span v-else>{{ formattedYValueFromStats }}</span>
+      <span v-if="valueToShowWhenCollapsed === 'nearestValue'">{{ formattedYValue }}</span>
+      <span v-else-if="valueToShowWhenCollapsed === 'nearestTimestamp'">{{ formattedXValue }}</span>
+      <span v-else>{{ formattedYValueFromStats }}</span>
     </div>
-</div>
+  </div>
 </template>
 <script>
+import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
 
 export default {
-    props: {
-        valueToShowWhenCollapsed: {
-            type: String,
-            required: true
-        },
-        seriesObject: {
-            type: Object,
-            required: true,
-            default() {
-                return {};
-            }
-        },
-        highlights: {
-            type: Array,
-            default() {
-                return [];
-            }
-        }
+  mixins: [stalenessMixin, tooltipHelpers],
+  inject: ['openmct', 'domainObject'],
+  props: {
+    seriesKeyString: {
+      type: String,
+      required: true
     },
-    data() {
-        return {
-            isMissing: false,
-            colorAsHexString: '',
-            nameWithUnit: '',
-            formattedYValue: '',
-            formattedXValue: '',
-            mctLimitStateClass: '',
-            formattedYValueFromStats: ''
-        };
-    },
-    computed: {
-        valueToDisplayWhenCollapsedClass() {
-            return `value-to-display-${ this.valueToShowWhenCollapsed }`;
-        },
-        notNearest() {
-            return (this.valueToShowWhenCollapsed.indexOf('nearest') > -1);
-        }
-    },
-    watch: {
-        highlights(newHighlights) {
-            const highlightedObject = newHighlights.find(highlight => highlight.series.keyString === this.seriesObject.keyString);
-            if (newHighlights.length === 0 || highlightedObject) {
-                this.initialize(highlightedObject);
-            }
-        }
-    },
-    mounted() {
-        this.initialize();
-    },
-    methods: {
-        initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
-            this.isMissing = seriesObject.domainObject.status === 'missing';
-            this.colorAsHexString = seriesObject.get('color').asHexString();
-            this.nameWithUnit = seriesObject.nameWithUnit();
-
-            const closest = seriesObject.closest;
-            if (closest) {
-                this.formattedYValue = seriesObject.formatY(closest);
-                this.formattedXValue = seriesObject.formatX(closest);
-                this.mctLimitStateClass = closest.mctLimitState ? getLimitClass(closest.mctLimitState, 'c-plot-limit--') : '';
-            } else {
-                this.formattedYValue = '';
-                this.formattedXValue = '';
-                this.mctLimitStateClass = '';
-            }
-
-            const stats = seriesObject.get('stats');
-            if (stats) {
-                this.formattedYValueFromStats = seriesObject.formatY(stats[this.valueToShowWhenCollapsed + 'Point']);
-            } else {
-                this.formattedYValueFromStats = '';
-            }
-        },
-        toggleHover(hover) {
-            this.hover = hover;
-            this.$emit('legendHoverChanged', {
-                seriesKey: this.hover ? this.seriesObject.keyString : ''
-            });
-        }
+    highlights: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
-};
+  },
+  emits: ['legend-hover-changed'],
+  data() {
+    return {
+      isMissing: false,
+      colorAsHexString: '',
+      nameWithUnit: '',
+      formattedYValue: '',
+      formattedXValue: '',
+      mctLimitStateClass: '',
+      formattedYValueFromStats: '',
+      loaded: false
+    };
+  },
+  computed: {
+    valueToShowWhenCollapsed() {
+      return this.loaded ? this.legend.get('valueToShowWhenCollapsed') : [];
+    },
+    valueToDisplayWhenCollapsedClass() {
+      return `value-to-display-${this.valueToShowWhenCollapsed}`;
+    },
+    notNearest() {
+      return this.valueToShowWhenCollapsed.indexOf('nearest') > -1;
+    }
+  },
+  watch: {
+    highlights: {
+      handler(newHighlights) {
+        const highlightedObject = newHighlights.find(
+          (highlight) => highlight.seriesKeyString === this.seriesKeyString
+        );
+        if (newHighlights.length === 0 || highlightedObject) {
+          this.initialize(highlightedObject);
+        }
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.seriesModels = [];
+    eventHelpers.extend(this);
+    this.config = this.getConfig();
+    this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+    this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+    this.config.series.forEach(this.onSeriesAdd, this);
+    this.legend = this.config.legend;
+    this.loaded = true;
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
+  },
+  beforeUnmount() {
+    this.stopListening();
+  },
+  methods: {
+    getConfig() {
+      const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
+      return configStore.get(configId);
+    },
+    onSeriesAdd(series, index) {
+      this.seriesModels[index] = series;
+      if (series.keyString === this.seriesKeyString) {
+        this.listenTo(
+          series,
+          'change:color',
+          (newColor) => {
+            this.updateColor(newColor);
+          },
+          this
+        );
+        this.listenTo(
+          series,
+          'change:name',
+          () => {
+            this.updateName();
+          },
+          this
+        );
+        this.subscribeToStaleness(series.domainObject);
+        this.initialize();
+      }
+    },
+    onSeriesRemove(seriesToRemove) {
+      const seriesIndexToRemove = this.seriesModels.findIndex(
+        (series) => series.keyString === seriesToRemove.keyString
+      );
+      this.seriesModels.splice(seriesIndexToRemove, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
+    initialize(highlightedObject) {
+      const seriesKeyStringToUse = highlightedObject?.seriesKeyString || this.seriesKeyString;
+      const seriesObject = this.getSeries(seriesKeyStringToUse);
+
+      this.isMissing = seriesObject.domainObject.status === 'missing';
+      this.colorAsHexString = seriesObject.get('color').asHexString();
+      this.nameWithUnit = seriesObject.nameWithUnit();
+
+      const closest = seriesObject.closest;
+      if (closest) {
+        this.formattedYValue = seriesObject.formatY(closest);
+        this.formattedXValue = seriesObject.formatX(closest);
+        this.mctLimitStateClass = closest.mctLimitState
+          ? getLimitClass(closest.mctLimitState, 'c-plot-limit--')
+          : '';
+      } else {
+        this.formattedYValue = '';
+        this.formattedXValue = '';
+        this.mctLimitStateClass = '';
+      }
+
+      const stats = seriesObject.get('stats');
+      if (stats) {
+        this.formattedYValueFromStats = seriesObject.formatY(
+          stats[this.valueToShowWhenCollapsed + 'Point']
+        );
+      } else {
+        this.formattedYValueFromStats = '';
+      }
+    },
+    updateColor(newColor) {
+      this.colorAsHexString = newColor.asHexString();
+    },
+    updateName() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      this.nameWithUnit = seriesObject.nameWithUnit();
+    },
+    toggleHover(hover) {
+      this.hover = hover;
+      this.$emit(
+        'legend-hover-changed',
+        this.hover
+          ? {
+              seriesKey: this.seriesKeyString
+            }
+          : undefined
+      );
+    },
+    async showToolTip() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      this.buildToolTip(
+        await this.getTelemetryPathString(seriesObject.domainObject.identifier),
+        BELOW,
+        'series'
+      );
+    }
+  }
+};
 </script>

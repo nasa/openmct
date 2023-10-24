@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,200 +21,252 @@
  *****************************************************************************/
 /******************************************************** TABLE */
 table {
-    $minW: 50px;
-    width: 100%;
+  $minW: 50px;
+  width: 100%;
 
-    thead {
-        th {
-            background: $colorTabHeaderBg;
+  thead {
+    th {
+      background: $colorTabHeaderBg;
 
-            + th {
-                border-left: 1px solid $colorTabHeaderBorder;
-            }
-        }
+      + th {
+        border-left: 1px solid $colorTabHeaderBorder;
+      }
     }
+  }
 
-    tbody {
-        tr + tr {
-            border-top: 1px solid $colorTabBorder;
-        }
+  tbody {
+    tr + tr {
+      border-top: 1px solid $colorTabBorder;
     }
+  }
 
-    th, td {
-        white-space: nowrap;
-        min-width: $minW;
-        padding: $tabularTdPadTB $tabularTdPadLR;
-    }
+  th,
+  td {
+    white-space: nowrap;
+    min-width: $minW;
+    padding: $tabularTdPadTB $tabularTdPadLR;
+  }
 
-    td {
-        vertical-align: top;
-    }
+  td {
+    vertical-align: top;
+  }
 }
 
 .is-editing {
-    td.is-selectable {
-        &:hover {
-            background: rgba($editUIColorBg, 0.1);
-            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
-        }
-
-        &[s-selected] {
-            background: $editUIColorBg !important;
-            border: 1px solid $editUIColorFg !important;
-            color: $editUIColorFg !important;
-            box-shadow: $editFrameSelectedShdw;
-            z-index: 2;
-        }
+  td.is-selectable {
+    &:hover {
+      background: rgba($editUIColorBg, 0.1);
+      box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
     }
+
+    &[s-selected] {
+      background: $editUIColorBg !important;
+      border: 1px solid $editUIColorFg !important;
+      color: $editUIColorFg !important;
+      box-shadow: $editFrameSelectedShdw;
+      z-index: 2;
+    }
+  }
 }
 
 /******************************************************** C-TABLE */
 div.c-table {
-    // When c-table is used as a wrapper element in more complex table views
-    height: 100%;
+  // When c-table is used as a wrapper element in more complex table views
+  height: 100%;
 }
 
 .c-table-wrapper {
-    // Wraps .c-control-bar and .c-table
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  // Wraps .c-control-bar and .c-table
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
-    // Using absolute here because sizing table can't calc width properly if padding is used
-    $p: $mainViewPad;
-    position: absolute;
-    top: $p; right: $p; bottom: $p; left: $p;
+  // Using absolute here because sizing table can't calc width properly if padding is used
+  $p: $mainViewPad;
+  position: absolute;
+  top: $p;
+  right: $p;
+  bottom: $p;
+  left: $p;
 
-    > .c-table {
-        height: auto;
-        flex: 1 1 auto;
+  > .c-table {
+    height: auto;
+    flex: 1 1 auto;
+  }
+
+  &.is-stale {
+    @include isStaleHolder();
+  }
+
+  .--width-less-than-600 & {
+    &:not(.is-paused) {
+      .c-table-control-bar {
+        display: none;
+      }
     }
-
-    .--width-less-than-600 & {
-        &:not(.is-paused) {
-            .c-table-control-bar {
-                display: none;
-            }
+    .c-table-control-bar {
+      .c-icon-button,
+      .c-click-icon,
+      .c-button {
+        &__label {
+          display: none;
         }
-        .c-table-control-bar {
-            .c-icon-button,
-            .c-click-icon,
-            .c-button {
-                &__label {
-                    display: none;
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 .c-table-control-bar {
-    display: flex;
-    flex: 0 0 auto;
-    //margin-bottom: $interiorMarginSm; // This approach to allow margin to go away when control bar is hidden
-    padding: $interiorMarginSm 0;
+  display: flex;
+  flex: 0 0 auto;
+  //margin-bottom: $interiorMarginSm; // This approach to allow margin to go away when control bar is hidden
+  padding: $interiorMarginSm 0;
 
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
 }
 
 .c-table {
-    // Can be used by any type of table, scrolling, LAD, etc.
-    $min-w: 50px;
+  // Can be used by any type of table, scrolling, LAD, etc.
+  $min-w: 50px;
 
-    width: 100%;
+  width: 100%;
 
-    &__headers-w {
-        flex: 0 0 auto;
+  &__headers-w {
+    flex: 0 0 auto;
+  }
+
+  /******************************* ELEMENTS */
+  thead tr,
+  &.c-table__headers {
+    background: $colorTabHeaderBg;
+
+    th {
+      &:not(:first-child) {
+        border-left: 1px solid $colorTabHeaderBorder;
+      }
     }
+  }
 
-    /******************************* ELEMENTS */
-    thead tr,
-    &.c-table__headers {
-        background: $colorTabHeaderBg;
-
-        th {
-            &:not(:first-child) {
-                border-left: 1px solid $colorTabHeaderBorder;
-            }
-        }
+  tbody,
+  &__body {
+    tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
+      border-top: 1px solid $colorTabBorder;
     }
+    transition: $transOut;
+  }
 
-    tbody,
-    &__body {
-        tr:not(.c-table__group-header) + tr:not(.c-table__group-header) {
-            border-top: 1px solid $colorTabBorder;
-        }
+  &__selectable-row {
+    cursor: pointer;
+    &:hover {
+      background: $colorListItemBgHov;
+      filter: $filterHov;
+      transition: $transIn;
     }
+  }
 
-    &__group-header {
-        // tr element found in LAD Table Sets
-        border-top: 1px solid $colorTabHeaderBorder;
-        background: $colorTabGroupHeaderBg;
-        td { color: $colorTabGroupHeaderFg; }
+  &__group-header {
+    // tr element found in LAD Table Sets
+    border-top: 1px solid $colorTabHeaderBorder;
+    background: $colorTabGroupHeaderBg;
+    td {
+      color: $colorTabGroupHeaderFg;
     }
+  }
 
-    &--sortable {
-        .is-sorting {
-            &:after {
-                color: $colorIconAlias;
-                content: $glyph-icon-arrow-tall-up;
-                font-family: symbolsfont;
-                font-size: 8px;
-                display: inline-block;
-                margin-left: $interiorMarginSm;
-            }
-            &.desc:after {
-                content: $glyph-icon-arrow-tall-down;
-            }
-        }
-        .is-sortable {
-            cursor: pointer;
-        }
+  &--sortable {
+    .is-sorting {
+      &:after {
+        color: $colorIconAlias;
+        content: $glyph-icon-arrow-tall-up;
+        font-family: symbolsfont;
+        font-size: 8px;
+        display: inline-block;
+        margin-left: $interiorMarginSm;
+      }
+      &.desc:after {
+        content: $glyph-icon-arrow-tall-down;
+      }
     }
+    .is-sortable {
+      cursor: pointer;
+    }
+  }
 }
 
 .c-lad-table-wrapper {
-    width: 100%;
-    height: 100%;
-    padding: $mainViewPad;
+  width: 100%;
+  height: 100%;
+  padding: $mainViewPad;
+
+  &.is-stale {
+    @include isStaleHolder();
+  }
 }
 
 .c-lad-table {
-    th, td {
-        width: 33%; // Needed to prevent size jumping as values dynamically update
+  &.fixed-layout {
+    table-layout: fixed;
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+  }
+  th,
+  td {
+    width: 33%; // Needed to prevent size jumping as values dynamically update
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  tbody tr {
+    &:hover {
+      background: $colorItemTreeHoverBg;
+    }
+  }
+
+  td {
+    user-select: none; // Table supports context-click to display Actions menu, don't allow text selection.
+
+    &.is-stale {
+      @include isStaleElement();
+    }
+  }
 }
 
 /************************************** TABLE AND SUMMARY VIEWS */
 // Displays summary values above a table.
 
 .c-table-and-summary {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &__summary {
     display: flex;
-    flex-direction: column;
+    justify-items: stretch;
 
-    > * + * { margin-top: $interiorMargin; }
-
-    &__summary {
-        display: flex;
-        justify-items: stretch;
-
-        > * + * { margin-left: 1px; }
+    > * + * {
+      margin-left: 1px;
     }
+  }
 
-    &__summary-item {
-        background: $colorSummaryBg;
-        color: $colorSummaryFg;
-        flex: 1 1 auto;
-        padding: $interiorMargin $interiorMarginLg;
+  &__summary-item {
+    background: $colorSummaryBg;
+    color: $colorSummaryFg;
+    flex: 1 1 auto;
+    padding: $interiorMargin $interiorMarginLg;
 
-        em {
-            font-weight: bold;
-            color: $colorSummaryFgEm;
-        }
+    em {
+      font-weight: bold;
+      color: $colorSummaryFgEm;
     }
+  }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,37 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW, FAULT_MANAGEMENT_NAMESPACE } from './constants';
+import {
+  FAULT_MANAGEMENT_NAMESPACE,
+  FAULT_MANAGEMENT_TYPE,
+  FAULT_MANAGEMENT_VIEW
+} from './constants';
 
 export default class FaultManagementObjectProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.namespace = FAULT_MANAGEMENT_NAMESPACE;
-        this.key = FAULT_MANAGEMENT_VIEW;
-        this.objects = {};
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.namespace = FAULT_MANAGEMENT_NAMESPACE;
+    this.key = FAULT_MANAGEMENT_VIEW;
+    this.objects = {};
 
-        this.createFaultManagementRootObject();
+    this.createFaultManagementRootObject();
+  }
+
+  createFaultManagementRootObject() {
+    this.rootObject = {
+      identifier: {
+        key: this.key,
+        namespace: this.namespace
+      },
+      name: 'Fault Management',
+      type: FAULT_MANAGEMENT_TYPE,
+      location: 'ROOT'
+    };
+
+    this.openmct.objects.addRoot(this.rootObject.identifier);
+  }
+
+  get(identifier) {
+    if (identifier.key === FAULT_MANAGEMENT_VIEW) {
+      return Promise.resolve(this.rootObject);
     }
 
-    createFaultManagementRootObject() {
-        this.rootObject = {
-            identifier: {
-                key: this.key,
-                namespace: this.namespace
-            },
-            name: 'Fault Management',
-            type: FAULT_MANAGEMENT_TYPE,
-            location: 'ROOT'
-        };
-
-        this.openmct.objects.addRoot(this.rootObject.identifier);
-    }
-
-    get(identifier) {
-        if (identifier.key === FAULT_MANAGEMENT_VIEW) {
-            return Promise.resolve(this.rootObject);
-        }
-
-        return Promise.reject();
-    }
+    return Promise.reject();
+  }
 }

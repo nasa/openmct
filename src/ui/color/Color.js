@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 /**
-     * A representation of a color that allows conversions between different
-     * formats.
-     *
-     * @constructor
-     */
+ * A representation of a color that allows conversions between different
+ * formats.
+ *
+ * @constructor
+ */
 /**
  * A representation of a color that allows conversions between different
  * formats.
@@ -33,23 +33,21 @@
  * @constructor
  */
 function Color(integerArray) {
-    this.integerArray = integerArray;
+  this.integerArray = integerArray;
 }
 
 Color.fromHexString = function (hexString) {
-    if (!/#([0-9a-fA-F]{2}){2}/.test(hexString)) {
-        throw new Error(
-            'Invalid input "'
-            + hexString
-            + '". Hex string must be in CSS format e.g. #00FF00'
-        );
-    }
+  if (!/#([0-9a-fA-F]{2}){2}/.test(hexString)) {
+    throw new Error(
+      'Invalid input "' + hexString + '". Hex string must be in CSS format e.g. #00FF00'
+    );
+  }
 
-    return new Color([
-        parseInt(hexString.slice(1, 3), 16),
-        parseInt(hexString.slice(3, 5), 16),
-        parseInt(hexString.slice(5, 7), 16)
-    ]);
+  return new Color([
+    parseInt(hexString.slice(1, 3), 16),
+    parseInt(hexString.slice(3, 5), 16),
+    parseInt(hexString.slice(5, 7), 16)
+  ]);
 };
 
 /**
@@ -59,9 +57,9 @@ Color.fromHexString = function (hexString) {
  * @return {number[]} the color, as integer RGB values
  */
 Color.prototype.asIntegerArray = function () {
-    return this.integerArray.map(function (c) {
-        return c;
-    });
+  return this.integerArray.map(function (c) {
+    return c;
+  });
 };
 
 /**
@@ -72,9 +70,14 @@ Color.prototype.asIntegerArray = function () {
  */
 
 Color.prototype.asHexString = function () {
-    return '#' + this.integerArray.map(function (c) {
+  return (
+    '#' +
+    this.integerArray
+      .map(function (c) {
         return (c < 16 ? '0' : '') + c.toString(16);
-    }).join('');
+      })
+      .join('')
+  );
 };
 
 /**
@@ -86,13 +89,15 @@ Color.prototype.asHexString = function () {
  * @return {number[]} the color, as floating-point RGBA values
  */
 Color.prototype.asRGBAArray = function () {
-    return this.integerArray.map(function (c) {
-        return c / 255.0;
-    }).concat([1]);
+  return this.integerArray
+    .map(function (c) {
+      return c / 255.0;
+    })
+    .concat([1]);
 };
 
 Color.prototype.equalTo = function (otherColor) {
-    return this.asHexString() === otherColor.asHexString();
+  return this.asHexString() === otherColor.asHexString();
 };
 
 export default Color;

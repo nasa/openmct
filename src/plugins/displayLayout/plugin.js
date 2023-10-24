@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,111 +20,124 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import mount from 'utils/mount';
+
 import CopyToClipboardAction from './actions/CopyToClipboardAction';
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
-
-import objectUtils from 'objectUtils';
-
-import Vue from 'vue';
+import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
 
 class DisplayLayoutView {
-    constructor(openmct, domainObject, objectPath, options) {
-        this.openmct = openmct;
-        this.domainObject = domainObject;
-        this.objectPath = objectPath;
-        this.options = options;
+  constructor(openmct, domainObject, objectPath, options) {
+    this.openmct = openmct;
+    this.domainObject = domainObject;
+    this.objectPath = objectPath;
+    this.options = options;
 
-        this.component = undefined;
+    this.component = null;
+  }
+
+  show(container, isEditing) {
+    const { vNode, destroy } = mount(
+      {
+        el: container,
+        components: {
+          DisplayLayout
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          options: this.options,
+          currentView: this
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject,
+            isEditing
+          };
+        },
+        template:
+          '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
+      },
+      {
+        app: this.openmct.app,
+        element: container
+      }
+    );
+    this._destroy = destroy;
+    this.component = vNode.componentInstance;
+  }
+
+  getViewContext() {
+    if (!this.component) {
+      return {};
     }
 
-    show(container, isEditing) {
-        this.component = new Vue({
-            el: container,
-            components: {
-                DisplayLayout
-            },
-            provide: {
-                openmct: this.openmct,
-                objectPath: this.objectPath,
-                options: this.options,
-                objectUtils,
-                currentView: this
-            },
-            data: () => {
-                return {
-                    domainObject: this.domainObject,
-                    isEditing
-                };
-            },
-            template: '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
-        });
-    }
+    return this.component.$refs.displayLayout.getViewContext();
+  }
 
-    getViewContext() {
-        if (!this.component) {
-            return {};
-        }
+  getSelectionContext() {
+    return {
+      item: this.domainObject,
+      supportsMultiSelect: true
+    };
+  }
 
-        return this.component.$refs.displayLayout.getViewContext();
+  contextAction() {
+    const action = arguments[0];
+    if (this.component && this.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...Array.from(arguments).splice(1));
     }
+  }
 
-    getSelectionContext() {
-        return {
-            item: this.domainObject,
-            supportsMultiSelect: true,
-            addElement: this.component && this.component.$refs.displayLayout.addElement,
-            removeItem: this.component && this.component.$refs.displayLayout.removeItem,
-            orderItem: this.component && this.component.$refs.displayLayout.orderItem,
-            duplicateItem: this.component && this.component.$refs.displayLayout.duplicateItem,
-            switchViewType: this.component && this.component.$refs.displayLayout.switchViewType,
-            mergeMultipleTelemetryViews: this.component && this.component.$refs.displayLayout.mergeMultipleTelemetryViews,
-            mergeMultipleOverlayPlots: this.component && this.component.$refs.displayLayout.mergeMultipleOverlayPlots,
-            toggleGrid: this.component && this.component.$refs.displayLayout.toggleGrid
-        };
-    }
+  onEditModeChange(isEditing) {
+    this.component.isEditing = isEditing;
+  }
 
-    onEditModeChange(isEditing) {
-        this.component.isEditing = isEditing;
+  destroy() {
+    if (this._destroy) {
+      this._destroy();
+      this.component = undefined;
     }
-
-    destroy() {
-        this.component.$destroy();
-        this.component = undefined;
-    }
+  }
 }
 
 export default function DisplayLayoutPlugin(options) {
-    return function (openmct) {
-        openmct.actions.register(new CopyToClipboardAction(openmct));
+  return function (openmct) {
+    openmct.actions.register(new CopyToClipboardAction(openmct));
 
-        openmct.objectViews.addProvider({
-            key: 'layout.view',
-            canView: function (domainObject) {
-                return domainObject.type === 'layout';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'layout';
-            },
-            view: function (domainObject, objectPath) {
-                return new DisplayLayoutView(openmct, domainObject, objectPath, options);
-            },
-            priority() {
-                return 100;
-            }
-        });
-        openmct.types.addType('layout', DisplayLayoutType());
-        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
-        openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
-        openmct.composition.addPolicy((parent, child) => {
-            if (parent.type === 'layout' && child.type === 'folder') {
-                return false;
-            } else {
-                return true;
-            }
-        });
-        DisplayLayoutPlugin._installed = true;
-    };
+    openmct.objectViews.addProvider({
+      key: 'layout.view',
+      canView: function (domainObject) {
+        return domainObject.type === 'layout';
+      },
+      canEdit: function (domainObject) {
+        return domainObject.type === 'layout';
+      },
+      view: function (domainObject, objectPath) {
+        return new DisplayLayoutView(openmct, domainObject, objectPath, options);
+      },
+      priority() {
+        return 100;
+      }
+    });
+    openmct.types.addType('layout', DisplayLayoutType());
+    openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
+    openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
+    openmct.composition.addPolicy((parent, child) => {
+      if (parent.type === 'layout' && child.type === 'folder') {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    for (const [type, definition] of Object.entries(DisplayLayoutDrawingObjectTypes)) {
+      openmct.types.addType(type, definition);
+    }
+
+    DisplayLayoutPlugin._installed = true;
+  };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,98 +19,97 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("the plugin", () => {
-    let openmct;
-    let newFolderAction;
+describe('the plugin', () => {
+  let openmct;
+  let newFolderAction;
 
+  beforeEach((done) => {
+    openmct = createOpenMct();
+
+    openmct.on('start', done);
+    openmct.startHeadless();
+
+    newFolderAction = openmct.actions._allActions.newFolder;
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('installs the new folder action', () => {
+    expect(newFolderAction).toBeDefined();
+  });
+
+  describe('when invoked', () => {
+    let parentObject;
+    let parentObjectPath;
+    let changedParentObject;
+    let unobserve;
     beforeEach((done) => {
-        openmct = createOpenMct();
+      parentObject = {
+        name: 'mock folder',
+        type: 'folder',
+        identifier: {
+          key: 'mock-folder',
+          namespace: ''
+        },
+        composition: []
+      };
+      parentObjectPath = [parentObject];
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+      spyOn(openmct.objects, 'save');
+      openmct.objects.save.and.callThrough();
 
-        newFolderAction = openmct.actions._allActions.newFolder;
+      spyOn(openmct.forms, 'showForm');
+      openmct.forms.showForm.and.callFake((formStructure) => {
+        return Promise.resolve({
+          name: 'test',
+          notes: 'test notes',
+          location: parentObjectPath
+        });
+      });
+
+      unobserve = openmct.objects.observe(parentObject, '*', (newObject) => {
+        changedParentObject = newObject;
+
+        done();
+      });
+
+      newFolderAction.invoke(parentObjectPath);
     });
-
     afterEach(() => {
-        return resetApplicationState(openmct);
+      unobserve();
     });
 
-    it('installs the new folder action', () => {
-        expect(newFolderAction).toBeDefined();
+    it('creates a new folder object', () => {
+      expect(openmct.objects.save).toHaveBeenCalled();
     });
 
-    describe('when invoked', () => {
-        let parentObject;
-        let parentObjectPath;
-        let changedParentObject;
-        let unobserve;
-        beforeEach((done) => {
-            parentObject = {
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                },
-                composition: []
-            };
-            parentObjectPath = [parentObject];
+    it('adds new folder object to parent composition', () => {
+      const composition = changedParentObject.composition;
 
-            spyOn(openmct.objects, "save");
-            openmct.objects.save.and.callThrough();
-
-            spyOn(openmct.forms, "showForm");
-            openmct.forms.showForm.and.callFake(formStructure => {
-                return Promise.resolve({
-                    name: 'test',
-                    notes: 'test notes',
-                    location: parentObjectPath
-                });
-            });
-
-            unobserve = openmct.objects.observe(parentObject, '*', (newObject) => {
-                changedParentObject = newObject;
-
-                done();
-            });
-
-            newFolderAction.invoke(parentObjectPath);
-        });
-        afterEach(() => {
-            unobserve();
-        });
-
-        it('creates a new folder object', () => {
-            expect(openmct.objects.save).toHaveBeenCalled();
-        });
-
-        it('adds new folder object to parent composition', () => {
-            const composition = changedParentObject.composition;
-
-            expect(composition.length).toBe(1);
-        });
-
-        it('checks if the domainObject is persistable', () => {
-            const mockObjectPath = [{
-                name: 'mock folder',
-                type: 'folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                }
-            }];
-
-            spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
-
-            newFolderAction.appliesTo(mockObjectPath);
-
-            expect(openmct.objects.isPersistable).toHaveBeenCalled();
-        });
+      expect(composition.length).toBe(1);
     });
+
+    it('checks if the domainObject is persistable', () => {
+      const mockObjectPath = [
+        {
+          name: 'mock folder',
+          type: 'folder',
+          identifier: {
+            key: 'mock-folder',
+            namespace: ''
+          }
+        }
+      ];
+
+      spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
+
+      newFolderAction.appliesTo(mockObjectPath);
+
+      expect(openmct.objects.isPersistable).toHaveBeenCalled();
+    });
+  });
 });

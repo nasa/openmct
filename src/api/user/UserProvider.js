@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,17 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 export default class UserProvider {
-    /**
-     * @returns {Promise<User>} A promise that resolves with the currently logged in user
-     */
-    getCurrentUser() {}
-    /**
-     * @returns {Boolean} true if a user is currently logged in, otherwise false
-     */
-    isLoggedIn() {}
-    /**
-    * @param {String} role
-    * @returns {Promise<Boolean>} true if the current user has the given role
-    */
-    hasRole(role) {}
+  /**
+   * @returns {Promise<User>} A promise that resolves with the currently logged in user
+   */
+  getCurrentUser() {}
+  /**
+   * @returns {Boolean} true if a user is currently logged in, otherwise false
+   */
+  isLoggedIn() {}
+  /**
+   * @param {String} role
+   * @returns {Promise<Boolean>} true if the current user has the given role
+   */
+  hasRole(role) {}
 }

@@ -1,38 +1,89 @@
-name: "e2e-couchdb"
+name: 'e2e-couchdb'
 on:
+  push:
+    branches: master
   workflow_dispatch:
   pull_request:
     types:
       - labeled
       - opened
-env:
-  OPENMCT_DATABASE_NAME: openmct
-  COUCH_ADMIN_USER: admin
-  COUCH_ADMIN_PASSWORD: password
-  COUCH_BASE_LOCAL: http://localhost:5984
-  COUCH_NODE_NAME: nonode@nohost
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   e2e-couchdb:
-    if: ${{ github.event.label.name == 'pr:e2e:couchdb' }}
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
-      - run : docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
-      - run : sleep 3 # wait until CouchDB has started (TODO: there must be a better way)
-      - run : bash src/plugins/persistence/couch/setup-couchdb.sh
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
-      - run: npx playwright@1.25.2 install
-      - run: npm install
-      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
-      - run: npm run test:e2e:couchdb
-      - run: ls -latr
+          node-version: 'lts/hydrogen'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      
+      - run: npm install --cache ~/.npm --no-audit --progress=false
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        continue-on-error: true
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - run: npx playwright@1.36.2 install
+
+      - name: Start CouchDB Docker Container and Init with Setup Scripts
+        run: |
+          export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          sleep 3
+          bash src/plugins/persistence/couch/setup-couchdb.sh
+          bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+
+      - name: Run CouchDB Tests and publish to deploysentinel
+        env:
+          DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
+        run: npm run test:e2e:couchdb
+
+      - name: Publish Results to Codecov.io
+        env:
+          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
+        run: npm run cov:e2e:full:publish
+
       - name: Archive test results
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: test-results
+
       - name: Archive html test results
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           path: html-test-results
+
+      - name: Remove pr:e2e:couchdb label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:couchdb';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }

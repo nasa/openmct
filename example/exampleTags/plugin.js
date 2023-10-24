@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import availableTags from './tags.json';
+
 /**
+@typedef {{
+    namespaceToSaveAnnotations: string
+}} TagsPluginOptions
+*/
+
+/**
+ * @typedef {TagsPluginOptions} options
  * @returns {function} The plugin install function
  */
-export default function exampleTagsPlugin() {
-    return function install(openmct) {
-        Object.keys(availableTags.tags).forEach(tagKey => {
-            const tagDefinition = availableTags.tags[tagKey];
-            openmct.annotation.defineTag(tagKey, tagDefinition);
-        });
-    };
+export default function exampleTagsPlugin(options) {
+  return function install(openmct) {
+    if (options?.namespaceToSaveAnnotations) {
+      openmct.annotation.setNamespaceToSaveAnnotations(options?.namespaceToSaveAnnotations);
+    }
+
+    Object.keys(availableTags.tags).forEach((tagKey) => {
+      const tagDefinition = availableTags.tags[tagKey];
+      openmct.annotation.defineTag(tagKey, tagDefinition);
+    });
+  };
 }

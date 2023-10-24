@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,50 +20,55 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementView from './FaultManagementView.vue';
+import mount from 'utils/mount';
+
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
-import Vue from 'vue';
+import FaultManagementView from './FaultManagementView.vue';
 
 export default class FaultManagementViewProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.key = FAULT_MANAGEMENT_VIEW;
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = FAULT_MANAGEMENT_VIEW;
+  }
 
-    canView(domainObject) {
-        return domainObject.type === FAULT_MANAGEMENT_TYPE;
-    }
+  canView(domainObject) {
+    return domainObject.type === FAULT_MANAGEMENT_TYPE;
+  }
 
-    canEdit(domainObject) {
-        return false;
-    }
+  canEdit(domainObject) {
+    return false;
+  }
 
-    view(domainObject) {
-        let component;
-        const openmct = this.openmct;
+  view(domainObject) {
+    const openmct = this.openmct;
+    let _destroy = null;
 
-        return {
-            show: (element) => {
-                component = new Vue({
-                    el: element,
-                    components: {
-                        FaultManagementView
-                    },
-                    provide: {
-                        openmct,
-                        domainObject
-                    },
-                    template: '<FaultManagementView></FaultManagementView>'
-                });
+    return {
+      show: (element) => {
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FaultManagementView
             },
-            destroy: () => {
-                if (!component) {
-                    return;
-                }
-
-                component.$destroy();
-                component = undefined;
-            }
-        };
-    }
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: '<FaultManagementView></FaultManagementView>'
+          },
+          {
+            app: openmct.app,
+            element
+          }
+        );
+        _destroy = destroy;
+      },
+      destroy: () => {
+        if (_destroy) {
+          _destroy();
+        }
+      }
+    };
+  }
 }

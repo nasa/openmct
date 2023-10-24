@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,56 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetCondition'
-], function (
-    SummaryWidgetCondition
-) {
-    function SummaryWidgetRule(definition) {
-        this.name = definition.name;
-        this.label = definition.label;
-        this.id = definition.id;
-        this.icon = definition.icon;
-        this.style = definition.style;
-        this.message = definition.message;
-        this.description = definition.description;
-        this.conditions = definition.conditions.map(function (cDefinition) {
-            return new SummaryWidgetCondition(cDefinition);
-        });
-        this.trigger = definition.trigger;
-    }
+define(['./SummaryWidgetCondition'], function (SummaryWidgetCondition) {
+  function SummaryWidgetRule(definition) {
+    this.name = definition.name;
+    this.label = definition.label;
+    this.id = definition.id;
+    this.icon = definition.icon;
+    this.style = definition.style;
+    this.message = definition.message;
+    this.description = definition.description;
+    this.conditions = definition.conditions.map(function (cDefinition) {
+      return new SummaryWidgetCondition(cDefinition);
+    });
+    this.trigger = definition.trigger;
+  }
 
-    /**
-     * Evaluate the given rule against a telemetryState and return true if it
-     * matches.
-     */
-    SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
-        let i;
-        let result;
+  /**
+   * Evaluate the given rule against a telemetryState and return true if it
+   * matches.
+   */
+  SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
+    let i;
+    let result;
 
-        if (this.trigger === 'all') {
-            for (i = 0; i < this.conditions.length; i++) {
-                result = this.conditions[i].evaluate(telemetryState);
-                if (!result) {
-                    return false;
-                }
-            }
-
-            return true;
-        } else if (this.trigger === 'any') {
-            for (i = 0; i < this.conditions.length; i++) {
-                result = this.conditions[i].evaluate(telemetryState);
-                if (result) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else {
-            throw new Error('Invalid rule trigger: ' + this.trigger);
+    if (this.trigger === 'all') {
+      for (i = 0; i < this.conditions.length; i++) {
+        result = this.conditions[i].evaluate(telemetryState);
+        if (!result) {
+          return false;
         }
-    };
+      }
 
-    return SummaryWidgetRule;
+      return true;
+    } else if (this.trigger === 'any') {
+      for (i = 0; i < this.conditions.length; i++) {
+        result = this.conditions[i].evaluate(telemetryState);
+        if (result) {
+          return true;
+        }
+      }
+
+      return false;
+    } else {
+      throw new Error('Invalid rule trigger: ' + this.trigger);
+    }
+  };
+
+  return SummaryWidgetRule;
 });
-

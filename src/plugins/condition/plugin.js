@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,46 +19,47 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ConditionSetViewProvider from './ConditionSetViewProvider.js';
-import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
-import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
-import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
 import { v4 as uuid } from 'uuid';
 
+import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
+import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
+import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
+import ConditionSetViewProvider from './ConditionSetViewProvider.js';
+
 export default function ConditionPlugin() {
-
-    return function install(openmct) {
-
-        openmct.types.addType('conditionSet', {
-            name: 'Condition Set',
-            key: 'conditionSet',
-            description: 'Monitor and evaluate telemetry values in real-time with a wide variety of criteria. Use to control the styling of many objects in Open MCT.',
-            creatable: true,
-            cssClass: 'icon-conditional',
-            initialize: function (domainObject) {
-                domainObject.configuration = {
-                    conditionTestData: [],
-                    conditionCollection: [{
-                        isDefault: true,
-                        id: uuid(),
-                        configuration: {
-                            name: 'Default',
-                            output: 'Default',
-                            trigger: 'all',
-                            criteria: []
-                        },
-                        summary: 'Default condition'
-                    }]
-                };
-                domainObject.composition = [];
-                domainObject.telemetry = {};
+  return function install(openmct) {
+    openmct.types.addType('conditionSet', {
+      name: 'Condition Set',
+      key: 'conditionSet',
+      description:
+        'Monitor and evaluate telemetry values in real-time with a wide variety of criteria. Use to control the styling of many objects in Open MCT.',
+      creatable: true,
+      cssClass: 'icon-conditional',
+      initialize: function (domainObject) {
+        domainObject.configuration = {
+          conditionTestData: [],
+          conditionCollection: [
+            {
+              isDefault: true,
+              id: uuid(),
+              configuration: {
+                name: 'Default',
+                output: 'Default',
+                trigger: 'all',
+                criteria: []
+              },
+              summary: 'Default condition'
             }
-        });
-        let compositionPolicy = new ConditionSetCompositionPolicy(openmct);
-        openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
-        openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
-        openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
-        openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
-
-    };
+          ]
+        };
+        domainObject.composition = [];
+        domainObject.telemetry = {};
+      }
+    });
+    let compositionPolicy = new ConditionSetCompositionPolicy(openmct);
+    openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
+    openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
+    openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
+    openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
+  };
 }

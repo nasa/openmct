@@ -1,6 +1,6 @@
 /* eslint-disable no-invalid-this */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,76 +21,94 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-describe("The local storage plugin", () => {
-    let space;
-    let openmct;
+describe('The local storage plugin', () => {
+  let space;
+  let openmct;
 
-    beforeEach(() => {
-        space = `test-${Date.now()}`;
-        openmct = createOpenMct();
+  beforeEach(() => {
+    space = `test-${Date.now()}`;
+    openmct = createOpenMct();
 
-        openmct.install(openmct.plugins.LocalStorage('', space));
+    openmct.install(openmct.plugins.LocalStorage('', space));
+  });
 
-    });
+  it('initializes localstorage if not already initialized', () => {
+    const ls = getLocalStorage();
+    expect(ls[space]).toBeDefined();
+  });
 
-    it('initializes localstorage if not already initialized', () => {
-        const ls = getLocalStorage();
-        expect(ls[space]).toBeDefined();
-    });
+  it('successfully persists an object to localstorage', async () => {
+    const domainObject = {
+      identifier: {
+        namespace: '',
+        key: 'test-key'
+      },
+      name: 'A test object'
+    };
+    let spaceAsObject = getSpaceAsObject();
+    expect(spaceAsObject['test-key']).not.toBeDefined();
 
-    it('successfully persists an object to localstorage', async () => {
-        const domainObject = {
-            identifier: {
-                namespace: '',
-                key: 'test-key'
-            },
-            name: 'A test object'
-        };
-        let spaceAsObject = getSpaceAsObject();
-        expect(spaceAsObject['test-key']).not.toBeDefined();
+    await openmct.objects.save(domainObject);
 
-        await openmct.objects.save(domainObject);
+    spaceAsObject = getSpaceAsObject();
+    expect(spaceAsObject['test-key']).toBeDefined();
+  });
 
-        spaceAsObject = getSpaceAsObject();
-        expect(spaceAsObject['test-key']).toBeDefined();
-    });
+  it('successfully retrieves an object from localstorage', async () => {
+    const domainObject = {
+      identifier: {
+        namespace: '',
+        key: 'test-key'
+      },
+      name: 'A test object',
+      anotherProperty: Date.now()
+    };
+    await openmct.objects.save(domainObject);
 
-    it('successfully retrieves an object from localstorage', async () => {
-        const domainObject = {
-            identifier: {
-                namespace: '',
-                key: 'test-key'
-            },
-            name: 'A test object',
-            anotherProperty: Date.now()
-        };
-        await openmct.objects.save(domainObject);
+    let testObject = await openmct.objects.get(domainObject.identifier);
 
-        let testObject = await openmct.objects.get(domainObject.identifier);
+    expect(testObject.name).toEqual(domainObject.name);
+    expect(testObject.anotherProperty).toEqual(domainObject.anotherProperty);
+  });
 
-        expect(testObject.name).toEqual(domainObject.name);
-        expect(testObject.anotherProperty).toEqual(domainObject.anotherProperty);
-    });
+  it('prevents prototype pollution from manipulated localstorage', async () => {
+    spyOn(console, 'warn');
 
-    afterEach(() => {
-        resetApplicationState(openmct);
-        resetLocalStorage();
-    });
+    const identifier = {
+      namespace: '',
+      key: 'test-key'
+    };
 
-    function resetLocalStorage() {
-        delete window.localStorage[space];
-    }
+    const pollutedSpaceString = `{"test-key":{"__proto__":{"toString":"foobar"},"type":"folder","name":"A test object","identifier":{"namespace":"","key":"test-key"}}}`;
+    getLocalStorage()[space] = pollutedSpaceString;
 
-    function getLocalStorage() {
-        return window.localStorage;
-    }
+    let testObject = await openmct.objects.get(identifier);
 
-    function getSpaceAsObject() {
-        return JSON.parse(getLocalStorage()[space]);
-    }
+    const hasPollutedProto =
+      Object.prototype.hasOwnProperty.call(testObject, '__proto__') ||
+      Object.getPrototypeOf(testObject) !== Object.getPrototypeOf({});
+
+    // warning from openmct.objects.get
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(hasPollutedProto).toBeFalse();
+  });
+
+  afterEach(() => {
+    resetApplicationState(openmct);
+    resetLocalStorage();
+  });
+
+  function resetLocalStorage() {
+    delete window.localStorage[space];
+  }
+
+  function getLocalStorage() {
+    return window.localStorage;
+  }
+
+  function getSpaceAsObject() {
+    return JSON.parse(getLocalStorage()[space]);
+  }
 });

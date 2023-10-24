@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,54 +19,52 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
 
-define([
-    './components/GridView.vue',
-    './constants.js',
-    'vue'
-], function (
-    GridViewComponent,
-    constants,
-    Vue
-) {
-    function FolderGridView(openmct) {
-        const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+import GridViewComponent from './components/GridView.vue';
+import { ALLOWED_FOLDER_TYPES } from './constants.js';
 
-        return {
-            key: 'grid',
-            name: 'Grid View',
-            cssClass: 'icon-thumbs-strip',
-            canView: function (domainObject) {
-                return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+export default class FolderGridView {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = 'grid';
+    this.name = 'Grid View';
+    this.cssClass = 'icon-thumbs-strip';
+  }
+  canView(domainObject) {
+    return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+  }
+
+  view(domainObject) {
+    return {
+      show: (element) => {
+        const { destroy } = mount(
+          {
+            components: {
+              GridViewComponent
             },
-            view: function (domainObject) {
-                let component;
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                gridViewComponent: GridViewComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject
-                            },
-                            template: '<grid-view-component></grid-view-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
+            provide: {
+              openmct: this.openmct,
+              domainObject
             },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
+            template: '<GridViewComponent></GridViewComponent>'
+          },
+          {
+            app: this.openmct.app,
+            element
+          }
+        );
+        this._destroy = destroy;
+      },
+      destroy: () => {
+        if (this._destroy) {
+          this._destroy();
+        }
+      }
+    };
+  }
 
-    return FolderGridView;
-});
+  priority() {
+    return 1;
+  }
+}

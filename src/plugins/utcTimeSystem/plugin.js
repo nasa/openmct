@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,21 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import UTCTimeSystem from './UTCTimeSystem';
+import DurationFormat from './DurationFormat';
 import LocalClock from './LocalClock';
 import UTCTimeFormat from './UTCTimeFormat';
-import DurationFormat from './DurationFormat';
+import UTCTimeSystem from './UTCTimeSystem';
 
 /**
  * Install a time system that supports UTC times. It also installs a local
  * clock source that ticks every 100ms, providing UTC times.
  */
 export default function () {
-    return function (openmct) {
-        const timeSystem = new UTCTimeSystem();
-        openmct.time.addTimeSystem(timeSystem);
-        openmct.time.addClock(new LocalClock(100));
-        openmct.telemetry.addFormat(new UTCTimeFormat());
-        openmct.telemetry.addFormat(new DurationFormat());
-    };
+  return function (openmct) {
+    const timeSystem = new UTCTimeSystem();
+    openmct.time.addTimeSystem(timeSystem);
+    openmct.time.addClock(new LocalClock(100));
+    openmct.telemetry.addFormat(new UTCTimeFormat());
+    openmct.telemetry.addFormat(new DurationFormat());
+  };
 }

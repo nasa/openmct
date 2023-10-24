@@ -1,42 +1,48 @@
 .c-telemetry-view {
+  display: flex;
+  align-items: stretch;
+
+  > * {
+    // Label and value holders
+    flex: 1 1 50%;
     display: flex;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    padding: $interiorMargin;
 
     > * {
-        // Label and value holders
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        overflow: hidden;
-        padding: $interiorMargin;
-
-        > * {
-            // Text elements
-            @include ellipsize();
-        }
+      // Text elements
+      @include ellipsize();
     }
+  }
 
-    &__value {
-        @include isLimit();
-    }
+  &__value {
+    @include isLimit();
+  }
 
-    &__label {
-        margin-right: $interiorMargin;
-    }
+  &__label {
+    margin-right: $interiorMargin;
+  }
 
-    .c-frame & {
-        @include abs();
-        border: 1px solid transparent;
+  &.is-stale {
+    .c-telemetry-view__value {
+      @include isStaleElement();
     }
+  }
 
-    .is-status__indicator {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+  .c-frame & {
+    @include abs();
+    border: 1px solid transparent;
+  }
 
-    &[class*='is-status'] {
-        border: $borderMissing;
-    }
+  .is-status__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &[class*='is-status'] {
+    border: $borderMissing;
+  }
 }
