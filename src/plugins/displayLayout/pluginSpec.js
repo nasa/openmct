@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import DisplayLayoutPlugin from './plugin';
 
@@ -163,7 +163,7 @@ describe('the plugin', function () {
       const view = displayLayoutViewProvider.view(displayLayoutItem, displayLayoutItem);
       view.show(child, false);
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
     it('will sync composition and layout items', () => {

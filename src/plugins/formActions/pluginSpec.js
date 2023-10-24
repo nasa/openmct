@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { debounce } from 'lodash';
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 describe('EditPropertiesAction plugin', () => {
   let editPropertiesAction;
@@ -106,7 +106,7 @@ describe('EditPropertiesAction plugin', () => {
         done();
       });
 
-    Vue.nextTick(() => {
+    nextTick(() => {
       const form = document.querySelector('.js-form');
       const title = form.querySelector('input');
       expect(title.value).toEqual(domainObject.name);
@@ -153,7 +153,7 @@ describe('EditPropertiesAction plugin', () => {
 
     editPropertiesAction.invoke([domainObject]);
 
-    Vue.nextTick(() => {
+    nextTick(() => {
       const form = document.querySelector('.js-form');
       const title = form.querySelector('input');
       const notes = form.querySelector('textArea');

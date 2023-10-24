@@ -22,6 +22,7 @@
 <template>
   <div class="c-ctrl-wrapper">
     <div
+      ref="button"
       class="c-icon-button"
       :title="options.title"
       :class="{
