@@ -342,7 +342,7 @@ define([
    *        MCT; if undefined, MCT will be run in the body of the document
    */
   MCT.prototype.start = function (
-    domElement = document.body.firstElementChild,
+    domElement = document.getElementById('openmct-app'),
     isHeadlessMode = false
   ) {
     // Create element to mount Layout if it doesn't exist
