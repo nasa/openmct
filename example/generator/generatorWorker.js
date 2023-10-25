@@ -85,7 +85,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.exceedFloat32
               ),
               wavelengths: wavelengths(),
               intensities: intensities(),
@@ -96,7 +97,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.exceedFloat32
               )
             }
           });
@@ -136,6 +138,7 @@
     var randomness = request.randomness;
     var loadDelay = Math.max(request.loadDelay, 0);
     var infinityValues = request.infinityValues;
+    var exceedFloat32 = request.exceedFloat32;
 
     var step = 1000 / dataRateInHz;
     var nextStep = start - (start % step) + step;
@@ -146,10 +149,28 @@
       data.push({
         utc: nextStep,
         yesterday: nextStep - 60 * 60 * 24 * 1000,
-        sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues),
+        sin: sin(
+          nextStep,
+          period,
+          amplitude,
+          offset,
+          phase,
+          randomness,
+          infinityValues,
+          exceedFloat32
+        ),
         wavelengths: wavelengths(),
         intensities: intensities(),
-        cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues)
+        cos: cos(
+          nextStep,
+          period,
+          amplitude,
+          offset,
+          phase,
+          randomness,
+          infinityValues,
+          exceedFloat32
+        )
       });
     }
 
@@ -176,9 +197,26 @@
     });
   }
 
-  function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
+  function cos(
+    timestamp,
+    period,
+    amplitude,
+    offset,
+    phase,
+    randomness,
+    infinityValues,
+    exceedFloat32
+  ) {
+    if (infinityValues && exceedFloat32) {
+      if (Math.random() > 0.5) {
+        return Number.POSITIVE_INFINITY;
+      } else if (Math.random() < 0.01) {
+        return getRandomFloat32OverflowValue();
+      }
+    } else if (infinityValues && Math.random() > 0.5) {
       return Number.POSITIVE_INFINITY;
+    } else if (exceedFloat32 && Math.random() < 0.01) {
+      return getRandomFloat32OverflowValue();
     }
 
     return (
@@ -188,9 +226,26 @@
     );
   }
 
-  function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
+  function sin(
+    timestamp,
+    period,
+    amplitude,
+    offset,
+    phase,
+    randomness,
+    infinityValues,
+    exceedFloat32
+  ) {
+    if (infinityValues && exceedFloat32) {
+      if (Math.random() > 0.5) {
+        return Number.POSITIVE_INFINITY;
+      } else if (Math.random() < 0.01) {
+        return getRandomFloat32OverflowValue();
+      }
+    } else if (infinityValues && Math.random() > 0.5) {
       return Number.POSITIVE_INFINITY;
+    } else if (exceedFloat32 && Math.random() < 0.01) {
+      return getRandomFloat32OverflowValue();
     }
 
     return (
@@ -198,6 +253,13 @@
       amplitude * Math.random() * randomness +
       offset
     );
+  }
+
+  // Values exceeding float32 range (Positive: 3.4+38, Negative: -3.4+38)
+  function getRandomFloat32OverflowValue() {
+    const sign = Math.random() > 0.5 ? 1 : -1;
+
+    return sign * 3.4e39;
   }
 
   function wavelengths() {
