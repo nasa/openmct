@@ -157,14 +157,19 @@ export default {
     },
     getFilterLabels(filterObject, metadatum) {
       let filterLabels = [];
+
       Object.values(filterObject).forEach((comparator) => {
-        comparator.forEach((filterValue) => {
-          metadatum.filters[0].possibleValues.forEach((option) => {
-            if (option.value === filterValue) {
-              filterLabels.push(option.label);
-            }
+        if (typeof comparator !== 'string') {
+          comparator.forEach((filterValue) => {
+            metadatum.filters[0].possibleValues.forEach((option) => {
+              if (option.value === filterValue) {
+                filterLabels.push(option.label);
+              }
+            });
           });
-        });
+        } else {
+          filterLabels.push(comparator);
+        }
       });
 
       return filterLabels;
