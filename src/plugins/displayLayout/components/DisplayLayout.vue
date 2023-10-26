@@ -191,13 +191,13 @@ export default {
       };
     },
     showMarquee() {
-      let selectionPath = this.selection[0];
-      let singleSelectedLine =
-        this.selection.length === 1 &&
-        selectionPath[0].context.layoutItem &&
-        selectionPath[0].context.layoutItem.type === 'line-view';
+      const layoutItem = this.selection[0]?.[0]?.context?.layoutItem;
+      const isSelectedLayoutItem =
+        layoutItem &&
+        this.layoutItems.some((item) => this.openmct.objects.areIdsEqual(item, layoutItem));
+      const isSingleSelectedLine = this.selection.length === 1 && layoutItem?.type === 'line-view';
 
-      return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
+      return isSelectedLayoutItem && this.isEditing && !isSingleSelectedLine;
     }
   },
   watch: {
