@@ -231,7 +231,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter">
+      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>
