@@ -31,7 +31,6 @@ export default class NicelyCalled {
     }
     this.#element = element;
     this.#isIntersecting = true;
-    console.debug(`🪞 nice visibility created for ${this.#element?.className}`);
 
     this.#observer = new IntersectionObserver(this.#observerCallback);
     this.#observer.observe(this.#element);
@@ -41,13 +40,7 @@ export default class NicelyCalled {
   #observerCallback = ([entry]) => {
     if (entry.target === this.#element) {
       this.#isIntersecting = entry.isIntersecting;
-      console.debug(
-        `🪞 nice visibility changed on ${this.#element?.className}. Visibility: ${
-          this.#isIntersecting
-        }`
-      );
       if (this.#isIntersecting && this.#lastUnfiredFunc) {
-        console.debug(`🪞 flushing our last fire func as we're now visible`);
         window.requestAnimationFrame(this.#lastUnfiredFunc);
         this.#lastUnfiredFunc = null;
       }

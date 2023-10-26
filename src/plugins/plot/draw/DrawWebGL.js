@@ -84,8 +84,8 @@ const VERTEX_SHADER = `
  * @throws {Error} an error is thrown if WebGL is unavailable.
  */
 class DrawWebGL extends EventEmitter {
-  #observer;
   #gl;
+  #lostContextExtension;
   #overlay;
   #c2d;
   #canvas;
@@ -104,29 +104,19 @@ class DrawWebGL extends EventEmitter {
   #uDimensions;
   #uOrigin;
   #uPointSize;
+  #observer;
 
   constructor(canvas, overlay) {
     super();
     this.#canvas = canvas;
-    this.#gl =
-      this.#canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
-      this.#canvas.getContext('experimental-webgl', { preserveDrawingBuffer: true });
-
     this.#overlay = overlay;
-    this.#c2d = this.#overlay.getContext('2d');
-    if (!this.#c2d) {
-      throw new Error('No canvas 2d!');
-    }
-
-    if (!this.#gl) {
-      throw new Error('WebGL unavailable.');
-    }
-
-    this.#initContext();
+    this.#gl = this.#canvas.getContext('webgl', { preserveDrawingBuffer: true });
+    this.#lostContextExtension = this.#gl.getExtension('WEBGL_lose_context');
 
     eventHelpers.extend(this);
 
-    this.listenTo(this.#canvas, 'webglcontextlost', this.onContextLost, this);
+    this.#observer = new IntersectionObserver(this.#intersectionChanged);
+    this.#observer.observe(this.#canvas);
   }
 
   onContextLost() {
@@ -136,11 +126,49 @@ class DrawWebGL extends EventEmitter {
     // TODO re-initialize and re-draw on context restored
   }
 
+  #intersectionChanged = ([entry]) => {
+    if (entry.target === this.#canvas) {
+      const isVisible = entry.isIntersecting;
+      if (isVisible) {
+        this.#initContext();
+      } else if (!isVisible) {
+        // tear it down
+        this.#loseWebGLContext();
+      }
+    }
+  };
+
+  #checkWebGLError() {
+    const error = this.#gl.getError();
+    if (error !== this.#gl.NO_ERROR) {
+      console.error(`🚨 WebGL error ${error}`);
+    }
+  }
+
   #initContext() {
+    console.debug(`🚀 building webgl context`);
+    if (this.#gl.isContextLost()) {
+      this.#lostContextExtension.restoreContext();
+    }
+    this.#checkWebGLError();
+
+    this.#c2d = this.#overlay.getContext('2d');
+    if (!this.#c2d) {
+      throw new Error('No canvas 2d!');
+    }
+    this.#checkWebGLError();
+
+    if (!this.#gl) {
+      throw new Error('WebGL unavailable.');
+    }
+    this.#checkWebGLError();
     // Initialize shaders
     this.#vertexShader = this.#gl.createShader(this.#gl.VERTEX_SHADER);
+    this.#checkWebGLError();
     this.#gl.shaderSource(this.#vertexShader, VERTEX_SHADER);
+    this.#checkWebGLError();
     this.#gl.compileShader(this.#vertexShader);
+    this.#checkWebGLError();
 
     this.#fragmentShader = this.#gl.createShader(this.#gl.FRAGMENT_SHADER);
     this.#gl.shaderSource(this.#fragmentShader, FRAGMENT_SHADER);
@@ -172,10 +200,12 @@ class DrawWebGL extends EventEmitter {
     this.#gl.blendFunc(this.#gl.SRC_ALPHA, this.#gl.ONE_MINUS_SRC_ALPHA);
   }
 
-  destroy() {
+  #loseWebGLContext() {
+    console.debug(`🚮 Trashing web gl context`);
     // Lose the context and delete all associated resources
     // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#lose_contexts_eagerly
-    this.#gl.getExtension('WEBGL_lose_context').loseContext();
+    this.#lostContextExtension.loseContext();
+    this.#isContextLost = true;
     this.#gl.deleteBuffer(this.#buffer);
     this.#buffer = undefined;
     this.#gl.deleteProgram(this.#program);
@@ -184,8 +214,10 @@ class DrawWebGL extends EventEmitter {
     this.#vertexShader = undefined;
     this.#gl.deleteShader(this.#fragmentShader);
     this.#fragmentShader = undefined;
-    this.#gl = undefined;
+  }
 
+  destroy() {
+    this.#loseWebGLContext();
     this.stopListening();
     this.#canvas = undefined;
     this.#overlay = undefined;
