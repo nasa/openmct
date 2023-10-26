@@ -332,7 +332,7 @@
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import {DIAL_VALUE_DEG_OFFSET, getLimitDegree} from '../gauge-limit-util';
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
@@ -402,8 +402,7 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = (this.rangeLow && this.rangeHigh) ?
-        Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length) : CHAR_THRESHOLD;
+      const RANGE_CHARS_MAX = (this.rangeLow && this.rangeHigh) ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length) : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },
@@ -518,7 +517,7 @@ export default {
     },
     timeFormatter() {
       const timeSystem = this.activeTimeSystem;
-      const metadataValue = this.metadata.value(timeSystem.key) || {format: timeSystem.key};
+      const metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
 
       return this.openmct.telemetry.getValueFormatter(metadataValue);
     }
@@ -717,10 +716,7 @@ export default {
         return;
       }
 
-      const {
-        start,
-        end
-      } = this.openmct.time.bounds();
+      const { start, end } = this.openmct.time.bounds();
       const parsedValue = this.timeFormatter.parse(this.datum);
 
       const beforeStartOfBounds = parsedValue < start;
@@ -749,7 +745,7 @@ export default {
       return this.round(((this.rangeHigh - vValue) / (this.rangeHigh - this.rangeLow)) * 100, 2);
     },
     async showToolTip() {
-      const {CENTER} = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      const { CENTER } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(await this.getTelemetryPathString(), CENTER, 'gauge');
     }
   }
