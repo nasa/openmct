@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import utils from 'objectUtils';
 import mount from 'utils/mount';
 
 import CopyToClipboardAction from './actions/CopyToClipboardAction';
@@ -28,6 +29,8 @@ import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
+
+const { identifierEquals } = utils;
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -50,6 +53,7 @@ class DisplayLayoutView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           options: this.options,
+          objectUtils: utils,
           currentView: this
         },
         data: () => {
@@ -85,11 +89,30 @@ class DisplayLayoutView {
     };
   }
 
-  contextAction() {
-    const action = arguments[0];
-    if (this.component && this.component.$refs.displayLayout[action]) {
-      this.component.$refs.displayLayout[action](...Array.from(arguments).splice(1));
+  contextAction(action, context, ...rest) {
+    const selection = rest?.[0];
+    const selectedObject = selection?.[0]?.[0]?.context?.item;
+    if (
+      selectedObject &&
+      (this.objectViewEqualsSelectedObject(selectedObject) ||
+        (selectedObject.type !== 'layout' && this.objectViewContainsSelectedObject(selectedObject)))
+    ) {
+      if (this?.component.$refs.displayLayout[action]) {
+        this.component.$refs.displayLayout[action](context, ...rest);
+      }
     }
+  }
+
+  objectViewEqualsSelectedObject(selectedObject) {
+    return (
+      selectedObject && identifierEquals(this.domainObject.identifier, selectedObject.identifier)
+    );
+  }
+
+  objectViewContainsSelectedObject(selectedObject) {
+    return this.domainObject?.configuration?.items?.some((item) =>
+      identifierEquals(item.identifier, selectedObject.identifier)
+    );
   }
 
   onEditModeChange(isEditing) {

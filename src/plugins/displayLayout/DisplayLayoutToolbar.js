@@ -21,6 +21,18 @@
  *****************************************************************************/
 
 define(['lodash'], function (_) {
+  const CONTEXT_ACTION = 'contextAction';
+  const CONTEXT_ACTIONS = Object.freeze({
+    ADD_ELEMENT: 'addElement',
+    REMOVE_ITEM: 'removeItem',
+    DUPLICATE_ITEM: 'duplicateItem',
+    ORDER_ITEM: 'orderItem',
+    SWITCH_VIEW_TYPE: 'switchViewType',
+    MERGE_MULTIPLE_TELEMETRY_VIEWS: 'mergeMultipleTelemetryViews',
+    MERGE_MULTIPLE_OVERLAY_PLOTS: 'mergeMultipleOverlayPlots',
+    TOGGLE_GRID: 'toggleGrid'
+  });
+
   function DisplayLayoutToolbar(openmct) {
     return {
       name: 'Display Layout Toolbar',
@@ -168,9 +180,14 @@ define(['lodash'], function (_) {
                 let name = option.name.toLowerCase();
                 let form = DIALOG_FORM[name];
                 if (form) {
-                  showForm(form, name, selectionPath);
+                  showForm(form, name, selection);
                 } else {
-                  openmct.objectViews.emit('contextAction', 'addElement', name);
+                  openmct.objectViews.emit(
+                    CONTEXT_ACTION,
+                    CONTEXT_ACTIONS.ADD_ELEMENT,
+                    name,
+                    selection
+                  );
                 }
               },
               key: 'add',
@@ -245,9 +262,10 @@ define(['lodash'], function (_) {
                     emphasis: 'true',
                     callback: function () {
                       openmct.objectViews.emit(
-                        'contextAction',
-                        'removeItem',
-                        getAllTypes(selection)
+                        CONTEXT_ACTION,
+                        CONTEXT_ACTIONS.REMOVE_ITEM,
+                        getAllTypes(selection),
+                        selection
                       );
                       prompt.dismiss();
                     }
@@ -294,8 +312,8 @@ define(['lodash'], function (_) {
             ],
             method: function (option) {
               openmct.objectViews.emit(
-                'contextAction',
-                'orderItem',
+                CONTEXT_ACTION,
+                CONTEXT_ACTIONS.ORDER_ITEM,
                 option.value,
                 getAllTypes(selectedObjects)
               );
@@ -482,7 +500,7 @@ define(['lodash'], function (_) {
             icon: 'icon-duplicate',
             title: 'Duplicate the selected object',
             method: function () {
-              openmct.objectViews.emit('contextAction', 'duplicateItem', selection);
+              openmct.objectViews.emit(CONTEXT_ACTION, CONTEXT_ACTIONS.DUPLICATE_ITEM, selection);
             }
           };
         }
@@ -582,11 +600,11 @@ define(['lodash'], function (_) {
                 options: viewOptions,
                 method: function (option) {
                   openmct.objectViews.emit(
-                    'contextAction',
-                    'switchViewType',
-                    selectedItemContext,
+                    CONTEXT_ACTION,
+                    CONTEXT_ACTIONS.SWITCH_VIEW_TYPE,
                     option.value,
-                    selection
+                    selection,
+                    selectedItemContext
                   );
                 }
               };
@@ -602,8 +620,8 @@ define(['lodash'], function (_) {
                 options: APPLICABLE_VIEWS['telemetry-view-multi'],
                 method: function (option) {
                   openmct.objectViews.emit(
-                    'contextAction',
-                    'mergeMultipleTelemetryViews',
+                    CONTEXT_ACTION,
+                    CONTEXT_ACTIONS.MERGE_MULTIPLE_TELEMETRY_VIEWS,
                     selection,
                     option.value
                   );
@@ -618,8 +636,8 @@ define(['lodash'], function (_) {
                 options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
                 method: function (option) {
                   openmct.objectViews.emit(
-                    'contextAction',
-                    'mergeMultipleOverlayPlots',
+                    CONTEXT_ACTION,
+                    CONTEXT_ACTIONS.MERGE_MULTIPLE_OVERLAY_PLOTS,
                     selection,
                     option.value
                   );
@@ -646,7 +664,7 @@ define(['lodash'], function (_) {
             domainObject: displayLayoutContext.item,
             icon: ICON_GRID_SHOW,
             method: function () {
-              openmct.objectViews.emit('contextAction', 'toggleGrid');
+              openmct.objectViews.emit(CONTEXT_ACTION, CONTEXT_ACTIONS.TOGGLE_GRID);
 
               this.icon = this.icon === ICON_GRID_SHOW ? ICON_GRID_HIDE : ICON_GRID_SHOW;
             },
@@ -670,9 +688,15 @@ define(['lodash'], function (_) {
           );
         }
 
-        function showForm(formStructure, name, selectionPath) {
+        function showForm(formStructure, name, selection) {
           openmct.forms.showForm(formStructure).then((changes) => {
-            openmct.objectViews.emit('contextAction', 'addElement', name, changes);
+            openmct.objectViews.emit(
+              CONTEXT_ACTION,
+              CONTEXT_ACTIONS.ADD_ELEMENT,
+              name,
+              selection,
+              changes
+            );
           });
         }
 

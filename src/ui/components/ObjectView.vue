@@ -34,9 +34,6 @@ import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
-  components: {
-    // IndependentTimeConductor
-  },
   mixins: [stalenessMixin],
   inject: ['openmct'],
   props: {
@@ -473,9 +470,9 @@ export default {
         }
       }
     },
-    performContextAction() {
+    performContextAction(...args) {
       if (this.currentView.contextAction) {
-        this.currentView.contextAction(...arguments);
+        this.currentView.contextAction(...args);
       }
     },
     isEditingAllowed() {
