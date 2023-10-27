@@ -27,13 +27,13 @@
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
-        :key="`limitLabel-${index}`"
+        :key="`limitLabel-${limitLabel.seriesKey}-${index}`"
         :point="limitLabel.point"
         :limit="limitLabel.limit"
       ></limit-label>
       <limit-line
         v-for="(limitLine, index) in visibleLimitLines"
-        :key="`limitLine-${index}`"
+        :key="`limitLine-${limitLine.seriesKey}${index}`"
         :point="limitLine.point"
         :limit="limitLine.limit"
       ></limit-line>
