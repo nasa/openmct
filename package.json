@@ -68,7 +68,7 @@
     "sanitize-html": "2.11.0",
     "sass": "1.68.0",
     "sass-loader": "13.3.2",
-    "sinon": "15.1.0",
+    "sinon": "17.0.0",
     "style-loader": "3.3.3",
     "tiny-emitter": "2.1.0",
     "typescript": "5.2.2",
