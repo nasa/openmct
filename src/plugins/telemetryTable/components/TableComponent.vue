@@ -174,6 +174,7 @@
                 :header-index="headerIndex"
                 :column-width="columnWidths[key]"
                 :is-editing="isEditing"
+                :aria-label="`${headers[key]} filter header`"
                 @resize-column="resizeColumn"
                 @drop-target-offset-changed="setDropTargetOffset"
                 @drop-target-active="dropTargetActive"
@@ -181,9 +182,10 @@
                 @resize-column-end="updateConfiguredColumnWidths"
               >
                 <search
-                  v-model="filters[key]"
+                  :value="filters[key]"
                   class="c-table__search"
-                  @input="filterChanged(key)"
+                  :aria-label="`${key} filter input`"
+                  @input="filterChanged(key, $event)"
                   @clear="clearFilter(key)"
                 >
                   <button
@@ -669,7 +671,8 @@ export default {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
     },
-    filterChanged(columnKey) {
+    filterChanged(columnKey, newFilterValue) {
+      this.filters[columnKey] = newFilterValue;
       if (this.enableRegexSearch[columnKey]) {
         if (this.isCompleteRegex(this.filters[columnKey])) {
           this.table.tableRows.setColumnRegexFilter(
