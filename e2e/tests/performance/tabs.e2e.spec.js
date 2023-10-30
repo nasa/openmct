@@ -20,31 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const {
-  createDomainObjectWithDefaults,
-  setRealTimeMode,
-  setFixedTimeMode
-} = require('../../appActions');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
   test('Renders tabbed elements nicely', async ({ page }) => {
+    // overide console
     // Code to hook into the requestAnimationFrame function and log each call
     let animationCalls = [];
-    await page.exposeFunction('logCall', (call, callCount) => {
-      animationCalls.push(call);
+    await page.exposeFunction('logCall', (callCount) => {
+      animationCalls.push(callCount);
     });
     await page.addInitScript(() => {
       const oldRequestAnimationFrame = window.requestAnimationFrame;
       let callCount = 0;
       window.requestAnimationFrame = function (callback) {
-        const error = new Error();
-        const stack = error.stack.split('\n');
-        const callingFunctionName = stack[2];
-        if (callingFunctionName.includes('NicelyCalled')) {
-          // eslint-disable-next-line no-undef
-          logCall(callingFunctionName, callCount++);
-        }
+        // eslint-disable-next-line no-undef
+        logCall(callCount++);
         return oldRequestAnimationFrame(callback);
       };
     });
@@ -94,19 +86,19 @@ test.describe('Tabs View', () => {
     // now select notebook and clear animation calls
     await page.getByLabel(`${notebook.name} tab`).click();
     animationCalls = [];
-    await setRealTimeMode(page);
     // ensure table header visible
-    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
-      true
-    );
-    // ensure we're not calling animation frames
-    expect(animationCalls.length).toBe(0);
+    expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
+    const notebookAnimationCalls = animationCalls.length;
+    expect(notebookAnimationCalls).toBe(0);
 
     // select sine wave generator and clear animation calls
     animationCalls = [];
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
-    await setFixedTimeMode(page);
+
+    // ensure sine wave generator visible
+    expect(await page.locator('.c-plot').isVisible()).toBe(true);
     // we should be calling animation frames
-    expect(animationCalls.length).toBeGreaterThan(0);
+    const sineWaveAnimationCalls = animationCalls.length;
+    expect(sineWaveAnimationCalls).toBeGreaterThan(1);
   });
 });
