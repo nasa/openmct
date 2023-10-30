@@ -900,7 +900,7 @@ export default {
         throw 'No method identified for domainObject type';
       }
     },
-    switchViewType(viewType, selection, context) {
+    switchViewType(context, viewType, selection) {
       let domainObject = context.item;
       let layoutItem = context.layoutItem;
       let position = [layoutItem.x, layoutItem.y];

@@ -617,9 +617,9 @@ export default function DisplayLayoutToolbar(openmct) {
                 openmct.objectViews.emit(
                   `${CONTEXT_ACTION}:${keyString}`,
                   CONTEXT_ACTIONS.SWITCH_VIEW_TYPE,
+                  selectedItemContext,
                   option.value,
-                  selection,
-                  selectedItemContext
+                  selection
                 );
               }
             };
