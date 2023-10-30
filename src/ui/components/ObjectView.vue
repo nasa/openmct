@@ -472,7 +472,7 @@ export default {
       }
     },
     performContextAction(...args) {
-      if (this.currentView.contextAction) {
+      if (this?.currentView?.contextAction) {
         this.currentView.contextAction(...args);
       }
     },
