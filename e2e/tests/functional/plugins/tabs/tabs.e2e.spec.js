@@ -52,7 +52,9 @@ test.describe('Tabs View', () => {
     // select first tab
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-     expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(true);
+    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
+      true
+    );
 
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
@@ -69,6 +71,8 @@ test.describe('Tabs View', () => {
     // now try to select the first tab again
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(true);
+    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
+      true
+    );
   });
 });
