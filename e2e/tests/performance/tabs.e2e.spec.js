@@ -24,7 +24,7 @@ const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../appAc
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
-  test('Renders tabbed elements', async ({ page }) => {
+  test('Renders tabbed elements nicely', async ({ page }) => {
     // Code to hook into the requestAnimationFrame function and log each call
     let animationCalls = [];
     await page.exposeFunction('logCall', (call, callCount) => {
@@ -71,26 +71,30 @@ test.describe('Tabs View', () => {
     // select first tab
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-    await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
+    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
+      true
+    );
 
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
 
     // ensure notebook visible
-    await page.locator('.c-notebook__drag-area').isVisible();
+    expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
 
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
     // ensure sine wave generator visible
-    await page.locator('.c-telemetry-chart').isVisible();
+    expect(await page.locator('.c-plot').isVisible()).toBe(true);
 
     // now select notebook and clear animation calls
     await page.getByLabel(`${notebook.name} tab`).click();
     animationCalls = [];
     await setRealTimeMode(page);
     // ensure table header visible
-    await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
+    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
+      true
+    );
     // ensure we're not calling animation frames
     expect(animationCalls.length).toBe(0);
 

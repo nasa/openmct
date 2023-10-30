@@ -52,23 +52,23 @@ test.describe('Tabs View', () => {
     // select first tab
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-    await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
+     expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(true);
 
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
 
     // ensure notebook visible
-    await page.locator('.c-notebook__drag-area').isVisible();
+    expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
 
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
-    // ensure sine wave generator visible
-    await page.locator('.c-telemetry-chart').isVisible();
+    // expect sine wave generator visible
+    expect(await page.locator('.c-plot').isVisible()).toBe(true);
 
     // now try to select the first tab again
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-    await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
+    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(true);
   });
 });
