@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
@@ -57,40 +57,38 @@ test.describe('Tabs View', () => {
       type: 'Event Message Generator',
       parent: table.uuid
     });
-    await createDomainObjectWithDefaults(page, {
+    const notebook = await createDomainObjectWithDefaults(page, {
       type: 'Notebook',
       parent: tabsView.uuid
     });
-    await createDomainObjectWithDefaults(page, {
+    const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: tabsView.uuid
     });
+
     page.goto(tabsView.url);
 
-    const tabs = await page.locator('.c-tab').all();
-    // ensure we've got three tabs
-    expect(tabs.length).toBe(3);
-
     // select first tab
-    await tabs[0].click();
+    await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
     await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
 
     // select second tab
-    await tabs[1].click();
+    await page.getByLabel(`${notebook.name} tab`).click();
 
     // ensure notebook visible
     await page.locator('.c-notebook__drag-area').isVisible();
 
     // select third tab
-    await tabs[2].click();
+    await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
     // ensure sine wave generator visible
     await page.locator('.c-telemetry-chart').isVisible();
 
     // now select notebook and clear animation calls
-    await tabs[0].click();
+    await page.getByLabel(`${notebook.name} tab`).click();
     animationCalls = [];
+    await setRealTimeMode(page);
     // ensure table header visible
     await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
     // ensure we're not calling animation frames
@@ -98,7 +96,7 @@ test.describe('Tabs View', () => {
 
     // select sine wave generator and clear animation calls
     animationCalls = [];
-    await tabs[2].click();
+    await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
     // we should be calling animation frames
     expect(animationCalls.length).toBeGreaterThan(0);
   });

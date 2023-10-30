@@ -37,6 +37,7 @@
         v-for="(tab, index) in tabsList"
         :ref="tab.keyString"
         :key="tab.keyString"
+        :aria-label="`${tab.domainObject.name} tab`"
         class="c-tab c-tabs-view__tab js-tab"
         :class="{
           'is-current': isCurrent(tab)

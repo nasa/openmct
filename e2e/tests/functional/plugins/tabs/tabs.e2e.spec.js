@@ -24,7 +24,7 @@ const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Tabs View', () => {
-  test.beforeEach(async ({ page }) => {
+  test('Renders tabbed elements', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     const tabsView = await createDomainObjectWithDefaults(page, {
@@ -38,41 +38,36 @@ test.describe('Tabs View', () => {
       type: 'Event Message Generator',
       parent: table.uuid
     });
-    await createDomainObjectWithDefaults(page, {
+    const notebook = await createDomainObjectWithDefaults(page, {
       type: 'Notebook',
       parent: tabsView.uuid
     });
-    await createDomainObjectWithDefaults(page, {
+    const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: tabsView.uuid
     });
-    page.goto(tabsView.url);
-  });
 
-  test('Renders tabbed elements', async ({ page }) => {
-    const tabs = await page.locator('.c-tab').all();
-    // ensure we've got three tabs
-    expect(tabs.length).toBe(3);
+    page.goto(tabsView.url);
 
     // select first tab
-    await tabs[0].click();
+    await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
     await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
 
     // select second tab
-    await tabs[1].click();
+    await page.getByLabel(`${notebook.name} tab`).click();
 
     // ensure notebook visible
     await page.locator('.c-notebook__drag-area').isVisible();
 
     // select third tab
-    await tabs[2].click();
+    await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
     // ensure sine wave generator visible
     await page.locator('.c-telemetry-chart').isVisible();
 
     // now try to select the first tab again
-    await tabs[0].click();
+    await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
     await page.getByRole('searchbox', { name: 'message filter input' }).isVisible();
   });
