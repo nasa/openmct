@@ -96,6 +96,7 @@ export default {
   emits: ['offsets-updated', 'dismiss-inputs-realtime'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
+    console.log({ timeSystem });
     const durationFormatter = this.getFormatter(
       timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
     );
@@ -218,6 +219,7 @@ export default {
     setCurrentValue(value) {
       this.currentValue = value;
       this.formattedCurrentValue = this.timeFormatter.format(value);
+      console.log('setting current value', this.currentValue, this.formattedCurrentValue);
     },
     setTimeSystem(timeSystem) {
       this.timeSystem = timeSystem;

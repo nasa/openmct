@@ -174,7 +174,12 @@ export default {
 
           // these may not be set due to older configurations
           this.timeOptions.clock = this.timeOptions.clock ?? this.openmct.time.getClock().key;
-          console.log('timeOptions', this.timeOptions.mode);
+          console.log(
+            'timeOptions',
+            this.timeOptions.mode,
+            this.timeOptions.clock,
+            this.openmct.time.getClock().key
+          );
           this.timeOptions.mode = this.timeOptions.mode ?? this.openmct.time.getMode();
           console.log('timeOptionsAfter', this.timeOptions.mode);
 
