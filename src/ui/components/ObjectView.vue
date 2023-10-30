@@ -178,7 +178,9 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
-      this.openmct.objectViews.off('contextAction', this.performContextAction);
+      if (this.contextActionEvent) {
+        this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
+      }
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -298,9 +300,11 @@ export default {
         );
       }
 
-      const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      this.contextActionEvent = `contextAction:${this.openmct.objects.makeKeyString(
+        this.domainObject.identifier
+      )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
-      this.openmct.objectViews.on(`contextAction:${keyString}`, this.performContextAction);
+      this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
