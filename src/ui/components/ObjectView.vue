@@ -298,8 +298,9 @@ export default {
         );
       }
 
+      const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
       this.openmct.objectViews.on('clearData', this.clearData);
-      this.openmct.objectViews.on('contextAction', this.performContextAction);
+      this.openmct.objectViews.on(`contextAction:${keyString}`, this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);

@@ -89,30 +89,10 @@ class DisplayLayoutView {
     };
   }
 
-  contextAction(action, context, ...rest) {
-    const selection = rest?.[0];
-    const selectedObject = selection?.[0]?.[0]?.context?.item;
-    if (
-      selectedObject &&
-      (this.objectViewEqualsSelectedObject(selectedObject) ||
-        (selectedObject.type !== 'layout' && this.objectViewContainsSelectedObject(selectedObject)))
-    ) {
-      if (this?.component.$refs.displayLayout[action]) {
-        this.component.$refs.displayLayout[action](context, ...rest);
-      }
+  contextAction(action, ...rest) {
+    if (this?.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...rest);
     }
-  }
-
-  objectViewEqualsSelectedObject(selectedObject) {
-    return (
-      selectedObject && identifierEquals(this.domainObject.identifier, selectedObject.identifier)
-    );
-  }
-
-  objectViewContainsSelectedObject(selectedObject) {
-    return this.domainObject?.configuration?.items?.some((item) =>
-      identifierEquals(item.identifier, selectedObject.identifier)
-    );
   }
 
   onEditModeChange(isEditing) {

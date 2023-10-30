@@ -173,10 +173,12 @@ export default function DisplayLayoutToolbar(openmct) {
       function getAddButton(selection, selectionPath) {
         if (selection.length === 1) {
           selectionPath = selectionPath || selection[0];
+          const domainObject = selectionPath[0].context.item;
+          const keyString = openmct.objects.makeKeyString(domainObject.identifier);
 
           return {
             control: 'menu',
-            domainObject: selectionPath[0].context.item,
+            domainObject,
             method: function (option) {
               let name = option.name.toLowerCase();
               let form = DIALOG_FORM[name];
@@ -184,7 +186,7 @@ export default function DisplayLayoutToolbar(openmct) {
                 showForm(form, name, selection);
               } else {
                 openmct.objectViews.emit(
-                  CONTEXT_ACTION,
+                  `${CONTEXT_ACTION}:${keyString}`,
                   CONTEXT_ACTIONS.ADD_ELEMENT,
                   name,
                   selection
@@ -248,9 +250,11 @@ export default function DisplayLayoutToolbar(openmct) {
       }
 
       function getRemoveButton(selectedParent, selectionPath, selection) {
+        const domainObject = selectedParent;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
         return {
           control: 'button',
-          domainObject: selectedParent,
+          domainObject,
           icon: 'icon-trash',
           title: 'Delete the selected object',
           method: function () {
@@ -263,7 +267,7 @@ export default function DisplayLayoutToolbar(openmct) {
                   emphasis: 'true',
                   callback: function () {
                     openmct.objectViews.emit(
-                      CONTEXT_ACTION,
+                      `${CONTEXT_ACTION}:${keyString}`,
                       CONTEXT_ACTIONS.REMOVE_ITEM,
                       getAllTypes(selection),
                       selection
@@ -284,9 +288,11 @@ export default function DisplayLayoutToolbar(openmct) {
       }
 
       function getStackOrder(selectedParent, selectionPath) {
+        const domainObject = selectedParent;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
         return {
           control: 'menu',
-          domainObject: selectedParent,
+          domainObject,
           icon: 'icon-layers',
           title: 'Move the selected object above or below other objects',
           options: [
@@ -313,7 +319,7 @@ export default function DisplayLayoutToolbar(openmct) {
           ],
           method: function (option) {
             openmct.objectViews.emit(
-              CONTEXT_ACTION,
+              `${CONTEXT_ACTION}:${keyString}`,
               CONTEXT_ACTIONS.ORDER_ITEM,
               option.value,
               getAllTypes(selectedObjects)
@@ -495,13 +501,19 @@ export default function DisplayLayoutToolbar(openmct) {
       }
 
       function getDuplicateButton(selectedParent, selectionPath, selection) {
+        const domainObject = selectedParent;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
         return {
           control: 'button',
-          domainObject: selectedParent,
+          domainObject,
           icon: 'icon-duplicate',
           title: 'Duplicate the selected object',
           method: function () {
-            openmct.objectViews.emit(CONTEXT_ACTION, CONTEXT_ACTIONS.DUPLICATE_ITEM, selection);
+            openmct.objectViews.emit(
+              `${CONTEXT_ACTION}:${keyString}`,
+              CONTEXT_ACTIONS.DUPLICATE_ITEM,
+              selection
+            );
           }
         };
       }
@@ -592,16 +604,18 @@ export default function DisplayLayoutToolbar(openmct) {
           let viewOptions = APPLICABLE_VIEWS[selectedItemType];
 
           if (viewOptions) {
+            const domainObject = selectedParent;
+            const keyString = openmct.objects.makeKeyString(domainObject.identifier);
             return {
               control: 'menu',
-              domainObject: selectedParent,
+              domainObject,
               icon: 'icon-object',
               title: 'Switch the way this telemetry is displayed',
               label: 'View type',
               options: viewOptions,
               method: function (option) {
                 openmct.objectViews.emit(
-                  CONTEXT_ACTION,
+                  `${CONTEXT_ACTION}:${keyString}`,
                   CONTEXT_ACTIONS.SWITCH_VIEW_TYPE,
                   option.value,
                   selection,
@@ -611,17 +625,19 @@ export default function DisplayLayoutToolbar(openmct) {
             };
           }
         } else if (selection.length > 1) {
+          const domainObject = selectedParent;
+          const keyString = openmct.objects.makeKeyString(domainObject.identifier);
           if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
             return {
               control: 'menu',
-              domainObject: selectedParent,
+              domainObject,
               icon: 'icon-object',
               title: 'Merge into a telemetry table or plot',
               label: 'View type',
               options: APPLICABLE_VIEWS['telemetry-view-multi'],
               method: function (option) {
                 openmct.objectViews.emit(
-                  CONTEXT_ACTION,
+                  `${CONTEXT_ACTION}:${keyString}`,
                   CONTEXT_ACTIONS.MERGE_MULTIPLE_TELEMETRY_VIEWS,
                   selection,
                   option.value
@@ -631,13 +647,13 @@ export default function DisplayLayoutToolbar(openmct) {
           } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
             return {
               control: 'menu',
-              domainObject: selectedParent,
+              domainObject,
               icon: 'icon-object',
               title: 'Merge into a stacked plot',
               options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
               method: function (option) {
                 openmct.objectViews.emit(
-                  CONTEXT_ACTION,
+                  `${CONTEXT_ACTION}:${keyString}`,
                   CONTEXT_ACTIONS.MERGE_MULTIPLE_OVERLAY_PLOTS,
                   selection,
                   option.value
@@ -660,12 +676,15 @@ export default function DisplayLayoutToolbar(openmct) {
           displayLayoutContext = selectionPath[1].context;
         }
 
+        const domainObject = displayLayoutContext.item;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
+
         return {
           control: 'button',
-          domainObject: displayLayoutContext.item,
+          domainObject,
           icon: ICON_GRID_SHOW,
           method: function () {
-            openmct.objectViews.emit(CONTEXT_ACTION, CONTEXT_ACTIONS.TOGGLE_GRID);
+            openmct.objectViews.emit(`${CONTEXT_ACTION}:${keyString}`, CONTEXT_ACTIONS.TOGGLE_GRID);
 
             this.icon = this.icon === ICON_GRID_SHOW ? ICON_GRID_HIDE : ICON_GRID_SHOW;
           },
@@ -688,13 +707,15 @@ export default function DisplayLayoutToolbar(openmct) {
       }
 
       function showForm(formStructure, name, selection) {
+        const domainObject = selection[0][0].context.item;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
         openmct.forms.showForm(formStructure).then((changes) => {
           openmct.objectViews.emit(
-            CONTEXT_ACTION,
+            `${CONTEXT_ACTION}:${keyString}`,
             CONTEXT_ACTIONS.ADD_ELEMENT,
             name,
-            selection,
-            changes
+            changes,
+            selection
           );
         });
       }
