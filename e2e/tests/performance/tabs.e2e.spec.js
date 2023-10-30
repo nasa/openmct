@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  setRealTimeMode,
+  setFixedTimeMode
+} = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
@@ -101,6 +105,7 @@ test.describe('Tabs View', () => {
     // select sine wave generator and clear animation calls
     animationCalls = [];
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
+    await setFixedTimeMode(page);
     // we should be calling animation frames
     expect(animationCalls.length).toBeGreaterThan(0);
   });
