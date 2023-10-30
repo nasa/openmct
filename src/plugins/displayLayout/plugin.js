@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from 'objectUtils';
 import mount from 'utils/mount';
 
 import CopyToClipboardAction from './actions/CopyToClipboardAction';
@@ -29,8 +28,6 @@ import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
-
-const { identifierEquals } = utils;
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -53,7 +50,6 @@ class DisplayLayoutView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           options: this.options,
-          objectUtils: utils,
           currentView: this
         },
         data: () => {
