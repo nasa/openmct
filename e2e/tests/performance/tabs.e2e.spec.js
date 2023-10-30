@@ -25,7 +25,6 @@ const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
   test('Renders tabbed elements nicely', async ({ page }) => {
-    // overide console
     // Code to hook into the requestAnimationFrame function and log each call
     let animationCalls = [];
     await page.exposeFunction('logCall', (callCount) => {
