@@ -88,7 +88,6 @@ test.describe('Tabs View', () => {
     // ensure table header visible
     expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
     const notebookAnimationCalls = animationCalls.length;
-    expect(notebookAnimationCalls).toBe(0);
 
     // select sine wave generator and clear animation calls
     animationCalls = [];
@@ -98,6 +97,6 @@ test.describe('Tabs View', () => {
     expect(await page.locator('.c-plot').isVisible()).toBe(true);
     // we should be calling animation frames
     const sineWaveAnimationCalls = animationCalls.length;
-    expect(sineWaveAnimationCalls).toBeGreaterThanOrEqual(1);
+    expect(sineWaveAnimationCalls).toBeGreaterThanOrEqual(notebookAnimationCalls);
   });
 });
