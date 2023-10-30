@@ -50,6 +50,7 @@
       v-if="showRealtimeInputs"
       class="c-compact-tc__bounds--real-time"
       :object-path="objectPath"
+      input-bounds="viewBounds"
       :read-only="true"
       :compact="true"
     />

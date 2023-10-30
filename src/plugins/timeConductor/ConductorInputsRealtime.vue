@@ -219,7 +219,6 @@ export default {
     setCurrentValue(value) {
       this.currentValue = value;
       this.formattedCurrentValue = this.timeFormatter.format(value);
-      console.log('setting current value', this.currentValue, this.formattedCurrentValue);
     },
     setTimeSystem(timeSystem) {
       this.timeSystem = timeSystem;
