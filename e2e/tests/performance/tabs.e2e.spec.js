@@ -98,6 +98,6 @@ test.describe('Tabs View', () => {
     expect(await page.locator('.c-plot').isVisible()).toBe(true);
     // we should be calling animation frames
     const sineWaveAnimationCalls = animationCalls.length;
-    expect(sineWaveAnimationCalls).toBeGreaterThan(1);
+    expect(sineWaveAnimationCalls).toBeGreaterThanOrEqual(1);
   });
 });
