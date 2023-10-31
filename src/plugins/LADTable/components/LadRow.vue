@@ -90,7 +90,9 @@ export default {
     limitColumnNames: {
       // for ordering
       type: Array,
-      required: true
+      default() {
+        return [];
+      }
     }
   },
   emits: ['row-context-click'],

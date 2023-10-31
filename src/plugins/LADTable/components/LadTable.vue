@@ -95,21 +95,21 @@ export default {
       return itemsWithUnits.length !== 0 && !this.configuration?.hiddenColumns?.units;
     },
     limitColumnNames() {
-      const limitDefintions = [];
+      const limitDefinitions = [];
 
       this.items.forEach((item) => {
         if (item.limitDefinition) {
           const limits = Object.keys(item.limitDefinition);
           limits.forEach((limit) => {
-            const limitAlreadyAdded = limitDefintions.some((limitDef) => limitDef.key === limit);
+            const limitAlreadyAdded = limitDefinitions.some((limitDef) => limitDef.key === limit);
             const limitHidden = this.configuration?.hiddenColumns?.[limit];
             if (!limitAlreadyAdded && !limitHidden) {
-              limitDefintions.push({ label: `Limit ${limit}`, key: limit });
+              limitDefinitions.push({ label: `Limit ${limit}`, key: limit });
             }
           });
         }
       });
-      return limitDefintions;
+      return limitDefinitions;
     },
     showTimestamp() {
       return !this.configuration?.hiddenColumns?.timestamp;
