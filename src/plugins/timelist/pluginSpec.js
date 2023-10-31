@@ -94,13 +94,13 @@ describe('the plugin', function () {
     openmct = createOpenMct({
       timeSystemKey: 'utc',
       bounds: {
-        start: twoHoursPast,
-        end: twoHoursFuture
+        start: twoHoursFuture,
+        end: threeHoursFuture
       }
     });
     openmct.time.setMode(FIXED_MODE_KEY, {
-      start: twoHoursPast,
-      end: twoHoursFuture
+      start: twoHoursFuture,
+      end: threeHoursFuture
     });
     openmct.install(new TimelistPlugin());
 
@@ -224,7 +224,7 @@ describe('the plugin', function () {
 
     it('displays the activities', () => {
       const items = element.querySelectorAll(LIST_ITEM_CLASS);
-      expect(items.length).toEqual(2);
+      expect(items.length).toEqual(1);
     });
 
     it('displays the activity headers', () => {
@@ -239,14 +239,10 @@ describe('the plugin', function () {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
         expect(itemValues.length).toEqual(4);
-        expect(itemValues[3].innerHTML.trim()).toEqual(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
-        );
-        expect(itemValues[0].innerHTML.trim()).toEqual(
-          timeFormatter.format(twoHoursPast, TIME_FORMAT)
-        );
+        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis');
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
         expect(itemValues[1].innerHTML.trim()).toEqual(
-          timeFormatter.format(oneHourPast, TIME_FORMAT)
+          timeFormatter.format(twoHoursFuture, TIME_FORMAT)
         );
 
         done();
@@ -304,7 +300,7 @@ describe('the plugin', function () {
 
       return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(3);
+        expect(items.length).toEqual(2);
       });
     });
   });
@@ -367,9 +363,18 @@ describe('the plugin', function () {
       mockComposition.emit('add', planObject);
 
       return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items[0].end).toEqual(threeHoursFuture);
-        expect(items[1].end).toEqual(twoHoursFuture);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[1].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(threeHoursFuture, TIME_FORMAT)
+        );
+        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
       });
     });
   });
