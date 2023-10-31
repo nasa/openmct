@@ -221,7 +221,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
+      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
