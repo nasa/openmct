@@ -108,8 +108,6 @@ export default {
           });
         }
       });
-
-      console.debug(`📊 Limit column names:`, limitDefintions);
       return limitDefintions;
     },
     showTimestamp() {
@@ -177,8 +175,6 @@ export default {
       item.domainObject = domainObject;
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
       item.limitDefinition = await this.openmct.telemetry.limitDefinition(domainObject).limits();
-
-      console.debug(`📊 Limit definition for ${domainObject.name}:`, item.limitDefinition);
 
       this.items.push(item);
       this.subscribeToStaleness(domainObject);

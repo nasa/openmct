@@ -104,10 +104,17 @@ export default {
     }
   },
   methods: {
-    addItem(domainObject) {
+    async addItem(domainObject) {
       const item = {};
       item.domainObject = domainObject;
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+      item.limitDefinition = await this.openmct.telemetry.limitDefinition(domainObject).limits();
+
+      const metadata = this.openmct.telemetry.getMetadata(domainObject);
+      const valueMetadatas = metadata ? metadata.valueMetadatas : [];
+      const metadataWithUnits = valueMetadatas.filter((metadatum) => metadatum.unit);
+
+      item.shouldShowUnits = metadataWithUnits.length > 0;
 
       this.items.push(item);
 
