@@ -58,23 +58,37 @@ export default {
     const ladTableConfiguration = new LADTableConfiguration(domainObject, this.openmct);
 
     return {
-      headers: {
-        timestamp: 'Timestamp',
-        units: 'Units',
-        type: 'Type'
-      },
       ladTableConfiguration,
       isEditing: this.openmct.editor.isEditing(),
       configuration: ladTableConfiguration.getConfiguration(),
       items: [],
-      ladTableObjects: [],
-      ladTelemetryObjects: {}
+      ladTableObjects: []
     };
+  },
+  computed: {
+    headers() {
+      const fullHeaders = {
+        timestamp: 'Timestamp',
+        type: 'Type'
+      };
+      // check hasUnits and limitColumnName and add then to fullHeaders
+      this.items.forEach((item) => {
+        if (item.hasUnits) {
+          fullHeaders.units = 'Units';
+        }
+        if (item.limitDefinition) {
+          const limits = Object.keys(item.limitDefinition);
+          limits.forEach((limit) => {
+            fullHeaders[limit] = limit;
+          });
+        }
+      });
+      return fullHeaders;
+    }
   },
   mounted() {
     this.openmct.editor.on('isEditing', this.toggleEdit);
     this.composition = this.openmct.composition.get(this.ladTableConfiguration.domainObject);
-    this.shouldShowUnitsCheckbox();
 
     if (this.ladTableConfiguration.domainObject.type === 'LadTable') {
       this.composition.on('add', this.addItem);
@@ -114,19 +128,15 @@ export default {
       const valueMetadatas = metadata ? metadata.valueMetadatas : [];
       const metadataWithUnits = valueMetadatas.filter((metadatum) => metadatum.unit);
 
-      item.shouldShowUnits = metadataWithUnits.length > 0;
+      item.hasUnits = metadataWithUnits.length > 0;
 
       this.items.push(item);
-
-      this.shouldShowUnitsCheckbox();
     },
     removeItem(identifier) {
       const keystring = this.openmct.objects.makeKeyString(identifier);
       const index = this.items.findIndex((item) => keystring === item.key);
 
       this.items.splice(index, 1);
-
-      this.shouldShowUnitsCheckbox();
     },
     addLadTable(domainObject) {
       let ladTable = {};
@@ -137,20 +147,12 @@ export default {
       this.ladTableObjects.push(ladTable);
 
       const composition = this.openmct.composition.get(ladTable.domainObject);
-      const addCallback = this.addTelemetryObject(ladTable);
-      const removeCallback = this.removeTelemetryObject(ladTable);
 
-      composition.on('add', addCallback);
-      composition.on('remove', removeCallback);
       composition.load();
 
       this.compositions.push({
-        composition,
-        addCallback,
-        removeCallback
+        composition
       });
-
-      this.shouldShowUnitsCheckbox();
     },
     removeLadTable(identifier) {
       const index = this.ladTableObjects.findIndex(
@@ -160,36 +162,6 @@ export default {
 
       delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
-
-      this.shouldShowUnitsCheckbox();
-    },
-    addTelemetryObject(ladTable) {
-      return (domainObject) => {
-        const telemetryObject = {};
-        telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-        telemetryObject.domainObject = domainObject;
-
-        const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-        telemetryObjects.push(telemetryObject);
-
-        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
-
-        this.shouldShowUnitsCheckbox();
-      };
-    },
-    removeTelemetryObject(ladTable) {
-      return (identifier) => {
-        const keystring = this.openmct.objects.makeKeyString(identifier);
-        const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-        const index = telemetryObjects.findIndex(
-          (telemetryObject) => keystring === telemetryObject.key
-        );
-
-        telemetryObjects.splice(index, 1);
-        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
-
-        this.shouldShowUnitsCheckbox();
-      };
     },
     combineKeys(ladKey, telemetryObjectKey) {
       return `${ladKey}-${telemetryObjectKey}`;
@@ -202,44 +174,6 @@ export default {
     },
     toggleEdit(isEditing) {
       this.isEditing = isEditing;
-    },
-    shouldShowUnitsCheckbox() {
-      let showUnitsCheckbox = false;
-
-      if (this.ladTableConfiguration?.domainObject) {
-        if (this.ladTableConfiguration.domainObject.type === 'LadTable') {
-          const itemsWithUnits = this.items.filter((item) => {
-            return this.metadataHasUnits(item.domainObject);
-          });
-
-          showUnitsCheckbox = itemsWithUnits.length !== 0;
-        } else {
-          const ladTables = Object.values(this.ladTelemetryObjects);
-
-          for (const ladTable of ladTables) {
-            for (const telemetryObject of ladTable) {
-              if (this.metadataHasUnits(telemetryObject.domainObject)) {
-                showUnitsCheckbox = true;
-              }
-            }
-          }
-        }
-      }
-
-      if (showUnitsCheckbox && this.headers.units === undefined) {
-        this.headers.units = 'Units';
-      }
-
-      if (!showUnitsCheckbox && this.headers?.units) {
-        delete this.headers.units;
-      }
-    },
-    metadataHasUnits(domainObject) {
-      const metadata = this.openmct.telemetry.getMetadata(domainObject);
-      const valueMetadatas = metadata ? metadata.valueMetadatas : [];
-      const metadataWithUnits = valueMetadatas.filter((metadatum) => metadatum.unit);
-
-      return metadataWithUnits.length > 0;
     }
   }
 };

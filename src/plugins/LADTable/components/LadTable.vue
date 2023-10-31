@@ -102,7 +102,8 @@ export default {
           const limits = Object.keys(item.limitDefinition);
           limits.forEach((limit) => {
             const limitAlreadyAdded = limitDefintions.some((limitDef) => limitDef.key === limit);
-            if (!limitAlreadyAdded) {
+            const limitHidden = this.configuration?.hiddenColumns?.[limit];
+            if (!limitAlreadyAdded && !limitHidden) {
               limitDefintions.push({ label: `Limit ${limit}`, key: limit });
             }
           });

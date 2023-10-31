@@ -83,7 +83,9 @@ export default {
     },
     limitDefinition: {
       type: Object,
-      required: true
+      default() {
+        return {};
+      }
     },
     limitColumnNames: {
       // for ordering
@@ -115,7 +117,7 @@ export default {
         return [];
       }
       return this.limitColumnNames.map((column) => {
-        if (this.limitDefinition[column.key]) {
+        if (this.limitDefinition?.[column.key]) {
           const highValue = this.limitDefinition[column.key].high[this.valueKey];
           const lowValue = this.limitDefinition[column.key].low[this.valueKey];
           return {
