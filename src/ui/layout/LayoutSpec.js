@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import Layout from './AppLayout.vue';
 
@@ -48,7 +48,7 @@ describe('Open MCT Layout:', () => {
   describe('the pane:', () => {
     it('is displayed on layout load', async () => {
       await createLayout();
-      await Vue.nextTick();
+      await nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(component.pane).toBeTruthy();
@@ -61,8 +61,8 @@ describe('Open MCT Layout:', () => {
       setHideParams();
 
       await createLayout();
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(isCollapsed(component.pane)).toBeTrue();
@@ -71,9 +71,9 @@ describe('Open MCT Layout:', () => {
 
     it('on toggle collapses if expanded', async () => {
       await createLayout();
-      await Vue.nextTick();
+      await nextTick();
       toggleCollapseButtons();
-      await Vue.nextTick();
+      await nextTick();
 
       Object.entries(components).forEach(([name, component]) => {
         expect(openmct.router.getSearchParam(component.param)).toEqual('true');
@@ -86,7 +86,7 @@ describe('Open MCT Layout:', () => {
       setHideParams();
 
       await createLayout();
-      await Vue.nextTick();
+      await nextTick();
       toggleExpandButtons();
 
       Object.entries(components).forEach(([name, component]) => {

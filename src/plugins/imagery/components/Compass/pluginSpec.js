@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import Compass from './CompassComponent.vue';
 
@@ -27,7 +27,7 @@ const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
 describe('The Compass component', () => {
-  let app;
+  let _destroy;
   let instance;
 
   beforeEach(() => {
@@ -55,7 +55,7 @@ describe('The Compass component', () => {
       }
     };
 
-    app = new Vue({
+    const { vNode, destroy } = mount({
       components: { Compass },
       data() {
         return propsData;
@@ -66,11 +66,12 @@ describe('The Compass component', () => {
                 :sized-image-dimensions="sizedImageDimensions"
             />`
     });
-    instance = app.$mount();
+    _destroy = destroy;
+    instance = vNode.componentInstance;
   });
 
   afterAll(() => {
-    app.$destroy();
+    _destroy();
   });
 
   describe('when a heading value and cameraAngleOfView exists on the image', () => {
