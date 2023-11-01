@@ -30,7 +30,10 @@ const {
   setIndependentTimeConductorBounds
 } = require('../../../../appActions');
 
-const LOCALSTORAGE_PATH = '../../../../test-data/display_layout_with_child_layouts.json';
+const LOCALSTORAGE_PATH = path.resolve(
+  __dirname,
+  '../../../../test-data/display_layout_with_child_layouts.json'
+);
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 
@@ -48,14 +51,7 @@ test.describe('Display Layout Toolbar Actions', () => {
     await page.getByLabel('Edit').click();
   });
   test.use({
-    storageState: {
-      origins: [
-        {
-          origin: 'http://localhost:8080',
-          localStorage: require(path.resolve(__dirname, LOCALSTORAGE_PATH))
-        }
-      ]
-    }
+    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
   });
 
   test('can add/remove Text element to a single layout', async ({ page }) => {
