@@ -592,8 +592,6 @@ export default function DisplayLayoutToolbar(openmct) {
 
       function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
         if (selection.length === 1) {
-          // eslint-disable-next-line no-unused-vars
-          let displayLayoutContext = selectionPath[1].context;
           let selectedItemContext = selectionPath[0].context;
           let selectedItemType = selectedItemContext.item.type;
 
