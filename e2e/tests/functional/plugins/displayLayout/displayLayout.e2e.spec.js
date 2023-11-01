@@ -144,6 +144,10 @@ test.describe('Display Layout Toolbar Actions', () => {
       });
     }
   }
+  test.fixme('Can switch view types of a single SWG in a layout', async ({ page }) => {});
+  test.fixme('Can merge multiple plots in a layout', async ({ page }) => {});
+  test.fixme('Can adjust stack order of a single object in a layout', async ({ page }) => {});
+  test.fixme('Can duplicate a single object in a layout', async ({ page }) => {});
 });
 
 test.describe('Display Layout', () => {
