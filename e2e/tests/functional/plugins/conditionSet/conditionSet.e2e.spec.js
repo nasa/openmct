@@ -50,7 +50,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.resolve(__dirname, '../../../../e2e/test-data/recycled_local_storage.json')
+      path: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
     });
 
     //Set object identifier from url
@@ -63,7 +63,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
   //Load localStorage for subsequent tests
   test.use({
-    storageState: path.resolve(__dirname, '../../../../e2e/test-data/recycled_local_storage.json')
+    storageState: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
   });
 
   //Begin suite of tests again localStorage
