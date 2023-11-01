@@ -63,10 +63,12 @@ export function millisecondsToDHMS(numericDuration) {
   return `${dhms ? '+' : ''} ${dhms}`;
 }
 
-export function getPreciseDuration(value, excludeMilliSeconds) {
+export function getPreciseDuration(value, excludeMilliSeconds, useDayFormat) {
+  let preciseDuration;
   const ms = value || 0;
+
   const duration = [
-    toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
+    Math.floor(normalizeAge(ms / ONE_DAY)),
     toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
     toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
     toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
@@ -74,5 +76,20 @@ export function getPreciseDuration(value, excludeMilliSeconds) {
   if (!excludeMilliSeconds) {
     duration.push(toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND))));
   }
-  return duration.join(':');
+
+  if (useDayFormat) {
+    // Format days as XD
+    const days = duration.shift();
+    if (days > 0) {
+      preciseDuration = `${days}D ${duration.join(':')}`;
+    } else {
+      preciseDuration = duration.join(':');
+    }
+  } else {
+    const days = toDoubleDigits(duration.shift());
+    duration.unshift(days);
+    preciseDuration = duration.join(':');
+  }
+
+  return preciseDuration;
 }

@@ -77,9 +77,9 @@ const headerItems = [
     format: function (value) {
       let result;
       if (value < 0) {
-        result = `+${getPreciseDuration(Math.abs(value), true)}`;
+        result = `+${getPreciseDuration(Math.abs(value), true, true)}`;
       } else if (value > 0) {
-        result = `-${getPreciseDuration(value, true)}`;
+        result = `-${getPreciseDuration(value, true, true)}`;
       } else {
         result = 'Now';
       }
@@ -350,8 +350,10 @@ export default {
     },
     applyStyles(activities) {
       let firstCurrentActivityIndex = -1;
-      let activityClosestToNowIndex = -1;
+      let firstFutureActivityIndex = -1;
       let currentActivitiesCount = 0;
+      let pastActivitiesCount = 0;
+      let futureActivitiesCount = 0;
       const styledActivities = activities.map((activity, index) => {
         if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
           activity.cssClass = CURRENT_CSS_SUFFIX;
@@ -363,11 +365,13 @@ export default {
         } else if (this.timestamp < activity.start) {
           activity.cssClass = FUTURE_CSS_SUFFIX;
           //the index of the first activity that's greater than the current timestamp
-          if (activityClosestToNowIndex < 0) {
-            activityClosestToNowIndex = index;
+          if (firstFutureActivityIndex < 0) {
+            firstFutureActivityIndex = index;
           }
+          futureActivitiesCount = futureActivitiesCount + 1;
         } else {
           activity.cssClass = PAST_CSS_SUFFIX;
+          pastActivitiesCount = pastActivitiesCount + 1;
         }
 
         if (!activity.key) {
@@ -384,9 +388,14 @@ export default {
         return activity;
       });
 
-      this.activityClosestToNowIndex = activityClosestToNowIndex;
-      this.firstCurrentActivityIndex = firstCurrentActivityIndex;
+      if (firstCurrentActivityIndex > -1) {
+        this.firstCurrentOrFutureActivityIndex = firstCurrentActivityIndex;
+      } else if (firstFutureActivityIndex > -1) {
+        this.firstCurrentOrFutureActivityIndex = firstFutureActivityIndex;
+      }
       this.currentActivitiesCount = currentActivitiesCount;
+      this.pastActivitiesCount = pastActivitiesCount;
+      this.futureActivitiesCount = futureActivitiesCount;
 
       return styledActivities;
     },
@@ -401,9 +410,10 @@ export default {
         return;
       }
 
-      this.firstCurrentActivityIndex = -1;
-      this.activityClosestToNowIndex = -1;
+      this.firstCurrentOrFutureActivityIndex = -1;
+      this.pastActivitiesCount = 0;
       this.currentActivitiesCount = 0;
+      this.futureActivitiesCount = 0;
       this.$el.parentElement?.scrollTo({ top: 0 });
       this.autoScrolled = false;
     },
@@ -413,40 +423,47 @@ export default {
         return;
       }
 
-      const row = this.$el.querySelector('.js-list-item');
-      if (row && this.firstCurrentActivityIndex > -1) {
-        // scroll to somewhere mid-way of the current activities
-        const ROW_HEIGHT = row.getBoundingClientRect().height;
+      // See #7167 for scrolling algorithm
+      const scrollTop = this.calculateScrollOffset();
 
-        if (this.canAutoScroll() === false) {
-          return;
-        }
-
-        const scrollOffset =
-          this.currentActivitiesCount > 0 ? Math.floor(this.currentActivitiesCount / 2) : 0;
-        this.$el.parentElement?.scrollTo({
-          top: ROW_HEIGHT * (this.firstCurrentActivityIndex + scrollOffset),
-          behavior: 'smooth'
-        });
-        this.autoScrolled = false;
-      } else if (row && this.activityClosestToNowIndex > -1) {
-        // scroll to somewhere close to 'now'
-
-        const ROW_HEIGHT = row.getBoundingClientRect().height;
-
-        if (this.canAutoScroll() === false) {
-          return;
-        }
-
-        this.$el.parentElement.scrollTo({
-          top: ROW_HEIGHT * (this.activityClosestToNowIndex - 1),
-          behavior: 'smooth'
-        });
-        this.autoScrolled = false;
-      } else {
-        // scroll to the top
+      if (scrollTop === undefined) {
         this.resetScroll();
+      } else {
+        this.$el.parentElement?.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        });
+        this.autoScrolled = false;
       }
+    },
+    calculateScrollOffset() {
+      let scrollTop;
+
+      //No scrolling necessary if no past events are present
+      if (this.pastActivitiesCount > 0) {
+        const row = this.$el.querySelector('.js-list-item');
+        const ROW_HEIGHT = row.getBoundingClientRect().height;
+
+        const maxViewableActivities =
+          Math.floor(this.$el.parentElement.getBoundingClientRect().height / ROW_HEIGHT) - 1;
+
+        const currentAndFutureActivities = this.currentActivitiesCount + this.futureActivitiesCount;
+
+        //If there is more viewable area than all current and future activities combined, then show some past events
+        const numberOfPastEventsToShow = maxViewableActivities - currentAndFutureActivities;
+        if (numberOfPastEventsToShow > 0) {
+          //some past events can be shown - get that scroll index
+          if (this.pastActivitiesCount > numberOfPastEventsToShow) {
+            scrollTop =
+              ROW_HEIGHT * (this.firstCurrentOrFutureActivityIndex + numberOfPastEventsToShow);
+          }
+        } else {
+          // only show current and future events
+          scrollTop = ROW_HEIGHT * this.firstCurrentOrFutureActivityIndex;
+        }
+      }
+
+      return scrollTop;
     },
     deferAutoScroll() {
       //if this is not a user-triggered event, don't defer auto scrolling
