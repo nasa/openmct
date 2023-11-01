@@ -58,92 +58,58 @@ test.describe('Display Layout Toolbar Actions', () => {
     }
   });
 
-  const LAYOUT_OBJECTS = ['Box', 'Ellipse', 'Line', 'Text', 'Image'];
-
-  for (const layoutObject of LAYOUT_OBJECTS) {
-    if (layoutObject === 'Text') {
-      test('can add/remove Text element to a single layout', async ({ page }) => {
-        await test.step("Add and remove text element from the parent's layout", async () => {
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-          await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
-          await page.getByText('OK').click();
-          expect(
-            await page
-              .getByLabel(`Move ${layoutObject} Frame`, {
-                exact: true
-              })
-              .count()
-          ).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-        });
-        await test.step("Add and remove Text element from the child's layout", async () => {
-          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-          await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
-          await page.getByText('OK').click();
-          expect(
-            await page
-              .getByLabel(layoutObject, {
-                exact: true
-              })
-              .count()
-          ).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-        });
-      });
-    } else if (layoutObject === 'Image') {
-      test('can add/remove Image to a single layout', async ({ page }) => {
-        await test.step("Add and remove image element from the parent's layout", async () => {
-          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
-          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-          await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
-          await page.getByText('OK').click();
-          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
-        });
-        await test.step("Add and remove image from the child's layout", async () => {
-          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-          await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
-          await page.getByText('OK').click();
-          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
-        });
-      });
-    } else {
-      test(`can add/remove ${layoutObject} to a single layout`, async ({ page }) => {
-        await test.step("Add and remove shapes from the parent's layout", async () => {
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-          expect(
-            await page
-              .getByLabel(layoutObject, {
-                exact: true
-              })
-              .count()
-          ).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-        });
-        await test.step("Add and remove shapes from the child's layout", async () => {
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-          expect(
-            await page
-              .getByLabel(layoutObject, {
-                exact: true
-              })
-              .count()
-          ).toBe(1);
-          await removeLayoutObject(page, layoutObject);
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-        });
-      });
-    }
-  }
+  test('can add/remove Text element to a single layout', async ({ page }) => {
+    const layoutObject = 'Text';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test('can add/remove Image to a single layout', async ({ page }) => {
+    const layoutObject = 'Image';
+    await test.step("Add and remove image element from the parent's layout", async () => {
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await removeLayoutObject(page, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+    });
+    await test.step("Add and remove image from the child's layout", async () => {
+      await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await removeLayoutObject(page, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+    });
+  });
+  test(`can add/remove Box to a single layout`, async ({ page }) => {
+    const layoutObject = 'Box';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test(`can add/remove Line to a single layout`, async ({ page }) => {
+    const layoutObject = 'Line';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test(`can add/remove Ellipse to a single layout`, async ({ page }) => {
+    const layoutObject = 'Ellipse';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
   test.fixme('Can switch view types of a single SWG in a layout', async ({ page }) => {});
   test.fixme('Can merge multiple plots in a layout', async ({ page }) => {});
   test.fixme('Can adjust stack order of a single object in a layout', async ({ page }) => {});
@@ -461,6 +427,20 @@ test.describe('Display Layout', () => {
   });
 });
 
+async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
+  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await addLayoutObject(page, DISPLAY_LAYOUT_NAME, layoutObject);
+  expect(
+    await page
+      .getByLabel(layoutObject, {
+        exact: true
+      })
+      .count()
+  ).toBe(1);
+  await removeLayoutObject(page, layoutObject);
+  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+}
+
 /**
  * Remove the first matching layout object from the layout
  * @param {import('@playwright/test').Page} page
@@ -485,12 +465,19 @@ async function removeLayoutObject(page, layoutObject) {
  */
 async function addLayoutObject(page, layoutName, layoutObject) {
   await page.getByLabel(`${layoutName} Layout Grid`).click();
-  await page.getByText('Add').click();
+  await page.getByText('Add Drawing Object').click();
   await page
     .getByRole('menuitem', {
       name: layoutObject
     })
     .click();
+  if (layoutObject === 'Text') {
+    await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
+    await page.getByText('OK').click();
+  } else if (layoutObject === 'Image') {
+    await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
+    await page.getByText('OK').click();
+  }
 }
 
 /**
