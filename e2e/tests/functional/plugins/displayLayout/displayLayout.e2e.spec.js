@@ -31,11 +31,12 @@ const {
 } = require('../../../../appActions');
 
 const LOCALSTORAGE_PATH = '../../../../test-data/display_layout_with_child_layouts.json';
+const TINY_IMAGE_BASE64 =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 
 test.describe('Display Layout Toolbar Actions', () => {
   const PARENT_DISPLAY_LAYOUT_NAME = 'Parent Display Layout';
   const CHILD_DISPLAY_LAYOUT_NAME1 = 'Child Layout 1';
-  const CHILD_DISPLAY_LAYOUT_NAME2 = 'Child Layout 2';
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await setRealTimeMode(page);
@@ -57,20 +58,14 @@ test.describe('Display Layout Toolbar Actions', () => {
     }
   });
 
-  const LAYOUT_OBJECTS = ['Box', 'Ellipse', 'Line', 'Text' /*, 'Image'*/];
+  const LAYOUT_OBJECTS = ['Box', 'Ellipse', 'Line', 'Text', 'Image'];
 
   for (const layoutObject of LAYOUT_OBJECTS) {
     if (layoutObject === 'Text') {
-      test('can add/remove Text to a single layout', async ({ page }) => {
+      test('can add/remove Text element to a single layout', async ({ page }) => {
         await test.step("Add and remove text element from the parent's layout", async () => {
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await page.getByLabel(`${PARENT_DISPLAY_LAYOUT_NAME} Layout Grid`).click();
-          await page.getByText('Add').click();
-          await page
-            .getByRole('menuitem', {
-              name: layoutObject
-            })
-            .click();
+          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
           await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
           await page.getByText('OK').click();
           expect(
@@ -80,25 +75,11 @@ test.describe('Display Layout Toolbar Actions', () => {
               })
               .count()
           ).toBe(1);
-          await page
-            .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
-            .or(page.getByLabel(layoutObject, { exact: true }))
-            .first()
-            // eslint-disable-next-line playwright/no-force-option
-            .click({ force: true });
-          await page.getByTitle('Delete the selected object').click();
-          await page.getByRole('button', { name: 'OK' }).click();
+          await removeLayoutObject(page, layoutObject);
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
         });
-        await test.step("Add and remove shapes from the child's layout", async () => {
-          expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await page.getByLabel(`${CHILD_DISPLAY_LAYOUT_NAME1} Layout Grid`).click();
-          await page.getByText('Add').click();
-          await page
-            .getByRole('menuitem', {
-              name: layoutObject
-            })
-            .click();
+        await test.step("Add and remove Text element from the child's layout", async () => {
+          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
           await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
           await page.getByText('OK').click();
           expect(
@@ -108,28 +89,35 @@ test.describe('Display Layout Toolbar Actions', () => {
               })
               .count()
           ).toBe(1);
-          await page
-            .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
-            .or(page.getByLabel(layoutObject, { exact: true }))
-            .first()
-            // eslint-disable-next-line playwright/no-force-option
-            .click({ force: true });
-          await page.getByTitle('Delete the selected object').click();
-          await page.getByRole('button', { name: 'OK' }).click();
+          await removeLayoutObject(page, layoutObject);
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+        });
+      });
+    } else if (layoutObject === 'Image') {
+      test('can add/remove Image to a single layout', async ({ page }) => {
+        await test.step("Add and remove image element from the parent's layout", async () => {
+          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
+          await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
+          await page.getByText('OK').click();
+          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+          await removeLayoutObject(page, layoutObject);
+          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+        });
+        await test.step("Add and remove image from the child's layout", async () => {
+          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
+          await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
+          await page.getByText('OK').click();
+          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+          await removeLayoutObject(page, layoutObject);
+          expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
         });
       });
     } else {
       test(`can add/remove ${layoutObject} to a single layout`, async ({ page }) => {
         await test.step("Add and remove shapes from the parent's layout", async () => {
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await page.getByLabel(`${PARENT_DISPLAY_LAYOUT_NAME} Layout Grid`).click();
-          await page.getByText('Add').click();
-          await page
-            .getByRole('menuitem', {
-              name: layoutObject
-            })
-            .click();
+          await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
           expect(
             await page
               .getByLabel(layoutObject, {
@@ -137,25 +125,12 @@ test.describe('Display Layout Toolbar Actions', () => {
               })
               .count()
           ).toBe(1);
-          await page
-            .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
-            .or(page.getByLabel(layoutObject, { exact: true }))
-            .first()
-            // eslint-disable-next-line playwright/no-force-option
-            .click({ force: true });
-          await page.getByTitle('Delete the selected object').click();
-          await page.getByRole('button', { name: 'OK' }).click();
+          await removeLayoutObject(page, layoutObject);
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
         });
         await test.step("Add and remove shapes from the child's layout", async () => {
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
-          await page.getByLabel(`${CHILD_DISPLAY_LAYOUT_NAME1} Layout Grid`).click();
-          await page.getByText('Add').click();
-          await page
-            .getByRole('menuitem', {
-              name: layoutObject
-            })
-            .click();
+          await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
           expect(
             await page
               .getByLabel(layoutObject, {
@@ -163,14 +138,7 @@ test.describe('Display Layout Toolbar Actions', () => {
               })
               .count()
           ).toBe(1);
-          await page
-            .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
-            .or(page.getByLabel(layoutObject, { exact: true }))
-            .first()
-            // eslint-disable-next-line playwright/no-force-option
-            .click({ force: true });
-          await page.getByTitle('Delete the selected object').click();
-          await page.getByRole('button', { name: 'OK' }).click();
+          await removeLayoutObject(page, layoutObject);
           expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
         });
       });
@@ -488,6 +456,38 @@ test.describe('Display Layout', () => {
     expect(networkRequests.length).toBe(0);
   });
 });
+
+/**
+ * Remove the first matching layout object from the layout
+ * @param {import('@playwright/test').Page} page
+ * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
+ */
+async function removeLayoutObject(page, layoutObject) {
+  await page
+    .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
+    .or(page.getByLabel(layoutObject, { exact: true }))
+    .first()
+    // eslint-disable-next-line playwright/no-force-option
+    .click({ force: true });
+  await page.getByTitle('Delete the selected object').click();
+  await page.getByRole('button', { name: 'OK' }).click();
+}
+
+/**
+ * Add a layout object to the specified layout
+ * @param {import('@playwright/test').Page} page
+ * @param {string} layoutName
+ * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
+ */
+async function addLayoutObject(page, layoutName, layoutObject) {
+  await page.getByLabel(`${layoutName} Layout Grid`).click();
+  await page.getByText('Add').click();
+  await page
+    .getByRole('menuitem', {
+      name: layoutObject
+    })
+    .click();
+}
 
 /**
  * Util for subscribing to a telemetry object by object identifier
