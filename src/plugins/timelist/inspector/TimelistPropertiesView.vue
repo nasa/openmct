@@ -24,7 +24,7 @@
   <div class="c-timelist-properties">
     <div class="c-inspect-properties">
       <ul class="c-inspect-properties__section">
-        <div class="c-inspect-properties_header" title="'Timeframe options'">Timeframe</div>
+        <div class="c-inspect-properties_header" title="'Display options'">Display Options</div>
         <li class="c-inspect-properties__row">
           <div v-if="canEdit" class="c-inspect-properties__hint span-all">
             These settings don't affect the view while editing, but will be applied after editing is
@@ -73,16 +73,8 @@ import Filtering from './FilteringComponent.vue';
 
 const EVENT_TYPES = [
   {
-    label: 'Future Events',
-    prefix: 'futureEvents'
-  },
-  {
     label: 'Current Events',
     prefix: 'currentEvents'
-  },
-  {
-    label: 'Past Events',
-    prefix: 'pastEvents'
   }
 ];
 
