@@ -200,7 +200,7 @@ export default class DisplayLayoutToolbar {
         },
         key: 'add',
         icon: 'icon-plus',
-        label: 'Add',
+        label: 'Add Drawing Object',
         options: [
           {
             name: 'Box',
