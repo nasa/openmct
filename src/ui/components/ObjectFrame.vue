@@ -101,18 +101,11 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { SupportedViewTypes } from '../../utils/constants.js';
 import ObjectView from './ObjectView.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'scatter-plot.view',
-  'time-strip.view',
-  'example.imagery'
-];
 
 export default {
   components: {
