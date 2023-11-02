@@ -195,8 +195,8 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // save and reload and verify they columns are still hidden
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Remove Sin Wave Generator
     openObjectTreeContextMenu(page, sineWaveObject.url);
