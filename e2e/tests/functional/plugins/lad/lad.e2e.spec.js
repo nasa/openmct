@@ -181,7 +181,7 @@ test.describe('Testing LAD table configuration', () => {
     await page.goto(ladTable.url);
 
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByTitle('Edit').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
