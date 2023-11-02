@@ -85,10 +85,9 @@ class DisplayLayoutView {
     };
   }
 
-  contextAction() {
-    const action = arguments[0];
-    if (this.component && this.component.$refs.displayLayout[action]) {
-      this.component.$refs.displayLayout[action](...Array.from(arguments).splice(1));
+  contextAction(action, ...rest) {
+    if (this?.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...rest);
     }
   }
 
