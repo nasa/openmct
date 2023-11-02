@@ -199,7 +199,7 @@ define([
   plugins.FaultManagement = FaultManagementPlugin.default;
   plugins.FormActions = FormActions;
   plugins.FolderView = FolderView.default;
-  plugins.Tabs = Tabs;
+  plugins.Tabs = Tabs.default;
   plugins.FlexibleLayout = FlexibleLayout;
   plugins.LADTable = LADTable.default;
   plugins.Filters = Filters;
