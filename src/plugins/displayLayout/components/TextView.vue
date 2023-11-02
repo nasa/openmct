@@ -35,6 +35,9 @@
         :data-font="item.font"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable text"
+        aria-label="Text"
       >
         <div class="c-text-view__text">{{ item.text }}</div>
       </div>
