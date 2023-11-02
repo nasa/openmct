@@ -80,7 +80,11 @@ export function getValidatedGroups(domainObject, planData) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
   if (sourceMap !== undefined && sourceMap.groupIds !== undefined) {
-    groupIds = json[sourceMap.groupIds];
+    if (typeof groupIds === 'function') {
+      groupIds = sourceMap.groupIds(json);
+    } else {
+      groupIds = json[sourceMap.groupIds];
+    }
   }
   if (groupIds === undefined) {
     groupIds = Object.keys(planData);
