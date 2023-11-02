@@ -22,17 +22,7 @@
 
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
-  const body = domainObject.selectFile?.body;
-  let json = {};
-  if (typeof body === 'string') {
-    try {
-      json = JSON.parse(body);
-    } catch (e) {
-      return json;
-    }
-  } else if (body !== undefined) {
-    json = body;
-  }
+  const json = getObjectJson(domainObject);
 
   if (
     sourceMap !== undefined &&
@@ -67,6 +57,36 @@ export function getValidatedData(domainObject) {
   } else {
     return json;
   }
+}
+
+function getObjectJson(domainObject) {
+  const body = domainObject.selectFile?.body;
+  let json = {};
+  if (typeof body === 'string') {
+    try {
+      json = JSON.parse(body);
+    } catch (e) {
+      return json;
+    }
+  } else if (body !== undefined) {
+    json = body;
+  }
+
+  return json;
+}
+
+export function getValidatedGroups(domainObject, planData) {
+  let groupIds;
+  const sourceMap = domainObject.sourceMap;
+  const json = getObjectJson(domainObject);
+  if (sourceMap !== undefined && sourceMap.groupIds !== undefined) {
+    groupIds = json[sourceMap.groupIds];
+  }
+  if (groupIds === undefined) {
+    groupIds = Object.keys(planData);
+  }
+
+  return groupIds;
 }
 
 export function getContrastingColor(hexColor) {
