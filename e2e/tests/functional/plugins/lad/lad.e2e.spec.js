@@ -181,7 +181,7 @@ test.describe('Testing LAD table configuration', () => {
     await page.goto(ladTable.url);
 
     // Edit LAD table
-    await page.getByTitle('Edit').click();
+    await page.getByLabel('Edit').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
@@ -200,8 +200,8 @@ test.describe('Testing LAD table configuration', () => {
 
     // Remove Sin Wave Generator
     openObjectTreeContextMenu(page, sineWaveObject.url);
-  await page.getByRole('menuitem', { name: /Remove/ }).click();
-  await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('menuitem', { name: /Remove/ }).click();
+    await page.getByRole('button', { name: 'OK' }).click();
 
     // Ensure Units & Limit columns are gone
     // as Event Generator don't have them
