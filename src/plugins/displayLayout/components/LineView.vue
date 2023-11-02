@@ -21,7 +21,14 @@
 -->
 
 <template>
-  <div class="l-layout__frame c-frame no-frame c-line-view" :class="[styleClass]" :style="style">
+  <div
+    class="l-layout__frame c-frame no-frame c-line-view"
+    :class="[styleClass]"
+    :style="style"
+    aria-role="application"
+    aria-roledescription="draggable line"
+    aria-label="Line"
+  >
     <svg width="100%" height="100%">
       <line
         v-bind="linePosition"
