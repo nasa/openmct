@@ -36,6 +36,8 @@
       :grid-size="gridSize"
       :show-grid="showGrid"
       :grid-dimensions="gridDimensions"
+      :aria-label="`${domainObject.name} Layout Grid`"
+      :aria-hidden="showGrid ? 'false' : 'true'"
     />
     <div
       v-if="shouldDisplayLayoutDimensions"
