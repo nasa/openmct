@@ -49,6 +49,7 @@ export default {
       required: true
     }
   },
+  emits: ['change'],
   data() {
     uniqueId++;
 

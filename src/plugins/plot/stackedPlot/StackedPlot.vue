@@ -31,13 +31,14 @@
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
       class="js-stacked-plot-legend"
-      @legendHoverChanged="legendHoverChanged"
+      @legend-hover-changed="legendHoverChanged"
       @expanded="updateExpanded"
       @position="updatePosition"
     />
     <div class="l-view-section">
       <stacked-plot-item
         v-for="objectWrapper in compositionObjects"
+        ref="stackedPlotItems"
         :key="objectWrapper.keyString"
         class="c-plot--stacked-container"
         :child-object="objectWrapper.object"
@@ -48,13 +49,13 @@
         :show-limit-line-labels="showLimitLineLabels"
         :parent-y-tick-width="maxTickWidth"
         :hide-legend="showLegendsForChildren === false"
-        @plotYTickWidth="onYTickWidthChange"
-        @loadingUpdated="loadingUpdated"
-        @cursorGuide="onCursorGuideChange"
-        @gridLines="onGridLinesChange"
-        @lockHighlightPoint="lockHighlightPointUpdated"
+        @plot-y-tick-width="onYTickWidthChange"
+        @loading-updated="loadingUpdated"
+        @cursor-guide="onCursorGuideChange"
+        @grid-lines="onGridLinesChange"
+        @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @configLoaded="configLoadedForObject(objectWrapper.keyString)"
+        @config-loaded="configLoadedForObject(objectWrapper.keyString)"
       />
     </div>
   </div>

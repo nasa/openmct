@@ -50,9 +50,10 @@ export default {
       required: true
     }
   },
+  emits: ['set-view'],
   methods: {
     setView(view) {
-      this.$emit('setView', view);
+      this.$emit('set-view', view);
     },
     showMenu() {
       const elementBoundingClientRect = this.$el.getBoundingClientRect();

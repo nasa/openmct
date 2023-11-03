@@ -71,6 +71,7 @@ export default {
       }
     }
   },
+  emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
       isZoomed: false,

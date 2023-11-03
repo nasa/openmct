@@ -33,7 +33,7 @@ define([
   './ui/registries/ToolbarRegistry',
   './ui/router/ApplicationRouter',
   './ui/router/Browse',
-  './ui/layout/Layout.vue',
+  './ui/layout/AppLayout.vue',
   './ui/preview/plugin',
   './api/Branding',
   './plugins/licenses/plugin',

@@ -73,6 +73,28 @@ describe('The local storage plugin', () => {
     expect(testObject.anotherProperty).toEqual(domainObject.anotherProperty);
   });
 
+  it('prevents prototype pollution from manipulated localstorage', async () => {
+    spyOn(console, 'warn');
+
+    const identifier = {
+      namespace: '',
+      key: 'test-key'
+    };
+
+    const pollutedSpaceString = `{"test-key":{"__proto__":{"toString":"foobar"},"type":"folder","name":"A test object","identifier":{"namespace":"","key":"test-key"}}}`;
+    getLocalStorage()[space] = pollutedSpaceString;
+
+    let testObject = await openmct.objects.get(identifier);
+
+    const hasPollutedProto =
+      Object.prototype.hasOwnProperty.call(testObject, '__proto__') ||
+      Object.getPrototypeOf(testObject) !== Object.getPrototypeOf({});
+
+    // warning from openmct.objects.get
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(hasPollutedProto).toBeFalse();
+  });
+
   afterEach(() => {
     resetApplicationState(openmct);
     resetLocalStorage();

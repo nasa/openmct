@@ -157,11 +157,11 @@
                 :sort-options="sortOptions"
                 :is-editing="isEditing"
                 @sort="allowSorting && sortBy(key)"
-                @resizeColumn="resizeColumn"
-                @dropTargetOffsetChanged="setDropTargetOffset"
-                @dropTargetActive="dropTargetActive"
-                @reorderColumn="reorderColumn"
-                @resizeColumnEnd="updateConfiguredColumnWidths"
+                @resize-column="resizeColumn"
+                @drop-target-offset-changed="setDropTargetOffset"
+                @drop-target-active="dropTargetActive"
+                @reorder-column="reorderColumn"
+                @resize-column-end="updateConfiguredColumnWidths"
               >
                 <span class="c-telemetry-table__headers__label">{{ title }}</span>
               </table-column-header>
@@ -174,11 +174,11 @@
                 :header-index="headerIndex"
                 :column-width="columnWidths[key]"
                 :is-editing="isEditing"
-                @resizeColumn="resizeColumn"
-                @dropTargetOffsetChanged="setDropTargetOffset"
-                @dropTargetActive="dropTargetActive"
-                @reorderColumn="reorderColumn"
-                @resizeColumnEnd="updateConfiguredColumnWidths"
+                @resize-column="resizeColumn"
+                @drop-target-offset-changed="setDropTargetOffset"
+                @drop-target-active="dropTargetActive"
+                @reorder-column="reorderColumn"
+                @resize-column-end="updateConfiguredColumnWidths"
               >
                 <search
                   v-model="filters[key]"
@@ -227,8 +227,8 @@
               :marked="row.marked"
               @mark="markRow"
               @unmark="unmarkRow"
-              @markMultipleConcurrent="markMultipleConcurrentRows"
-              @rowContextClick="updateViewContext"
+              @mark-multiple-concurrent="markMultipleConcurrentRows"
+              @row-context-click="updateViewContext"
             />
           </tbody>
         </table>
@@ -259,7 +259,7 @@
           :column-widths="configuredColumnWidths"
           :row="sizingRowData"
           :object-path="objectPath"
-          @rowContextClick="updateViewContext"
+          @row-context-click="updateViewContext"
         />
       </table>
       <table-footer-indicator
@@ -276,9 +276,11 @@
 import _ from 'lodash';
 import { toRaw } from 'vue';
 
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
-import Search from '../../../ui/components/Search.vue';
+import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
@@ -300,6 +302,7 @@ export default {
     SizingRow,
     ProgressBar
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'objectPath', 'table', 'currentView'],
   props: {
     isEditing: {
@@ -336,6 +339,7 @@ export default {
       default: false
     }
   },
+  emits: ['marked-rows-updated', 'filter'],
   data() {
     let configuration = this.table.configuration.getConfiguration();
 
@@ -370,8 +374,7 @@ export default {
       enableRegexSearch: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
-      rowContext: {},
-      staleObjects: []
+      rowContext: {}
     };
   },
   computed: {
@@ -414,7 +417,7 @@ export default {
         classes.push('is-paused');
       }
 
-      if (this.staleObjects.length !== 0) {
+      if (this.isStale) {
         classes.push('is-stale');
       }
 
@@ -745,17 +748,8 @@ export default {
     outstandingRequests(loading) {
       this.loading = loading;
     },
-    handleStaleness({ keyString, isStale }) {
-      const index = this.staleObjects.indexOf(keyString);
-      if (isStale) {
-        if (index === -1) {
-          this.staleObjects.push(keyString);
-        }
-      } else {
-        if (index !== -1) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
+    handleStaleness({ keyString, stalenessResponse }) {
+      this.addOrRemoveStaleObject(keyString, stalenessResponse);
     },
     calculateTableSize() {
       this.$nextTick().then(this.calculateColumnWidths);

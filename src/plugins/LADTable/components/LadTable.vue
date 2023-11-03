@@ -41,7 +41,7 @@
           :has-units="hasUnits"
           :is-stale="staleObjects.includes(ladRow.key)"
           :configuration="configuration"
-          @rowContextClick="updateViewContext"
+          @row-context-click="updateViewContext"
         />
       </tbody>
     </table>
@@ -49,9 +49,9 @@
 </template>
 
 <script>
-import Vue, { toRaw } from 'vue';
+import { nextTick, toRaw } from 'vue';
 
-import StalenessUtils from '@/utils/staleness';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import LadRow from './LadRow.vue';
 
@@ -59,6 +59,7 @@ export default {
   components: {
     LadRow
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'currentView', 'ladTableConfiguration'],
   props: {
     domainObject: {
@@ -74,7 +75,6 @@ export default {
     return {
       items: [],
       viewContext: {},
-      staleObjects: [],
       configuration: this.ladTableConfiguration.getConfiguration()
     };
   },
@@ -96,11 +96,7 @@ export default {
       return !this.configuration?.hiddenColumns?.type;
     },
     staleClass() {
-      if (this.staleObjects.length !== 0) {
-        return 'is-stale';
-      }
-
-      return '';
+      return this.isStale ? 'is-stale' : '';
     },
     applyLayoutClass() {
       if (this.configuration.isFixedLayout) {
@@ -133,12 +129,16 @@ export default {
     this.composition.on('remove', this.removeItem);
     this.composition.on('reorder', this.reorder);
     this.composition.load();
-    this.stalenessSubscription = {};
-    await Vue.nextTick();
+    await nextTick();
     this.viewActionsCollection = this.openmct.actions.getActionsCollection(
       this.objectPath,
       this.currentView
     );
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
+
     this.initializeViewActions();
   },
   unmounted() {
@@ -147,11 +147,6 @@ export default {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
-
-    Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-      stalenessSubscription.unsubscribe();
-      stalenessSubscription.stalenessUtils.destroy();
-    });
   },
   methods: {
     addItem(domainObject) {
@@ -160,35 +155,16 @@ export default {
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
       this.items.push(item);
-
-      this.stalenessSubscription[item.key] = {};
-      this.stalenessSubscription[item.key].stalenessUtils = new StalenessUtils(
-        this.openmct,
-        domainObject
-      );
-      this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(item.key, stalenessResponse);
-        }
-      });
-      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-        domainObject,
-        (stalenessResponse) => {
-          this.handleStaleness(item.key, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[item.key].unsubscribe = stalenessSubscription;
+      this.subscribeToStaleness(domainObject);
     },
     removeItem(identifier) {
-      const SKIP_CHECK = true;
       const keystring = this.openmct.objects.makeKeyString(identifier);
-      const index = this.items.findIndex((item) => keystring === item.key);
 
+      const index = this.items.findIndex((item) => keystring === item.key);
       this.items.splice(index, 1);
 
-      this.stalenessSubscription[keystring].unsubscribe();
-      this.handleStaleness(keystring, { isStale: false }, SKIP_CHECK);
+      const domainObject = this.openmct.objects.get(keystring);
+      this.triggerUnsubscribeFromStaleness(domainObject);
     },
     reorder(reorderPlan) {
       const oldItems = this.items.slice();
@@ -203,23 +179,6 @@ export default {
     },
     handleConfigurationChange(configuration) {
       this.configuration = configuration;
-    },
-    handleStaleness(id, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)
-      ) {
-        const index = this.staleObjects.indexOf(id);
-        if (stalenessResponse.isStale) {
-          if (index === -1) {
-            this.staleObjects.push(id);
-          }
-        } else {
-          if (index !== -1) {
-            this.staleObjects.splice(index, 1);
-          }
-        }
-      }
     },
     updateViewContext(rowContext) {
       this.viewContext.row = rowContext;

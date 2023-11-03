@@ -28,7 +28,7 @@
         :object-path="recentObject.objectPath"
         :navigation-path="recentObject.navigationPath"
         :domain-object="recentObject.domainObject"
-        @openAndScrollTo="openAndScrollTo($event)"
+        @open-and-scroll-to="openAndScrollTo($event)"
       />
     </ul>
   </div>
@@ -45,6 +45,7 @@ export default {
   },
   inject: ['openmct'],
   props: {},
+  emits: ['open-and-scroll-to', 'set-clear-button-disabled'],
   data() {
     return {
       recents: []
@@ -235,7 +236,7 @@ export default {
       }
     },
     openAndScrollTo(navigationPath) {
-      this.$emit('openAndScrollTo', navigationPath);
+      this.$emit('open-and-scroll-to', navigationPath);
     },
     /**
      * Saves the Recent Objects list to localStorage.
@@ -244,7 +245,7 @@ export default {
       localStorage.setItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS, JSON.stringify(this.recents));
       // send event to parent for enabled button
       if (this.recents.length === 1) {
-        this.$emit('setClearButtonDisabled', false);
+        this.$emit('set-clear-button-disabled', false);
       }
     },
     /**
@@ -279,7 +280,7 @@ export default {
               });
               this.recents = [];
               dialog.dismiss();
-              this.$emit('setClearButtonDisabled', true);
+              this.$emit('set-clear-button-disabled', true);
             }
           },
           {
