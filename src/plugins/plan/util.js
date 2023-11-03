@@ -80,12 +80,17 @@ export function getValidatedGroups(domainObject, planData) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
   if (sourceMap !== undefined && sourceMap.groupIds !== undefined) {
-    if (typeof sourceMap.groupIds === 'function') {
-      groupIds = sourceMap.groupIds(json);
+    const groups = json[sourceMap.groupIds];
+    if (groups.length && typeof groups[0] === 'object') {
+      const groupsWithNames = groups.filter(
+        (groupObj) => groupObj.name !== undefined && groupObj.name !== ''
+      );
+      groupIds = groupsWithNames.map((groupObj) => groupObj.name);
     } else {
-      groupIds = json[sourceMap.groupIds];
+      groupIds = groups;
     }
   }
+
   if (groupIds === undefined) {
     groupIds = Object.keys(planData);
   }
