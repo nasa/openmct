@@ -41,7 +41,7 @@ export default function plugin(options) {
         {
           key: 'keep_alive',
           name: 'Eager Load Tabs',
-          control: 'select',
+          control: 'toggleSwitch',
           options: [
             {
               name: 'True',
