@@ -287,6 +287,9 @@ export default {
       let activities = [];
 
       groups.forEach((key) => {
+        if (this.planData[key] === undefined) {
+          return;
+        }
         // Create new objects so Vue 3 can detect any changes
         activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
       });

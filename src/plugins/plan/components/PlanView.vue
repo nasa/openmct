@@ -430,6 +430,10 @@ export default {
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
+        if (rawActivities === undefined) {
+          return;
+        }
+
         rawActivities.forEach((rawActivity) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
