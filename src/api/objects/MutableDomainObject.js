@@ -129,7 +129,7 @@ class MutableDomainObject {
     this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
 
     //Emit wildcard event, with path so that callback knows what changed
-    this._globalEventEmitter.emit(qualifiedEventName(this, '*'), model);
+    this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this);
   }
 
   $on(event, callback) {

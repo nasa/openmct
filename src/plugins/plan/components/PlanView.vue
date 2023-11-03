@@ -259,8 +259,7 @@ export default {
 
       this.setScaleAndGenerateActivities();
     },
-    handleSelectFileChange(domainObject) {
-      this.domainObject = domainObject;
+    handleSelectFileChange() {
       this.planData = getValidatedData(this.domainObject);
       this.setScaleAndGenerateActivities();
     },
