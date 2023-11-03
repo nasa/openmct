@@ -22,8 +22,10 @@
 
 import Tabs from './tabs';
 
-export default function plugin() {
+export default function plugin(options) {
   return function install(openmct) {
+    const eagerLoad = options?.eagerLoad ?? false;
+
     openmct.objectViews.addProvider(new Tabs(openmct));
 
     openmct.types.addType('tabs', {
@@ -33,7 +35,7 @@ export default function plugin() {
       cssClass: 'icon-tabs-view',
       initialize(domainObject) {
         domainObject.composition = [];
-        domainObject.keep_alive = false;
+        domainObject.keep_alive = eagerLoad;
       },
       form: [
         {
