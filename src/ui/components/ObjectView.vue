@@ -34,9 +34,6 @@ import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 export default {
-  components: {
-    // IndependentTimeConductor
-  },
   mixins: [stalenessMixin],
   inject: ['openmct'],
   props: {
@@ -181,7 +178,9 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
-      this.openmct.objectViews.off('contextAction', this.performContextAction);
+      if (this.contextActionEvent) {
+        this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
+      }
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -301,8 +300,11 @@ export default {
         );
       }
 
+      this.contextActionEvent = `contextAction:${this.openmct.objects.makeKeyString(
+        this.domainObject.identifier
+      )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
-      this.openmct.objectViews.on('contextAction', this.performContextAction);
+      this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -473,9 +475,9 @@ export default {
         }
       }
     },
-    performContextAction() {
-      if (this.currentView.contextAction) {
-        this.currentView.contextAction(...arguments);
+    performContextAction(...args) {
+      if (this?.currentView?.contextAction) {
+        this.currentView.contextAction(...args);
       }
     },
     isEditingAllowed() {

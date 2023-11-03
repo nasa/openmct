@@ -33,6 +33,9 @@
         class="c-box-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable box"
+        aria-label="Box"
       ></div>
     </template>
   </layout-frame>

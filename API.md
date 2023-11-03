@@ -590,35 +590,108 @@ MinMax queries are issued by plots, and may be issued by other types as well.  T
 #### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data.
-They have a simple structure:
+They have a simple structure, provided here as a TypeScript interface:
 
-- `key`: A `string` that uniquely identifies this formatter.
-- `format`: A `function` that takes a raw telemetry value, and returns a
-  human-readable `string` representation of that value. It has one required
-  argument, and three optional arguments that provide context and can be used
-  for returning scaled representations of a value. An example of this is
-  representing time values in a scale such as the time conductor scale. There
-  are multiple ways of representing a point in time, and by providing a minimum
-  scale value, maximum scale value, and a count, it's possible to provide more
-  useful representations of time given the provided limitations.  
-  - `value`: The raw telemetry value in its native type.
-  - `minValue`: An **optional** argument specifying the minimum displayed
-      value.
-  - `maxValue`: An **optional** argument specifying the maximum displayed
-      value.
-  - `count`: An **optional** argument specifying the number of displayed
-      values.
-- `parse`: A `function` that takes a `string` representation of a telemetry
-  value, and returns the value in its native type. **Note** parse might receive an already-parsed value.  This function should be idempotent.
-- `validate`: A `function` that takes a `string` representation of a telemetry
-  value, and returns a `boolean` value indicating whether the provided string
-  can be parsed.
+```ts
+interface Formatter {
+    key: string; // A string that uniquely identifies this formatter.
+
+    format: (
+        value: any, // The raw telemetry value in its native type.
+        minValue?: number, // An optional argument specifying the minimum displayed value.
+        maxValue?: number, // An optional argument specifying the maximum displayed value.
+        count?: number // An optional argument specifying the number of displayed values.
+    ) => string; // Returns a human-readable string representation of the provided value.
+
+    parse: (
+        value: string | any // A string representation of a telemetry value or an already-parsed value.
+    ) => any; // Returns the value in its native type. This function should be idempotent.
+
+    validate: (value: string) => boolean; // Takes a string representation of a telemetry value and returns a boolean indicating whether the provided string can be parsed.
+}
+```
+
+##### Built-in Formats
+
+Open MCT on its own defines a handful of built-in formats:
+
+###### **Number Format (default):** 
+
+Applied to data with `format: 'number'`
+```js
+valueMetadata = {
+    format: 'number'
+    // ...
+};
+```
+
+```ts
+interface NumberFormatter extends Formatter {
+    parse: (x: any) => number;
+    format: (x: number) => string;
+    validate: (value: any) => boolean;
+}
+```
+###### **String Format**:
+
+Applied to data with `format: 'string'`
+```js
+valueMetadata = {
+    format: 'string'
+    // ...
+};
+```
+```ts
+interface StringFormatter extends Formatter {
+    parse: (value: any) => string;
+    format: (value: string) => string;
+    validate: (value: any) => boolean;
+}
+```
+
+###### **Enum Format**:
+Applied to data with `format: 'enum'`
+```js
+valueMetadata = {
+    format: 'enum',
+    enumerations: [
+    {
+        value: 1,
+        string: 'APPLE'
+    }, 
+    {
+        value: 2,
+        string: 'PEAR',
+    },
+    {
+        value: 3,
+        string: 'ORANGE'
+    }]
+    // ...
+};
+```
+
+Creates a two-way mapping between enum string and value to be used in the `parse` and `format` methods.
+Ex:
+- `formatter.parse('APPLE') === 1;`
+- `formatter.format(1) === 'APPLE';`
+
+```ts
+interface EnumFormatter extends Formatter {
+    parse: (value: string) => string;
+    format: (value: number) => string;
+    validate: (value: any) => boolean;
+}
+```
 
 ##### Registering Formats
 
+Formats implement the following interface (provided here as TypeScript for simplicity):
+
+
 Formats are registered with the Telemetry API using the `addFormat` function. eg.
 
-``` javascript
+```javascript
 openmct.telemetry.addFormat({
     key: 'number-to-string',
     format: function (number) {
