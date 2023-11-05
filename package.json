@@ -8,7 +8,7 @@
     "@deploysentinel/playwright": "0.3.4",
     "@percy/cli": "1.26.0",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.36.2",
+    "@playwright/test": "1.39.0",
     "@types/eventemitter3": "1.2.0",
     "@types/jasmine": "4.3.4",
     "@types/lodash": "4.14.192",
