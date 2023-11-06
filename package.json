@@ -72,7 +72,7 @@
     "style-loader": "3.3.3",
     "tiny-emitter": "2.1.0",
     "typescript": "5.2.2",
-    "uuid": "9.0.0",
+    "uuid": "9.0.1",
     "vue": "3.3.4",
     "vue-eslint-parser": "9.3.2",
     "vue-loader": "16.8.3",
