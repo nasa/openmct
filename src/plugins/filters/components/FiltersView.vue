@@ -42,6 +42,7 @@
 
 <script>
 import _ from 'lodash';
+import { toRaw } from 'vue';
 
 import FilterObject from './FilterObject.vue';
 import GlobalFilters from './GlobalFilters.vue';
@@ -267,14 +268,14 @@ export default {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.filters',
-        this.persistedFilters
+        toRaw(this.persistedFilters)
       );
     },
     mutateConfigurationGlobalFilters() {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.globalFilters',
-        this.globalFilters
+        toRaw(this.globalFilters)
       );
     }
   }
