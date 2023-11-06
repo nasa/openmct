@@ -133,4 +133,24 @@ test.describe('Gauge', () => {
 
     // TODO: Verify changes in the UI
   });
+
+  test('Gauge does not display NaN when data not available', async ({ page }) => {
+    // Create a Gauge
+    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('menuitem', { name: ' Gauge' }).click();
+    await page.getByLabel('Save').click(); // Save button in Create dialog
+    await page.getByLabel('Save').click(); // Save button in edit mode
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Create a Sine Wave Generator in the Gauge with a loading delay
+    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('menuitem', { name: ' Sine Wave Generator' }).click();
+    await page.getByRole('dialog').locator('div').filter({ hasText: 'Loading Delay (ms)' }).nth(3).click();
+    await page.getByLabel('Loading Delay (ms)').fill('5000');
+    await page.getByLabel('Save').click();
+    await page.getByLabel('Expand My Items folder').click();
+    await page.getByRole('treeitem', { name: 'Expand Unnamed Gauge gauge  Unnamed Gauge' }).locator('a').click();
+    const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
+    expect(gaugeNoDataText).toBe('--');
+  });
 });
