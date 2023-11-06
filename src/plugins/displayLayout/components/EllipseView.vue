@@ -33,6 +33,9 @@
         class="c-ellipse-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable ellipse"
+        aria-label="Ellipse"
       ></div>
     </template>
   </layout-frame>
