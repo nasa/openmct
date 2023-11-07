@@ -73,7 +73,7 @@
     "tiny-emitter": "2.1.0",
     "typescript": "5.2.2",
     "uuid": "9.0.1",
-    "vue": "3.3.4",
+    "vue": "3.3.8",
     "vue-eslint-parser": "9.3.2",
     "vue-loader": "16.8.3",
     "webpack": "5.88.0",
