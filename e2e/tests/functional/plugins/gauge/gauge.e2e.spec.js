@@ -135,12 +135,7 @@ test.describe('Gauge', () => {
   });
 
   test('Gauge does not display NaN when data not available', async ({ page }) => {
-    // Create a Gauge
-    await page.getByRole('button', { name: ' Create ' }).click();
-    await page.getByRole('menuitem', { name: ' Gauge' }).click();
-    await page.getByLabel('Save').click(); // Save button in Create dialog
-    await page.getByLabel('Save').click(); // Save button in edit mode
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge', name: 'Unnamed Gauge' });
 
     // Create a Sine Wave Generator in the Gauge with a loading delay
     await page.getByRole('button', { name: ' Create ' }).click();
