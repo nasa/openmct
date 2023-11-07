@@ -27,14 +27,15 @@ const {
 } = require('../../helper/planningUtils');
 const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+const VISUAL_FIXED_URL = require('../../constants').VISUAL_FIXED_URL;
 const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
+const { MISSION_TIME } = require('../../constants');
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Plan View', async ({ page, theme }) => {
@@ -54,7 +55,7 @@ test.describe('Visual - Planning', () => {
       name: 'Plan Visual Test (Draft)',
       json: examplePlanSmall
     });
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
@@ -90,10 +91,42 @@ test.describe('Visual - Planning', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
+      scope: snapshotScope
+    });
+  });
+});
+
+test.describe('Timelist', () => {
+  test.use({
+    overrideClock: true,
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+  test('Timelist', async ({ page, theme }) => {
+    const timelist = await createDomainObjectWithDefaults(page, {
+      type: 'Time List',
+      name: 'Time List Visual Test'
+    });
+    const plan = await createPlanFromJSON(page, {
+      json: examplePlanSmall,
+      parent: timelist.uuid
+    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
+    await page.goto(timelist.url);
+    await percySnapshot(page, `Timelist Countdown 1 (theme: ${theme})`, {
+      scope: snapshotScope
+    });
+    await page.waitForTimeout(1000);
+    await percySnapshot(page, `Timelist Countdown 2 (theme: ${theme})`, {
       scope: snapshotScope
     });
   });

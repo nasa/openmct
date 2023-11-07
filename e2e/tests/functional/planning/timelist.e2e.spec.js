@@ -69,6 +69,7 @@ const testPlan = {
 };
 
 test.describe('Time List', () => {
+  // the first time modifying test -- watch Terminator
   test('Create a Time List, add a single Plan to it and verify all the activities are displayed with no milliseconds', async ({
     page
   }) => {
@@ -84,21 +85,16 @@ test.describe('Time List', () => {
     });
 
     await test.step('Create a Plan and add it to the timelist', async () => {
-      const createdPlan = await createPlanFromJSON(page, {
+      await createPlanFromJSON(page, {
         name: 'Test Plan',
-        json: testPlan
+        json: testPlan,
+        parent: timelist.uuid
       });
 
       await page.goto(timelist.url);
-      // Expand the tree to show the plan
-      await page.click("button[title='Show selected item in tree']");
-      await page.dragAndDrop(`role=treeitem[name=/${createdPlan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
+
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
-
-      await page.goto(timelist.url);
 
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
