@@ -21,18 +21,62 @@
  *****************************************************************************/
 
 const { test } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const {
+  expandTreePaneItemByName,
+  createDomainObjectWithDefaults
+} = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
+// const treePane = "[role=tree][aria-label='Main Tree']";
 
 test.describe('Visual - Display Layout', () => {
-  test.beforeEach(async ({ page }) => {
+  test('Edit Marquee', async ({ page, theme, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-  });
 
-  test('Edit Marquee', async ({ page, theme }) => {
+    //Open Tree
+    await page.getByRole('button', { name: 'Browse' }).click();
 
+    const parentLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Parent Layout'
+    });
+
+    const child1Layout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child 1 Layout'
+    });
+
+    const child2Layout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child 2 Layout'
+    });
+
+    const swg1 = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'SWG 1'
+    });
+
+    const swg2 = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'SWG 2'
+    });
+
+    await expandTreePaneItemByName(page, myItemsFolderName);
+
+    await page.goto(child1Layout.url);
+    await page.dragAndDrop(`role=treeitem[name=/${swg1.name}/]`, '.c-object-view');
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    await page.goto(child2Layout.url);
+    await page.dragAndDrop(`role=treeitem[name=/${swg2.name}/]`, '.c-object-view');
+    await page.locator('button[title="Save"]').click();
+    await page.locator('text=Save and Finish Editing').click();
+
+    await page.goto(parentLayout.url);
+    await page.locator('[title="Edit"]').click();
   });
 });
