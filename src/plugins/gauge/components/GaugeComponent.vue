@@ -45,7 +45,7 @@
         </g>
 
         <g class="c-dial__graphics" mask="url(#gaugeBgMask)">
-          <rect class="c-dial__bg" x="0" y="0" width="10" height="10"/>
+          <rect class="c-dial__bg" x="0" y="0" width="10" height="10" />
           <g
             v-if="isDialLowLimit"
             class="c-dial__limit-low"
@@ -207,7 +207,7 @@
           :viewBox="curValViewBox"
           preserveAspectRatio="xMidYMid meet"
         >
-          <rect class="svg-viewbox-debug" x="0" y="0" width="100%" height="100%"/>
+          <rect class="svg-viewbox-debug" x="0" y="0" width="100%" height="100%" />
           <text
             class="c-dial__current-value-text js-dial-current-value"
             font-size="3.5"
@@ -291,7 +291,7 @@
             :viewBox="curValViewBox"
             preserveAspectRatio="xMidYMid meet"
           >
-            <rect class="svg-viewbox-debug" x="0" y="0" width="100%" height="100%"/>
+            <rect class="svg-viewbox-debug" x="0" y="0" width="100%" height="100%" />
             <text
               class="c-meter__current-value-text js-gauge-current-value"
               font-size="4"
@@ -402,7 +402,10 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = (this.rangeLow && this.rangeHigh) ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length) : CHAR_THRESHOLD;
+      const RANGE_CHARS_MAX =
+        this.rangeLow && this.rangeHigh
+          ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length)
+          : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },

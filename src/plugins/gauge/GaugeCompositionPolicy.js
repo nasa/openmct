@@ -1,27 +1,29 @@
 export default function GaugeCompositionPolicy(openmct) {
-    function hasNumericTelemetry(domainObject) {
-        const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
-        if (!hasTelemetry) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  function hasNumericTelemetry(domainObject) {
+    const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
+    if (!hasTelemetry) {
+      return false;
     }
 
-    function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
+    let metadata = openmct.telemetry.getMetadata(domainObject);
+
+    return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  }
+
+  function hasDomainAndRange(metadata) {
+    return (
+      metadata.valuesForHints(['range']).length > 0 &&
+      metadata.valuesForHints(['domain']).length > 0
+    );
+  }
+
+  return {
+    allow: function (parent, child) {
+      if (parent.type === 'gauge') {
+        return hasNumericTelemetry(child);
+      }
+
+      return true;
     }
-
-    return {
-        allow: function (parent, child) {
-            if (parent.type === 'gauge') {
-                return hasNumericTelemetry(child);
-            }
-
-            return true;
-        }
-    };
+  };
 }

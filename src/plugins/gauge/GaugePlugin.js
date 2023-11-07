@@ -23,8 +23,8 @@
 import mount from 'utils/mount';
 
 import GaugeFormController from './components/GaugeFormController.vue';
+import GaugeCompositionPolicy from './GaugeCompositionPolicy';
 import GaugeViewProvider from './GaugeViewProvider';
-import GaugeCompositionPolicy from "./GaugeCompositionPolicy";
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],
@@ -189,7 +189,8 @@ export default function () {
                 onChange
               };
             },
-            template: `<GaugeFormController :model="model" @on-change="onChange"></GaugeFormController>`
+            template: `
+                          <GaugeFormController :model="model" @on-change="onChange"></GaugeFormController>`
           },
           {
             app: openmct.app,
