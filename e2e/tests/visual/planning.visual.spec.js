@@ -23,13 +23,14 @@
 const { test } = require('../../pluginFixtures');
 const {
   setBoundsToSpanAllActivities,
-  setDraftStatusForPlan
+  setDraftStatusForPlan,
+  getEarliestStartTime
 } = require('../../helper/planningUtils');
 const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
 const VISUAL_FIXED_URL = require('../../constants').VISUAL_FIXED_URL;
 const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
-const { MISSION_TIME } = require('../../constants');
+const examplePlanSmall3 = require('../../test-data/examplePlans/ExamplePlan_Small3.json');
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
@@ -100,11 +101,10 @@ test.describe('Visual - Planning', () => {
   });
 });
 
-test.describe('Timelist', () => {
+test.describe('Timelist with controlled clock', () => {
   test.use({
-    overrideClock: true,
     clockOptions: {
-      now: MISSION_TIME,
+      now: getEarliestStartTime(examplePlanSmall3),
       shouldAdvanceTime: true
     }
   });
@@ -116,12 +116,19 @@ test.describe('Timelist', () => {
       type: 'Time List',
       name: 'Time List Visual Test'
     });
-    const plan = await createPlanFromJSON(page, {
-      json: examplePlanSmall,
+    await createPlanFromJSON(page, {
+      json: examplePlanSmall3,
       parent: timelist.uuid
     });
-    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-    await page.goto(timelist.url);
+    await page.goto(
+      `${timelist.url}?tc.mode=local&tc.startDelta=900000&tc.endDelta=1800000&tc.timeSystem=utc&view=grid`
+    );
+
+    // Dismiss each "Save successful" notification (quicker than waiting)
+    await page.getByLabel('Dismiss').click();
+    await page.getByLabel('Dismiss').click();
+    await page.getByLabel('Dismiss').click();
+
     await percySnapshot(page, `Timelist Countdown 1 (theme: ${theme})`, {
       scope: snapshotScope
     });
