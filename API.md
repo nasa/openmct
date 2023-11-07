@@ -94,6 +94,9 @@ well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
 
+> [!WARNING]
+> Open MCT provides a development server via `webpack-dev-server` (`npm start`). **This should be used for development purposes only and should never be deployed to a production environment**.
+
 To start a minimally functional Open MCT application, it is necessary to
 include the Open MCT distributable, enable some basic plugins, and bootstrap
 the application. The tutorials walk through the process of getting Open MCT up
