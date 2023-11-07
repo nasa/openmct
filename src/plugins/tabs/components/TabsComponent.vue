@@ -23,6 +23,7 @@
   <div ref="tabs" class="c-tabs-view">
     <div
       ref="tabsHolder"
+      role="tablist"
       class="c-tabs-view__tabs-holder c-tabs"
       :class="{
         'is-dragging': isDragging && allowEditing,
@@ -39,6 +40,7 @@
         :key="tab.keyString"
         :aria-label="`${tab.domainObject.name} tab`"
         class="c-tab c-tabs-view__tab js-tab"
+        role="tab"
         :class="{
           'is-current': isCurrent(tab)
         }"

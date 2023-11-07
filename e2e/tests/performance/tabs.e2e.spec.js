@@ -66,15 +66,13 @@ test.describe('Tabs View', () => {
     // select first tab
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
-    expect(await page.getByRole('searchbox', { name: 'message filter input' }).isVisible()).toBe(
-      true
-    );
+    await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
 
-    // ensure notebook visible
-    expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
+    // expect notebook visible
+    await expect(page.getByRole('.c-notebook__drag-area')).toBeVisible();
 
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
@@ -85,8 +83,8 @@ test.describe('Tabs View', () => {
     // now select notebook and clear animation calls
     await page.getByLabel(`${notebook.name} tab`).click();
     animationCalls = [];
-    // ensure table header visible
-    expect(await page.locator('.c-notebook__drag-area').isVisible()).toBe(true);
+    // expect notebook visible
+    await expect(page.getByRole('.c-notebook__drag-area')).toBeVisible();
     const notebookAnimationCalls = animationCalls.length;
 
     // select sine wave generator and clear animation calls

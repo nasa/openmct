@@ -19,12 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+/**
+ * Optimizes `requestAnimationFrame` calls to only execute when the element is visible in the viewport.
+ */
 export default class NicelyCalled {
   #element;
   #isIntersecting;
   #observer;
   #lastUnfiredFunc;
 
+  /**
+   * Constructs a NicelyCalled instance to manage visibility-based requestAnimationFrame calls.
+   *
+   * @param {HTMLElement} element - The DOM element to observe for visibility changes.
+   * @throws {Error} If element is not provided.
+   */
   constructor(element) {
     if (!element) {
       throw new Error(`Nice visibility must be created with an element`);
@@ -47,6 +57,14 @@ export default class NicelyCalled {
     }
   };
 
+  /**
+   * Executes a function within requestAnimationFrame if the observed element is visible.
+   * If the element is not visible, the function is stored and called when the element becomes visible.
+   * Note that if called multiple times while not visible, only the last execution is stored and executed.
+   *
+   * @param {Function} func - The function to execute.
+   * @returns {boolean} True if the function was executed immediately, false otherwise.
+   */
   execute(func) {
     if (this.#isIntersecting) {
       window.requestAnimationFrame(func);
@@ -57,6 +75,9 @@ export default class NicelyCalled {
     }
   }
 
+  /**
+   * Stops observing the element for visibility changes and cleans up resources to prevent memory leaks.
+   */
   destroy() {
     this.#observer.unobserve(this.#element);
     this.#element = null;
