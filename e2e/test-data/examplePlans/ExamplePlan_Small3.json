@@ -1,0 +1,38 @@
+{
+  "Group 1": [
+    {
+      "name": "Time until birthday",
+      "start": 1650320402000,
+      "end": 1660343797000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Time until supper",
+      "start": 1650320402000,
+      "end": 1650420410000,
+      "type": "Group 2",
+      "color": "blue",
+      "textColor": "white"
+    }
+  ],
+  "Group 2": [
+    {
+      "name": "Time since the last time I ate",
+      "start": 1650320102001,
+      "end": 1650320102001,
+      "type": "Group 2",
+      "color": "green",
+      "textColor": "white"
+    },
+    {
+      "name": "Time since last accident",
+      "start": 1650320102002,
+      "end": 1650320102002,
+      "type": "Group 1",
+      "color": "yellow",
+      "textColor": "white"
+    }
+  ]
+}
