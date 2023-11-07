@@ -25,7 +25,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="move"
-    @endMove="endMove"
+    @end-move="endMove"
   >
     <template #content>
       <ObjectFrame
@@ -103,6 +103,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   data() {
     return {
       domainObject: undefined,
@@ -174,7 +175,7 @@ export default {
       this.$emit('move', gridDelta);
     },
     endMove() {
-      this.$emit('endMove');
+      this.$emit('end-move');
     }
   }
 };

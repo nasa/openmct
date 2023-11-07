@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import Search from '../../components/Search.vue';
+import Search from '../../components/SearchComponent.vue';
 import SearchResultsDropDown from './SearchResultsDropDown.vue';
 
 const SEARCH_DEBOUNCE_TIME = 200;
@@ -187,7 +187,7 @@ export default {
         const clickedPreviewClose =
           event.target.parentElement &&
           event.target.parentElement.querySelector('.js-preview-window');
-        const searchResultsDropDown = this.$refs.searchResultsDropDown._data;
+        const searchResultsDropDown = this.$refs.searchResultsDropDown._.data;
         if (
           !clickedInsideDropdown &&
           searchResultsDropDown.resultsShown &&

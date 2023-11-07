@@ -26,13 +26,16 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="move"
-    @endMove="endMove"
+    @end-move="endMove"
   >
     <template #content>
       <div
         class="c-ellipse-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable ellipse"
+        aria-label="Ellipse"
       ></div>
     </template>
   </layout-frame>
@@ -78,6 +81,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     style() {
       if (this.itemStyle) {
@@ -127,7 +131,7 @@ export default {
       this.$emit('move', gridDelta);
     },
     endMove() {
-      this.$emit('endMove');
+      this.$emit('end-move');
     }
   }
 };

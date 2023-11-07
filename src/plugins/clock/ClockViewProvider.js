@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Clock from './components/Clock.vue';
+import Clock from './components/ClockComponent.vue';
 
 export default function ClockViewProvider(openmct) {
   return {

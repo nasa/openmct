@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Preview from '@/ui/preview/Preview.vue';
+import PreviewContainer from '@/ui/preview/PreviewContainer.vue';
 
 export default class ViewLargeAction {
   constructor(openmct) {
@@ -81,7 +81,7 @@ export default class ViewLargeAction {
     const { vNode, destroy } = mount(
       {
         components: {
-          Preview
+          PreviewContainer
         },
         provide: {
           openmct: this.openmct,
@@ -92,7 +92,7 @@ export default class ViewLargeAction {
             view
           };
         },
-        template: '<Preview :existing-view="view"></Preview>'
+        template: '<preview-container :existing-view="view"></preview-container>'
       },
       {
         app: this.openmct.app

@@ -21,7 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import Licenses from './Licenses.vue';
+import Licenses from './LicensesComponent.vue';
 
 export default function () {
   return function install(openmct) {

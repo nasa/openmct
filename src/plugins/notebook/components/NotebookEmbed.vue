@@ -90,6 +90,7 @@ export default {
       }
     }
   },
+  emits: ['update-embed', 'remove-embed'],
   data() {
     return {
       menuActions: []
@@ -401,10 +402,10 @@ export default {
         return;
       }
 
-      this.$emit('removeEmbed', this.embed.id);
+      this.$emit('remove-embed', this.embed.id);
     },
     updateEmbed(embed) {
-      this.$emit('updateEmbed', embed);
+      this.$emit('update-embed', embed);
     },
     updateSnapshot(snapshotObject) {
       this.embed.snapshot.thumbnailImage = snapshotObject.thumbnailImage;

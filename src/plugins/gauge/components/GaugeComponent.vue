@@ -226,7 +226,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter">
+      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>
@@ -338,7 +338,6 @@ const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
-  name: 'Gauge',
   mixins: [stalenessMixin, tooltipHelpers],
   inject: ['openmct', 'domainObject', 'composition'],
   data() {
@@ -541,6 +540,11 @@ export default {
 
     this.openmct.time.on('bounds', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
+
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   unmounted() {
     this.composition.off('add', this.addedToComposition);
@@ -620,7 +624,7 @@ export default {
         this.unsubscribe = null;
       }
 
-      this.triggerUnsubscribeFromStaleness();
+      this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.curVal = DEFAULT_CURRENT_VALUE;
       this.formats = null;

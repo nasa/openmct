@@ -44,10 +44,10 @@
       :view-bounds="viewBounds"
       :is-fixed="isFixed"
       :alt-pressed="altPressed"
-      @endPan="endPan"
-      @endZoom="endZoom"
-      @panAxis="pan"
-      @zoomAxis="zoom"
+      @end-pan="endPan"
+      @end-zoom="endZoom"
+      @pan-axis="pan"
+      @zoom-axis="zoom"
     />
     <div
       role="button"
@@ -62,11 +62,11 @@
       :position-x="positionX"
       :position-y="positionY"
       :is-fixed="isFixed"
-      @popupLoaded="initializePopup"
-      @modeUpdated="saveMode"
-      @clockUpdated="saveClock"
-      @fixedBoundsUpdated="saveFixedBounds"
-      @clockOffsetsUpdated="saveClockOffsets"
+      @popup-loaded="initializePopup"
+      @mode-updated="saveMode"
+      @clock-updated="saveClock"
+      @fixed-bounds-updated="saveFixedBounds"
+      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>

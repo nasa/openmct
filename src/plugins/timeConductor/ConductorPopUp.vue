@@ -6,14 +6,14 @@
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's mode."
         :mode="timeOptionMode"
-        @independentModeUpdated="saveIndependentMode"
+        @independent-mode-updated="saveIndependentMode"
       />
       <ConductorMode
         v-else
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's mode."
         :button-css-class="'c-icon-button'"
-        @modeUpdated="saveMode"
+        @mode-updated="saveMode"
       />
       <IndependentClock
         v-if="isIndependent"
@@ -21,14 +21,14 @@
         title="Sets the Time Conductor's clock."
         :clock="timeOptionClock"
         :button-css-class="'c-icon-button'"
-        @independentClockUpdated="saveIndependentClock"
+        @independent-clock-updated="saveIndependentClock"
       />
       <ConductorClock
         v-else
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
         :button-css-class="'c-icon-button'"
-        @clockUpdated="saveClock"
+        @clock-updated="saveClock"
       />
       <!-- TODO: Time system and history must work even with ITC later -->
       <ConductorTimeSystem
@@ -48,15 +48,15 @@
       v-if="isFixed"
       :input-bounds="bounds"
       :object-path="objectPath"
-      @boundsUpdated="saveFixedBounds"
-      @dismissInputsFixed="dismiss"
+      @bounds-updated="saveFixedBounds"
+      @dismiss-inputs-fixed="dismiss"
     />
     <conductor-inputs-realtime
       v-else
       :input-bounds="bounds"
       :object-path="objectPath"
-      @offsetsUpdated="saveClockOffsets"
-      @dismissInputsRealtime="dismiss"
+      @offsets-updated="saveClockOffsets"
+      @dismiss-inputs-realtime="dismiss"
     />
   </div>
 </template>
@@ -128,6 +128,16 @@ export default {
       }
     }
   },
+  emits: [
+    'popup-loaded',
+    'dismiss',
+    'independent-clock-updated',
+    'fixed-bounds-updated',
+    'clock-offsets-updated',
+    'clock-updated',
+    'mode-updated',
+    'independent-mode-updated'
+  ],
   data() {
     const bounds = this.openmct.time.getBounds();
     const timeSystem = this.openmct.time.getTimeSystem();
@@ -181,7 +191,7 @@ export default {
     }
   },
   mounted() {
-    this.$emit('popupLoaded');
+    this.$emit('popup-loaded');
     this.setTimeContext();
   },
   beforeUnmount() {
@@ -216,22 +226,22 @@ export default {
       }
     },
     saveFixedBounds(bounds) {
-      this.$emit('fixedBoundsUpdated', bounds);
+      this.$emit('fixed-bounds-updated', bounds);
     },
     saveClockOffsets(offsets) {
-      this.$emit('clockOffsetsUpdated', offsets);
+      this.$emit('clock-offsets-updated', offsets);
     },
     saveClock(clockOptions) {
-      this.$emit('clockUpdated', clockOptions);
+      this.$emit('clock-updated', clockOptions);
     },
     saveMode(mode) {
-      this.$emit('modeUpdated', mode);
+      this.$emit('mode-updated', mode);
     },
     saveIndependentMode(mode) {
-      this.$emit('independentModeUpdated', mode);
+      this.$emit('independent-mode-updated', mode);
     },
     saveIndependentClock(clockKey) {
-      this.$emit('independentClockUpdated', clockKey);
+      this.$emit('independent-clock-updated', clockKey);
     },
     dismiss() {
       this.$emit('dismiss');

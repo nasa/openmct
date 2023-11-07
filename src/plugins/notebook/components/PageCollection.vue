@@ -28,9 +28,9 @@
         :selected-page-id="selectedPageId"
         :page="page"
         :page-title="pageTitle"
-        @deletePage="deletePage"
-        @renamePage="updatePage"
-        @selectPage="selectPage"
+        @delete-page="deletePage"
+        @rename-page="updatePage"
+        @select-page="selectPage"
       />
     </li>
   </ul>
@@ -88,6 +88,7 @@ export default {
       }
     }
   },
+  emits: ['default-page-deleted', 'update-page', 'select-page', 'toggle-nav'],
   watch: {
     pages: {
       handler(val, oldVal) {
@@ -125,31 +126,31 @@ export default {
       }
 
       if (isPageDefault) {
-        this.$emit('defaultPageDeleted');
+        this.$emit('default-page-deleted');
       }
 
       if (pages.length && isPageSelected && (!defaultPageId || isPageDefault)) {
         selectedPageId = pages[0].id;
       }
 
-      this.$emit('updatePage', {
+      this.$emit('update-page', {
         pages,
         id
       });
-      this.$emit('selectPage', selectedPageId);
+      this.$emit('select-page', selectedPageId);
     },
     selectPage(id) {
-      this.$emit('selectPage', id);
+      this.$emit('select-page', id);
 
       // Add test here for whether or not to toggle the nav
       if (this.sidebarCoversEntries) {
-        this.$emit('toggleNav');
+        this.$emit('toggle-nav');
       }
     },
     updatePage(newPage) {
       const id = newPage.id;
       const pages = this.pages.map((page) => (page.id === id ? newPage : page));
-      this.$emit('updatePage', {
+      this.$emit('update-page', {
         pages,
         id
       });

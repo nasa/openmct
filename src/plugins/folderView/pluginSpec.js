@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import FolderPlugin from './plugin.js';
 
@@ -132,7 +132,7 @@ describe('The folder plugin', () => {
         let folderView = gridViewProvider.view(folderObject, [folderObject]);
         folderView.show(childDiv, true);
 
-        await Vue.nextTick();
+        await nextTick();
 
         let children = parentDiv.getElementsByClassName('js-folder-child');
         expect(children.length).toBe(folderObject.composition.length);
@@ -147,7 +147,7 @@ describe('The folder plugin', () => {
         let folderView = listViewProvider.view(folderObject, [folderObject]);
         folderView.show(childDiv, true);
 
-        await Vue.nextTick();
+        await nextTick();
 
         let children = parentDiv.getElementsByClassName('js-folder-child');
         expect(children.length).toBe(folderObject.composition.length);

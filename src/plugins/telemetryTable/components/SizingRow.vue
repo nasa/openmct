@@ -33,6 +33,7 @@ export default {
       default: false
     }
   },
+  emits: ['change-height'],
   watch: {
     isEditing: function (isEditing) {
       if (isEditing) {

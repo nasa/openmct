@@ -27,21 +27,21 @@
     aria-label="Image controls"
   >
     <imagery-view-menu-switcher :icon-class="'icon-brightness'" :title="'Brightness and contrast'">
-      <filter-settings @filterChanged="updateFilterValues" />
+      <filter-settings @filter-changed="updateFilterValues" />
     </imagery-view-menu-switcher>
 
     <imagery-view-menu-switcher v-if="layers.length" :icon-class="'icon-layers'" :title="'Layers'">
-      <layer-settings :layers="layers" @toggleLayerVisibility="toggleLayerVisibility" />
+      <layer-settings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
     </imagery-view-menu-switcher>
 
     <zoom-settings
       class="--hide-if-less-than-220"
       :pan-zoom-locked="panZoomLocked"
       :zoom-factor="zoomFactor"
-      @zoomOut="zoomOut"
-      @zoomIn="zoomIn"
-      @toggleZoomLock="toggleZoomLock"
-      @handleResetImage="handleResetImage"
+      @zoom-out="zoomOut"
+      @zoom-in="zoomIn"
+      @toggle-zoom-lock="toggleZoomLock"
+      @handle-reset-image="handleResetImage"
     />
 
     <imagery-view-menu-switcher
@@ -54,10 +54,10 @@
         :class="'c-control-menu c-menu--has-close-btn'"
         :zoom-factor="zoomFactor"
         :is-menu="true"
-        @zoomOut="zoomOut"
-        @zoomIn="zoomIn"
-        @toggleZoomLock="toggleZoomLock"
-        @handleResetImage="handleResetImage"
+        @zoom-out="zoomOut"
+        @zoom-in="zoomIn"
+        @toggle-zoom-lock="toggleZoomLock"
+        @handle-reset-image="handleResetImage"
       />
     </imagery-view-menu-switcher>
   </div>
@@ -105,6 +105,14 @@ export default {
       }
     }
   },
+  emits: [
+    'cursors-updated',
+    'reset-image',
+    'pan-zoom-updated',
+    'filters-updated',
+    'start-pan',
+    'toggle-layer-visibility'
+  ],
   data() {
     return {
       altPressed: false,
@@ -141,7 +149,7 @@ export default {
       }
     },
     cursorStates(states) {
-      this.$emit('cursorsUpdated', states);
+      this.$emit('cursors-updated', states);
     }
   },
   mounted() {
@@ -155,16 +163,16 @@ export default {
   },
   methods: {
     handleResetImage() {
-      this.$emit('resetImage');
+      this.$emit('reset-image');
     },
     handleUpdatePanZoom(options) {
-      this.$emit('panZoomUpdated', options);
+      this.$emit('pan-zoom-updated', options);
     },
     toggleZoomLock() {
       this.panZoomLocked = !this.panZoomLocked;
     },
     notifyFiltersChanged() {
-      this.$emit('filtersUpdated', this.filters);
+      this.$emit('filters-updated', this.filters);
     },
     handleResetFilters() {
       this.filters = { ...DEFAULT_FILTER_VALUES };
@@ -251,7 +259,7 @@ export default {
     // attached to onClick listener in ImageryView
     handlePanZoomClick(e) {
       if (this.altPressed) {
-        return this.$emit('startPan', e);
+        return this.$emit('start-pan', e);
       }
 
       if (!(this.metaPressed && e.button === 0)) {
@@ -262,7 +270,7 @@ export default {
       this.zoomImage(newScaleFactor, e.clientX, e.clientY);
     },
     toggleLayerVisibility(index) {
-      this.$emit('toggleLayerVisibility', index);
+      this.$emit('toggle-layer-visibility', index);
     },
     updateFilterValues(filters) {
       this.filters = filters;

@@ -82,6 +82,7 @@ export default {
       }
     }
   },
+  emits: ['legend-hover-changed'],
   data() {
     return {
       isMissing: false,
@@ -127,6 +128,10 @@ export default {
     this.config.series.forEach(this.onSeriesAdd, this);
     this.legend = this.config.legend;
     this.loaded = true;
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   beforeUnmount() {
     this.stopListening();
@@ -212,7 +217,7 @@ export default {
     toggleHover(hover) {
       this.hover = hover;
       this.$emit(
-        'legendHoverChanged',
+        'legend-hover-changed',
         this.hover
           ? {
               seriesKey: this.seriesKeyString

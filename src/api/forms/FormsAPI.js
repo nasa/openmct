@@ -171,7 +171,7 @@ export default class FormsAPI {
           };
         },
         template:
-          '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
+          '<FormProperties :model="formStructure" @on-change="onChange" @on-cancel="onCancel" @on-save="onSave"></FormProperties>'
       },
       {
         element,
