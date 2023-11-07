@@ -25,7 +25,10 @@
  */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject
+} = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Gauge', () => {
@@ -136,27 +139,29 @@ test.describe('Gauge', () => {
 
   test('Gauge does not display NaN when data not available', async ({ page }) => {
     // Create a Gauge
-    await createDomainObjectWithDefaults(page, {
-      type: 'Gauge',
-      name: 'Unnamed Gauge'
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge'
     });
 
     // Create a Sine Wave Generator in the Gauge with a loading delay
-    await page.getByRole('button', { name: ' Create ' }).click();
-    await page.getByRole('menuitem', { name: ' Sine Wave Generator' }).click();
-    await page
-      .getByRole('dialog')
-      .locator('div')
-      .filter({ hasText: 'Loading Delay (ms)' })
-      .nth(3)
-      .click();
-    await page.getByLabel('Loading Delay (ms)').fill('5000');
-    await page.locator('[aria-label="Save"]').click();
-    await page.getByLabel('Expand My Items folder').click();
-    await page
-      .getByRole('treeitem', { name: 'Expand Unnamed Gauge gauge  Unnamed Gauge' })
-      .locator('a')
-      .click();
+    const swgWith5sDelay = await createExampleTelemetryObject(page, gauge.uuid);
+
+    await page.goto(swgWith5sDelay.url);
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+
+    //Edit Example Telemetry Object to include 5s loading Delay
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+
+    await Promise.all([
+      page.waitForNavigation(),
+      page.locator('text=OK').click(),
+      //Wait for Save Banner to appear
+      page.waitForSelector('.c-message-banner__message')
+    ]);
+
+    // Nav to the Gauge
+    await page.goto(gauge.url);
     const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
     expect(gaugeNoDataText).toBe('--');
   });
@@ -169,14 +174,14 @@ test.describe('Gauge', () => {
     });
 
     // Try to create a Folder into the Gauge. Should be disallowed.
-    await page.getByRole('button', { name: ' Create ' }).click();
-    await page.getByRole('menuitem', { name: ' Folder' }).click();
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Folder/ }).click();
     await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
     await page.getByLabel('Cancel').click();
 
     // Try to create a Display Layout into the Gauge. Should be disallowed.
-    await page.getByRole('button', { name: ' Create ' }).click();
-    await page.getByRole('menuitem', { name: ' Display Layout' }).click();
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Display Layout/ }).click();
     await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
   });
 });
