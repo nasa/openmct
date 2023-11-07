@@ -189,8 +189,7 @@ export default function () {
                 onChange
               };
             },
-            template: `
-                          <GaugeFormController :model="model" @on-change="onChange"></GaugeFormController>`
+            template: `<GaugeFormController :model="model" @on-change="onChange"></GaugeFormController>`
           },
           {
             app: openmct.app,
