@@ -72,7 +72,7 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${notebook.name} tab`).click();
 
     // expect notebook visible
-    await expect(page.getByRole('.c-notebook__drag-area')).toBeVisible();
+    await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
 
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
@@ -84,7 +84,7 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${notebook.name} tab`).click();
     animationCalls = [];
     // expect notebook visible
-    await expect(page.getByRole('.c-notebook__drag-area')).toBeVisible();
+    await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
     const notebookAnimationCalls = animationCalls.length;
 
     // select sine wave generator and clear animation calls
