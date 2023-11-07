@@ -1,37 +1,37 @@
 {
   "Group 1": [
     {
-      "name": "Group 1 event 1",
-      "start": 1650320408000,
+      "name": "Time until birthday",
+      "start": 1650320402000,
       "end": 1660343797000,
       "type": "Group 1",
       "color": "orange",
       "textColor": "white"
     },
     {
-      "name": "Group 1 event 2",
-      "start": 1650320508000,
-      "end": 1660343897000,
-      "type": "Group 1",
-      "color": "yellow",
+      "name": "Time until supper",
+      "start": 1650320402000,
+      "end": 1650420410000,
+      "type": "Group 2",
+      "color": "blue",
       "textColor": "white"
     }
   ],
   "Group 2": [
     {
-      "name": "Group 2 event 1",
-      "start": 1650320608000,
-      "end": 1660343997000,
+      "name": "Time since the last time I ate",
+      "start": 1650320102001,
+      "end": 1650320102001,
       "type": "Group 2",
       "color": "green",
       "textColor": "white"
     },
     {
-      "name": "Group 2 event 2",
-      "start": 1650320808000,
-      "end": 1660344097000,
-      "type": "Group 2",
-      "color": "blue",
+      "name": "Time since last accident",
+      "start": 1650320102002,
+      "end": 1650320102002,
+      "type": "Group 1",
+      "color": "yellow",
       "textColor": "white"
     }
   ]
