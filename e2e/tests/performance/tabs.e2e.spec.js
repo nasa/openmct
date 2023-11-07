@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../appActions');
 const { test, expect } = require('../../pluginFixtures');
 
 test.describe('Tabs View', () => {
@@ -94,7 +94,7 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
     // ensure sine wave generator visible
-    expect(await page.locator('.c-plot').isVisible()).toBe(true);
+    await waitForPlotsToRender(page);
     // we should be calling animation frames
     const sineWaveAnimationCalls = animationCalls.length;
     expect(sineWaveAnimationCalls).toBeGreaterThanOrEqual(notebookAnimationCalls);

@@ -94,7 +94,7 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('Roger');
 
-    const cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -103,9 +103,20 @@ test.describe('Telemetry Table', () => {
       expect(text).toContain('Roger');
     }
 
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('Dodger');
+
+    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBe(0);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).not.toContain('Dodger');
+    }
+
     // Click pause button
-    const pauseButton = page.locator('button.c-button.icon-pause');
-    await pauseButton.click();
+    await page.click('button[title="Pause"]');
   });
 
   test('Supports filtering using Regex', async ({ page }) => {
@@ -124,7 +135,7 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
 
-    const cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -133,8 +144,19 @@ test.describe('Telemetry Table', () => {
       expect(text).toContain('Roger');
     }
 
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Dd]oger/');
+
+    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBe(0);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).not.toContain('Dodger');
+    }
+
     // Click pause button
-    const pauseButton = page.locator('button.c-button.icon-pause');
-    await pauseButton.click();
+    await page.click('button[title="Pause"]');
   });
 });
