@@ -5,6 +5,7 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 10
+    rebase-strategy: 'disabled'
     labels:
       - 'pr:daveit'
       - 'pr:e2e'
@@ -34,6 +35,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
+    rebase-strategy: 'disabled'
     labels:
       - 'pr:daveit'
       - 'type:maintenance'
