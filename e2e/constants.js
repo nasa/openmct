@@ -15,5 +15,5 @@ export const MISSION_TIME = 1732413600000; // Saturday, November 23, 2024 6:00:0
  *    - hides the tree and inspector to prevent visual noise
  *    - sets the time bounds to a fixed range
  */
-export const VISUAL_FIXED_URL =
+export const VISUAL_URL =
   './#/browse/mine?tc.mode=fixed&tc.startBound=1693592063607&tc.endBound=1693593893607&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true';

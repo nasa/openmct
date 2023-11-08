@@ -23,20 +23,18 @@
 const { test } = require('../../pluginFixtures');
 const {
   setBoundsToSpanAllActivities,
-  setDraftStatusForPlan,
-  getEarliestStartTime
+  setDraftStatusForPlan
 } = require('../../helper/planningUtils');
 const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
 const percySnapshot = require('@percy/playwright');
-const VISUAL_FIXED_URL = require('../../constants').VISUAL_FIXED_URL;
+const VISUAL_URL = require('../../constants').VISUAL_URL;
 const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
-const examplePlanSmall3 = require('../../test-data/examplePlans/ExamplePlan_Small3.json');
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Plan View', async ({ page, theme }) => {
@@ -56,7 +54,7 @@ test.describe('Visual - Planning', () => {
       name: 'Plan Visual Test (Draft)',
       json: examplePlanSmall
     });
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
@@ -92,7 +90,7 @@ test.describe('Visual - Planning', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
