@@ -25,9 +25,12 @@ const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../..
 const { getEarliestStartTime } = require('../../../helper/planningUtils');
 const examplePlanSmall3 = require('../../../test-data/examplePlans/ExamplePlan_Small3.json');
 
+// eslint-disable-next-line no-unused-vars
 const START_TIME_COLUMN = 0;
+// eslint-disable-next-line no-unused-vars
 const END_TIME_COLUMN = 1;
 const TIME_TO_FROM_COLUMN = 2;
+// eslint-disable-next-line no-unused-vars
 const ACTIVITY_COLUMN = 3;
 const HEADER_ROW = 0;
 const NUM_COLUMNS = 4;
@@ -200,12 +203,12 @@ test.describe('Time List with controlled clock', () => {
     });
 
     const countUpCells = [
-      getCell(page, 1, TIME_TO_FROM_COLUMN),
-      getCell(page, 2, TIME_TO_FROM_COLUMN)
+      getCellByIndex(page, 1, TIME_TO_FROM_COLUMN),
+      getCellByIndex(page, 2, TIME_TO_FROM_COLUMN)
     ];
     const countdownCells = [
-      getCell(page, 3, TIME_TO_FROM_COLUMN),
-      getCell(page, 4, TIME_TO_FROM_COLUMN)
+      getCellByIndex(page, 3, TIME_TO_FROM_COLUMN),
+      getCellByIndex(page, 4, TIME_TO_FROM_COLUMN)
     ];
 
     // Verify that the countdown cells are counting down
@@ -213,27 +216,27 @@ test.describe('Time List with controlled clock', () => {
       await test.step(`Countdown cell ${i + 1} counts down`, async () => {
         const countdownCell = countdownCells[i];
         // Get the initial countdown timestamp object
-        const beforeCountdown = await getCountdownObject(page, i + 3);
+        const beforeCountdown = await getAndAssertCountdownObject(page, i + 3);
         // Wait until it changes
         await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
         // Get the new countdown timestamp object
-        const afterCountdown = await getCountdownObject(page, i + 3);
+        const afterCountdown = await getAndAssertCountdownObject(page, i + 3);
         // Verify that the new countdown timestamp object is less than the old one
         expect(Number(afterCountdown.seconds)).toBeLessThan(Number(beforeCountdown.seconds));
       });
     }
 
-    // Verify that the countup cells are counting up
+    // Verify that the count-up cells are counting up
     for (let i = 0; i < countUpCells.length; i++) {
-      await test.step(`Countup cell ${i + 1} counts up`, async () => {
+      await test.step(`Count-up cell ${i + 1} counts up`, async () => {
         const countdownCell = countUpCells[i];
         // Get the initial countup timestamp object
-        const beforeCountdown = await getCountdownObject(page, i + 1);
+        const beforeCountdown = await getAndAssertCountdownObject(page, i + 1);
         // Wait until it changes
         await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
-        // Get the new countup timestamp object
-        const afterCountdown = await getCountdownObject(page, i + 1);
-        // Verify that the new countup timestamp object is greater than the old one
+        // Get the new count-up timestamp object
+        const afterCountdown = await getAndAssertCountdownObject(page, i + 1);
+        // Verify that the new count-up timestamp object is greater than the old one
         expect(Number(afterCountdown.seconds)).toBeGreaterThan(Number(beforeCountdown.seconds));
       });
     }
@@ -247,7 +250,7 @@ test.describe('Time List with controlled clock', () => {
  * @param {number} columnIndex
  * @returns {import('@playwright/test').Locator} cell
  */
-function getCell(page, rowIndex, columnIndex) {
+function getCellByIndex(page, rowIndex, columnIndex) {
   return page.getByRole('cell').nth(rowIndex * NUM_COLUMNS + columnIndex);
 }
 
@@ -258,8 +261,8 @@ function getCell(page, rowIndex, columnIndex) {
  * @param {number} columnIndex
  * @returns {Promise<string>} text
  */
-async function getCellText(page, rowIndex, columnIndex) {
-  const text = await getCell(page, rowIndex, columnIndex).innerText();
+async function getCellTextByIndex(page, rowIndex, columnIndex) {
+  const text = await getCellByIndex(page, rowIndex, columnIndex).innerText();
   return text;
 }
 
@@ -270,8 +273,8 @@ async function getCellText(page, rowIndex, columnIndex) {
  * @param {number} rowIndex the row index
  * @returns {Promise<CountdownObject>} countdownObject
  */
-async function getCountdownObject(page, rowIndex) {
-  const timeToFrom = await getCellText(page, HEADER_ROW + rowIndex, TIME_TO_FROM_COLUMN);
+async function getAndAssertCountdownObject(page, rowIndex) {
+  const timeToFrom = await getCellTextByIndex(page, HEADER_ROW + rowIndex, TIME_TO_FROM_COLUMN);
 
   expect(timeToFrom).toMatch(COUNTDOWN_REGEXP);
   const match = timeToFrom.match(COUNTDOWN_REGEXP);
