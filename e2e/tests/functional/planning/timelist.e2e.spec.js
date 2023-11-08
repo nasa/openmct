@@ -230,7 +230,7 @@ test.describe('Time List with controlled clock', () => {
     for (let i = 0; i < countUpCells.length; i++) {
       await test.step(`Count-up cell ${i + 1} counts up`, async () => {
         const countdownCell = countUpCells[i];
-        // Get the initial countup timestamp object
+        // Get the initial count-up timestamp object
         const beforeCountdown = await getAndAssertCountdownObject(page, i + 1);
         // Wait until it changes
         await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
