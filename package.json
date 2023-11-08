@@ -18,7 +18,7 @@
     "codecov": "3.8.3",
     "comma-separated-values": "3.6.4",
     "copy-webpack-plugin": "11.0.0",
-    "cspell": "7.3.8",
+    "cspell": "8.0.0",
     "css-loader": "6.8.1",
     "d3-axis": "3.0.0",
     "d3-scale": "3.3.0",
