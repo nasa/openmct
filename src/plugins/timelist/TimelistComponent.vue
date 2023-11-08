@@ -116,8 +116,10 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.timestamp = this.openmct.time.now();
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
+    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+
+    this.setTimeContext();
+    this.timestamp = this.timeContext.now();
 
     this.getPlanDataAndSetConfig(this.domainObject);
 
@@ -137,8 +139,6 @@ export default {
     );
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
-    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.openmct.time.on('tick', this.updateTimestamp);
     this.openmct.editor.on('isEditing', this.setEditState);
 
     this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
@@ -150,7 +150,7 @@ export default {
       this.composition.load();
     }
 
-    this.setFixedTime(this.openmct.time.getMode());
+    this.setFixedTime(this.timeContext.getMode());
   },
   beforeUnmount() {
     if (this.unlisten) {
@@ -166,8 +166,7 @@ export default {
     }
 
     this.openmct.editor.off('isEditing', this.setEditState);
-    this.openmct.time.off('tick', this.updateTimestamp);
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
+    this.stopFollowingTimeContext();
 
     this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
     if (this.clearAutoScrollDisabledTimer) {
@@ -180,6 +179,21 @@ export default {
     }
   },
   methods: {
+    setTimeContext() {
+      this.stopFollowingTimeContext();
+      this.timeContext = this.openmct.time.getContextForView(this.path);
+      this.followTimeContext();
+    },
+    followTimeContext() {
+      this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+    },
+    stopFollowingTimeContext() {
+      if (this.timeContext) {
+        this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setFixedTime);
+        this.timeContext.off(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+      }
+    },
     planFileUpdated(selectFile) {
       this.getPlanData({
         selectFile,
@@ -198,7 +212,6 @@ export default {
       } else {
         this.filterValue = configuration.filter;
         this.setSort();
-        this.setViewBounds();
         this.listActivities();
       }
     },
@@ -208,7 +221,7 @@ export default {
     },
     setFixedTime() {
       this.filterValue = this.domainObject.configuration.filter;
-      this.isFixedTime = !this.openmct.time.isRealTime();
+      this.isFixedTime = !this.timeContext.isRealTime();
       if (this.isFixedTime) {
         this.hideAll = false;
       }
@@ -269,71 +282,6 @@ export default {
     getPlanData(domainObject) {
       this.planData = getValidatedData(domainObject);
     },
-    setViewBounds() {
-      const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
-      const currentEventsIndex = this.domainObject.configuration.currentEventsIndex;
-      const futureEventsIndex = this.domainObject.configuration.futureEventsIndex;
-      const pastEventsDuration = this.domainObject.configuration.pastEventsDuration;
-      const pastEventsDurationIndex = this.domainObject.configuration.pastEventsDurationIndex;
-      const futureEventsDuration = this.domainObject.configuration.futureEventsDuration;
-      const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
-
-      if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
-        this.viewBounds = undefined;
-        this.hideAll = true;
-
-        return;
-      }
-
-      this.hideAll = false;
-
-      if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
-        this.viewBounds = undefined;
-
-        return;
-      }
-
-      this.viewBounds = {};
-
-      if (pastEventsIndex !== 1) {
-        const pastDurationInMS = this.getDurationInMilliSeconds(
-          pastEventsDuration,
-          pastEventsDurationIndex
-        );
-        this.viewBounds.pastEnd = (timestamp) => {
-          if (pastEventsIndex === 2) {
-            return timestamp - pastDurationInMS;
-          } else if (pastEventsIndex === 0) {
-            return timestamp + 1;
-          }
-        };
-      }
-
-      if (futureEventsIndex !== 1) {
-        const futureDurationInMS = this.getDurationInMilliSeconds(
-          futureEventsDuration,
-          futureEventsDurationIndex
-        );
-        this.viewBounds.futureStart = (timestamp) => {
-          if (futureEventsIndex === 2) {
-            return timestamp + futureDurationInMS;
-          } else if (futureEventsIndex === 0) {
-            return 0;
-          }
-        };
-      }
-    },
-    getDurationInMilliSeconds(duration, durationIndex) {
-      if (duration > 0) {
-        if (durationIndex === 0) {
-          return duration * 1000;
-        } else if (durationIndex === 1) {
-          return duration * 60 * 1000;
-        } else if (durationIndex === 2) {
-          return duration * 60 * 60 * 1000;
-        }
-      }
-    },
     listActivities() {
       let groups = Object.keys(this.planData);
       let activities = [];
@@ -356,18 +304,18 @@ export default {
     },
     isActivityInBounds(activity) {
       const startInBounds =
-        activity.start >= this.openmct.time.bounds()?.start &&
-        activity.start <= this.openmct.time.bounds()?.end;
+        activity.start >= this.timeContext.bounds()?.start &&
+        activity.start <= this.timeContext.bounds()?.end;
       const endInBounds =
-        activity.end >= this.openmct.time.bounds()?.start &&
-        activity.end <= this.openmct.time.bounds()?.end;
+        activity.end >= this.timeContext.bounds()?.start &&
+        activity.end <= this.timeContext.bounds()?.end;
       const middleInBounds =
-        activity.start <= this.openmct.time.bounds()?.start &&
-        activity.end >= this.openmct.time.bounds()?.end;
+        activity.start <= this.timeContext.bounds()?.start &&
+        activity.end >= this.timeContext.bounds()?.end;
 
       return startInBounds || endInBounds || middleInBounds;
     },
-    filterActivities(activity, index) {
+    filterActivities(activity) {
       if (this.isEditing) {
         return true;
       }
@@ -381,15 +329,12 @@ export default {
         return false;
       }
       //current event or future start event or past end event
-      const isCurrent = this.timestamp >= activity.start && this.timestamp <= activity.end;
-      const isPast =
-        this.timestamp > activity.end &&
-        (this.viewBounds?.pastEnd === undefined ||
-          activity.end >= this.viewBounds?.pastEnd(this.timestamp));
-      const isFuture =
-        this.timestamp < activity.start &&
-        (this.viewBounds?.futureStart === undefined ||
-          activity.start <= this.viewBounds?.futureStart(this.timestamp));
+      const showCurrentEvents = this.domainObject.configuration.currentEventsIndex > 0;
+
+      const isCurrent =
+        showCurrentEvents && this.timestamp >= activity.start && this.timestamp <= activity.end;
+      const isPast = this.timestamp > activity.end;
+      const isFuture = this.timestamp < activity.start;
 
       return isCurrent || isPast || isFuture;
     },
