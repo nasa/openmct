@@ -266,6 +266,10 @@
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"
+        :current-page="currentPage"
+        :items-per-page="itemsPerPage"
+        @prev-page="prevPage"
+        @next-page="nextPage"
       />
     </div>
   </div>
@@ -374,7 +378,9 @@ export default {
       enableRegexSearch: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
-      rowContext: {}
+      rowContext: {},
+      currentPage: 0,
+      itemsPerPage: 50
     };
   },
   computed: {
@@ -545,6 +551,15 @@ export default {
     this.table.destroy();
   },
   methods: {
+    prevPage() {
+      console.log('preve page');
+      if (this.currentPage !== 0) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      this.currentPage++;
+    },
     updateVisibleRows() {
       if (!this.updatingView) {
         this.updatingView = true;

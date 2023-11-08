@@ -148,6 +148,8 @@ define([
       let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
       let columnMap = this.getColumnMapForObject(keyString);
       let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+      // hardcode 50 item limit
+      requestOptions.size = 50;
 
       const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
       const telemetryRemover = this.getTelemetryRemover();
