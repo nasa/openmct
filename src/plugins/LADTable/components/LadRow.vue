@@ -40,6 +40,9 @@
       {{ unit }}
     </td>
     <td v-if="showType" class="js-type-data">{{ typeLabel }}</td>
+    <td v-for="limit in formattedLimitValues" :key="limit.key" class="js-limit-data">
+      {{ limit.value }}
+    </td>
   </tr>
 </template>
 
@@ -77,6 +80,19 @@ export default {
     configuration: {
       type: Object,
       required: true
+    },
+    limitDefinition: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    limitColumnNames: {
+      // for ordering
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   emits: ['row-context-click'],
@@ -85,6 +101,7 @@ export default {
       datum: undefined,
       timestamp: undefined,
       timestampKey: undefined,
+      valueKey: null,
       composition: [],
       unit: ''
     };
@@ -96,6 +113,26 @@ export default {
       }
 
       return this.formats[this.valueKey].format(this.datum);
+    },
+    formattedLimitValues() {
+      if (!this.valueKey) {
+        return [];
+      }
+      return this.limitColumnNames.map((column) => {
+        if (this.limitDefinition?.[column.key]) {
+          const highValue = this.limitDefinition[column.key].high[this.valueKey];
+          const lowValue = this.limitDefinition[column.key].low[this.valueKey];
+          return {
+            key: column.key,
+            value: `${lowValue} → ${highValue}`
+          };
+        } else {
+          return {
+            key: column.key,
+            value: BLANK_VALUE
+          };
+        }
+      });
     },
     typeLabel() {
       if (this.isAggregate) {
