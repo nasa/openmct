@@ -89,7 +89,7 @@
       // When main shell layout is the parent
       @include displayMarquee(deeppink); // TEMP
     }
-    > * > * > * {
+    > * > * > * > * {
       // When a sub-layout is the parent
       @include displayMarquee(blue);
     }
