@@ -85,6 +85,7 @@ export default class ConditionSetViewProvider {
         if (_destroy) {
           _destroy();
         }
+        component = null;
       }
     };
   }
