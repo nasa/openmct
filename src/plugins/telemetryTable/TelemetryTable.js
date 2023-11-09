@@ -116,13 +116,13 @@ define([
       const lastDatum = this.telemetryCollections[keystring].getLastTelemetryDatum();
       const timestampKey = this.openmct.time.timeSystem().key;
       const metadata = this.openmct.telemetry.getMetadata(
-        this.telemetryCollections[keystring].telemetryObject
+        this.telemetryCollections[keystring].domainObject
       );
       const formats = this.openmct.telemetry.getFormatMap(metadata);
       const lastTimestamp = formats[timestampKey].parse(lastDatum);
 
       // clear old collection, rerequest from last timestamp
-      this.addTelemetryObject(this.telemetryCollections[keystring].telemetryObject, lastTimestamp);
+      this.addTelemetryObject(this.telemetryCollections[keystring].domainObject, lastTimestamp);
     }
 
     createTableRowCollections() {
