@@ -113,7 +113,7 @@ define([
 
     nextPage() {
       const keystring = Object.keys(this.telemetryCollections)[0];
-      const lastDatum = this.telemetryCollections[keystring].getLastTelemtryDatum();
+      const lastDatum = this.telemetryCollections[keystring].getLastTelemetryDatum();
       const timestampKey = this.openmct.time.timeSystem().key;
       const metadata = this.openmct.telemetry.getMetadata(
         this.telemetryCollections[keystring].telemetryObject
