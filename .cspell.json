@@ -487,7 +487,9 @@
     "blockquote",
     "blockquotes",
     "Blockquote",
-    "Blockquotes"
+    "Blockquotes",
+    "lcovonly",
+    "gcov"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
