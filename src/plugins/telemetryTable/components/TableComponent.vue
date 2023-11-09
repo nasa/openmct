@@ -559,6 +559,7 @@ export default {
     },
     nextPage() {
       this.currentPage++;
+      this.table.nextPage();
     },
     updateVisibleRows() {
       if (!this.updatingView) {

@@ -188,6 +188,10 @@ export default class TelemetryCollection extends EventEmitter {
     );
   }
 
+  getLastTelemetryDatum() {
+    return this.boundedTelemetry[this.boundedTelemetry.length - 1];
+  }
+
   /**
    * Filter any new telemetry (add/page, historical, subscription) based on
    * time bounds and dupes

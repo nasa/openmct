@@ -111,6 +111,20 @@ define([
       }
     }
 
+    nextPage() {
+      const keystring = Object.keys(this.telemetryCollections)[0];
+      const lastDatum = this.telemetryCollections[keystring].getLastTelemtryDatum();
+      const timestampKey = this.openmct.time.timeSystem().key;
+      const metadata = this.openmct.telemetry.getMetadata(
+        this.telemetryCollections[keystring].telemetryObject
+      );
+      const formats = this.openmct.telemetry.getFormatMap(metadata);
+      const lastTimestamp = formats[timestampKey].parse(lastDatum);
+
+      // clear old collection, rerequest from last timestamp
+      this.addTelemetryObject(this.telemetryCollections[keystring].telemetryObject, lastTimestamp);
+    }
+
     createTableRowCollections() {
       this.tableRows = new TableRowCollection();
 
@@ -141,11 +155,14 @@ define([
       }
     }
 
-    addTelemetryObject(telemetryObject) {
+    addTelemetryObject(telemetryObject, start) {
       this.addColumnsForObject(telemetryObject, true);
 
       const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
       let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+      if (start) {
+        requestOptions.start = start;
+      }
       let columnMap = this.getColumnMapForObject(keyString);
       let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
       // hardcode 50 item limit
