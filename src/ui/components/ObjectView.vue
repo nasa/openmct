@@ -230,7 +230,11 @@ export default {
         if (elemToStyle) {
           if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
             if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
+              if (key === 'background-color') {
+                elemToStyle.style[key] = 'transparent';
+              } else {
+                elemToStyle.style[key] = '';
+              }
             }
           } else {
             if (

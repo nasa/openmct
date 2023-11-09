@@ -368,6 +368,10 @@ export default {
         title: 'Saving'
       });
 
+      const currentSelection = this.openmct.selection.selected[0];
+      const parentObject = currentSelection[currentSelection.length - 1];
+      this.openmct.selection.select(parentObject);
+
       return this.openmct.editor
         .save()
         .then(() => {

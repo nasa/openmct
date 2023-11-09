@@ -29,7 +29,7 @@
     </div>
 
     <div
-      class="c-fl__container-holder"
+      class="c-fl__container-holder u-style-receiver js-style-receiver"
       :class="{
         'c-fl--rows': rowsLayout === true
       }"
