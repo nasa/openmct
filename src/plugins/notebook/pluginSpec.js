@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { NotebookPlugin } from './plugin';
 
@@ -189,7 +189,7 @@ describe('Notebook plugin:', () => {
       notebookView = notebookViewProvider.view(mutableNotebookObject, [mutableNotebookObject]);
       notebookView.show(child);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
@@ -220,7 +220,7 @@ describe('Notebook plugin:', () => {
       const notebookEntryElements = element.querySelectorAll('.c-notebook__entry');
       const firstEntryText = getEntryText(0);
       expect(notebookEntryElements.length).toBe(2);
-      expect(firstEntryText.innerText).toBe('First Test Entry');
+      expect(firstEntryText.innerText.trim()).toBe('First Test Entry');
     });
 
     describe('synchronization', () => {
@@ -232,13 +232,13 @@ describe('Notebook plugin:', () => {
       });
 
       it('updates an entry when another user modifies it', () => {
-        expect(getEntryText(0).innerText).toBe('First Test Entry');
+        expect(getEntryText(0).innerText.trim()).toBe('First Test Entry');
         objectCloneToSyncFrom.configuration.entries['test-section-1']['test-page-1'][0].text =
           'Modified entry text';
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
-          expect(getEntryText(0).innerText).toBe('Modified entry text');
+        return nextTick().then(() => {
+          expect(getEntryText(0).innerText.trim()).toBe('Modified entry text');
         });
       });
 
@@ -252,7 +252,7 @@ describe('Notebook plugin:', () => {
         });
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookEntryElements().length).toBe(3);
         });
       });
@@ -263,7 +263,7 @@ describe('Notebook plugin:', () => {
           entries.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookEntryElements().length).toBe(1);
         });
       });
@@ -281,7 +281,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections[0].pages.push(newPage);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        await Vue.nextTick();
+        await nextTick();
         expect(allNotebookPageElements().length).toBe(3);
       });
 
@@ -290,7 +290,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections[0].pages.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        await Vue.nextTick();
+        await nextTick();
         expect(allNotebookPageElements().length).toBe(1);
       });
 
@@ -315,7 +315,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections.push(newSection);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookSectionElements().length).toBe(3);
         });
       });
@@ -325,7 +325,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookSectionElements().length).toBe(1);
         });
       });
@@ -351,7 +351,7 @@ describe('Notebook plugin:', () => {
 
       element.append(snapshotIndicator);
 
-      return Vue.nextTick().then(() => {
+      return nextTick().then(() => {
         drawerElement = document.querySelector('.l-shell__drawer');
       });
     });

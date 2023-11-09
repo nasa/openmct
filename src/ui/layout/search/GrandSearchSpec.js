@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
 import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
 import GrandSearch from './GrandSearch.vue';
 
-xdescribe('GrandSearch', () => {
+describe('GrandSearch', () => {
   let openmct;
   let grandSearchComponent;
   let viewContainer;
@@ -42,6 +43,7 @@ xdescribe('GrandSearch', () => {
   let originalRouterPath;
   let mockNewObject;
   let mockObjectProvider;
+  let _destroy;
 
   beforeEach((done) => {
     openmct = createOpenMct();
@@ -124,11 +126,12 @@ xdescribe('GrandSearch', () => {
         key: 'anAnnotationKey',
         namespace: 'fooNameSpace'
       },
-      targets: {
-        'fooNameSpace:some-object': {
+      targets: [
+        {
+          keyString: 'fooNameSpace:some-object',
           entryId: 'fooBarEntry'
         }
-      }
+      ]
     };
     mockNewObject = {
       type: 'folder',
@@ -186,17 +189,23 @@ xdescribe('GrandSearch', () => {
       document.body.appendChild(parent);
       viewContainer = document.createElement('div');
       parent.append(viewContainer);
-      grandSearchComponent = new Vue({
-        el: viewContainer,
-        components: {
-          GrandSearch
+      const { vNode, destroy } = mount(
+        {
+          components: {
+            GrandSearch
+          },
+          provide: {
+            openmct
+          },
+          template: '<GrandSearch ref="root"/>'
         },
-        provide: {
-          openmct
-        },
-        template: '<GrandSearch/>'
-      }).$mount();
-      await Vue.nextTick();
+        {
+          element: viewContainer
+        }
+      );
+      grandSearchComponent = vNode.componentInstance;
+      _destroy = destroy;
+      await nextTick();
       done();
     });
     openmct.startHeadless();
@@ -205,15 +214,14 @@ xdescribe('GrandSearch', () => {
   afterEach(() => {
     openmct.objects.inMemorySearchProvider.worker = sharedWorkerToRestore;
     openmct.router.path = originalRouterPath;
-    grandSearchComponent.$destroy();
-    document.body.removeChild(parent);
+    _destroy();
 
     return resetApplicationState(openmct);
   });
 
   it('should render an object search result', async () => {
-    await grandSearchComponent.$children[0].searchEverything('foo');
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('foo');
+    await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="fooRabbitNotebook notebook result"]'
     );
@@ -225,9 +233,9 @@ xdescribe('GrandSearch', () => {
     const composition = openmct.composition.get(mockFolderObject);
     composition.add(mockNewObject);
     // after adding, need to wait a beat for the folder to be indexed
-    await Vue.nextTick();
-    await grandSearchComponent.$children[0].searchEverything('apple');
-    await Vue.nextTick();
+    await nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('apple');
+    await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="New Apple Test Folder folder result"]'
     );
@@ -251,8 +259,8 @@ xdescribe('GrandSearch', () => {
 
     const composition = openmct.composition.get(mockFolderObject);
     composition.add(mockNewObject);
-    await grandSearchComponent.$children[0].searchEverything('apple');
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('apple');
+    await nextTick();
     const searchResults = document.querySelectorAll(
       '[aria-label="New Apple Test Folder folder result"]'
     );
@@ -262,24 +270,24 @@ xdescribe('GrandSearch', () => {
   });
 
   it('should render an annotation search result', async () => {
-    await grandSearchComponent.$children[0].searchEverything('S');
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('S');
+    await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(2);
     expect(annotationResults[1].innerText).toContain('Driving');
   });
 
   it('should render no annotation search results if no match', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Qbert');
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('Qbert');
+    await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(0);
   });
 
   it('should preview object search results in edit mode if object clicked', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Folder');
-    grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('Folder');
+    grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
+    await nextTick();
     const searchResults = document.querySelectorAll('[name="Test Folder"]');
     expect(searchResults.length).toBe(1);
     expect(searchResults[0].innerText).toContain('Folder');
@@ -289,9 +297,9 @@ xdescribe('GrandSearch', () => {
   });
 
   it('should preview annotation search results in edit mode if annotation clicked', async () => {
-    await grandSearchComponent.$children[0].searchEverything('Dri');
-    grandSearchComponent._provided.openmct.router.path = [mockDisplayLayout];
-    await Vue.nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('Dri');
+    grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
+    await nextTick();
     const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
     expect(annotationResults.length).toBe(1);
     expect(annotationResults[0].innerText).toContain('Driving');

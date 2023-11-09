@@ -111,6 +111,11 @@ export default class XAxisModel extends Model {
 
     return defaultModel;
   }
+
+  destroy() {
+    this.plot = undefined;
+    this.stopListening();
+  }
 }
 
 /** @typedef {any} TODO */

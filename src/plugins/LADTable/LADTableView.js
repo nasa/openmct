@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import LadTable from './components/LADTable.vue';
+import LadTable from './components/LadTable.vue';
 import LADTableConfiguration from './LADTableConfiguration';
 
 export default class LADTableView {

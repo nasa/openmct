@@ -25,7 +25,7 @@
  */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Scatter Plot', () => {
@@ -54,7 +54,7 @@ test.describe('Scatter Plot', () => {
     // the SWG appears in the elements pool
     await page.goto(scatterPlot.url);
     await editButton.click();
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await saveButton.click();
     await page.locator('li[title="Save and Finish Editing"]').click();
@@ -82,7 +82,7 @@ test.describe('Scatter Plot', () => {
     await editButton.click();
 
     // Click the "Elements" tab
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
     await saveButton.click();

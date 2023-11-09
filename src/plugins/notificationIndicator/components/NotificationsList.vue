@@ -53,6 +53,7 @@ export default {
       required: true
     }
   },
+  emits: ['close', 'clear-all'],
   data() {
     return {};
   },

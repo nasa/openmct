@@ -23,6 +23,7 @@
 
 <template>
   <div
+    ref="entry"
     class="c-notebook__entry c-ne has-local-controls"
     aria-label="Notebook Entry"
     :class="{ locked: isLocked, 'is-selected': isSelectedEntry, 'is-editing': editMode }"
@@ -30,6 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
+    @paste="addImageFromPaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -56,7 +58,7 @@
         <template v-if="readOnly && result">
           <div :id="entry.id" class="c-ne__text highlight" tabindex="0">
             <TextHighlight
-              :text="formatValidUrls(entry.text)"
+              :text="convertMarkDownToHtml(entry.text)"
               :highlight="highlightText"
               :highlight-class="'search-highlight'"
             />
@@ -64,18 +66,26 @@
         </template>
         <template v-else-if="!isLocked">
           <div
+            v-if="!editMode"
             v-bind.prop="formattedText"
             :id="entry.id"
-            class="c-ne__text c-ne__input"
+            tabindex="-1"
+            aria-label="Notebook Entry Display"
+            class="c-ne__text"
+            @mouseover="checkEditability($event)"
+            @click="editingEntry($event)"
+          ></div>
+          <textarea
+            v-else
+            :id="entry.id"
+            ref="entryInput"
+            v-model="entry.text"
+            class="c-ne__input"
             aria-label="Notebook Entry Input"
             tabindex="-1"
-            :contenteditable="canEdit"
-            @mouseover="checkEditability($event)"
             @mouseleave="canEdit = true"
-            @mousedown="preventFocusIfNotSelected($event)"
-            @focus="editingEntry()"
             @blur="updateEntryValue($event)"
-          ></div>
+          ></textarea>
           <div v-if="editMode" class="c-ne__save-button">
             <button class="c-button c-button--major icon-check"></button>
           </div>
@@ -110,8 +120,8 @@
               :key="embed.id"
               :embed="embed"
               :is-locked="isLocked"
-              @removeEmbed="removeEmbed"
-              @updateEmbed="updateEmbed"
+              @remove-embed="removeEmbed"
+              @update-embed="updateEmbed"
             />
           </div>
         </div>
@@ -139,11 +149,12 @@
 
 <script>
 import _ from 'lodash';
+import { Marked } from 'marked';
 import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed, selectEntry } from '../utils/notebook-entries';
+import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
@@ -151,11 +162,49 @@ import {
 import NotebookEmbed from './NotebookEmbed.vue';
 
 const SANITIZATION_SCHEMA = {
-  allowedTags: [],
-  allowedAttributes: {}
+  allowedTags: [
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'blockquote',
+    'p',
+    'a',
+    'ul',
+    'ol',
+    'li',
+    'b',
+    'i',
+    'strong',
+    'em',
+    's',
+    'strike',
+    'code',
+    'hr',
+    'br',
+    'div',
+    'table',
+    'thead',
+    'caption',
+    'tbody',
+    'tr',
+    'th',
+    'td',
+    'pre',
+    'del',
+    'ins',
+    'mark',
+    'abbr'
+  ],
+  allowedAttributes: {
+    a: ['href', 'target', 'class', 'title'],
+    code: ['class'],
+    abbr: ['title']
+  }
 };
-const URL_REGEX =
-  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+
 const UNKNOWN_USER = 'Unknown';
 
 export default {
@@ -220,6 +269,13 @@ export default {
       }
     }
   },
+  emits: [
+    'delete-entry',
+    'change-section-page',
+    'update-entry',
+    'editing-entry',
+    'entry-selection'
+  ],
   data() {
     return {
       editMode: false,
@@ -236,16 +292,15 @@ export default {
       return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
     },
     formattedText() {
-      // remove ANY tags
-      const text = sanitizeHtml(this.entry.text, SANITIZATION_SCHEMA);
+      const text = this.entry.text;
 
-      if (this.editMode || this.urlWhitelist.length === 0) {
+      if (this.editMode) {
         return { innerText: text };
       }
 
-      const html = this.formatValidUrls(text);
+      const markDownHtml = this.convertMarkDownToHtml(text);
 
-      return { innerHTML: html };
+      return { innerHTML: markDownHtml };
     },
     isSelectedEntry() {
       return this.selectedEntryId === this.entry.id;
@@ -276,7 +331,23 @@ export default {
       return text;
     }
   },
+  watch: {
+    editMode() {
+      this.$nextTick(() => {
+        // waiting for textarea to be rendered
+        this.$refs.entryInput?.focus();
+        this.adjustTextareaHeight();
+      });
+    }
+  },
+  beforeMount() {
+    this.marked = new Marked();
+    this.renderer = new this.marked.Renderer();
+  },
   mounted() {
+    const originalLinkRenderer = this.renderer.link;
+    this.renderer.link = this.validateLink.bind(this, originalLinkRenderer);
+
     this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
 
     if (this.$refs.embedsWrapper) {
@@ -292,7 +363,7 @@ export default {
   },
   beforeUnmount() {
     if (this.embedsWrapperResizeObserver) {
-      this.embedsWrapperResizeObserver.unobserve(this.$refs.embedsWrapper);
+      this.embedsWrapperResizeObserver.disconnect();
     }
   },
   methods: {
@@ -305,9 +376,74 @@ export default {
         openmct: this.openmct
       };
       const newEmbed = await createNewEmbed(snapshotMeta);
+      if (!this.entry.embeds) {
+        this.entry.embeds = [];
+      }
       this.entry.embeds.push(newEmbed);
 
       this.manageEmbedLayout();
+    },
+    async addImageFromPaste(event) {
+      const clipboardItems = Array.from(
+        (event.clipboardData || event.originalEvent.clipboardData).items
+      );
+      const hasImage = clipboardItems.some(
+        (clipboardItem) => clipboardItem.type.includes('image') && clipboardItem.kind === 'file'
+      );
+      // If the clipboard contained an image, prevent the paste event from reaching the textarea.
+      if (hasImage) {
+        event.preventDefault();
+      }
+      await Promise.all(
+        Array.from(clipboardItems).map(async (clipboardItem) => {
+          const isImage = clipboardItem.type.includes('image') && clipboardItem.kind === 'file';
+          if (isImage) {
+            const imageFile = clipboardItem.getAsFile();
+            const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
+            if (!this.entry.embeds) {
+              this.entry.embeds = [];
+            }
+            this.entry.embeds.push(imageEmbed);
+          }
+        })
+      );
+      this.manageEmbedLayout();
+      this.timestampAndUpdate();
+    },
+    convertMarkDownToHtml(text = '') {
+      let markDownHtml = this.marked.parse(text, {
+        breaks: true,
+        renderer: this.renderer
+      });
+      markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
+      return markDownHtml;
+    },
+    adjustTextareaHeight() {
+      if (this.$refs.entryInput) {
+        this.$refs.entryInput.style.height = 'auto';
+        this.$refs.entryInput.style.height = `${this.$refs?.entryInput.scrollHeight}px`;
+        this.$refs.entryInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    },
+    validateLink(originalLinkRenderer, href, title, text) {
+      try {
+        const domain = new URL(href).hostname;
+        const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
+          return domain.endsWith(partialDomain);
+        });
+        if (!urlIsWhitelisted) {
+          return text;
+        }
+        const linkHtml = originalLinkRenderer.call(this.renderer, href, title, text);
+        const linkHtmlWithTarget = linkHtml.replace(
+          /^<a /,
+          '<a class="c-hyperlink" target="_blank"'
+        );
+        return linkHtmlWithTarget;
+      } catch (error) {
+        // had error parsing this URL, just return the text
+        return text;
+      }
     },
     cancelEditMode(event) {
       const isEditing = this.openmct.editor.isEditing();
@@ -331,23 +467,7 @@ export default {
       }
     },
     deleteEntry() {
-      this.$emit('deleteEntry', this.entry.id);
-    },
-    formatValidUrls(text) {
-      return text.replace(URL_REGEX, (match) => {
-        const url = new URL(match);
-        const domain = url.hostname;
-        let result = match;
-        let isMatch = this.urlWhitelist.find((partialDomain) => {
-          return domain.endsWith(partialDomain);
-        });
-
-        if (isMatch) {
-          result = `<a class="c-hyperlink" target="_blank" href="${match}">${match}</a>`;
-        }
-
-        return result;
-      });
+      this.$emit('delete-entry', this.entry.id);
     },
     manageEmbedLayout() {
       if (this.$refs.embeds) {
@@ -359,12 +479,54 @@ export default {
         this.enableEmbedsWrapperScroll = embedsTotalWidth > embedsWrapperLength;
       }
     },
-    async dropOnEntry($event) {
-      $event.stopImmediatePropagation();
+    async dropOnEntry(dropEvent) {
+      dropEvent.stopImmediatePropagation();
+      const dataTransferFiles = Array.from(dropEvent.dataTransfer.files);
 
-      const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
-      if (snapshotId.length) {
+      const localImageDropped = dataTransferFiles.some((file) => file.type.includes('image'));
+      const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
+      const domainObjectData = dropEvent.dataTransfer.getData('openmct/domain-object-path');
+      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      if (localImageDropped) {
+        // local image(s) dropped from disk (file)
+        await Promise.all(
+          dataTransferFiles.map(async (file) => {
+            if (file.type.includes('image')) {
+              const imageData = file;
+              const imageEmbed = await createNewImageEmbed(
+                imageData,
+                this.openmct,
+                imageData?.name
+              );
+              if (!this.entry.embeds) {
+                this.entry.embeds = [];
+              }
+              this.entry.embeds.push(imageEmbed);
+            }
+          })
+        );
+        this.manageEmbedLayout();
+      } else if (imageUrl) {
+        try {
+          // remote image dropped (URL)
+          const response = await fetch(imageUrl);
+          const imageData = await response.blob();
+          const imageEmbed = await createNewImageEmbed(imageData, this.openmct);
+          if (!this.entry.embeds) {
+            this.entry.embeds = [];
+          }
+          this.entry.embeds.push(imageEmbed);
+          this.manageEmbedLayout();
+        } catch (error) {
+          this.openmct.notifications.error(`Unable to add image: ${error.message} `);
+          console.error(`Problem embedding remote image`, error);
+        }
+      } else if (snapshotId.length) {
+        // snapshot object
         const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
+        if (!this.entry.embeds) {
+          this.entry.embeds = [];
+        }
         this.entry.embeds.push(snapshot.embedObject);
         this.snapshotContainer.removeSnapshot(snapshotId);
 
@@ -374,10 +536,18 @@ export default {
           namespace
         );
         saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-      } else {
-        const data = $event.dataTransfer.getData('openmct/domain-object-path');
-        const objectPath = JSON.parse(data);
+      } else if (domainObjectData) {
+        // plain domain object
+        const objectPath = JSON.parse(domainObjectData);
         await this.addNewEmbed(objectPath);
+      } else {
+        this.openmct.notifications.error(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        console.warn(
+          `Unknown object(s) dropped and cannot embed. Try again with an image or domain object.`
+        );
+        return;
       }
 
       this.timestampAndUpdate();
@@ -395,20 +565,17 @@ export default {
 
       return position;
     },
-    forceBlur(event) {
-      event.target.blur();
-    },
     formatTime(unixTime, timeFormat) {
       return Moment.utc(unixTime).format(timeFormat);
     },
     navigateToPage() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: this.result.page.id
       });
     },
     navigateToSection() {
-      this.$emit('changeSectionPage', {
+      this.$emit('change-section-page', {
         sectionId: this.result.section.id,
         pageId: null
       });
@@ -450,31 +617,30 @@ export default {
 
       this.entry.modified = this.openmct.time.now();
 
-      this.$emit('updateEntry', this.entry);
+      this.$emit('update-entry', this.entry);
     },
-    preventFocusIfNotSelected($event) {
-      if (!this.isSelectedEntry) {
-        $event.preventDefault();
-        // blur the previous focused entry if clicking on non selected entry input
-        const focusedElementId = document.activeElement?.id;
-        if (focusedElementId !== this.entry.id) {
-          document.activeElement.blur();
-        }
+    editingEntry(event) {
+      this.selectAndEmitEntry(event, this.entry);
+      if (this.isSelectedEntry) {
+        // selected and click, so we're ready to edit
+        this.selectAndEmitEntry(event, this.entry);
+        this.editMode = true;
+        this.adjustTextareaHeight();
+        this.$emit('editing-entry');
       }
-    },
-    editingEntry() {
-      this.editMode = true;
-      this.$emit('editingEntry');
     },
     updateEntryValue($event) {
       this.editMode = false;
-      const value = $event.target.innerText;
-      this.entry.text = sanitizeHtml(value, SANITIZATION_SCHEMA);
+      const rawEntryValue = $event.target.value;
+      const sanitizeInput = sanitizeHtml(rawEntryValue, { allowedAttributes: [], allowedTags: [] });
+      // change &gt back to > for markdown to do blockquotes
+      const restoredQuoteBrackets = sanitizeInput.replace(/&gt;/g, '>');
+      this.entry.text = restoredQuoteBrackets;
       this.timestampAndUpdate();
     },
     selectAndEmitEntry(event, entry) {
       selectEntry({
-        element: event.currentTarget,
+        element: this.$refs.entry,
         entryId: entry.id,
         domainObject: this.domainObject,
         openmct: this.openmct,

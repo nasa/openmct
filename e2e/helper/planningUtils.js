@@ -99,3 +99,14 @@ export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl
     `${planObjectUrl}?tc.mode=fixed&tc.startBound=${start}&tc.endBound=${end}&tc.timeSystem=utc&view=plan.view`
   );
 }
+
+/**
+ * Uses the Open MCT API to set the status of a plan to 'draft'.
+ * @param {import('@playwright/test').Page} page
+ * @param {import('../../appActions').CreatedObjectInfo} plan
+ */
+export async function setDraftStatusForPlan(page, plan) {
+  await page.evaluate(async (planObject) => {
+    await window.openmct.status.set(planObject.uuid, 'draft');
+  }, plan);
+}

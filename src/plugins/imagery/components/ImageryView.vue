@@ -34,16 +34,17 @@
       @mousedown="handlePanZoomClick"
     >
       <ImageControls
+        v-show="!annotationsBeingMarqueed"
         ref="imageControls"
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
         :layers="layers"
-        @resetImage="resetImage"
-        @panZoomUpdated="handlePanZoomUpdate"
-        @filtersUpdated="setFilters"
-        @cursorsUpdated="setCursorStates"
-        @startPan="startPan"
-        @toggleLayerVisibility="toggleLayerVisibility"
+        @reset-image="resetImage"
+        @pan-zoom-updated="handlePanZoomUpdate"
+        @filters-updated="setFilters"
+        @cursors-updated="setCursorStates"
+        @start-pan="startPan"
+        @toggle-layer-visibility="toggleLayerVisibility"
       />
       <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
@@ -92,8 +93,9 @@
             v-if="shouldDisplayAnnotations"
             :image="focusedImage"
             :imagery-annotations="imageryAnnotations[focusedImage.time]"
-            @annotationMarqueed="handlePauseButton(true)"
-            @annotationsChanged="loadAnnotations"
+            @annotation-marquee-started="pauseAndHideImageControls"
+            @annotation-marquee-finished="revealImageControls"
+            @annotations-changed="loadAnnotations"
           />
         </div>
       </div>
@@ -200,13 +202,13 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
 import imageryData from '../../imagery/mixins/imageryData';
 import eventHelpers from '../lib/eventHelpers';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
-import Compass from './Compass/Compass.vue';
+import Compass from './Compass/CompassComponent.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
@@ -246,7 +248,14 @@ export default {
     AnnotationsCanvas
   },
   mixins: [imageryData],
-  inject: ['openmct', 'domainObject', 'objectPath', 'currentView', 'imageFreshnessOptions'],
+  inject: [
+    'openmct',
+    'domainObject',
+    'objectPath',
+    'currentView',
+    'imageFreshnessOptions',
+    'showCompassHUD'
+  ],
   props: {
     focusedImageTimestamp: {
       type: Number,
@@ -255,6 +264,7 @@ export default {
       }
     }
   },
+  emits: ['update:focused-image-timestamp'],
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -308,7 +318,8 @@ export default {
       imagePanned: false,
       forceShowThumbnails: false,
       animateThumbScroll: false,
-      imageryAnnotations: {}
+      imageryAnnotations: {},
+      annotationsBeingMarqueed: false
     };
   },
   computed: {
@@ -727,7 +738,8 @@ export default {
       }
     }
 
-    this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+    // remove all eventListeners
+    this.stopListening();
 
     Object.keys(this.imageryAnnotations).forEach((time) => {
       const imageAnnotationsForTime = this.imageryAnnotations[time];
@@ -750,6 +762,13 @@ export default {
         }px)`,
         transition: `${!this.pan && this.animateZoom ? 'transform 250ms ease-in' : 'initial'}`
       };
+    },
+    pauseAndHideImageControls() {
+      this.annotationsBeingMarqueed = true;
+      this.handlePauseButton(true);
+    },
+    revealImageControls() {
+      this.annotationsBeingMarqueed = false;
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
@@ -1063,7 +1082,7 @@ export default {
         return;
       }
 
-      await Vue.nextTick();
+      await nextTick();
       if (this.$refs.thumbsWrapper) {
         this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
       }
@@ -1087,7 +1106,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.$emit('update:focusedImageTimestamp', undefined);
+      this.$emit('update:focused-image-timestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;
@@ -1187,7 +1206,7 @@ export default {
       this.zoomFactor = newScaleFactor;
     },
     handlePanZoomClick(e) {
-      this.$refs.imageControls.handlePanZoomClick(e);
+      this.$refs.imageControls?.handlePanZoomClick(e);
     },
     arrowDownHandler(event) {
       let key = event.keyCode;
@@ -1276,6 +1295,9 @@ export default {
       this.scrollHandler();
     },
     setSizedImageDimensions() {
+      if (!this.$refs.focusedImage) {
+        return;
+      }
       this.focusedImageNaturalAspectRatio =
         this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
       if (

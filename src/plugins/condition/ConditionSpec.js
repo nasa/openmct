@@ -97,8 +97,10 @@ describe('The condition', function () {
     mockTimeSystems = {
       key: 'utc'
     };
-    openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems']);
+    openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems', 'on', 'off']);
     openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
+    openmct.time.on.and.returnValue(() => {});
+    openmct.time.off.and.returnValue(() => {});
 
     testConditionDefinition = {
       id: '123-456',
