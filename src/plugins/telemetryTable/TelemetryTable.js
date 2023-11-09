@@ -122,7 +122,7 @@ define([
       const lastTimestamp = formats[timestampKey].parse(lastDatum);
 
       // clear old collection, rerequest from last timestamp
-      this.removeTelemetryObject(this.telemetryCollections[keystring].domainObject);
+      this.removeTelemetryObject(this.telemetryCollections[keystring].domainObject.identifier);
       this.addTelemetryObject(this.telemetryCollections[keystring].domainObject, lastTimestamp);
     }
 
