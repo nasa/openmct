@@ -44,12 +44,8 @@
 <script>
 import configStore from '../configuration/ConfigStore.js';
 import eventHelpers from '../lib/eventHelpers.js';
-import MctTicks from '../MctTicks.vue';
 
 export default {
-  components: {
-    MctTicks
-  },
   inject: ['openmct', 'domainObject'],
   props: {
     seriesModel: {
@@ -59,7 +55,6 @@ export default {
       }
     }
   },
-  emits: ['plot-x-tick-width'],
   data() {
     return {
       selectedXKeyOptionKey: '',
@@ -137,9 +132,6 @@ export default {
       this.xAxisLabel = this.xAxis.get('label');
       this.selectedXKeyOptionKey =
         this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
-    },
-    onTickWidthChange(width) {
-      this.$emit('plot-x-tick-width', width);
     }
   }
 };
