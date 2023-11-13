@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plot-tick-width="onTickWidthChange" />
+    <mct-ticks :axis-type="'xAxis'" :position="'left'" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
