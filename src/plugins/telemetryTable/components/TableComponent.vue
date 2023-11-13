@@ -174,6 +174,7 @@
                 :header-index="headerIndex"
                 :column-width="columnWidths[key]"
                 :is-editing="isEditing"
+                :aria-label="`${headers[key]} filter header`"
                 @resize-column="resizeColumn"
                 @drop-target-offset-changed="setDropTargetOffset"
                 @drop-target-active="dropTargetActive"
@@ -181,9 +182,10 @@
                 @resize-column-end="updateConfiguredColumnWidths"
               >
                 <search
-                  v-model="filters[key]"
+                  :value="filters[key]"
                   class="c-table__search"
-                  @input="filterChanged(key)"
+                  :aria-label="`${key} filter input`"
+                  @input="filterChanged(key, $event)"
                   @clear="clearFilter(key)"
                 >
                   <button
@@ -278,6 +280,7 @@ import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
@@ -478,6 +481,7 @@ export default {
     this.filterChanged = _.debounce(this.filterChanged, 500);
   },
   mounted() {
+    this.nicelyCalled = new NicelyCalled(this.$refs.root);
     this.csvExporter = new CSVExporter();
     this.rowsAdded = _.throttle(this.rowsAdded, 200);
     this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
@@ -543,12 +547,13 @@ export default {
     this.table.configuration.destroy();
 
     this.table.destroy();
+
+    this.nicelyCalled.destroy();
   },
   methods: {
     updateVisibleRows() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.nicelyCalled.execute(() => {
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
@@ -666,7 +671,8 @@ export default {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
     },
-    filterChanged(columnKey) {
+    filterChanged(columnKey, newFilterValue) {
+      this.filters[columnKey] = newFilterValue;
       if (this.enableRegexSearch[columnKey]) {
         if (this.isCompleteRegex(this.filters[columnKey])) {
           this.table.tableRows.setColumnRegexFilter(
@@ -823,21 +829,23 @@ export default {
       let scrollTop = this.scrollable.scrollTop;
 
       this.resizePollHandle = setInterval(() => {
-        if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
-          this.calculateTableSize();
-          // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
-          // Need to preserve scroll position in this case.
-          if (this.autoScroll) {
-            this.scrollToBottom();
-          } else {
-            this.scrollable.scrollTop = scrollTop;
+        this.nicelyCalled.execute(() => {
+          if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
+            this.calculateTableSize();
+            // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+            // Need to preserve scroll position in this case.
+            if (this.autoScroll) {
+              this.scrollToBottom();
+            } else {
+              this.scrollable.scrollTop = scrollTop;
+            }
+
+            width = el.clientWidth;
+            height = el.clientHeight;
           }
 
-          width = el.clientWidth;
-          height = el.clientHeight;
-        }
-
-        scrollTop = this.scrollable.scrollTop;
+          scrollTop = this.scrollable.scrollTop;
+        });
       }, RESIZE_POLL_INTERVAL);
     },
     clearRowsAndRerender() {
