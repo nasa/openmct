@@ -32,9 +32,19 @@ const path = require('path');
 const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
-  test.fixme('Can create a Notebook Object', async ({ page }) => {
-    //Create domain object
+  test('Can create a Notebook Object', async ({ page }) => {
+    await page.goto('http://localhost:8080/');
+    await page.goto(
+      'http://localhost:8080/#/browse/mine?tc.mode=fixed&tc.startBound=1699787482193&tc.endBound=1699789312193&tc.timeSystem=utc&view=grid'
+    );
+    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('menuitem', { name: ' Notebook' }).click();
+    await page.getByText('Create a New Notebook').click();
     //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
+    await page.locator('form[name="mctForm"] div').filter({ hasText: 'Title' }).nth(1).click();
+    await page.getByRole('dialog').getByText('Title', { exact: true }).click();
+    await page.getByLabel('Section Title').click();
+    await page.getByLabel('Page Title').click();
   });
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
   test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
