@@ -169,7 +169,7 @@ test.describe('Overlay Plot', () => {
       .click();
     await page
       .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('[title="Display limit lines"]~div input')
+      .getByRole('checkbox', { name: 'Limit lines' })
       .check();
 
     await assertLimitLinesExistAndAreVisible(page);
