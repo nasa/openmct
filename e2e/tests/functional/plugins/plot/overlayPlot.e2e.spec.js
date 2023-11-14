@@ -185,6 +185,12 @@ test.describe('Overlay Plot', () => {
     const newCoords = await assertLimitLinesExistAndAreVisible(page);
     // We just need to know that the first limit line redrew somewhere lower than the initial y position.
     expect(newCoords.y).toBeGreaterThan(initialCoords.y);
+    // No request was made to get historical data
+    const createMineFolderRequests = [];
+    page.on('request', (req) => {
+      createMineFolderRequests.push(req);
+    });
+    expect(createMineFolderRequests.length).toEqual(0);
   });
 
   test('The elements pool supports dragging series into multiple y-axis buckets', async ({
