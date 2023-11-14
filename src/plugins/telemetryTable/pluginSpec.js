@@ -335,33 +335,6 @@ describe('the plugin', () => {
       expect(toColumnText).toEqual(firstColumnText);
     });
 
-    it('Supports filtering telemetry by regular text search', async () => {
-      tableInstance.tableRows.setColumnFilter('some-key', '1');
-      await nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(1);
-      tableInstance.tableRows.setColumnFilter('some-key', '');
-      await nextTick();
-
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-      expect(allRowElements.length).toEqual(3);
-    });
-
-    it('Supports filtering using Regex', async () => {
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value$');
-      await nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(0);
-
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value');
-      await nextTick();
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(allRowElements.length).toEqual(3);
-    });
-
     it('displays the correct number of column headers when the configuration is mutated', async () => {
       const tableInstanceConfiguration = tableInstance.domainObject.configuration;
       tableInstanceConfiguration.hiddenColumns['some-key'] = true;

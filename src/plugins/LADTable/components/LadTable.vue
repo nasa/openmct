@@ -30,6 +30,9 @@
           <th>Value</th>
           <th v-if="hasUnits">Units</th>
           <th v-if="showType">Type</th>
+          <th v-for="limitColumn in limitColumnNames" :key="limitColumn.key">
+            {{ limitColumn.label }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +40,8 @@
           v-for="ladRow in items"
           :key="ladRow.key"
           :domain-object="ladRow.domainObject"
+          :limit-definition="ladRow.limitDefinition"
+          :limit-column-names="limitColumnNames"
           :path-to-table="objectPath"
           :has-units="hasUnits"
           :is-stale="staleObjects.includes(ladRow.key)"
@@ -88,6 +93,23 @@ export default {
       });
 
       return itemsWithUnits.length !== 0 && !this.configuration?.hiddenColumns?.units;
+    },
+    limitColumnNames() {
+      const limitDefinitions = [];
+
+      this.items.forEach((item) => {
+        if (item.limitDefinition) {
+          const limits = Object.keys(item.limitDefinition);
+          limits.forEach((limit) => {
+            const limitAlreadyAdded = limitDefinitions.some((limitDef) => limitDef.key === limit);
+            const limitHidden = this.configuration?.hiddenColumns?.[limit];
+            if (!limitAlreadyAdded && !limitHidden) {
+              limitDefinitions.push({ label: `Limit ${limit}`, key: limit });
+            }
+          });
+        }
+      });
+      return limitDefinitions;
     },
     showTimestamp() {
       return !this.configuration?.hiddenColumns?.timestamp;
@@ -149,10 +171,11 @@ export default {
     this.composition.off('reorder', this.reorder);
   },
   methods: {
-    addItem(domainObject) {
+    async addItem(domainObject) {
       let item = {};
       item.domainObject = domainObject;
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+      item.limitDefinition = await this.openmct.telemetry.limitDefinition(domainObject).limits();
 
       this.items.push(item);
       this.subscribeToStaleness(domainObject);

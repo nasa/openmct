@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div class="gl-plot-chart-area">
+  <div ref="chart" class="gl-plot-chart-area">
     <canvas :style="canvasStyle"></canvas>
     <canvas :style="canvasStyle"></canvas>
     <div ref="limitArea" class="js-limit-area">
@@ -45,6 +45,7 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import { DrawLoader } from '../draw/DrawLoader';
@@ -197,6 +198,7 @@ export default {
   },
   mounted() {
     eventHelpers.extend(this);
+    this.nicelyCalled = new NicelyCalled(this.$refs.chart);
     this.seriesModels = [];
     this.config = this.getConfig();
     this.isDestroyed = false;
@@ -259,6 +261,7 @@ export default {
   },
   beforeUnmount() {
     this.destroy();
+    this.nicelyCalled.destroy();
   },
   methods: {
     handleWindowResize() {
@@ -653,8 +656,8 @@ export default {
     },
     scheduleDraw(updateLimitLines) {
       if (!this.drawScheduled) {
-        requestAnimationFrame(this.draw.bind(this, updateLimitLines));
-        this.drawScheduled = true;
+        const called = this.nicelyCalled.execute(this.draw.bind(this, updateLimitLines));
+        this.drawScheduled = called;
       }
     },
     draw(updateLimitLines) {
