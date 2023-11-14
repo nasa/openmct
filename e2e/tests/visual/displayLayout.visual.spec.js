@@ -76,7 +76,20 @@ test.describe('Visual - Display Layout', () => {
     await page.locator('button[title="Save"]').click();
     await page.locator('text=Save and Finish Editing').click();
 
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const child1LayoutTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(child1Layout.name)
+    });
+    const child2LayoutTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(child2Layout.name)
+    });
     await page.goto(parentLayout.url);
+    // Edit Display Layout
     await page.locator('[title="Edit"]').click();
+    const layoutGridHolder = await page.locator('.l-layout__grid-holder').first();
+    await child1LayoutTreeItem.dragTo(layoutGridHolder, { targetPosition: { x: 500, y: 0 } });
+    await child2LayoutTreeItem.dragTo(layoutGridHolder, { targetPosition: { x: 0, y: 0 } });
   });
 });
