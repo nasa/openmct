@@ -27,14 +27,14 @@
  */
 
 const { test } = require('../../pluginFixtures');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 const percySnapshot = require('@percy/playwright');
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {
   test('Resize Marquee surrounds selection', async ({ page, theme, openmctConfig }) => {
-    const baseline = await setupBaseline(page, theme, openmctConfig);
+    const baseline = await setupBaseline(page, openmctConfig);
     const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
 
     await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
@@ -53,7 +53,7 @@ test.describe('Visual - Display Layout', () => {
   });
 
   test('Parent layout of selection displays grid', async ({ page, theme, openmctConfig }) => {
-    const baseline = await setupBaseline(page, theme, openmctConfig);
+    const baseline = await setupBaseline(page, openmctConfig);
     const { parentLayoutLocator, child1LayoutObjectLocator } = baseline;
 
     await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
@@ -130,8 +130,9 @@ async function setupBaseline(page, openmctConfig) {
     name: new RegExp(swg2.name)
   });
 
-  // Expand My Items folder
-  await expandTreePaneItemByName(page, myItemsFolderName);
+  // Expand folder containing created objects
+  await page.goto(parentLayout.url);
+  await page.getByTitle('Show selected item in tree').click();
 
   // Add swg1 to child1Layout
   await page.goto(child1Layout.url);
