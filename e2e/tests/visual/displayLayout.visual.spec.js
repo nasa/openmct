@@ -20,6 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Defines playwright locators that can be used in tests.
+ * @typedef {Object} LayoutLocators
+ * @property {Object<string, import('@playwright/test').Locator>} LayoutLocator
+ */
+
 const { test } = require('../../pluginFixtures');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
@@ -66,7 +72,13 @@ test.describe('Visual - Display Layout', () => {
   });
 });
 
-async function setupBaseline(page, theme, openmctConfig) {
+/**
+ * Sets up a complex layout with nested layouts and provides the playwright locators
+ * @param {import('@playwright/test').Page} page
+ * @param {Object} openmctConfig
+ * @returns {LayoutLocators} locators of baseline complex display to be used in tests
+ */
+async function setupBaseline(page, openmctConfig) {
   const { myItemsFolderName } = openmctConfig;
 
   // Load Open MCT visual test baseline
