@@ -460,7 +460,7 @@ async function removeLayoutObject(page, layoutObject) {
  * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
  */
 async function addLayoutObject(page, layoutName, layoutObject) {
-  await page.getByLabel(`${layoutName} Layout Grid`).click();
+  await page.getByLabel(`${layoutName} Layout Grid`).locator('..').click();
   await page.getByText('Add Drawing Object').click();
   await page
     .getByRole('menuitem', {
