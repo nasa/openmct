@@ -81,7 +81,7 @@ async function setupBaseline(page, theme, openmctConfig) {
   const objectViewLocator = page.locator('.c-object-view');
   const parentLayoutLocator = objectViewLocator.first();
   const child1LayoutLocator = parentLayoutLocator.locator(objectViewLocator).first();
-  const child1LayoutObjectLocator = child1LayoutLocator.locator('.c-telemetry-view');
+  const child1LayoutObjectLocator = child1LayoutLocator.locator('.l-layout__frame');
   const editButton = page.locator('[title="Edit"]');
   const saveButton = page.locator('button[title="Save"]');
   const confirmSaveAndFinishEditingButton = page.locator('text=Save and Finish Editing');
