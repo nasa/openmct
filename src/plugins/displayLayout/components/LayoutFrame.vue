@@ -30,13 +30,18 @@
     :style="style"
   >
     <slot name="content"></slot>
-    <div class="c-frame__move-bar" @mousedown.left="startMove($event)"></div>
+    <div
+      class="c-frame__move-bar"
+      :aria-label="`Move ${typeName} Frame`"
+      @mousedown.left="startMove($event)"
+    ></div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
 
+import DRAWING_OBJECT_TYPES from '../DrawingObjectTypes';
 import LayoutDrag from './../LayoutDrag';
 
 export default {
@@ -58,6 +63,13 @@ export default {
   },
   emits: ['move', 'end-move'],
   computed: {
+    typeName() {
+      const { type } = this.item;
+      if (DRAWING_OBJECT_TYPES[type]) {
+        return DRAWING_OBJECT_TYPES[type].name;
+      }
+      return 'Sub-object';
+    },
     size() {
       let { width, height } = this.item;
 

@@ -22,6 +22,7 @@
 
 <template>
   <tr
+    ref="tableRow"
     class="js-lad-table__body__row c-table__selectable-row"
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
@@ -40,6 +41,9 @@
       {{ unit }}
     </td>
     <td v-if="showType" class="js-type-data">{{ typeLabel }}</td>
+    <td v-for="limit in formattedLimitValues" :key="limit.key" class="js-limit-data">
+      {{ limit.value }}
+    </td>
   </tr>
 </template>
 
@@ -50,6 +54,7 @@ const BLANK_VALUE = '---';
 import identifierToString from '/src/tools/url';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
@@ -77,6 +82,19 @@ export default {
     configuration: {
       type: Object,
       required: true
+    },
+    limitDefinition: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    limitColumnNames: {
+      // for ordering
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   emits: ['row-context-click'],
@@ -85,6 +103,7 @@ export default {
       datum: undefined,
       timestamp: undefined,
       timestampKey: undefined,
+      valueKey: null,
       composition: [],
       unit: ''
     };
@@ -96,6 +115,26 @@ export default {
       }
 
       return this.formats[this.valueKey].format(this.datum);
+    },
+    formattedLimitValues() {
+      if (!this.valueKey) {
+        return [];
+      }
+      return this.limitColumnNames.map((column) => {
+        if (this.limitDefinition?.[column.key]) {
+          const highValue = this.limitDefinition[column.key].high[this.valueKey];
+          const lowValue = this.limitDefinition[column.key].low[this.valueKey];
+          return {
+            key: column.key,
+            value: `${lowValue} → ${highValue}`
+          };
+        } else {
+          return {
+            key: column.key,
+            value: BLANK_VALUE
+          };
+        }
+      });
     },
     typeLabel() {
       if (this.isAggregate) {
@@ -151,6 +190,7 @@ export default {
     }
   },
   async mounted() {
+    this.nicelyCalled = new NicelyCalled(this.$refs.tableRow);
     this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
     this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -199,12 +239,12 @@ export default {
     this.previewAction.off('isVisible', this.togglePreviewState);
 
     this.telemetryCollection.destroy();
+    this.nicelyCalled.destroy();
   },
   methods: {
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.nicelyCalled.execute(() => {
           this.timestamp = this.getParsedTimestamp(this.latestDatum);
           this.datum = this.latestDatum;
           this.updatingView = false;

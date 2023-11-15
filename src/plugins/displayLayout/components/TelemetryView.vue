@@ -73,6 +73,7 @@ import {
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 import LayoutFrame from './LayoutFrame.vue';
@@ -231,13 +232,7 @@ export default {
     }
   },
   mounted() {
-    if (this.openmct.objects.supportsMutation(this.item.identifier)) {
-      this.mutablePromise = this.openmct.objects
-        .getMutable(this.item.identifier)
-        .then(this.setObject);
-    } else {
-      this.openmct.objects.get(this.item.identifier).then(this.setObject);
-    }
+    this.getAndSetObject();
 
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
@@ -247,7 +242,7 @@ export default {
       this.subscribeToStaleness(domainObject);
     });
   },
-  beforeUnmount() {
+  async beforeUnmount() {
     this.removeStatusListener();
 
     if (this.removeSelectable) {
@@ -262,14 +257,25 @@ export default {
     }
 
     if (this.mutablePromise) {
-      this.mutablePromise.then(() => {
-        this.openmct.objects.destroyMutable(this.domainObject);
-      });
+      await this.mutablePromise();
+      this.openmct.objects.destroyMutable(this.domainObject);
     } else if (this?.domainObject?.isMutable) {
       this.openmct.objects.destroyMutable(this.domainObject);
     }
   },
   methods: {
+    async getAndSetObject() {
+      let foundObject = null;
+      if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+        this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier);
+        foundObject = await this.mutablePromise;
+      } else {
+        foundObject = await this.openmct.objects.get(this.item.identifier);
+      }
+      this.setObject(foundObject);
+      await this.$nextTick();
+      this.nicelyCalled = new NicelyCalled(this.$refs.telemetryViewWrapper);
+    },
     formattedValueForCopy() {
       const timeFormatterKey = this.openmct.time.timeSystem().key;
       const timeFormatter = this.formats[timeFormatterKey];
@@ -285,8 +291,7 @@ export default {
     },
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.nicelyCalled.execute(() => {
           this.datum = this.latestDatum;
           this.updatingView = false;
         });

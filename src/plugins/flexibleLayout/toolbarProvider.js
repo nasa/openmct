@@ -84,7 +84,8 @@ function ToolbarProvider(openmct) {
         let containerIndex = containers.indexOf(container);
         let frame = container && container.frames.filter((f) => f.id === frameId)[0];
         let frameIndex = container && container.frames.indexOf(frame);
-
+        const primaryKeyString = openmct.objects.makeKeyString(primary.context.item.identifier);
+        const tertiaryKeyString = openmct.objects.makeKeyString(tertiary.context.item.identifier);
         deleteFrame = {
           control: 'button',
           domainObject: primary.context.item,
@@ -98,7 +99,7 @@ function ToolbarProvider(openmct) {
                   emphasis: 'true',
                   callback: function () {
                     openmct.objectViews.emit(
-                      'contextAction',
+                      `contextAction:${primaryKeyString}`,
                       'deleteFrame',
                       primary.context.frameId
                     );
@@ -135,11 +136,12 @@ function ToolbarProvider(openmct) {
             }
           ]
         };
+
         addContainer = {
           control: 'button',
           domainObject: tertiary.context.item,
-          method: function () {
-            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          method: function (...args) {
+            openmct.objectViews.emit(`contextAction:${tertiaryKeyString}`, 'addContainer', ...args);
           },
           key: 'add',
           icon: 'icon-plus-in-rect',
@@ -185,11 +187,14 @@ function ToolbarProvider(openmct) {
           title: 'Remove Container'
         };
 
+        const domainObject = secondary.context.item;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
+
         addContainer = {
           control: 'button',
-          domainObject: secondary.context.item,
-          method: function () {
-            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          domainObject,
+          method: function (...args) {
+            openmct.objectViews.emit(`contextAction:${keyString}`, 'addContainer', ...args);
           },
           key: 'add',
           icon: 'icon-plus-in-rect',
@@ -200,11 +205,14 @@ function ToolbarProvider(openmct) {
           return [];
         }
 
+        const domainObject = primary.context.item;
+        const keyString = openmct.objects.makeKeyString(domainObject.identifier);
+
         addContainer = {
           control: 'button',
-          domainObject: primary.context.item,
-          method: function () {
-            openmct.objectViews.emit('contextAction', 'addContainer', ...arguments);
+          domainObject,
+          method: function (...args) {
+            openmct.objectViews.emit(`contextAction:${keyString}`, 'addContainer', ...args);
           },
           key: 'add',
           icon: 'icon-plus-in-rect',
