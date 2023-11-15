@@ -24,17 +24,45 @@ const { test } = require('../../pluginFixtures');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 const percySnapshot = require('@percy/playwright');
-
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {
-  test('Edit Marquee', async ({ page, theme, openmctConfig }) => {
-    const {
-      parentObjectView,
-      child1ObjectView
-    } = await setupBaseline(page, theme, openmctConfig);
+  test('Resize Marquee surrounds selection', async ({ page, theme, openmctConfig }) => {
+    const baseline = await setupBaseline(page, theme, openmctConfig);
+    const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
 
-    await child1ObjectView.click();
+    await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
+
+    await child1LayoutLocator.click();
+    await percySnapshot(page, `New nested layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
+
+    await child1LayoutObjectLocator.click();
+    await percySnapshot(page, `Object in nested layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
+  });
+
+  test('Parent layout of selection displays grid', async ({ page, theme, openmctConfig }) => {
+    const baseline = await setupBaseline(page, theme, openmctConfig);
+    const { parentLayoutLocator, child1LayoutObjectLocator } = baseline;
+
+    await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
+
+    await parentLayoutLocator.click();
+    await percySnapshot(page, `Outer layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
+
+    await child1LayoutObjectLocator.click();
+    await percySnapshot(page, `Object in nested layout selected (theme: '${theme}')`, {
+      scope: snapshotScope
+    });
   });
 });
 
@@ -50,10 +78,10 @@ async function setupBaseline(page, theme, openmctConfig) {
     name: 'Main Tree'
   });
 
-  const objectView = page.locator('.c-object-view');
-  const parentObjectView = objectView.first();
-  const child1ObjectView = parentObjectView.locator(objectView).first();
-  const child1ObjectViewObject = child1ObjectView.locator('.c-telemetry-view');
+  const objectViewLocator = page.locator('.c-object-view');
+  const parentLayoutLocator = objectViewLocator.first();
+  const child1LayoutLocator = parentLayoutLocator.locator(objectViewLocator).first();
+  const child1LayoutObjectLocator = child1LayoutLocator.locator('.c-telemetry-view');
   const editButton = page.locator('[title="Edit"]');
   const saveButton = page.locator('button[title="Save"]');
   const confirmSaveAndFinishEditingButton = page.locator('text=Save and Finish Editing');
@@ -96,26 +124,26 @@ async function setupBaseline(page, theme, openmctConfig) {
   // Add swg1 to child1Layout
   await page.goto(child1Layout.url);
   await editButton.click();
-  await swg1TreeItem.dragTo(parentObjectView, { targetPosition: { x: 0, y: 0 } });
+  await swg1TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
   await saveButton.click();
   await confirmSaveAndFinishEditingButton.click();
 
   // Add swg1 to child1Layout
   await page.goto(child2Layout.url);
   await editButton.click();
-  await swg2TreeItem.dragTo(parentObjectView, { targetPosition: { x: 0, y: 0 } });
+  await swg2TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
   await saveButton.click();
   await confirmSaveAndFinishEditingButton.click();
 
   // Add child1Layout and child2Layout to parentLayout
   await page.goto(parentLayout.url);
   await editButton.click();
-  await child1LayoutTreeItem.dragTo(parentObjectView, { targetPosition: { x: 350, y: 0 } });
-  await child2LayoutTreeItem.dragTo(parentObjectView, { targetPosition: { x: 0, y: 0 } });
+  await child1LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 350, y: 0 } });
+  await child2LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
 
   return {
-    parentObjectView,
-    child1ObjectView,
-    child1ObjectViewObject
+    parentLayoutLocator,
+    child1LayoutLocator,
+    child1LayoutObjectLocator
   };
 }
