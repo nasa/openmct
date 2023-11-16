@@ -153,10 +153,10 @@ test.describe('Gauge', () => {
     //Edit Example Telemetry Object to include 5s loading Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
 
-  await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
-  // Wait until the URL is updated
-  await page.waitForURL(`**/${gauge.uuid}/*`);
+    // Wait until the URL is updated
+    await page.waitForURL(`**/${gauge.uuid}/*`);
 
     // Nav to the Gauge
     await page.goto(gauge.url);
