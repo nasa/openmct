@@ -101,7 +101,7 @@ test.describe('Testing LAD table configuration', () => {
 
     // save and reload and verify they columns are still hidden
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
@@ -129,7 +129,7 @@ test.describe('Testing LAD table configuration', () => {
 
     // save and reload and make sure timestamp is still visible
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
@@ -159,7 +159,7 @@ test.describe('Testing LAD table configuration', () => {
 
     // save and reload and make sure all columns are still visible
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
@@ -265,7 +265,7 @@ test.describe('Testing LAD table @unstable', () => {
     // Add the Sine Wave Generator to the LAD table and save changes
     await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the LAD table is the most recent value
@@ -293,7 +293,7 @@ test.describe('Testing LAD table @unstable', () => {
     // Add the Sine Wave Generator to the LAD table and save changes
     await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
