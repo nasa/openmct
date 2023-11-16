@@ -33,8 +33,8 @@ const percySnapshot = require('@percy/playwright');
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {
-  test('Resize Marquee surrounds selection', async ({ page, theme, openmctConfig }) => {
-    const baseline = await setupBaseline(page, openmctConfig);
+  test('Resize Marquee surrounds selection', async ({ page, theme }) => {
+    const baseline = await setupBaseline(page);
     const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
 
     await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
@@ -52,8 +52,8 @@ test.describe('Visual - Display Layout', () => {
     });
   });
 
-  test('Parent layout of selection displays grid', async ({ page, theme, openmctConfig }) => {
-    const baseline = await setupBaseline(page, openmctConfig);
+  test('Parent layout of selection displays grid', async ({ page, theme }) => {
+    const baseline = await setupBaseline(page);
     const { parentLayoutLocator, child1LayoutObjectLocator } = baseline;
 
     await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
@@ -75,12 +75,9 @@ test.describe('Visual - Display Layout', () => {
 /**
  * Sets up a complex layout with nested layouts and provides the playwright locators
  * @param {import('@playwright/test').Page} page
- * @param {Object} openmctConfig
  * @returns {LayoutLocators} locators of baseline complex display to be used in tests
  */
-async function setupBaseline(page, openmctConfig) {
-  const { myItemsFolderName } = openmctConfig;
-
+async function setupBaseline(page) {
   // Load Open MCT visual test baseline
   await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   // Open Tree
