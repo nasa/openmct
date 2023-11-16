@@ -32,19 +32,19 @@ const path = require('path');
 const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
+  test.beforeEach(async ({ page }) => {
+    //Navigate to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
   test('Can create a Notebook Object', async ({ page }) => {
-    await page.goto('http://localhost:8080/');
-    await page.goto(
-      'http://localhost:8080/#/browse/mine?tc.mode=fixed&tc.startBound=1699787482193&tc.endBound=1699789312193&tc.timeSystem=utc&view=grid'
-    );
-    await page.getByRole('button', { name: ' Create ' }).click();
-    await page.getByRole('menuitem', { name: ' Notebook' }).click();
-    await page.getByText('Create a New Notebook').click();
+    //Create domain object
+    await createDomainObjectWithDefaults(page, {
+      type: NOTEBOOK_NAME
+    });
     //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
-    await page.locator('form[name="mctForm"] div').filter({ hasText: 'Title' }).nth(1).click();
-    await page.getByRole('dialog').getByText('Title', { exact: true }).click();
-    await page.getByLabel('Section Title').click();
-    await page.getByLabel('Page Title').click();
+    const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
+    await expect(notebookSectionNames).toBeHidden();
+    await expect(page.locator('span').filter({ hasText: 'Unnamed Page' })).toBeVisible();
   });
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
   test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
