@@ -99,7 +99,9 @@ export default class RemoteClock extends DefaultClock {
   _subscribe() {
     this._unsubscribe = this.openmct.telemetry.subscribe(
       this.timeTelemetryObject,
-      this._processDatum
+      this._processDatum, {
+        strategy: 'latest'
+      }
     );
   }
 
