@@ -19,12 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* global __dirname */
 
 const { test, expect } = require('../../../../pluginFixtures');
 const {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
 } = require('../../../../appActions');
+const path = require('path');
+
+const LOCALSTORAGE_PATH = path.resolve(
+  __dirname,
+  '../../../../test-data/flexible_layout_with_child_layouts.json'
+);
 
 test.describe('Flexible Layout', () => {
   let sineWaveObject;
@@ -255,5 +262,42 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('switch').click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+  });
+});
+
+test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
+  test.use({
+    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page
+      .locator('a')
+      .filter({ hasText: 'Parent Flexible Layout Flexible Layout' })
+      .first()
+      .click();
+    await page.getByLabel('Edit').click();
+  });
+  test('Add/Remove Container', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7234'
+    });
+    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
+    expect(await page.locator('.c-fl-container').count()).toEqual(2);
+    await page.getByTitle('Add Container').click();
+    expect(await page.locator('.c-fl-container').count()).toEqual(3);
+    await page.getByTitle('Remove Container').click();
+    await page.getByRole('button', { name: 'OK' }).click();
+    expect(await page.locator('.c-fl-container').count()).toEqual(2);
+  });
+  test('Columns/Rows Layout Toggle', async ({ page }) => {
+    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
+    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    await page.getByTitle('Columns layout').click();
+    expect(await page.locator('.c-fl--rows').count()).toEqual(1);
+    await page.getByTitle('Rows layout').click();
+    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
   });
 });

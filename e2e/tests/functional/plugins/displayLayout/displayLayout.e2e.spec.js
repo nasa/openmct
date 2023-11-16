@@ -37,7 +37,7 @@ const LOCALSTORAGE_PATH = path.resolve(
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 
-test.describe('Display Layout Toolbar Actions', () => {
+test.describe('Display Layout Toolbar Actions @localStorage', () => {
   const PARENT_DISPLAY_LAYOUT_NAME = 'Parent Display Layout';
   const CHILD_DISPLAY_LAYOUT_NAME1 = 'Child Layout 1';
   test.beforeEach(async ({ page }) => {
