@@ -421,6 +421,12 @@ export default class PlotSeries extends Model {
    *                  a point to the end without dupe checking.
    */
   add(point, appendOnly) {
+    if (point instanceof Array) {
+      for (let i = 0; i < point.length; i++) {
+        this.add(point[i], true);
+      }
+      return;
+    }
     let data = this.getSeriesData();
     let insertIndex = data.length;
     const currentYVal = this.getYVal(point);

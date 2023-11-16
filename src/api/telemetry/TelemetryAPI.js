@@ -400,14 +400,18 @@ export default class TelemetryAPI {
 
     if (!subscriber) {
       subscriber = this.subscribeCache[keyString] = {
-        callbacks: [callback]
+        callbacks: [{options, callback}]
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
           function (value) {
             subscriber.callbacks.forEach(function (cb) {
-              cb(value);
+              if (value instanceof Array && cb.options?.strategy === 'latest') {
+                cb.callback(value[value.length - 1]);
+              } else {
+                cb.callback(value);
+              }
             });
           },
           options
@@ -416,7 +420,7 @@ export default class TelemetryAPI {
         subscriber.unsubscribe = function () {};
       }
     } else {
-      subscriber.callbacks.push(callback);
+      subscriber.callbacks.push({callback, options});
     }
 
     return function unsubscribe() {
