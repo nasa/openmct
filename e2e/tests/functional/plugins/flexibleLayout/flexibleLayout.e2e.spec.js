@@ -292,6 +292,14 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByRole('button', { name: 'OK' }).click();
     expect(await page.locator('.c-fl-container').count()).toEqual(2);
   });
+  test('Remove Frame', async ({ page }) => {
+    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
+    expect(await page.locator('.c-fl-container__frame').count()).toEqual(2);
+    await page.locator('.c-fl-container__frame').first().click();
+    await page.getByTitle('Remove Frame').click();
+    await page.getByRole('button', { name: 'OK' }).click();
+    expect(await page.locator('.c-fl-container__frame').count()).toEqual(1);
+  });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
     await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
