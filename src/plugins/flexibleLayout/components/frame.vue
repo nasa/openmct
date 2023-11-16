@@ -154,8 +154,11 @@ export default {
                 let originalClassName = this.dragGhost.classList[0];
                 this.dragGhost.className = '';
                 this.dragGhost.classList.add(originalClassName, iconClass);
+                this.dragGhost.textContent = '';
+                const span = document.createElement('span');
+                span.textContent = this.domainObject.name;
+                this.dragGhost.appendChild(span);
 
-                this.dragGhost.innerHTML = `<span>${this.domainObject.name}</span>`;
                 event.dataTransfer.setDragImage(this.dragGhost, 0, 0);
             }
 
