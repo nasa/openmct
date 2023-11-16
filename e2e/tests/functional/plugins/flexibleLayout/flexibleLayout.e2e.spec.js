@@ -88,7 +88,7 @@ test.describe('Flexible Layout', () => {
     await expect(dragWrapper).toHaveAttribute('draggable', 'true');
     // Save Flexible Layout
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Check that panes are not draggable while Flexible Layout is in Browse mode
     dragWrapper = page.locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper').first();
     await expect(dragWrapper).toHaveAttribute('draggable', 'false');
@@ -174,7 +174,7 @@ test.describe('Flexible Layout', () => {
     // Add the Sine Wave Generator to the Flexible Layout and save changes
     await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.c-fl-container__frame').count()).toEqual(1);
 
@@ -205,7 +205,7 @@ test.describe('Flexible Layout', () => {
     // Add the Sine Wave Generator to the Flexible Layout and save changes
     await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.c-fl-container__frame').count()).toEqual(1);
 
@@ -246,7 +246,7 @@ test.describe('Flexible Layout', () => {
     await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
     await setIndependentTimeConductorBounds(

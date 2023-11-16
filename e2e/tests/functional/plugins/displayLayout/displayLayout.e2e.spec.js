@@ -148,7 +148,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
@@ -186,7 +186,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
@@ -228,7 +228,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
 
@@ -270,7 +270,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
 
@@ -326,7 +326,7 @@ test.describe('Display Layout', () => {
     await page.locator('div[title="Resize object width"] > input').fill('70');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
@@ -388,7 +388,7 @@ test.describe('Display Layout', () => {
     await page.getByText('Overlay Plot').click();
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic
     let networkRequests = [];
@@ -460,7 +460,7 @@ async function removeLayoutObject(page, layoutObject) {
  * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
  */
 async function addLayoutObject(page, layoutName, layoutObject) {
-  await page.getByLabel(`${layoutName} Layout Grid`).click();
+  await page.getByLabel(`${layoutName} Layout`, { exact: true }).click();
   await page.getByText('Add Drawing Object').click();
   await page
     .getByRole('menuitem', {
