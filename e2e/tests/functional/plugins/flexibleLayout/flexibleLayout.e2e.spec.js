@@ -265,7 +265,7 @@ test.describe('Flexible Layout', () => {
   });
 });
 
-test.describe('Flexible Layout Toolbar Actions', () => {
+test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
   test.use({
     storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
   });
