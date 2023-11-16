@@ -336,7 +336,6 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
@@ -345,7 +344,7 @@ const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],
-  inject: ['openmct', 'domainObject', 'composition'],
+  inject: ['openmct', 'domainObject', 'composition', 'renderWhenVisible'],
   data() {
     let gaugeController = this.domainObject.configuration.gaugeController;
 
@@ -539,7 +538,6 @@ export default {
     }
   },
   mounted() {
-    this.nicelyCalled = new NicelyCalled(this.$refs.gaugeWrapper);
     this.composition.on('add', this.addedToComposition);
     this.composition.on('remove', this.removeTelemetryObject);
 
@@ -563,8 +561,6 @@ export default {
 
     this.openmct.time.off('bounds', this.refreshData);
     this.openmct.time.off('timeSystem', this.setTimeSystem);
-
-    this.nicelyCalled.destroy();
   },
   methods: {
     getLimitDegree: getLimitDegree,
@@ -737,7 +733,7 @@ export default {
         return;
       }
 
-      this.isRendering = this.nicelyCalled.execute(() => {
+      this.isRendering = this.renderWhenVisible(() => {
         this.isRendering = false;
 
         this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);

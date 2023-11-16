@@ -54,12 +54,11 @@ const BLANK_VALUE = '---';
 import identifierToString from '/src/tools/url';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
 
-import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
   mixins: [tooltipHelpers],
-  inject: ['openmct', 'currentView'],
+  inject: ['openmct', 'currentView', 'renderWhenVisible'],
   props: {
     domainObject: {
       type: Object,
@@ -190,7 +189,6 @@ export default {
     }
   },
   async mounted() {
-    this.nicelyCalled = new NicelyCalled(this.$refs.tableRow);
     this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
     this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -239,12 +237,11 @@ export default {
     this.previewAction.off('isVisible', this.togglePreviewState);
 
     this.telemetryCollection.destroy();
-    this.nicelyCalled.destroy();
   },
   methods: {
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = this.nicelyCalled.execute(() => {
+        this.updatingView = this.renderWhenVisible(() => {
           this.timestamp = this.getParsedTimestamp(this.latestDatum);
           this.datum = this.latestDatum;
           this.updatingView = false;

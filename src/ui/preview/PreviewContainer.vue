@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-preview-window js-preview-window">
+  <div ref="previewWindow" class="l-preview-window js-preview-window">
     <PreviewHeader
       :current-view="currentViewProvider"
       :action-collection="actionCollection"
@@ -37,6 +37,7 @@
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
 import PreviewHeader from './PreviewHeader.vue';
 
 export default {
@@ -48,7 +49,7 @@ export default {
     viewOptions: {
       type: Object,
       default() {
-        return undefined;
+        return {};
       }
     },
     existingView: {
@@ -71,6 +72,7 @@ export default {
     };
   },
   mounted() {
+    this.visibilityObserver = new VisibilityObserver(this.$refs.previewWindow);
     this.viewProviders = this.openmct.objectViews.get(this.domainObject, this.objectPath);
     this.viewProviders.forEach((provider, index) => {
       provider.onItemClicked = () => {
@@ -96,6 +98,10 @@ export default {
 
     if (this.actionCollection) {
       this.actionCollection.destroy();
+    }
+
+    if (this.visibilityObserver) {
+      this.visibilityObserver.destroy();
     }
   },
   unmounted() {
@@ -147,6 +153,7 @@ export default {
       if (isExistingView) {
         this.viewContainer.appendChild(this.existingViewElement);
       } else {
+        this.viewOptions.renderWhenVisible = this.visibilityObserver.renderWhenVisible;
         this.view.show(this.viewContainer, false, this.viewOptions);
       }
 

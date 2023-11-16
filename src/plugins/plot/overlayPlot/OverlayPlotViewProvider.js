@@ -47,7 +47,7 @@ export default function OverlayPlotViewProvider(openmct) {
       let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
           const { vNode, destroy } = mount(
             {
@@ -58,7 +58,8 @@ export default function OverlayPlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                renderWhenVisible
               },
               data() {
                 return {
