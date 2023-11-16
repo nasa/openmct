@@ -53,7 +53,7 @@ test.describe('Gauge', () => {
     await editButtonLocator.click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await saveButtonLocator.click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the gauge
     const swg2 = await createDomainObjectWithDefaults(page, {

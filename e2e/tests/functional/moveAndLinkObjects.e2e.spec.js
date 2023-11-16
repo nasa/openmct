@@ -149,7 +149,7 @@ test.describe('Move & link item tests', () => {
 
     // Finish editing and save Telemetry Table
     await page.locator('.c-button--menu.c-button--major.icon-save').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create New Folder Basic Domain Object
     let folder = 'Test Folder';

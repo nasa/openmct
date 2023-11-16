@@ -37,17 +37,17 @@ test.describe('Visual - Display Layout', () => {
     const baseline = await setupBaseline(page);
     const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
 
-    await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Resize nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
 
     await child1LayoutLocator.click();
-    await percySnapshot(page, `New nested layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Resize new nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
 
     await child1LayoutObjectLocator.click();
-    await percySnapshot(page, `Object in nested layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Resize Object in nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
   });
@@ -56,17 +56,17 @@ test.describe('Visual - Display Layout', () => {
     const baseline = await setupBaseline(page);
     const { parentLayoutLocator, child1LayoutObjectLocator } = baseline;
 
-    await percySnapshot(page, `Nested layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Parent nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
 
     await parentLayoutLocator.click();
-    await percySnapshot(page, `Outer layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
 
     await child1LayoutObjectLocator.click();
-    await percySnapshot(page, `Object in nested layout selected (theme: '${theme}')`, {
+    await percySnapshot(page, `Parent Object in nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
   });
@@ -91,9 +91,6 @@ async function setupBaseline(page) {
   const parentLayoutLocator = objectViewLocator.first();
   const child1LayoutLocator = parentLayoutLocator.locator(objectViewLocator).first();
   const child1LayoutObjectLocator = child1LayoutLocator.locator('.l-layout__frame');
-  const editButton = page.locator('[title="Edit"]');
-  const saveButton = page.locator('button[title="Save"]');
-  const confirmSaveAndFinishEditingButton = page.locator('text=Save and Finish Editing');
   const parentLayout = await createDomainObjectWithDefaults(page, {
     type: 'Display Layout',
     name: 'Parent Layout'
@@ -133,21 +130,21 @@ async function setupBaseline(page) {
 
   // Add swg1 to child1Layout
   await page.goto(child1Layout.url);
-  await editButton.click();
+  await page.getByRole('button', { name: 'Edit' }).click();
   await swg1TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
-  await saveButton.click();
-  await confirmSaveAndFinishEditingButton.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
   // Add swg1 to child1Layout
   await page.goto(child2Layout.url);
-  await editButton.click();
+  await page.getByRole('button', { name: 'Edit' }).click();
   await swg2TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
-  await saveButton.click();
-  await confirmSaveAndFinishEditingButton.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
   // Add child1Layout and child2Layout to parentLayout
   await page.goto(parentLayout.url);
-  await editButton.click();
+  await page.getByRole('button', { name: 'Edit' }).click();
   await child1LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 350, y: 0 } });
   await child2LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
 

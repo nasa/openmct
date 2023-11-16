@@ -103,7 +103,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-lad-table-wrapper');
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-lad-table-wrapper');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
@@ -133,7 +133,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.gl-plot');
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.gl-plot');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
@@ -200,7 +200,7 @@ test.describe('Verify tooltips', () => {
     await page.locator('[title="Edit"]').click();
     await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.gl-plot');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create Stacked Plot
     await createDomainObjectWithDefaults(page, {
@@ -211,7 +211,7 @@ test.describe('Verify tooltips', () => {
     await page.locator('[title="Edit"]').click();
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-plot--stacked.holder');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create Display Layout
     await createDomainObjectWithDefaults(page, {
@@ -231,7 +231,7 @@ test.describe('Verify tooltips', () => {
       targetPosition: { x: 500, y: 200 }
     });
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
@@ -269,7 +269,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl__container >> nth=1');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
@@ -293,7 +293,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-tabs-view__tabs-holder');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
@@ -378,7 +378,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.keyboard.down('Control');
 
     await page.locator('.noselect > [title="SWG 3"]').first().hover();
@@ -442,7 +442,7 @@ test.describe('Verify tooltips', () => {
       '.c-object-view.is-object-type-time-strip'
     );
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
     await page.getByText(sineWaveObject1.name).nth(2).hover();
