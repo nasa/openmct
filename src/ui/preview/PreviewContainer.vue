@@ -151,6 +151,7 @@ export default {
         // in preview mode, we're always visible
         this.viewOptions.renderWhenVisible = (func) => {
           window.requestAnimationFrame(func);
+          return true;
         };
         this.view.show(this.viewContainer, false, this.viewOptions);
       }
