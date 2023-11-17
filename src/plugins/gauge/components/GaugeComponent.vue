@@ -407,10 +407,10 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = Math.max(
-        this.rangeLow.toString().length,
-        this.rangeHigh.toString().length
-      );
+      const RANGE_CHARS_MAX =
+        this.rangeLow && this.rangeHigh
+          ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length)
+          : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },
