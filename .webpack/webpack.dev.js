@@ -55,6 +55,9 @@ module.exports = merge(base, {
     ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      __OPENMCT_ROOT_RELATIVE__: '"dist/"'
+    }),
     new webpack.ProgressPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',

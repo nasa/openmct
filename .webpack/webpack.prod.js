@@ -49,6 +49,9 @@ module.exports = merge(base, {
     ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      __OPENMCT_ROOT_RELATIVE__: '""'
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css'
