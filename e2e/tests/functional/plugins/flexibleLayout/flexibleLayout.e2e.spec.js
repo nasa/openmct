@@ -300,7 +300,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
-    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
+    await page.getByRole('group', { name: 'Container' }).nth(1).click();
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
     await page.getByTitle('Columns layout').click();
     expect(await page.locator('.c-fl--rows').count()).toEqual(1);
