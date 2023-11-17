@@ -56,9 +56,6 @@ module.exports = merge(base, {
   },
   plugins: [
     new webpack.ProgressPlugin(),
-    new webpack.DefinePlugin({
-      __OPENMCT_ROOT_RELATIVE__: '""'
-    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css'
@@ -75,7 +72,7 @@ module.exports = merge(base, {
     },
     watchFiles: ['**/*.css'],
     static: {
-      directory: path.join(projectRootDir, '/dist'),
+      directory: path.join(projectRootDir, 'dist'),
       publicPath: '/dist',
       watch: false
     },

@@ -22,7 +22,7 @@ try {
   gitRevision = require('child_process').execSync('git rev-parse HEAD').toString().trim();
   gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
-    .toString()
+    .toString() 
     .trim();
 } catch (err) {
   console.warn(err);
@@ -78,6 +78,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
+      __OPENMCT_ROOT_RELATIVE__: '""',
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
