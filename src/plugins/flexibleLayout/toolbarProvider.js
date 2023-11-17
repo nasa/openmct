@@ -46,6 +46,12 @@ function ToolbarProvider(openmct) {
       let deleteContainer;
       let addContainer;
       let toggleFrame;
+      const primaryKeyString =
+        primary?.context?.item?.identifier &&
+        openmct.objects.makeKeyString(primary.context.item.identifier);
+      const tertiaryKeyString =
+        tertiary?.context?.item?.identifier &&
+        openmct.objects.makeKeyString(tertiary.context.item.identifier);
 
       toggleContainer = {
         control: 'toggle-button',
@@ -84,8 +90,6 @@ function ToolbarProvider(openmct) {
         let containerIndex = containers.indexOf(container);
         let frame = container && container.frames.filter((f) => f.id === frameId)[0];
         let frameIndex = container && container.frames.indexOf(frame);
-        const primaryKeyString = openmct.objects.makeKeyString(primary.context.item.identifier);
-        const tertiaryKeyString = openmct.objects.makeKeyString(tertiary.context.item.identifier);
         deleteFrame = {
           control: 'button',
           domainObject: primary.context.item,
@@ -169,7 +173,11 @@ function ToolbarProvider(openmct) {
                   label: 'OK',
                   emphasis: 'true',
                   callback: function () {
-                    openmct.objectViews.emit('contextAction', 'deleteContainer', containerId);
+                    openmct.objectViews.emit(
+                      `contextAction:${primaryKeyString}`,
+                      'deleteContainer',
+                      containerId
+                    );
                     prompt.dismiss();
                   }
                 },

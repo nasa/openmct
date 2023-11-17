@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-gauge__wrapper js-gauge-wrapper" :class="gaugeClasses" :title="gaugeTitle">
+  <div
+    ref="gaugeWrapper"
+    class="c-gauge__wrapper js-gauge-wrapper"
+    :class="gaugeClasses"
+    :title="gaugeTitle"
+  >
     <template v-if="typeDial">
       <svg
         ref="gauge"
@@ -331,6 +336,7 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
 
@@ -402,10 +408,10 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = Math.max(
-        this.rangeLow.toString().length,
-        this.rangeHigh.toString().length
-      );
+      const RANGE_CHARS_MAX =
+        this.rangeLow && this.rangeHigh
+          ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length)
+          : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },
@@ -533,6 +539,7 @@ export default {
     }
   },
   mounted() {
+    this.nicelyCalled = new NicelyCalled(this.$refs.gaugeWrapper);
     this.composition.on('add', this.addedToComposition);
     this.composition.on('remove', this.removeTelemetryObject);
 
@@ -556,6 +563,8 @@ export default {
 
     this.openmct.time.off('bounds', this.refreshData);
     this.openmct.time.off('timeSystem', this.setTimeSystem);
+
+    this.nicelyCalled.destroy();
   },
   methods: {
     getLimitDegree: getLimitDegree,
@@ -728,8 +737,7 @@ export default {
         return;
       }
 
-      this.isRendering = true;
-      requestAnimationFrame(() => {
+      this.isRendering = this.nicelyCalled.execute(() => {
         this.isRendering = false;
 
         this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);

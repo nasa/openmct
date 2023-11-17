@@ -135,7 +135,7 @@ test.describe('Stacked Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // assert plot order persists after save - [swgB, swgC, swgA]
     await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
@@ -243,7 +243,7 @@ test.describe('Stacked Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await assertAggregateLegendIsVisible(page);
 

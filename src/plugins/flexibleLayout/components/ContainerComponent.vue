@@ -63,7 +63,7 @@
         <resize-handle
           v-if="i !== frames.length - 1"
           :index="i"
-          :orientation="rowsLayout ? 'horizontal' : 'vertical'"
+          :drag-orientation="rowsLayout ? 'horizontal' : 'vertical'"
           :is-editing="isEditing"
           @init-move="startFrameResizing"
           @move="frameResizing"

@@ -68,7 +68,7 @@ test.describe('Autoscale', () => {
     // save
     await page.click('button[title="Save"]');
     await Promise.all([
-      page.locator('li[title = "Save and Finish Editing"]').click(),
+      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
       //Wait for Save Banner to appear
       page.waitForSelector('.c-message-banner__message')
     ]);
