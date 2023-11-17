@@ -27,6 +27,7 @@
       'is-multi-selected': selectedLayoutItems.length > 1,
       'allow-editing': isEditing
     }"
+    :aria-label="`${domainObject.name} Layout`"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"

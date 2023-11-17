@@ -24,7 +24,7 @@
   <div
     v-show="isEditing && !isDragging"
     class="c-fl-frame__resize-handle"
-    :class="[orientation]"
+    :class="[dragOrientation]"
     @mousedown="mousedown"
   ></div>
 </template>
@@ -32,7 +32,7 @@
 <script>
 export default {
   props: {
-    orientation: {
+    dragOrientation: {
       type: String,
       required: true
     },
@@ -78,7 +78,7 @@ export default {
       let mousePos;
       let delta;
 
-      if (this.orientation === 'horizontal') {
+      if (this.dragOrientation === 'horizontal') {
         elSize = this.$el.getBoundingClientRect().x;
         mousePos = event.clientX;
       } else {
