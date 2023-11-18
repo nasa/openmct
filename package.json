@@ -74,6 +74,7 @@
     "sass-loader": "13.3.2",
     "sinon": "17.0.0",
     "style-loader": "3.3.3",
+    "terser-webpack-plugin": "5.3.9",
     "tiny-emitter": "2.1.0",
     "typescript": "5.2.2",
     "uuid": "9.0.1",

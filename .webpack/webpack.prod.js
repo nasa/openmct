@@ -7,6 +7,7 @@ It is the default webpack configuration.
 const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const common = require('./webpack.common');
 const projectRootDir = path.resolve(__dirname, '..');
@@ -18,5 +19,9 @@ module.exports = merge(common, {
       __OPENMCT_ROOT_RELATIVE__: '""'
     })
   ],
-  devtool: 'source-map'
+  devtool: 'source-map',
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
+  }
 });
