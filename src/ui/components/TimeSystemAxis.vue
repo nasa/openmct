@@ -27,7 +27,7 @@
 
 <script>
 import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import * as d3Selection from 'd3-selection';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
@@ -155,10 +155,10 @@ export default {
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([bounds.start, bounds.end]);
       }
 
