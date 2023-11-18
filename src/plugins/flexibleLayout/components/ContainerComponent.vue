@@ -25,6 +25,8 @@
     class="c-fl-container"
     :style="[{ 'flex-basis': sizeString }]"
     :class="{ 'is-empty': !frames.length }"
+    role="group"
+    :aria-label="`Container ${container.id}`"
   >
     <div
       v-show="isEditing"
