@@ -226,7 +226,9 @@ export default class TelemetryCollection extends EventEmitter {
 
       if (
         !afterEndOfBounds &&
-        (!beforeStartOfBounds || (this.isStrategyLatest && this.openmct.telemetry.greedyLAD()))
+        (!beforeStartOfBounds ||
+          (beforeStartOfBounds && this.options.paging) ||
+          (this.isStrategyLatest && this.openmct.telemetry.greedyLAD()))
       ) {
         let isDuplicate = false;
         let startIndex = this._sortedIndex(datum);
