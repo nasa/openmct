@@ -322,6 +322,10 @@ export default class TelemetryCollection extends EventEmitter {
       return;
     }
 
+    if (this.options.paging) {
+      return;
+    }
+
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 
