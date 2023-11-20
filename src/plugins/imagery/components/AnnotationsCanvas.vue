@@ -419,6 +419,7 @@ export default {
     },
     drawAnnotations() {
       this.clearCanvas();
+      let drawnRectangles = [];
       this.imageryAnnotations.forEach((annotation) => {
         if (annotation._deleted) {
           return;
@@ -426,19 +427,31 @@ export default {
         const annotationRectangle = annotation.targets.find(
           (target) => target.keyString === this.keyString
         )?.rectangle;
-        const rectangleForPixelDensity = this.transformRectangleToPixelDense(annotationRectangle);
-        if (this.isSelectedAnnotation(annotation)) {
-          this.drawRectInCanvas(
-            rectangleForPixelDensity,
-            SELECTED_ANNOTATION_FILL_STYLE,
-            SELECTED_ANNOTATION_STROKE_COLOR
-          );
-        } else {
-          this.drawRectInCanvas(
-            rectangleForPixelDensity,
-            EXISTING_ANNOTATION_FILL_STYLE,
-            EXISTING_ANNOTATION_STROKE_STYLE
-          );
+
+        // Check if the rectangle has already been drawn
+        const hasBeenDrawn = drawnRectangles.some(
+          (drawnRect) =>
+            drawnRect.x === annotationRectangle.x &&
+            drawnRect.y === annotationRectangle.y &&
+            drawnRect.width === annotationRectangle.width &&
+            drawnRect.height === annotationRectangle.height
+        );
+        if (!hasBeenDrawn) {
+          const rectangleForPixelDensity = this.transformRectangleToPixelDense(annotationRectangle);
+          if (this.isSelectedAnnotation(annotation)) {
+            this.drawRectInCanvas(
+              rectangleForPixelDensity,
+              SELECTED_ANNOTATION_FILL_STYLE,
+              SELECTED_ANNOTATION_STROKE_COLOR
+            );
+          } else {
+            this.drawRectInCanvas(
+              rectangleForPixelDensity,
+              EXISTING_ANNOTATION_FILL_STYLE,
+              EXISTING_ANNOTATION_STROKE_STYLE
+            );
+          }
+          drawnRectangles.push(annotationRectangle);
         }
       });
     }
