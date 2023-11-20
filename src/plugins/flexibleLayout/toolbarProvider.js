@@ -103,7 +103,7 @@ function ToolbarProvider(openmct) {
                   emphasis: 'true',
                   callback: function () {
                     openmct.objectViews.emit(
-                      `contextAction:${primaryKeyString}`,
+                      `contextAction:${tertiaryKeyString}`,
                       'deleteFrame',
                       primary.context.frameId
                     );

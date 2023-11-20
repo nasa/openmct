@@ -31,6 +31,8 @@
       ref="frame"
       class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
       :draggable="draggable"
+      :aria-label="frameLabel"
+      role="group"
       @dragstart="initDrag"
     >
       <object-frame
@@ -95,6 +97,9 @@ export default {
     },
     draggable() {
       return this.isEditing;
+    },
+    frameLabel() {
+      return `${this.domainObject?.name} Frame` || 'Frame';
     }
   },
   mounted() {
