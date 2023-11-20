@@ -193,7 +193,7 @@ Current list of test tags:
 |`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
 |`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
-|`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB).|
+|`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB). See [note](#utilizing-localstorage)|
 |`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
 |`@unstable` | A new test or test which is known to be flaky.|
 |`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
@@ -352,6 +352,28 @@ By adhering to this principle, we can create tests that are both robust and refl
   1.  Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
   This ensures that your changes will be picked up with large refactors.
 
+##### Utilizing LocalStorage
+  1. In order to save test runtime in the case of tests that require a decent amount of initial setup (such as in the case of testing complex displays), you may use [Playwright's `storageState` feature](https://playwright.dev/docs/api/class-browsercontext#browser-context-storage-state) to generate and load localStorage states.
+  1. To generate a localStorage state to be used in a test:
+    - Add an e2e test to our generateLocalStorageData suite which sets the initial state (creating/configuring objects, etc.), saving it in the `test-data` folder:
+    ```js
+    // Save localStorage for future test execution
+    await context.storageState({
+      path: path.join(__dirname, '../../../e2e/test-data/display_layout_with_child_layouts.json')
+    });
+    ```
+    - Load the state from file at the beginning of the desired test suite (within the `test.describe()`). (NOTE: the storage state will be used for each test in the suite, so you may need to create a new suite):
+    ```js
+      const LOCALSTORAGE_PATH = path.resolve(
+        __dirname,
+        '../../../../test-data/display_layout_with_child_layouts.json'
+      );
+      test.use({
+        storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+      }); 
+    ```
+
+
 ### How to write a great test
 
 - Avoid using css locators to find elements to the page. Use modern web accessible locators like `getByRole`
@@ -468,15 +490,7 @@ Our e2e code coverage is captured and combined with our unit test coverage. For 
 
 #### Generating e2e code coverage
 
-Code coverage is collected during test execution using our custom [baseFixture](./baseFixtures.js). The raw coverage files are stored in a `.nyc_report` directory to be converted into a lcov file with the following [nyc](https://github.com/istanbuljs/nyc) command:
-
-```npm run cov:e2e:report```
-
-At this point, the nyc linecov report can be published to [codecov.io](https://about.codecov.io/) with the following command:
-
-```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu.
-or
-```npm run cov:e2e:full:publish``` for the full suite running against all available platforms.
+Please read more about our code coverage [here](../TESTING.md#code-coverage)
 
 ## Other
 
@@ -526,10 +540,10 @@ A single e2e test in Open MCT is extended to run:
 - How is Open MCT extending default Playwright functionality?
 - What about Component Testing?
 
-### Troubleshooting
+### e2e Troubleshooting
 
-- Why is my test failing on CI and not locally?
-- How can I view the failing tests on CI?
+Please follow the general guide troubleshooting in [the general troubleshooting doc](../TESTING.md#troubleshooting-ci)
+
 - Tests won't start because 'Error: <http://localhost:8080/># is already used...'
 This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
 ```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```

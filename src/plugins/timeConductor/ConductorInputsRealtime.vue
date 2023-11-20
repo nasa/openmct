@@ -209,7 +209,7 @@ export default {
       this.formattedBounds.end = this.timeFormatter.format(bounds.end);
     },
     updateCurrentValue() {
-      const currentValue = this.openmct.time.getClock()?.currentValue();
+      const currentValue = this.timeContext.getClock().currentValue();
 
       if (currentValue !== undefined) {
         this.setCurrentValue(currentValue);
