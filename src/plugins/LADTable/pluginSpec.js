@@ -24,6 +24,7 @@ import {
   getLatestTelemetry,
   getMockObjects,
   getMockTelemetry,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -225,7 +226,7 @@ describe('The LAD Table', () => {
         (viewProvider) => viewProvider.key === ladTableKey
       );
       ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
-      ladTableView.show(child, true);
+      ladTableView.show(child, true, { renderWhenVisible });
 
       await Promise.all([
         telemetryRequestPromise,

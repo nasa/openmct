@@ -22,6 +22,7 @@
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -236,7 +237,7 @@ describe('the plugin', () => {
       applicableViews = openmct.objectViews.get(testTelemetryObject, []);
       tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
       tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
-      tableView.show(child, true);
+      tableView.show(child, true, { renderWhenVisible });
 
       tableInstance = tableView.getTable();
 

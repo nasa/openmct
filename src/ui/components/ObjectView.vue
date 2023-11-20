@@ -33,6 +33,8 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+
 export default {
   mixins: [stalenessMixin],
   inject: ['openmct'],
@@ -113,6 +115,9 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    if (this.visibilityObserver) {
+      this.visibilityObserver.destroy();
+    }
     this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
       capture: true
     });
@@ -125,6 +130,7 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
+    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -290,7 +296,9 @@ export default {
         }
       }
 
-      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
+      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing(), {
+        renderWhenVisible: this.visibilityObserver.renderWhenVisible
+      });
 
       if (immediatelySelect) {
         this.removeSelectable = this.openmct.selection.selectable(
