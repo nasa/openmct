@@ -23,36 +23,38 @@
 /**
  * Optimizes `requestAnimationFrame` calls to only execute when the element is visible in the viewport.
  */
-export default class NicelyCalled {
+export default class VisibilityObserver {
   #element;
-  #isIntersecting;
   #observer;
-  #lastUnfiredFunc;
+  lastUnfiredFunc;
 
   /**
-   * Constructs a NicelyCalled instance to manage visibility-based requestAnimationFrame calls.
+   * Constructs a VisibilityObserver instance to manage visibility-based requestAnimationFrame calls.
    *
    * @param {HTMLElement} element - The DOM element to observe for visibility changes.
    * @throws {Error} If element is not provided.
    */
   constructor(element) {
     if (!element) {
-      throw new Error(`Nice visibility must be created with an element`);
+      throw new Error(`VisibilityObserver must be created with an element`);
     }
+    // set the id to some random 4 letters
+    this.id = Math.random().toString(36).substring(2, 6);
     this.#element = element;
-    this.#isIntersecting = true;
+    this.isIntersecting = true;
 
     this.#observer = new IntersectionObserver(this.#observerCallback);
     this.#observer.observe(this.#element);
-    this.#lastUnfiredFunc = null;
+    this.lastUnfiredFunc = null;
+    this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
 
   #observerCallback = ([entry]) => {
     if (entry.target === this.#element) {
-      this.#isIntersecting = entry.isIntersecting;
-      if (this.#isIntersecting && this.#lastUnfiredFunc) {
-        window.requestAnimationFrame(this.#lastUnfiredFunc);
-        this.#lastUnfiredFunc = null;
+      this.isIntersecting = entry.isIntersecting;
+      if (this.isIntersecting && this.lastUnfiredFunc) {
+        window.requestAnimationFrame(this.lastUnfiredFunc);
+        this.lastUnfiredFunc = null;
       }
     }
   };
@@ -65,12 +67,12 @@ export default class NicelyCalled {
    * @param {Function} func - The function to execute.
    * @returns {boolean} True if the function was executed immediately, false otherwise.
    */
-  execute(func) {
-    if (this.#isIntersecting) {
+  renderWhenVisible(func) {
+    if (this.isIntersecting) {
       window.requestAnimationFrame(func);
       return true;
     } else {
-      this.#lastUnfiredFunc = func;
+      this.lastUnfiredFunc = func;
       return false;
     }
   }
@@ -81,8 +83,8 @@ export default class NicelyCalled {
   destroy() {
     this.#observer.unobserve(this.#element);
     this.#element = null;
-    this.#isIntersecting = null;
+    this.isIntersecting = null;
     this.#observer = null;
-    this.#lastUnfiredFunc = null;
+    this.lastUnfiredFunc = null;
   }
 }
