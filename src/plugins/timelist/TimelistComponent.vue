@@ -351,54 +351,55 @@ export default {
         return regex.test(name.toLowerCase());
       });
     },
-    applyStyles(activities) {
-      let firstCurrentActivityIndex = -1;
-      let firstFutureActivityIndex = -1;
-      let currentActivitiesCount = 0;
-      let pastActivitiesCount = 0;
-      let futureActivitiesCount = 0;
-      const styledActivities = activities.map((activity, index) => {
-        if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-          activity.cssClass = CURRENT_CSS_SUFFIX;
-          if (firstCurrentActivityIndex < 0) {
-            firstCurrentActivityIndex = index;
-          }
-
-          currentActivitiesCount = currentActivitiesCount + 1;
-        } else if (this.timestamp < activity.start) {
-          activity.cssClass = FUTURE_CSS_SUFFIX;
-          //the index of the first activity that's greater than the current timestamp
-          if (firstFutureActivityIndex < 0) {
-            firstFutureActivityIndex = index;
-          }
-          futureActivitiesCount = futureActivitiesCount + 1;
-        } else {
-          activity.cssClass = PAST_CSS_SUFFIX;
-          pastActivitiesCount = pastActivitiesCount + 1;
+    // Add activity classes, increase activity counts by type,
+    // set indices of the first occurrences of current and future activities - used for scrolling
+    styleActivity(activity, index) {
+      if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
+        activity.cssClass = CURRENT_CSS_SUFFIX;
+        if (this.firstCurrentActivityIndex < 0) {
+          this.firstCurrentActivityIndex = index;
         }
-
-        if (!activity.key) {
-          activity.key = uuid();
+        this.currentActivitiesCount = this.currentActivitiesCount + 1;
+      } else if (this.timestamp < activity.start) {
+        activity.cssClass = FUTURE_CSS_SUFFIX;
+        //the index of the first activity that's greater than the current timestamp
+        if (this.firstFutureActivityIndex < 0) {
+          this.firstFutureActivityIndex = index;
         }
-
-        if (activity.start < this.timestamp) {
-          //if the activity start time has passed, display the time to the end of the activity
-          activity.duration = activity.end - this.timestamp;
-        } else {
-          activity.duration = activity.start - this.timestamp;
-        }
-
-        return activity;
-      });
-
-      if (firstCurrentActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = firstCurrentActivityIndex;
-      } else if (firstFutureActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = firstFutureActivityIndex;
+        this.futureActivitiesCount = this.futureActivitiesCount + 1;
+      } else {
+        activity.cssClass = PAST_CSS_SUFFIX;
+        this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
-      this.currentActivitiesCount = currentActivitiesCount;
-      this.pastActivitiesCount = pastActivitiesCount;
-      this.futureActivitiesCount = futureActivitiesCount;
+
+      if (!activity.key) {
+        activity.key = uuid();
+      }
+
+      if (activity.start < this.timestamp) {
+        //if the activity start time has passed, display the time to the end of the activity
+        activity.duration = activity.end - this.timestamp;
+      } else {
+        activity.duration = activity.start - this.timestamp;
+      }
+
+      return activity;
+    },
+    applyStyles(activities) {
+      this.firstCurrentOrFutureActivityIndex = -1;
+      this.firstCurrentActivityIndex = -1;
+      this.firstFutureActivityIndex = -1;
+      this.currentActivitiesCount = 0;
+      this.pastActivitiesCount = 0;
+      this.futureActivitiesCount = 0;
+
+      const styledActivities = activities.map(this.styleActivity);
+
+      if (this.firstCurrentActivityIndex > -1) {
+        this.firstCurrentOrFutureActivityIndex = this.firstCurrentActivityIndex;
+      } else if (this.firstFutureActivityIndex > -1) {
+        this.firstCurrentOrFutureActivityIndex = this.firstFutureActivityIndex;
+      }
 
       return styledActivities;
     },
@@ -423,6 +424,10 @@ export default {
     setScrollTop() {
       //The view isn't ready yet
       if (!this.$el.parentElement) {
+        return;
+      }
+
+      if (this.canAutoScroll() === false) {
         return;
       }
 
