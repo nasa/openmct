@@ -284,16 +284,29 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7234'
     });
-    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
-    expect(await page.locator('.c-fl-container').count()).toEqual(2);
+    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
+    await page.getByRole('group', { name: 'Container' }).nth(1).click();
     await page.getByTitle('Add Container').click();
-    expect(await page.locator('.c-fl-container').count()).toEqual(3);
+    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(3);
     await page.getByTitle('Remove Container').click();
+    await expect(page.getByRole('dialog')).toHaveText(
+      'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
+    );
     await page.getByRole('button', { name: 'OK' }).click();
-    expect(await page.locator('.c-fl-container').count()).toEqual(2);
+    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
+  });
+  test('Remove Frame', async ({ page }) => {
+    expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
+    await page.getByRole('group', { name: 'Child Layout 1' }).click();
+    await page.getByTitle('Remove Frame').click();
+    await expect(page.getByRole('dialog')).toHaveText(
+      'This action will remove this frame from this Flexible Layout. Do you want to continue?'
+    );
+    await page.getByRole('button', { name: 'OK' }).click();
+    expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
-    await page.locator('div:nth-child(5) > .c-fl-container__frames-holder').click();
+    await page.getByRole('group', { name: 'Container' }).nth(1).click();
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
     await page.getByTitle('Columns layout').click();
     expect(await page.locator('.c-fl--rows').count()).toEqual(1);

@@ -25,6 +25,7 @@
     v-show="isEditing && !isDragging"
     class="c-fl-frame__resize-handle"
     :class="[dragOrientation]"
+    :aria-grabbed="isGrabbed"
     @mousedown="mousedown"
   ></div>
 </template>
@@ -49,7 +50,8 @@ export default {
   data() {
     return {
       initialPos: 0,
-      isDragging: false
+      isDragging: false,
+      isGrabbed: false
     };
   },
   mounted() {
@@ -66,6 +68,7 @@ export default {
     mousedown(event) {
       event.preventDefault();
 
+      this.isGrabbed = true;
       this.$emit('init-move', this.index);
 
       document.body.addEventListener('mousemove', this.mousemove);
@@ -91,6 +94,7 @@ export default {
       this.$emit('move', this.index, delta, event);
     },
     mouseup(event) {
+      this.isGrabbed = false;
       this.$emit('end-move', event);
 
       document.body.removeEventListener('mousemove', this.mousemove);
