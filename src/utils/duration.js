@@ -63,7 +63,7 @@ export function millisecondsToDHMS(numericDuration) {
   return `${dhms ? '+' : ''} ${dhms}`;
 }
 
-export function getPreciseDuration(value, excludeMilliSeconds, useDayFormat) {
+export function getPreciseDuration(value, { excludeMilliSeconds, useDayFormat }) {
   let preciseDuration;
   const ms = value || 0;
 

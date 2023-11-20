@@ -77,9 +77,12 @@ const headerItems = [
     format: function (value) {
       let result;
       if (value < 0) {
-        result = `+${getPreciseDuration(Math.abs(value), true, true)}`;
+        result = `+${getPreciseDuration(Math.abs(value), {
+          excludeMilliSeconds: true,
+          useDayFormat: true
+        })}`;
       } else if (value > 0) {
-        result = `-${getPreciseDuration(value, true, true)}`;
+        result = `-${getPreciseDuration(value, { excludeMilliSeconds: true, useDayFormat: true })}`;
       } else {
         result = 'Now';
       }
