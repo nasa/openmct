@@ -29,7 +29,7 @@
         :model="availableTagModel"
         :place-holder-text="'Type to select tag'"
         class="c-tag-selection"
-        :item-css-class="'icon-circle'"
+        :item-css-class="'icon-circle js-tag-option'"
         @on-change="tagSelected"
       />
     </template>
@@ -41,7 +41,7 @@
       >
         <button
           v-show="!readOnly"
-          class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
+          class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle js-remove-tag"
           :style="{ textShadow: selectedBackgroundColor + ' 0 0 4px' }"
           :aria-label="`Remove tag ${selectedTagLabel}`"
           @click="removeTag"

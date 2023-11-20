@@ -34,11 +34,11 @@
     />
     <button
       v-show="!userAddingTag && !maxTagsAdded"
-      class="c-tag-applier__add-btn c-icon-button c-icon-button--major icon-plus"
+      class="c-tag-applier__add-btn c-icon-button c-icon-button--major icon-plus js-add-new-tag"
       title="Add new tag"
       @click="addTag"
     >
-      <div class="c-icon-button__label c-tag-btn__label">Add Tag</div>
+      <div class="c-icon-button__label c-tag-btn__label js-add-another-tag">Add Tag</div>
     </button>
   </div>
 </template>

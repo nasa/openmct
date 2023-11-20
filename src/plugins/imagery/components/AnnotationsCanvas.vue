@@ -290,15 +290,28 @@ export default {
       }
 
       this.openmct.selection.select(selection, true);
+      console.debug(`🍎 Selection event happened`, selection);
 
       document.body.addEventListener('click', this.cancelSelection);
     },
     cancelSelection(event) {
       if (this.$refs.canvas) {
         const clickedInsideCanvas = this.$refs.canvas.contains(event.target);
+        const tagEditorClassNames = [
+          'js-remove-tag',
+          'js-autocomplete__input',
+          'js-add-new-tag',
+          'js-add-another-tag',
+          'js-tag-option'
+        ];
+        // doing it this way as we could be detached from the DOM when
+        // adding/deleting tags, so closest() won't work
+        const clickedTagEditor = tagEditorClassNames.some((className) => {
+          return event.target.classList.contains(className);
+        });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
-        const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
-        if (!clickedInsideCanvas && !clickedInsideInspector && !clickedOption) {
+        if (!clickedInsideCanvas && !clickedTagEditor && !clickedInsideInspector) {
+          console.debug(`🍎 Cancel selection event happened`, event);
           this.newAnnotationRectangle = {};
           this.selectedAnnotations = [];
           this.drawAnnotations();
