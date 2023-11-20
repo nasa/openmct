@@ -71,7 +71,10 @@ export default class ConditionManager extends EventEmitter {
     });
     this.subscriptions[id] = this.openmct.telemetry.subscribe(
       endpoint,
-      this.telemetryReceived.bind(this, endpoint)
+      this.telemetryReceived.bind(this, endpoint),
+      {
+        strategy: 'latest'
+      }
     );
     this.updateConditionTelemetryObjects();
   }
