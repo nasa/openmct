@@ -214,7 +214,7 @@ async function saveOverlayPlot(page) {
     .click();
 
   await Promise.all([
-    page.locator('text=Save and Finish Editing').click(),
+    page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
