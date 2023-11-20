@@ -181,6 +181,10 @@ export default class TelemetryCollection extends EventEmitter {
       this.unsubscribe();
     }
 
+    if (this.options.paging) {
+      return;
+    }
+
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
       (datum) => this._processNewTelemetry(datum),

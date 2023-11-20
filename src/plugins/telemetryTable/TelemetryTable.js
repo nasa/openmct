@@ -167,6 +167,7 @@ define([
       let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
       // hardcode 50 item limit
       requestOptions.size = 50;
+      requestOptions.paging = true;
 
       const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
       const telemetryRemover = this.getTelemetryRemover();
