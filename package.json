@@ -71,7 +71,7 @@
     "sinon": "17.0.0",
     "style-loader": "3.3.3",
     "tiny-emitter": "2.1.0",
-    "typescript": "5.2.2",
+    "typescript": "5.3.2",
     "uuid": "9.0.1",
     "vue": "3.3.8",
     "vue-eslint-parser": "9.3.2",
