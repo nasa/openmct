@@ -92,7 +92,7 @@ test.describe('Telemetry Table', () => {
     await page.goto(table.url);
 
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
-    await page.keyboard.type('Roger', { delay: 150 });
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('Roger');
 
     let cells = await page.getByRole('cell', { name: /Roger/ }).all();
     // ensure we've got more than one cell
