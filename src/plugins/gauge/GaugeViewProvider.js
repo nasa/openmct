@@ -41,7 +41,7 @@ export default function GaugeViewProvider(openmct) {
       let _destroy = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           const { destroy } = mount(
             {
               el: element,
@@ -51,7 +51,8 @@ export default function GaugeViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                composition: openmct.composition.get(domainObject)
+                composition: openmct.composition.get(domainObject),
+                renderWhenVisible
               },
               template: '<gauge-component></gauge-component>'
             },
