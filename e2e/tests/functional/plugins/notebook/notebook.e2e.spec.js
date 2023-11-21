@@ -50,7 +50,7 @@ test.describe('Notebook CRUD Operations', () => {
     await expect(notebookPageNames).toHaveText('Unnamed Page');
   });
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
-  test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
+  test.fixme('Can view a previously created Notebook Object', async ({ page }) => {});
   test.fixme('Can Delete a Notebook Object', async ({ page }) => {
     // Other than non-persistable objects
   });
