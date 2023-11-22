@@ -9,10 +9,10 @@ There are separate npm scripts to use these configurations, though simply runnin
 will use the default production configuration.
 */
 const path = require('path');
+
 const packageDefinition = require('../package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const { VueLoaderPlugin } = require('vue-loader');
 let gitRevision = 'error-retrieving-revision';
@@ -22,7 +22,7 @@ try {
   gitRevision = require('child_process').execSync('git rev-parse HEAD').toString().trim();
   gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
-    .toString()
+    .toString() 
     .trim();
 } catch (err) {
   console.warn(err);
@@ -30,54 +30,49 @@ try {
 
 const projectRootDir = path.resolve(__dirname, '..');
 
+function setImportPath(p) {
+  return path.resolve(projectRootDir, p);
+}
+
 /** @type {import('webpack').Configuration} */
-const config = {
+module.exports = {
   context: projectRootDir,
-  devServer: {
-    client: {
-      progress: true,
-      overlay: {
-        // Disable overlay for runtime errors.
-        // See: https://github.com/webpack/webpack-dev-server/issues/4771
-        runtimeErrors: false
-      }
-    }
-  },
   entry: {
-    openmct: './openmct.js',
-    generatorWorker: './example/generator/generatorWorker.js',
-    couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
-    inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
-    espressoTheme: './src/plugins/themes/espresso-theme.scss',
-    snowTheme: './src/plugins/themes/snow-theme.scss'
+    openmct: setImportPath('openmct.js'),
+    generatorWorker: setImportPath('example/generator/generatorWorker.js'),
+    couchDBChangesFeed: setImportPath('src/plugins/persistence/couch/CouchChangesFeed.js'),
+    inMemorySearchWorker: setImportPath('src/api/objects/InMemorySearchWorker.js'),
+    espressoTheme: setImportPath('src/plugins/themes/espresso-theme.scss'),
+    snowTheme: setImportPath('src/plugins/themes/snow-theme.scss')
   },
   output: {
     globalObject: 'this',
+    // TODO (@evenstensberg): generate application in addition to local dev build
     filename: '[name].js',
-    path: path.resolve(projectRootDir, 'dist'),
+    path: setImportPath('dist'),
     library: 'openmct',
     libraryTarget: 'umd',
-    publicPath: '',
+    publicPath: 'auto',
     hashFunction: 'xxhash64',
     clean: true
   },
   resolve: {
     alias: {
-      '@': path.join(projectRootDir, 'src'),
-      legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
+      '@': setImportPath('src'),
+      legacyRegistry: setImportPath('src/legacyRegistry'),
       saveAs: 'file-saver/src/FileSaver.js',
       csv: 'comma-separated-values',
       EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',
       'plotly-basic': 'plotly.js-basic-dist',
       'plotly-gl2d': 'plotly.js-gl2d-dist',
-      'd3-scale': path.join(projectRootDir, 'node_modules/d3-scale/dist/d3-scale.min.js'),
-      printj: path.join(projectRootDir, 'node_modules/printj/dist/printj.min.js'),
-      styles: path.join(projectRootDir, 'src/styles'),
-      MCT: path.join(projectRootDir, 'src/MCT'),
-      testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
-      objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
-      utils: path.join(projectRootDir, 'src/utils')
+      'd3-scale': setImportPath('node_modules/d3-scale/dist/d3-scale.min.js'),
+      printj: setImportPath('node_modules/printj/dist/printj.min.js'),
+      styles: setImportPath('src/styles'),
+      MCT: setImportPath('src/MCT'),
+      testUtils: setImportPath('src/utils/testUtils.js'),
+      objectUtils: setImportPath('src/api/objects/object-utils.js'),
+      utils: setImportPath('src/utils')
     }
   },
   plugins: [
@@ -90,6 +85,12 @@ const config = {
       __VUE_PROD_DEVTOOLS__: false // enable/disable devtools support in production, default: false
     }),
     new VueLoaderPlugin(),
+    // Add a UTF-8 BOM to CSS output to avoid random mojibake
+    new webpack.BannerPlugin({
+      test: /.*Theme\.css$/,
+      raw: true,
+      banner: '@charset "UTF-8";'
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -108,10 +109,6 @@ const config = {
         }
       ]
     }),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[name].css'
-    }),
     // Add a UTF-8 BOM to CSS output to avoid random mojibake
     new webpack.BannerPlugin({
       test: /.*Theme\.css$/,
@@ -121,22 +118,6 @@ const config = {
   ],
   module: {
     rules: [
-      {
-        test: /\.(sc|sa|c)ss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader'
-          },
-          {
-            loader: 'resolve-url-loader'
-          },
-          {
-            loader: 'sass-loader',
-            options: { sourceMap: true }
-          }
-        ]
-      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -152,7 +133,7 @@ const config = {
         type: 'asset/source'
       },
       {
-        test: /\.(jpg|jpeg|png|svg)$/,
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
         type: 'asset/resource',
         generator: {
           filename: 'images/[name][ext]'
@@ -182,5 +163,3 @@ const config = {
     maxAssetSize: 27000000
   }
 };
-
-module.exports = config;

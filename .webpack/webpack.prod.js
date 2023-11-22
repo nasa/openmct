@@ -1,22 +1,89 @@
 /* global __dirname module */
 
 /*
-This configuration should be used for production installs.
-It is the default webpack configuration.
+Production webpack configuration.
 */
-const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 const { merge } = require('webpack-merge');
 
-const common = require('./webpack.common');
-const projectRootDir = path.resolve(__dirname, '..');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
-module.exports = merge(common, {
+const base = require('./webpack.base');
+
+module.exports = merge(base, {
+  devtool: 'source-map',
   mode: 'production',
+  module: {
+    rules: [
+      {
+        test: /\.(sc|sa|c)ss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: false
+            }
+          },
+          {
+            loader: 'resolve-url-loader'
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            // resolve-url-loader needs all loaders below its decl to have sourcemaps enabled
+            options: { sourceMap: true }
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '""'
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[name].css'
     })
   ],
-  devtool: 'source-map'
+  // TODO (@evenstensberg): splitchunks when application is aligned towards it
+  optimization: {
+    runtimeChunk: false,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false
+          },
+          warnings: false,
+          parse: {
+            html5_comments: false
+          },
+          mangle: true,
+          module: false,
+          toplevel: false,
+          ie8: false,
+          keep_classnames: false,
+          keep_fnames: false,
+          safari10: false
+        }
+      }),
+      new CssMinimizerPlugin()
+    ]
+  },
+  stats: {
+    children: true,
+    errorDetails: true
+  }
 });
