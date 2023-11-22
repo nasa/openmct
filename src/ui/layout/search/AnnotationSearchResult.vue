@@ -53,6 +53,9 @@
 </template>
 
 <script>
+import { Marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
+
 import { identifierToString } from '../../../../src/tools/url';
 import ObjectPath from '../../components/ObjectPath.vue';
 import PreviewAction from '../../preview/PreviewAction';
@@ -81,30 +84,13 @@ export default {
     },
     getResultName() {
       if (this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.NOTEBOOK) {
-        const targetID = Object.keys(this.result.targets)[0];
-        const entryIdToFind = this.result.targets[targetID].entryId;
-        const notebookModel = this.result.targetModels[0].configuration.entries;
-
-        const sections = Object.values(notebookModel);
-        for (const section of sections) {
-          const pages = Object.values(section);
-          for (const entries of pages) {
-            for (const entry of entries) {
-              if (entry.id === entryIdToFind) {
-                return entry.text;
-              }
-            }
-          }
-        }
-
-        return 'Could not find any matching Notebook entries';
+        const previewText = this.getNotebookPreviewText(this.result);
+        return previewText;
       } else if (
         this.result.annotationType === this.openmct.annotation.ANNOTATION_TYPES.GEOSPATIAL
       ) {
-        const targetID = Object.keys(this.result.targets)[0];
-        const { layerName, name } = this.result.targets[targetID];
-
-        return layerName ? `${layerName} - ${name}` : name;
+        const previewText = this.getGeospatialPreviewText(this.result);
+        return previewText;
       } else {
         return this.result.targetModels[0].name;
       }
@@ -119,6 +105,9 @@ export default {
       return this.result.fullTagModels[0].foregroundColor;
     }
   },
+  beforeMount() {
+    this.marked = new Marked();
+  },
   mounted() {
     this.previewAction = new PreviewAction(this.openmct);
     this.previewAction.on('isVisible', this.togglePreviewState);
@@ -129,6 +118,48 @@ export default {
     this.openmct.selection.off('change', this.fireAnnotationSelection);
   },
   methods: {
+    getNotebookEntryTextById(entryIdToFind, notebookModel) {
+      const sections = Object.values(notebookModel);
+      for (const section of sections) {
+        const pages = Object.values(section);
+        for (const entries of pages) {
+          for (const entry of entries) {
+            if (entry.id === entryIdToFind) {
+              return entry.text;
+            }
+          }
+        }
+      }
+      return null;
+    },
+    getNotebookPreviewText(result) {
+      const targetID = Object.keys(this.result.targets)[0];
+      const entryIdToFind = this.result.targets[targetID].entryId;
+      const notebookModel = this.result.targetModels[0].configuration.entries;
+
+      const entryText = this.getNotebookEntryTextById(entryIdToFind, notebookModel);
+      if (entryText === null) {
+        return 'Could not find any matching Notebook entries';
+      }
+      const markDownHtml = this.marked.parse(entryText, {
+        breaks: true
+      });
+      // strip everything
+      const cleanedHtml = sanitizeHtml(markDownHtml, { allowedAttributes: [], allowedTags: [] });
+      // strip to 64 characters
+      let truncatedText = cleanedHtml.substring(0, 64);
+      // add ellipsis if necessary
+      if (truncatedText.length < entryText.length) {
+        truncatedText = `${truncatedText}...`;
+      }
+      return truncatedText;
+    },
+    getGeospatialPreviewText(result) {
+      const targetID = Object.keys(this.result.targets)[0];
+      const { layerName, name } = this.result.targets[targetID];
+
+      return layerName ? `${layerName} - ${name}` : name;
+    },
     clickedResult(event) {
       const objectPath = this.domainObject.originalPath;
       if (this.openmct.editor.isEditing()) {

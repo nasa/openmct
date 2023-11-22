@@ -25,6 +25,7 @@ import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -32,7 +33,7 @@ import { nextTick } from 'vue';
 
 import configStore from '../configuration/ConfigStore';
 import PlotOptions from '../inspector/PlotOptions.vue';
-import Plot from '../Plot.vue';
+import Plot from '../PlotView.vue';
 import PlotVuePlugin from '../plugin';
 
 describe('the plugin', function () {
@@ -314,7 +315,8 @@ describe('the plugin', function () {
             openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject]
+            path: [overlayPlotObject],
+            renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'
         },
@@ -505,7 +507,8 @@ describe('the plugin', function () {
             openmct: openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject]
+            path: [overlayPlotObject],
+            renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'
         },

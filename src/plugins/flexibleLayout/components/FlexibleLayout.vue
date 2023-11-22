@@ -59,7 +59,7 @@
         <resize-handle
           v-if="index !== containers.length - 1"
           :index="index"
-          :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+          :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
           :is-editing="isEditing"
           @init-move="startContainerResizing"
           @move="containerResizing"
@@ -81,7 +81,7 @@
 <script>
 import Container from '../utils/container';
 import Frame from '../utils/frame';
-import ContainerComponent from './Container.vue';
+import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
 import ResizeHandle from './ResizeHandle.vue';
 

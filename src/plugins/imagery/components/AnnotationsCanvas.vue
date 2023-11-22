@@ -54,6 +54,7 @@ export default {
       }
     }
   },
+  emits: ['annotation-marquee-started', 'annotations-changed', 'annotation-marquee-finished'],
   data() {
     return {
       dragging: false,
@@ -77,12 +78,10 @@ export default {
           )?.rectangle;
           const annotationRectangleForPixelDepth =
             this.transformRectangleToPixelDense(annotationRectangle);
-          const indexNumber = builtAnnotationsIndex.add(
-            annotationRectangleForPixelDepth.x,
-            annotationRectangleForPixelDepth.y,
-            annotationRectangleForPixelDepth.x + annotationRectangleForPixelDepth.width,
-            annotationRectangleForPixelDepth.y + annotationRectangleForPixelDepth.height
+          const { x, y, x2, y2 } = this.transformAnnotationRectangleToFlatbushRectangle(
+            annotationRectangleForPixelDepth
           );
+          const indexNumber = builtAnnotationsIndex.add(x, y, x2, y2);
           this.indexToAnnotationMap[indexNumber] = annotation;
         });
         builtAnnotationsIndex.finish();
@@ -121,7 +120,24 @@ export default {
   methods: {
     onAnnotationChange(annotations) {
       this.selectedAnnotations = annotations;
-      this.$emit('annotationsChanged', annotations);
+      this.$emit('annotations-changed', annotations);
+    },
+    transformAnnotationRectangleToFlatbushRectangle(annotationRectangle) {
+      let { x, y, width, height } = annotationRectangle;
+      let x2 = x + width;
+      let y2 = y + height;
+
+      // if height or width are negative, we need to adjust the x and y
+      if (width < 0) {
+        x2 = x;
+        x = x + width;
+      }
+      if (height < 0) {
+        y2 = y;
+        y = y + height;
+      }
+
+      return { x, y, x2, y2 };
     },
     updateSelection(selection) {
       const selectionContext = selection?.[0]?.[0]?.context?.item;
@@ -292,6 +308,8 @@ export default {
     createNewAnnotation() {
       this.dragging = false;
       this.selectedAnnotations = [];
+      this.selectedAnnotations = [];
+      this.$emit('annotation-marquee-finished');
 
       const rectangleFromCanvas = {
         x: this.newAnnotationRectangle.x,
@@ -315,6 +333,7 @@ export default {
     },
     attemptToSelectExistingAnnotation(event) {
       this.dragging = false;
+      this.$emit('annotation-marquee-finished');
       // use flatbush to find annotations that are close to the click
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;
@@ -377,7 +396,7 @@ export default {
       return selection;
     },
     startAnnotationDrag(event) {
-      this.$emit('annotationMarqueed');
+      this.$emit('annotation-marquee-started');
       this.newAnnotationRectangle = {};
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;

@@ -77,19 +77,19 @@ test.describe('Grand Search', () => {
 
     // Click [aria-label="OpenMCT Search"] a >> nth=0
     await page.locator('[aria-label="Search Result"] >> nth=0').click();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeInViewport();
+    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     // Fill [aria-label="OpenMCT Search"] input[type="search"]
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toBeInViewport();
+    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
     await page
       .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
       .nth(1)
       .click();
-    // Click text=Save and Finish Editing
-    await page.locator('text=Save and Finish Editing').click();
+
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
     // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]

@@ -20,12 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 
-<!-- eslint-disable vue/no-v-html -->
-
 <template>
-  <div class="gl-plot-chart-area">
-    <span v-html="canvasTemplate"></span>
-    <span v-html="canvasTemplate"></span>
+  <div ref="chart" class="gl-plot-chart-area">
+    <canvas :style="canvasStyle"></canvas>
+    <canvas :style="canvasStyle"></canvas>
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
@@ -101,7 +99,7 @@ const HANDLED_ATTRIBUTES = {
 
 export default {
   components: { LimitLine, LimitLabel },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,
@@ -144,13 +142,22 @@ export default {
       required: true
     }
   },
+  emits: ['chart-loaded', 'plot-reinitialize-canvas'],
   data() {
     return {
-      canvasTemplate:
-        '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>',
       visibleLimitLabels: [],
       visibleLimitLines: []
     };
+  },
+  computed: {
+    canvasStyle() {
+      return {
+        position: 'absolute',
+        background: 'none',
+        width: '100%',
+        height: '100%'
+      };
+    }
   },
   watch: {
     highlights: {
@@ -245,7 +252,7 @@ export default {
     this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
-    this.$emit('chartLoaded');
+    this.$emit('chart-loaded');
   },
   beforeUnmount() {
     this.destroy();
@@ -487,7 +494,10 @@ export default {
       // Have to throw away the old canvas elements and replace with new
       // canvas elements in order to get new drawing contexts.
       const div = document.createElement('div');
-      div.innerHTML = this.canvasTemplate + this.canvasTemplate;
+      div.innerHTML = `
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
       this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
@@ -495,7 +505,7 @@ export default {
       this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
       this.overlay = overlayCanvas;
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
-      this.$emit('plotReinitializeCanvas');
+      this.$emit('plot-reinitialize-canvas');
     },
     removeChartElement(series) {
       const elements = this.seriesElements.get(toRaw(series));
@@ -637,8 +647,8 @@ export default {
     },
     scheduleDraw() {
       if (!this.drawScheduled) {
-        requestAnimationFrame(this.draw);
-        this.drawScheduled = true;
+        const called = this.renderWhenVisible(this.draw);
+        this.drawScheduled = called;
       }
     },
     draw() {

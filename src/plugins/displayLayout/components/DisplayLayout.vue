@@ -27,6 +27,7 @@
       'is-multi-selected': selectedLayoutItems.length > 1,
       'allow-editing': isEditing
     }"
+    :aria-label="`${domainObject.name} Layout`"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"
@@ -36,6 +37,8 @@
       :grid-size="gridSize"
       :show-grid="showGrid"
       :grid-dimensions="gridDimensions"
+      :aria-label="`${domainObject.name} Layout Grid`"
+      :aria-hidden="showGrid ? 'false' : 'true'"
     />
     <div
       v-if="shouldDisplayLayoutDimensions"
@@ -57,17 +60,17 @@
       :index="index"
       :multi-select="selectedLayoutItems.length > 1 || null"
       :is-editing="isEditing"
-      @contextClick="updateViewContext"
+      @context-click="updateViewContext"
       @move="move"
-      @endMove="endMove"
-      @endLineResize="endLineResize"
-      @formatChanged="updateTelemetryFormat"
+      @end-move="endMove"
+      @end-line-resize="endLineResize"
+      @format-changed="updateTelemetryFormat"
     />
     <edit-marquee
       v-if="showMarquee"
       :grid-size="gridSize"
       :selected-layout-items="selectedLayoutItems"
-      @endResize="endResize"
+      @end-resize="endResize"
     />
   </div>
 </template>

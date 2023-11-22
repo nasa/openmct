@@ -43,7 +43,7 @@
           class="c-fault-mgmt-viewButton"
           title="Sort By"
           :model="model"
-          @onChange="onChange"
+          @on-change="onChange"
         />
       </div>
     </div>
@@ -74,6 +74,7 @@ export default {
       }
     }
   },
+  emits: ['sort-changed', 'select-all'],
   data() {
     return {
       model: {}
@@ -93,10 +94,10 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$emit('sortChanged', data);
+      this.$emit('sort-changed', data);
     },
     selectAll(e) {
-      this.$emit('selectAll', e.target.checked);
+      this.$emit('select-all', e.target.checked);
     }
   }
 };

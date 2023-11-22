@@ -131,8 +131,8 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('new-notebook-entry-created'));
 
     // Enter Notebook Entry text
-    await page.locator('div.c-ne__text').last().fill('New Entry');
-    await page.keyboard.press('Enter');
+    await page.getByLabel('Notebook Entry Input').last().fill('New Entry');
+    await page.locator('.c-ne__save-button').click();
     await page.evaluate(() => window.performance.mark('new-notebook-entry-filled'));
 
     //Individual Notebook Entry Search

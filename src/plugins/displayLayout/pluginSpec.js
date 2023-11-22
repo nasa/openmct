@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { createOpenMct, renderWhenVisible, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
 
 import DisplayLayoutPlugin from './plugin';
 
@@ -114,7 +114,7 @@ describe('the plugin', function () {
     let error;
 
     try {
-      view.show(child, false);
+      view.show(child, false, { renderWhenVisible });
     } catch (e) {
       error = e;
     }
@@ -161,9 +161,9 @@ describe('the plugin', function () {
         (viewProvider) => viewProvider.key === 'layout.view'
       );
       const view = displayLayoutViewProvider.view(displayLayoutItem, displayLayoutItem);
-      view.show(child, false);
+      view.show(child, false, { renderWhenVisible });
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
     it('will sync composition and layout items', () => {
