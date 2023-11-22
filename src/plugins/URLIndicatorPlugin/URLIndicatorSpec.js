@@ -34,7 +34,6 @@ define(['utils/testing', './URLIndicator', './URLIndicatorPlugin', '../../MCT'],
     let fetchSpy;
 
     beforeEach(function () {
-      jasmine.clock().uninstall();
       jasmine.clock().install();
       openmct = new testingUtils.createOpenMct();
       spyOn(openmct.indicators, 'add');

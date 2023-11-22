@@ -63,15 +63,9 @@ module.exports = merge(base, {
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          output: {
+          format: {
             comments: false
           },
-          compress: {
-            passes: 3,
-            pure_getters: true,
-            unsafe: true
-          },
-          ecma: undefined,
           warnings: false,
           parse: {
             html5_comments: false
@@ -79,7 +73,6 @@ module.exports = merge(base, {
           mangle: true,
           module: false,
           toplevel: false,
-          nameCache: null,
           ie8: false,
           keep_classnames: false,
           keep_fnames: false,
