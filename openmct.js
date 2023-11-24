@@ -47,7 +47,7 @@ if (document.currentScript) {
  * @property {*} inspectorViews
  * @property {*} propertyEditors
  * @property {*} toolbars
- * @property {*} types
+ * @property {import('./src/api/types/TypeRegistry').default} types
  * @property {import('./src/api/objects/ObjectAPI').default} objects
  * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
  * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
