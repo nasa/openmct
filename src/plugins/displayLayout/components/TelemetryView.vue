@@ -73,14 +73,18 @@ import {
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import NicelyCalled from '../../../api/nice/NicelyCalled';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
+const CONTEXT_MENU_ACTIONS = [
+  'copyToClipboard',
+  'copyToNotebook',
+  'viewHistoricalData',
+  'renderWhenVisible'
+];
 
 export default {
   makeDefinition(openmct, gridSize, domainObject, position) {
@@ -106,7 +110,7 @@ export default {
     LayoutFrame
   },
   mixins: [conditionalStylesMixin, stalenessMixin, tooltipHelpers],
-  inject: ['openmct', 'objectPath', 'currentView'],
+  inject: ['openmct', 'objectPath', 'currentView', 'renderWhenVisible'],
   props: {
     item: {
       type: Object,
@@ -274,7 +278,6 @@ export default {
       }
       this.setObject(foundObject);
       await this.$nextTick();
-      this.nicelyCalled = new NicelyCalled(this.$refs.telemetryViewWrapper);
     },
     formattedValueForCopy() {
       const timeFormatterKey = this.openmct.time.timeSystem().key;
@@ -291,7 +294,7 @@ export default {
     },
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = this.nicelyCalled.execute(() => {
+        this.updatingView = this.renderWhenVisible(() => {
           this.datum = this.latestDatum;
           this.updatingView = false;
         });
