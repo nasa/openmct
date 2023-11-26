@@ -24,7 +24,7 @@ import TelemetryTableView from './TelemetryTableView.js';
 
 export default function TelemetryTableViewProvider(openmct, options) {
   function hasTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+    if (!openmct.telemetry.isTelemetryObject(domainObject)) {
       return false;
     }
 
