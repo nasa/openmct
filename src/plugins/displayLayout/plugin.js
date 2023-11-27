@@ -39,7 +39,7 @@ class DisplayLayoutView {
     this.component = null;
   }
 
-  show(container, isEditing) {
+  show(container, isEditing, { renderWhenVisible }) {
     const { vNode, destroy } = mount(
       {
         el: container,
@@ -50,7 +50,8 @@ class DisplayLayoutView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           options: this.options,
-          currentView: this
+          currentView: this,
+          renderWhenVisible
         },
         data: () => {
           return {

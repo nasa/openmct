@@ -22,6 +22,7 @@
 <template>
   <div class="l-preview-window js-preview-window">
     <PreviewHeader
+      ref="previewHeader"
       :current-view="currentViewProvider"
       :action-collection="actionCollection"
       :domain-object="domainObject"
@@ -48,7 +49,7 @@ export default {
     viewOptions: {
       type: Object,
       default() {
-        return undefined;
+        return {};
       }
     },
     existingView: {
@@ -147,6 +148,11 @@ export default {
       if (isExistingView) {
         this.viewContainer.appendChild(this.existingViewElement);
       } else {
+        // in preview mode, we're always visible
+        this.viewOptions.renderWhenVisible = (func) => {
+          window.requestAnimationFrame(func);
+          return true;
+        };
         this.view.show(this.viewContainer, false, this.viewOptions);
       }
 
