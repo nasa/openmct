@@ -139,6 +139,7 @@
             @editing-entry="startTransaction"
             @delete-entry="deleteEntry"
             @update-entry="updateEntry"
+            @update-annotations="loadAnnotations"
             @entry-selection="entrySelection(entry)"
           />
         </div>
@@ -298,6 +299,12 @@ export default {
     },
     showTime() {
       mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
+    },
+    notebookAnnotations: {
+      handler() {
+        this.filterAndSortEntries();
+      },
+      deep: true
     }
   },
   beforeMount() {

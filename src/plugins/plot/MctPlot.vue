@@ -178,6 +178,7 @@
 import Flatbush from 'flatbush';
 import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
+import { toRaw } from 'vue';
 
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -465,9 +466,21 @@ export default {
     cancelSelection(event) {
       if (this.$refs?.plot) {
         const clickedInsidePlot = this.$refs.plot.contains(event.target);
+        const tagEditorClassNames = [
+          'js-remove-tag',
+          'js-autocomplete__input',
+          'js-add-new-tag',
+          'js-add-another-tag',
+          'js-tag-option'
+        ];
+        // doing it this way as we could be detached from the DOM when
+        // adding/deleting tags, so closest() won't work
+        const clickedTagEditor = tagEditorClassNames.some((className) => {
+          return event.target.classList.contains(className);
+        });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
         const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
-        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption && !clickedTagEditor) {
           this.rectangles = [];
           this.annotationSelectionsBySeries = {};
           this.selectPlot();
@@ -937,7 +950,10 @@ export default {
       const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        targetDetails.push(annotation.targets);
+        // for each target, push toRaw
+        annotation.targets.forEach((target) => {
+          targetDetails.push(toRaw(target));
+        });
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
           const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
