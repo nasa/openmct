@@ -25,6 +25,7 @@ import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -372,7 +373,7 @@ describe('the plugin', function () {
       applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
       plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
       plotView = plotViewProvider.view(testTelemetryObject, []);
-      plotView.show(child, true);
+      plotView.show(child, true, { renderWhenVisible });
 
       return nextTick();
     });
@@ -654,7 +655,7 @@ describe('the plugin', function () {
       plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
       plotView = plotViewProvider.view(testTelemetryObject, []);
 
-      plotView.show(child, true);
+      plotView.show(child, true, { renderWhenVisible });
 
       resizePromise = new Promise((resolve) => {
         resizePromiseResolve = resolve;
@@ -811,7 +812,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item, selection[0][1].context.item]
+            path: [selection[0][0].context.item, selection[0][1].context.item],
+            renderWhenVisible
           },
           template: '<plot-options ref="root"/>'
         },

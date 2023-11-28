@@ -65,7 +65,7 @@ export default class TelemetryTableView {
     }
   }
 
-  show(element, editMode) {
+  show(element, editMode, { renderWhenVisible }) {
     const { vNode, destroy } = mount(
       {
         el: element,
@@ -76,7 +76,8 @@ export default class TelemetryTableView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           table: this.table,
-          currentView: this
+          currentView: this,
+          renderWhenVisible
         },
         data() {
           return {

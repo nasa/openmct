@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { debounce } from 'lodash';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, renderWhenVisible, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
 let gaugeDomainObject = {
@@ -172,7 +172,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
@@ -314,7 +314,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
@@ -456,7 +456,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
@@ -560,7 +560,7 @@ describe('Gauge plugin', () => {
         mutablegaugeObject = mutableObject;
 
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
@@ -643,7 +643,7 @@ describe('Gauge plugin', () => {
         mutablegaugeObject = mutableObject;
 
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
@@ -771,7 +771,7 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child);
+        gaugeView.show(child, false, { renderWhenVisible });
 
         return nextTick();
       });
