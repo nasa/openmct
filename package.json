@@ -10,7 +10,7 @@
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.39.0",
     "@types/eventemitter3": "1.2.0",
-    "@types/jasmine": "5.1.2",
+    "@types/jasmine": "5.1.4",
     "@types/lodash": "4.14.192",
     "@vue/compiler-sfc": "3.3.8",
     "babel-loader": "9.1.0",
