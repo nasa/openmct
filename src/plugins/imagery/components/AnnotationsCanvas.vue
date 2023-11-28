@@ -33,6 +33,7 @@
 
 <script>
 import Flatbush from 'flatbush';
+import _ from 'lodash';
 import { toRaw } from 'vue';
 
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
@@ -118,9 +119,22 @@ export default {
     document.body.removeEventListener('click', this.cancelSelection);
   },
   methods: {
-    onAnnotationChange(annotations) {
-      this.selectedAnnotations = annotations;
-      this.$emit('annotations-changed', annotations);
+    onAnnotationChange(updatedAnnotations) {
+      updatedAnnotations.forEach((updatedAnnotation) => {
+        // Try to find the annotation in the existing selected annotations
+        const existingIndex = this.selectedAnnotations.findIndex((annotation) =>
+          this.openmct.objects.areIdsEqual(annotation.identifier, updatedAnnotation.identifier)
+        );
+
+        // If found, update it
+        if (existingIndex > -1) {
+          this.selectedAnnotations[existingIndex] = updatedAnnotation;
+        } else {
+          // If not found, add it
+          this.selectedAnnotations.push(updatedAnnotation);
+        }
+      });
+      this.$emit('annotations-changed', this.selectedAnnotations);
     },
     transformAnnotationRectangleToFlatbushRectangle(annotationRectangle) {
       let { x, y, width, height } = annotationRectangle;
@@ -164,7 +178,13 @@ export default {
       const targetDetails = [];
       annotations.forEach((annotation) => {
         annotation.targets.forEach((target) => {
-          targetDetails.push(toRaw(target));
+          // only add targetDetails if we haven't added it before
+          const targetAlreadyAdded = targetDetails.some((targetDetail) => {
+            return _.isEqual(targetDetail, toRaw(target));
+          });
+          if (!targetAlreadyAdded) {
+            targetDetails.push(toRaw(target));
+          }
         });
       });
       this.selectedAnnotations = annotations;
@@ -290,7 +310,6 @@ export default {
       }
 
       this.openmct.selection.select(selection, true);
-      console.debug(`🍎 Selection event happened`, selection);
 
       document.body.addEventListener('click', this.cancelSelection);
     },
@@ -311,7 +330,6 @@ export default {
         });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
         if (!clickedInsideCanvas && !clickedTagEditor && !clickedInsideInspector) {
-          console.debug(`🍎 Cancel selection event happened`, event);
           this.newAnnotationRectangle = {};
           this.selectedAnnotations = [];
           this.drawAnnotations();
@@ -358,12 +376,13 @@ export default {
         const resultIndicies = this.annotationsIndex.search(x, y, x, y);
         resultIndicies.forEach((resultIndex) => {
           const foundAnnotation = this.indexToAnnotationMap[resultIndex];
-          if (foundAnnotation._deleted) {
-            return;
-          }
           nearbyAnnotations.push(foundAnnotation);
         });
-        //show annotations if some were found
+        //if everything has been deleted, don't bother with the selection
+        const allAnnotationsDeleted = nearbyAnnotations.every((annotation) => annotation._deleted);
+        if (allAnnotationsDeleted) {
+          nearbyAnnotations = [];
+        }
         const { targetDomainObjects, targetDetails } =
           this.prepareExistingAnnotationSelection(nearbyAnnotations);
         this.selectImageAnnotations({
