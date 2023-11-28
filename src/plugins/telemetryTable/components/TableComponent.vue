@@ -477,7 +477,7 @@ export default {
     }
   },
   created() {
-    this.filterChanged = _.debounce(this.filterChanged, 500);
+    this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
   },
   mounted() {
     this.csvExporter = new CSVExporter();
@@ -667,8 +667,7 @@ export default {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
     },
-    filterChanged(columnKey, newFilterValue) {
-      this.filters[columnKey] = newFilterValue;
+    filterTelemetry(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
         if (this.isCompleteRegex(this.filters[columnKey])) {
           this.table.tableRows.setColumnRegexFilter(
@@ -683,6 +682,10 @@ export default {
       }
 
       this.setHeight();
+    },
+    filterChanged(columnKey, newFilterValue) {
+      this.filters[columnKey] = newFilterValue;
+      this.filterTelemetry(columnKey);
     },
     clearFilter(columnKey) {
       this.filters[columnKey] = '';
