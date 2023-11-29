@@ -323,7 +323,7 @@ export default {
           'js-add-another-tag',
           'js-tag-option'
         ];
-        // doing it this way as we could be detached from the DOM when
+        // unfortunate side effect from possibly being detached from the DOM when
         // adding/deleting tags, so closest() won't work
         const clickedTagEditor = tagEditorClassNames.some((className) => {
           return event.target.classList.contains(className);
