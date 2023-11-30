@@ -134,3 +134,23 @@ export async function setDraftStatusForPlan(page, plan) {
     await window.openmct.status.set(planObject.uuid, 'draft');
   }, plan);
 }
+
+export async function addPlanGetInterceptor(page) {
+  await page.waitForLoadState('load');
+  await page.evaluate(async () => {
+    await window.openmct.objects.addGetInterceptor({
+      appliesTo: (identifier, domainObject) => {
+        return domainObject && domainObject.type === 'plan';
+      },
+      invoke: (identifier, object) => {
+        if (object) {
+          object.sourceMap = {
+            groupIds: 'Groups'
+          };
+        }
+
+        return object;
+      }
+    });
+  });
+}

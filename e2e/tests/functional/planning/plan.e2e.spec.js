@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON, addPlanGetInterceptor } = require('../../../appActions');
+const { createPlanFromJSON, addPlanGetInterceptor } = require('../../../helper/planningUtils.js');
 const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
 const testPlanWithOrderedLanes = require('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json');
 const {

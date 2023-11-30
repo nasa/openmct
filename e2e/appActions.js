@@ -644,26 +644,6 @@ async function renameObjectFromContextMenu(page, url, newName) {
   await page.click('[aria-label="Save"]');
 }
 
-async function addPlanGetInterceptor(page) {
-  await page.waitForLoadState('load');
-  await page.evaluate(async () => {
-    await window.openmct.objects.addGetInterceptor({
-      appliesTo: (identifier, domainObject) => {
-        return domainObject && domainObject.type === 'plan';
-      },
-      invoke: (identifier, object) => {
-        if (object) {
-          object.sourceMap = {
-            groupIds: 'Groups'
-          };
-        }
-
-        return object;
-      }
-    });
-  });
-}
-
 // eslint-disable-next-line no-undef
 module.exports = {
   createDomainObjectWithDefaults,
@@ -684,6 +664,5 @@ module.exports = {
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
   waitForPlotsToRender,
-  renameObjectFromContextMenu,
-  addPlanGetInterceptor
+  renameObjectFromContextMenu
 };
