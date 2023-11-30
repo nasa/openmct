@@ -200,7 +200,7 @@ export default {
   },
   mounted() {
     this.chartVisible = true;
-    this.chartContainer = this.$parent.$refs.chartContainer;
+    this.chartContainer = this.$refs.chart;
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
     this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
@@ -284,10 +284,8 @@ export default {
         if (!this.chartVisible) {
           // destroy the chart
           this.destroyCanvas();
-          console.debug(`🛑 chart is not visible ${this.domainObject.name}`);
         } else if (!wasVisible && this.chartVisible) {
           // rebuild the chart
-          console.debug(`🪞 chart is visible ${this.domainObject.name}`);
           this.buildCanvasElements();
           const canvasInitialized = this.readyCanvasForDrawing();
           if (canvasInitialized) {
@@ -296,10 +294,8 @@ export default {
           this.$emit('plot-reinitialize-canvas');
         } else if (wasVisible && this.chartVisible) {
           // ignore, moving on
-          console.debug(`🔄 chart was already visible ${this.domainObject.name}`);
         }
       }
-      console.debug(`👁️ current webgl context count ${this.countWebGLContexts()}`);
     },
     countWebGLContexts() {
       const canvases = document.getElementsByTagName('canvas');
@@ -524,10 +520,8 @@ export default {
     },
     destroyCanvas() {
       if (this.isDestroyed) {
-        console.debug(`🛑 canvas already destroyed ${this.domainObject.name}`);
         return;
       }
-      console.debug(`🛑 destroying canvas ${this.domainObject.name}`);
       this.stopListening(this.drawAPI);
       DrawLoader.releaseDrawAPI(this.drawAPI);
       if (this.chartContainer) {
@@ -551,7 +545,6 @@ export default {
       return Boolean(this.drawAPI);
     },
     buildCanvasElements() {
-      console.debug(`⚙️ build canvas elements ${this.domainObject.name}`);
       const div = document.createElement('div');
       div.innerHTML = `
       <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
@@ -718,7 +711,6 @@ export default {
     draw() {
       this.drawScheduled = false;
       if (this.isDestroyed || !this.chartVisible) {
-        console.debug(`🛑 not doing draw ${this.domainObject.name}`);
         return;
       }
 
@@ -747,7 +739,6 @@ export default {
     },
     updateViewport(yAxisId) {
       if (!this.chartVisible) {
-        console.debug(`🛑 not updating viewport ${this.domainObject.name}`);
         return;
       }
       const mainYAxisId = this.config.yAxis.get('id');
