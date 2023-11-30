@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div class="gl-plot-chart-area">
+  <div ref="chart" class="gl-plot-chart-area">
     <canvas :style="canvasStyle"></canvas>
     <canvas :style="canvasStyle"></canvas>
     <div ref="limitArea" class="js-limit-area">
@@ -99,7 +99,7 @@ const HANDLED_ATTRIBUTES = {
 
 export default {
   components: { LimitLine, LimitLabel },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,
@@ -647,8 +647,8 @@ export default {
     },
     scheduleDraw() {
       if (!this.drawScheduled) {
-        requestAnimationFrame(this.draw);
-        this.drawScheduled = true;
+        const called = this.renderWhenVisible(this.draw);
+        this.drawScheduled = called;
       }
     },
     draw() {

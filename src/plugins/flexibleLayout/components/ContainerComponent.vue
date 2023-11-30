@@ -25,6 +25,8 @@
     class="c-fl-container"
     :style="[{ 'flex-basis': sizeString }]"
     :class="{ 'is-empty': !frames.length }"
+    role="group"
+    :aria-label="`Container ${container.id}`"
   >
     <div
       v-show="isEditing"
@@ -63,7 +65,7 @@
         <resize-handle
           v-if="i !== frames.length - 1"
           :index="i"
-          :orientation="rowsLayout ? 'horizontal' : 'vertical'"
+          :drag-orientation="rowsLayout ? 'horizontal' : 'vertical'"
           :is-editing="isEditing"
           @init-move="startFrameResizing"
           @move="frameResizing"
