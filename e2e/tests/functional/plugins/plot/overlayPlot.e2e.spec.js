@@ -105,7 +105,7 @@ test.describe('Overlay Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await assertLimitLinesExistAndAreVisible(page);
 
@@ -127,7 +127,7 @@ test.describe('Overlay Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await assertLimitLinesExistAndAreVisible(page);
 

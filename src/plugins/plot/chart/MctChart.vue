@@ -45,7 +45,6 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
-import NicelyCalled from '../../../api/nice/NicelyCalled';
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import { DrawLoader } from '../draw/DrawLoader';
@@ -100,7 +99,7 @@ const HANDLED_ATTRIBUTES = {
 
 export default {
   components: { LimitLine, LimitLabel },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,
@@ -198,7 +197,6 @@ export default {
   },
   mounted() {
     eventHelpers.extend(this);
-    this.nicelyCalled = new NicelyCalled(this.$refs.chart);
     this.seriesModels = [];
     this.config = this.getConfig();
     this.isDestroyed = false;
@@ -261,7 +259,6 @@ export default {
   },
   beforeUnmount() {
     this.destroy();
-    this.nicelyCalled.destroy();
   },
   methods: {
     handleWindowResize() {
@@ -656,7 +653,7 @@ export default {
     },
     scheduleDraw(updateLimitLines) {
       if (!this.drawScheduled) {
-        const called = this.nicelyCalled.execute(this.draw.bind(this, updateLimitLines));
+        const called = this.renderWhenVisible(this.draw.bind(this, updateLimitLines));
         this.drawScheduled = called;
       }
     },
