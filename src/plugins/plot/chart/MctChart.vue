@@ -201,7 +201,7 @@ export default {
   mounted() {
     this.chartVisible = true;
     this.chartContainer = this.$parent.$refs.chartContainer;
-    this.visibilityObserver = new IntersectionObserver(this.observerCallback);
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
     this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
     this.seriesModels = [];
@@ -260,6 +260,7 @@ export default {
   },
   beforeUnmount() {
     this.destroy();
+    this.visibilityObserver.unobserve(this.chartContainer);
   },
   methods: {
     getConfig() {
@@ -276,7 +277,7 @@ export default {
 
       return config;
     },
-    observerCallback([entry]) {
+    visibilityChanged([entry]) {
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
         this.chartVisible = entry.isIntersecting;
@@ -298,6 +299,21 @@ export default {
           console.debug(`🔄 chart was already visible ${this.domainObject.name}`);
         }
       }
+      console.debug(`👁️ current webgl context count ${this.countWebGLContexts()}`);
+    },
+    countWebGLContexts() {
+      const canvases = document.getElementsByTagName('canvas');
+      let webGLContextCount = 0;
+
+      for (let i = 0; i < canvases.length; i++) {
+        const canvas = canvases[i];
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (gl && gl instanceof WebGLRenderingContext) {
+          webGLContextCount++;
+        }
+      }
+
+      return webGLContextCount;
     },
     reDraw(newXKey, oldXKey, series) {
       this.changeInterpolate(newXKey, oldXKey, series);

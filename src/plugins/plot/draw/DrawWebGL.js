@@ -154,7 +154,7 @@ DrawWebGL.prototype.initContext = function () {
 DrawWebGL.prototype.destroy = function () {
   // Lose the context and delete all associated resources
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#lose_contexts_eagerly
-  this.gl.getExtension('WEBGL_lose_context').loseContext();
+  this.gl.getExtension('WEBGL_lose_context')?.loseContext();
   this.gl.deleteBuffer(this.buffer);
   this.buffer = undefined;
   this.gl.deleteProgram(this.program);
