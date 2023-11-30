@@ -125,34 +125,33 @@ export default {
       );
     },
     async getSearchResults() {
-      // an abort controller will be passed in that will be used
-      // to cancel an active searches if necessary
       this.searchLoading = true;
       this.$refs.searchResultsDropDown.showSearchStarted();
       this.abortSearchController = new AbortController();
       const abortSignal = this.abortSearchController.signal;
+
       try {
         this.annotationSearchResults = await this.openmct.annotation.searchForTags(
           this.searchValue,
           abortSignal
         );
-        const fullObjectSearchResults = await Promise.all(
-          this.openmct.objects.search(this.searchValue, abortSignal)
-        );
-        const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
-        const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(
-          aggregatedObjectSearchResults
-        );
-        const filterAnnotationsAndValidPaths = aggregatedObjectSearchResultsWithPaths.filter(
-          (result) => {
-            if (this.openmct.annotation.isAnnotation(result)) {
-              return false;
-            }
 
-            return this.openmct.objects.isReachable(result?.objectPath);
-          }
-        );
-        this.objectSearchResults = filterAnnotationsAndValidPaths;
+        const objectSearchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
+        for await (const objectSearchResult of objectSearchPromises) {
+          const objectsWithPaths = await this.getPathsForObjects(objectSearchResult);
+          this.objectSearchResults.push(
+            ...objectsWithPaths.filter((result) => {
+              // Check if the result is NOT an annotation and has a reachable path
+              return (
+                !this.openmct.annotation.isAnnotation(result) &&
+                this.openmct.objects.isReachable(result?.objectPath)
+              );
+            })
+          );
+          // Display the available results so far
+          this.showSearchResults();
+        }
+
         this.searchLoading = false;
         this.showSearchResults();
       } catch (error) {
@@ -162,8 +161,7 @@ export default {
           delete this.abortSearchController;
         }
 
-        // Is this coming from the AbortController?
-        // If so, we can swallow the error. If not, 🤮 it to console
+        // Handle non-abort errors
         if (error.name !== 'AbortError') {
           console.error(`😞 Error searching`, error);
         }
