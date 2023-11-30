@@ -79,7 +79,7 @@ export function getValidatedGroups(domainObject, planData) {
   let groupIds;
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
-  if (sourceMap !== undefined && sourceMap.groupIds !== undefined) {
+  if (sourceMap?.groupIds) {
     const groups = json[sourceMap.groupIds];
     if (groups.length && typeof groups[0] === 'object') {
       const groupsWithNames = groups.filter(
