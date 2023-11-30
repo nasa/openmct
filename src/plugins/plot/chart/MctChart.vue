@@ -297,20 +297,6 @@ export default {
         }
       }
     },
-    countWebGLContexts() {
-      const canvases = document.getElementsByTagName('canvas');
-      let webGLContextCount = 0;
-
-      for (let i = 0; i < canvases.length; i++) {
-        const canvas = canvases[i];
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (gl && gl instanceof WebGLRenderingContext) {
-          webGLContextCount++;
-        }
-      }
-
-      return webGLContextCount;
-    },
     reDraw(newXKey, oldXKey, series) {
       this.changeInterpolate(newXKey, oldXKey, series);
       this.changeMarkers(newXKey, oldXKey, series);
