@@ -442,15 +442,12 @@ export default {
       this.scheduleDraw();
     },
     destroy() {
+      this.destroyCanvas();
       this.isDestroyed = true;
-      this.stopListening();
       this.lines.forEach((line) => line.destroy());
       this.limitLines.forEach((line) => line.destroy());
       this.pointSets.forEach((pointSet) => pointSet.destroy());
       this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
-      if (this.chartVisible) {
-        DrawLoader.releaseDrawAPI(this.drawAPI);
-      }
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
