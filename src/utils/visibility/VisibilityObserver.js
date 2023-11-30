@@ -38,8 +38,6 @@ export default class VisibilityObserver {
     if (!element) {
       throw new Error(`VisibilityObserver must be created with an element`);
     }
-    // set the id to some random 4 letters
-    this.id = Math.random().toString(36).substring(2, 6);
     this.#element = element;
     this.isIntersecting = true;
 
