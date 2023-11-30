@@ -125,17 +125,14 @@ export default {
       );
     },
     async getSearchResults() {
+      // an abort controller will be passed in that will be used
+      // to cancel an active searches if necessary
       this.searchLoading = true;
       this.$refs.searchResultsDropDown.showSearchStarted();
       this.abortSearchController = new AbortController();
       const abortSignal = this.abortSearchController.signal;
 
       try {
-        this.annotationSearchResults = await this.openmct.annotation.searchForTags(
-          this.searchValue,
-          abortSignal
-        );
-
         const objectSearchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
         for await (const objectSearchResult of objectSearchPromises) {
           const objectsWithPaths = await this.getPathsForObjects(objectSearchResult);
@@ -152,6 +149,11 @@ export default {
           this.showSearchResults();
         }
 
+        this.annotationSearchResults = await this.openmct.annotation.searchForTags(
+          this.searchValue,
+          abortSignal
+        );
+
         this.searchLoading = false;
         this.showSearchResults();
       } catch (error) {
@@ -161,7 +163,8 @@ export default {
           delete this.abortSearchController;
         }
 
-        // Handle non-abort errors
+        // Is this coming from the AbortController?
+        // If so, we can swallow the error. If not, 🤮 it to console
         if (error.name !== 'AbortError') {
           console.error(`😞 Error searching`, error);
         }
