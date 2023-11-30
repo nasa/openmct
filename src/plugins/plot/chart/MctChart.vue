@@ -22,10 +22,8 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <!-- overlay canvas -->
-    <canvas :style="canvasStyle"></canvas>
-    <!-- main canvas -->
-    <canvas :style="canvasStyle"></canvas>
+    <canvas :style="canvasStyle" class="js-overlay-canvas"></canvas>
+    <canvas :style="canvasStyle" class="js-main-canvas"></canvas>
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
@@ -530,8 +528,8 @@ export default {
     buildCanvasElements() {
       const div = document.createElement('div');
       div.innerHTML = `
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-overlay-canvas"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-main-canvas"></canvas>
       `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
