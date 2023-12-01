@@ -469,7 +469,7 @@ export default {
         const clickedInsidePlot = this.$refs.plot.contains(event.target);
         // unfortunate side effect from possibly being detached from the DOM when
         // adding/deleting tags, so closest() won't work
-        const clickedTagEditor = TagEditorClassNames.some((className) => {
+        const clickedTagEditor = Object.values(TagEditorClassNames).some((className) => {
           return event.target.classList.contains(className);
         });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
