@@ -36,6 +36,8 @@ import Flatbush from 'flatbush';
 import isEqual from 'lodash/isequal';
 import { toRaw } from 'vue';
 
+import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames';
+
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
 const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
@@ -316,16 +318,9 @@ export default {
     cancelSelection(event) {
       if (this.$refs.canvas) {
         const clickedInsideCanvas = this.$refs.canvas.contains(event.target);
-        const tagEditorClassNames = [
-          'js-remove-tag',
-          'js-autocomplete__input',
-          'js-add-new-tag',
-          'js-add-another-tag',
-          'js-tag-option'
-        ];
         // unfortunate side effect from possibly being detached from the DOM when
         // adding/deleting tags, so closest() won't work
-        const clickedTagEditor = tagEditorClassNames.some((className) => {
+        const clickedTagEditor = TagEditorClassNames.some((className) => {
           return event.target.classList.contains(className);
         });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;

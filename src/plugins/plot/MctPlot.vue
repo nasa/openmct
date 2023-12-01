@@ -180,6 +180,7 @@ import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
 import { toRaw } from 'vue';
 
+import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
 import MctChart from './chart/MctChart.vue';
@@ -466,16 +467,9 @@ export default {
     cancelSelection(event) {
       if (this.$refs?.plot) {
         const clickedInsidePlot = this.$refs.plot.contains(event.target);
-        const tagEditorClassNames = [
-          'js-remove-tag',
-          'js-autocomplete__input',
-          'js-add-new-tag',
-          'js-add-another-tag',
-          'js-tag-option'
-        ];
         // unfortunate side effect from possibly being detached from the DOM when
         // adding/deleting tags, so closest() won't work
-        const clickedTagEditor = tagEditorClassNames.some((className) => {
+        const clickedTagEditor = TagEditorClassNames.some((className) => {
           return event.target.classList.contains(className);
         });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
