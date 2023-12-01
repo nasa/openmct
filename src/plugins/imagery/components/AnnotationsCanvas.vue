@@ -33,7 +33,7 @@
 
 <script>
 import Flatbush from 'flatbush';
-import isEqual from 'lodash/isequal';
+import isEqual from 'lodash/isEqual';
 import { toRaw } from 'vue';
 
 import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames';
