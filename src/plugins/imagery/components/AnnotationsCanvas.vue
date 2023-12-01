@@ -33,7 +33,7 @@
 
 <script>
 import Flatbush from 'flatbush';
-import _ from 'lodash';
+import isEqual from 'lodash/isequal';
 import { toRaw } from 'vue';
 
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
@@ -180,7 +180,7 @@ export default {
         annotation.targets.forEach((target) => {
           // only add targetDetails if we haven't added it before
           const targetAlreadyAdded = targetDetails.some((targetDetail) => {
-            return _.isEqual(targetDetail, toRaw(target));
+            return isEqual(targetDetail, toRaw(target));
           });
           if (!targetAlreadyAdded) {
             targetDetails.push(toRaw(target));
