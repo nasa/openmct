@@ -398,24 +398,22 @@ export default class TelemetryAPI {
     const keyString = objectUtils.makeKeyString(domainObject.identifier);
     let subscriber = this.subscribeCache[keyString];
 
+    function wrappedCallback(value) {
+      subscriber.callbacks.forEach(function (cb) {
+        if (value instanceof Array && cb.options?.strategy === 'latest') {
+          cb.callback(value[value.length - 1]);
+        } else {
+          cb.callback(value);
+        }
+      });
+    }
+
     if (!subscriber) {
       subscriber = this.subscribeCache[keyString] = {
         callbacks: [{options, callback}]
       };
       if (provider) {
-        subscriber.unsubscribe = provider.subscribe(
-          domainObject,
-          function (value) {
-            subscriber.callbacks.forEach(function (cb) {
-              if (value instanceof Array && cb.options?.strategy === 'latest') {
-                cb.callback(value[value.length - 1]);
-              } else {
-                cb.callback(value);
-              }
-            });
-          },
-          options
-        );
+        subscriber.unsubscribe = provider.subscribe(domainObject, wrappedCallback, options);
       } else {
         subscriber.unsubscribe = function () {};
       }
@@ -425,7 +423,7 @@ export default class TelemetryAPI {
 
     return function unsubscribe() {
       subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
-        return cb !== callback;
+        return cb.callback !== callback;
       });
       if (subscriber.callbacks.length === 0) {
         subscriber.unsubscribe();
