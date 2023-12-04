@@ -21,7 +21,7 @@
     "cspell": "7.3.8",
     "css-loader": "6.8.1",
     "d3-axis": "3.0.0",
-    "d3-scale": "3.3.0",
+    "d3-scale": "4.0.2",
     "d3-selection": "3.0.0",
     "eslint": "8.54.0",
     "eslint-config-prettier": "9.0.0",
@@ -123,10 +123,10 @@
   "homepage": "https://nasa.github.io/openmct",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nasa/openmct.git"
+    "url": "git+https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=16.19.1 <20"
+    "node": ">=18.14.2 <22"
   },
   "browserslist": [
     "Firefox ESR",
