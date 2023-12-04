@@ -22,8 +22,8 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas :style="canvasStyle"></canvas>
-    <canvas :style="canvasStyle"></canvas>
+    <canvas :style="canvasStyle" class="js-overlay-canvas"></canvas>
+    <canvas :style="canvasStyle" class="js-main-canvas"></canvas>
     <div ref="limitArea" class="js-limit-area">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
@@ -197,6 +197,10 @@ export default {
     }
   },
   mounted() {
+    this.chartVisible = true;
+    this.chartContainer = this.$refs.chart;
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
+    this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -239,10 +243,8 @@ export default {
     this.seriesElements = new WeakMap();
     this.seriesLimits = new WeakMap();
 
-    let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll('canvas');
-    const mainCanvas = canvasEls[1];
-    const overlayCanvas = canvasEls[0];
-    if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
+    const canvasReadyForDrawing = this.readyCanvasForDrawing();
+    if (canvasReadyForDrawing) {
       this.draw();
     }
 
@@ -256,6 +258,7 @@ export default {
   },
   beforeUnmount() {
     this.destroy();
+    this.visibilityObserver.unobserve(this.chartContainer);
   },
   methods: {
     getConfig() {
@@ -271,6 +274,26 @@ export default {
       }
 
       return config;
+    },
+    visibilityChanged([entry]) {
+      if (entry.target === this.chartContainer) {
+        const wasVisible = this.chartVisible;
+        this.chartVisible = entry.isIntersecting;
+        if (!this.chartVisible) {
+          // destroy the chart
+          this.destroyCanvas();
+        } else if (!wasVisible && this.chartVisible) {
+          // rebuild the chart
+          this.buildCanvasElements();
+          const canvasInitialized = this.readyCanvasForDrawing();
+          if (canvasInitialized) {
+            this.draw();
+          }
+          this.$emit('plot-reinitialize-canvas');
+        } else if (wasVisible && this.chartVisible) {
+          // ignore, moving on
+        }
+      }
     },
     reDraw(newXKey, oldXKey, series) {
       this.changeInterpolate(newXKey, oldXKey, series);
@@ -417,13 +440,12 @@ export default {
       this.scheduleDraw();
     },
     destroy() {
+      this.destroyCanvas();
       this.isDestroyed = true;
-      this.stopListening();
       this.lines.forEach((line) => line.destroy());
       this.limitLines.forEach((line) => line.destroy());
       this.pointSets.forEach((pointSet) => pointSet.destroy());
       this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
-      DrawLoader.releaseDrawAPI(this.drawAPI);
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
@@ -477,33 +499,49 @@ export default {
         return this.offset[yAxisId].y(pSeries.getYVal(point));
       }.bind(this);
     },
-
-    initializeCanvas(canvas, overlay) {
-      this.canvas = canvas;
-      this.overlay = overlay;
-      this.drawAPI = DrawLoader.getDrawAPI(canvas, overlay);
+    destroyCanvas() {
+      if (this.isDestroyed) {
+        return;
+      }
+      this.stopListening(this.drawAPI);
+      DrawLoader.releaseDrawAPI(this.drawAPI);
+      if (this.chartContainer) {
+        const canvasElements = this.chartContainer.querySelectorAll('canvas');
+        canvasElements.forEach((canvas) => {
+          canvas.parentNode.removeChild(canvas);
+        });
+      }
+    },
+    readyCanvasForDrawing() {
+      const canvasEls = this.chartContainer.querySelectorAll('canvas');
+      const mainCanvas = canvasEls[1];
+      const overlayCanvas = canvasEls[0];
+      this.canvas = mainCanvas;
+      this.overlay = overlayCanvas;
+      this.drawAPI = DrawLoader.getDrawAPI(mainCanvas, overlayCanvas);
       if (this.drawAPI) {
         this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
       }
 
       return Boolean(this.drawAPI);
     },
-    fallbackToCanvas() {
-      this.stopListening(this.drawAPI);
-      DrawLoader.releaseDrawAPI(this.drawAPI);
-      // Have to throw away the old canvas elements and replace with new
-      // canvas elements in order to get new drawing contexts.
+    buildCanvasElements() {
       const div = document.createElement('div');
       div.innerHTML = `
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-overlay-canvas"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-main-canvas"></canvas>
       `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
-      this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
+      this.chartContainer.appendChild(mainCanvas, this.canvas);
       this.canvas = mainCanvas;
-      this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
+      this.chartContainer.appendChild(overlayCanvas, this.overlay);
       this.overlay = overlayCanvas;
+    },
+    fallbackToCanvas() {
+      console.warn(`📈 fallback to 2D canvas`);
+      this.destroyCanvas();
+      this.buildCanvasElements();
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
       this.$emit('plot-reinitialize-canvas');
     },
@@ -653,7 +691,7 @@ export default {
     },
     draw() {
       this.drawScheduled = false;
-      if (this.isDestroyed) {
+      if (this.isDestroyed || !this.chartVisible) {
         return;
       }
 
@@ -681,6 +719,9 @@ export default {
       });
     },
     updateViewport(yAxisId) {
+      if (!this.chartVisible) {
+        return;
+      }
       const mainYAxisId = this.config.yAxis.get('id');
       const xRange = this.config.xAxis.get('displayRange');
       let yRange;
