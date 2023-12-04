@@ -109,8 +109,7 @@ test.describe('Notification Overlay', () => {
     // Click on the "Save" button
     await page.click('button[title="Save"]');
 
-    // Click on the "Save and Finish Editing" option
-    await page.click('li[title="Save and Finish Editing"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Verify that Notification List is NOT open
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);

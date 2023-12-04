@@ -71,7 +71,6 @@ const config = {
       bourbon: 'bourbon.scss',
       'plotly-basic': 'plotly.js-basic-dist',
       'plotly-gl2d': 'plotly.js-gl2d-dist',
-      'd3-scale': path.join(projectRootDir, 'node_modules/d3-scale/dist/d3-scale.min.js'),
       printj: path.join(projectRootDir, 'node_modules/printj/dist/printj.min.js'),
       styles: path.join(projectRootDir, 'src/styles'),
       MCT: path.join(projectRootDir, 'src/MCT'),

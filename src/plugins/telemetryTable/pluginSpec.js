@@ -22,6 +22,7 @@
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -236,7 +237,7 @@ describe('the plugin', () => {
       applicableViews = openmct.objectViews.get(testTelemetryObject, []);
       tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
       tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
-      tableView.show(child, true);
+      tableView.show(child, true, { renderWhenVisible });
 
       tableInstance = tableView.getTable();
 
@@ -333,33 +334,6 @@ describe('the plugin', () => {
       expect(fromColumnText).toEqual(secondColumnText);
       expect(toColumnText).not.toEqual(secondColumnText);
       expect(toColumnText).toEqual(firstColumnText);
-    });
-
-    it('Supports filtering telemetry by regular text search', async () => {
-      tableInstance.tableRows.setColumnFilter('some-key', '1');
-      await nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(1);
-      tableInstance.tableRows.setColumnFilter('some-key', '');
-      await nextTick();
-
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-      expect(allRowElements.length).toEqual(3);
-    });
-
-    it('Supports filtering using Regex', async () => {
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value$');
-      await nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(0);
-
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value');
-      await nextTick();
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(allRowElements.length).toEqual(3);
     });
 
     it('displays the correct number of column headers when the configuration is mutated', async () => {

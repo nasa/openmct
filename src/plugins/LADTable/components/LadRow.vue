@@ -22,6 +22,7 @@
 
 <template>
   <tr
+    ref="tableRow"
     class="js-lad-table__body__row c-table__selectable-row"
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
@@ -57,7 +58,7 @@ import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 export default {
   mixins: [tooltipHelpers],
-  inject: ['openmct', 'currentView'],
+  inject: ['openmct', 'currentView', 'renderWhenVisible'],
   props: {
     domainObject: {
       type: Object,
@@ -240,8 +241,7 @@ export default {
   methods: {
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.renderWhenVisible(() => {
           this.timestamp = this.getParsedTimestamp(this.latestDatum);
           this.datum = this.latestDatum;
           this.updatingView = false;
