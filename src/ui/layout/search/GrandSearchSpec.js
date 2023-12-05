@@ -247,7 +247,7 @@ describe('GrandSearch', () => {
     // eslint-disable-next-line require-await
     mockObjectProvider.search = async (query, abortSignal, searchType) => {
       if (searchType === openmct.objects.SEARCH_TYPES.OBJECTS) {
-        return mockNewObject;
+        return [mockNewObject];
       } else {
         return [];
       }

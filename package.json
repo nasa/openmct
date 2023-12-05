@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "3.2.0",
+  "version": "3.3.0-next",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
@@ -12,7 +12,7 @@
     "@types/eventemitter3": "1.2.0",
     "@types/jasmine": "5.1.2",
     "@types/lodash": "4.14.192",
-    "@vue/compiler-sfc": "3.3.8",
+    "@vue/compiler-sfc": "3.3.10",
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "6.1.1",
     "codecov": "3.8.3",
@@ -21,9 +21,9 @@
     "cspell": "7.3.8",
     "css-loader": "6.8.1",
     "d3-axis": "3.0.0",
-    "d3-scale": "3.3.0",
+    "d3-scale": "4.0.2",
     "d3-selection": "3.0.0",
-    "eslint": "8.53.0",
+    "eslint": "8.54.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-compat": "4.2.0",
     "eslint-plugin-no-unsanitized": "4.0.2",
@@ -123,10 +123,10 @@
   "homepage": "https://nasa.github.io/openmct",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nasa/openmct.git"
+    "url": "git+https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=16.19.1 <20"
+    "node": ">=18.14.2 <22"
   },
   "browserslist": [
     "Firefox ESR",

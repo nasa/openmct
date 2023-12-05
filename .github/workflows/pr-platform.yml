@@ -22,7 +22,7 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - lts/gallium
+          - lts/iron
           - lts/hydrogen
         architecture:
           - x64
