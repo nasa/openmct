@@ -366,15 +366,19 @@ export default class AnnotationAPI extends EventEmitter {
     return tagsAddedToResults;
   }
 
-  async #addTargetModelsToResults(results) {
+  async #addTargetModelsToResults(results, abortSignal) {
     const modelAddedToResults = await Promise.all(
       results.map(async (result) => {
         const targetModels = await Promise.all(
           result.targets.map(async (target) => {
             const targetID = target.keyString;
-            const targetModel = await this.openmct.objects.get(targetID);
+            const targetModel = await this.openmct.objects.get(targetID, abortSignal);
             const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
-            const originalPathObjects = await this.openmct.objects.getOriginalPath(targetKeyString);
+            const originalPathObjects = await this.openmct.objects.getOriginalPath(
+              targetKeyString,
+              [],
+              abortSignal
+            );
 
             return {
               originalPath: originalPathObjects,
@@ -442,7 +446,7 @@ export default class AnnotationAPI extends EventEmitter {
    * @param {Object} [abortController] An optional abort method to stop the query
    * @returns {Promise} returns a model of matching tags with their target domain objects attached
    */
-  async searchForTags(query, abortController) {
+  async searchForTags(query, abortSignal) {
     const matchingTagKeys = this.#getMatchingTags(query);
     if (!matchingTagKeys.length) {
       return [];
@@ -452,7 +456,7 @@ export default class AnnotationAPI extends EventEmitter {
       await Promise.all(
         this.openmct.objects.search(
           matchingTagKeys,
-          abortController,
+          abortSignal,
           this.openmct.objects.SEARCH_TYPES.TAGS
         )
       )
@@ -465,7 +469,10 @@ export default class AnnotationAPI extends EventEmitter {
       combinedSameTargets,
       matchingTagKeys
     );
-    const appliedTargetsModels = await this.#addTargetModelsToResults(appliedTagSearchResults);
+    const appliedTargetsModels = await this.#addTargetModelsToResults(
+      appliedTagSearchResults,
+      abortSignal
+    );
     const resultsWithValidPath = appliedTargetsModels.filter((result) => {
       return this.openmct.objects.isReachable(result.targetModels?.[0]?.originalPath);
     });
