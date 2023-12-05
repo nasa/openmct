@@ -198,6 +198,32 @@ test.describe('Grand Search', () => {
     await expect(searchResultDropDown).toContainText('Clock A');
   });
 
+  test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
+    let requestWasAborted = false;
+    //await createObjectsForSearch(page);
+    page.on('requestfailed', (request) => {
+      // check if the request was aborted
+      if (request.failure().errorText === 'net::ERR_ABORTED') {
+        requestWasAborted = true;
+      }
+    });
+
+    // Intercept and delay request
+    const delayInMs = 100;
+
+    await page.route('**', async (route, request) => {
+      await new Promise((resolve) => setTimeout(resolve, delayInMs));
+      route.continue();
+    });
+
+    // Slowly type after search delay
+    const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
+    await searchInput.pressSequentially('Clock', { delay: 200 });
+    await expect(page.getByText('Clock B').first()).toBeVisible();
+
+    expect(requestWasAborted).toBe(true);
+  });
+
   test('Validate multiple objects in search results return partial matches', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
