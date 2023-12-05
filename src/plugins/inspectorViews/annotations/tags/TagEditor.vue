@@ -35,10 +35,13 @@
     <button
       v-show="!userAddingTag && !maxTagsAdded"
       class="c-tag-applier__add-btn c-icon-button c-icon-button--major icon-plus"
+      :class="TagEditorClassNames.ADD_TAG_BUTTON"
       title="Add new tag"
       @click="addTag"
     >
-      <div class="c-icon-button__label c-tag-btn__label">Add Tag</div>
+      <div class="c-icon-button__label c-tag-btn__label" :class="TagEditorClassNames.ADD_TAG_LABEL">
+        Add Tag
+      </div>
     </button>
   </div>
 </template>
@@ -46,6 +49,7 @@
 <script>
 import { toRaw } from 'vue';
 
+import TagEditorClassNames from './TagEditorClassNames';
 import TagSelection from './TagSelection.vue';
 
 export default {
@@ -88,7 +92,8 @@ export default {
   data() {
     return {
       addedTags: [],
-      userAddingTag: false
+      userAddingTag: false,
+      TagEditorClassNames: TagEditorClassNames
     };
   },
   computed: {

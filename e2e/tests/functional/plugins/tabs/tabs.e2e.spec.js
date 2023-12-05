@@ -54,21 +54,35 @@ test.describe('Tabs View', () => {
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
+    // no canvas (i.e., sine wave generator) in the document should be visible
+    await expect(page.locator('canvas')).toBeHidden();
+
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
 
     // ensure notebook visible
     await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
 
+    // no canvas (i.e., sine wave generator) in the document should be visible
+    await expect(page.locator('canvas')).toBeHidden();
+
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
 
     // expect sine wave generator visible
-    expect(await page.locator('.c-plot').isVisible()).toBe(true);
+    await expect(page.locator('.c-plot')).toBeVisible();
+
+    // expect two canvases (i.e., overlay & main canvas for sine wave generator) to be visible
+    await expect(page.locator('canvas')).toHaveCount(2);
+    await expect(page.locator('canvas').nth(0)).toBeVisible();
+    await expect(page.locator('canvas').nth(1)).toBeVisible();
 
     // now try to select the first tab again
     await page.getByLabel(`${table.name} tab`).click();
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
+
+    // no canvas (i.e., sine wave generator) in the document should be visible
+    await expect(page.locator('canvas')).toBeHidden();
   });
 });
