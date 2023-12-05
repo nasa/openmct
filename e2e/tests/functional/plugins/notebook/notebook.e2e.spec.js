@@ -32,12 +32,25 @@ const path = require('path');
 const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
-  test.fixme('Can create a Notebook Object', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
+    //Navigate to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+  test('Can create a Notebook Object', async ({ page }) => {
     //Create domain object
+    await createDomainObjectWithDefaults(page, {
+      type: NOTEBOOK_NAME
+    });
     //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
+    const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
+    const notebookPageNames = page.locator('.c-notebook__pages .c-list__item__name');
+    await expect(notebookSectionNames).toBeHidden();
+    await expect(notebookPageNames).toBeHidden();
+    await expect(notebookSectionNames).toHaveText('Unnamed Section');
+    await expect(notebookPageNames).toHaveText('Unnamed Page');
   });
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
-  test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
+  test.fixme('Can view a previously created Notebook Object', async ({ page }) => {});
   test.fixme('Can Delete a Notebook Object', async ({ page }) => {
     // Other than non-persistable objects
   });
