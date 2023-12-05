@@ -200,7 +200,7 @@ test.describe('Grand Search', () => {
 
   test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
     let requestWasAborted = false;
-    //await createObjectsForSearch(page);
+    await createObjectsForSearch(page);
     page.on('requestfailed', (request) => {
       // check if the request was aborted
       if (request.failure().errorText === 'net::ERR_ABORTED') {
