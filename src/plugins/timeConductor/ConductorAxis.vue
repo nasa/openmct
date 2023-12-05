@@ -27,7 +27,7 @@
 
 <script>
 import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import * as d3Selection from 'd3-selection';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
@@ -135,9 +135,9 @@ export default {
       //The D3 scale used depends on the type of time system as d3
       // supports UTC out of the box.
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
       }
 
       this.xAxis.scale(this.xScale);

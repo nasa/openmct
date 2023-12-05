@@ -104,7 +104,7 @@ export default {
         });
       };
     },
-    getPathsForObjects(objectsNeedingPaths) {
+    getPathsForObjects(objectsNeedingPaths, abortSignal) {
       return Promise.all(
         objectsNeedingPaths.map(async (domainObject) => {
           if (!domainObject) {
@@ -114,7 +114,9 @@ export default {
 
           const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
           const originalPathObjects = await this.openmct.objects.getOriginalPath(
-            keyStringForObject
+            keyStringForObject,
+            [],
+            abortSignal
           );
 
           return {
@@ -130,44 +132,55 @@ export default {
       this.searchLoading = true;
       this.$refs.searchResultsDropDown.showSearchStarted();
       this.abortSearchController = new AbortController();
-      const abortSignal = this.abortSearchController.signal;
-      try {
-        this.annotationSearchResults = await this.openmct.annotation.searchForTags(
-          this.searchValue,
-          abortSignal
-        );
-        const fullObjectSearchResults = await Promise.all(
-          this.openmct.objects.search(this.searchValue, abortSignal)
-        );
-        const aggregatedObjectSearchResults = fullObjectSearchResults.flat();
-        const aggregatedObjectSearchResultsWithPaths = await this.getPathsForObjects(
-          aggregatedObjectSearchResults
-        );
-        const filterAnnotationsAndValidPaths = aggregatedObjectSearchResultsWithPaths.filter(
-          (result) => {
-            if (this.openmct.annotation.isAnnotation(result)) {
-              return false;
-            }
 
-            return this.openmct.objects.isReachable(result?.objectPath);
-          }
-        );
-        this.objectSearchResults = filterAnnotationsAndValidPaths;
+      try {
+        const searchObjectsPromise = this.searchObjects(this.abortSearchController.signal);
+        const searchAnnotationsPromise = this.searchAnnotations(this.abortSearchController.signal);
+
+        // Wait for all promises, but they process their results as they complete
+        await Promise.allSettled([searchObjectsPromise, searchAnnotationsPromise]);
+
         this.searchLoading = false;
         this.showSearchResults();
       } catch (error) {
         this.searchLoading = false;
-
-        if (this.abortSearchController) {
-          delete this.abortSearchController;
-        }
 
         // Is this coming from the AbortController?
         // If so, we can swallow the error. If not, 🤮 it to console
         if (error.name !== 'AbortError') {
           console.error(`😞 Error searching`, error);
         }
+      } finally {
+        if (this.abortSearchController) {
+          delete this.abortSearchController;
+        }
       }
+    },
+    async searchObjects(abortSignal) {
+      const objectSearchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
+      for await (const objectSearchResult of objectSearchPromises) {
+        const objectsWithPaths = await this.getPathsForObjects(objectSearchResult, abortSignal);
+        this.objectSearchResults.push(
+          ...objectsWithPaths.filter((result) => {
+            // Check if the result is NOT an annotation and has a reachable path
+            return (
+              !this.openmct.annotation.isAnnotation(result) &&
+              this.openmct.objects.isReachable(result?.objectPath)
+            );
+          })
+        );
+        // Display the available results so far for objects
+        this.showSearchResults();
+      }
+    },
+    async searchAnnotations(abortSignal) {
+      const annotationSearchResults = await this.openmct.annotation.searchForTags(
+        this.searchValue,
+        abortSignal
+      );
+      this.annotationSearchResults = annotationSearchResults;
+      // Display the available results so far for annotations
+      this.showSearchResults();
     },
     showSearchResults() {
       const dropdownOptions = {
