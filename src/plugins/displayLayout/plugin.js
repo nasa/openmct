@@ -39,7 +39,7 @@ class DisplayLayoutView {
     this.component = null;
   }
 
-  show(container, isEditing) {
+  show(container, isEditing, { renderWhenVisible }) {
     const { vNode, destroy } = mount(
       {
         el: container,
@@ -50,7 +50,8 @@ class DisplayLayoutView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           options: this.options,
-          currentView: this
+          currentView: this,
+          renderWhenVisible
         },
         data: () => {
           return {
@@ -85,10 +86,9 @@ class DisplayLayoutView {
     };
   }
 
-  contextAction() {
-    const action = arguments[0];
-    if (this.component && this.component.$refs.displayLayout[action]) {
-      this.component.$refs.displayLayout[action](...Array.from(arguments).splice(1));
+  contextAction(action, ...rest) {
+    if (this?.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...rest);
     }
   }
 

@@ -786,16 +786,17 @@ export default class ObjectAPI {
    * Given an identifier, constructs the original path by walking up its parents
    * @param {module:openmct.ObjectAPI~Identifier} identifier
    * @param {Array<module:openmct.DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(utils.parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }

@@ -20,7 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-layout__grid-holder" :class="{ 'c-grid': showGrid }">
+  <div
+    class="l-layout__grid-holder"
+    :class="{ 'c-grid': showGrid }"
+    role="grid"
+    :aria-label="'Layout Grid'"
+    :aria-hidden="showGrid ? 'false' : 'true'"
+    :aria-live="showGrid ? 'polite' : 'off'"
+  >
     <div
       v-if="gridSize[0] >= 3"
       class="c-grid__x l-grid l-grid-x"

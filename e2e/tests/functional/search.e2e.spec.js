@@ -88,8 +88,8 @@ test.describe('Grand Search', () => {
       .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
       .nth(1)
       .click();
-    // Click text=Save and Finish Editing
-    await page.locator('text=Save and Finish Editing').click();
+
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
     // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]

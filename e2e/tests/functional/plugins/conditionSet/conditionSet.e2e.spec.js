@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
 suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
@@ -31,6 +31,7 @@ const {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
 } = require('../../../../appActions');
+const path = require('path');
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
@@ -48,7 +49,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
 
     //Save localStorage for future test execution
-    await context.storageState({ path: './e2e/test-data/recycled_local_storage.json' });
+    await context.storageState({
+      path: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+    });
 
     //Set object identifier from url
     conditionSetUrl = page.url();
@@ -59,7 +62,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
   });
 
   //Load localStorage for subsequent tests
-  test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
+  test.use({
+    storageState: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+  });
 
   //Begin suite of tests again localStorage
   test('Condition set object properties persist in main view and inspector @localStorage', async ({
@@ -117,7 +122,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .nth(1)
       .click();
     // Click Save and Finish Editing Option
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     //Verify Main section reflects updated Name Property
     await expect

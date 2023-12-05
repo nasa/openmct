@@ -25,6 +25,7 @@ import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
@@ -329,7 +330,8 @@ describe('the plugin', function () {
           provide: {
             openmct,
             domainObject: stackedPlotObject,
-            path: [stackedPlotObject]
+            path: [stackedPlotObject],
+            renderWhenVisible
           },
           template: '<stacked-plot ref="stackedPlotRef"></stacked-plot>'
         },
@@ -619,7 +621,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item]
+            path: [selection[0][0].context.item],
+            renderWhenVisible
           },
           template: '<plot-options/>'
         },
@@ -774,7 +777,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item, selection[0][1].context.item]
+            path: [selection[0][0].context.item, selection[0][1].context.item],
+            renderWhenVisible
           },
           template: '<plot-options />'
         },
