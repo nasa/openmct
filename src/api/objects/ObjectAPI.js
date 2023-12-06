@@ -232,6 +232,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -791,6 +795,9 @@ export default class ObjectAPI {
    */
   async getOriginalPath(identifier, path = [], abortSignal = null) {
     const domainObject = await this.get(identifier, abortSignal);
+    if (!domainObject) {
+      return [];
+    }
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
