@@ -269,6 +269,7 @@ export default {
       }
 
       this.viewContainer = this.$refs.objectViewWrapper;
+
       let provider = this.getViewProvider();
       if (!provider) {
         return;

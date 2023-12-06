@@ -1319,6 +1319,8 @@ The `renderWhenVisible` function is passed to the show function as a required pa
 
 Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
 
+Monitoring of visibility begins after the first call to `renderWhenVisible` is made.
+
 Here’s the signature for the show function:
 
 `show(element, isEditing, viewOptions)`
