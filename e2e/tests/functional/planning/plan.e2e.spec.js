@@ -29,7 +29,7 @@ const {
   assertPlanOrderedSwimLanes
 } = require('../../../helper/planningUtils');
 
-test.describe.only('Plan', () => {
+test.describe('Plan', () => {
   let plan;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
