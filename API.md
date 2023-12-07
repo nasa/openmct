@@ -1315,7 +1315,7 @@ The show function is responsible for the rendering of a view. An [Intersection O
 
 ### Implementing Visibility-Based Rendering
 
-The `renderWhenVisible` function passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
+The `renderWhenVisible` function is passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
 
 Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
 
