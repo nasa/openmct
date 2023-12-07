@@ -25,29 +25,45 @@ const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const path = require('path');
 
-test.describe.only('Testing numeric data with inspector data visualization (i.e., data pivoting)', () => {
+test.describe('Testing numeric data with inspector data visualization (i.e., data pivoting)', () => {
   test.beforeEach(async ({ page }) => {
     // eslint-disable-next-line no-undef
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
+      path: path.join(__dirname, '../../../../helper/', 'addInitDataVisualization.js')
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Creates an example data visualization source and clicks on items', async ({ page }) => {
+  test('Can click on telemetry and see data in inspector', async ({ page }) => {
     const exampleDataVisualizationSource = await createDomainObjectWithDefaults(page, {
       type: 'Example Data Visualization Source'
     });
-    const sineWaveObject1 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'First Sine Wave Generator',
       parent: exampleDataVisualizationSource.uuid
     });
-    const sineWaveObject2 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Second Sine Wave Generator',
       parent: exampleDataVisualizationSource.uuid
     });
 
-    // click on first item in example data visualization source
-    await page.pause();
+    await page.goto(exampleDataVisualizationSource.url);
+
+    await page.getByRole('tab', { name: 'Data Visualization' }).click();
+    await page.getByRole('cell', { name: /First Sine Wave Generator/ }).click();
+    await expect(page.getByText('Numeric Data')).toBeVisible();
+    await expect(
+      page.locator('span.plot-series-name', { hasText: 'First Sine Wave Generator Hz' })
+    ).toBeVisible();
+    await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+
+    await page.getByRole('cell', { name: /Second Sine Wave Generator/ }).click();
+    await expect(page.getByText('Numeric Data')).toBeVisible();
+    await expect(
+      page.locator('span.plot-series-name', { hasText: 'Second Sine Wave Generator Hz' })
+    ).toBeVisible();
+    await expect(page.locator('.js-series-data-loaded')).toBeVisible();
   });
 });
