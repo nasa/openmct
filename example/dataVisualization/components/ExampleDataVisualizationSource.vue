@@ -34,7 +34,7 @@
           v-for="item in items"
           :key="item.keyString"
           class="c-list-item js-folder-child"
-          @click="selectItem(item)"
+          @click="selectItem(item, $event)"
         >
           <td class="c-list-item__name">
             <a ref="objectLink" class="c-object-label">
@@ -74,22 +74,31 @@ export default {
     this.composition.off('remove', this.removedTelemetry);
   },
   methods: {
-    selectItem(item) {
-      console.debug('🍄 selected item', item);
-
+    selectItem(item, event) {
+      event.stopPropagation();
+      const bounds = this.openmct.time.getBounds();
       const selection = [
         {
           element: this.$el,
           context: {
-            telemetryKeys: [item.model.identifier],
-            description: item.model.name,
-            dataRanges: [],
-            loading: false,
-            item: item.model
+            dataVisualization: {
+              telemetryKeys: [item.model.identifier],
+              description: {
+                text: item.model.name,
+                icon: item.type.cssClass
+              },
+              dataRanges: [
+                {
+                  bounds
+                }
+              ],
+              loading: false
+            },
+            item: this.domainObject
           }
         }
       ];
-      this.openmct.selection.select(selection, true);
+      this.openmct.selection.select(selection, false);
     },
     addedTelemetry(child) {
       const type = this.openmct.types.get(child.type) || {
