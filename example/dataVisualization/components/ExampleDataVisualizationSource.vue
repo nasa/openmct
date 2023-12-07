@@ -82,7 +82,7 @@ export default {
           element: this.$el,
           context: {
             dataVisualization: {
-              telemetryKeys: [item.model.identifier],
+              telemetryKeys: [item.objectKeyString],
               description: {
                 text: item.model.name,
                 icon: item.type.cssClass
