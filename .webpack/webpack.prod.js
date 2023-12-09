@@ -61,24 +61,7 @@ module.exports = merge(base, {
   optimization: {
     runtimeChunk: false,
     minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          format: {
-            comments: false
-          },
-          warnings: false,
-          parse: {
-            html5_comments: false
-          },
-          mangle: true,
-          module: false,
-          toplevel: false,
-          ie8: false,
-          keep_classnames: false,
-          keep_fnames: false,
-          safari10: false
-        }
-      }),
+      new TerserPlugin(),
       new CssMinimizerPlugin()
     ]
   },
