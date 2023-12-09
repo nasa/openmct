@@ -506,6 +506,7 @@ export default {
       this.overlay = overlayCanvas;
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
       this.$emit('plot-reinitialize-canvas');
+      console.warn(`📈 fallback to 2D canvas`);
     },
     removeChartElement(series) {
       const elements = this.seriesElements.get(toRaw(series));
