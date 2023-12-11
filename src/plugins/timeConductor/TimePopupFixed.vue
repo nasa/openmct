@@ -96,6 +96,7 @@
 <script>
 import _ from 'lodash';
 
+import throttle from '../../utils/throttle';
 import DatePicker from './DatePicker.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -156,7 +157,7 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = throttle(this.handleNewBounds.bind(this), 1000);
     this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
   },
   beforeUnmount() {

@@ -1,10 +1,11 @@
-import raf from './raf';
+import throttle from './throttle';
+const waitForMs = 1000;
 
 describe('The raf utility function', () => {
   it('Throttles function calls that arrive in quick succession using Request Animation Frame', () => {
     const unthrottledFunction = jasmine.createSpy('unthrottledFunction');
     const throttledCallback = jasmine.createSpy('throttledCallback');
-    const throttledFunction = raf(throttledCallback);
+    const throttledFunction = throttle(throttledCallback, waitForMs);
 
     for (let i = 0; i < 10; i++) {
       unthrottledFunction();
@@ -20,7 +21,7 @@ describe('The raf utility function', () => {
   });
   it('Only invokes callback once per animation frame', () => {
     const throttledCallback = jasmine.createSpy('throttledCallback');
-    const throttledFunction = raf(throttledCallback);
+    const throttledFunction = throttle(throttledCallback, waitForMs);
 
     for (let i = 0; i < 10; i++) {
       throttledFunction();
@@ -40,7 +41,7 @@ describe('The raf utility function', () => {
   });
   it('Invokes callback again if called in subsequent animation frame', () => {
     const throttledCallback = jasmine.createSpy('throttledCallback');
-    const throttledFunction = raf(throttledCallback);
+    const throttledFunction = throttle(throttledCallback, waitForMs);
 
     for (let i = 0; i < 10; i++) {
       throttledFunction();

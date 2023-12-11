@@ -322,14 +322,14 @@ export default {
   },
   watch: {
     sizedImageDimensions() {
-      this.debounceResizeSvg();
+      this.throttleResizeSvg();
     }
   },
   mounted() {
-    this.debounceResizeSvg = throttle(this.resizeSvg, 100);
+    this.throttleResizeSvg = throttle(this.resizeSvg.bind(this), 100);
 
     this.$nextTick(() => {
-      this.debounceResizeSvg();
+      this.throttleResizeSvg();
     });
   },
   methods: {

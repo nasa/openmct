@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import raf from '@/utils/raf';
+import throttle from '../../utils/throttle';
+const waitForMs = 1000;
 
 export default class AbstractStatusIndicator {
   #popupComponent;
@@ -36,8 +37,7 @@ export default class AbstractStatusIndicator {
 
     this.showPopup = this.showPopup.bind(this);
     this.clearPopup = this.clearPopup.bind(this);
-    this.positionBox = this.positionBox.bind(this);
-    this.positionBox = raf(this.positionBox);
+    this.positionBox = throttle(this.positionBox.bind(this), waitForMs);
 
     this.#indicator = this.createIndicator();
     this.#popupComponent = this.createPopupComponent();

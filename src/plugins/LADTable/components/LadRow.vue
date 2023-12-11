@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import throttle from '../../../utils/throttle';
+const waitForMs = 1000;
 const CONTEXT_MENU_ACTIONS = ['viewDatumAction', 'viewHistoricalData', 'remove'];
 const BLANK_VALUE = '---';
 
@@ -189,6 +191,7 @@ export default {
     }
   },
   async mounted() {
+    this.updateView = throttle(this.updateView.bind(this), waitForMs);
     this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
     this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -241,12 +244,13 @@ export default {
   methods: {
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = this.renderWhenVisible(() => {
-          this.timestamp = this.getParsedTimestamp(this.latestDatum);
-          this.datum = this.latestDatum;
-          this.updatingView = false;
-        });
+        this.updatingView = this.renderWhenVisible(this.updateDatum);
       }
+    },
+    updateDatum() {
+      this.timestamp = this.getParsedTimestamp(this.latestDatum);
+      this.datum = this.latestDatum;
+      this.updatingView = false;
     },
     clickedRow(event) {
       if (this.openmct.editor.isEditing()) {

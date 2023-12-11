@@ -30,7 +30,9 @@
 
 <script>
 import moment from 'moment';
-import raf from 'utils/raf';
+
+import throttle from '../../../utils/throttle';
+const waitForMs = 1000;
 
 export default {
   inject: ['openmct'],
@@ -46,7 +48,7 @@ export default {
     };
   },
   mounted() {
-    this.tick = raf(this.tick);
+    this.tick = throttle(this.tick.bind(this), waitForMs);
     this.openmct.time.on('tick', this.tick);
     this.tick(this.timeTextValue);
   },

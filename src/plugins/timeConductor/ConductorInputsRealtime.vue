@@ -58,6 +58,7 @@
 import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import throttle from '../../utils/throttle';
 import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -145,7 +146,7 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = throttle(this.handleNewBounds.bind(this), 1000);
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();

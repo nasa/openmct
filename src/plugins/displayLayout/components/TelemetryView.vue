@@ -74,6 +74,8 @@ import {
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import throttle from '../../../utils/throttle';
+const waitForMs = 1000;
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 import LayoutFrame from './LayoutFrame.vue';
 
@@ -236,6 +238,7 @@ export default {
     }
   },
   mounted() {
+    this.updateView = throttle(this.updateView.bind(this), waitForMs);
     this.getAndSetObject();
 
     this.status = this.openmct.status.get(this.item.identifier);
@@ -294,11 +297,12 @@ export default {
     },
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = this.renderWhenVisible(() => {
-          this.datum = this.latestDatum;
-          this.updatingView = false;
-        });
+        this.updatingView = this.renderWhenVisible(this.updateDatum);
       }
+    },
+    updateDatum() {
+      this.datum = this.latestDatum;
+      this.updatingView = false;
     },
     refreshData(bounds, isTick) {
       if (!isTick) {

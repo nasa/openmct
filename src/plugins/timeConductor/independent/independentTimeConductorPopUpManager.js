@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import debounce from '@/utils/debounce';
-import raf from '@/utils/raf';
+
+import throttle from '../../../utils/throttle';
+const waitForMs = 1000;
 
 export default {
   data() {
@@ -38,7 +40,7 @@ export default {
     }
   },
   mounted() {
-    this.positionBox = debounce(raf(this.positionBox), 250);
+    this.positionBox = debounce(throttle(this.positionBox.bind(this), waitForMs), 250);
     this.timeConductorOptionsHolder = this.$el;
     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
   },

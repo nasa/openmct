@@ -38,6 +38,7 @@ import { v4 as uuid } from 'uuid';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration';
+import throttle from '../../utils/throttle';
 import { getValidatedData } from '../plan/util';
 import { SORT_ORDER_OPTIONS } from './constants';
 
@@ -116,7 +117,7 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.updateTimestamp = throttle(this.updateTimestamp.bind(this), 1000);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();

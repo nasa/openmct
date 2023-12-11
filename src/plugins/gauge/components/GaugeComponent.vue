@@ -733,11 +733,12 @@ export default {
         return;
       }
 
-      this.isRendering = this.renderWhenVisible(() => {
-        this.isRendering = false;
+      this.isRendering = this.renderWhenVisible(this.updateCurrentValue);
+    },
+    updateCurrentValue() {
+      this.isRendering = false;
 
-        this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
-      });
+      this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
     },
     valToPercent(vValue) {
       // Used by dial

@@ -44,13 +44,12 @@
 </template>
 
 <script>
-import raf from 'utils/raf';
-
 import throttle from '../../../utils/throttle';
 
 const moment = require('moment-timezone');
 const momentDurationFormatSetup = require('moment-duration-format');
 const refreshRateSeconds = 2;
+const waitForMs = 1000;
 
 momentDurationFormatSetup(moment);
 
@@ -176,8 +175,11 @@ export default {
         this.triggerAction(`timer.${timerAction}`);
       }
 
-      this.handleTick = raf(this.handleTick);
-      this.refreshTimerObject = throttle(this.refreshTimerObject, refreshRateSeconds * 1000);
+      this.handleTick = throttle(this.handleTick.bind(this), waitForMs);
+      this.refreshTimerObject = throttle(
+        this.refreshTimerObject.bind(this),
+        refreshRateSeconds * 1000
+      );
       this.openmct.time.on('tick', this.handleTick);
 
       this.viewActionsCollection = this.openmct.actions.getActionsCollection(

@@ -81,6 +81,7 @@ import {
   REALTIME_MODE_KEY,
   TIME_CONTEXT_EVENTS
 } from '../../api/time/constants';
+import throttle from '../../utils/throttle';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
@@ -155,8 +156,9 @@ export default {
     document.addEventListener('keyup', this.handleKeyUp);
 
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
+    this.handleNewBounds = throttle(this.handleNewBounds.bind(this), 1000);
 
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },
@@ -164,7 +166,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
 
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },

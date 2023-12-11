@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import raf from '@/utils/raf';
+import throttle from '../../utils/throttle';
+const waitForMs = 1000;
 
 export default {
   inject: ['openmct', 'configuration'],
@@ -32,7 +33,7 @@ export default {
     };
   },
   mounted() {
-    this.positionBox = raf(this.positionBox);
+    this.positionBox = throttle(this.positionBox.bind(this), waitForMs);
     this.timeConductorOptionsHolder = this.$el;
     this.timeConductorOptionsHolder.addEventListener('click', this.showPopup);
   },

@@ -284,6 +284,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -293,6 +294,7 @@ const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
+const waitForMs = 1000;
 
 export default {
   components: {
@@ -481,9 +483,9 @@ export default {
   },
   mounted() {
     this.csvExporter = new CSVExporter();
-    this.rowsAdded = _.throttle(this.rowsAdded, 200);
-    this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
-    this.scroll = _.throttle(this.scroll, 100);
+    this.rowsAdded = throttle(this.rowsAdded.bind(this), waitForMs);
+    this.rowsRemoved = throttle(this.rowsRemoved.bind(this), waitForMs);
+    this.scroll = throttle(this.scroll.bind(this), waitForMs);
 
     if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
       this.$nextTick(() => {
@@ -549,40 +551,41 @@ export default {
   methods: {
     updateVisibleRows() {
       if (!this.updatingView) {
-        this.updatingView = this.renderWhenVisible(() => {
-          let start = 0;
-          let end = VISIBLE_ROW_COUNT;
-          let tableRows = this.table.tableRows.getRows();
-          let tableRowsLength = tableRows.length;
-
-          this.totalNumberOfRows = tableRowsLength;
-
-          if (tableRowsLength < VISIBLE_ROW_COUNT) {
-            end = tableRowsLength;
-          } else {
-            let firstVisible = this.calculateFirstVisibleRow();
-            let lastVisible = this.calculateLastVisibleRow();
-            let totalVisible = lastVisible - firstVisible;
-
-            let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
-            start = firstVisible - Math.floor(numberOffscreen / 2);
-            end = lastVisible + Math.ceil(numberOffscreen / 2);
-
-            if (start < 0) {
-              start = 0;
-              end = Math.min(VISIBLE_ROW_COUNT, tableRowsLength);
-            } else if (end >= tableRowsLength) {
-              end = tableRowsLength;
-              start = end - VISIBLE_ROW_COUNT + 1;
-            }
-          }
-
-          this.rowOffset = start;
-          this.visibleRows = tableRows.slice(start, end);
-
-          this.updatingView = false;
-        });
+        this.updatingView = this.renderWhenVisible(this.setVisibleRows);
       }
+    },
+    setVisibleRows() {
+      let start = 0;
+      let end = VISIBLE_ROW_COUNT;
+      let tableRows = this.table.tableRows.getRows();
+      let tableRowsLength = tableRows.length;
+
+      this.totalNumberOfRows = tableRowsLength;
+
+      if (tableRowsLength < VISIBLE_ROW_COUNT) {
+        end = tableRowsLength;
+      } else {
+        let firstVisible = this.calculateFirstVisibleRow();
+        let lastVisible = this.calculateLastVisibleRow();
+        let totalVisible = lastVisible - firstVisible;
+
+        let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
+        start = firstVisible - Math.floor(numberOffscreen / 2);
+        end = lastVisible + Math.ceil(numberOffscreen / 2);
+
+        if (start < 0) {
+          start = 0;
+          end = Math.min(VISIBLE_ROW_COUNT, tableRowsLength);
+        } else if (end >= tableRowsLength) {
+          end = tableRowsLength;
+          start = end - VISIBLE_ROW_COUNT + 1;
+        }
+      }
+
+      this.rowOffset = start;
+      this.visibleRows = tableRows.slice(start, end);
+
+      this.updatingView = false;
     },
     calculateFirstVisibleRow() {
       let scrollTop = this.scrollable.scrollTop;
@@ -822,30 +825,31 @@ export default {
       this.isDropTargetActive = isActive;
     },
     pollForResize() {
+      this.resizePollHandle = setInterval(() => {
+        this.renderWhenVisible(this.calculateTableSizeAndSetScrollTop.bind(this));
+      }, RESIZE_POLL_INTERVAL);
+    },
+    calculateTableSizeAndSetScrollTop() {
       let el = this.$refs.root;
       let width = el.clientWidth;
       let height = el.clientHeight;
       let scrollTop = this.scrollable.scrollTop;
 
-      this.resizePollHandle = setInterval(() => {
-        this.renderWhenVisible(() => {
-          if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
-            this.calculateTableSize();
-            // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
-            // Need to preserve scroll position in this case.
-            if (this.autoScroll) {
-              this.scrollToBottom();
-            } else {
-              this.scrollable.scrollTop = scrollTop;
-            }
+      if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
+        this.calculateTableSize();
+        // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+        // Need to preserve scroll position in this case.
+        if (this.autoScroll) {
+          this.scrollToBottom();
+        } else {
+          this.scrollable.scrollTop = scrollTop;
+        }
 
-            width = el.clientWidth;
-            height = el.clientHeight;
-          }
+        width = el.clientWidth;
+        height = el.clientHeight;
+      }
 
-          scrollTop = this.scrollable.scrollTop;
-        });
-      }, RESIZE_POLL_INTERVAL);
+      scrollTop = this.scrollable.scrollTop;
     },
     clearRowsAndRerender() {
       this.visibleRows = [];

@@ -45,6 +45,7 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
+import throttle from '../../../utils/throttle';
 import configStore from '../configuration/ConfigStore';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
 import { DrawLoader } from '../draw/DrawLoader';
@@ -96,6 +97,7 @@ const HANDLED_ATTRIBUTES = {
   limitLines: 'limitLines',
   yAxisId: 'yAxisId'
 };
+const waitForMs = 1000;
 
 export default {
   components: { LimitLine, LimitLabel },
@@ -199,6 +201,7 @@ export default {
   mounted() {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
+    this.scheduleDraw = throttle(this.scheduleDraw.bind(this), waitForMs);
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
     this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);

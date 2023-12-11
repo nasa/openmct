@@ -39,7 +39,9 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
-import raf from 'utils/raf';
+
+import throttle from '../../../utils/throttle';
+const waitForMs = 1000;
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -88,7 +90,7 @@ export default {
         this.configuration = configuration;
       }
     );
-    this.tick = raf(this.tick);
+    this.tick = throttle(this.tick.bind(this), waitForMs);
     this.openmct.time.on('tick', this.tick);
   },
   beforeUnmount() {

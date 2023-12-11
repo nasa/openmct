@@ -51,6 +51,7 @@
 import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import throttle from '../../utils/throttle';
 import TimePopupFixed from './TimePopupFixed.vue';
 
 export default {
@@ -123,7 +124,7 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = throttle(this.handleNewBounds.bind(this), 1000);
     this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
