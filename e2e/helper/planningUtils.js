@@ -145,7 +145,7 @@ export async function addPlanGetInterceptor(page) {
       invoke: (identifier, object) => {
         if (object) {
           object.sourceMap = {
-            groupIds: 'Groups'
+            orderedGroups: 'Groups'
           };
         }
 

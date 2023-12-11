@@ -76,26 +76,28 @@ function getObjectJson(domainObject) {
 }
 
 export function getValidatedGroups(domainObject, planData) {
-  let groupIds;
+  let orderedGroupNames;
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
-  if (sourceMap?.groupIds) {
-    const groups = json[sourceMap.groupIds];
+  if (sourceMap?.orderedGroups) {
+    const groups = json[sourceMap.orderedGroups];
     if (groups.length && typeof groups[0] === 'object') {
+      //if groups is a list of objects, then get the name property from each group object.
       const groupsWithNames = groups.filter(
         (groupObj) => groupObj.name !== undefined && groupObj.name !== ''
       );
-      groupIds = groupsWithNames.map((groupObj) => groupObj.name);
+      orderedGroupNames = groupsWithNames.map((groupObj) => groupObj.name);
     } else {
-      groupIds = groups;
+      // Otherwise, groups is likely a list of names, so use that.
+      orderedGroupNames = groups;
     }
   }
 
-  if (groupIds === undefined) {
-    groupIds = Object.keys(planData);
+  if (orderedGroupNames === undefined) {
+    orderedGroupNames = Object.keys(planData);
   }
 
-  return groupIds;
+  return orderedGroupNames;
 }
 
 export function getContrastingColor(hexColor) {
