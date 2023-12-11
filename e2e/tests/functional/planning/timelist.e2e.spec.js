@@ -114,7 +114,7 @@ test.describe('Time List', () => {
 
       // Verify all events are displayed
       const eventCount = await page.locator('.js-list-item').count();
-      expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
+      await expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
     });
 
     await test.step('Does not show milliseconds in times', async () => {
