@@ -6,29 +6,32 @@
  * @return {Function} Returns the new throttled function.
  */
 export default function throttle(func, wait) {
-  let timeout;
-  let result;
-  let previous = 0;
+  let waiting = false;
+  let lastArgs = null;
+
+  // If the function was invoked while we were waiting, call it with those arguments
+  // If it wasn't called when we were waiting, we're done
+  function checkFunctionInvokedOrStopWaiting() {
+    if (lastArgs !== null) {
+      func(...lastArgs);
+      lastArgs = null;
+      setTimeout(checkFunctionInvokedOrStopWaiting, wait);
+    } else {
+      waiting = false;
+    }
+  }
 
   return function (...args) {
-    const now = new Date().getTime();
-    const remaining = wait - (now - previous);
-
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-
-      previous = now;
-      result = func(...args);
-    } else if (!timeout) {
-      timeout = setTimeout(() => {
-        previous = new Date().getTime();
-        timeout = null;
-        result = func(...args);
-      }, remaining);
+    // if we're waiting (in between calls), store the arguments to use for when we call the function after we're done waiting
+    if (waiting) {
+      lastArgs = args;
+      return;
     }
-    return result;
+
+    // if we're not waiting (between calls), call the function and wait
+    func(...args);
+    waiting = true;
+    // when we're done waiting, now check if the function was invoked while we were waiting
+    setTimeout(checkFunctionInvokedOrStopWaiting, wait);
   };
 }
