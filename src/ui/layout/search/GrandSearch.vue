@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="searchbox">
+  <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="search">
     <search
       ref="shell-search"
       class="c-gsearch__input"
