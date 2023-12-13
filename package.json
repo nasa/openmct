@@ -3,7 +3,7 @@
   "version": "3.1.0-next",
   "description": "The Open MCT core platform",
   "devDependencies": {
-    "@axe-core/playwright": "4.7.3",
+    "@axe-core/playwright": "4.8.2",
     "@babel/eslint-parser": "7.22.5",
     "@braintree/sanitize-url": "6.0.2",
     "@deploysentinel/playwright": "0.3.4",
