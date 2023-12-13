@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "3.2.0-next",
+  "version": "3.3.0-next",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
@@ -12,7 +12,7 @@
     "@types/eventemitter3": "1.2.0",
     "@types/jasmine": "5.1.2",
     "@types/lodash": "4.14.192",
-    "@vue/compiler-sfc": "3.3.8",
+    "@vue/compiler-sfc": "3.3.10",
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "6.1.1",
     "codecov": "3.8.3",
