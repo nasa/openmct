@@ -59,7 +59,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
 import PlanViewConfiguration from '../PlanViewConfiguration';
-import { getContrastingColor, getValidatedData } from '../util';
+import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util';
 import ActivityTimeline from './ActivityTimeline.vue';
 
 const PADDING = 1;
@@ -416,7 +416,7 @@ export default {
       return currentRow || SWIMLANE_PADDING;
     },
     generateActivities() {
-      const groupNames = Object.keys(this.planData);
+      const groupNames = getValidatedGroups(this.domainObject, this.planData);
 
       if (!groupNames.length) {
         return;
@@ -430,6 +430,10 @@ export default {
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
+        if (rawActivities === undefined) {
+          return;
+        }
+
         rawActivities.forEach((rawActivity) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;

@@ -295,8 +295,8 @@
                 cursor: text;
 
                 @include hover() {
-                    &:not(:focus, .locked) {
-                        background: $colorInputBg;
+                    &:not(.locked) {
+                        background: $colorInputBgHov;
                     }
                 }
 
