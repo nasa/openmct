@@ -97,4 +97,33 @@ test.describe('Visual - Notebook', () => {
     // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
     await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
   });
+  test('Visual check of entry hover and selection', async ({ page, theme }) => {
+    // Make two entries so we can test an unselected entry
+    await enterTextEntry(page, 'Entry 0');
+    await enterTextEntry(page, 'Entry 1');
+
+    // Hover the first entry
+    await page.getByText('Entry 0').hover();
+
+    // Take a snapshot
+    await percySnapshot(page, `Notebook Non-selected Entry Hover (theme: '${theme}')`);
+
+    // Click the first entry
+    await page.getByText('Entry 0').click();
+
+    // Take a snapshot
+    await percySnapshot(page, `Notebook Selected Entry Hover (theme: '${theme}')`);
+
+    // Hover the text entry area
+    await page.getByText('Entry 0').hover();
+
+    // Take a snapshot
+    await percySnapshot(page, `Notebook Selected Entry Text Area Hover (theme: '${theme}')`);
+
+    // Click the text entry area
+    await page.getByText('Entry 0').click();
+
+    // Take a snapshot
+    await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
+  });
 });

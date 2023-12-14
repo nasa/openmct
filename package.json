@@ -2,6 +2,7 @@
   "name": "openmct",
   "version": "3.3.0-next",
   "description": "The Open MCT core platform",
+  "main": "dist/openmct.js",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
     "@braintree/sanitize-url": "6.0.4",
@@ -52,7 +53,7 @@
     "karma-webpack": "5.0.0",
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
-    "marked": "9.1.5",
+    "marked": "11.1.0",
     "mini-css-extract-plugin": "2.7.6",
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
