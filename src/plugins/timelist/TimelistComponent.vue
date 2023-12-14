@@ -38,7 +38,7 @@ import { v4 as uuid } from 'uuid';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration';
-import { getValidatedData } from '../plan/util';
+import { getValidatedData, getValidatedGroups } from '../plan/util';
 import { SORT_ORDER_OPTIONS } from './constants';
 
 const SCROLL_TIMEOUT = 10000;
@@ -283,10 +283,13 @@ export default {
       this.planData = getValidatedData(domainObject);
     },
     listActivities() {
-      let groups = Object.keys(this.planData);
+      let groups = getValidatedGroups(this.domainObject, this.planData);
       let activities = [];
 
       groups.forEach((key) => {
+        if (this.planData[key] === undefined) {
+          return;
+        }
         // Create new objects so Vue 3 can detect any changes
         activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
       });

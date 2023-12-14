@@ -247,6 +247,14 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
     await expect(page.getByText('Driving')).toBeVisible();
     await expect(page.getByText('Science')).toBeVisible();
+
+    // add another tag and expect it to appear without changing selection
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Drilling').click();
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Drilling')).toBeVisible();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
