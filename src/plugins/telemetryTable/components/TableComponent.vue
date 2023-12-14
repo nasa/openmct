@@ -225,7 +225,7 @@
               :object-path="objectPath"
               :row-offset="rowOffset"
               :row-height="rowHeight"
-              :row="row"
+              :row="getRow(rowIndex)"
               :marked="row.marked"
               @mark="markRow"
               @unmark="unmarkRow"
@@ -623,6 +623,9 @@ export default {
       this.totalWidth = totalWidth;
 
       this.calculateScrollbarWidth();
+    },
+    getRow(rowIndex) {
+      return toRaw(this.visibleRows[rowIndex]);
     },
     sortBy(columnKey) {
       // If sorting by the same column, flip the sort direction.
