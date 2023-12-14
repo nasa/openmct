@@ -300,6 +300,7 @@ $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
 $colorInputBg: rgba(black, 0.2);
+$colorInputBgHov: rgba(black, 0.1);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
