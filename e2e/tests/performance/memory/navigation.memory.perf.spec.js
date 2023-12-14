@@ -60,8 +60,8 @@ test.describe('Navigation memory leak is not detected in', () => {
     await expect(page.locator('a:has-text("Memory Leak Detection")')).toBeVisible();
   });
 
-  test('guage', async ({ page }) => {
-    const result = await navigateToObjectAndDetectMemoryLeak(page, 'guage-single-1hz-swg', {
+  test('gauge', async ({ page }) => {
+    const result = await navigateToObjectAndDetectMemoryLeak(page, 'gauge-single-1hz-swg', {
       timeout: NAV_LEAK_TIMEOUT
     });
 
