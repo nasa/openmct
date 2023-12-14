@@ -21,39 +21,21 @@
 -->
 <template>
   <div>
-    <div
-      v-if="supportsIndependentTime"
-      class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
-    >
-      <independent-time-conductor
-        :domain-object="domainObject"
-        :object-path="path"
-        @stateChanged="updateIndependentTimeState"
-        @updated="saveTimeOptions"
-      />
-    </div>
     <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
+import { toRaw } from 'vue';
+
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
-import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'scatter-plot.view',
-  'time-strip.view'
-];
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+
 export default {
-  components: {
-    IndependentTimeConductor
-  },
   mixins: [stalenessMixin],
   inject: ['openmct'],
   props: {
@@ -81,6 +63,7 @@ export default {
       default: ''
     }
   },
+  emits: ['change-action-collection'],
   data() {
     return {
       domainObject: this.defaultObject
@@ -99,11 +82,6 @@ export default {
     font() {
       return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
     },
-    supportsIndependentTime() {
-      const viewKey = this.getViewKey();
-
-      return this.domainObject && SupportedViewTypes.includes(viewKey);
-    },
     viewClasses() {
       let classes;
 
@@ -114,7 +92,7 @@ export default {
       return classes;
     }
   },
-  destroyed() {
+  beforeUnmount() {
     this.clear();
     if (this.releaseEditModeHandler) {
       this.releaseEditModeHandler();
@@ -137,11 +115,22 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    if (this.visibilityObserver) {
+      this.visibilityObserver.destroy();
+    }
+    this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.editIfEditable, {
+      capture: true
+    });
+    this.$refs.objectViewWrapper.removeEventListener('drop', this.addObjectToParent);
   },
   created() {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
+    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -155,11 +144,16 @@ export default {
       this.initObjectStyles();
       this.triggerStalenessSubscribe(this.domainObject);
     }
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   methods: {
     clear() {
       if (this.currentView) {
         this.currentView.destroy();
+
         if (this.$refs.objectViewWrapper) {
           this.$refs.objectViewWrapper.innerHTML = '';
         }
@@ -187,10 +181,12 @@ export default {
         this.composition._destroy();
       }
 
-      this.isStale = false;
-      this.triggerUnsubscribeFromStaleness();
+      this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      if (this.contextActionEvent) {
+        this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
+      }
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -272,9 +268,7 @@ export default {
         this.loadComposition();
       }
 
-      this.viewContainer = document.createElement('div');
-      this.viewContainer.classList.add('l-angular-ov-wrapper');
-      this.$refs.objectViewWrapper.append(this.viewContainer);
+      this.viewContainer = this.$refs.objectViewWrapper;
       let provider = this.getViewProvider();
       if (!provider) {
         return;
@@ -284,16 +278,16 @@ export default {
 
       if (provider.edit && this.showEditView) {
         if (this.openmct.editor.isEditing()) {
-          this.currentView = provider.edit(this.domainObject, true, objectPath);
+          this.currentView = provider.edit(toRaw(this.domainObject), true, objectPath);
         } else {
-          this.currentView = provider.view(this.domainObject, objectPath);
+          this.currentView = provider.view(toRaw(this.domainObject), objectPath);
         }
 
         this.openmct.editor.on('isEditing', this.toggleEditView);
         this.releaseEditModeHandler = () =>
           this.openmct.editor.off('isEditing', this.toggleEditView);
       } else {
-        this.currentView = provider.view(this.domainObject, objectPath);
+        this.currentView = provider.view(toRaw(this.domainObject), objectPath);
 
         if (this.currentView.onEditModeChange) {
           this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -302,7 +296,9 @@ export default {
         }
       }
 
-      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
+      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing(), {
+        renderWhenVisible: this.visibilityObserver.renderWhenVisible
+      });
 
       if (immediatelySelect) {
         this.removeSelectable = this.openmct.selection.selectable(
@@ -312,7 +308,11 @@ export default {
         );
       }
 
+      this.contextActionEvent = `contextAction:${this.openmct.objects.makeKeyString(
+        this.domainObject.identifier
+      )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -334,10 +334,6 @@ export default {
     },
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
-
-      if (this.unlisten) {
-        this.unlisten();
-      }
 
       if (this.removeSelectable) {
         this.removeSelectable();
@@ -454,7 +450,7 @@ export default {
       if (
         provider &&
         provider.canEdit &&
-        provider.canEdit(this.domainObject, objectPath) &&
+        provider.canEdit(toRaw(this.domainObject), objectPath) &&
         this.isEditingAllowed() &&
         !this.openmct.editor.isEditing()
       ) {
@@ -487,6 +483,11 @@ export default {
         }
       }
     },
+    performContextAction(...args) {
+      if (this?.currentView?.contextAction) {
+        this.currentView.contextAction(...args);
+      }
+    },
     isEditingAllowed() {
       let browseObject = this.openmct.layout.$refs.browseObject.domainObject;
       let objectPath = this.currentObjectPath || this.objectPath;
@@ -509,17 +510,6 @@ export default {
       if (elemToStyle !== undefined) {
         elemToStyle.dataset.font = newFont;
       }
-    },
-    //Should the domainObject be updated in the Independent Time conductor component itself?
-    updateIndependentTimeState(useIndependentTime) {
-      this.openmct.objects.mutate(
-        this.domainObject,
-        'configuration.useIndependentTime',
-        useIndependentTime
-      );
-    },
-    saveTimeOptions(options) {
-      this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
     }
   }
 };

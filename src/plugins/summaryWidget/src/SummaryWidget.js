@@ -247,9 +247,10 @@ define([
   SummaryWidget.prototype.updateWidget = function () {
     const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
     const activeRule = this.rulesById[this.activeId];
+
     this.applyStyle(this.domElement.querySelector('#widget'), activeRule.getProperty('style'));
     this.domElement.querySelector('#widget').title = activeRule.getProperty('message');
-    this.domElement.querySelector('#widgetLabel').innerHTML = activeRule.getProperty('label');
+    this.domElement.querySelector('#widgetLabel').textContent = activeRule.getProperty('label');
     this.domElement.querySelector('#widgetIcon').classList =
       WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
   };
@@ -315,12 +316,12 @@ define([
   };
 
   /**
-     * Initialze a new rule from a default configuration, or build a {Rule} object
-     * from it if already exists
-     * @param {string} ruleId An key to be used to identify this ruleId, or the key
-                              of the rule to be instantiated
-     * @param {string} ruleName The initial human-readable name of this rule
-     */
+   * Initialize a new rule from a default configuration, or build a {Rule} object
+   * from it if already exists
+   * @param {string} ruleId An key to be used to identify this ruleId, or the key
+                            of the rule to be instantiated
+    * @param {string} ruleName The initial human-readable name of this rule
+    */
   SummaryWidget.prototype.initRule = function (ruleId, ruleName) {
     let ruleConfig;
     const styleObj = {};

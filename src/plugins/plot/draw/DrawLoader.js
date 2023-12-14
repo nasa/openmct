@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DrawWebGL from './DrawWebGL';
 import Draw2D from './Draw2D';
+import DrawWebGL from './DrawWebGL';
 
 const CHARTS = [
   {
@@ -45,7 +45,7 @@ export const DrawLoader = {
      * Return the first draw API available.  Returns
      * `undefined` if a draw API could not be constructed.
      *.
-     * @param {CanvasElement} canvas - The canvas eelement to attach
+     * @param {CanvasElement} canvas - The canvas element to attach
      the draw API to.
      */
   getDrawAPI: function (canvas, overlay) {

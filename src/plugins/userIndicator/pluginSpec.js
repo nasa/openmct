@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
+
 import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Coach McGuirk';
@@ -68,7 +69,7 @@ describe('The User Indicator plugin', () => {
 
       openmct.user.setProvider(provider);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('exists', () => {
@@ -84,7 +85,7 @@ describe('The User Indicator plugin', () => {
       openmct.user
         .getCurrentUser()
         .then(async (user) => {
-          await Vue.nextTick();
+          await nextTick();
 
           userIndicator = openmct.indicators.indicatorObjects.find(
             (indicator) => indicator.key === 'user-indicator'

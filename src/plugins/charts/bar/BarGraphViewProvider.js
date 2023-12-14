@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import BarGraphView from './BarGraphView.vue';
+import mount from 'utils/mount';
+
 import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
-import Vue from 'vue';
+import BarGraphView from './BarGraphView.vue';
 
 export default function BarGraphViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -43,35 +44,43 @@ export default function BarGraphViewProvider(openmct) {
       return domainObject && domainObject.type === BAR_GRAPH_KEY;
     },
 
-    view: function (domainObject, objectPath) {
-      let component;
+    view(domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
 
       return {
-        show: function (element) {
+        show(element) {
           let isCompact = isCompactView(objectPath);
-          component = new Vue({
-            el: element,
-            components: {
-              BarGraphView
+
+          const { vNode, destroy } = mount(
+            {
+              components: {
+                BarGraphView
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
-        destroy: function () {
-          component.$destroy();
-          component = undefined;
+        destroy() {
+          _destroy();
         },
         onClearData() {
           component.$refs.graphComponent.refreshData();

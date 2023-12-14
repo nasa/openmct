@@ -159,6 +159,9 @@ class InMemorySearchProvider {
     return pendingQuery.promise;
   }
 
+  /**
+   * @private
+   */
   #localQueryFallBack({ queryId, searchType, query, maxResults }) {
     if (searchType === this.searchTypes.OBJECTS) {
       return this.localSearchForObjects(queryId, query, maxResults);
@@ -371,7 +374,7 @@ class InMemorySearchProvider {
     delete provider.pendingIndex[keyString];
 
     try {
-      if (domainObject) {
+      if (domainObject && domainObject.identifier) {
         await provider.index(domainObject);
       }
     } catch (error) {
@@ -432,7 +435,8 @@ class InMemorySearchProvider {
   }
 
   localIndexAnnotation(objectToIndex, model) {
-    Object.keys(model.targets).forEach((targetID) => {
+    model.targets.forEach((target) => {
+      const targetID = target.keyString;
       if (!this.localIndexedAnnotationsByDomainObject[targetID]) {
         this.localIndexedAnnotationsByDomainObject[targetID] = [];
       }

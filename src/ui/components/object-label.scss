@@ -1,11 +1,10 @@
 .c-object-label {
   // <a> tag and draggable element that holds type icon and name.
   // Used mostly in trees and lists
+  @include ellipsize();
   display: flex;
   align-items: center;
   flex: 0 1 auto;
-  overflow: hidden;
-  white-space: nowrap;
 
   > * + * {
     margin-left: $interiorMargin;

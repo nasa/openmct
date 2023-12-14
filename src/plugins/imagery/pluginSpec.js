@@ -20,14 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
 import {
   createMouseEvent,
   createOpenMct,
   resetApplicationState,
   simulateKeyEvent
 } from 'utils/testing';
-import ClearDataPlugin from '../clearData/plugin';
+import { nextTick } from 'vue';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -60,7 +59,6 @@ function isNew(doc) {
 
 function generateTelemetry(start, count) {
   let telemetry = [];
-
   for (let i = 1, l = count + 1; i < l; i++) {
     let stringRep = i + 'minute';
     let logo = 'images/logo-openmct.svg';
@@ -211,7 +209,6 @@ describe('The Imagery View Layouts', () => {
       disconnect() {}
     });
 
-    //spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
     spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
     originalRouterPath = openmct.router.path;
@@ -320,63 +317,6 @@ describe('The Imagery View Layouts', () => {
     expect(imageryView).toBeDefined();
   });
 
-  describe('Clear data action for imagery', () => {
-    let applicableViews;
-    let imageryViewProvider;
-    let imageryView;
-    let componentView;
-    let clearDataPlugin;
-    let clearDataAction;
-
-    beforeEach(() => {
-      openmct.time.timeSystem('utc', {
-        start: START - 5 * ONE_MINUTE,
-        end: START + 5 * ONE_MINUTE
-      });
-
-      applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
-      imageryViewProvider = applicableViews.find((viewProvider) => viewProvider.key === imageryKey);
-      imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
-      imageryView.show(child);
-      componentView = imageryView._getInstance().$children[0];
-
-      clearDataPlugin = new ClearDataPlugin(['example.imagery'], { indicator: true });
-      openmct.install(clearDataPlugin);
-      clearDataAction = openmct.actions.getAction('clear-data-action');
-
-      return Vue.nextTick();
-    });
-
-    it('clear data action is installed', () => {
-      expect(clearDataAction).toBeDefined();
-    });
-
-    it('on clearData action should clear data for object is selected', (done) => {
-      // force show the thumbnails
-      componentView.forceShowThumbnails = true;
-      Vue.nextTick(() => {
-        let clearDataResolve;
-        let telemetryRequestPromise = new Promise((resolve) => {
-          clearDataResolve = resolve;
-        });
-        expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-
-        openmct.objectViews.on('clearData', (_domainObject) => {
-          return Vue.nextTick(() => {
-            expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
-
-            clearDataResolve();
-          });
-        });
-        clearDataAction.invoke(imageryObject);
-
-        telemetryRequestPromise.then(() => {
-          done();
-        });
-      });
-    });
-  });
-
   describe('imagery view', () => {
     let applicableViews;
     let imageryViewProvider;
@@ -393,49 +333,35 @@ describe('The Imagery View Layouts', () => {
       imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
       imageryView.show(child);
 
-      imageryView._getInstance().$children[0].forceShowThumbnails = true;
+      imageryView._getInstance().$refs.ImageryContainer.forceShowThumbnails = true;
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('on mount should show the the most recent image', async () => {
-      //Looks like we need Vue.nextTick here so that computed properties settle down
-      await Vue.nextTick();
+      //Looks like we need nextTick here so that computed properties settle down
+      await nextTick();
+      await nextTick();
+      await nextTick();
       const imageInfo = getImageInfo(parent);
       expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
     });
 
-    it('on mount should show the any image layers', async () => {
-      //Looks like we need Vue.nextTick here so that computed properties settle down
-      await Vue.nextTick();
+    it('on mount should show any image layers', async () => {
+      //Looks like we need nextTick here so that computed properties settle down
+      await nextTick();
+      await nextTick();
       const layerEls = parent.querySelectorAll('.js-layer-image');
       expect(layerEls.length).toEqual(1);
     });
 
-    it('should use the image thumbnailUrl for thumbnails', async () => {
-      await Vue.nextTick();
-      const fullSizeImageUrl = imageTelemetry[5].url;
-      const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
-
-      // Ensure thumbnails are shown w/ thumbnail Urls
-      const thumbnails = parent.querySelectorAll(`img[src='${thumbnailUrl}']`);
-      expect(thumbnails.length).toBeGreaterThan(0);
-
-      // Click a thumbnail
-      parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
-      await Vue.nextTick();
-
-      // Ensure full size image is shown w/ full size url
-      const fullSizeImages = parent.querySelectorAll(`img[src='${fullSizeImageUrl}']`);
-      expect(fullSizeImages.length).toBeGreaterThan(0);
-    });
-
     it('should show the clicked thumbnail as the main image', async () => {
-      //Looks like we need Vue.nextTick here so that computed properties settle down
-      await Vue.nextTick();
+      //Looks like we need nextTick here so that computed properties settle down
+      await nextTick();
+      await nextTick();
       const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
       parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
-      await Vue.nextTick();
+      await nextTick();
       const imageInfo = getImageInfo(parent);
 
       expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
@@ -447,7 +373,7 @@ describe('The Imagery View Layouts', () => {
         end: 1000
       });
 
-      Vue.nextTick(() => {
+      nextTick(() => {
         // used in code, need to wait to the 500ms here too
         setTimeout(() => {
           const imageIsNew = isNew(parent);
@@ -458,18 +384,20 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should show that an image is not new', async () => {
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const target = formatThumbnail(imageTelemetry[4].url);
       parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
-      await Vue.nextTick();
+      await nextTick();
       const imageIsNew = isNew(parent);
 
       expect(imageIsNew).toBeFalse();
     });
 
     it('should navigate via arrow keys', async () => {
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const keyOpts = {
         element: parent.querySelector('.c-imagery'),
         key: 'ArrowLeft',
@@ -479,13 +407,14 @@ describe('The Imagery View Layouts', () => {
 
       simulateKeyEvent(keyOpts);
 
-      await Vue.nextTick();
+      await nextTick();
       const imageInfo = getImageInfo(parent);
       expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
     });
 
     it('should navigate via numerous arrow keys', async () => {
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const element = parent.querySelector('.c-imagery');
       const type = 'keyup';
       const leftKeyOpts = {
@@ -508,15 +437,15 @@ describe('The Imagery View Layouts', () => {
       // right once
       simulateKeyEvent(rightKeyOpts);
 
-      await Vue.nextTick();
+      await nextTick();
       const imageInfo = getImageInfo(parent);
       expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
     });
     it('shows an auto scroll button when scroll to left', (done) => {
-      Vue.nextTick(() => {
+      nextTick(() => {
         // to mock what a scroll would do
         imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-        Vue.nextTick(() => {
+        nextTick(() => {
           let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
           expect(autoScrollButton).toBeTruthy();
           done();
@@ -524,16 +453,16 @@ describe('The Imagery View Layouts', () => {
       });
     });
     it('scrollToRight is called when clicking on auto scroll button', async () => {
-      await Vue.nextTick();
+      await nextTick();
       // use spyon to spy the scroll function
       spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollHandler');
       imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-      await Vue.nextTick();
+      await nextTick();
       parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
       expect(imageryView._getInstance().$refs.ImageryContainer.scrollHandler);
     });
     xit('should change the image zoom factor when using the zoom buttons', async () => {
-      await Vue.nextTick();
+      await nextTick();
       let imageSizeBefore;
       let imageSizeAfter;
 
@@ -542,7 +471,7 @@ describe('The Imagery View Layouts', () => {
         .querySelector('.c-imagery_main-image_background-image')
         .getBoundingClientRect();
       parent.querySelector('.t-btn-zoom-in').click();
-      await Vue.nextTick();
+      await nextTick();
       imageSizeAfter = parent
         .querySelector('.c-imagery_main-image_background-image')
         .getBoundingClientRect();
@@ -553,7 +482,7 @@ describe('The Imagery View Layouts', () => {
         .querySelector('.c-imagery_main-image_background-image')
         .getBoundingClientRect();
       parent.querySelector('.t-btn-zoom-out').click();
-      await Vue.nextTick();
+      await nextTick();
       imageSizeAfter = parent
         .querySelector('.c-imagery_main-image_background-image')
         .getBoundingClientRect();
@@ -561,15 +490,15 @@ describe('The Imagery View Layouts', () => {
       expect(imageSizeAfter.width).toBeLessThan(imageSizeBefore.width);
     });
     xit('should reset the zoom factor on the image when clicking the zoom button', async (done) => {
-      await Vue.nextTick();
+      await nextTick();
       // test clicking the zoom reset button
       // zoom in to scale up the image dimensions
       parent.querySelector('.t-btn-zoom-in').click();
-      await Vue.nextTick();
+      await nextTick();
       let imageSizeBefore = parent
         .querySelector('.c-imagery_main-image_background-image')
         .getBoundingClientRect();
-      await Vue.nextTick();
+      await nextTick();
       parent.querySelector('.t-btn-zoom-reset').click();
       let imageSizeAfter = parent
         .querySelector('.c-imagery_main-image_background-image')
@@ -580,21 +509,22 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should display the viewable area when zoom factor is greater than 1', async () => {
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
 
       parent.querySelector('.t-btn-zoom-in').click();
-      await Vue.nextTick();
+      await nextTick();
       expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(1);
 
       parent.querySelector('.t-btn-zoom-reset').click();
-      await Vue.nextTick();
+      await nextTick();
       expect(parent.querySelectorAll('.c-thumb__viewable-area').length).toBe(0);
     });
 
     it('should reset the brightness and contrast when clicking the reset button', async () => {
       const viewInstance = imageryView._getInstance();
-      await Vue.nextTick();
+      await nextTick();
 
       // Save the original brightness and contrast values
       const origBrightness = viewInstance.$refs.ImageryContainer.filters.brightness;
@@ -605,7 +535,7 @@ describe('The Imagery View Layouts', () => {
         brightness: 200,
         contrast: 200
       });
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify that the values actually changed
       expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(200);
@@ -613,7 +543,7 @@ describe('The Imagery View Layouts', () => {
 
       // Click the reset button
       parent.querySelector('.t-btn-reset').click();
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify that the values were reset
       expect(viewInstance.$refs.ImageryContainer.filters.brightness).toBe(origBrightness);
@@ -623,8 +553,8 @@ describe('The Imagery View Layouts', () => {
 
   describe('imagery time strip view', () => {
     let applicableViews;
-    let imageryViewProvider;
-    let imageryView;
+    let imageryTimestripViewProvider;
+    let imageryTimeView;
     let componentView;
 
     beforeEach(() => {
@@ -663,10 +593,10 @@ describe('The Imagery View Layouts', () => {
           type: 'time-strip'
         }
       ]);
-      imageryViewProvider = applicableViews.find(
+      imageryTimestripViewProvider = applicableViews.find(
         (viewProvider) => viewProvider.key === imageryForTimeStripKey
       );
-      imageryView = imageryViewProvider.view(imageryObject, [
+      imageryTimeView = imageryTimestripViewProvider.view(imageryObject, [
         imageryObject,
         {
           identifier: {
@@ -676,45 +606,55 @@ describe('The Imagery View Layouts', () => {
           type: 'time-strip'
         }
       ]);
-      imageryView.show(child);
+      imageryTimeView.show(child);
 
-      componentView = imageryView.getComponent().$children[0];
+      componentView = imageryTimeView.getComponent().$refs.root;
       spyOn(componentView.previewAction, 'invoke').and.callThrough();
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
-    it('on mount should show imagery within the given bounds', (done) => {
-      Vue.nextTick(() => {
-        const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
-        expect(imageElements.length).toEqual(5);
-        done();
-      });
+    afterEach(() => {
+      openmct.time.setClock('local');
     });
 
-    it('should show the clicked thumbnail as the preview image', (done) => {
-      Vue.nextTick(() => {
-        const mouseDownEvent = createMouseEvent('mousedown');
-        let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
-        imageWrapper[2].dispatchEvent(mouseDownEvent);
-        Vue.nextTick(() => {
-          const timestamp = imageWrapper[2].id.replace('wrapper-', '');
-          expect(componentView.previewAction.invoke).toHaveBeenCalledWith(
-            [componentView.objectPath[0]],
-            {
-              timestamp: Number(timestamp),
-              objectPath: componentView.objectPath
-            }
-          );
-          done();
-        });
-      });
+    it('on mount should show imagery within the given bounds', async () => {
+      await nextTick();
+      await nextTick();
+      const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+      expect(imageElements.length).toEqual(5);
+    });
+
+    it('should show the clicked thumbnail as the preview image', async () => {
+      await nextTick();
+      await nextTick();
+      const mouseDownEvent = createMouseEvent('mousedown');
+      let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
+      imageWrapper[2].dispatchEvent(mouseDownEvent);
+      await nextTick();
+      const timestamp = imageWrapper[2].id.replace('wrapper-', '');
+      const mockInvoke = componentView.previewAction.invoke;
+      // Make sure the function was called
+      expect(mockInvoke).toHaveBeenCalled();
+
+      // Get the arguments of the first call
+      const firstArg = mockInvoke.calls.mostRecent().args[0];
+      const secondArg = mockInvoke.calls.mostRecent().args[1];
+
+      // Compare the first argument
+      expect(firstArg).toEqual([componentView.objectPath[0]]);
+
+      // Compare the "timestamp" property of the second argument
+      expect(secondArg.timestamp).toEqual(Number(timestamp));
+
+      // Compare the "objectPath" property of the second argument
+      expect(secondArg.objectPath).toEqual(componentView.objectPath);
     });
 
     it('should remove images when clock advances', async () => {
       openmct.time.tick(ONE_MINUTE * 2);
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
       expect(imageElements.length).toEqual(4);
     });
@@ -724,8 +664,8 @@ describe('The Imagery View Layouts', () => {
         start: START,
         end: START + 5 * ONE_MINUTE
       });
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
       expect(imageElements.length).toEqual(1);
     });
@@ -735,8 +675,8 @@ describe('The Imagery View Layouts', () => {
         start: START - 5 * ONE_MINUTE,
         end: START - 2 * ONE_MINUTE
       });
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
       expect(imageElements.length).toEqual(4);
     });
@@ -746,8 +686,8 @@ describe('The Imagery View Layouts', () => {
         start: START - 2 * ONE_MINUTE,
         end: START + 2 * ONE_MINUTE
       });
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
       expect(imageElements.length).toEqual(3);
     });

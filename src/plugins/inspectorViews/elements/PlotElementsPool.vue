@@ -70,10 +70,11 @@
 
 <script>
 import _ from 'lodash';
-import Search from '../../../ui/components/search.vue';
+
+import Search from '../../../ui/components/SearchComponent.vue';
+import configStore from '../../plot/configuration/ConfigStore';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
-import configStore from '../../plot/configuration/ConfigStore';
 
 const Y_AXIS_1 = 1;
 
@@ -115,7 +116,7 @@ export default {
     this.openmct.selection.on('change', this.showSelection);
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.editor.off('isEditing', this.setEditState);
     this.openmct.selection.off('change', this.showSelection);
 

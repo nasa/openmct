@@ -21,33 +21,35 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct started by `npm start` within the
-`./e2e/playwright-visual.config.js` file.
-
+Collection of Visual Tests set to run with browser clock manipulate made possible with the
+clockOptions plugin fixture.
 */
 
+const { VISUAL_URL, MISSION_TIME } = require('../../constants');
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 
-test.describe('Visual - Controlled Clock @localStorage', () => {
+test.describe('Visual - Controlled Clock', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
   test.use({
-    storageState: './e2e/test-data/VisualTestData_storage.json',
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
     clockOptions: {
-      now: 0, //Set browser clock to UNIX Epoch
+      now: MISSION_TIME,
       shouldAdvanceTime: false //Don't advance the clock
     }
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    // Go to baseURL
-    await page.goto('./#/browse/mine?hideTree=true', { waitUntil: 'networkidle' });
-
-    await page.locator('a:has-text("Unnamed Overlay Plot Overlay Plot")').click();
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.locator('a').filter({ hasText: 'Overlay Plot with 5s Delay' }).click();
     //Ensure that we're on the Unnamed Overlay Plot object
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Overlay Plot');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+      'Overlay Plot with 5s Delay'
+    );
 
-    //Wait for canvas to be rendered and stop animating
+    //Wait for canvas to be rendered and stop animating, but plot should not be loaded. Cannot use waitForPlotsToRender
     await page.locator('canvas >> nth=1').hover({ trial: true });
 
     //Take snapshot of Sine Wave Generator within Overlay Plot

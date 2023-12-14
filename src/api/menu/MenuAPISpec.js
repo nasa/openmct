@@ -20,9 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MenuAPI from './MenuAPI';
+import { nextTick } from 'vue';
+
+import { createMouseEvent, createOpenMct, resetApplicationState } from '../../utils/testing';
 import Menu from './menu';
-import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
+import MenuAPI from './MenuAPI';
 
 describe('The Menu API', () => {
   let openmct;
@@ -137,14 +139,13 @@ describe('The Menu API', () => {
       it('invokes the destroy method when menu is dismissed', (done) => {
         menuOptions.onDestroy = done;
 
-        menuAPI.showMenu(x, y, actionsArray, menuOptions);
+        spyOn(menuAPI, '_clearMenuComponent').and.callThrough();
 
-        const vueComponent = menuAPI.menuComponent.component;
-        spyOn(vueComponent, '$destroy');
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
 
         document.body.click();
 
-        expect(vueComponent.$destroy).toHaveBeenCalled();
+        expect(menuAPI._clearMenuComponent).toHaveBeenCalled();
       });
 
       it('invokes the onDestroy callback if passed in', (done) => {
@@ -185,7 +186,7 @@ describe('The Menu API', () => {
       superMenuItem.dispatchEvent(mouseOverEvent);
       const itemDescription = document.querySelector('.l-item-description__description');
 
-      menuAPI.menuComponent.component.$nextTick(() => {
+      nextTick(() => {
         expect(menuElement).not.toBeNull();
         expect(itemDescription.innerText).toEqual(actionsArray[0].description);
 

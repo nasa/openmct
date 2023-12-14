@@ -52,7 +52,8 @@
 
 <script>
 import _ from 'lodash';
-import Search from '../../../ui/components/search.vue';
+
+import Search from '../../../ui/components/SearchComponent.vue';
 import ElementItem from './ElementItem.vue';
 
 export default {
@@ -80,7 +81,7 @@ export default {
     this.openmct.selection.on('change', this.showSelection);
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  destroyed() {
+  unmounted() {
     this.openmct.editor.off('isEditing', this.setEditState);
     this.openmct.selection.off('change', this.showSelection);
 

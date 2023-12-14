@@ -20,59 +20,71 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./components/FiltersView.vue', 'vue'], function (FiltersView, Vue) {
-  function FiltersInspectorViewProvider(openmct, supportedObjectTypesArray) {
+import mount from 'utils/mount';
+
+import FiltersView from './components/FiltersView.vue';
+
+const FILTERS_INSPECTOR_KEY = 'filters-inspector';
+export default class FiltersInspectorViewProvider {
+  constructor(openmct, supportedObjectTypesArray) {
+    this.openmct = openmct;
+    this.supportedObjectTypesArray = supportedObjectTypesArray;
+    this.key = FILTERS_INSPECTOR_KEY;
+    this.name = 'Filters';
+  }
+  canView(selection) {
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
+    return (
+      domainObject && this.supportedObjectTypesArray.some((type) => domainObject.type === type)
+    );
+  }
+  view(selection) {
+    let openmct = this.openmct;
+    let _destroy = null;
+
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
     return {
-      key: 'filters-inspector',
-      name: 'Filters',
-      canView: function (selection) {
-        const domainObject = selection?.[0]?.[0]?.context?.item;
-
-        return domainObject && supportedObjectTypesArray.some((type) => domainObject.type === type);
-      },
-      view: function (selection) {
-        let component;
-
-        const domainObject = selection?.[0]?.[0]?.context?.item;
-
-        return {
-          show: function (element) {
-            component = new Vue({
-              el: element,
-              components: {
-                FiltersView: FiltersView.default
-              },
-              provide: {
-                openmct
-              },
-              template: '<filters-view></filters-view>'
-            });
+      show: function (element) {
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FiltersView
+            },
+            provide: {
+              openmct: openmct
+            },
+            template: '<filters-view></filters-view>'
           },
-          showTab: function (isEditing) {
-            if (isEditing) {
-              return true;
-            }
-
-            const metadata = openmct.telemetry.getMetadata(domainObject);
-            const metadataWithFilters = metadata
-              ? metadata.valueMetadatas.filter((value) => value.filters)
-              : [];
-
-            return metadataWithFilters.length;
-          },
-          priority: function () {
-            return openmct.priority.DEFAULT;
-          },
-          destroy: function () {
-            if (component) {
-              component.$destroy();
-              component = undefined;
-            }
+          {
+            app: openmct.app,
+            element
           }
-        };
+        );
+        _destroy = destroy;
+      },
+      showTab: function (isEditing) {
+        if (isEditing) {
+          return true;
+        }
+
+        const metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadataWithFilters = metadata
+          ? metadata.valueMetadatas.filter((value) => value.filters)
+          : [];
+
+        return metadataWithFilters.length;
+      },
+      priority: function () {
+        return openmct.priority.DEFAULT;
+      },
+      destroy: function () {
+        if (_destroy) {
+          _destroy();
+        }
       }
     };
   }
-
-  return FiltersInspectorViewProvider;
-});
+}

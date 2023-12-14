@@ -1,17 +1,16 @@
+import mount from 'utils/mount';
+
 import AutoCompleteField from './components/controls/AutoCompleteField.vue';
-import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
 import CheckBoxField from './components/controls/CheckBoxField.vue';
-import Datetime from './components/controls/Datetime.vue';
+import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
+import Datetime from './components/controls/DatetimeField.vue';
 import FileInput from './components/controls/FileInput.vue';
-import Locator from './components/controls/Locator.vue';
+import Locator from './components/controls/LocatorField.vue';
 import NumberField from './components/controls/NumberField.vue';
 import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
 import TextField from './components/controls/TextField.vue';
 import ToggleSwitchField from './components/controls/ToggleSwitchField.vue';
-
-import Vue from 'vue';
-
 export const DEFAULT_CONTROLS_MAP = {
   autocomplete: AutoCompleteField,
   checkbox: CheckBoxField,
@@ -69,31 +68,40 @@ export default class FormControl {
    */
   _getControlViewProvider(control) {
     const self = this;
-    let rowComponent;
+    let _destroy = null;
 
     return {
       show(element, model, onChange) {
-        rowComponent = new Vue({
-          el: element,
-          components: {
-            FormControlComponent: DEFAULT_CONTROLS_MAP[control]
+        const { vNode, destroy } = mount(
+          {
+            el: element,
+            components: {
+              FormControlComponent: DEFAULT_CONTROLS_MAP[control]
+            },
+            provide: {
+              openmct: self.openmct
+            },
+            data() {
+              return {
+                model,
+                onChange
+              };
+            },
+            template: `<FormControlComponent :model="model" @on-change="onChange"></FormControlComponent>`
           },
-          provide: {
-            openmct: self.openmct
-          },
-          data() {
-            return {
-              model,
-              onChange
-            };
-          },
-          template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
-        });
+          {
+            element,
+            app: self.openmct.app
+          }
+        );
+        _destroy = destroy;
 
-        return rowComponent;
+        return vNode;
       },
       destroy() {
-        rowComponent.$destroy();
+        if (_destroy) {
+          _destroy();
+        }
       }
     };
   }

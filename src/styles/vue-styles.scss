@@ -24,7 +24,6 @@
 @import '../plugins/telemetryTable/components/table.scss';
 @import '../plugins/timeConductor/conductor.scss';
 @import '../plugins/timeConductor/conductor-axis.scss';
-@import '../plugins/timeConductor/conductor-mode.scss';
 @import '../plugins/timeConductor/conductor-mode-icon.scss';
 @import '../plugins/timeConductor/date-picker.scss';
 @import '../plugins/timeline/timeline.scss';
@@ -59,6 +58,7 @@
 @import '../plugins/gauge/gauge.scss';
 @import '../plugins/faultManagement/fault-manager.scss';
 @import '../plugins/operatorStatus/operator-status';
+@import '../plugins/inspectorDataVisualization/inspector-data-visualization.scss';
 
 #splash-screen {
   display: none;

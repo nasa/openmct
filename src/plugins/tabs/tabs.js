@@ -20,56 +20,73 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./components/tabs.vue', 'vue'], function (TabsComponent, Vue) {
-  function Tabs(openmct) {
-    return {
-      key: 'tabs',
-      name: 'Tabs',
-      cssClass: 'icon-list-view',
-      canView: function (domainObject) {
-        return domainObject.type === 'tabs';
-      },
-      canEdit: function (domainObject) {
-        return domainObject.type === 'tabs';
-      },
-      view: function (domainObject, objectPath) {
-        let component;
+import mount from 'utils/mount';
 
-        return {
-          show: function (element, editMode) {
-            component = new Vue({
-              el: element,
-              components: {
-                TabsComponent: TabsComponent.default
-              },
-              provide: {
-                openmct,
-                domainObject,
-                objectPath,
-                composition: openmct.composition.get(domainObject)
-              },
-              data() {
-                return {
-                  isEditing: editMode
-                };
-              },
-              template: '<tabs-component :isEditing="isEditing"></tabs-component>'
-            });
+import TabsComponent from './components/TabsComponent.vue';
+
+const TABS_KEY = 'tabs';
+export default class Tabs {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = TABS_KEY;
+    this.name = 'Tabs';
+    this.cssClass = 'icon-list-view';
+    this.destroy = null;
+  }
+
+  canView(domainObject) {
+    return domainObject.type === TABS_KEY;
+  }
+
+  canEdit(domainObject) {
+    return domainObject.type === TABS_KEY;
+  }
+
+  view(domainObject, objectPath) {
+    let openmct = this.openmct;
+    let component = null;
+
+    return {
+      show: function (element, editMode) {
+        const { vNode, destroy } = mount(
+          {
+            el: element,
+            components: {
+              TabsComponent
+            },
+            provide: {
+              openmct,
+              domainObject,
+              objectPath,
+              composition: openmct.composition.get(domainObject)
+            },
+            data() {
+              return {
+                isEditing: editMode
+              };
+            },
+            template: '<tabs-component :isEditing="isEditing"></tabs-component>'
           },
-          onEditModeChange(editMode) {
-            component.isEditing = editMode;
-          },
-          destroy: function (element) {
-            component.$destroy();
-            component = undefined;
+          {
+            app: openmct.app,
+            element
           }
-        };
+        );
+        this.destroy = destroy;
+        component = vNode.componentInstance;
       },
-      priority: function () {
-        return 1;
+      onEditModeChange(editMode) {
+        component.isEditing = editMode;
+      },
+      destroy: function (element) {
+        if (this.destroy) {
+          this.destroy();
+        }
       }
     };
   }
 
-  return Tabs;
-});
+  priority() {
+    return 1;
+  }
+}

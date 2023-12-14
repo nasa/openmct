@@ -29,14 +29,20 @@
     }"
     :style="style"
   >
-    <slot></slot>
-    <div class="c-frame__move-bar" @mousedown.left="startMove($event)"></div>
+    <slot name="content"></slot>
+    <div
+      class="c-frame__move-bar"
+      :aria-label="`Move ${typeName} Frame`"
+      @mousedown.left="startMove($event)"
+    ></div>
   </div>
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag';
 import _ from 'lodash';
+
+import DRAWING_OBJECT_TYPES from '../DrawingObjectTypes';
+import LayoutDrag from './../LayoutDrag';
 
 export default {
   inject: ['openmct'],
@@ -55,7 +61,15 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
+    typeName() {
+      const { type } = this.item;
+      if (DRAWING_OBJECT_TYPES[type]) {
+        return DRAWING_OBJECT_TYPES[type].name;
+      }
+      return 'Sub-object';
+    },
     size() {
       let { width, height } = this.item;
 
@@ -118,7 +132,7 @@ export default {
       document.body.removeEventListener('mousemove', this.continueMove);
       document.body.removeEventListener('mouseup', this.endMove);
       this.continueMove(event);
-      this.$emit('endMove');
+      this.$emit('end-move');
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.delta = undefined;

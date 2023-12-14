@@ -19,11 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import AutoflowTabularPlugin from './AutoflowTabularPlugin';
-import AutoflowTabularConstants from './AutoflowTabularConstants';
-import DOMObserver from './dom-observer';
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
+
+import AutoflowTabularConstants from './AutoflowTabularConstants';
+import AutoflowTabularPlugin from './AutoflowTabularPlugin';
+import DOMObserver from './dom-observer';
 
 // TODO lots of its without expects
 xdescribe('AutoflowTabularPlugin', () => {
@@ -171,10 +172,10 @@ xdescribe('AutoflowTabularPlugin', () => {
           return [{ hint: hints[0] }];
         });
 
-        view = provider.view(testObject);
+        view = provider.view(testObject, [testObject]);
         view.show(testContainer);
 
-        return Vue.nextTick();
+        return nextTick();
       });
 
       afterEach(() => {

@@ -20,7 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Conductor from './Conductor.vue';
+import { markRaw } from 'vue';
+
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
+import Conductor from './ConductorComponent.vue';
 
 function isTruthy(a) {
   return Boolean(a);
@@ -100,16 +103,17 @@ function throwIfError(configResult) {
 }
 
 function mountComponent(openmct, configuration) {
-  openmct.layout.conductorComponent = Object.create({
+  const conductorApp = {
     components: {
       Conductor
     },
-    template: '<conductor></conductor>',
     provide: {
       openmct: openmct,
       configuration: configuration
-    }
-  });
+    },
+    template: '<conductor />'
+  };
+  openmct.layout.conductorComponent = markRaw(conductorApp);
 }
 
 export default function (config) {
@@ -118,11 +122,34 @@ export default function (config) {
     throwIfError(configResult);
 
     const defaults = config.menuOptions[0];
-    if (defaults.clock) {
-      openmct.time.clock(defaults.clock, defaults.clockOffsets);
-      openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
+    const defaultClock = defaults.clock;
+    const defaultMode = defaultClock ? REALTIME_MODE_KEY : FIXED_MODE_KEY;
+    const defaultBounds = defaults?.bounds;
+    let clockOffsets = openmct.time.getClockOffsets();
+
+    if (defaultClock) {
+      openmct.time.setClock(defaults.clock);
+      clockOffsets = defaults.clockOffsets;
     } else {
-      openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
+      // always have an active clock, regardless of mode
+      const firstClock = config.menuOptions.find((option) => option.clock);
+
+      if (firstClock) {
+        openmct.time.setClock(firstClock.clock);
+        clockOffsets = firstClock.clockOffsets;
+      }
+    }
+
+    openmct.time.setMode(defaultMode, defaultClock ? clockOffsets : defaultBounds);
+    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds);
+
+    //We are going to set the clockOffsets in fixed time mode since the conductor components down the line need these
+    if (clockOffsets && defaultMode === FIXED_MODE_KEY) {
+      openmct.time.setClockOffsets(clockOffsets);
+    }
+    //We are going to set the fixed time bounds in realtime time mode since the conductor components down the line need these
+    if (defaultBounds && defaultMode === REALTIME_MODE_KEY) {
+      openmct.time.setBounds(clockOffsets);
     }
 
     openmct.on('start', function () {

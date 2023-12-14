@@ -98,6 +98,8 @@ test.describe('Time List', () => {
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
+      await page.goto(timelist.url);
+
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
         `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
@@ -110,7 +112,7 @@ test.describe('Time List', () => {
 
     await test.step('Does not show milliseconds in times', async () => {
       // Get the first activity
-      const row = await page.locator('.js-list-item').first();
+      const row = page.locator('.js-list-item').first();
       // Verify that none fo the times have milliseconds displayed.
       // Example: 2024-11-17T16:00:00Z is correct and 2024-11-17T16:00:00.000Z is wrong
 

@@ -51,10 +51,9 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     page.on('request', (request) => notebookElementsRequests.push(request));
 
     //Clicking Add Page generates
-    let [notebookUrlRequest, allDocsRequest] = await Promise.all([
+    let [notebookUrlRequest] = await Promise.all([
       // Waits for the next request with the specified url
       page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
-      page.waitForRequest('**/openmct/_all_docs?include_docs=true'),
       // Triggers the request
       page.click('[aria-label="Add Page"]')
     ]);
@@ -64,15 +63,13 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // Assert that only two requests are made
     // Network Requests are:
     // 1) The actual POST to create the page
-    // 2) The shared worker event from 👆 request
-    expect(notebookElementsRequests.length).toBe(2);
+    expect(notebookElementsRequests.length).toBe(1);
 
     // Assert on request object
     expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);
     expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(
       notebookUrlRequest.postDataJSON().model.modified
     );
-    expect(allDocsRequest.postDataJSON().keys).toContain(testNotebook.uuid);
 
     // Add an entry
     // Network Requests are:

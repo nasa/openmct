@@ -71,9 +71,9 @@
 </template>
 
 <script>
-import eventHelpers from './lib/eventHelpers';
-import { ticks, getLogTicks, getFormattedTicks } from './tickUtils';
 import configStore from './configuration/ConfigStore';
+import eventHelpers from './lib/eventHelpers';
+import { getFormattedTicks, getLogTicks, ticks } from './tickUtils';
 
 const SECONDARY_TICK_NUMBER = 2;
 
@@ -108,6 +108,7 @@ export default {
       }
     }
   },
+  emits: ['plot-tick-width'],
   data() {
     return {
       ticks: []
@@ -128,7 +129,7 @@ export default {
     this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
     this.updateTicks();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -271,7 +272,7 @@ export default {
           );
 
           this.tickWidth = tickWidth;
-          this.$emit('plotTickWidth', {
+          this.$emit('plot-tick-width', {
             width: tickWidth,
             yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
           });

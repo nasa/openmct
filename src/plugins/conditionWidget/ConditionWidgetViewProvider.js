@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import ConditionWidgetComponent from './components/ConditionWidget.vue';
-import Vue from 'vue';
 
 export default function ConditionWidget(openmct) {
   return {
@@ -35,25 +36,33 @@ export default function ConditionWidget(openmct) {
       return domainObject.type === 'conditionWidget';
     },
     view: function (domainObject) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              ConditionWidgetComponent: ConditionWidgetComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ConditionWidgetComponent: ConditionWidgetComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<condition-widget-component></condition-widget-component>'
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: '<condition-widget-component></condition-widget-component>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-        destroy: function (element) {
-          component.$destroy();
-          component = undefined;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     },

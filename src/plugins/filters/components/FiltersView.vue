@@ -28,22 +28,24 @@
     <global-filters
       :global-filters="globalFilters"
       :global-metadata="globalMetadata"
-      @persistGlobalFilters="persistGlobalFilters"
+      @persist-global-filters="persistGlobalFilters"
     />
     <filter-object
       v-for="(child, key) in children"
       :key="key"
       :filter-object="child"
       :persisted-filters="persistedFilters[key]"
-      @updateFilters="persistFilters"
+      @update-filters="persistFilters"
     />
   </ul>
 </template>
 
 <script>
+import _ from 'lodash';
+import { toRaw } from 'vue';
+
 import FilterObject from './FilterObject.vue';
 import GlobalFilters from './GlobalFilters.vue';
-import _ from 'lodash';
 
 const FILTER_VIEW_TITLE = 'Filters applied';
 const FILTER_VIEW_TITLE_MIXED = 'Mixed filters applied';
@@ -114,7 +116,7 @@ export default {
       this.updateGlobalFilters
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.composition.off('add', this.addChildren);
     this.composition.off('remove', this.removeChildren);
     this.unobserve();
@@ -136,29 +138,25 @@ export default {
       };
 
       if (metadataWithFilters.length) {
-        this.$set(this.children, keyString, childObject);
+        this.children[keyString] = childObject;
 
         metadataWithFilters.forEach((metadatum) => {
           if (!this.globalFilters[metadatum.key]) {
-            this.$set(this.globalFilters, metadatum.key, {});
+            this.globalFilters[metadatum.key] = {};
           }
 
           if (!this.globalMetadata[metadatum.key]) {
-            this.$set(this.globalMetadata, metadatum.key, metadatum);
+            this.globalMetadata[metadatum.key] = metadatum;
           }
 
           if (!hasFiltersWithKeyString) {
             if (!this.persistedFilters[keyString]) {
-              this.$set(this.persistedFilters, keyString, {});
-              this.$set(this.persistedFilters[keyString], 'useGlobal', true);
+              this.persistedFilters[keyString] = {};
+              this.persistedFilters[keyString].useGlobal = true;
               mutateFilters = true;
             }
 
-            this.$set(
-              this.persistedFilters[keyString],
-              metadatum.key,
-              this.globalFilters[metadatum.key]
-            );
+            this.persistedFilters[keyString][metadatum.key] = this.globalFilters[metadatum.key];
           }
         });
       }
@@ -173,14 +171,14 @@ export default {
 
       if (globalFiltersToRemove.length > 0) {
         globalFiltersToRemove.forEach((key) => {
-          this.$delete(this.globalFilters, key);
-          this.$delete(this.globalMetadata, key);
+          delete this.globalFilters[key];
+          delete this.globalMetadata[key];
         });
         this.mutateConfigurationGlobalFilters();
       }
 
-      this.$delete(this.children, keyString);
-      this.$delete(this.persistedFilters, keyString);
+      delete this.children[keyString];
+      delete this.persistedFilters[keyString];
       this.mutateConfigurationFilters();
     },
     getGlobalFiltersToRemove(keyString) {
@@ -239,10 +237,10 @@ export default {
           this.containsField(keyString, key)
         ) {
           if (!this.persistedFilters[keyString][key]) {
-            this.$set(this.persistedFilters[keyString], key, {});
+            this.persistedFilters[keyString][key] = {};
           }
 
-          this.$set(this.persistedFilters[keyString], key, filters[key]);
+          this.persistedFilters[keyString][key] = filters[key];
           mutateFilters = true;
         }
       });
@@ -270,14 +268,14 @@ export default {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.filters',
-        this.persistedFilters
+        toRaw(this.persistedFilters)
       );
     },
     mutateConfigurationGlobalFilters() {
       this.openmct.objects.mutate(
         this.providedObject,
         'configuration.globalFilters',
-        this.globalFilters
+        toRaw(this.globalFilters)
       );
     }
   }

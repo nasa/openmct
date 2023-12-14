@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plotTickWidth="onTickWidthChange" />
+    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plot-tick-width="onTickWidthChange" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import MctTicks from '../MctTicks.vue';
-import eventHelpers from '../lib/eventHelpers';
 import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
+import MctTicks from '../MctTicks.vue';
 
 export default {
   components: {
@@ -59,6 +59,7 @@ export default {
       }
     }
   },
+  emits: ['plot-x-tick-width'],
   data() {
     return {
       selectedXKeyOptionKey: '',
@@ -73,17 +74,17 @@ export default {
     this.xAxis = this.getXAxisFromConfig();
     this.loaded = true;
     this.setUpXAxisOptions();
-    this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
+    this.openmct.time.on('timeSystemChanged', this.syncXAxisToTimeSystem);
     this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
   },
-  beforeDestroy() {
-    this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
+  beforeUnmount() {
+    this.openmct.time.off('timeSystemChanged', this.syncXAxisToTimeSystem);
   },
   methods: {
     isEnabledXKeyToggle() {
       const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.seriesModel;
       const isFrozen = this.xAxis.get('frozen');
-      const inRealTimeMode = this.openmct.time.clock();
+      const inRealTimeMode = this.openmct.time.isRealTime();
 
       return isSinglePlot && !isFrozen && !inRealTimeMode;
     },
@@ -138,7 +139,7 @@ export default {
         this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
     },
     onTickWidthChange(width) {
-      this.$emit('plotXTickWidth', width);
+      this.$emit('plot-x-tick-width', width);
     }
   }
 };

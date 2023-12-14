@@ -20,15 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from 'objectUtils';
-import MutableDomainObject from './MutableDomainObject';
-import RootRegistry from './RootRegistry';
-import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
-import InterceptorRegistry from './InterceptorRegistry';
-import Transaction from './Transaction';
+import utils from 'objectUtils';
+
 import ConflictError from './ConflictError';
 import InMemorySearchProvider from './InMemorySearchProvider';
+import InterceptorRegistry from './InterceptorRegistry';
+import MutableDomainObject from './MutableDomainObject';
+import RootObjectProvider from './RootObjectProvider';
+import RootRegistry from './RootRegistry';
+import Transaction from './Transaction';
 
 /**
  * Uniquely identifies a domain object.
@@ -220,7 +221,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
+      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -231,6 +232,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -520,7 +525,7 @@ export default class ObjectAPI {
   }
 
   /**
-   * Inovke interceptors if applicable for a given domain object.
+   * Invoke interceptors if applicable for a given domain object.
    * @private
    */
   applyGetInterceptors(identifier, domainObject) {
@@ -554,28 +559,34 @@ export default class ObjectAPI {
    */
   async getTelemetryPath(identifier, telemetryIdentifier) {
     const objectDetails = await this.get(identifier);
-    const telemetryPath = [];
-    if (objectDetails.composition && !['folder'].includes(objectDetails.type)) {
-      let sourceTelemetry = objectDetails.composition[0];
+    let telemetryPath = [];
+    if (objectDetails?.type === 'folder') {
+      return telemetryPath;
+    }
+
+    let sourceTelemetry = null;
+    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
+      sourceTelemetry = identifier;
+    } else if (objectDetails.composition) {
+      sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
-        sourceTelemetry = objectDetails.composition.find(
-          (telemetrySource) =>
-            this.makeKeyString(telemetrySource) === this.makeKeyString(telemetryIdentifier)
+        sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
+          utils.identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
-      const compositionElement = await this.get(sourceTelemetry);
-      if (!['yamcs.telemetry', 'generator'].includes(compositionElement.type)) {
-        return telemetryPath;
-      }
-      const telemetryKey = compositionElement.identifier.key;
-      const telemetryPathObjects = await this.getOriginalPath(telemetryKey);
-      telemetryPathObjects.forEach((pathObject) => {
-        if (pathObject.type === 'root') {
-          return;
-        }
-        telemetryPath.unshift(pathObject.name);
-      });
     }
+
+    const compositionElement = await this.get(sourceTelemetry);
+    if (!['yamcs.telemetry', 'generator', 'yamcs.aggregate'].includes(compositionElement.type)) {
+      return telemetryPath;
+    }
+
+    const telemetryPathObjects = await this.getOriginalPath(compositionElement.identifier);
+    telemetryPath = telemetryPathObjects
+      .reverse()
+      .filter((pathObject) => pathObject.type !== 'root')
+      .map((pathObject) => pathObject.name);
+
     return telemetryPath;
   }
 
@@ -779,16 +790,20 @@ export default class ObjectAPI {
    * Given an identifier, constructs the original path by walking up its parents
    * @param {module:openmct.ObjectAPI~Identifier} identifier
    * @param {Array<module:openmct.DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
+    if (!domainObject) {
+      return [];
+    }
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(utils.parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }

@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LADTableConfigurationComponent from './components/LADTableConfiguration.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import LadTableConfiguration from './components/LadTableConfiguration.vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
   return {
@@ -37,28 +38,34 @@ export default function LADTableConfigurationViewProvider(openmct) {
       return object?.type === 'LadTable' || object?.type === 'LadTableSet';
     },
     view(selection) {
-      let component;
+      let _destroy = null;
 
       return {
         show(element) {
-          component = new Vue({
-            el: element,
-            components: {
-              LADTableConfiguration: LADTableConfigurationComponent
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                LadTableConfiguration
+              },
+              provide: {
+                openmct
+              },
+              template: '<LadTableConfiguration />'
             },
-            provide: {
-              openmct
-            },
-            template: '<LADTableConfiguration />'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority() {
           return 1;
         },
         destroy() {
-          if (component) {
-            component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventEmitter from 'EventEmitter';
+import { v4 as uuid } from 'uuid';
+
 import Condition from './Condition';
 import { getLatestTimestamp } from './utils/time';
-import { v4 as uuid } from 'uuid';
-import EventEmitter from 'EventEmitter';
 
 export default class ConditionManager extends EventEmitter {
   constructor(conditionSetDomainObject, openmct) {
@@ -399,7 +400,7 @@ export default class ConditionManager extends EventEmitter {
   }
 
   shouldEvaluateNewTelemetry(currentTimestamp) {
-    return this.openmct.time.bounds().end >= currentTimestamp;
+    return this.openmct.time.getBounds().end >= currentTimestamp;
   }
 
   telemetryReceived(endpoint, datum) {

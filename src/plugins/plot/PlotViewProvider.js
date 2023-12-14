@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Plot from './PlotView.vue';
 
 export default function PlotViewProvider(openmct) {
   function hasNumericTelemetry(domainObject) {
@@ -60,30 +61,40 @@ export default function PlotViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
+      let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
-          component = new Vue({
-            el: element,
-            components: {
-              Plot
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                renderWhenVisible
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<plot ref="plotComponent" :options="options"></plot>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<plot ref="plotComponent" :options="options"></plot>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
         getViewContext() {
           if (!component) {
@@ -93,8 +104,9 @@ export default function PlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         },
         getComponent() {
           return component;

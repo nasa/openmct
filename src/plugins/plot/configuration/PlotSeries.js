@@ -19,11 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
-import Model from './Model';
-import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import configStore from '../configuration/ConfigStore';
+import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import { symlog } from '../mathUtils';
+import Model from './Model';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -63,6 +62,10 @@ import { symlog } from '../mathUtils';
  *
  * @extends {Model<PlotSeriesModelType, PlotSeriesModelOptions>}
  */
+
+const FLOAT32_MAX = 3.4e38;
+const FLOAT32_MIN = -3.4e38;
+
 export default class PlotSeries extends Model {
   logMode = false;
 
@@ -134,16 +137,24 @@ export default class PlotSeries extends Model {
    * @override
    */
   destroy() {
+    //this triggers Model.destroy which in turn triggers destroy methods for other classes.
     super.destroy();
+    this.stopListening();
     this.openmct.time.off('bounds', this.updateLimits);
 
     if (this.unsubscribe) {
       this.unsubscribe();
     }
 
+    if (this.unsubscribeLimits) {
+      this.unsubscribeLimits();
+    }
+
     if (this.removeMutationListener) {
       this.removeMutationListener();
     }
+
+    configStore.deleteStore(this.dataStoreId);
   }
 
   /**
@@ -320,10 +331,26 @@ export default class PlotSeries extends Model {
   async load(options) {
     await this.fetch(options);
     this.emit('load');
+    await this.loadLimits();
+  }
+
+  async loadLimits() {
     const limitsResponse = await this.limitDefinition.limits();
-    this.limits = [];
+    this.limits = {};
+    if (!this.unsubscribeLimits) {
+      this.unsubscribeLimits = this.openmct.telemetry.subscribeToLimits(
+        this.domainObject,
+        this.limitsUpdated.bind(this)
+      );
+    }
+    this.limitsUpdated(limitsResponse);
+  }
+
+  limitsUpdated(limitsResponse) {
     if (limitsResponse) {
       this.limits = limitsResponse;
+    } else {
+      this.limits = {};
     }
 
     this.emit('limits', this);
@@ -346,7 +373,7 @@ export default class PlotSeries extends Model {
     let stats = this.get('stats');
     let changed = false;
     if (!stats) {
-      if ([Infinity, -Infinity].includes(value)) {
+      if ([Infinity, -Infinity].includes(value) || !this.isValidFloat32(value)) {
         return;
       }
 
@@ -358,13 +385,13 @@ export default class PlotSeries extends Model {
       };
       changed = true;
     } else {
-      if (stats.maxValue < value && value !== Infinity) {
+      if (stats.maxValue < value && value !== Infinity && this.isValidFloat32(value)) {
         stats.maxValue = value;
         stats.maxPoint = point;
         changed = true;
       }
 
-      if (stats.minValue > value && value !== -Infinity) {
+      if (stats.minValue > value && value !== -Infinity && this.isValidFloat32(value)) {
         stats.minValue = value;
         stats.minPoint = point;
         changed = true;
@@ -400,7 +427,7 @@ export default class PlotSeries extends Model {
     const lastYVal = this.getYVal(data[insertIndex - 1]);
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
-      console.warn('[Plot] Invalid Y Values detected');
+      console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
 
       return;
     }
@@ -428,7 +455,15 @@ export default class PlotSeries extends Model {
    * @private
    */
   isValueInvalid(val) {
-    return Number.isNaN(val) || this.unPlottableValues.includes(val);
+    return Number.isNaN(val) || this.unPlottableValues.includes(val) || !this.isValidFloat32(val);
+  }
+
+  /**
+   *
+   * @private
+   */
+  isValidFloat32(val) {
+    return val < FLOAT32_MAX && val > FLOAT32_MIN;
   }
 
   /**
@@ -534,7 +569,7 @@ export default class PlotSeries extends Model {
 
   /**
      * Update the series data with the given value.
-     * This return type definition is totally wrong, only covers sinwave generator. It needs to be generic.
+     * This return type definition is totally wrong, only covers sinewave generator. It needs to be generic.
      * @return-example {Array<{
             cos: number
             sin: number

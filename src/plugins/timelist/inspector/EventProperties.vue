@@ -32,34 +32,15 @@
           {{ activityOption }}
         </option>
       </select>
-      <input
-        v-if="index === 2"
-        v-model="duration"
-        class="c-input c-input--sm"
-        type="text"
-        @change="updateForm('duration')"
-      />
-      <select v-if="index === 2" v-model="durationIndex" @change="updateForm('durationIndex')">
-        <option
-          v-for="(durationOption, durationKey) in durationOptions"
-          :key="durationKey"
-          :value="durationKey"
-        >
-          {{ durationOption }}
-        </option>
-      </select>
     </div>
     <div v-else class="c-inspect-properties__value">
       {{ activitiesOptions[index] }}
-      <span v-if="index > 1">{{ duration }} {{ durationOptions[durationIndex] }}</span>
     </div>
   </li>
 </template>
 
 <script>
-const ACTIVITIES_OPTIONS = ["Don't show", 'Show all', 'Show starts within', 'Show after end for'];
-
-const DURATION_OPTIONS = ['seconds', 'minutes', 'hours'];
+const ACTIVITIES_OPTIONS = ["Don't show", 'Show all'];
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -73,13 +54,11 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     return {
-      index: this.domainObject.configuration[`${this.prefix}Index`],
-      durationIndex: this.domainObject.configuration[`${this.prefix}DurationIndex`],
-      duration: this.domainObject.configuration[`${this.prefix}Duration`],
+      index: this.domainObject.configuration[`${this.prefix}Index`] % 2, //this is modulo since we previously had more options and index could have been > 1
       activitiesOptions: ACTIVITIES_OPTIONS,
-      durationOptions: DURATION_OPTIONS,
       isEditing: this.openmct.editor.isEditing()
     };
   },
@@ -99,7 +78,7 @@ export default {
 
     this.openmct.editor.on('isEditing', this.setEditState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
   },
   methods: {
@@ -115,7 +94,7 @@ export default {
       });
     },
     isValid() {
-      return this.index < 2 || (this.durationIndex >= 0 && this.duration > 0);
+      return this.index <= 1;
     },
     setEditState(isEditing) {
       this.isEditing = isEditing;

@@ -20,7 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  setTimeConductorBounds
+} = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 
 test.describe('Telemetry Table', () => {
@@ -51,18 +54,14 @@ test.describe('Telemetry Table', () => {
     await expect(tableWrapper).toHaveClass(/is-paused/);
 
     // Subtract 5 minutes from the current end bound datetime and set it
-    const endTimeInput = page.locator('input[type="text"].c-input--datetime').nth(1);
-    await endTimeInput.click();
-
-    let endDate = await endTimeInput.inputValue();
+    // Bring up the time conductor popup
+    let endDate = await page.locator('[aria-label="End bounds"]').textContent();
     endDate = new Date(endDate);
 
     endDate.setUTCMinutes(endDate.getUTCMinutes() - 5);
     endDate = endDate.toISOString().replace(/T/, ' ');
 
-    await endTimeInput.fill('');
-    await endTimeInput.fill(endDate);
-    await page.keyboard.press('Enter');
+    await setTimeConductorBounds(page, undefined, endDate);
 
     await expect(tableWrapper).not.toHaveClass(/is-paused/);
 
@@ -78,5 +77,86 @@ test.describe('Telemetry Table', () => {
     const latestMilliseconds = Date.parse(latestTelemetryDate);
     const endBoundMilliseconds = Date.parse(endDate);
     expect(latestMilliseconds).toBeLessThanOrEqual(endBoundMilliseconds);
+  });
+
+  test('Supports filtering telemetry by regular text search', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Event Message Generator',
+      parent: table.uuid
+    });
+
+    // focus the Telemetry Table
+    await page.goto(table.url);
+
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('Roger');
+
+    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBeGreaterThan(1);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).toContain('Roger');
+    }
+
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('Dodger');
+
+    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBe(0);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).not.toContain('Dodger');
+    }
+
+    // Click pause button
+    await page.click('button[title="Pause"]');
+  });
+
+  test('Supports filtering using Regex', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Event Message Generator',
+      parent: table.uuid
+    });
+
+    // focus the Telemetry Table
+    page.goto(table.url);
+    await page.getByRole('searchbox', { name: 'message filter input' }).hover();
+    await page.getByLabel('Message filter header').getByRole('button', { name: '/R/' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
+
+    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBeGreaterThan(1);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).toContain('Roger');
+    }
+
+    await page.getByRole('searchbox', { name: 'message filter input' }).click();
+    await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Dd]oger/');
+
+    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    // ensure we've got more than one cell
+    expect(cells.length).toBe(0);
+    // ensure the text content of each cell contains the search term
+    for (const cell of cells) {
+      const text = await cell.textContent();
+      expect(text).not.toContain('Dodger');
+    }
+
+    // Click pause button
+    await page.click('button[title="Pause"]');
   });
 });

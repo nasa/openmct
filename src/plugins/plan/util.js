@@ -22,17 +22,7 @@
 
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
-  const body = domainObject.selectFile?.body;
-  let json = {};
-  if (typeof body === 'string') {
-    try {
-      json = JSON.parse(body);
-    } catch (e) {
-      return json;
-    }
-  } else if (body !== undefined) {
-    json = body;
-  }
+  const json = getObjectJson(domainObject);
 
   if (
     sourceMap !== undefined &&
@@ -67,6 +57,47 @@ export function getValidatedData(domainObject) {
   } else {
     return json;
   }
+}
+
+function getObjectJson(domainObject) {
+  const body = domainObject.selectFile?.body;
+  let json = {};
+  if (typeof body === 'string') {
+    try {
+      json = JSON.parse(body);
+    } catch (e) {
+      return json;
+    }
+  } else if (body !== undefined) {
+    json = body;
+  }
+
+  return json;
+}
+
+export function getValidatedGroups(domainObject, planData) {
+  let orderedGroupNames;
+  const sourceMap = domainObject.sourceMap;
+  const json = getObjectJson(domainObject);
+  if (sourceMap?.orderedGroups) {
+    const groups = json[sourceMap.orderedGroups];
+    if (groups.length && typeof groups[0] === 'object') {
+      //if groups is a list of objects, then get the name property from each group object.
+      const groupsWithNames = groups.filter(
+        (groupObj) => groupObj.name !== undefined && groupObj.name !== ''
+      );
+      orderedGroupNames = groupsWithNames.map((groupObj) => groupObj.name);
+    } else {
+      // Otherwise, groups is likely a list of names, so use that.
+      orderedGroupNames = groups;
+    }
+  }
+
+  if (orderedGroupNames === undefined) {
+    orderedGroupNames = Object.keys(planData);
+  }
+
+  return orderedGroupNames;
 }
 
 export function getContrastingColor(hexColor) {

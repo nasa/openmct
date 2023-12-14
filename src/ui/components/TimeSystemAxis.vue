@@ -26,9 +26,10 @@
 </template>
 
 <script>
-import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
+import * as d3Selection from 'd3-selection';
+
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
 //TODO: UI direction needed for the following property values
@@ -78,6 +79,9 @@ export default {
     },
     timeSystem(newTimeSystem) {
       this.drawAxis(this.bounds, newTimeSystem);
+    },
+    contentHeight() {
+      this.updateNowMarker();
     }
   },
   mounted() {
@@ -98,7 +102,7 @@ export default {
     this.drawAxis(this.bounds, this.timeSystem);
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
-  destroyed() {
+  unmounted() {
     clearInterval(this.resizeTimer);
   },
   methods: {
@@ -110,20 +114,13 @@ export default {
       }
     },
     updateNowMarker() {
-      if (this.openmct.time.clock() === undefined) {
-        let nowMarker = document.querySelector('.nowMarker');
-        if (nowMarker) {
-          nowMarker.classList.add('hidden');
-        }
-      } else {
-        let nowMarker = document.querySelector('.nowMarker');
-        if (nowMarker) {
-          nowMarker.classList.remove('hidden');
-          nowMarker.style.height = this.contentHeight + 'px';
-          const nowTimeStamp = this.openmct.time.clock().currentValue();
-          const now = this.xScale(nowTimeStamp);
-          nowMarker.style.left = now + this.offset + 'px';
-        }
+      let nowMarker = this.$el.querySelector('.nowMarker');
+      if (nowMarker) {
+        nowMarker.classList.remove('hidden');
+        nowMarker.style.height = this.contentHeight + 'px';
+        const nowTimeStamp = this.openmct.time.now();
+        const now = this.xScale(nowTimeStamp);
+        nowMarker.style.left = now + this.offset + 'px';
       }
     },
     setDimensions() {
@@ -154,14 +151,14 @@ export default {
       }
 
       if (timeSystem === undefined) {
-        timeSystem = this.openmct.time.timeSystem();
+        timeSystem = this.openmct.time.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([bounds.start, bounds.end]);
       }
 

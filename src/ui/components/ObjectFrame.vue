@@ -55,6 +55,9 @@
           'has-complex-content': complexContent
         }"
       >
+        <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
+          <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
+        </div>
         <NotebookMenuSwitcher
           v-if="notebookEnabled"
           :domain-object="domainObject"
@@ -94,9 +97,12 @@
 </template>
 
 <script>
-import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { SupportedViewTypes } from '../../utils/constants.js';
+import ObjectView from './ObjectView.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
@@ -104,7 +110,8 @@ const CSS_WIDTH_LESS_STR = '--width-less-than-';
 export default {
   components: {
     ObjectView,
-    NotebookMenuSwitcher
+    NotebookMenuSwitcher,
+    IndependentTimeConductor
   },
   mixins: [tooltipHelpers],
   inject: ['openmct'],
@@ -145,7 +152,8 @@ export default {
       complexContent,
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
-      status: ''
+      status: '',
+      supportsIndependentTime: false
     };
   },
   computed: {
@@ -168,8 +176,11 @@ export default {
       this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
+
+    const viewKey = this.getViewKey();
+    this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeStatusListener();
 
     if (this.actionCollection) {
@@ -191,13 +202,13 @@ export default {
 
       this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.applicableActions);
+      this.updateActionItems();
     },
     unlistenToActionCollection() {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    updateActionItems(actionItems) {
+    updateActionItems() {
       const statusBarItems = this.actionCollection.getStatusBarActions();
       this.statusBarItems = this.openmct.menus.actionsToMenuItems(
         statusBarItems,
@@ -232,6 +243,9 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
+    },
+    getViewKey() {
+      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

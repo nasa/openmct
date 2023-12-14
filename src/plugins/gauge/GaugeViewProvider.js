@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GaugeComponent from './components/Gauge.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import GaugeComponent from './components/GaugeComponent.vue';
 
 export default function GaugeViewProvider(openmct) {
   return {
@@ -37,26 +38,35 @@ export default function GaugeViewProvider(openmct) {
       }
     },
     view: function (domainObject) {
-      let component;
+      let _destroy = null;
 
       return {
-        show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              GaugeComponent
+        show: function (element, isEditing, { renderWhenVisible }) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                GaugeComponent
+              },
+              provide: {
+                openmct,
+                domainObject,
+                composition: openmct.composition.get(domainObject),
+                renderWhenVisible
+              },
+              template: '<gauge-component></gauge-component>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              composition: openmct.composition.get(domainObject)
-            },
-            template: '<gauge-component></gauge-component>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-        destroy: function (element) {
-          component.$destroy();
-          component = undefined;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     },

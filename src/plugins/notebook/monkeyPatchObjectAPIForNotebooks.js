@@ -1,5 +1,7 @@
-import { isAnnotationType, isNotebookType, isNotebookOrAnnotationType } from './notebook-constants';
 import _ from 'lodash';
+import { toRaw } from 'vue';
+
+import { isAnnotationType, isNotebookOrAnnotationType, isNotebookType } from './notebook-constants';
 
 export default function (openmct) {
   const apiSave = openmct.objects.save.bind(openmct.objects);
@@ -40,7 +42,7 @@ function resolveConflicts(domainObject, localMutable, openmct) {
 }
 
 async function resolveNotebookTagConflicts(localAnnotation, openmct) {
-  const localClonedAnnotation = structuredClone(localAnnotation);
+  const localClonedAnnotation = structuredClone(toRaw(localAnnotation));
   const remoteMutable = await openmct.objects.getMutable(localClonedAnnotation.identifier);
 
   // should only be one annotation per targetID, entryID, and tag; so for sanity, ensure we have the
@@ -49,13 +51,18 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
     throw new Error("Conflict on annotation's tag has different tags than remote");
   }
 
-  Object.keys(localClonedAnnotation.targets).forEach((targetKey) => {
-    if (!remoteMutable.targets[targetKey]) {
+  localClonedAnnotation.targets.forEach((target) => {
+    const targetKey = target.keyString;
+
+    const remoteMutableTarget = remoteMutable.targets.find((remoteTarget) => {
+      return remoteTarget.keyString === targetKey;
+    });
+    if (!remoteMutableTarget) {
       throw new Error(`Conflict on annotation's target is missing ${targetKey}`);
     }
-
-    const remoteMutableTarget = remoteMutable.targets[targetKey];
-    const localMutableTarget = localClonedAnnotation.targets[targetKey];
+    const localMutableTarget = localClonedAnnotation.targets.find((localTarget) => {
+      return localTarget.keyString === targetKey;
+    });
 
     if (remoteMutableTarget.entryId !== localMutableTarget.entryId) {
       throw new Error(
@@ -77,7 +84,7 @@ async function resolveNotebookTagConflicts(localAnnotation, openmct) {
 async function resolveNotebookEntryConflicts(localMutable, openmct) {
   if (localMutable.configuration.entries) {
     const FORCE_REMOTE = true;
-    const localEntries = structuredClone(localMutable.configuration.entries);
+    const localEntries = structuredClone(toRaw(localMutable.configuration.entries));
     const remoteObject = await openmct.objects.get(
       localMutable.identifier,
       undefined,

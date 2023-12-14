@@ -25,6 +25,7 @@
   &__bar {
     background: $colorProgressBar;
     height: 100%;
+    min-height: $progressBarMinH;
 
     &.--indeterminate {
       position: absolute;

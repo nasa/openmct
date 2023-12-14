@@ -29,7 +29,7 @@
  */
 
 const base = require('@playwright/test');
-const { expect } = base;
+const { expect, request } = base;
 const fs = require('fs');
 const path = require('path');
 const { v4: uuid } = require('uuid');
@@ -72,11 +72,16 @@ exports.test = base.test.extend({
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
    * the Time Indicator Clock to be in a specific state.
+   *
+   * Warning: Has many limitations and secondary side effects in Open MCT.
+   * 1. The tree component does not render.
+   * 2. page.WaitForNavigation does not trigger.
+   *
    * Usage:
-   * ```
+   * ```js
    * test.use({
    *   clockOptions: {
-   *       now: 0,
+   *       now: MISSION_TIME,
    *       shouldAdvanceTime: true
    * ```
    * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.
@@ -85,6 +90,7 @@ exports.test = base.test.extend({
    *
    * @see {@link https://github.com/microsoft/playwright/issues/6347 Github RFE}
    * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
+   * @type {import('@types/sinonjs__fake-timers').FakeTimerInstallOpts}
    */
   clockOptions: [undefined, { option: true }],
   overrideClock: [
@@ -143,7 +149,24 @@ exports.test = base.test.extend({
    * Extends the base page class to enable console log error detection.
    * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
    */
-  page: async ({ page, failOnConsoleError }, use) => {
+  page: async ({ page, failOnConsoleError, clockOptions }, use) => {
+    // If overriding the clock, we must also override the Date.now()
+    // function in the generatorWorker context. This is necessary
+    // to ensure that example telemetry data is generated for the new clock time.
+    if (clockOptions?.now !== undefined) {
+      page.on(
+        'worker',
+        (worker) => {
+          if (worker.url().includes('generatorWorker')) {
+            worker.evaluate((time) => {
+              self.Date.now = () => time;
+            });
+          }
+        },
+        clockOptions.now
+      );
+    }
+
     // Capture any console errors during test execution
     const messages = [];
     page.on('console', (msg) => messages.push(msg));
@@ -179,4 +202,5 @@ exports.test = base.test.extend({
 });
 
 exports.expect = expect;
+exports.request = request;
 exports.waitForAnimations = waitForAnimations;

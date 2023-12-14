@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import ElementsPool from './ElementsPool.vue';
-import Vue from 'vue';
 
 export default function ElementsViewProvider(openmct) {
   return {
@@ -34,23 +35,29 @@ export default function ElementsViewProvider(openmct) {
       return hasValidSelection && !isOverlayPlot;
     },
     view: function (selection) {
-      let component;
-
+      let _destroy = null;
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
-        show: function (el) {
-          component = new Vue({
-            el,
-            components: {
-              ElementsPool
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ElementsPool
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<ElementsPool />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<ElementsPool />`
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
@@ -61,8 +68,9 @@ export default function ElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

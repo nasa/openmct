@@ -49,6 +49,15 @@
     </div>
 
     <div class="l-browse-bar__end">
+      <div
+        v-if="supportsIndependentTime"
+        class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+      >
+        <independent-time-conductor
+          :domain-object="domainObject"
+          :object-path="openmct.router.path"
+        />
+      </div>
       <ViewSwitcher v-if="!isEditing" :current-view="currentView" :views="views" />
       <!-- Action buttons -->
       <NotebookMenuSwitcher
@@ -128,14 +137,20 @@
 </template>
 
 <script>
-import ViewSwitcher from './ViewSwitcher.vue';
+import { toRaw } from 'vue';
+
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { SupportedViewTypes } from '../../utils/constants.js';
+import ViewSwitcher from './ViewSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
   components: {
+    IndependentTimeConductor,
     NotebookMenuSwitcher,
     ViewSwitcher
   },
@@ -145,7 +160,7 @@ export default {
     actionCollection: {
       type: Object,
       default: () => {
-        return {};
+        return undefined;
       }
     }
   },
@@ -184,7 +199,7 @@ export default {
       });
     },
     hasParent() {
-      return this.domainObject !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return toRaw(this.domainObject) !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
     },
     parentUrl() {
       const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -226,6 +241,11 @@ export default {
       } else {
         return 'Unlocked for editing - click to lock.';
       }
+    },
+    supportsIndependentTime() {
+      const viewKey = this.getViewKey();
+
+      return this.domainObject && SupportedViewTypes.includes(viewKey);
     }
   },
   watch: {
@@ -245,7 +265,6 @@ export default {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection = actionCollection;
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
@@ -259,7 +278,7 @@ export default {
       this.isEditing = isEditing;
     });
   },
-  beforeDestroy: function () {
+  beforeUnmount: function () {
     if (this.mutationObserver) {
       this.mutationObserver();
     }
@@ -300,6 +319,9 @@ export default {
     edit() {
       this.openmct.editor.edit();
     },
+    getViewKey() {
+      return this.viewKey;
+    },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
@@ -333,7 +355,7 @@ export default {
     },
     saveAndFinishEditing() {
       let dialog = this.openmct.overlays.progressDialog({
-        progressPerc: 'unknown',
+        progressPerc: null,
         message:
           'Do not navigate away from this page or close this browser tab while this message is displayed.',
         iconClass: 'info',

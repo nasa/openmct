@@ -59,7 +59,7 @@
         edit-title="Manually set the line and marker color for this plot."
         view-title="The line and marker color for this plot."
         short-label="Color"
-        @colorSet="setColor"
+        @color-set="setColor"
       />
     </ul>
   </div>
@@ -89,7 +89,7 @@ export default {
     this.registerListeners();
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -135,7 +135,7 @@ export default {
       }
     },
     addSeries(series, index) {
-      this.$set(this.plotSeries, this.plotSeries.length, series);
+      this.plotSeries.push(series);
       this.setupOptions();
     },
     removeSeries(seriesIdentifier) {
@@ -143,7 +143,7 @@ export default {
         this.openmct.objects.areIdsEqual(seriesIdentifier, plotSeries.identifier)
       );
       if (index >= 0) {
-        this.$delete(this.plotSeries, index);
+        this.plotSeries.splice(index, 1);
         this.setupOptions();
       }
     },

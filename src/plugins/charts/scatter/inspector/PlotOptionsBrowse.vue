@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 import Color from '../../../../ui/color/Color';
 import ColorPalette from '../../../../ui/color/ColorPalette';
+import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 
 export default {
   components: { ColorSwatch },
@@ -64,7 +64,7 @@ export default {
     this.registerListeners();
     this.composition.load();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -102,7 +102,7 @@ export default {
       }
     },
     addSeries(series, index) {
-      this.$set(this.plotSeries, this.plotSeries.length, series);
+      this.plotSeries.push(series);
       this.setAxesLabels();
     },
     removeSeries(seriesKey) {
@@ -112,7 +112,7 @@ export default {
 
       const foundSeries = seriesIndex > -1;
       if (foundSeries) {
-        this.$delete(this.plotSeries, seriesIndex);
+        this.plotSeries.splice(seriesIndex, 1);
         this.setAxesLabels();
       }
     },

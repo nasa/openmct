@@ -27,7 +27,7 @@
         v-if="dismissable"
         aria-label="Close"
         class="c-click-icon c-overlay__close-button icon-x"
-        @click="destroy"
+        @click.stop="destroy"
       ></button>
       <div
         ref="element"
@@ -57,6 +57,7 @@
 <script>
 export default {
   inject: ['dismiss', 'element', 'buttons', 'dismissable'],
+  emits: ['destroy'],
   data: function () {
     return {
       focusIndex: -1
@@ -71,16 +72,16 @@ export default {
     });
   },
   methods: {
-    destroy: function () {
+    destroy() {
       if (this.dismissable) {
         this.dismiss();
       }
     },
-    buttonClickHandler: function (method) {
+    buttonClickHandler(method) {
       method();
       this.$emit('destroy');
     },
-    getElementForFocus: function () {
+    getElementForFocus() {
       const defaultElement = this.$refs.element;
       if (!this.$refs.buttons) {
         return defaultElement;

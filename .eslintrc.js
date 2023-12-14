@@ -9,13 +9,14 @@ module.exports = {
   globals: {
     _: 'readonly'
   },
-  plugins: ['prettier'],
+  plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
-    'plugin:vue/recommended',
+    'plugin:vue/vue3-recommended',
     'plugin:you-dont-need-lodash-underscore/compatible',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
+    'plugin:no-unsanitized/DOM'
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -28,6 +29,12 @@ module.exports = {
     }
   },
   rules: {
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    'vue/no-deprecated-dollar-listeners-api': 'warn',
+    'vue/no-deprecated-events-api': 'warn',
+    'vue/no-v-for-template-key': 'off',
+    'vue/no-v-for-template-key-on-child': 'error',
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
     'you-dont-need-lodash-underscore/throttle': 'off',
@@ -139,18 +146,26 @@ module.exports = {
     'no-implicit-coercion': 'error',
     //https://eslint.org/docs/rules/no-unneeded-ternary
     'no-unneeded-ternary': 'error',
+    'unicorn/filename-case': [
+      'error',
+      {
+        cases: {
+          pascalCase: true
+        },
+        ignore: ['^.*\\.js$']
+      }
+    ],
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/multi-word-component-names': 'off', // TODO enable, align with conventions
-    'vue/no-mutating-props': 'off'
+    'vue/no-mutating-props': 'off' // TODO: Remove this rule and fix resulting errors
   },
   overrides: [
     {
       files: LEGACY_FILES,
       rules: {
         'no-unused-vars': [
-          'warn',
+          'error',
           {
             vars: 'all',
             args: 'none',

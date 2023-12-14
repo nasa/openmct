@@ -36,7 +36,7 @@
             :key="openmct.objects.makeKeyString(objectResult.identifier)"
             :result="objectResult"
             @preview-changed="previewChanged"
-            @click.native="selectedResult"
+            @click="selectedResult"
           />
         </div>
         <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
@@ -45,12 +45,12 @@
             v-for="annotationResult in annotationResults"
             :key="makeKeyForAnnotationResult(annotationResult)"
             :result="annotationResult"
-            @click.native="selectedResult"
+            @click="selectedResult"
           />
         </div>
         <div v-if="searchLoading" class="c-gsearch__result-pane-msg">
           <div class="hint">Searching...</div>
-          <progress-bar :model="{ progressPerc: undefined }" />
+          <progress-bar :model="{ progressPerc: null }" />
         </div>
         <div
           v-if="
@@ -68,9 +68,10 @@
 </template>
 
 <script>
+import ProgressBar from '@/ui/components/ProgressBar.vue';
+
 import AnnotationSearchResult from './AnnotationSearchResult.vue';
 import ObjectSearchResult from './ObjectSearchResult.vue';
-import ProgressBar from '@/ui/components/ProgressBar.vue';
 
 export default {
   name: 'SearchResultsDropDown',

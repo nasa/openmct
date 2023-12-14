@@ -51,6 +51,7 @@ export default {
     },
     checked: Boolean
   },
+  emits: ['change'],
   methods: {
     onUserSelect(event) {
       this.$emit('change', event.target.checked);

@@ -89,6 +89,7 @@ export default {
       }
     }
   },
+  emits: ['color-set'],
   data() {
     return {
       swatchActive: false,
@@ -106,7 +107,7 @@ export default {
     this.openmct.editor.on('isEditing', this.setEditState);
     this.initialize();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
   },
   methods: {
@@ -127,7 +128,7 @@ export default {
       this.isEditing = isEditing;
     },
     setColor(chosenColor) {
-      this.$emit('colorSet', chosenColor);
+      this.$emit('color-set', chosenColor);
     },
     toggleSwatch() {
       this.swatchActive = !this.swatchActive;

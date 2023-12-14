@@ -27,14 +27,16 @@ export default class StalenessUtils {
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
     this.lastStalenessResponseTime = 0;
 
-    this.setTimeSystem(this.openmct.time.timeSystem());
+    this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
   }
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
+    const { start } = this.openmct.time.bounds();
+    const isStalenessInCurrentClock = stalenessResponseTime > start;
 
-    if (stalenessResponseTime > this.lastStalenessResponseTime) {
+    if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
       this.lastStalenessResponseTime = stalenessResponseTime;
 
       return true;

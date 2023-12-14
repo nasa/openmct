@@ -71,6 +71,7 @@ export default {
       }
     }
   },
+  emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
       isZoomed: false,
@@ -87,7 +88,10 @@ export default {
   watch: {
     data: {
       immediate: false,
-      handler: 'updateData'
+      handler() {
+        this.updateData();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -106,13 +110,13 @@ export default {
 
     this.$refs.plot.on('plotly_relayout', this.zoom);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.$refs.plot && this.$refs.plot.off) {
       this.$refs.plot.off('plotly_relayout', this.zoom);
     }
 
     if (this.plotResizeObserver) {
-      this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
+      this.plotResizeObserver.disconnect();
       clearTimeout(this.resizeTimer);
     }
 

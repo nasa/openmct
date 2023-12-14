@@ -1,0 +1,24 @@
+version: 2
+snapshot:
+  widths: [1024, 2000]
+  min-height: 1440 # px
+  percyCSS: |
+    /* Clock indicator... your days are numbered  */
+    .t-indicator-clock > .label {
+      opacity: 0 !important;
+    }
+    .c-input--datetime {
+      opacity: 0 !important;
+    }
+    /* Timer object text */
+    .c-ne__time-and-creator {
+      opacity: 0 !important;
+    }
+    /* Time Conductor ticks */
+    div.c-conductor-axis.c-conductor__ticks > svg {
+      opacity: 0 !important;
+    }
+    /* Embedded timestamp in notebooks */
+    .c-ne__embed__time{
+      opacity: 0 !important;
+    }

@@ -1,11 +1,12 @@
+import mount from 'utils/mount';
+
 import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
-import Vue from 'vue';
 import BarGraphOptions from './BarGraphOptions.vue';
 
 export default function BarGraphInspectorViewProvider(openmct) {
   return {
     key: BAR_GRAPH_INSPECTOR_KEY,
-    name: 'Bar Graph Configuration',
+    name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
         return false;
@@ -16,29 +17,35 @@ export default function BarGraphInspectorViewProvider(openmct) {
       return object && object.type === BAR_GRAPH_KEY;
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              BarGraphOptions
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                BarGraphOptions
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item
+              },
+              template: '<bar-graph-options></bar-graph-options>'
             },
-            provide: {
-              openmct,
-              domainObject: selection[0][0].context.item
-            },
-            template: '<bar-graph-options></bar-graph-options>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
         destroy: function () {
-          if (component) {
-            component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
         }
       };

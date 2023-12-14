@@ -112,10 +112,11 @@
 </template>
 
 <script>
-import { objectPath } from './formUtil';
 import _ from 'lodash';
-import eventHelpers from '../../lib/eventHelpers';
+
 import configStore from '../../configuration/ConfigStore';
+import eventHelpers from '../../lib/eventHelpers';
+import { objectPath } from './formUtil';
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -125,6 +126,7 @@ export default {
       required: true
     }
   },
+  emits: ['series-updated'],
   data() {
     return {
       yAxis: null,
@@ -138,7 +140,7 @@ export default {
       loaded: false
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.autoscale === false && this.validationErrors.range) {
       this.autoscale = true;
       this.updateForm('autoscale');
@@ -301,7 +303,7 @@ export default {
                 newVal
               );
             } else {
-              this.$emit('seriesUpdated', {
+              this.$emit('series-updated', {
                 identifier: this.domainObject.identifier,
                 path: `${this.getPrefix()}.${formKey}`,
                 id: this.id,
@@ -316,7 +318,7 @@ export default {
                 newVal
               );
             } else {
-              this.$emit('seriesUpdated', {
+              this.$emit('series-updated', {
                 identifier: this.domainObject.identifier,
                 path: `${this.getPrefix()}.${formKey}`,
                 value: newVal

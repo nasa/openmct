@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
-import utils from './object-utils.js';
 import EventEmitter from 'EventEmitter';
+import _ from 'lodash';
+
+import utils from './object-utils.js';
 
 const ANY_OBJECT_EVENT = 'mutation';
 
@@ -96,12 +97,26 @@ class MutableDomainObject {
     //Emit events specific to properties affected
     let parentPropertiesList = path.split('.');
     for (let index = parentPropertiesList.length; index > 0; index--) {
+      let pathToThisProperty = parentPropertiesList.slice(0, index);
       let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
       this._globalEventEmitter.emit(
         qualifiedEventName(this, parentPropertyPath),
         _.get(this, parentPropertyPath),
         _.get(oldModel, parentPropertyPath)
       );
+
+      const lastPathElement = parentPropertiesList[index - 1];
+      // Also emit an event for the array whose element has changed so developers do not need to listen to every element of the array.
+      if (lastPathElement.endsWith(']')) {
+        const arrayPathElement = lastPathElement.substring(0, lastPathElement.lastIndexOf('['));
+        pathToThisProperty[index - 1] = arrayPathElement;
+        const pathToArrayString = pathToThisProperty.join('.');
+        this._globalEventEmitter.emit(
+          qualifiedEventName(this, pathToArrayString),
+          _.get(this, pathToArrayString),
+          _.get(oldModel, pathToArrayString)
+        );
+      }
     }
 
     //TODO: Emit events for listeners of child properties when parent changes.

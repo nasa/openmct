@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-form-control--clock-display-format-fields">
-    <SelectField v-for="item in items" :key="item.key" :model="item" @onChange="onChange" />
+    <SelectField v-for="item in items" :key="item.key" :model="item" @on-change="onChange" />
   </div>
 </template>
 
@@ -39,6 +39,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       items: []
@@ -55,7 +56,7 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import MetadataListView from './components/MetadataList.vue';
-import Vue from 'vue';
 
 export default class ViewDatumAction {
   constructor(openmct) {
@@ -30,30 +31,33 @@ export default class ViewDatumAction {
     this.description = 'View full value of datum received';
     this.cssClass = 'icon-object';
 
-    this._openmct = openmct;
+    this.openmct = openmct;
   }
   invoke(objectPath, view) {
     let viewContext = view.getViewContext && view.getViewContext();
     const row = viewContext.row;
     let attributes = row.getDatum && row.getDatum();
-    let component = new Vue({
-      components: {
-        MetadataListView
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          MetadataListView
+        },
+        provide: {
+          name: this.name,
+          attributes
+        },
+        template: '<MetadataListView />'
       },
-      provide: {
-        name: this.name,
-        attributes
-      },
-      template: '<MetadataListView />'
-    });
+      {
+        app: this.openmct.app
+      }
+    );
 
-    this._openmct.overlays.overlay({
-      element: component.$mount().$el,
+    this.openmct.overlays.overlay({
+      element: vNode.el,
       size: 'large',
       dismissable: true,
-      onDestroy: () => {
-        component.$destroy();
-      }
+      onDestroy: destroy
     });
   }
   appliesTo(objectPath, view = {}) {

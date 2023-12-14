@@ -44,6 +44,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       selected: this.model.value
@@ -56,7 +57,7 @@ export default {
         value: this.selected
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

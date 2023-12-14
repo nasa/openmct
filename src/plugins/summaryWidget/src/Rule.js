@@ -27,7 +27,7 @@ define([
    * @param {MCT} openmct An MCT instance
    * @param {ConditionManager} conditionManager A ConditionManager instance
    * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
-   * @param {element} container The DOM element which cotains this summary widget
+   * @param {element} container The DOM element which contains this summary widget
    */
   function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
     eventHelpers.extend(this);
@@ -167,7 +167,8 @@ define([
         const ruleHeader = self.domElement
           .querySelectorAll('.widget-rule-header')[0]
           .cloneNode(true);
-        indicator.innerHTML = ruleHeader;
+        indicator.textContent = '';
+        indicator.appendChild(ruleHeader);
       });
       self.widgetDnD.setDragImage(
         self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true)
@@ -239,8 +240,8 @@ define([
     this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
     this.listenTo(this.trigger, 'change', onTriggerInput);
 
-    this.title.innerHTML = self.config.name;
-    this.description.innerHTML = self.config.description;
+    this.title.innerText = self.config.name;
+    this.description.innerText = self.config.description;
     this.trigger.value = self.config.trigger;
 
     this.listenTo(this.grippy, 'mousedown', onDragStart);
@@ -303,7 +304,7 @@ define([
    * Register a callback with this rule: supported callbacks are remove, change,
    * conditionChange, and duplicate
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -335,7 +336,7 @@ define([
   };
 
   /**
-   * Mutate thet domain object with this rule's local configuration
+   * Mutate the domain object with this rule's local configuration
    */
   Rule.prototype.updateDomainObject = function () {
     this.openmct.objects.mutate(
@@ -385,7 +386,7 @@ define([
   };
 
   /**
-   * Initialze a new condition. If called with the sourceConfig and sourceIndex arguments,
+   * Initialize a new condition. If called with the sourceConfig and sourceIndex arguments,
    * will insert a new condition with the provided configuration after the sourceIndex
    * index. Otherwise, initializes a new blank rule and inserts it at the end
    * of the list.
@@ -456,7 +457,7 @@ define([
         const lastOfType = self.conditionArea.querySelector('li:last-of-type');
         lastOfType.parentNode.insertBefore($condition, lastOfType);
         if (loopCnt > 0) {
-          $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
+          $condition.querySelector('.t-condition-context').innerText = triggerContextStr + ' when';
         }
 
         loopCnt++;
@@ -528,7 +529,7 @@ define([
     }
 
     description = description === '' ? this.config.description : description;
-    this.description.innerHTML = self.config.description;
+    this.description.innerText = self.config.description;
     this.config.description = description;
   };
 

@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import HyperlinkPlugin from './plugin';
 
 function getView(openmct, domainObj, objectPath) {
@@ -29,7 +30,7 @@ function getView(openmct, domainObj, objectPath) {
     (viewProvider) => viewProvider.key === 'hyperlink.view'
   );
 
-  return hyperLinkView.view(domainObj);
+  return hyperLinkView.view(domainObj, [domainObj]);
 }
 
 function destroyView(view) {

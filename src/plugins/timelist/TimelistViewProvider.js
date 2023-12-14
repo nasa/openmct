@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Timelist from './Timelist.vue';
+import mount from 'utils/mount';
+
 import { TIMELIST_TYPE } from './constants';
-import Vue from 'vue';
+import Timelist from './TimelistComponent.vue';
 
 export default function TimelistViewProvider(openmct) {
   return {
@@ -38,27 +39,35 @@ export default function TimelistViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              Timelist
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Timelist
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                composition: openmct.composition.get(domainObject)
+              },
+              template: '<timelist></timelist>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath,
-              composition: openmct.composition.get(domainObject)
-            },
-            template: '<timelist></timelist>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

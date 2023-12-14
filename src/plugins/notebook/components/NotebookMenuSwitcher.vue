@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import Snapshot from '../snapshot';
-import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
+import Snapshot from '../snapshot';
 import { getMenuItems } from '../utils/notebook-snapshot-menu';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 
 export default {
   inject: ['openmct'],

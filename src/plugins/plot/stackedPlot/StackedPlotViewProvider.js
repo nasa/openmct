@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import StackedPlot from './StackedPlot.vue';
-import Vue from 'vue';
 
 export default function StackedPlotViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -43,31 +44,41 @@ export default function StackedPlotViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
+      let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
 
-          component = new Vue({
-            el: element,
-            components: {
-              StackedPlot
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                StackedPlot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                renderWhenVisible
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact
-                }
-              };
-            },
-            template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
         getViewContext() {
           if (!component) {
@@ -77,8 +88,9 @@ export default function StackedPlotViewProvider(openmct) {
           return component.$refs.plotComponent.getViewContext();
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

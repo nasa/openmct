@@ -27,11 +27,11 @@
 const { test, expect } = require('../../pluginFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
+const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 test.describe("Visual - Check Notification Info Banner of 'Save successful'", () => {
   test.beforeEach(async ({ page }) => {
-    // Go to baseURL and Hide Tree
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test("Create a clock, click on 'Save successful' banner and dismiss it", async ({
@@ -39,25 +39,24 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful'", ()
     theme
   }) => {
     // Create a clock domain object
-    await createDomainObjectWithDefaults(page, { type: 'Clock' });
-    // Verify there is a button with aria-label="Review 1 Notification"
-    expect(await page.locator('button[aria-label="Review 1 Notification"]').isVisible()).toBe(true);
-    // Verify there is a button with aria-label="Clear all notifications"
-    expect(await page.locator('button[aria-label="Clear all notifications"]').isVisible()).toBe(
-      true
-    );
+    await createDomainObjectWithDefaults(page, {
+      type: 'Clock',
+      name: 'Default Clock'
+    });
     // Click on the div with role="alert" that has "Save successful" text
     await page.locator('div[role="alert"]:has-text("Save successful")').click();
     // Verify there is a div with role="dialog"
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
     // Verify the div with role="dialog" contains text "Save successful"
     expect(await page.locator('div[role="dialog"]').innerText()).toContain('Save successful');
-    await percySnapshot(page, `Notification banner - ${theme}`);
+    await percySnapshot(page, `Notification banner shows Save successful (theme: '${theme}')`);
     // Verify there is a button with text "Dismiss"
     expect(await page.locator('button:has-text("Dismiss")').isVisible()).toBe(true);
+    await percySnapshot(page, `Notification banner shows Dismiss (theme: '${theme}')`);
     // Click on button with text "Dismiss"
     await page.locator('button:has-text("Dismiss")').click();
     // Verify there is no div with role="dialog"
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
+    await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
   });
 });

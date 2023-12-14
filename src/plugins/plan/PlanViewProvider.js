@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plan from './components/Plan.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Plan from './components/PlanView.vue';
 
 export default function PlanViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -43,36 +44,44 @@ export default function PlanViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
 
       return {
         show: function (element) {
           let isCompact = isCompactView(objectPath);
 
-          component = new Vue({
-            el: element,
-            components: {
-              Plan
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plan
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact,
+                    isChildObject: isCompact
+                  }
+                };
+              },
+              template: '<plan :options="options"></plan>'
             },
-            provide: {
-              openmct,
-              domainObject,
-              path: objectPath
-            },
-            data() {
-              return {
-                options: {
-                  compact: isCompact,
-                  isChildObject: isCompact
-                }
-              };
-            },
-            template: '<plan :options="options"></plan>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

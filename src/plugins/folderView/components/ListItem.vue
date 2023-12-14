@@ -21,6 +21,7 @@
 -->
 <template>
   <tr
+    ref="root"
     class="c-list-item js-folder-child"
     :class="{
       'is-alias': item.isAlias === true
@@ -52,6 +53,7 @@
 
 <script>
 import moment from 'moment';
+
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
 import statusListener from './status-listener';

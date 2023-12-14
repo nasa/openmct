@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import PlotElementsPool from './PlotElementsPool.vue';
-import Vue from 'vue';
 
 export default function PlotElementsViewProvider(openmct) {
   return {
@@ -31,23 +32,30 @@ export default function PlotElementsViewProvider(openmct) {
       return selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
-        show: function (el) {
-          component = new Vue({
-            el,
-            components: {
-              PlotElementsPool
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlotElementsPool
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: `<PlotElementsPool />`
             },
-            provide: {
-              openmct,
-              domainObject
-            },
-            template: `<PlotElementsPool />`
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
@@ -58,8 +66,9 @@ export default function PlotElementsViewProvider(openmct) {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

@@ -2,7 +2,7 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.32.3-focal
+      - image: mcr.microsoft.com/playwright:v1.39.0-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
@@ -162,7 +162,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright@1.32.3 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.39.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
@@ -197,7 +197,9 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run test:perf
+      - run: npm run test:perf:memory
+      - run: npm run test:perf:localhost
+      - run: npm run test:perf:contract
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -213,11 +215,13 @@ jobs:
     parameters:
       node-version:
         type: string
+      suite:
+        type: string # ci or full
     executor: pw-focal-development
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run test:e2e:visual
+      - run: npm run test:e2e:visual:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -233,8 +237,8 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node16-lint
-          node-version: lts/gallium
+          name: node20-lint
+          node-version: lts/iron
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -245,13 +249,15 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
+          name: visual-test-ci
+          suite: ci
           node-version: lts/hydrogen
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-chrome-nightly
-          node-version: lts/gallium
+          name: node20-chrome-nightly
+          node-version: lts/iron
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -264,6 +270,8 @@ workflows:
       - perf-test:
           node-version: lts/hydrogen
       - visual-test:
+          name: visual-test-nightly
+          suite: full
           node-version: lts/hydrogen
       - e2e-couchdb:
           node-version: lts/hydrogen

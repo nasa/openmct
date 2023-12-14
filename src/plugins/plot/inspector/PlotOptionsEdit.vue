@@ -24,7 +24,7 @@
     <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
       <h2 class="--first" title="Display properties for this object">Plot Series</h2>
       <li v-for="series in plotSeries" :key="series.key">
-        <series-form :series="series" @seriesUpdated="updateSeriesConfigForObject" />
+        <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>
     <y-axis-form
@@ -33,7 +33,7 @@
       :key="`yAxis-${index}`"
       class="grid-properties js-yaxis-grid-properties"
       :y-axis="config.yAxis"
-      @seriesUpdated="updateSeriesConfigForObject"
+      @series-updated="updateSeriesConfigForObject"
     />
     <ul
       v-if="isStackedPlotObject || !isStackedPlotNestedObject"
@@ -46,12 +46,13 @@
   </div>
 </template>
 <script>
+import _ from 'lodash';
+
+import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
+import LegendForm from './forms/LegendForm.vue';
 import SeriesForm from './forms/SeriesForm.vue';
 import YAxisForm from './forms/YAxisForm.vue';
-import LegendForm from './forms/LegendForm.vue';
-import eventHelpers from '../lib/eventHelpers';
-import configStore from '../configuration/ConfigStore';
-import _ from 'lodash';
 
 export default {
   components: {
@@ -85,9 +86,11 @@ export default {
       return !this.isStackedPlotObject && this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
   },
-  mounted() {
+  created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
+  },
+  mounted() {
     if (!this.isStackedPlotObject) {
       this.yAxes = [
         {
@@ -111,7 +114,7 @@ export default {
 
     this.loaded = true;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopListening();
   },
   methods: {
@@ -149,7 +152,7 @@ export default {
     addSeries(series, index) {
       const yAxisId = series.get('yAxisId');
       this.incrementAxisUsageCount(yAxisId);
-      this.$set(this.plotSeries, index, series);
+      this.plotSeries[index] = series;
       this.setYAxisLabel(yAxisId);
 
       if (this.isStackedPlotObject) {

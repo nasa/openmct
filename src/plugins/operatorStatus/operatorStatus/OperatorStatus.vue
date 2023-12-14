@@ -81,7 +81,7 @@ export default {
       return this.openmct.user.canProvideStatusForRole(this.role);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.user.status.off('statusChange', this.setStatus);
     this.openmct.user.status.off('pollQuestionChange', this.setPollQuestion);
     this.openmct.user.off('roleChanged', this.fetchMyStatus);

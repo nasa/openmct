@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import SelectionComponent from './components/SelectionComponent.vue';
 import Overlay from './Overlay';
-import Vue from 'vue';
 
 class Selection extends Overlay {
   constructor({
@@ -34,7 +35,7 @@ class Selection extends Overlay {
     currentSelection,
     ...options
   }) {
-    let component = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         SelectionComponent: SelectionComponent
       },
@@ -47,7 +48,9 @@ class Selection extends Overlay {
         currentSelection
       },
       template: '<selection-component></selection-component>'
-    }).$mount();
+    });
+
+    const component = vNode.componentInstance;
 
     super({
       element: component.$el,
@@ -59,7 +62,7 @@ class Selection extends Overlay {
     });
 
     this.once('destroy', () => {
-      component.$destroy();
+      destroy();
     });
   }
 }

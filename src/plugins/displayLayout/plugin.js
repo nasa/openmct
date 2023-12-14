@@ -20,16 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import mount from 'utils/mount';
+
 import CopyToClipboardAction from './actions/CopyToClipboardAction';
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
-
-import objectUtils from 'objectUtils';
-
-import Vue from 'vue';
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -38,31 +36,39 @@ class DisplayLayoutView {
     this.objectPath = objectPath;
     this.options = options;
 
-    this.component = undefined;
+    this.component = null;
   }
 
-  show(container, isEditing) {
-    this.component = new Vue({
-      el: container,
-      components: {
-        DisplayLayout
+  show(container, isEditing, { renderWhenVisible }) {
+    const { vNode, destroy } = mount(
+      {
+        el: container,
+        components: {
+          DisplayLayout
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          options: this.options,
+          currentView: this,
+          renderWhenVisible
+        },
+        data: () => {
+          return {
+            domainObject: this.domainObject,
+            isEditing
+          };
+        },
+        template:
+          '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        options: this.options,
-        objectUtils,
-        currentView: this
-      },
-      data: () => {
-        return {
-          domainObject: this.domainObject,
-          isEditing
-        };
-      },
-      template:
-        '<display-layout ref="displayLayout" :domain-object="domainObject" :is-editing="isEditing"></display-layout>'
-    });
+      {
+        app: this.openmct.app,
+        element: container
+      }
+    );
+    this._destroy = destroy;
+    this.component = vNode.componentInstance;
   }
 
   getViewContext() {
@@ -76,18 +82,14 @@ class DisplayLayoutView {
   getSelectionContext() {
     return {
       item: this.domainObject,
-      supportsMultiSelect: true,
-      addElement: this.component && this.component.$refs.displayLayout.addElement,
-      removeItem: this.component && this.component.$refs.displayLayout.removeItem,
-      orderItem: this.component && this.component.$refs.displayLayout.orderItem,
-      duplicateItem: this.component && this.component.$refs.displayLayout.duplicateItem,
-      switchViewType: this.component && this.component.$refs.displayLayout.switchViewType,
-      mergeMultipleTelemetryViews:
-        this.component && this.component.$refs.displayLayout.mergeMultipleTelemetryViews,
-      mergeMultipleOverlayPlots:
-        this.component && this.component.$refs.displayLayout.mergeMultipleOverlayPlots,
-      toggleGrid: this.component && this.component.$refs.displayLayout.toggleGrid
+      supportsMultiSelect: true
     };
+  }
+
+  contextAction(action, ...rest) {
+    if (this?.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...rest);
+    }
   }
 
   onEditModeChange(isEditing) {
@@ -95,8 +97,10 @@ class DisplayLayoutView {
   }
 
   destroy() {
-    this.component.$destroy();
-    this.component = undefined;
+    if (this._destroy) {
+      this._destroy();
+      this.component = undefined;
+    }
   }
 }
 

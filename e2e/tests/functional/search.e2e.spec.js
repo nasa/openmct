@@ -24,7 +24,7 @@
  */
 
 const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, selectInspectorTab } = require('../../appActions');
+const { createDomainObjectWithDefaults } = require('../../appActions');
 const { v4: uuid } = require('uuid');
 
 test.describe('Grand Search', () => {
@@ -61,7 +61,7 @@ test.describe('Grand Search', () => {
       `Clock D ${myItemsFolderName} Red Folder Blue Folder`
     );
     // Click the Elements pool to dismiss the search menu
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
 
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
@@ -88,8 +88,8 @@ test.describe('Grand Search', () => {
       .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
       .nth(1)
       .click();
-    // Click text=Save and Finish Editing
-    await page.locator('text=Save and Finish Editing').click();
+
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
     await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
     // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
@@ -175,7 +175,8 @@ test.describe('Grand Search', () => {
 
     let networkRequests = [];
     page.on('request', (request) => {
-      const searchRequest = request.url().endsWith('_find');
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
       const fetchRequest = request.resourceType() === 'fetch';
       if (searchRequest && fetchRequest) {
         networkRequests.push(request);
@@ -195,6 +196,32 @@ test.describe('Grand Search', () => {
     const searchResultDropDown = await page.locator(searchResultDropDownSelector);
 
     await expect(searchResultDropDown).toContainText('Clock A');
+  });
+
+  test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
+    let requestWasAborted = false;
+    await createObjectsForSearch(page);
+    page.on('requestfailed', (request) => {
+      // check if the request was aborted
+      if (request.failure().errorText === 'net::ERR_ABORTED') {
+        requestWasAborted = true;
+      }
+    });
+
+    // Intercept and delay request
+    const delayInMs = 100;
+
+    await page.route('**', async (route, request) => {
+      await new Promise((resolve) => setTimeout(resolve, delayInMs));
+      route.continue();
+    });
+
+    // Slowly type after search delay
+    const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
+    await searchInput.pressSequentially('Clock', { delay: 200 });
+    await expect(page.getByText('Clock B').first()).toBeVisible();
+
+    expect(requestWasAborted).toBe(true);
   });
 
   test('Validate multiple objects in search results return partial matches', async ({ page }) => {

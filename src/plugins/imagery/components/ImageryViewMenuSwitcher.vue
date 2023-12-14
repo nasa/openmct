@@ -27,9 +27,7 @@
       :class="iconClass"
       :title="title"
       @click="toggleMenu"
-    >
-      <span class="c-button__label"></span>
-    </button>
+    />
     <div v-show="showMenu" class="c-switcher-menu__content">
       <slot></slot>
     </div>
@@ -64,7 +62,7 @@ export default {
   mounted() {
     document.addEventListener('click', this.hideMenu);
   },
-  destroyed() {
+  unmounted() {
     document.removeEventListener('click', this.hideMenu);
   },
   methods: {

@@ -21,14 +21,12 @@
 -->
 
 <template>
-  <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @onChange="onChange">
-    <div class="c-form-row__label" :title="row.description">
+  <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @on-change="onChange">
+    <label class="c-form-row__label" :title="row.description" :for="`form-${row.key}`">
       {{ row.name }}
-    </div>
+    </label>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
-    <div v-if="row.control" class="c-form-row__controls">
-      <div ref="rowElement"></div>
-    </div>
+    <div v-if="row.control" ref="rowElement" class="c-form-row__controls"></div>
   </div>
 </template>
 
@@ -53,6 +51,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       formControl: this.openmct.forms.getFormControl(this.row.control),
@@ -91,7 +90,7 @@ export default {
 
     this.formControl.show(this.$refs.rowElement, this.row, this.onChange);
   },
-  destroyed() {
+  unmounted() {
     const destroy = this.formControl.destroy;
     if (destroy) {
       destroy();
@@ -103,7 +102,7 @@ export default {
       this.valid = this.validateRow(data);
       data.invalid = !this.valid;
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     validateRow(data) {
       let valid = true;

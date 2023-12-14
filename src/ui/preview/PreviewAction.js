@@ -19,9 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Preview from './Preview.vue';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import mount from 'utils/mount';
+
+import PreviewContainer from './PreviewContainer.vue';
 
 export default class PreviewAction extends EventEmitter {
   constructor(openmct) {
@@ -47,25 +48,29 @@ export default class PreviewAction extends EventEmitter {
   }
 
   invoke(objectPath, viewOptions) {
-    let preview = new Vue({
-      components: {
-        Preview
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          PreviewContainer
+        },
+        provide: {
+          openmct: this._openmct,
+          objectPath: objectPath
+        },
+        data() {
+          return {
+            viewOptions
+          };
+        },
+        template: '<preview-container :view-options="viewOptions"></preview-container>'
       },
-      provide: {
-        openmct: this._openmct,
-        objectPath: objectPath
-      },
-      data() {
-        return {
-          viewOptions
-        };
-      },
-      template: '<Preview :view-options="viewOptions"></Preview>'
-    });
-    preview.$mount();
+      {
+        app: this._openmct.app
+      }
+    );
 
     let overlay = this._openmct.overlays.overlay({
-      element: preview.$el,
+      element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
@@ -76,7 +81,7 @@ export default class PreviewAction extends EventEmitter {
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
-        preview.$destroy();
+        destroy();
         this.emit('isVisible', false);
       }
     });

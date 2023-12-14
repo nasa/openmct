@@ -24,19 +24,21 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @end-move="endMove"
   >
-    <object-frame
-      v-if="domainObject"
-      ref="objectFrame"
-      :domain-object="domainObject"
-      :object-path="currentObjectPath"
-      :has-frame="item.hasFrame"
-      :show-edit-view="false"
-      :layout-font-size="item.fontSize"
-      :layout-font="item.font"
-    />
+    <template #content>
+      <ObjectFrame
+        v-if="domainObject"
+        ref="objectFrame"
+        :domain-object="domainObject"
+        :object-path="currentObjectPath"
+        :has-frame="item.hasFrame"
+        :show-edit-view="false"
+        :layout-font-size="item.fontSize"
+        :layout-font="item.font"
+      />
+    </template>
   </layout-frame>
 </template>
 
@@ -101,11 +103,11 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   data() {
     return {
       domainObject: undefined,
-      currentObjectPath: [],
-      mutablePromise: undefined
+      currentObjectPath: []
     };
   },
   watch: {
@@ -133,7 +135,7 @@ export default {
       this.openmct.objects.get(this.item.identifier).then(this.setObject);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
     }
@@ -168,6 +170,12 @@ export default {
           delete this.immediatelySelect;
         }
       });
+    },
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('end-move');
     }
   }
 };

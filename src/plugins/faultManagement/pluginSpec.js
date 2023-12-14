@@ -22,9 +22,10 @@
 
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import {
+  FAULT_MANAGEMENT_INSPECTOR,
+  FAULT_MANAGEMENT_NAMESPACE,
   FAULT_MANAGEMENT_TYPE,
-  FAULT_MANAGEMENT_VIEW,
-  FAULT_MANAGEMENT_NAMESPACE
+  FAULT_MANAGEMENT_VIEW
 } from './constants';
 
 describe('The Fault Management Plugin', () => {
@@ -86,7 +87,7 @@ describe('The Fault Management Plugin', () => {
       ];
       const applicableInspectorViews = openmct.inspectorViews.get(faultDomainObjectSelection);
       const faultManagementInspectorView = applicableInspectorViews.filter(
-        (view) => view.name === 'Fault Management Configuration'
+        (view) => view.key === FAULT_MANAGEMENT_INSPECTOR
       );
 
       expect(faultManagementInspectorView.length).toEqual(1);

@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
-import TableConfigurationComponent from './components/table-configuration.vue';
+import mount from 'utils/mount';
+
+import TableConfigurationComponent from './components/TableConfiguration.vue';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 
 export default function TableConfigurationViewProvider(openmct) {
   return {
     key: 'table-configuration',
-    name: 'Configuration',
+    name: 'Config',
     canView: function (selection) {
       if (selection.length !== 1 || selection[0].length === 0) {
         return false;
@@ -38,24 +39,31 @@ export default function TableConfigurationViewProvider(openmct) {
       return object && object.type === 'table';
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
       let tableConfiguration;
       const domainObject = selection[0][0].context.item;
 
       return {
         show: function (element) {
           tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-          component = new Vue({
-            el: element,
-            components: {
-              TableConfiguration: TableConfigurationComponent.default
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TableConfiguration: TableConfigurationComponent
+              },
+              provide: {
+                openmct,
+                tableConfiguration
+              },
+              template: '<table-configuration></table-configuration>'
             },
-            provide: {
-              openmct,
-              tableConfiguration
-            },
-            template: '<table-configuration></table-configuration>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         showTab: function (isEditing) {
           return isEditing;
@@ -64,9 +72,8 @@ export default function TableConfigurationViewProvider(openmct) {
           return 1;
         },
         destroy: function () {
-          if (component) {
-            component.$destroy();
-            component = undefined;
+          if (_destroy) {
+            _destroy();
           }
 
           tableConfiguration = undefined;

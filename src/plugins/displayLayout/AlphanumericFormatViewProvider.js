@@ -20,32 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AlphanumericFormat from './components/AlphanumericFormat.vue';
+import mount from 'utils/mount';
 
-import Vue from 'vue';
+import AlphanumericFormat from './components/AlphanumericFormat.vue';
 
 class AlphanumericFormatView {
   constructor(openmct, domainObject, objectPath) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
-    this.component = undefined;
+    this._destroy = null;
+    this.component = null;
   }
 
   show(element) {
-    this.component = new Vue({
-      el: element,
-      name: 'AlphanumericFormat',
-      components: {
-        AlphanumericFormat
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          AlphanumericFormat
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          currentView: this
+        },
+        template: '<AlphanumericFormat ref="alphanumericFormat" />'
       },
-      provide: {
-        openmct: this.openmct,
-        objectPath: this.objectPath,
-        currentView: this
-      },
-      template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
   }
 
   getViewContext() {
@@ -61,8 +69,9 @@ class AlphanumericFormatView {
   }
 
   destroy() {
-    this.component.$destroy();
-    this.component = undefined;
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 }
 

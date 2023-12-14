@@ -31,13 +31,14 @@
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
       class="js-stacked-plot-legend"
-      @legendHoverChanged="legendHoverChanged"
+      @legend-hover-changed="legendHoverChanged"
       @expanded="updateExpanded"
       @position="updatePosition"
     />
     <div class="l-view-section">
       <stacked-plot-item
         v-for="objectWrapper in compositionObjects"
+        ref="stackedPlotItems"
         :key="objectWrapper.keyString"
         class="c-plot--stacked-container"
         :child-object="objectWrapper.object"
@@ -48,34 +49,34 @@
         :show-limit-line-labels="showLimitLineLabels"
         :parent-y-tick-width="maxTickWidth"
         :hide-legend="showLegendsForChildren === false"
-        @plotYTickWidth="onYTickWidthChange"
-        @loadingUpdated="loadingUpdated"
-        @cursorGuide="onCursorGuideChange"
-        @gridLines="onGridLinesChange"
-        @lockHighlightPoint="lockHighlightPointUpdated"
+        @plot-y-tick-width="onYTickWidthChange"
+        @loading-updated="loadingUpdated"
+        @cursor-guide="onCursorGuideChange"
+        @grid-lines="onGridLinesChange"
+        @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @configLoaded="configLoadedForObject(objectWrapper.keyString)"
+        @config-loaded="configLoadedForObject(objectWrapper.keyString)"
       />
     </div>
   </div>
 </template>
 
 <script>
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import configStore from '../configuration/ConfigStore';
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import PlotLegend from '../legend/PlotLegend.vue';
-import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
+import configStore from '../configuration/ConfigStore';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import PlotLegend from '../legend/PlotLegend.vue';
 import eventHelpers from '../lib/eventHelpers';
+import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {
   components: {
     StackedPlotItem,
     PlotLegend
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -145,7 +146,7 @@ export default {
       };
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy();
   },
   mounted() {
@@ -212,15 +213,17 @@ export default {
       this.composition.off('reorder', this.compositionReorder);
 
       this.stopListening();
+      const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      configStore.deleteStore(configId);
     },
 
     addChild(child) {
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
-      this.$set(this.tickWidthMap, id, {
+      this.tickWidthMap[id] = {
         leftTickWidth: 0,
         rightTickWidth: 0
-      });
+      };
 
       this.compositionObjects.push({
         object: child,
@@ -232,7 +235,7 @@ export default {
     removeChild(childIdentifier) {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
 
-      this.$delete(this.tickWidthMap, id);
+      delete this.tickWidthMap[id];
 
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
@@ -270,7 +273,7 @@ export default {
       let oldComposition = this.compositionObjects.slice();
 
       reorderPlan.forEach((reorder) => {
-        this.$set(this.compositionObjects, reorder.newIndex, oldComposition[reorder.oldIndex]);
+        this.compositionObjects[reorder.newIndex] = oldComposition[reorder.oldIndex];
       });
     },
 
@@ -315,7 +318,7 @@ export default {
         return;
       }
 
-      this.$set(this.tickWidthMap, plotId, data);
+      this.tickWidthMap[plotId] = data;
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;

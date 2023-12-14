@@ -45,16 +45,21 @@
         ></div>
       </div>
       <div class="c-datetime-picker__calendar c-calendar">
-        <ul class="c-calendar__row--header l-cal-row">
-          <li v-for="day in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" :key="day">
+        <div class="c-calendar__row--header l-cal-row">
+          <div
+            v-for="day in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']"
+            :key="day"
+            class="c-calendar-cell"
+          >
             {{ day }}
-          </li>
-        </ul>
-        <ul v-for="(row, tableIndex) in table" :key="tableIndex" class="c-calendar__row--body">
-          <li
+          </div>
+        </div>
+        <div v-for="(row, tableIndex) in table" :key="tableIndex" class="c-calendar__row--body">
+          <div
             v-for="(cell, rowIndex) in row"
             :key="rowIndex"
             :class="{ 'is-in-month': isInCurrentMonth(cell), selected: isSelected(cell) }"
+            class="c-calendar-cell"
             @click="select(cell)"
           >
             <div class="c-calendar__day--prime">
@@ -63,8 +68,8 @@
             <div class="c-calendar__day--sub">
               {{ cell.dayOfYear }}
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -72,6 +77,7 @@
 
 <script>
 import moment from 'moment';
+
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
 const TIME_NAMES = {
@@ -112,6 +118,7 @@ export default {
       }
     }
   },
+  emits: ['date-selected'],
   data: function () {
     return {
       picker: {

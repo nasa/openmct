@@ -20,8 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GlobalTimeContext from './GlobalTimeContext';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '@/api/time/constants';
 import IndependentTimeContext from '@/api/time/IndependentTimeContext';
+
+import GlobalTimeContext from './GlobalTimeContext';
 
 /**
  * The public API for setting and querying the temporal state of the
@@ -134,14 +136,15 @@ class TimeAPI extends GlobalTimeContext {
    */
   addIndependentContext(key, value, clockKey) {
     let timeContext = this.getIndependentContext(key);
+
     //stop following upstream time context since the view has it's own
     timeContext.resetContext();
 
     if (clockKey) {
-      timeContext.clock(clockKey, value);
+      timeContext.setClock(clockKey);
+      timeContext.setMode(REALTIME_MODE_KEY, value);
     } else {
-      timeContext.stopClock();
-      timeContext.bounds(value);
+      timeContext.setMode(FIXED_MODE_KEY, value);
     }
 
     // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context
@@ -185,6 +188,7 @@ class TimeAPI extends GlobalTimeContext {
     }
 
     let viewTimeContext = this.getIndependentContext(viewKey);
+
     if (!viewTimeContext) {
       // If the context doesn't exist yet, create it.
       viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);

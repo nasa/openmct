@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+import { markRaw } from 'vue';
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
@@ -35,7 +36,7 @@ const DEFAULT_TIME_OPTIONS = {
 };
 
 export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
-  const openmct = new MCT();
+  const openmct = markRaw(new MCT());
   openmct.install(openmct.plugins.LocalStorage());
   openmct.install(openmct.plugins.UTCTimeSystem());
   openmct.setAssetPath('/base');
@@ -45,7 +46,7 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   const start = timeSystemOptions.bounds.start;
   const end = timeSystemOptions.bounds.end;
 
-  openmct.time.timeSystem(timeSystemKey, {
+  openmct.time.setTimeSystem(timeSystemKey, {
     start,
     end
   });
@@ -276,6 +277,12 @@ export function getMockTelemetry(opts = {}) {
   }
 
   return telemetry;
+}
+
+// used to inject into tests that require a render
+export function renderWhenVisible(func) {
+  func();
+  return true;
 }
 
 // copy objects a bit more easily

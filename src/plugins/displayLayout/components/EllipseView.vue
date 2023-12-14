@@ -25,20 +25,25 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @end-move="endMove"
   >
-    <div
-      class="c-ellipse-view u-style-receiver js-style-receiver"
-      :class="[styleClass]"
-      :style="style"
-    ></div>
+    <template #content>
+      <div
+        class="c-ellipse-view u-style-receiver js-style-receiver"
+        :class="[styleClass]"
+        :style="style"
+        role="application"
+        aria-roledescription="draggable ellipse"
+        aria-label="Ellipse"
+      ></div>
+    </template>
   </layout-frame>
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import LayoutFrame from './LayoutFrame.vue';
 
 export default {
   makeDefinition() {
@@ -76,6 +81,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     style() {
       if (this.itemStyle) {
@@ -115,9 +121,17 @@ export default {
       this.initSelect
     );
   },
-  destroyed() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
+    }
+  },
+  methods: {
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('end-move');
     }
   }
 };

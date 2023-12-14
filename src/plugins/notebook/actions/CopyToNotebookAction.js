@@ -1,5 +1,5 @@
-import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage';
 import { addNotebookEntry } from '../utils/notebook-entries';
+import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage';
 
 export default class CopyToNotebookAction {
   constructor(openmct) {

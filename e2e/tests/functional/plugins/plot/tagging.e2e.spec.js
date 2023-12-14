@@ -41,7 +41,7 @@ test.describe('Plot Tagging', () => {
    * @param {Number} yEnd a telemetry item with a plot
    * @returns {Promise}
    */
-  async function createTags({ page, canvas, xEnd, yEnd }) {
+  async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
     await canvas.hover({ trial: true });
 
     //Alt+Shift Drag Start to select some points to tag
@@ -63,7 +63,7 @@ test.describe('Plot Tagging', () => {
     await page.keyboard.up('Alt');
     await page.keyboard.up('Shift');
 
-    //Wait for canvas to stablize.
+    //Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -90,15 +90,17 @@ test.describe('Plot Tagging', () => {
     await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
     const canvas = page.locator('canvas').nth(1);
+    //Wait for canvas to stabilize.
+    await waitForPlotsToRender(page);
 
-    //Wait for canvas to stablize.
+    await expect(canvas).toBeInViewport();
     await canvas.hover({ trial: true });
 
     // click on the tagged plot point
     await canvas.click({
       position: {
-        x: 325,
-        y: 377
+        x: 100,
+        y: 100
       }
     });
 
@@ -146,7 +148,10 @@ test.describe('Plot Tagging', () => {
     // wait for plots to load
     await waitForPlotsToRender(page);
 
-    await page.getByText('Annotations').click();
+    await expect(page.getByRole('tab', { name: 'Annotations' })).not.toHaveClass(/is-current/);
+    await page.getByRole('tab', { name: 'Annotations' }).click();
+    await expect(page.getByRole('tab', { name: 'Annotations' })).toHaveClass(/is-current/);
+
     await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
     const canvas = page.locator('canvas').nth(1);
@@ -160,6 +165,29 @@ test.describe('Plot Tagging', () => {
 
     await expect(page.getByText('Science')).toBeVisible();
     await expect(page.getByText('Driving')).toBeHidden();
+
+    // click elsewhere
+    await page.locator('body').click();
+    //click on tagged plot point again
+    await canvas.click({
+      position: {
+        x: 100,
+        y: 100
+      }
+    });
+    // Add driving tag again
+    await page.getByText('Annotations').click();
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Driving').click();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Driving')).toBeVisible();
+
+    // Delete Driving again
+    await page.hover('[aria-label="Tag"]:has-text("Driving")');
+    await page.locator('[aria-label="Remove tag Driving"]').click();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Driving')).toBeHidden();
   }
 
   test.beforeEach(async ({ page }) => {
@@ -167,8 +195,11 @@ test.describe('Plot Tagging', () => {
   });
 
   test('Tags work with Overlay Plots', async ({ page }) => {
-    //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
     test.slow();
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6822'
+    });
 
     const overlayPlot = await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot'
@@ -177,13 +208,19 @@ test.describe('Plot Tagging', () => {
     const alphaSineWave = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Alpha Sine Wave',
-      parent: overlayPlot.uuid
+      parent: overlayPlot.uuid,
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Beta Sine Wave',
-      parent: overlayPlot.uuid
+      parent: overlayPlot.uuid,
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.02'
+      }
     });
 
     await page.goto(overlayPlot.url);
@@ -196,9 +233,7 @@ test.describe('Plot Tagging', () => {
 
     await createTags({
       page,
-      canvas,
-      xEnd: 700,
-      yEnd: 480
+      canvas
     });
 
     await setFixedTimeMode(page);
@@ -228,15 +263,15 @@ test.describe('Plot Tagging', () => {
 
   test('Tags work with Plot View of telemetry items', async ({ page }) => {
     await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator'
+      type: 'Sine Wave Generator',
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
     });
-
     const canvas = page.locator('canvas').nth(1);
     await createTags({
       page,
-      canvas,
-      xEnd: 700,
-      yEnd: 480
+      canvas
     });
     await basicTagsTests(page);
   });
@@ -249,13 +284,19 @@ test.describe('Plot Tagging', () => {
     const alphaSineWave = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Alpha Sine Wave',
-      parent: stackedPlot.uuid
+      parent: stackedPlot.uuid,
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Beta Sine Wave',
-      parent: stackedPlot.uuid
+      parent: stackedPlot.uuid,
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.02'
+      }
     });
 
     await page.goto(stackedPlot.url);
@@ -266,7 +307,7 @@ test.describe('Plot Tagging', () => {
       page,
       canvas,
       xEnd: 700,
-      yEnd: 215
+      yEnd: 240
     });
     await basicTagsTests(page);
     await testTelemetryItem(page, alphaSineWave);

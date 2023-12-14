@@ -25,11 +25,6 @@ module.exports = merge(common, {
       '**/.*' // dotfiles and dotfolders
     ]
   },
-  resolve: {
-    alias: {
-      vue: path.join(projectRootDir, 'node_modules/vue/dist/vue.js')
-    }
-  },
   plugins: [
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '"dist/"'
@@ -50,14 +45,6 @@ module.exports = merge(common, {
       directory: path.join(__dirname, '..', '/dist'),
       publicPath: '/dist',
       watch: false
-    },
-    client: {
-      progress: true,
-      overlay: {
-        // Disable overlay for runtime errors.
-        // See: https://github.com/webpack/webpack-dev-server/issues/4771
-        runtimeErrors: false
-      }
     }
   }
 });

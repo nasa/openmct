@@ -1,6 +1,6 @@
-import ImageryViewComponent from './components/ImageryView.vue';
+import mount from 'utils/mount';
 
-import Vue from 'vue';
+import ImageryViewComponent from './components/ImageryView.vue';
 
 const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
   fadeOutDelayTime: '0s',
@@ -12,7 +12,8 @@ export default class ImageryView {
     this.domainObject = domainObject;
     this.objectPath = objectPath;
     this.options = options;
-    this.component = undefined;
+    this.component = null;
+    this._destroy = null;
   }
 
   show(element, isEditing, viewOptions) {
@@ -23,26 +24,35 @@ export default class ImageryView {
       alternateObjectPath = viewOptions.objectPath;
     }
 
-    this.component = new Vue({
-      el: element,
-      components: {
-        'imagery-view': ImageryViewComponent
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          'imagery-view': ImageryViewComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          domainObject: this.domainObject,
+          objectPath: alternateObjectPath || this.objectPath,
+          imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+          showCompassHUD: this.options?.showCompassHUD,
+          currentView: this
+        },
+        data() {
+          return {
+            focusedImageTimestamp
+          };
+        },
+        template:
+          '<imagery-view :focused-image-timestamp="focusedImageTimestamp" @update:focusedImageTimestamp="value => focusedImageTimestamp = value" ref="ImageryContainer"></imagery-view>'
       },
-      provide: {
-        openmct: this.openmct,
-        domainObject: this.domainObject,
-        objectPath: alternateObjectPath || this.objectPath,
-        imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
-        currentView: this
-      },
-      data() {
-        return {
-          focusedImageTimestamp
-        };
-      },
-      template:
-        '<imagery-view :focused-image-timestamp="focusedImageTimestamp" ref="ImageryContainer"></imagery-view>'
-    });
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
   }
 
   getViewContext() {
@@ -75,8 +85,9 @@ export default class ImageryView {
   }
 
   destroy() {
-    this.component.$destroy();
-    this.component = undefined;
+    if (this._destroy) {
+      this._destroy();
+    }
   }
 
   _getInstance() {

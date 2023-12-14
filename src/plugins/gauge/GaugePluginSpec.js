@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { debounce } from 'lodash';
-
-import Vue from 'vue';
+import { createOpenMct, renderWhenVisible, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
 
 let gaugeDomainObject = {
   identifier: {
@@ -172,10 +171,10 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -222,7 +221,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -314,10 +313,10 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -364,7 +363,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -456,10 +455,10 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -506,7 +505,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 
@@ -560,10 +559,10 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
 
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -643,10 +642,10 @@ describe('Gauge plugin', () => {
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
 
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -771,10 +770,10 @@ describe('Gauge plugin', () => {
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
-        gaugeView = gaugeViewProvider.view(mutablegaugeObject);
-        gaugeView.show(child);
+        gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
+        gaugeView.show(child, false, { renderWhenVisible });
 
-        return Vue.nextTick();
+        return nextTick();
       });
     });
 
@@ -822,7 +821,7 @@ describe('Gauge plugin', () => {
       }
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
-      Vue.nextTick(debouncedWatchUpdate);
+      nextTick(debouncedWatchUpdate);
     });
   });
 });

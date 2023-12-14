@@ -127,6 +127,7 @@ export default {
       }
     }
   },
+  emits: ['update-test-data'],
   data() {
     return {
       expanded: true,
@@ -154,7 +155,7 @@ export default {
       deep: true
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.resetApplied();
   },
   mounted() {
@@ -225,7 +226,7 @@ export default {
       this.updateTestData();
     },
     updateTestData() {
-      this.$emit('updateTestData', {
+      this.$emit('update-test-data', {
         applied: this.isApplied,
         conditionTestInputs: this.testInputs
       });

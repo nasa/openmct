@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
 import ClearDataPlugin from './plugin.js';
-import Vue from 'vue';
-import { createOpenMct, resetApplicationState, createMouseEvent } from 'utils/testing';
 
 describe('The Clear Data Plugin:', () => {
   let clearDataPlugin;
@@ -212,7 +213,7 @@ describe('The Clear Data Plugin:', () => {
     });
 
     it('renders its major elements', async () => {
-      await Vue.nextTick();
+      await nextTick();
       const indicatorClass = appHolder.querySelector('.c-indicator');
       const iconClass = appHolder.querySelector('.icon-clear-data');
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');

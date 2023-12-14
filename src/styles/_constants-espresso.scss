@@ -83,6 +83,7 @@ $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
 $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
+$filterHovSubtle: brightness(1.2) contrast(1.2);
 $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
@@ -144,13 +145,31 @@ $colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 10%);
 
 // Time Colors
-$colorTime: #618cff;
-$colorTimeBg: $colorTime;
-$colorTimeFg: pullForward($colorTimeBg, 30%);
-$colorTimeHov: pullForward($colorTime, 10%);
-$colorTimeSubtle: pushBack($colorTime, 20%);
+$colorTimeCommonFg: #eee;
+$colorTimeFixed: #59554c;
+$colorTimeFixedBg: $colorTimeFixed;
+$colorTimeFixedFg: #eee;
+$colorTimeFixedFgSubtle: #b2aa98;
+$colorTimeFixedHov: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+$colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
+$colorTimeFixedBtnBgMajor: #a09375;
+$colorTimeFixedBtnFgMajor: #fff;
+
+$colorTimeRealtime: #445890;
+$colorTimeRealtimeBg: $colorTimeRealtime;
+$colorTimeRealtimeFg: #eee;
+$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeHov: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+$colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
+$colorTimeRealtimeBtnBgMajor: #588ffa;
+$colorTimeRealtimeBtnFgMajor: #fff;
+
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
-$colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(1.2);
 $timeConductorActiveBg: $colorKey;
 $timeConductorActivePanBg: #226074;
@@ -281,6 +300,7 @@ $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
 $colorInputBg: rgba(black, 0.2);
+$colorInputBgHov: rgba(black, 0.1);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
@@ -402,10 +422,10 @@ $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 // Time Strip and Lists
-$colorCurrentBg: rgba($colorStatusAlert, 0.3);
-$colorCurrentFg: pullForward($colorBodyFg, 20%);
+$colorCurrentBg: $colorTimeRealtimeBg;
+$colorCurrentFg: $colorTimeRealtimeFg;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: rgba($colorKey, 0.2);
+$colorFutureBg: #1b5263;
 $colorFutureFg: $colorCurrentFg;
 $colorFutureBorder: $colorCurrentBorder;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);

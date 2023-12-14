@@ -83,7 +83,8 @@ define([
   './timelist/plugin',
   './faultManagement/FaultManagementPlugin',
   '../../example/exampleTags/plugin',
-  './inspectorViews/plugin'
+  './inspectorViews/plugin',
+  './inspectorDataVisualization/plugin'
 ], function (
   _,
   UTCTimeSystem,
@@ -147,7 +148,8 @@ define([
   TimeList,
   FaultManagementPlugin,
   ExampleTags,
-  InspectorViews
+  InspectorViews,
+  InspectorDataVisualization
 ) {
   const plugins = {};
 
@@ -196,7 +198,7 @@ define([
   plugins.DisplayLayout = DisplayLayoutPlugin.default;
   plugins.FaultManagement = FaultManagementPlugin.default;
   plugins.FormActions = FormActions;
-  plugins.FolderView = FolderView;
+  plugins.FolderView = FolderView.default;
   plugins.Tabs = Tabs;
   plugins.FlexibleLayout = FlexibleLayout;
   plugins.LADTable = LADTable.default;
@@ -204,7 +206,7 @@ define([
   plugins.ObjectMigration = ObjectMigration.default;
   plugins.GoToOriginalAction = GoToOriginalAction.default;
   plugins.OpenInNewTabAction = OpenInNewTabAction.default;
-  plugins.ClearData = ClearData;
+  plugins.ClearData = ClearData.default;
   plugins.WebPage = WebPagePlugin.default;
   plugins.Espresso = Espresso.default;
   plugins.Snow = Snow.default;
@@ -232,6 +234,7 @@ define([
   plugins.Gauge = GaugePlugin.default;
   plugins.Timelist = TimeList.default;
   plugins.InspectorViews = InspectorViews.default;
+  plugins.InspectorDataVisualization = InspectorDataVisualization.default;
 
   return plugins;
 });

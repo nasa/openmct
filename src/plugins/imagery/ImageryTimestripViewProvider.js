@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import mount from 'utils/mount';
+
 import ImageryTimeView from './components/ImageryTimeView.vue';
-import Vue from 'vue';
 
 export default function ImageryTimestripViewProvider(openmct) {
   const type = 'example.imagery.time-strip.view';
@@ -48,27 +49,37 @@ export default function ImageryTimestripViewProvider(openmct) {
       );
     },
     view: function (domainObject, objectPath) {
-      let component;
+      let _destroy = null;
+      let component = null;
 
       return {
         show: function (element) {
-          component = new Vue({
-            el: element,
-            components: {
-              ImageryTimeView
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                ImageryTimeView
+              },
+              provide: {
+                openmct: openmct,
+                domainObject: domainObject,
+                objectPath: objectPath
+              },
+              template: '<imagery-time-view ref="root"></imagery-time-view>'
             },
-            provide: {
-              openmct: openmct,
-              domainObject: domainObject,
-              objectPath: objectPath
-            },
-            template: '<imagery-time-view></imagery-time-view>'
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
 
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         },
 
         getComponent() {

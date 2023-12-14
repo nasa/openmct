@@ -26,7 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { selectInspectorTab } = require('../../../../appActions');
+const { setTimeConductorBounds } = require('../../../../appActions');
 
 test.describe('Log plot tests', () => {
   test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
@@ -34,14 +34,13 @@ test.describe('Log plot tests', () => {
     openmctConfig
   }) => {
     const { myItemsFolderName } = openmctConfig;
-
-    //Test.slow decorator is currently broken. Needs to be fixed in https://github.com/nasa/openmct/issues/5374
+    //Test is slow and should be split in the future
     test.slow();
 
     await makeOverlayPlot(page, myItemsFolderName);
     await testRegularTicks(page);
     await enableEditMode(page);
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await enableLogMode(page);
     await testLogTicks(page);
     await disableLogMode(page);
@@ -87,12 +86,10 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   // Set a specific time range for consistency, otherwise it will change
   // on every test to a range based on the current time.
 
-  const timeInputs = page.locator('input.c-input--datetime');
-  await timeInputs.first().click();
-  await timeInputs.first().fill('2022-03-29 22:00:00.000Z');
+  const start = '2022-03-29 22:00:00.000Z';
+  const end = '2022-03-29 22:00:30.000Z';
 
-  await timeInputs.nth(1).click();
-  await timeInputs.nth(1).fill('2022-03-29 22:00:30.000Z');
+  await setTimeConductorBounds(page, start, end);
 
   // create overlay plot
 
@@ -217,7 +214,7 @@ async function saveOverlayPlot(page) {
     .click();
 
   await Promise.all([
-    page.locator('text=Save and Finish Editing').click(),
+    page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);

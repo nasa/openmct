@@ -20,13 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryCollection from './TelemetryCollection';
-import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
-import TelemetryValueFormatter from './TelemetryValueFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
 import objectUtils from 'objectUtils';
+
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
+import DefaultMetadataProvider from './DefaultMetadataProvider';
+import TelemetryCollection from './TelemetryCollection';
+import TelemetryMetadataManager from './TelemetryMetadataManager';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
+import TelemetryValueFormatter from './TelemetryValueFormatter';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext
@@ -204,27 +205,25 @@ export default class TelemetryAPI {
    */
   standardizeRequestOptions(options = {}) {
     if (!Object.hasOwn(options, 'start')) {
-      if (options.timeContext?.bounds()) {
-        options.start = options.timeContext.bounds().start;
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.start) {
+        options.start = options.timeContext.getBounds().start;
       } else {
-        options.start = this.openmct.time.bounds().start;
+        options.start = this.openmct.time.getBounds().start;
       }
     }
 
     if (!Object.hasOwn(options, 'end')) {
-      if (options.timeContext?.bounds()) {
-        options.end = options.timeContext.bounds().end;
+      const bounds = options.timeContext?.getBounds();
+      if (bounds?.end) {
+        options.end = options.timeContext.getBounds().end;
       } else {
-        options.end = this.openmct.time.bounds().end;
+        options.end = this.openmct.time.getBounds().end;
       }
     }
 
     if (!Object.hasOwn(options, 'domain')) {
-      options.domain = this.openmct.time.timeSystem().key;
-    }
-
-    if (!Object.hasOwn(options, 'timeContext')) {
-      options.timeContext = this.openmct.time;
+      options.domain = this.openmct.time.getTimeSystem().key;
     }
 
     return options;
@@ -232,7 +231,7 @@ export default class TelemetryAPI {
 
   /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
-   * The request will be modifyed when it is received and will be returned in it's modified state
+   * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
@@ -271,7 +270,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Get or set greedy LAD. For stategy "latest" telemetry in
+   * Get or set greedy LAD. For strategy "latest" telemetry in
    * realtime mode the start bound will be ignored if true and
    * there is no new data to replace the existing data.
    * defaults to true
@@ -490,6 +489,62 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Subscribe to run-time changes in configured telemetry limits for a specific domain object.
+   * The callback will be called whenever data is received from a
+   * limit provider.
+   *
+   * @method subscribeToLimits
+   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+   * @param {module:openmct.DomainObject} domainObject the object
+   *        which has associated limits
+   * @param {Function} callback the callback to invoke with new data, as
+   *        it becomes available
+   * @returns {Function} a function which may be called to terminate
+   *          the subscription
+   */
+  subscribeToLimits(domainObject, callback) {
+    if (domainObject.type === 'unknown') {
+      return () => {};
+    }
+
+    const provider = this.#findLimitEvaluator(domainObject);
+
+    if (!this.limitsSubscribeCache) {
+      this.limitsSubscribeCache = {};
+    }
+
+    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    let subscriber = this.limitsSubscribeCache[keyString];
+
+    if (!subscriber) {
+      subscriber = this.limitsSubscribeCache[keyString] = {
+        callbacks: [callback]
+      };
+      if (provider && provider.subscribeToLimits) {
+        subscriber.unsubscribe = provider.subscribeToLimits(domainObject, function (value) {
+          subscriber.callbacks.forEach(function (cb) {
+            cb(value);
+          });
+        });
+      } else {
+        subscriber.unsubscribe = function () {};
+      }
+    } else {
+      subscriber.callbacks.push(callback);
+    }
+
+    return function unsubscribe() {
+      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+      if (subscriber.callbacks.length === 0) {
+        subscriber.unsubscribe();
+        delete this.limitsSubscribeCache[keyString];
+      }
+    }.bind(this);
+  }
+
+  /**
    * Request telemetry staleness for a domain object.
    *
    * @method isStale
@@ -676,7 +731,7 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.DomainObject} domainObject the domain
    *        object for which to get limits
-   * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+   * @returns {LimitsResponseObject}
    * @method limits
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
@@ -723,23 +778,14 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.DomainObject} domainObject the domain
    *        object for which to display limits
-   * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
-   * @method limits returns a limits object of
-   * type {
-   *          level1: {
-   *              low: { key1: value1, key2: value2, color: <supportedColor> },
-   *              high: { key1: value1, key2: value2, color: <supportedColor> }
-   *          },
-   *          level2: {
-   *              low: { key1: value1, key2: value2 },
-   *              high: { key1: value1, key2: value2 }
-   *          }
-   *       }
+   * @returns {LimitsResponseObject}
+   * @method limits returns a limits object of type {LimitsResponseObject}
    *  supported colors are purple, red, orange, yellow and cyan
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   getLimits(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
+
     if (!provider || !provider.getLimits) {
       return {
         limits: function () {
@@ -748,7 +794,23 @@ export default class TelemetryAPI {
       };
     }
 
-    return provider.getLimits(domainObject);
+    const abortController = new AbortController();
+    const options = { signal: abortController.signal };
+    this.requestAbortControllers.add(abortController);
+
+    try {
+      return provider.getLimits(domainObject, options);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        this.openmct.notifications.error(
+          'Error requesting telemetry data, see console for details'
+        );
+      }
+
+      throw new Error(error);
+    } finally {
+      this.requestAbortControllers.delete(abortController);
+    }
   }
 }
 
@@ -766,7 +828,7 @@ export default class TelemetryAPI {
  * @param {*} datum the telemetry datum to evaluate
  * @param {TelemetryProperty} the property to check for limit violations
  * @memberof module:openmct.TelemetryAPI~LimitEvaluator
- * @returns {module:openmct.TelemetryAPI~LimitViolation} metadata about
+ * @returns {LimitViolation} metadata about
  *          the limit violation, or undefined if a value is within limits
  */
 
@@ -777,6 +839,42 @@ export default class TelemetryAPI {
  * @property {string} cssClass the class (or space-separated classes) to
  *           apply to display elements for values which violate this limit
  * @property {string} name the human-readable name for the limit violation
+ * @property {number} low a lower limit for violation
+ * @property {number} high a higher limit violation
+ */
+
+/**
+ * @typedef {object} LimitsResponseObject
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {LimitDefinition} limitLevel the level name and it's limit definition
+ * @example {
+ *  [limitLevel]: {
+ *    low: {
+ *      color: lowColor,
+ *      value: lowValue
+ *    },
+ *    high: {
+ *      color: highColor,
+ *      value: highValue
+ *    }
+ *  }
+ * }
+ */
+
+/**
+ * Limit defined for a telemetry property.
+ * @typedef LimitDefinition
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {LimitDefinitionValue} low a lower limit
+ * @property {LimitDefinitionValue} high a higher limit
+ */
+
+/**
+ * Limit definition for a Limit of a telemetry property.
+ * @typedef LimitDefinitionValue
+ * @memberof {module:openmct.TelemetryAPI~}
+ * @property {string} color color to represent this limit
+ * @property {Number} value the limit value
  */
 
 /**

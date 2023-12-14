@@ -33,8 +33,8 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="ladTable in ladTableObjects">
-          <tr :key="ladTable.key" class="c-table__group-header js-lad-table-set__table-headers">
+        <template v-for="ladTable in ladTableObjects" :key="ladTable.key">
+          <tr class="c-table__group-header js-lad-table-set__table-headers">
             <td colspan="10">
               {{ ladTable.domainObject.name }}
             </td>
@@ -45,9 +45,9 @@
             :domain-object="ladRow.domainObject"
             :path-to-table="ladTable.objectPath"
             :has-units="hasUnits"
-            :is-stale="staleObjects.includes(combineKeys(ladTable.key, ladRow.key))"
+            :is-stale="staleObjects.includes(ladRow.key)"
             :configuration="configuration"
-            @rowContextClick="updateViewContext"
+            @row-context-click="updateViewContext"
           />
         </template>
       </tbody>
@@ -56,13 +56,17 @@
 </template>
 
 <script>
-import LadRow from './LADRow.vue';
-import StalenessUtils from '@/utils/staleness';
+import { toRaw } from 'vue';
+
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import LadRow from './LadRow.vue';
 
 export default {
   components: {
     LadRow
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'objectPath', 'currentView', 'ladTableConfiguration'],
   props: {
     domainObject: {
@@ -74,10 +78,9 @@ export default {
     return {
       ladTableObjects: [],
       ladTelemetryObjects: {},
-      compositions: [],
       viewContext: {},
-      staleObjects: [],
-      configuration: this.ladTableConfiguration.getConfiguration()
+      configuration: this.ladTableConfiguration.getConfiguration(),
+      subscribedObjects: {}
     };
   },
   computed: {
@@ -108,12 +111,11 @@ export default {
       return !this.configuration?.hiddenColumns?.type;
     },
     staleClass() {
-      if (this.staleObjects.length !== 0) {
-        return 'is-stale';
-      }
-
-      return '';
+      return this.isStale ? 'is-stale' : '';
     }
+  },
+  created() {
+    this.compositions = [];
   },
   mounted() {
     this.ladTableConfiguration.on('change', this.handleConfigurationChange);
@@ -122,10 +124,12 @@ export default {
     this.composition.on('remove', this.removeLadTable);
     this.composition.on('reorder', this.reorderLadTables);
     this.composition.load();
-
-    this.stalenessSubscription = {};
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
-  destroyed() {
+  unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
     this.composition.off('add', this.addLadTable);
     this.composition.off('remove', this.removeLadTable);
@@ -133,11 +137,6 @@ export default {
     this.compositions.forEach((c) => {
       c.composition.off('add', c.addCallback);
       c.composition.off('remove', c.removeCallback);
-    });
-
-    Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-      stalenessSubscription.unsubscribe();
-      stalenessSubscription.stalenessUtils.destroy();
     });
   },
   methods: {
@@ -147,7 +146,7 @@ export default {
       ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
       ladTable.objectPath = [domainObject, ...this.objectPath];
 
-      this.$set(this.ladTelemetryObjects, ladTable.key, []);
+      this.ladTelemetryObjects[ladTable.key] = [];
       this.ladTableObjects.push(ladTable);
 
       let composition = this.openmct.composition.get(ladTable.domainObject);
@@ -173,22 +172,27 @@ export default {
       );
       let ladTable = this.ladTableObjects[index];
 
-      this.ladTelemetryObjects[ladTable.key].forEach((telemetryObject) => {
-        let combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
-        this.unwatchStaleness(combinedKey);
+      ladTable?.domainObject?.composition.forEach((telemetryObject) => {
+        const telemetryKey = this.openmct.objects.makeKeyString(telemetryObject);
+        if (!this.subscribedObjects?.[telemetryKey]) {
+          return;
+        }
+        let subscribedObject = toRaw(this.subscribedObjects[telemetryKey]);
+        if (subscribedObject?.count > 1) {
+          subscribedObject.count -= 1;
+        } else if (subscribedObject?.count === 1) {
+          this.triggerUnsubscribeFromStaleness(subscribedObject.domainObject);
+          delete this.subscribedObjects[telemetryKey];
+        }
       });
 
-      this.$delete(this.ladTelemetryObjects, ladTable.key);
+      delete this.ladTelemetryObjects[ladTable.key];
       this.ladTableObjects.splice(index, 1);
     },
     reorderLadTables(reorderPlan) {
       let oldComposition = this.ladTableObjects.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(
-          this.ladTableObjects,
-          reorderEvent.newIndex,
-          oldComposition[reorderEvent.oldIndex]
-        );
+        this.ladTableObjects[reorderEvent.newIndex] = oldComposition[reorderEvent.oldIndex];
       });
     },
     addTelemetryObject(ladTable) {
@@ -196,76 +200,34 @@ export default {
         let telemetryObject = {};
         telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
         telemetryObject.domainObject = domainObject;
-        const combinedKey = this.combineKeys(ladTable.key, telemetryObject.key);
 
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
         telemetryObjects.push(telemetryObject);
 
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
 
-        this.stalenessSubscription[combinedKey] = {};
-        this.stalenessSubscription[combinedKey].stalenessUtils = new StalenessUtils(
-          this.openmct,
-          domainObject
-        );
-
-        this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-          if (stalenessResponse !== undefined) {
-            this.handleStaleness(combinedKey, stalenessResponse);
-          }
-        });
-        const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-          domainObject,
-          (stalenessResponse) => {
-            this.handleStaleness(combinedKey, stalenessResponse);
-          }
-        );
-
-        this.stalenessSubscription[combinedKey].unsubscribe = stalenessSubscription;
+        if (!this.subscribedObjects[telemetryObject?.key]) {
+          this.subscribeToStaleness(domainObject);
+          this.subscribedObjects[telemetryObject?.key] = { count: 1, domainObject };
+        } else if (this.subscribedObjects?.[telemetryObject?.key]?.count) {
+          this.subscribedObjects[telemetryObject?.key].count += 1;
+        }
       };
     },
     removeTelemetryObject(ladTable) {
       return (identifier) => {
         const keystring = this.openmct.objects.makeKeyString(identifier);
         const telemetryObjects = this.ladTelemetryObjects[ladTable.key];
-        const combinedKey = this.combineKeys(ladTable.key, keystring);
         let index = telemetryObjects.findIndex(
           (telemetryObject) => keystring === telemetryObject.key
         );
 
-        this.unwatchStaleness(combinedKey);
-
         telemetryObjects.splice(index, 1);
-        this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+        this.ladTelemetryObjects[ladTable.key] = telemetryObjects;
       };
-    },
-    unwatchStaleness(combinedKey) {
-      const SKIP_CHECK = true;
-
-      this.stalenessSubscription[combinedKey].unsubscribe();
-      this.stalenessSubscription[combinedKey].stalenessUtils.destroy();
-      this.handleStaleness(combinedKey, { isStale: false }, SKIP_CHECK);
-
-      delete this.stalenessSubscription[combinedKey];
     },
     handleConfigurationChange(configuration) {
       this.configuration = configuration;
-    },
-    handleStaleness(combinedKey, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[combinedKey].stalenessUtils.shouldUpdateStaleness(
-          stalenessResponse
-        )
-      ) {
-        const index = this.staleObjects.indexOf(combinedKey);
-        const foundStaleObject = index > -1;
-        if (stalenessResponse.isStale && !foundStaleObject) {
-          this.staleObjects.push(combinedKey);
-        } else if (!stalenessResponse.isStale && foundStaleObject) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
     },
     updateViewContext(rowContext) {
       this.viewContext.row = rowContext;

@@ -19,14 +19,98 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 const { test, expect } = require('../../../../pluginFixtures');
+const path = require('path');
 const {
   createDomainObjectWithDefaults,
   setStartOffset,
   setFixedTimeMode,
-  setRealTimeMode
+  setRealTimeMode,
+  setIndependentTimeConductorBounds
 } = require('../../../../appActions');
+
+const LOCALSTORAGE_PATH = path.resolve(
+  __dirname,
+  '../../../../test-data/display_layout_with_child_layouts.json'
+);
+const TINY_IMAGE_BASE64 =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
+
+test.describe('Display Layout Toolbar Actions @localStorage', () => {
+  const PARENT_DISPLAY_LAYOUT_NAME = 'Parent Display Layout';
+  const CHILD_DISPLAY_LAYOUT_NAME1 = 'Child Layout 1';
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await setRealTimeMode(page);
+    await page
+      .locator('a')
+      .filter({ hasText: 'Parent Display Layout Display Layout' })
+      .first()
+      .click();
+    await page.getByLabel('Edit').click();
+  });
+  test.use({
+    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+  });
+
+  test('can add/remove Text element to a single layout', async ({ page }) => {
+    const layoutObject = 'Text';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test('can add/remove Image to a single layout', async ({ page }) => {
+    const layoutObject = 'Image';
+    await test.step("Add and remove image element from the parent's layout", async () => {
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await removeLayoutObject(page, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+    });
+    await test.step("Add and remove image from the child's layout", async () => {
+      await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await removeLayoutObject(page, layoutObject);
+      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+    });
+  });
+  test(`can add/remove Box to a single layout`, async ({ page }) => {
+    const layoutObject = 'Box';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test(`can add/remove Line to a single layout`, async ({ page }) => {
+    const layoutObject = 'Line';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test(`can add/remove Ellipse to a single layout`, async ({ page }) => {
+    const layoutObject = 'Ellipse';
+    await test.step(`Add and remove ${layoutObject} from the parent's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, PARENT_DISPLAY_LAYOUT_NAME);
+    });
+    await test.step(`Add and remove ${layoutObject} from the child's layout`, async () => {
+      await addAndRemoveDrawingObjectAndAssert(page, layoutObject, CHILD_DISPLAY_LAYOUT_NAME1);
+    });
+  });
+  test.fixme('Can switch view types of a single SWG in a layout', async ({ page }) => {});
+  test.fixme('Can merge multiple plots in a layout', async ({ page }) => {});
+  test.fixme('Can adjust stack order of a single object in a layout', async ({ page }) => {});
+  test.fixme('Can duplicate a single object in a layout', async ({ page }) => {});
+});
 
 test.describe('Display Layout', () => {
   /** @type {import('../../../../appActions').CreatedObjectInfo} */
@@ -40,6 +124,7 @@ test.describe('Display Layout', () => {
       type: 'Sine Wave Generator'
     });
   });
+
   test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in real time', async ({
     page
   }) => {
@@ -63,7 +148,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
@@ -101,7 +186,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
@@ -143,7 +228,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
 
@@ -185,7 +270,7 @@ test.describe('Display Layout', () => {
     const layoutGridHolder = page.locator('.l-layout__grid-holder');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
 
@@ -206,12 +291,66 @@ test.describe('Display Layout', () => {
     expect(await page.locator('.l-layout .l-layout__frame').count()).toEqual(0);
   });
 
+  test('independent time works with display layouts and its children', async ({ page }) => {
+    await setFixedTimeMode(page);
+    // Create Example Imagery
+    const exampleImageryObject = await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery'
+    });
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout'
+    });
+    // Edit Display Layout
+    await page.locator('[title="Edit"]').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const exampleImageryTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(exampleImageryObject.name)
+    });
+    let layoutGridHolder = page.locator('.l-layout__grid-holder');
+    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+
+    //adjust so that we can see the independent time conductor toggle
+    // Adjust object height
+    await page.locator('div[title="Resize object height"] > input').click();
+    await page.locator('div[title="Resize object height"] > input').fill('70');
+
+    // Adjust object width
+    await page.locator('div[title="Resize object width"] > input').click();
+    await page.locator('div[title="Resize object width"] > input').fill('70');
+
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    const startDate = '2021-12-30 01:01:00.000Z';
+    const endDate = '2021-12-30 01:11:00.000Z';
+    await setIndependentTimeConductorBounds(page, startDate, endDate);
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByRole('switch').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+  });
+
   test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
     page
   }) => {
+    await setFixedTimeMode(page);
     // Create another Sine Wave Generator
     const anotherSineWaveObject = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator'
+      type: 'Sine Wave Generator',
+      customParameters: {
+        '[aria-label="Data Rate (hz)"]': '0.01'
+      }
     });
     // Create a Display Layout
     await createDomainObjectWithDefaults(page, {
@@ -249,12 +388,13 @@ test.describe('Display Layout', () => {
     await page.getByText('Overlay Plot').click();
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic
     let networkRequests = [];
     page.on('request', (request) => {
-      const searchRequest = request.url().endsWith('_find');
+      const searchRequest =
+        request.url().endsWith('_find') || request.url().includes('by_keystring');
       const fetchRequest = request.resourceType() === 'fetch';
       if (searchRequest && fetchRequest) {
         networkRequests.push(request);
@@ -265,12 +405,76 @@ test.describe('Display Layout', () => {
 
     // wait for annotations requests to be batched and requested
     await page.waitForLoadState('networkidle');
-
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
     expect(networkRequests.length).toBe(1);
+
+    await setRealTimeMode(page);
+
+    networkRequests = [];
+
+    await page.reload();
+
+    // wait for annotations to not load (if we have any, we've got a problem)
+    await page.waitForLoadState('networkidle');
+
+    // In real time mode, we don't fetch annotations at all
+    expect(networkRequests.length).toBe(0);
   });
 });
+
+async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
+  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await addLayoutObject(page, DISPLAY_LAYOUT_NAME, layoutObject);
+  expect(
+    await page
+      .getByLabel(layoutObject, {
+        exact: true
+      })
+      .count()
+  ).toBe(1);
+  await removeLayoutObject(page, layoutObject);
+  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+}
+
+/**
+ * Remove the first matching layout object from the layout
+ * @param {import('@playwright/test').Page} page
+ * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
+ */
+async function removeLayoutObject(page, layoutObject) {
+  await page
+    .getByLabel(`Move ${layoutObject} Frame`, { exact: true })
+    .or(page.getByLabel(layoutObject, { exact: true }))
+    .first()
+    // eslint-disable-next-line playwright/no-force-option
+    .click({ force: true });
+  await page.getByTitle('Delete the selected object').click();
+  await page.getByRole('button', { name: 'OK' }).click();
+}
+
+/**
+ * Add a layout object to the specified layout
+ * @param {import('@playwright/test').Page} page
+ * @param {string} layoutName
+ * @param {'Box' | 'Ellipse' | 'Line' | 'Text' | 'Image'} layoutObject
+ */
+async function addLayoutObject(page, layoutName, layoutObject) {
+  await page.getByLabel(`${layoutName} Layout`, { exact: true }).click();
+  await page.getByText('Add Drawing Object').click();
+  await page
+    .getByRole('menuitem', {
+      name: layoutObject
+    })
+    .click();
+  if (layoutObject === 'Text') {
+    await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
+    await page.getByText('OK').click();
+  } else if (layoutObject === 'Image') {
+    await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
+    await page.getByText('OK').click();
+  }
+}
 
 /**
  * Util for subscribing to a telemetry object by object identifier

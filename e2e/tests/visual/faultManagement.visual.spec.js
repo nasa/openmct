@@ -26,12 +26,12 @@ const percySnapshot = require('@percy/playwright');
 
 const utils = require('../../helper/faultUtils');
 
-test.describe('The Fault Management Plugin Visual Test', () => {
+test.describe('Fault Management Visual Tests', () => {
   test('icon test', async ({ page, theme }) => {
     await page.addInitScript({
       path: path.join(__dirname, '../../helper/', 'addInitFaultManagementPlugin.js')
     });
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     await percySnapshot(page, `Fault Management icon appears in tree (theme: '${theme}')`);
   });
@@ -46,7 +46,7 @@ test.describe('The Fault Management Plugin Visual Test', () => {
 
     await percySnapshot(
       page,
-      `Acknowledged faults, have a checkmark on the fault icon and appear in the acknowldeged view (theme: '${theme}')`
+      `Acknowledged faults, have a checkmark on the fault icon and appear in the acknowledged view (theme: '${theme}')`
     );
   });
 

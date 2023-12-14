@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { toRaw } from 'vue';
+
 import objectUtils from '../objects/object-utils';
 import CompositionProvider from './CompositionProvider';
 
@@ -167,7 +169,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    */
   add(parent, childId) {
     if (!this.includes(parent, childId)) {
-      const composition = structuredClone(parent.composition);
+      const composition = structuredClone(toRaw(parent.composition));
       composition.push(childId);
       this.publicAPI.objects.mutate(parent, 'composition', composition);
     }

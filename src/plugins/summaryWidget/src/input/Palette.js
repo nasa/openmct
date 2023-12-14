@@ -44,11 +44,12 @@ define([
     self.setNullOption(this.nullOption);
 
     self.items.forEach(function (item) {
-      const itemElement = `<div class = "c-palette__item ${item}" data-item = "${item}"></div>`;
-      const temp = document.createElement('div');
-      temp.innerHTML = itemElement;
-      self.itemElements[item] = temp.firstChild;
-      self.domElement.querySelector('.c-palette__items').appendChild(temp.firstChild);
+      const itemElement = document.createElement('div');
+      itemElement.className = 'c-palette__item ' + item;
+      itemElement.setAttribute('data-item', item);
+
+      self.itemElements[item] = itemElement;
+      self.domElement.querySelector('.c-palette__items').appendChild(itemElement);
     });
 
     self.domElement.querySelector('.c-menu').style.display = 'none';
@@ -99,7 +100,7 @@ define([
   /**
    * Register a callback with this palette: supported callback is change
    * @param {string} event The key for the event to listen to
-   * @param {function} callback The function that this rule will envoke on this event
+   * @param {function} callback The function that this rule will invoke on this event
    * @param {Object} context A reference to a scope to use as the context for
    *                         context for the callback function
    */
@@ -140,7 +141,7 @@ define([
   };
 
   /**
-   * Update the view assoicated with the currently selected item
+   * Update the view associated with the currently selected item
    */
   Palette.prototype.updateSelected = function (item) {
     this.domElement.querySelectorAll('.c-palette__item').forEach((paletteItem) => {

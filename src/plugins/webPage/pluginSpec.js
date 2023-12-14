@@ -21,13 +21,14 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import WebPagePlugin from './plugin';
 
 function getView(openmct, domainObj, objectPath) {
   const applicableViews = openmct.objectViews.get(domainObj, objectPath);
   const webpageView = applicableViews.find((viewProvider) => viewProvider.key === 'webPage');
 
-  return webpageView.view(domainObj);
+  return webpageView.view(domainObj, [domainObj]);
 }
 
 function destroyView(view) {

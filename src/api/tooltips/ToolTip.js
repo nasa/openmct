@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TooltipComponent from './components/TooltipComponent.vue';
 import EventEmitter from 'EventEmitter';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import TooltipComponent from './components/TooltipComponent.vue';
 
 class Tooltip extends EventEmitter {
   constructor(
@@ -34,9 +35,7 @@ class Tooltip extends EventEmitter {
   ) {
     super();
 
-    this.container = document.createElement('div');
-
-    this.component = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         TooltipComponent: TooltipComponent
       },
@@ -48,6 +47,9 @@ class Tooltip extends EventEmitter {
       template: '<tooltip-component toolTipText="toolTipText"></tooltip-component>'
     });
 
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
+
     this.isActive = null;
   }
 
@@ -55,8 +57,7 @@ class Tooltip extends EventEmitter {
     if (!this.isActive) {
       return;
     }
-    document.body.removeChild(this.container);
-    this.component.$destroy();
+    this._destroy();
     this.isActive = false;
   }
 
@@ -64,8 +65,7 @@ class Tooltip extends EventEmitter {
    * @private
    **/
   show() {
-    document.body.appendChild(this.container);
-    this.container.appendChild(this.component.$mount().$el);
+    document.body.appendChild(this.component.$el);
     this.isActive = true;
   }
 }

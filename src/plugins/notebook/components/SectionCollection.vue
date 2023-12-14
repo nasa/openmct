@@ -28,9 +28,9 @@
         :selected-section-id="selectedSectionId"
         :section="section"
         :section-title="sectionTitle"
-        @deleteSection="deleteSection"
-        @renameSection="updateSection"
-        @selectSection="selectSection"
+        @delete-section="deleteSection"
+        @rename-section="updateSection"
+        @select-section="selectSection"
       />
     </li>
   </ul>
@@ -77,11 +77,15 @@ export default {
       }
     }
   },
+  emits: ['select-section', 'default-section-deleted', 'update-section'],
   watch: {
-    sections() {
-      if (!this.containsSection(this.selectedSectionId)) {
-        this.selectSection(this.sections[0].id);
-      }
+    sections: {
+      handler(val, oldVal) {
+        if (!this.containsSection(this.selectedSectionId)) {
+          this.selectSection(this.sections[0].id);
+        }
+      },
+      deep: true
     }
   },
   methods: {
@@ -109,25 +113,25 @@ export default {
       }
 
       if (isSectionDefault) {
-        this.$emit('defaultSectionDeleted');
+        this.$emit('default-section-deleted');
       }
 
       if (sections.length && isSectionSelected && (!defaultSectionId || isSectionDefault)) {
         sections[0].isSelected = true;
       }
 
-      this.$emit('updateSection', {
+      this.$emit('update-section', {
         sections,
         id
       });
     },
     selectSection(id) {
-      this.$emit('selectSection', id);
+      this.$emit('select-section', id);
     },
     updateSection(newSection) {
       const id = newSection.id;
       const sections = this.sections.map((section) => (section.id === id ? newSection : section));
-      this.$emit('updateSection', {
+      this.$emit('update-section', {
         sections,
         id
       });

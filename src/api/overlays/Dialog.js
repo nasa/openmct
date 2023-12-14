@@ -1,10 +1,11 @@
+import mount from 'utils/mount';
+
 import DialogComponent from './components/DialogComponent.vue';
 import Overlay from './Overlay';
-import Vue from 'vue';
 
 class Dialog extends Overlay {
   constructor({ iconClass, message, title, hint, timestamp, ...options }) {
-    let component = new Vue({
+    const { vNode, destroy } = mount({
       components: {
         DialogComponent: DialogComponent
       },
@@ -16,17 +17,17 @@ class Dialog extends Overlay {
         timestamp
       },
       template: '<dialog-component></dialog-component>'
-    }).$mount();
+    });
 
     super({
-      element: component.$el,
+      element: vNode.el,
       size: 'fit',
       dismissable: false,
       ...options
     });
 
     this.once('destroy', () => {
-      component.$destroy();
+      destroy();
     });
   }
 }

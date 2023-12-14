@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementView from './FaultManagementView.vue';
+import mount from 'utils/mount';
+
 import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
-import Vue from 'vue';
+import FaultManagementView from './FaultManagementView.vue';
 
 export default class FaultManagementViewProvider {
   constructor(openmct) {
@@ -39,30 +40,34 @@ export default class FaultManagementViewProvider {
   }
 
   view(domainObject) {
-    let component;
     const openmct = this.openmct;
+    let _destroy = null;
 
     return {
       show: (element) => {
-        component = new Vue({
-          el: element,
-          components: {
-            FaultManagementView
+        const { destroy } = mount(
+          {
+            el: element,
+            components: {
+              FaultManagementView
+            },
+            provide: {
+              openmct,
+              domainObject
+            },
+            template: '<FaultManagementView></FaultManagementView>'
           },
-          provide: {
-            openmct,
-            domainObject
-          },
-          template: '<FaultManagementView></FaultManagementView>'
-        });
+          {
+            app: openmct.app,
+            element
+          }
+        );
+        _destroy = destroy;
       },
       destroy: () => {
-        if (!component) {
-          return;
+        if (_destroy) {
+          _destroy();
         }
-
-        component.$destroy();
-        component = undefined;
       }
     };
   }

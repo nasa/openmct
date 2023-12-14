@@ -31,9 +31,10 @@
 </template>
 
 <script>
-import PlanActivityView from './PlanActivityView.vue';
 import { getPreciseDuration } from 'utils/duration';
 import { v4 as uuid } from 'uuid';
+
+import PlanActivityView from './PlanActivityView.vue';
 
 const propertyLabels = {
   start: 'Start DateTime',
@@ -64,7 +65,7 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.openmct.time.on('timeSystem', this.setFormatters);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     this.openmct.time.off('timeSystem', this.setFormatters);
   },
@@ -117,7 +118,7 @@ export default {
             value: this.formatDuration(selectedActivity.end - selectedActivity.start)
           }
         };
-        this.$set(this.activities, index, activity);
+        this.activities[index] = activity;
       });
     },
     sortFn(a, b) {
@@ -193,7 +194,7 @@ export default {
         value: this.formatDuration(totalTime)
       };
 
-      this.$set(this.activities, 0, activity);
+      this.activities[0] = activity;
     },
     formatDuration(duration) {
       return getPreciseDuration(duration);

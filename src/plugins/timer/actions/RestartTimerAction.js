@@ -39,7 +39,7 @@ export default class RestartTimerAction {
 
     const newConfiguration = { ...domainObject.configuration };
     newConfiguration.timerState = 'started';
-    newConfiguration.timestamp = new Date();
+    newConfiguration.timestamp = new Date(this.openmct.time.now());
     newConfiguration.pausedTime = undefined;
 
     this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);

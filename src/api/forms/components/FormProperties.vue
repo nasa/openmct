@@ -44,7 +44,7 @@
           :css-class="row.cssClass"
           :first="index < 1"
           :row="row"
-          @onChange="onChange"
+          @on-change="onChange"
         />
       </div>
     </form>
@@ -73,8 +73,9 @@
 </template>
 
 <script>
-import FormRow from '@/api/forms/components/FormRow.vue';
 import { v4 as uuid } from 'uuid';
+
+import FormRow from '@/api/forms/components/FormRow.vue';
 
 export default {
   components: {
@@ -93,6 +94,7 @@ export default {
       }
     }
   },
+  emits: ['on-change', 'on-save', 'on-cancel'],
   data() {
     return {
       invalidProperties: {},
@@ -141,15 +143,15 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$set(this.invalidProperties, data.model.key, data.invalid);
+      this.invalidProperties[data.model.key] = data.invalid;
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     onCancel() {
-      this.$emit('onCancel');
+      this.$emit('on-cancel');
     },
     onSave() {
-      this.$emit('onSave');
+      this.$emit('on-save');
     }
   }
 };

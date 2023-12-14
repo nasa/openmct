@@ -27,12 +27,14 @@
 </template>
 
 <script>
-import * as d3Scale from 'd3-scale';
-import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import Vue from 'vue';
-import imageryData from '../../imagery/mixins/imageryData';
-import PreviewAction from '@/ui/preview/PreviewAction';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
+import mount from 'utils/mount';
+
+import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+import PreviewAction from '@/ui/preview/PreviewAction';
+
+import imageryData from '../../imagery/mixins/imageryData';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
@@ -61,8 +63,11 @@ export default {
     };
   },
   watch: {
-    imageHistory(newHistory, oldHistory) {
-      this.updatePlotImagery();
+    imageHistory: {
+      handler(newHistory, oldHistory) {
+        this.updatePlotImagery();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -86,7 +91,7 @@ export default {
 
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.imageryStripResizeObserver) {
       this.imageryStripResizeObserver.disconnect();
     }
@@ -94,6 +99,9 @@ export default {
     this.stopFollowingTimeContext();
     if (this.unlisten) {
       this.unlisten();
+    }
+    if (this.destroyImageryContainer) {
+      this.destroyImageryContainer();
     }
   },
   methods: {
@@ -212,10 +220,10 @@ export default {
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(this.viewBounds.start), new Date(this.viewBounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([this.viewBounds.start, this.viewBounds.end]);
       }
 
@@ -234,22 +242,32 @@ export default {
         imageryContainer = existingContainer;
         imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
-        let component = new Vue({
-          components: {
-            SwimLane
+        if (this.destroyImageryContainer) {
+          this.destroyImageryContainer();
+        }
+        const { vNode, destroy } = mount(
+          {
+            components: {
+              SwimLane
+            },
+            provide: {
+              openmct: this.openmct
+            },
+            data() {
+              return {
+                isNested: true
+              };
+            },
+            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-imagery-tsv-container"></div></template></swim-lane>`
           },
-          provide: {
-            openmct: this.openmct
-          },
-          data() {
-            return {
-              isNested: true
-            };
-          },
-          template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><div class="c-imagery-tsv-container"></div></template></swim-lane>`
-        });
+          {
+            app: this.openmct.app
+          }
+        );
 
-        this.$refs.imageryHolder.appendChild(component.$mount().$el);
+        this.destroyImageryContainer = destroy;
+        const component = vNode.componentInstance;
+        this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
         imageryContainer.style.maxWidth = `${containerWidth}px`;

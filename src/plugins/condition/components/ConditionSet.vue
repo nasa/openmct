@@ -39,30 +39,33 @@
         :is-editing="isEditing"
         :test-data="testData"
         :telemetry="telemetryObjs"
-        @updateTestData="updateTestData"
+        @update-test-data="updateTestData"
       />
       <ConditionCollection
         class="c-cs__conditions"
         :is-editing="isEditing"
         :test-data="testData"
-        @conditionSetResultUpdated="updateCurrentOutput"
-        @noTelemetryObjects="updateCurrentOutput('---')"
-        @telemetryUpdated="updateTelemetry"
-        @telemetryStaleness="handleStaleness"
+        @condition-set-result-updated="updateCurrentOutput"
+        @no-telemetry-objects="updateCurrentOutput('---')"
+        @telemetry-updated="updateTelemetry"
+        @telemetry-staleness="handleStaleness"
       />
     </div>
   </div>
 </template>
 
 <script>
-import TestData from './TestData.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
 import ConditionCollection from './ConditionCollection.vue';
+import TestData from './TestData.vue';
 
 export default {
   components: {
     TestData,
     ConditionCollection
   },
+  mixins: [stalenessMixin],
   inject: ['openmct', 'domainObject'],
   props: {
     isEditing: Boolean
@@ -71,14 +74,8 @@ export default {
     return {
       currentConditionOutput: '',
       telemetryObjs: [],
-      testData: {},
-      staleObjects: []
+      testData: {}
     };
-  },
-  computed: {
-    isStale() {
-      return this.staleObjects.length !== 0;
-    }
   },
   mounted() {
     this.conditionSetIdentifier = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -100,17 +97,8 @@ export default {
     updateTestData(testData) {
       this.testData = testData;
     },
-    handleStaleness({ keyString, isStale }) {
-      const index = this.staleObjects.indexOf(keyString);
-      if (isStale) {
-        if (index === -1) {
-          this.staleObjects.push(keyString);
-        }
-      } else {
-        if (index !== -1) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
+    handleStaleness({ keyString, stalenessResponse }) {
+      this.addOrRemoveStaleObject(keyString, stalenessResponse);
     }
   }
 };

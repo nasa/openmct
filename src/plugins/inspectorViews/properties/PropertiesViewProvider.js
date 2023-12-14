@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Properties from './Properties.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Properties from './PropertiesComponent.vue';
 
 export default function PropertiesViewProvider(openmct) {
   return {
@@ -32,27 +33,35 @@ export default function PropertiesViewProvider(openmct) {
       return selection.length > 0;
     },
     view: function (selection) {
-      let component;
+      let _destroy = null;
 
       return {
-        show: function (el) {
-          component = new Vue({
-            el,
-            components: {
-              Properties
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                Properties
+              },
+              provide: {
+                openmct
+              },
+              template: `<Properties />`
             },
-            provide: {
-              openmct
-            },
-            template: `<Properties />`
-          });
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
-          component.$destroy();
-          component = undefined;
+          if (_destroy) {
+            _destroy();
+          }
         }
       };
     }

@@ -21,9 +21,11 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+
 import StalenessUtils from '@/utils/staleness';
+
 import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
-import { OPERATIONS, getOperatorText } from '../utils/operations';
+import { getOperatorText, OPERATIONS } from '../utils/operations';
 import { checkIfOld } from '../utils/time';
 
 export default class TelemetryCriterion extends EventEmitter {
@@ -50,6 +52,8 @@ export default class TelemetryCriterion extends EventEmitter {
 
     this.initialize();
     this.emitEvent('criterionUpdated', this);
+
+    this.openmct.time.on('clockChanged', this.subscribeToStaleness);
   }
 
   initialize() {
@@ -91,6 +95,10 @@ export default class TelemetryCriterion extends EventEmitter {
   subscribeToStaleness() {
     if (this.unsubscribeFromStaleness) {
       this.unsubscribeFromStaleness();
+    }
+
+    if (!this.telemetryObject) {
+      return;
     }
 
     if (!this.stalenessUtils) {
@@ -189,9 +197,11 @@ export default class TelemetryCriterion extends EventEmitter {
   }
 
   requestLAD(telemetryObjects, requestOptions) {
+    //We pass in the global time context here
     let options = {
       strategy: 'latest',
-      size: 1
+      size: 1,
+      timeContext: this.openmct.time.getContextForView([])
     };
 
     if (requestOptions !== undefined) {
@@ -328,6 +338,8 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.ageCheck) {
       delete this.ageCheck;
     }
+
+    this.openmct.time.off('clockChanged', this.subscribeToStaleness);
 
     if (this.stalenessUtils) {
       this.stalenessUtils.destroy();

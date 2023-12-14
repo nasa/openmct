@@ -43,7 +43,7 @@
           edit-title="Manually set the color for this bar graph series."
           view-title="The color for this bar graph series."
           short-label="Color"
-          @colorSet="setColor"
+          @color-set="setColor"
         />
       </li>
     </ul>
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 import Color from '@/ui/color/Color';
+import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
 export default {
   components: {
@@ -115,7 +115,7 @@ export default {
       this.initColorAndName
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.removeBarStylesListener) {
       this.removeBarStylesListener();
     }

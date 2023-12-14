@@ -78,6 +78,8 @@ export default {
     };
   },
   async mounted() {
+    this.abortController = new AbortController();
+    this.nameChangeListeners = {};
     const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
     if (keyString && this.keyString !== keyString) {
@@ -86,7 +88,18 @@ export default {
 
       let rawPath = null;
       if (this.objectPath === null) {
-        rawPath = await this.openmct.objects.getOriginalPath(keyString);
+        try {
+          rawPath = await this.openmct.objects.getOriginalPath(
+            keyString,
+            [],
+            this.abortController.signal
+          );
+        } catch (error) {
+          // aborting the search is ok, everything else should be thrown
+          if (error.name !== 'AbortError') {
+            throw error;
+          }
+        }
       } else {
         rawPath = this.objectPath;
       }
@@ -108,7 +121,18 @@ export default {
         // remove ROOT and object itself from path
         this.orderedPath = pathWithDomainObject.slice(1, pathWithDomainObject.length - 1).reverse();
       }
+      this.orderedPath.forEach((pathObject) => {
+        this.addNameListenerFor(pathObject.domainObject);
+      });
     }
+  },
+  unmounted() {
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+    Object.values(this.nameChangeListeners).forEach((unlisten) => {
+      unlisten();
+    });
   },
   methods: {
     /**
@@ -120,6 +144,34 @@ export default {
       const path = `/browse/${this.openmct.objects.getRelativePath(objectPath)}`;
 
       return path.replace('ROOT/', '');
+    },
+    updateObjectPathName(keyString, newName) {
+      this.orderedPath = this.orderedPath.map((pathObject) => {
+        if (this.openmct.objects.makeKeyString(pathObject.domainObject.identifier) === keyString) {
+          return {
+            ...pathObject,
+            domainObject: { ...pathObject.domainObject, name: newName }
+          };
+        }
+        return pathObject;
+      });
+    },
+    removeNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString]();
+        delete this.nameChangeListeners[keyString];
+      }
+    },
+    addNameListenerFor(domainObject) {
+      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      if (!this.nameChangeListeners[keyString]) {
+        this.nameChangeListeners[keyString] = this.openmct.objects.observe(
+          domainObject,
+          'name',
+          this.updateObjectPathName.bind(this, keyString)
+        );
+      }
     }
   }
 };

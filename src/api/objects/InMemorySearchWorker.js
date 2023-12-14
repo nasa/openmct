@@ -57,7 +57,8 @@
   };
 
   function indexAnnotation(objectToIndex, model) {
-    Object.keys(model.targets).forEach((targetID) => {
+    model.targets.forEach((target) => {
+      const targetID = target.keyString;
       if (!indexedAnnotationsByDomainObject[targetID]) {
         indexedAnnotationsByDomainObject[targetID] = [];
       }

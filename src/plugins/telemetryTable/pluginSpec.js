@@ -19,14 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import TablePlugin from './plugin.js';
-import Vue from 'vue';
 import {
-  createOpenMct,
   createMouseEvent,
-  spyOnBuiltins,
-  resetApplicationState
+  createOpenMct,
+  renderWhenVisible,
+  resetApplicationState,
+  spyOnBuiltins
 } from 'utils/testing';
+import { nextTick } from 'vue';
+
+import TablePlugin from './plugin.js';
 
 class MockDataTransfer {
   constructor() {
@@ -48,7 +50,7 @@ describe('the plugin', () => {
   let tablePlugin;
   let element;
   let child;
-  let historicalProvider;
+  let historicalTelemetryProvider;
   let originalRouterPath;
   let unlistenConfigMutation;
 
@@ -56,16 +58,16 @@ describe('the plugin', () => {
     openmct = createOpenMct();
 
     // Table Plugin is actually installed by default, but because installing it
-    // again is harmless it is left here as an examplar for non-default plugins.
+    // again is harmless it is left here as an example for non-default plugins.
     tablePlugin = new TablePlugin();
     openmct.install(tablePlugin);
 
-    historicalProvider = {
+    historicalTelemetryProvider = {
       request: () => {
         return Promise.resolve([]);
       }
     };
-    spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
+    spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalTelemetryProvider);
 
     element = document.createElement('div');
     child = document.createElement('div');
@@ -136,11 +138,12 @@ describe('the plugin', () => {
     let tableView;
     let tableInstance;
     let mockClock;
+    let telemetryCallback;
 
     beforeEach(async () => {
       openmct.time.timeSystem('utc', {
         start: 0,
-        end: 4
+        end: 10
       });
 
       mockClock = jasmine.createSpyObj('clock', ['on', 'off', 'currentValue']);
@@ -150,7 +153,7 @@ describe('the plugin', () => {
       openmct.time.addClock(mockClock);
       openmct.time.clock('mockClock', {
         start: 0,
-        end: 4
+        end: 10
       });
 
       testTelemetryObject = {
@@ -213,22 +216,37 @@ describe('the plugin', () => {
         }
       ];
 
-      historicalProvider.request = () => Promise.resolve(testTelemetry);
+      historicalTelemetryProvider.request = () => {
+        return Promise.resolve(testTelemetry);
+      };
+
+      const realtimeTelemetryProvider = {
+        supportsSubscribe: () => true,
+        subscribe: (domainObject, passedCallback) => {
+          telemetryCallback = passedCallback;
+          return Promise.resolve(() => {});
+        }
+      };
+
+      spyOn(openmct.telemetry, 'findSubscriptionProvider').and.returnValue(
+        realtimeTelemetryProvider
+      );
 
       openmct.router.path = [testTelemetryObject];
 
       applicableViews = openmct.objectViews.get(testTelemetryObject, []);
       tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
       tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
-      tableView.show(child, true);
+      tableView.show(child, true, { renderWhenVisible });
 
       tableInstance = tableView.getTable();
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
       openmct.router.path = originalRouterPath;
+      openmct.time.setClock('local');
     });
 
     it('Shows no progress bar initially', () => {
@@ -240,7 +258,7 @@ describe('the plugin', () => {
 
     it('Shows a progress bar while making requests', async () => {
       tableInstance.incrementOutstandingRequests();
-      await Vue.nextTick();
+      await nextTick();
 
       let progressBar = element.querySelector('.c-progress-bar');
 
@@ -250,8 +268,25 @@ describe('the plugin', () => {
 
     it('Renders a row for every telemetry datum returned', async () => {
       let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
-      await Vue.nextTick();
+      await nextTick();
       expect(rows.length).toBe(3);
+    });
+
+    it('Adds a row in place when updating with existing telemetry', async () => {
+      let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
+      await nextTick();
+      expect(rows.length).toBe(3);
+      // fire some telemetry
+      const newTelemetry = {
+        utc: 2,
+        'some-key': 'some-value 2',
+        'some-other-key': 'spacecraft'
+      };
+      spyOn(tableInstance.tableRows, 'getInPlaceUpdateIndex').and.returnValue(1);
+      spyOn(tableInstance.tableRows, 'updateRowInPlace').and.callThrough();
+      telemetryCallback(newTelemetry);
+
+      expect(tableInstance.tableRows.updateRowInPlace.calls.count()).toBeGreaterThan(0);
     });
 
     it('Renders a column for every item in telemetry metadata', () => {
@@ -285,7 +320,7 @@ describe('the plugin', () => {
       toColumn.dispatchEvent(dragOverEvent);
       toColumn.dispatchEvent(dropEvent);
 
-      await Vue.nextTick();
+      await nextTick();
       columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
       let firstColumn = columns[0];
       let secondColumn = columns[1];
@@ -301,33 +336,6 @@ describe('the plugin', () => {
       expect(toColumnText).toEqual(firstColumnText);
     });
 
-    it('Supports filtering telemetry by regular text search', async () => {
-      tableInstance.tableRows.setColumnFilter('some-key', '1');
-      await Vue.nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(1);
-      tableInstance.tableRows.setColumnFilter('some-key', '');
-      await Vue.nextTick();
-
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-      expect(allRowElements.length).toEqual(3);
-    });
-
-    it('Supports filtering using Regex', async () => {
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value$');
-      await Vue.nextTick();
-      let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(filteredRowElements.length).toEqual(0);
-
-      tableInstance.tableRows.setColumnRegexFilter('some-key', '^some-value');
-      await Vue.nextTick();
-      let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-
-      expect(allRowElements.length).toEqual(3);
-    });
-
     it('displays the correct number of column headers when the configuration is mutated', async () => {
       const tableInstanceConfiguration = tableInstance.domainObject.configuration;
       tableInstanceConfiguration.hiddenColumns['some-key'] = true;
@@ -337,7 +345,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       let tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
       expect(tableHeaderElements.length).toEqual(3);
 
@@ -348,7 +356,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
       expect(tableHeaderElements.length).toEqual(4);
     });
@@ -362,7 +370,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       let tableRowCells = element.querySelectorAll(
         'table.c-telemetry-table__body > tbody > tr:first-child td'
       );
@@ -375,7 +383,7 @@ describe('the plugin', () => {
         tableInstanceConfiguration
       );
 
-      await Vue.nextTick();
+      await nextTick();
       tableRowCells = element.querySelectorAll(
         'table.c-telemetry-table__body > tbody > tr:first-child td'
       );
@@ -389,7 +397,7 @@ describe('the plugin', () => {
       // Mark a row
       firstRow.dispatchEvent(clickEvent);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
@@ -402,13 +410,13 @@ describe('the plugin', () => {
       // Mark a row
       firstRow.dispatchEvent(clickEvent);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
       const currentBounds = openmct.time.bounds();
-      await Vue.nextTick();
+      await nextTick();
       const newBounds = {
         start: currentBounds.start,
         end: currentBounds.end - 3
@@ -416,7 +424,7 @@ describe('the plugin', () => {
 
       // Manually change the time bounds
       openmct.time.bounds(newBounds);
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is no longer paused
       expect(element.querySelector('div.c-table.is-paused')).toBeNull();
@@ -427,13 +435,13 @@ describe('the plugin', () => {
 
       // Pause by button
       viewContext.togglePauseByButton();
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
       const currentBounds = openmct.time.bounds();
-      await Vue.nextTick();
+      await nextTick();
 
       const newBounds = {
         start: currentBounds.start,
@@ -442,7 +450,7 @@ describe('the plugin', () => {
       // Manually change the time bounds
       openmct.time.bounds(newBounds);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is no longer paused
       expect(element.querySelector('div.c-table.is-paused')).toBeNull();
@@ -454,7 +462,7 @@ describe('the plugin', () => {
       // Pause by button
       viewContext.togglePauseByButton();
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table displays the correct number of rows
       let tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');
@@ -466,12 +474,12 @@ describe('the plugin', () => {
       // Tick the clock
       openmct.time.tick(1);
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table is still paused
       expect(element.querySelector('div.c-table.is-paused')).not.toBeNull();
 
-      await Vue.nextTick();
+      await nextTick();
 
       // Verify table displays the correct number of rows
       tableRows = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr');

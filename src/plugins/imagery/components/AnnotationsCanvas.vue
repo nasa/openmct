@@ -33,6 +33,11 @@
 
 <script>
 import Flatbush from 'flatbush';
+import isEqual from 'lodash/isEqual';
+import { toRaw } from 'vue';
+
+import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames';
+
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
 const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
@@ -52,6 +57,7 @@ export default {
       }
     }
   },
+  emits: ['annotation-marquee-started', 'annotations-changed', 'annotation-marquee-finished'],
   data() {
     return {
       dragging: false,
@@ -70,15 +76,15 @@ export default {
         // create a flatbush index for the annotations
         const builtAnnotationsIndex = new Flatbush(this.imageryAnnotations.length);
         this.imageryAnnotations.forEach((annotation) => {
-          const annotationRectangle = annotation.targets[this.keyString].rectangle;
+          const annotationRectangle = annotation.targets.find(
+            (target) => target.keyString === this.keyString
+          )?.rectangle;
           const annotationRectangleForPixelDepth =
             this.transformRectangleToPixelDense(annotationRectangle);
-          const indexNumber = builtAnnotationsIndex.add(
-            annotationRectangleForPixelDepth.x,
-            annotationRectangleForPixelDepth.y,
-            annotationRectangleForPixelDepth.x + annotationRectangleForPixelDepth.width,
-            annotationRectangleForPixelDepth.y + annotationRectangleForPixelDepth.height
+          const { x, y, x2, y2 } = this.transformAnnotationRectangleToFlatbushRectangle(
+            annotationRectangleForPixelDepth
           );
+          const indexNumber = builtAnnotationsIndex.add(x, y, x2, y2);
           this.indexToAnnotationMap[indexNumber] = annotation;
         });
         builtAnnotationsIndex.finish();
@@ -90,8 +96,11 @@ export default {
     }
   },
   watch: {
-    imageryAnnotations() {
-      this.drawAnnotations();
+    imageryAnnotations: {
+      handler() {
+        this.drawAnnotations();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -107,14 +116,44 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
     this.drawAnnotations();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     document.body.removeEventListener('click', this.cancelSelection);
   },
   methods: {
-    onAnnotationChange(annotations) {
-      this.selectedAnnotations = annotations;
-      this.$emit('annotationsChanged', annotations);
+    onAnnotationChange(updatedAnnotations) {
+      updatedAnnotations.forEach((updatedAnnotation) => {
+        // Try to find the annotation in the existing selected annotations
+        const existingIndex = this.selectedAnnotations.findIndex((annotation) =>
+          this.openmct.objects.areIdsEqual(annotation.identifier, updatedAnnotation.identifier)
+        );
+
+        // If found, update it
+        if (existingIndex > -1) {
+          this.selectedAnnotations[existingIndex] = updatedAnnotation;
+        } else {
+          // If not found, add it
+          this.selectedAnnotations.push(updatedAnnotation);
+        }
+      });
+      this.$emit('annotations-changed', this.selectedAnnotations);
+    },
+    transformAnnotationRectangleToFlatbushRectangle(annotationRectangle) {
+      let { x, y, width, height } = annotationRectangle;
+      let x2 = x + width;
+      let y2 = y + height;
+
+      // if height or width are negative, we need to adjust the x and y
+      if (width < 0) {
+        x2 = x;
+        x = x + width;
+      }
+      if (height < 0) {
+        y2 = y;
+        y = y + height;
+      }
+
+      return { x, y, x2, y2 };
     },
     updateSelection(selection) {
       const selectionContext = selection?.[0]?.[0]?.context?.item;
@@ -138,20 +177,23 @@ export default {
       this.prepareExistingAnnotationSelection(incomingSelectedAnnotations);
     },
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      targetDomainObjects[this.keyString] = this.domainObject;
-
-      const targetDetails = {};
+      const targetDetails = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
+        annotation.targets.forEach((target) => {
+          // only add targetDetails if we haven't added it before
+          const targetAlreadyAdded = targetDetails.some((targetDetail) => {
+            return isEqual(targetDetail, toRaw(target));
+          });
+          if (!targetAlreadyAdded) {
+            targetDetails.push(toRaw(target));
+          }
         });
       });
       this.selectedAnnotations = annotations;
       this.drawAnnotations();
 
       return {
-        targetDomainObjects,
+        targetDomainObjects: [this.domainObject],
         targetDetails
       };
     },
@@ -276,9 +318,13 @@ export default {
     cancelSelection(event) {
       if (this.$refs.canvas) {
         const clickedInsideCanvas = this.$refs.canvas.contains(event.target);
+        // unfortunate side effect from possibly being detached from the DOM when
+        // adding/deleting tags, so closest() won't work
+        const clickedTagEditor = Object.values(TagEditorClassNames).some((className) => {
+          return event.target.classList.contains(className);
+        });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
-        const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
-        if (!clickedInsideCanvas && !clickedInsideInspector && !clickedOption) {
+        if (!clickedInsideCanvas && !clickedTagEditor && !clickedInsideInspector) {
           this.newAnnotationRectangle = {};
           this.selectedAnnotations = [];
           this.drawAnnotations();
@@ -288,10 +334,9 @@ export default {
     createNewAnnotation() {
       this.dragging = false;
       this.selectedAnnotations = [];
+      this.selectedAnnotations = [];
+      this.$emit('annotation-marquee-finished');
 
-      const targetDomainObjects = {};
-      targetDomainObjects[this.keyString] = this.domainObject;
-      const targetDetails = {};
       const rectangleFromCanvas = {
         x: this.newAnnotationRectangle.x,
         y: this.newAnnotationRectangle.y,
@@ -299,18 +344,22 @@ export default {
         height: this.newAnnotationRectangle.height
       };
       const rectangleWithoutPixelScale = this.transformRectangleFromPixelDense(rectangleFromCanvas);
-      targetDetails[this.keyString] = {
-        rectangle: rectangleWithoutPixelScale,
-        time: this.image.time
-      };
+      const targetDetails = [
+        {
+          rectangle: rectangleWithoutPixelScale,
+          time: this.image.time,
+          keyString: this.keyString
+        }
+      ];
       this.selectImageAnnotations({
         targetDetails,
-        targetDomainObjects,
+        targetDomainObjects: [this.domainObject],
         annotations: []
       });
     },
     attemptToSelectExistingAnnotation(event) {
       this.dragging = false;
+      this.$emit('annotation-marquee-finished');
       // use flatbush to find annotations that are close to the click
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;
@@ -322,12 +371,13 @@ export default {
         const resultIndicies = this.annotationsIndex.search(x, y, x, y);
         resultIndicies.forEach((resultIndex) => {
           const foundAnnotation = this.indexToAnnotationMap[resultIndex];
-          if (foundAnnotation._deleted) {
-            return;
-          }
           nearbyAnnotations.push(foundAnnotation);
         });
-        //show annotations if some were found
+        //if everything has been deleted, don't bother with the selection
+        const allAnnotationsDeleted = nearbyAnnotations.every((annotation) => annotation._deleted);
+        if (allAnnotationsDeleted) {
+          nearbyAnnotations = [];
+        }
         const { targetDomainObjects, targetDetails } =
           this.prepareExistingAnnotationSelection(nearbyAnnotations);
         this.selectImageAnnotations({
@@ -373,7 +423,7 @@ export default {
       return selection;
     },
     startAnnotationDrag(event) {
-      this.$emit('annotationMarqueed');
+      this.$emit('annotation-marquee-started');
       this.newAnnotationRectangle = {};
       const boundingRect = this.canvas.getBoundingClientRect();
       const scaleX = this.canvas.width / boundingRect.width;
@@ -396,25 +446,39 @@ export default {
     },
     drawAnnotations() {
       this.clearCanvas();
+      let drawnRectangles = [];
       this.imageryAnnotations.forEach((annotation) => {
         if (annotation._deleted) {
           return;
         }
-        const rectangleForPixelDensity = this.transformRectangleToPixelDense(
-          annotation.targets[this.keyString].rectangle
+        const annotationRectangle = annotation.targets.find(
+          (target) => target.keyString === this.keyString
+        )?.rectangle;
+
+        // Check if the rectangle has already been drawn
+        const hasBeenDrawn = drawnRectangles.some(
+          (drawnRect) =>
+            drawnRect.x === annotationRectangle.x &&
+            drawnRect.y === annotationRectangle.y &&
+            drawnRect.width === annotationRectangle.width &&
+            drawnRect.height === annotationRectangle.height
         );
-        if (this.isSelectedAnnotation(annotation)) {
-          this.drawRectInCanvas(
-            rectangleForPixelDensity,
-            SELECTED_ANNOTATION_FILL_STYLE,
-            SELECTED_ANNOTATION_STROKE_COLOR
-          );
-        } else {
-          this.drawRectInCanvas(
-            rectangleForPixelDensity,
-            EXISTING_ANNOTATION_FILL_STYLE,
-            EXISTING_ANNOTATION_STROKE_STYLE
-          );
+        if (!hasBeenDrawn) {
+          const rectangleForPixelDensity = this.transformRectangleToPixelDense(annotationRectangle);
+          if (this.isSelectedAnnotation(annotation)) {
+            this.drawRectInCanvas(
+              rectangleForPixelDensity,
+              SELECTED_ANNOTATION_FILL_STYLE,
+              SELECTED_ANNOTATION_STROKE_COLOR
+            );
+          } else {
+            this.drawRectInCanvas(
+              rectangleForPixelDensity,
+              EXISTING_ANNOTATION_FILL_STYLE,
+              EXISTING_ANNOTATION_STROKE_STYLE
+            );
+          }
+          drawnRectangles.push(annotationRectangle);
         }
       });
     }
