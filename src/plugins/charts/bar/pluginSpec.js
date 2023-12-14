@@ -309,7 +309,6 @@ describe('the plugin', function () {
 
       const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
       expect(plotElement).not.toBeNull();
-      barGraphView.destroy();
     });
   });
 
