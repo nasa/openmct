@@ -217,7 +217,6 @@ describe('the plugin', function () {
           'someNamespace:~OpenMCT~outer.test-object.foo.bar'
         ].name
       ).toEqual('A Dotful Object');
-      barGraphView.destroy();
     });
   });
 
