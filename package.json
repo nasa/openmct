@@ -2,6 +2,7 @@
   "name": "openmct",
   "version": "3.3.0-next",
   "description": "The Open MCT core platform",
+  "main": "dist/openmct.js",
   "devDependencies": {
     "@babel/eslint-parser": "7.22.5",
     "@braintree/sanitize-url": "6.0.4",
