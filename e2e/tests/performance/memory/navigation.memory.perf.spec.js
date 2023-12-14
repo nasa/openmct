@@ -50,16 +50,28 @@ test.describe('Navigation memory leak is not detected in', () => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.locator('a:has-text("My Items")').click({
-      button: 'right'
-    });
+    await page
+      .getByRole('treeitem', {
+        name: /My Items/
+      })
+      .click({
+        button: 'right'
+      });
 
-    await page.locator('text=Import from JSON').click();
+    await page
+      .getByRole('menuitem', {
+        name: /Import from JSON/
+      })
+      .click();
 
     // Upload memory-leak-detection.json
     await page.setInputFiles('#fileElem', memoryLeakFilePath);
 
-    await page.locator('text=OK').click();
+    await page
+      .getByRole('button', {
+        name: 'Save'
+      })
+      .click();
 
     await expect(page.locator('a:has-text("Memory Leak Detection")')).toBeVisible();
   });
@@ -277,15 +289,12 @@ test.describe('Navigation memory leak is not detected in', () => {
    * @returns
    */
   async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
     // Fill Search input
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill(objectName);
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill(objectName);
 
     //Search Result Appears and is clicked
-    await Promise.all([
-      page.locator(`div.c-gsearch-result__title:has-text("${objectName}")`).first().click(),
-      page.waitForNavigation()
-    ]);
+    await page.getByText(objectName, { exact: true }).click();
 
     // Register a finalization listener on the root node for the view. This tends to be the last thing to be
     // garbage collected since it has either direct or indirect references to all resources used by the view. Therefore it's a pretty good proxy
@@ -303,8 +312,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     });
 
     // Nav back to folder
-    await page.goto('./#/browse/mine', { waitUntil: 'networkidle' });
-    await page.waitForNavigation();
+    await page.goto('./#/browse/mine');
 
     // This next code block blocks until the finalization listener is called and the gcPromise resolved. This means that the root node for the view has been garbage collected.
     // In the event that the root node is not garbage collected, the gcPromise will never resolve and the test will time out.
