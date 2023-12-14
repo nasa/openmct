@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,45 +19,50 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import AbstractStatusIndicator from '../AbstractStatusIndicator';
 import PollQuestionComponent from './PollQuestion.vue';
 
 export default class PollQuestionIndicator extends AbstractStatusIndicator {
-    createPopupComponent() {
-        const indicator = this.getIndicator();
-        const pollQuestionElement = new Vue({
-            components: {
-                PollQuestion: PollQuestionComponent
-            },
-            provide: {
-                openmct: this.openmct,
-                indicator: indicator,
-                configuration: this.getConfiguration()
-            },
-            data() {
-                return {
-                    positionX: 0,
-                    positionY: 0
-                };
-            },
-            template: '<poll-question :positionX="positionX" :positionY="positionY" />'
-        }).$mount();
+  createPopupComponent() {
+    const indicator = this.getIndicator();
+    const { vNode } = mount(
+      {
+        components: {
+          PollQuestion: PollQuestionComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          indicator: indicator,
+          configuration: this.getConfiguration()
+        },
+        data() {
+          return {
+            positionX: 0,
+            positionY: 0
+          };
+        },
+        template: '<poll-question :positionX="positionX" :positionY="positionY" />'
+      },
+      {
+        app: this.openmct.app
+      }
+    );
 
-        return pollQuestionElement;
-    }
+    return vNode.componentInstance;
+  }
 
-    createIndicator() {
-        const pollQuestionIndicator = this.openmct.indicators.simpleIndicator();
+  createIndicator() {
+    const pollQuestionIndicator = this.openmct.indicators.simpleIndicator();
 
-        pollQuestionIndicator.text("Poll Question");
-        pollQuestionIndicator.description("Set the current poll question");
-        pollQuestionIndicator.iconClass('icon-status-poll-edit');
-        pollQuestionIndicator.element.classList.add("c-indicator--operator-status");
-        pollQuestionIndicator.element.classList.add("no-minify");
-        pollQuestionIndicator.on('click', this.showPopup);
+    pollQuestionIndicator.text('No Poll Question');
+    pollQuestionIndicator.description('Set the current poll question');
+    pollQuestionIndicator.iconClass('icon-status-poll-edit');
+    pollQuestionIndicator.element.classList.add('c-indicator--operator-status');
+    pollQuestionIndicator.element.classList.add('no-minify');
+    pollQuestionIndicator.on('click', this.showPopup);
 
-        return pollQuestionIndicator;
-    }
+    return pollQuestionIndicator;
+  }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,16 +21,16 @@
  *****************************************************************************/
 
 export default function createExampleUser(UserClass) {
-    return class ExampleUser extends UserClass {
-        constructor(id, name, roles) {
-            super(id, name);
+  return class ExampleUser extends UserClass {
+    constructor(id, name, roles) {
+      super(id, name);
 
-            this.roles = roles;
-            this.getRoles = this.getRoles.bind(this);
-        }
+      this.roles = roles;
+      this.getRoles = this.getRoles.bind(this);
+    }
 
-        getRoles() {
-            return this.roles;
-        }
-    };
+    getRoles() {
+      return this.roles;
+    }
+  };
 }

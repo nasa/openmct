@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,57 +21,57 @@
  *****************************************************************************/
 
 function updateLatestTimeStamp(timestamp, timeSystems) {
-    let latest = {};
+  let latest = {};
 
-    timeSystems.forEach(timeSystem => {
-        latest[timeSystem.key] = timestamp[timeSystem.key];
-    });
+  timeSystems.forEach((timeSystem) => {
+    latest[timeSystem.key] = timestamp[timeSystem.key];
+  });
 
-    return latest;
+  return latest;
 }
 
 export function getLatestTimestamp(
-    currentTimestamp,
-    compareTimestamp,
-    timeSystems,
-    currentTimeSystem
+  currentTimestamp,
+  compareTimestamp,
+  timeSystems,
+  currentTimeSystem
 ) {
-    let latest = { ...currentTimestamp };
-    const compare = { ...compareTimestamp };
-    const key = currentTimeSystem.key;
+  let latest = { ...currentTimestamp };
+  const compare = { ...compareTimestamp };
+  const key = currentTimeSystem.key;
 
-    if (!latest || !latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems);
-    }
+  if (!latest || !latest[key]) {
+    latest = updateLatestTimeStamp(compare, timeSystems);
+  }
 
-    if (compare[key] > latest[key]) {
-        latest = updateLatestTimeStamp(compare, timeSystems);
-    }
+  if (compare[key] > latest[key]) {
+    latest = updateLatestTimeStamp(compare, timeSystems);
+  }
 
-    return latest;
+  return latest;
 }
 
-export function subscribeForStaleness(callback, timeout) {
-    let stalenessTimer = setTimeout(() => {
-        clearTimeout(stalenessTimer);
-        callback();
-    }, timeout);
+export function checkIfOld(callback, timeout) {
+  let oldCheckTimer = setTimeout(() => {
+    clearTimeout(oldCheckTimer);
+    callback();
+  }, timeout);
 
-    return {
-        update: (data) => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
-            }
+  return {
+    update: (data) => {
+      if (oldCheckTimer) {
+        clearTimeout(oldCheckTimer);
+      }
 
-            stalenessTimer = setTimeout(() => {
-                clearTimeout(stalenessTimer);
-                callback(data);
-            }, timeout);
-        },
-        clear: () => {
-            if (stalenessTimer) {
-                clearTimeout(stalenessTimer);
-            }
-        }
-    };
+      oldCheckTimer = setTimeout(() => {
+        clearTimeout(oldCheckTimer);
+        callback(data);
+      }, timeout);
+    },
+    clear: () => {
+      if (oldCheckTimer) {
+        clearTimeout(oldCheckTimer);
+      }
+    }
+  };
 }

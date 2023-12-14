@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,23 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementViewProvider from './FaultManagementViewProvider';
-import FaultManagementObjectProvider from './FaultManagementObjectProvider';
+import { FAULT_MANAGEMENT_NAMESPACE, FAULT_MANAGEMENT_TYPE } from './constants';
 import FaultManagementInspectorViewProvider from './FaultManagementInspectorViewProvider';
-
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_NAMESPACE } from './constants';
+import FaultManagementObjectProvider from './FaultManagementObjectProvider';
+import FaultManagementViewProvider from './FaultManagementViewProvider';
 
 export default function FaultManagementPlugin() {
-    return function (openmct) {
-        openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
-            name: 'Fault Management',
-            creatable: false,
-            description: 'Fault Management View',
-            cssClass: 'icon-bell'
-        });
+  return function (openmct) {
+    openmct.types.addType(FAULT_MANAGEMENT_TYPE, {
+      name: 'Fault Management',
+      creatable: false,
+      description: 'Fault Management View',
+      cssClass: 'icon-bell'
+    });
 
-        openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
-        openmct.objects.addProvider(FAULT_MANAGEMENT_NAMESPACE, new FaultManagementObjectProvider(openmct));
-    };
+    openmct.objectViews.addProvider(new FaultManagementViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new FaultManagementInspectorViewProvider(openmct));
+    openmct.objects.addProvider(
+      FAULT_MANAGEMENT_NAMESPACE,
+      new FaultManagementObjectProvider(openmct)
+    );
+  };
 }

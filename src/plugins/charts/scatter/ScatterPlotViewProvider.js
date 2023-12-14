@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,60 +20,69 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ScatterPlotView from './ScatterPlotView.vue';
+import mount from 'utils/mount';
+
 import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW, TIME_STRIP_KEY } from './scatterPlotConstants.js';
-import Vue from 'vue';
+import ScatterPlotView from './ScatterPlotView.vue';
 
 export default function ScatterPlotViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === TIME_STRIP_KEY);
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === TIME_STRIP_KEY);
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: SCATTER_PLOT_VIEW,
-        name: 'Scatter Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
+  return {
+    key: SCATTER_PLOT_VIEW,
+    name: 'Scatter Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject && domainObject.type === SCATTER_PLOT_KEY;
+    },
+
+    canEdit(domainObject, objectPath) {
+      return domainObject && domainObject.type === SCATTER_PLOT_KEY;
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const isCompact = isCompactView(objectPath);
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ScatterPlotView
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<scatter-plot-view :options="options"></scatter-plot-view>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-
-        canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
-        },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            ScatterPlotView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<scatter-plot-view :options="options"></scatter-plot-view>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

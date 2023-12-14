@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,15 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['vue'], function (Vue) {
-    function VueView(options) {
-        const vm = new Vue(options);
-        this.show = function (container) {
-            container.appendChild(vm.$mount().$el);
-        };
+import mount from 'utils/mount';
+export default function () {
+  return function VueView(options) {
+    const { vNode, destroy } = mount(options);
 
-        this.destroy = vm.$destroy.bind(vm);
-    }
+    this.show = function (container) {
+      container.appendChild(vNode.el);
+    };
 
-    return VueView;
-});
+    this.destroy = destroy;
+  };
+}

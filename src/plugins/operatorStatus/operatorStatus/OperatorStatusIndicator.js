@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,45 +19,50 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import AbstractStatusIndicator from '../AbstractStatusIndicator';
 import OperatorStatusComponent from './OperatorStatus.vue';
 
 export default class OperatorStatusIndicator extends AbstractStatusIndicator {
-    createPopupComponent() {
-        const indicator = this.getIndicator();
-        const popupElement = new Vue({
-            components: {
-                OperatorStatus: OperatorStatusComponent
-            },
-            provide: {
-                openmct: this.openmct,
-                indicator: indicator,
-                configuration: this.getConfiguration()
-            },
-            data() {
-                return {
-                    positionX: 0,
-                    positionY: 0
-                };
-            },
-            template: '<operator-status :positionX="positionX" :positionY="positionY" />'
-        }).$mount();
+  createPopupComponent() {
+    const indicator = this.getIndicator();
+    const { vNode } = mount(
+      {
+        components: {
+          OperatorStatus: OperatorStatusComponent
+        },
+        provide: {
+          openmct: this.openmct,
+          indicator: indicator,
+          configuration: this.getConfiguration()
+        },
+        data() {
+          return {
+            positionX: 0,
+            positionY: 0
+          };
+        },
+        template: '<operator-status :positionX="positionX" :positionY="positionY" />'
+      },
+      {
+        app: this.openmct.app
+      }
+    );
 
-        return popupElement;
-    }
+    return vNode.componentInstance;
+  }
 
-    createIndicator() {
-        const operatorIndicator = this.openmct.indicators.simpleIndicator();
+  createIndicator() {
+    const operatorIndicator = this.openmct.indicators.simpleIndicator();
 
-        operatorIndicator.text("My Operator Status");
-        operatorIndicator.description("Set my operator status");
-        operatorIndicator.iconClass('icon-status-poll-question-mark');
-        operatorIndicator.element.classList.add("c-indicator--operator-status");
-        operatorIndicator.element.classList.add("no-minify");
-        operatorIndicator.on('click', this.showPopup);
+    operatorIndicator.text('My Operator Status');
+    operatorIndicator.description('Set my operator status');
+    operatorIndicator.iconClass('icon-status-poll-question-mark');
+    operatorIndicator.element.classList.add('c-indicator--operator-status');
+    operatorIndicator.element.classList.add('no-minify');
+    operatorIndicator.on('click', this.showPopup);
 
-        return operatorIndicator;
-    }
+    return operatorIndicator;
+  }
 }

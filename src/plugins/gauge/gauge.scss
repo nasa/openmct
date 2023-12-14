@@ -11,10 +11,16 @@ $meterNeedleBorderRadius: 5px;
   width: 20px;
 
   &.invalid,
-  &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
+  &.invalid.req {
+    @include validationState($glyph-icon-x, $colorFormInvalid);
+  }
   &.valid,
-  &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
-  &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
+  &.valid.req {
+    @include validationState($glyph-icon-check, $colorFormValid);
+  }
+  &.req {
+    @include validationState($glyph-icon-asterisk, $colorFormRequired);
+  }
 }
 
 .c-gauge {
@@ -32,6 +38,15 @@ $meterNeedleBorderRadius: 5px;
   &__wrapper {
     @include abs();
     overflow: hidden;
+
+    &.is-stale {
+      @include isStaleHolder();
+
+      [class*='__current-value-text'] {
+        fill: $colorTelemStale;
+        font-style: italic;
+      }
+    }
   }
 
   &__current-value-text-wrapper {

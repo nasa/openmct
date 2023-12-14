@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,3 +22,6 @@
 
 export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
 export const NO_PROVIDER_ERROR = 'No user provider has been set.';
+
+export const ACTIVE_ROLE_LOCAL_STORAGE_KEY = 'ACTIVE_USER_ROLE';
+export const ACTIVE_ROLE_BROADCAST_CHANNEL_NAME = 'ActiveRoleChannel';

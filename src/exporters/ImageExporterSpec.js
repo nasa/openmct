@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,39 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageExporter from './ImageExporter';
 import { createOpenMct, resetApplicationState } from '../utils/testing';
+import ImageExporter from './ImageExporter';
 
 describe('The Image Exporter', () => {
-    let openmct;
-    let imageExporter;
+  let openmct;
+  let imageExporter;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  describe('basic instantiation', () => {
+    it('can be instantiated', () => {
+      imageExporter = new ImageExporter(openmct);
+
+      expect(imageExporter).not.toEqual(null);
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('can render an element to a blob', async () => {
+      const mockHeadElement = document.createElement('h1');
+      const mockTextNode = document.createTextNode('foo bar');
+      mockHeadElement.appendChild(mockTextNode);
+      document.body.appendChild(mockHeadElement);
+      imageExporter = new ImageExporter(openmct);
+      const returnedBlob = await imageExporter.renderElement(document.body, {
+        imageType: 'png'
+      });
+      expect(returnedBlob).not.toEqual(null);
+      expect(returnedBlob.blob).not.toEqual(null);
+      expect(returnedBlob.blob).toBeInstanceOf(Blob);
     });
-
-    describe("basic instatation", () => {
-        it("can be instatiated", () => {
-            imageExporter = new ImageExporter(openmct);
-
-            expect(imageExporter).not.toEqual(null);
-        });
-        it("can render an element to a blob", async () => {
-            const mockHeadElement = document.createElement("h1");
-            const mockTextNode = document.createTextNode('foo bar');
-            mockHeadElement.appendChild(mockTextNode);
-            document.body.appendChild(mockHeadElement);
-            imageExporter = new ImageExporter(openmct);
-            const returnedBlob = await imageExporter.renderElement(document.body, {
-                imageType: 'png'
-            });
-            expect(returnedBlob).not.toEqual(null);
-            expect(returnedBlob.blob).not.toEqual(null);
-            expect(returnedBlob.blob).toBeInstanceOf(Blob);
-        });
-    });
+  });
 });

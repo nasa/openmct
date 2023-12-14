@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,794 +21,876 @@
  *****************************************************************************/
 /********************************************************************* PLOTS */
 mct-plot {
-    display: contents;
+  display: contents;
 }
 
 /*********************** STACKED PLOT LAYOUT */
 .is-editing {
-    .gl-plot.child-frame {
-        @include hover {
-            background: rgba($editUIColorBg, 0.1);
-            box-shadow: inset rgba($editUIColorBg, 0.3) 0 0 0 1px;
-        }
-
-        &[s-selected] {
-            background: rgba($editUIColorBg, 0.2);
-            box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
-            z-index: 2;
-        }
+  .gl-plot.child-frame {
+    @include hover {
+      background: rgba($editUIColorBg, 0.1);
+      box-shadow: inset rgba($editUIColorBg, 0.3) 0 0 0 1px;
     }
 
-    .plot-wrapper-axis-and-display-area {
-        pointer-events: none;
+    &[s-selected] {
+      background: rgba($editUIColorBg, 0.2);
+      box-shadow: inset rgba($editUIColorBg, 0.8) 0 0 0 1px;
+      z-index: 2;
     }
+  }
+
+  .plot-wrapper-axis-and-display-area {
+    pointer-events: none;
+  }
 }
 
 .c-plot,
 .gl-plot {
-        .s-status-taking-snapshot & {
-        .c-control-bar {
-            display: none;
-        }
-        .gl-plot-x-label__select,
-        .gl-plot-y-label__select {
-            display: none;
-        }
+  .s-status-taking-snapshot & {
+    .c-control-bar {
+      display: none;
     }
+    .gl-plot-x-label__select,
+    .gl-plot-y-label__select {
+      display: none;
+    }
+  }
 
-    /*********************** MISSING ITEM INDICATORS */
-    .is-status__indicator {
-        font-size: 0.8em;
-    }
+  /*********************** MISSING ITEM INDICATORS */
+  .is-status__indicator {
+    font-size: 0.8em;
+  }
 }
 
 .c-plot {
-    @include abs($mainViewPad);
+  @include abs($mainViewPad);
+  display: flex;
+  overflow: hidden;
+  min-height: $plotMinH;
+
+  .c-control-bar {
+    flex: 0 0 auto;
+    margin-bottom: $interiorMargin;
+  }
+
+  .l-view-section {
     display: flex;
-    overflow: hidden;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  &.is-stale {
+    @include isStaleHolder();
+  }
+
+  .c-plot--stacked-container {
+    border: 1px solid transparent;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
     min-height: $plotMinH;
+    overflow: hidden;
 
-    .c-control-bar {
-        flex: 0 0 auto;
-        margin-bottom: $interiorMargin;
+    &[s-selected] {
+      .is-editing & {
+        border: $editMarqueeBorder;
+      }
     }
+  }
+  &--stacked {
+    min-height: auto !important;
 
-    .l-view-section {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .c-plot--stacked-container {
-        border: 1px solid transparent;
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-        min-height: $plotMinH;
-        overflow: hidden;
-
-        &[s-selected] {
-            .is-editing & {
-                border: $editMarqueeBorder;
-            }
-        }
-    }
-;
-
-    &--stacked {
-        min-height: auto !important;
-
-        .child-frame {
-            .has-control-bar {
-                .c-control-bar {
-                    // Hides buttons per plot element in a stacked plot
-                    display: none;
-                }
-            }
-
-            mct-plot {
-                display: flex;
-                flex: 1 1 auto;
-                height: 100%;
-                position: relative;
-            }
-            flex: 1 1 auto;
-        }
-
-        .s-status-timeconductor-unsynced .holder-plot {
-            .t-object-alert.t-alert-unsynced {
-                display: block;
-            }
-        }
-    }
-
-    .--width-less-than-600 & {
+    .child-frame {
+      .has-control-bar {
         .c-control-bar {
-            display: none;
+          // Hides buttons per plot element in a stacked plot
+          display: none;
         }
+      }
+
+      mct-plot {
+        display: flex;
+        flex: 1 1 auto;
+        height: 100%;
+        position: relative;
+      }
+      flex: 1 1 auto;
     }
+
+    .s-status-timeconductor-unsynced .holder-plot {
+      .t-object-alert.t-alert-unsynced {
+        display: block;
+      }
+    }
+  }
+
+  .--width-less-than-600 & {
+    .c-control-bar {
+      display: none;
+    }
+  }
 }
 
 .gl-plot {
-    display: flex;
+  display: flex;
+  flex: 1 1 auto;
+
+  /*********************** AXIS AND DISPLAY AREA */
+  .plot-wrapper-axis-and-display-area {
+    position: relative;
     flex: 1 1 auto;
+    //min-height: $plotMinH;
+  }
 
-    /*********************** AXIS AND DISPLAY AREA */
-    .plot-wrapper-axis-and-display-area {
-        position: relative;
-        flex: 1 1 auto;
-        //min-height: $plotMinH;
+  .gl-plot-wrapper-display-area-and-x-axis {
+    // Holds the plot area and the X-axis only
+    position: absolute;
+    top: nth($plotDisplayArea, 1);
+    right: 0;
+    bottom: 0;
+    left: nth($plotDisplayArea, 4);
+
+    .gl-plot-display-area {
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: nth($plotDisplayArea, 3);
+      left: 0;
     }
 
-    .gl-plot-wrapper-display-area-and-x-axis {
-        // Holds the plot area and the X-axis only
-        position: absolute;
-        top: nth($plotDisplayArea, 1);
-        right:0;
-        bottom: 0;
-        left: nth($plotDisplayArea, 4);
-
-        .gl-plot-display-area {
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: nth($plotDisplayArea, 3);
-            left: 0;
-        }
-
-        .gl-plot-chart-area, .gl-plot-chart-wrapper {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-        .alt-pressed {
-            // When alt is being pressed and user is hovering over the plot, set the cursor
-            @include cursorGrab();
-        }
-
-        .gl-plot-axis-area.gl-plot-x {
-            top: auto;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            height: $plotXBarH;
-            width: auto;
-            overflow: hidden;
-        }
+    .gl-plot-chart-area,
+    .gl-plot-chart-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    .alt-pressed {
+      // When alt is being pressed and user is hovering over the plot, set the cursor
+      @include cursorGrab();
     }
 
-    .gl-plot-axis-area {
-        position: absolute;
-        &.gl-plot-y {
-            top: nth($plotDisplayArea, 1);
-            right: auto;
-            bottom: nth($plotDisplayArea, 3);
-            left: 0;
-            width: $plotYBarW;
+    .gl-plot-axis-area.gl-plot-x {
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: $plotXBarH;
+      width: auto;
+      overflow: hidden;
+    }
+  }
 
-            &:hover {
-                .gl-plot-y-label__select {
-                    display: block;
-                }
-            }
-        }
+  .gl-plot-axis-area {
+    position: absolute;
+    &.gl-plot-y {
+      top: nth($plotDisplayArea, 1);
+      right: auto;
+      bottom: nth($plotDisplayArea, 3);
+      left: 0;
+      width: $plotYBarW;
 
-        &.gl-plot-x {
-            @include hover {
-                .gl-plot-x-label__select {
-                    display: block;
-                }
-            }
+      &:hover {
+        .gl-plot-y-label__select {
+          display: block;
         }
+      }
     }
 
-    .gl-plot-coords {
-        // This does not appear to be in use in Open MCT
-        box-sizing: border-box;
-        border-radius: $controlCr;
-        background: black;
-        padding: 2px 5px;
-        position: absolute;
-        top: nth($plotDisplayArea,1) + $interiorMarginLg;
-        right: auto;
-        bottom: auto;
-        left: nth($plotDisplayArea,4) + $interiorMarginLg;
-        z-index: 10;
-        &:empty {
-            display: none;
+    &.gl-plot-x {
+      @include hover {
+        .gl-plot-x-label__select {
+          display: block;
         }
+      }
+    }
+  }
+
+  .gl-plot-coords {
+    // This does not appear to be in use in Open MCT
+    box-sizing: border-box;
+    border-radius: $controlCr;
+    background: black;
+    padding: 2px 5px;
+    position: absolute;
+    top: nth($plotDisplayArea, 1) + $interiorMarginLg;
+    right: auto;
+    bottom: auto;
+    left: nth($plotDisplayArea, 4) + $interiorMarginLg;
+    z-index: 10;
+    &:empty {
+      display: none;
+    }
+  }
+
+  .gl-plot-ticks,
+  .gl-plot-tick-wrapper {
+    height: 100%;
+  }
+
+  .gl-plot-label,
+  .l-plot-label {
+    position: absolute;
+    text-align: center;
+
+    &.gl-plot-x-label,
+    &.l-plot-x-label {
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: auto;
     }
 
-    .gl-plot-ticks, .gl-plot-tick-wrapper {
-        height: 100%;
+    &.gl-plot-y-label {
+      display: flex;
+      left: 0;
+      right: auto;
+      bottom: 0;
+      text-orientation: mixed;
+      writing-mode: vertical-lr;
+      //z-index allows clicking on visibility icon
+      z-index: 2;
+
+      .icon-gear-after:after {
+        // Icon denoting configurability
+        margin-top: $interiorMargin; // Uses margin-top due to writing-mode
+      }
+
+      .icon-eye-open:before,
+      .icon-eye-disabled:before {
+        padding-top: 5px;
+      }
+
+      .plot-series-color-swatch {
+        @include colorSwatch();
+        display: inline-block;
+        flex: 0 0 auto;
+        margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
+      }
+    }
+  }
+  .gl-plot-y-label-swatch-container {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+  }
+  .plot-yaxis-right {
+    &.gl-plot-y {
+      margin-left: 100%;
     }
 
-    .gl-plot-label,
-    .l-plot-label {
-        position: absolute;
-        text-align: center;
-
-        &.gl-plot-x-label,
-        &.l-plot-x-label {
-            top: auto;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            height: auto;
-        }
-
-        &.gl-plot-y-label {
-            display: block;
-            left: 0; top: 0; right: auto; bottom: 0;
-            text-orientation: mixed;
-            writing-mode: vertical-lr;
-            &:before {
-                // Icon denoting configurability
-                margin-bottom: $interiorMargin; // Uses margin-bottom due to writing-mode
-            }
-        }
-    }
-
-    .gl-plot-x-label__select {
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%);
-        z-index: 10;
+    .gl-plot-label {
+      &.gl-plot-y-label {
+        left: auto;
+        right: 0;
+      }
     }
 
     .gl-plot-y-label__select {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 0;
-        z-index: 10;
+      left: 0;
+      right: auto;
+    }
+  }
+
+  .gl-plot-x-label__select {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .gl-plot-y-label__select {
+    position: absolute;
+    bottom: 2%;
+    transform: translateY(-50%);
+    left: 0;
+    z-index: 10;
+  }
+
+  .gl-plot-x-options,
+  .gl-plot-y-options {
+    $h: 24px;
+    position: absolute;
+    height: $h;
+    min-height: $h;
+    z-index: 2;
+  }
+
+  .gl-plot-x-options {
+    transform: translateX(-50%);
+    bottom: 0;
+    left: 50%;
+  }
+
+  .gl-plot-y-options {
+    transform: translateY(-50%);
+    min-width: 150px; // Need this due to enclosure of .select
+    top: 50%;
+    left: $plotYLabelW + $interiorMargin * 2;
+  }
+
+  .t-plot-display-controls {
+    position: absolute;
+    top: $interiorMargin;
+    right: $interiorMargin;
+  }
+
+  .gl-plot-hash {
+    position: absolute;
+    opacity: $opacityPlotHash;
+    &.hash-v {
+      border-right: 1px $colorPlotHash $stylePlotHash;
+      height: 100%;
+    }
+    &.hash-h {
+      border-bottom: 1px $colorPlotHash $stylePlotHash;
+      width: 100%;
+    }
+  }
+
+  &__local-controls {
+    // Plot local controls
+    $m: $interiorMargin;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: $m;
+    left: $m;
+    z-index: 9;
+
+    &__reset {
+      transition: right 100ms;
+      top: $m;
+      right: $m;
     }
 
-    .gl-plot-x-options,
-    .gl-plot-y-options {
-        $h: 24px;
-        position: absolute;
-        height: $h;
-        min-height: $h;
-        z-index: 2;
+    &__zoom-and-guides {
+      top: $m;
+      right: $m;
     }
 
-    .gl-plot-x-options {
-        transform: translateX(-50%);
-        bottom: 0;
-        left: 50%;
+    .c-button {
+      box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
+    }
+  }
+
+  .l-state-indicators {
+    color: $colorPausedBg;
+    position: absolute;
+    cursor: help;
+    font-size: 1.2em;
+    bottom: $interiorMarginSm;
+    left: $interiorMarginSm;
+    z-index: 2;
+
+    > * + * {
+      margin-left: $interiorMarginSm;
     }
 
-    .gl-plot-y-options {
-        transform: translateY(-50%);
-        min-width: 150px; // Need this due to enclosure of .select
-        top: 50%;
-        left: $plotYLabelW + $interiorMargin * 2;
+    .t-alert-unsynced {
+      display: none;
     }
-
-    .t-plot-display-controls {
-        position: absolute;
-        top: $interiorMargin;
-        right: $interiorMargin;
-    }
-
-    .gl-plot-hash {
-        position: absolute;
-        opacity: $opacityPlotHash;
-        &.hash-v {
-            border-right: 1px $colorPlotHash $stylePlotHash;
-            height: 100%;
-        }
-        &.hash-h {
-            border-bottom: 1px $colorPlotHash $stylePlotHash;
-            width: 100%;
-        }
-    }
-
-    &__local-controls {
-        // Plot local controls
-        $m: $interiorMargin;
-        display: flex;
-        align-items: center;
-        position: absolute;
-        top: $m;
-        left: $m;
-        z-index: 9;
-
-        &__reset {
-            transition: right 100ms;
-            top: $m;
-            right: $m;
-        }
-
-        &__zoom-and-guides {
-            top: $m;
-            right: $m;
-        }
-
-        .c-button {
-            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        }
-    }
-
-    .l-state-indicators {
-        color: $colorPausedBg;
-        position: absolute;
-        cursor: help;
-        font-size: 1.2em;
-        bottom: $interiorMarginSm;
-        left: $interiorMarginSm;
-        z-index: 2;
-
-        > * + * {
-            margin-left: $interiorMarginSm;
-        }
-
-        .t-alert-unsynced {
-            display: none;
-        }
-    }
+  }
 }
 
 .gl-plot-display-area,
 .plot-display-area {
-    @if $colorPlotBg != none {
-        background-color: $colorPlotBg;
-    }
-    cursor: crosshair;
-    border: 1px solid $colorPlotAreaBorder;
+  @if $colorPlotBg != none {
+    background-color: $colorPlotBg;
+  }
+  cursor: crosshair;
+  border: 1px solid $colorPlotAreaBorder;
 }
 
 .tick {
-    position: absolute;
-    border: 0 $colorPlotHash solid;
-    &.tick-x {
-        border-right-width: 1px;
-        height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
-    }
+  position: absolute;
+  border: 0 $colorPlotHash solid;
+  &.tick-x {
+    border-right-width: 1px;
+    height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
+  }
 }
 
 .gl-plot-tick,
 .tick-label {
-    @include reverseEllipsis();
-    font-size: 0.7rem;
-    position: absolute;
-    &.gl-plot-x-tick-label,
-    &.tick-label-x {
-        right: auto;
-        bottom: auto;
-        left: auto;
-        height: auto;
-        width: 20%;
-        margin-left: -10%;
-        text-align: center;
-    }
-    &.gl-plot-y-tick-label,
-    &.tick-label-y {
-        top: auto;
-        height: 1em;
-        width: auto;
-        margin-bottom: -0.5em;
-        text-align: right;
-    }
+  @include reverseEllipsis();
+  font-size: 0.7rem;
+  position: absolute;
+  &.gl-plot-x-tick-label,
+  &.tick-label-x {
+    right: auto;
+    bottom: auto;
+    left: auto;
+    height: auto;
+    width: 20%;
+    margin-left: -10%;
+    text-align: center;
+  }
+  &.gl-plot-y-tick-label,
+  &.tick-label-y {
+    top: auto;
+    height: 1em;
+    width: auto;
+    margin-bottom: -0.5em;
+    text-align: right;
+  }
 }
 
 .gl-plot-tick {
-    &.gl-plot-x-tick-label {
-        top: $interiorMarginSm;
-    }
-    &.gl-plot-y-tick-label {
-        right: $interiorMarginSm;
-        left: auto;
-    }
+  &.gl-plot-x-tick-label {
+    top: $interiorMarginSm;
+  }
+  &.gl-plot-y-tick-label {
+    right: $interiorMarginSm;
+    left: auto;
+  }
 }
 
+.plot-yaxis-right {
+  .gl-plot-tick {
+    &.gl-plot-y-tick-label {
+      left: $interiorMarginSm;
+      right: auto;
+    }
+  }
+}
 .tick-label {
-    &.tick-label-x {
-        top: 0;
-    }
-    &.tick-label-y {
-        right: 0;
-        left: 0;
-    }
+  &.tick-label-x {
+    top: 0;
+  }
+  &.tick-label-y {
+    right: 0;
+    left: 0;
+  }
 }
 
 .export-plot {
-    $bg: white;
-    $fg: black;
-    $gry: #999;
+  $bg: white;
+  $fg: black;
+  $gry: #999;
 
-    background: $bg !important;
-    z-index: -10;
+  background: $bg !important;
+  z-index: -10;
 
-    .l-view-section {
-        .s-status-timeconductor-unsynced .holder-plot {
-            .t-object-alert.t-alert-unsynced {
-                display: none;
-            }
-        }
+  .l-view-section {
+    .s-status-timeconductor-unsynced .holder-plot {
+      .t-object-alert.t-alert-unsynced {
+        display: none;
+      }
     }
+  }
 
-    .gl-plot-display-area {
-        background: none !important;
-        border-color: $gry !important;
+  .gl-plot-display-area {
+    background: none !important;
+    border-color: $gry !important;
 
-        .gl-plot-local-controls,
-        .h-local-controls {
-            opacity: 0;
-        }
+    .gl-plot-local-controls,
+    .h-local-controls {
+      opacity: 0;
     }
+  }
 
-    .gl-plot {
+  .gl-plot {
+    color: $fg;
+
+    .gl-plot-hash {
+      opacity: 0.1;
+      border-color: $fg;
+    }
+  }
+
+  table {
+    thead {
+      border-bottom: none;
+
+      th {
+        background: #eee;
+        border-left-color: $bg;
+        color: #666;
+      }
+
+      tr {
+        border: none;
+      }
+    }
+    tbody {
+      tr {
+        border-top: 1px solid #ccc;
+      }
+
+      td {
         color: $fg;
-
-        .gl-plot-hash {
-            opacity: 0.1;
-            border-color: $fg;
-        }
+      }
     }
-
-    table {
-        thead {
-            border-bottom: none;
-
-            th {
-                background: #eee;
-                border-left-color: $bg;
-                color: #666;
-            }
-
-            tr {
-                border: none;
-            }
-        }
-        tbody {
-            tr {
-                border-top: 1px solid #ccc;
-            }
-
-            td {
-                color: $fg;
-            }
-        }
-    }
+  }
 }
 
 /****************** _LEGEND.SCSS */
 .gl-plot-legend,
 .c-plot-legend {
-    overflow: hidden;
-    flex: 0 0 auto; // Prevents clipping for all legend placements (top, bottom, etc.)
+  overflow: hidden;
+  flex: 0 0 auto; // Prevents clipping for all legend placements (top, bottom, etc.)
 
-    &__wrapper {
-        // Holds view-control and both collapsed and expanded legends
-        flex: 1 1 auto;
-        height: 100%;
-        overflow: auto;
-        padding: 2px;
-    }
+  &__wrapper {
+    // Holds view-control and both collapsed and expanded legends
+    flex: 1 1 auto;
+    height: 100%;
+    overflow: auto;
+    padding: 2px;
+  }
 
-    &__view-control {
-        padding-top: 4px;
-        margin-right: $interiorMarginSm;
-    }
+  &__view-control {
+    padding-top: 4px;
+    margin-right: $interiorMarginSm;
+  }
 
-    &__header {
-        @include propertiesHeader();
-        margin-bottom: $interiorMarginSm;
-    }
+  &__header {
+    @include propertiesHeader();
+    margin-bottom: $interiorMarginSm;
+  }
 
-    .--width-less-than-600 & {
-        &.is-legend-hidden {
-            display: none;
-        }
+  .--width-less-than-600 & {
+    &.is-legend-hidden {
+      display: none;
     }
+  }
 }
 
 .c-plot--stacked {
-    .is-legend-hidden {
-        // Always show the legend in a stacked plot
-        display: flex !important;
-    }
+  .is-legend-hidden {
+    // Always show the legend in a stacked plot
+    display: flex !important;
+  }
 }
-
 
 .gl-plot-legend {
-    display: flex;
-    align-items: flex-start;
+  display: flex;
+  align-items: flex-start;
 
-    table {
-        table-layout: fixed;
-        th,
-        td {
-            @include ellipsize(); // Note: this won't work if table-layout uses anything other than fixed.
-            padding: 1px 3px; // Tighter than standard tabular padding
-        }
+  table {
+    table-layout: fixed;
+    th,
+    td {
+      @include ellipsize(); // Note: this won't work if table-layout uses anything other than fixed.
+      padding: 1px 3px; // Tighter than standard tabular padding
     }
+  }
 }
 
-*[class*="-legend"] {
-    &.hover-on-plot {
-        // User is hovering over the plot to get a value at a point
-        .hover-value-enabled {
-            background-color: $legendHoverValueBg;
-            border-radius: $smallCr;
-            padding: 0 $interiorMarginSm;
+*[class*='-legend'] {
+  &.hover-on-plot {
+    // User is hovering over the plot to get a value at a point
+    .hover-value-enabled {
+      background-color: $legendHoverValueBg;
+      border-radius: $smallCr;
+      padding: 0 $interiorMarginSm;
 
-            &.value-to-display-min:before {
-                content: 'MIN ';
-            }
-            &.value-to-display-max:before {
-                content: 'MAX ';
-            }
-        }
+      &.value-to-display-min:before {
+        content: 'MIN ';
+      }
+      &.value-to-display-max:before {
+        content: 'MAX ';
+      }
     }
+  }
 }
 
 /***************** GENERAL STYLES, ALL STATES */
-.plot-legend-item, .plot-series-limit-label {
-    // General styles for legend items, both expanded and collapsed legend states
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
+.plot-legend-item,
+.plot-series-limit-label {
+  // General styles for legend items, both expanded and collapsed legend states
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
 
-    .plot-series-color-swatch {
-        @include colorSwatch();
-        display: inline-block;
-        flex: 0 0 auto;
-    }
-    .plot-series-name {
-        display: inline;
-        @include ellipsize();
-    }
+  &.is-stale {
+    @include isStaleElement();
+  }
 
-    .plot-series-value {
-        @include ellipsize();
-        @include isLimit();
-    }
+  .plot-series-color-swatch {
+    @include colorSwatch();
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+  .plot-series-name {
+    display: inline;
+    @include ellipsize();
+  }
+
+  .plot-series-value {
+    @include ellipsize();
+    @include isLimit();
+  }
 }
 
 .plot-series-swatch-and-name {
-    display: flex;
-    flex: 0 1 auto;
-    align-items: center;
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
 
-    > * + * {
-        margin-left: $interiorMarginSm;
-    }
+  > * + * {
+    margin-left: $interiorMarginSm;
+  }
 }
 
 .plot-wrapper-expanded-legend {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
-.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
-.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
-.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
-.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
+.plot-legend-top .gl-plot-legend {
+  margin-bottom: $interiorMargin;
+}
+.plot-legend-bottom .gl-plot-legend {
+  margin-top: $interiorMargin;
+}
+.plot-legend-left .gl-plot-legend {
+  margin-right: $interiorMargin;
+}
+.plot-legend-right .gl-plot-legend {
+  margin-left: $interiorMargin;
+}
 
 .gl-plot,
 .c-plot {
-    &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
-    &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
+  &.plot-legend-collapsed .plot-wrapper-expanded-legend {
+    display: none;
+  }
+  &.plot-legend-expanded .plot-wrapper-collapsed-legend {
+    display: none;
+  }
 
-    &.plot-legend-collapsed .icon-cursor-lock::before { padding-right: 5px; }
-    &.plot-legend-expanded .icon-cursor-lock::before { padding-right: 5px; }
+  &.plot-legend-collapsed .icon-cursor-lock::before {
+    padding-right: 5px;
+  }
+  &.plot-legend-expanded .icon-cursor-lock::before {
+    padding-right: 5px;
+  }
 
-    &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
-    &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
-    &.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
-    &.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
+  &.plot-legend-top .gl-plot-legend {
+    margin-bottom: $interiorMargin;
+  }
+  &.plot-legend-bottom .gl-plot-legend {
+    margin-top: $interiorMargin;
+  }
+  &.plot-legend-right .gl-plot-legend {
+    margin-left: $interiorMargin;
+  }
+  &.plot-legend-left .gl-plot-legend {
+    margin-right: $interiorMargin;
+  }
 
-    /***************** GENERAL STYLES, COLLAPSED */
+  /***************** GENERAL STYLES, COLLAPSED */
+  &.plot-legend-collapsed {
+    // .plot-legend-item is a span of spans.
+
+    .plot-legend-item {
+      border-radius: $smallCr;
+      display: flex;
+      justify-content: stretch;
+
+      .plot-series-swatch-and-name,
+      .plot-series-value {
+        @include ellipsize();
+        flex: 1 1 auto;
+      }
+
+      .plot-series-value {
+        text-align: left;
+      }
+    }
+  }
+
+  /***************** GENERAL STYLES, EXPANDED */
+  &.plot-legend-expanded {
+    .gl-plot-legend {
+      max-height: 70%;
+    }
+
+    .plot-wrapper-expanded-legend {
+      overflow-y: auto;
+      table thead th {
+        background: $legendTableHeadBg;
+      }
+    }
+  }
+
+  /***************** TOP OR BOTTOM */
+  &.plot-legend-top,
+  &.plot-legend-bottom,
+  &.plot-legend-hidden {
+    // General styles when legend is on the top or bottom
+    // -hidden included for legacy plots
+    flex-direction: column;
+
     &.plot-legend-collapsed {
-        // .plot-legend-item is a span of spans.
+      // COLLAPSED ON TOP OR BOTTOM
+      .plot-wrapper-collapsed-legend {
+        display: flex;
+        flex: 1 1 auto;
+        overflow: hidden;
 
-        .plot-legend-item {
-            display: flex;
-            justify-content: stretch;
-
-            .plot-series-swatch-and-name,
-            .plot-series-value {
-                @include ellipsize();
-                flex: 1 1 auto;
-            }
-
-            .plot-series-value {
-                text-align: left;
-            }
+        > .plot-legend-item + .plot-legend-item {
+          // Space between plot items
+          margin-left: $interiorMarginLg;
         }
+      }
+    }
+  }
+
+  /***************** LEFT OR RIGHT */
+  &.plot-legend-left,
+  &.plot-legend-right {
+    // General styles when legend is on left or right
+
+    .gl-plot-legend {
+      max-height: inherit;
     }
 
-    /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
-        .gl-plot-legend {
-             max-height: 70%;
-        }
-
-        .plot-wrapper-expanded-legend {
-            overflow-y: auto;
-            table thead th { background: $legendTableHeadBg; }
-        }
+      // EXPANDED, ON EITHER SIDE
+      .gl-plot-legend {
+        width: $plotLegendWidthExpanded;
+      }
     }
 
-    /***************** TOP OR BOTTOM */
-    &.plot-legend-top,
-    &.plot-legend-bottom,
-    &.plot-legend-hidden {
-        // General styles when legend is on the top or bottom
-        // -hidden included for legacy plots
-        flex-direction: column;
+    &.plot-legend-collapsed {
+      // COLLAPSED, ON EITHER SIDE
+      .gl-plot-legend {
+        width: $plotLegendWidthCollapsed;
+      }
 
-        &.plot-legend-collapsed {
-            // COLLAPSED ON TOP OR BOTTOM
-            .plot-wrapper-collapsed-legend {
-                display: flex;
-                flex: 1 1 auto;
-                overflow: hidden;
+      .plot-wrapper-collapsed-legend {
+        display: flex;
+        flex-flow: column nowrap;
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow-y: auto;
 
-                > .plot-legend-item + .plot-legend-item {
-                    // Space between plot items
-                    margin-left: $interiorMarginLg;
-                }
-            }
+        > * + * {
+          // Space between plot items
+          margin-top: $interiorMarginSm;
         }
+      }
+      .plot-legend-item {
+        margin-bottom: $interiorMarginSm;
+        margin-left: 0;
+        flex-wrap: nowrap;
+        .plot-series-swatch-and-name {
+          @include ellipsize();
+          flex: 0 1 auto;
+          min-width: 20%;
+        }
+        .plot-series-value {
+          flex: 0 1 auto;
+          width: auto;
+        }
+      }
     }
+  }
 
-    /***************** LEFT OR RIGHT */
-    &.plot-legend-left,
-    &.plot-legend-right {
-        // General styles when legend is on left or right
-
-        .gl-plot-legend {
-            max-height: inherit;
-        }
-
-        &.plot-legend-expanded {
-            // EXPANDED, ON EITHER SIDE
-            .gl-plot-legend {
-                width: $plotLegendWidthExpanded;
-            }
-        }
-
-        &.plot-legend-collapsed {
-            // COLLAPSED, ON EITHER SIDE
-            .gl-plot-legend {
-                width: $plotLegendWidthCollapsed;
-            }
-
-            .plot-wrapper-collapsed-legend {
-                display: flex;
-                flex-flow: column nowrap;
-                min-width: 0;
-                flex: 1 1 auto;
-                overflow-y: auto;
-
-                > * + * {
-                    // Space between plot items
-                    margin-top: $interiorMarginSm;
-                }
-            }
-            .plot-legend-item {
-                margin-bottom: $interiorMarginSm;
-                margin-left: 0;
-                flex-wrap: nowrap;
-                .plot-series-swatch-and-name {
-                    @include ellipsize();
-                    flex: 0 1 auto;
-                    min-width: 20%;
-                }
-                .plot-series-value {
-                    flex: 0 1 auto;
-                    width: auto;
-                }
-            }
-        }
+  /***************** ON BOTTOM OR RIGHT */
+  &.plot-legend-right,
+  &.plot-legend-bottom {
+    .gl-plot-legend {
+      order: 2;
     }
-
-    /***************** ON BOTTOM OR RIGHT */
-    &.plot-legend-right,
-    &.plot-legend-bottom {
-        .gl-plot-legend {
-            order: 2;
-        }
-        .plot-wrapper-axis-and-display-area {
-            order: 1;
-        }
+    .plot-wrapper-axis-and-display-area {
+      order: 1;
     }
+  }
 }
 
 /***************** STACKED PLOT LEGEND OVERRIDES */
 .c-plot--stacked {
-    // Always show the legend on top, ignore any position setting
-    .c-plot,
-    .gl-plot {
-        flex-direction: column !important;
+  // Always show the legend on top, ignore any position setting
+  .c-plot,
+  .gl-plot {
+    flex-direction: column !important;
 
-        .c-plot-legend,
-        .gl-plot-legend {
-            margin: 0;
-            margin-bottom: $interiorMargin;
-            order: 1 !important;
-            width: 100% !important;
+    .c-plot-legend,
+    .gl-plot-legend {
+      margin: 0;
+      margin-bottom: $interiorMargin;
+      order: 1 !important;
+      width: 100% !important;
 
-            .plot-wrapper-collapsed-legend {
-                flex-direction: row !important;
-            }
-        }
-        .plot-wrapper-axis-and-display-area {
-            order: 2 !important;
-        }
+      .plot-wrapper-collapsed-legend {
+        flex-direction: row !important;
+      }
     }
-
+    .plot-wrapper-axis-and-display-area {
+      order: 2 !important;
+    }
+  }
 }
 
 /***************** BAR GRAPHS */
 .c-bar-chart {
-    flex: 1 1 auto;
-    overflow: hidden;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 /***************** SCATTER PLOTS */
 .c-scatter-chart {
-    flex: 1 1 auto;
-    overflow: hidden;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 /***************** CURSOR GUIDES */
 [class*='c-cursor-guide'] {
-    box-shadow: $shdwCursorGuide;
-    background-color: $colorCursorGuide;
-    display: none; // Displayed when an element with has-cursor-guides gets a hover; see below
-    pointer-events: none;
-    position: absolute;
+  box-shadow: $shdwCursorGuide;
+  background-color: $colorCursorGuide;
+  display: none; // Displayed when an element with has-cursor-guides gets a hover; see below
+  pointer-events: none;
+  position: absolute;
 }
 
 .has-cursor-guides:hover [class*='c-cursor-guide'] {
-    display: block;
+  display: block;
 }
 
 .c-cursor-guide {
-    &--h {
-        height: 1px;
-        left: 0; right: 0;
-    }
+  &--h {
+    height: 1px;
+    left: 0;
+    right: 0;
+  }
 
-    &--v {
-        width: 1px;
-        top: 0; bottom: 0;
-    }
+  &--v {
+    width: 1px;
+    top: 0;
+    bottom: 0;
+  }
 }
 
 .s-status-timeconductor-unsynced {
-    .t-alert-unsynced {
-        display: inline-block !important;
-    }
+  .t-alert-unsynced {
+    display: inline-block !important;
+  }
 }
 
 /*********************** CURSOR LOCK INDICATOR */
 [class*='c-state-indicator__alert-cursor-lock'] {
-    display: none;
+  display: none;
 }
 
 [class*='is-cursor-locked'] {
-    background: rgba($colorInfo, 0.1);
+  background: rgba($colorInfo, 0.1);
 
-    [class*='c-state-indicator__alert-cursor-lock'] {
-        @include userSelectNone();
-        color: $colorInfo;
-        display: block;
-        margin-right: $interiorMarginSm;
+  [class*='c-state-indicator__alert-cursor-lock'] {
+    @include userSelectNone();
+    color: $colorInfo;
+    display: block;
+    margin-right: $interiorMarginSm;
 
-        &[class*='--verbose'] {
-            padding: $interiorMarginSm;
-
-        }
+    &[class*='--verbose'] {
+      padding: $interiorMarginSm;
     }
+  }
 }

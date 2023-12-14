@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,68 +20,79 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import StackedPlot from './StackedPlot.vue';
-import Vue from 'vue';
 
 export default function StackedPlotViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: 'plot-stacked',
-        name: 'Stacked Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
+  return {
+    key: 'plot-stacked',
+    name: 'Stacked Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.stacked';
+    },
+
+    canEdit(domainObject, objectPath) {
+      return domainObject.type === 'telemetry.plot.stacked';
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
+
+      return {
+        show: function (element, isEditing, { renderWhenVisible }) {
+          let isCompact = isCompactView(objectPath);
+
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                StackedPlot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                renderWhenVisible
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
+        getViewContext() {
+          if (!component) {
+            return {};
+          }
 
-        canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
+          return component.$refs.plotComponent.getViewContext();
         },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            StackedPlot
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            composition: openmct.composition.get(domainObject),
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<stacked-plot ref="plotComponent" :options="options"></stacked-plot>'
-                    });
-                },
-                getViewContext() {
-                    if (!component) {
-                        return {};
-                    }
-
-                    return component.$refs.plotComponent.getViewContext();
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

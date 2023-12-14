@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,24 +21,23 @@
  *****************************************************************************/
 
 define([], function () {
+  /**
+   * This time system supports UTC dates.
+   * @implements TimeSystem
+   * @constructor
+   */
+  function UTCTimeSystem() {
     /**
-     * This time system supports UTC dates.
-     * @implements TimeSystem
-     * @constructor
+     * Metadata used to identify the time system in
+     * the UI
      */
-    function UTCTimeSystem() {
+    this.key = 'utc';
+    this.name = 'UTC';
+    this.cssClass = 'icon-clock';
+    this.timeFormat = 'utc';
+    this.durationFormat = 'duration';
+    this.isUTCBased = true;
+  }
 
-        /**
-         * Metadata used to identify the time system in
-         * the UI
-         */
-        this.key = 'utc';
-        this.name = 'UTC';
-        this.cssClass = 'icon-clock';
-        this.timeFormat = 'utc';
-        this.durationFormat = 'duration';
-        this.isUTCBased = true;
-    }
-
-    return UTCTimeSystem;
+  return UTCTimeSystem;
 });

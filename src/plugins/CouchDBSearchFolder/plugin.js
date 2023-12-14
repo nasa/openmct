@@ -1,38 +1,44 @@
 export default function (folderName, couchPlugin, searchFilter) {
-    return function install(openmct) {
-        const couchProvider = couchPlugin.couchProvider;
+  const DEFAULT_NAME = 'CouchDB Documents';
 
-        openmct.objects.addRoot({
-            namespace: 'couch-search',
-            key: 'couch-search'
+  return function install(openmct) {
+    const couchProvider = couchPlugin.couchProvider;
+    //replace any non-letter/non-number with a hyphen
+    const couchSearchId = (folderName || DEFAULT_NAME).replace(/[^a-zA-Z0-9]/g, '-');
+    const couchSearchName = `couch-search-${couchSearchId}`;
+
+    openmct.objects.addRoot({
+      namespace: couchSearchName,
+      key: couchSearchName
+    });
+
+    openmct.objects.addProvider(couchSearchName, {
+      get(identifier) {
+        if (identifier.key !== couchSearchName) {
+          return undefined;
+        } else {
+          return Promise.resolve({
+            identifier,
+            type: 'folder',
+            name: folderName || DEFAULT_NAME,
+            location: 'ROOT'
+          });
+        }
+      }
+    });
+
+    openmct.composition.addProvider({
+      appliesTo(domainObject) {
+        return (
+          domainObject.identifier.namespace === couchSearchName &&
+          domainObject.identifier.key === couchSearchName
+        );
+      },
+      load() {
+        return couchProvider.getObjectsByFilter(searchFilter).then((objects) => {
+          return objects.map((object) => object.identifier);
         });
-
-        openmct.objects.addProvider('couch-search', {
-            get(identifier) {
-                if (identifier.key !== 'couch-search') {
-                    return undefined;
-                } else {
-                    return Promise.resolve({
-                        identifier,
-                        type: 'folder',
-                        name: folderName || "CouchDB Documents",
-                        location: 'ROOT'
-                    });
-                }
-            }
-        });
-
-        openmct.composition.addProvider({
-            appliesTo(domainObject) {
-                return domainObject.identifier.namespace === 'couch-search'
-                    && domainObject.identifier.key === 'couch-search';
-            },
-            load() {
-                return couchProvider.getObjectsByFilter(searchFilter).then(objects => {
-                    return objects.map(object => object.identifier);
-                });
-            }
-        });
-    };
-
+      }
+    });
+  };
 }

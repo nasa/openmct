@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,122 +20,124 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash',
-    'EventEmitter',
-    './DefaultCompositionProvider',
-    './CompositionCollection'
-], function (
-    _,
-    EventEmitter,
-    DefaultCompositionProvider,
-    CompositionCollection
-) {
-    /**
-     * An interface for interacting with the composition of domain objects.
-     * The composition of a domain object is the list of other domain objects
-     * it "contains" (for instance, that should be displayed beneath it
-     * in the tree.)
-     *
-     * @interface CompositionAPI
-     * @returns {module:openmct.CompositionCollection}
-     * @memberof module:openmct
-     */
-    function CompositionAPI(publicAPI) {
-        this.registry = [];
-        this.policies = [];
-        this.addProvider(new DefaultCompositionProvider(publicAPI, this));
-        this.publicAPI = publicAPI;
+import CompositionCollection from './CompositionCollection';
+import DefaultCompositionProvider from './DefaultCompositionProvider';
+
+/**
+ * @typedef {import('./CompositionProvider').default} CompositionProvider
+ */
+
+/**
+ * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ */
+
+/**
+ * An interface for interacting with the composition of domain objects.
+ * The composition of a domain object is the list of other domain objects
+ * it "contains" (for instance, that should be displayed beneath it
+ * in the tree.)
+ * @constructor
+ */
+export default class CompositionAPI {
+  /**
+   * @param {OpenMCT} publicAPI
+   */
+  constructor(publicAPI) {
+    /** @type {CompositionProvider[]} */
+    this.registry = [];
+    /** @type {CompositionPolicy[]} */
+    this.policies = [];
+    this.addProvider(new DefaultCompositionProvider(publicAPI, this));
+    /** @type {OpenMCT} */
+    this.publicAPI = publicAPI;
+  }
+  /**
+   * Add a composition provider.
+   *
+   * Plugins can add new composition providers to change the loading
+   * behavior for certain domain objects.
+   *
+   * @method addProvider
+   * @param {CompositionProvider} provider the provider to add
+   */
+  addProvider(provider) {
+    this.registry.unshift(provider);
+  }
+  /**
+   * Retrieve the composition (if any) of this domain object.
+   *
+   * @method get
+   * @param {DomainObject} domainObject
+   * @returns {CompositionCollection}
+   */
+  get(domainObject) {
+    const provider = this.registry.find((p) => {
+      return p.appliesTo(domainObject);
+    });
+
+    if (!provider) {
+      return;
     }
 
-    /**
-     * Add a composition provider.
-     *
-     * Plugins can add new composition providers to change the loading
-     * behavior for certain domain objects.
-     *
-     * @method addProvider
-     * @param {module:openmct.CompositionProvider} provider the provider to add
-     * @memberof module:openmct.CompositionAPI#
-     */
-    CompositionAPI.prototype.addProvider = function (provider) {
-        this.registry.unshift(provider);
-    };
+    return new CompositionCollection(domainObject, provider, this.publicAPI);
+  }
+  /**
+   * A composition policy is a function which either allows or disallows
+   * placing one object in another's composition.
+   *
+   * Open MCT's policy model requires consensus, so any one policy may
+   * reject composition by returning false. As such, policies should
+   * generally be written to return true in the default case.
+   *
+   * @callback CompositionPolicy
+   * @param {DomainObject} containingObject the object which
+   *        would act as a container
+   * @param {DomainObject} containedObject the object which
+   *        would be contained
+   * @returns {boolean} false if this composition should be disallowed
+   */
+  /**
+   * Add a composition policy. Composition policies may disallow domain
+   * objects from containing other domain objects.
+   *
+   * @method addPolicy
+   * @param {CompositionPolicy} policy
+   *        the policy to add
+   */
+  addPolicy(policy) {
+    this.policies.push(policy);
+  }
+  /**
+   * Check whether or not a domain object is allowed to contain another
+   * domain object.
+   *
+   * @private
+   * @method checkPolicy
+   * @param {DomainObject} container the object which
+   *        would act as a container
+   * @param {DomainObject} containee the object which
+   *        would be contained
+   * @returns {boolean} false if this composition should be disallowed
+   * @param {CompositionPolicy} policy
+   *        the policy to add
+   */
+  checkPolicy(container, containee) {
+    return this.policies.every(function (policy) {
+      return policy(container, containee);
+    });
+  }
 
-    /**
-     * Retrieve the composition (if any) of this domain object.
-     *
-     * @method get
-     * @returns {module:openmct.CompositionCollection}
-     * @memberof module:openmct.CompositionAPI#
-     */
-    CompositionAPI.prototype.get = function (domainObject) {
-        const provider = this.registry.find(p => {
-            return p.appliesTo(domainObject);
-        });
-
-        if (!provider) {
-            return;
-        }
-
-        return new CompositionCollection(domainObject, provider, this.publicAPI);
-    };
-
-    /**
-     * A composition policy is a function which either allows or disallows
-     * placing one object in another's composition.
-     *
-     * Open MCT's policy model requires consensus, so any one policy may
-     * reject composition by returning false. As such, policies should
-     * generally be written to return true in the default case.
-     *
-     * @callback CompositionPolicy
-     * @memberof module:openmct.CompositionAPI~
-     * @param {module:openmct.DomainObject} containingObject the object which
-     *        would act as a container
-     * @param {module:openmct.DomainObject} containedObject the object which
-     *        would be contained
-     * @returns {boolean} false if this composition should be disallowed
-     */
-
-    /**
-     * Add a composition policy. Composition policies may disallow domain
-     * objects from containing other domain objects.
-     *
-     * @method addPolicy
-     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
-     *        the policy to add
-     * @memberof module:openmct.CompositionAPI#
-     */
-    CompositionAPI.prototype.addPolicy = function (policy) {
-        this.policies.push(policy);
-    };
-
-    /**
-     * Check whether or not a domain object is allowed to contain another
-     * domain object.
-     *
-     * @private
-     * @method checkPolicy
-     * @param {module:openmct.DomainObject} containingObject the object which
-     *        would act as a container
-     * @param {module:openmct.DomainObject} containedObject the object which
-     *        would be contained
-     * @returns {boolean} false if this composition should be disallowed
-
-     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
-     *        the policy to add
-     * @memberof module:openmct.CompositionAPI#
-     */
-    CompositionAPI.prototype.checkPolicy = function (container, containee) {
-        return this.policies.every(function (policy) {
-            return policy(container, containee);
-        });
-    };
-
-    CompositionAPI.prototype.supportsComposition = function (domainObject) {
-        return this.get(domainObject) !== undefined;
-    };
-
-    return CompositionAPI;
-});
+  /**
+   * Check whether or not a domainObject supports composition
+   *
+   * @param {DomainObject} domainObject
+   * @returns {boolean} true if the domainObject supports composition
+   */
+  supportsComposition(domainObject) {
+    return this.get(domainObject) !== undefined;
+  }
+}

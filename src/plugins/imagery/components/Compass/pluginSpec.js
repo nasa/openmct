@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,69 +19,72 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Compass from './Compass.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Compass from './CompassComponent.vue';
 
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
-describe("The Compass component", () => {
-    let app;
-    let instance;
+describe('The Compass component', () => {
+  let _destroy;
+  let instance;
 
-    beforeEach(() => {
-        let imageDatum = {
-            heading: 100,
-            roll: 90,
-            pitch: 90,
-            cameraTilt: 100,
-            cameraPan: 90,
-            sunAngle: 30
-        };
-        let propsData = {
-            naturalAspectRatio: 0.9,
-            image: imageDatum,
-            sizedImageDimensions: {
-                width: 100,
-                height: 100
-            },
-            compassRoseSizingClasses: '--rose-small --rose-min'
-        };
+  beforeEach(() => {
+    let imageDatum = {
+      heading: 100,
+      roll: 90,
+      pitch: 90,
+      cameraTilt: 100,
+      cameraAzimuth: 90,
+      sunAngle: 30,
+      transformations: {
+        translateX: 0,
+        translateY: 18,
+        rotation: 0,
+        scale: 0.3,
+        cameraAngleOfView: 70
+      }
+    };
+    let propsData = {
+      naturalAspectRatio: 0.9,
+      image: imageDatum,
+      sizedImageDimensions: {
+        width: 100,
+        height: 100
+      }
+    };
 
-        app = new Vue({
-            components: { Compass },
-            data() {
-                return propsData;
-            },
-            template: `<Compass
-                :compass-rose-sizing-classes="compassRoseSizingClasses"
+    const { vNode, destroy } = mount({
+      components: { Compass },
+      data() {
+        return propsData;
+      },
+      template: `<Compass
                 :image="image"
                 :natural-aspect-ratio="naturalAspectRatio"
                 :sized-image-dimensions="sizedImageDimensions"
             />`
-        });
-        instance = app.$mount();
+    });
+    _destroy = destroy;
+    instance = vNode.componentInstance;
+  });
+
+  afterAll(() => {
+    _destroy();
+  });
+
+  describe('when a heading value and cameraAngleOfView exists on the image', () => {
+    it('should display a compass rose', () => {
+      let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS);
+
+      expect(compassRoseElement).toBeDefined();
     });
 
-    afterAll(() => {
-        app.$destroy();
+    it('should display a compass HUD', () => {
+      let compassHUDElement = instance.$el.querySelector(COMPASS_HUD_CLASS);
+
+      expect(compassHUDElement).toBeDefined();
     });
-
-    describe("when a heading value exists on the image", () => {
-
-        it("should display a compass rose", () => {
-            let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS
-            );
-
-            expect(compassRoseElement).toBeDefined();
-        });
-
-        it("should display a compass HUD", () => {
-            let compassHUDElement = instance.$el.querySelector(COMPASS_HUD_CLASS);
-
-            expect(compassHUDElement).toBeDefined();
-        });
-
-    });
-
+  });
 });

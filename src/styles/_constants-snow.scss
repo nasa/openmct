@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,36 +23,36 @@
 /****************************************************** SNOW THEME CONSTANTS */
 
 // Fonts
-$heroFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
 
 @mixin heroFont($size: 1em) {
-    font-family: $heroFont;
-    font-size: $size;
+  font-family: $heroFont;
+  font-size: $size;
 }
 
 @mixin headerFont($size: 1em) {
-    font-family: $headerFont;
-    font-size: $size;
+  font-family: $headerFont;
+  font-size: $size;
 }
 
 @mixin bodyFont($size: 1em) {
-    font-family: $bodyFont;
-    font-size: $size;
+  font-family: $bodyFont;
+  font-size: $size;
 }
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
-    @return $c;
+  @return $c;
 }
 
 @function pullForward($val, $amt) {
-    @return darken($val, $amt);
+  @return darken($val, $amt);
 }
 
 @function pushBack($val, $amt) {
-    @return lighten($val, $amt);
+  @return lighten($val, $amt);
 }
 
 // General
@@ -73,20 +73,23 @@ $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
 $colorKeyHov: #00c0f6;
-$colorKeyFilter: invert(37%) sepia(100%) saturate(686%) hue-rotate(157deg) brightness(102%) contrast(102%);
-$colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) brightness(97%) contrast(102%);
+$colorKeyFilter: invert(37%) sepia(100%) saturate(686%) hue-rotate(157deg) brightness(102%)
+  contrast(102%);
+$colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) brightness(97%)
+  contrast(102%);
 $colorKeySelectedBg: $colorKey;
 $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: $colorBodyFg;
 $colorAHov: $colorKey;
 $filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location items
+$filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2);
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
-$objectLabelNameFilter: brightness(0.9);
+$objectLabelNameColorFg: darken($colorBodyFg, 10%);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -101,11 +104,14 @@ $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 $colorStatusFg: #999;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
-$colorStatusInfoFilter: invert(64%) sepia(42%) saturate(416%) hue-rotate(85deg) brightness(93%) contrast(93%);
+$colorStatusInfoFilter: invert(64%) sepia(42%) saturate(416%) hue-rotate(85deg) brightness(93%)
+  contrast(93%);
 $colorStatusAlert: #ff8a0d;
-$colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316deg) brightness(114%) contrast(107%);
+$colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316deg) brightness(114%)
+  contrast(107%);
 $colorStatusError: #da0004;
-$colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%) contrast(114%);
+$colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%)
+  contrast(114%);
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #c9d6ff;
 $colorStatusCompleteBg: #a4e4b4;
@@ -114,11 +120,11 @@ $colorAlertFg: #fff;
 $colorError: #ff3c00;
 $colorErrorFg: #fff;
 $colorWarningHi: #990000;
-$colorWarningHiFg: #FF9594;
+$colorWarningHiFg: #ff9594;
 $colorWarningLo: #ff9900;
 $colorWarningLoFg: #523400;
 $colorDiagnostic: #a4b442;
-$colorDiagnosticFg: #39461A;
+$colorDiagnosticFg: #39461a;
 $colorCommand: #3693bd;
 $colorCommandFg: #fff;
 $colorInfo: #2294a2;
@@ -135,20 +141,38 @@ $colorPausedFg: #fff;
 
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: pushBack($colorKey, 50%);
+$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorKeySubtle: pushBack($colorKey, 20%);
 
 // Time Colors
-$colorTime: #618cff;
-$colorTimeBg: $colorTime;
-$colorTimeFg: $colorBodyBg;
-$colorTimeHov: pushBack($colorTime, 5%);
-$colorTimeSubtle: pushBack($colorTime, 20%);
+$colorTimeCommonFg: #eee;
+$colorTimeFixed: #59554c;
+$colorTimeFixedBg: $colorTimeFixed;
+$colorTimeFixedFg: #eee;
+$colorTimeFixedFgSubtle: #b2aa98;
+$colorTimeFixedHov: pullForward($colorTimeFixed, 10%);
+$colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+$colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
+$colorTimeFixedBtnBgMajor: #a09375;
+$colorTimeFixedBtnFgMajor: #fff;
+
+$colorTimeRealtime: #445890;
+$colorTimeRealtimeBg: $colorTimeRealtime;
+$colorTimeRealtimeFg: #eee;
+$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
+$colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+$colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
+$colorTimeRealtimeBtnBgMajor: #588ffa;
+$colorTimeRealtimeBtnFgMajor: #fff;
+
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
-$colorTOIHov: $colorTime; // was $timeControllerToiLineColorHov
+$colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(0.8);
 $timeConductorActiveBg: $colorKey;
-$timeConductorActivePanBg: #A0CDE1;
+$timeConductorActivePanBg: #a0cde1;
 
 /************************************************** BROWSING */
 $browseFrameColor: pullForward($colorBodyBg, 10%);
@@ -164,7 +188,10 @@ $borderMissing: 1px dashed $colorAlert !important;
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
-$editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
+$editUIColorHov: pullForward(
+  saturate($uiColor, 10%),
+  20%
+); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
 $editUIBaseColorFg: #4c4c4c; // Toolbar button icon colors, etc.
@@ -183,7 +210,10 @@ $editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make h
 $editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
 $editFrameSelectedShdw: rgba(black, 0.5) 0 1px 5px 2px;
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
-$editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%);  // Grippy lines, container size text
+$editFrameMovebarColorFg: pullForward(
+  $editFrameMovebarColorBg,
+  20%
+); // Grippy lines, container size text
 $editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
 $editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
 $editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
@@ -202,6 +232,7 @@ $colorTabsHolderBg: rgba($colorBodyFg, 0.2);
 // Buttons and Controls
 $colorBtnBg: #aaa;
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
+$shdwBtnHov: inset rgba(white, 10%) 0 0 0 20px;
 $colorBtnFg: #fff;
 $colorBtnReverseFg: $colorBodyBg;
 $colorBtnReverseBg: $colorBodyFg;
@@ -269,6 +300,7 @@ $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.05);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.5);
 $colorInputBg: $colorGenBg;
+$colorInputBgHov: rgba($colorGenBg, 0.7);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
@@ -289,6 +321,13 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
+// Tabs
+$colorTabBg: pullForward($colorBodyBg, 15%);
+$colorTabFg: pullForward($colorTabBg, 60%);
+$colorTabCurrentBg: $colorBodyFg; //pullForward($colorTabBg, 10%);
+$colorTabCurrentFg: $colorBodyBg; //pullForward($colorTabFg, 10%);
+$colorTabsBaseline: $colorTabCurrentBg;
+
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $overlayCr: $interiorMarginLg;
@@ -305,26 +344,32 @@ $colorIndicatorMenuFg: $colorHeadFg;
 $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
 // Staleness
-$colorTelemFresh: pullForward($colorBodyFg, 20%);
-$colorTelemStale: pushBack($colorBodyFg, 20%);
+$colorTelemStale: #00c9c9;
+$colorTelemStaleFg: #002a2a;
 $styleTelemStale: italic;
 
 // Limits
 $colorLimitYellowBg: #ffe64d;
 $colorLimitYellowFg: #7f4f20;
 $colorLimitYellowIc: #e7a115;
-$colorLimitOrangeBg: #B36B00;
-$colorLimitOrangeFg: #FFE0B2;
+$colorLimitOrangeBg: #b36b00;
+$colorLimitOrangeFg: #ffe0b2;
 $colorLimitOrangeIc: #ff9900;
 $colorLimitRedBg: #ff0000;
 $colorLimitRedFg: #fff;
 $colorLimitRedIc: #ffa99a;
-$colorLimitPurpleBg: #891BB3;
-$colorLimitPurpleFg: #EDBEFF;
+$colorLimitPurpleBg: #891bb3;
+$colorLimitPurpleFg: #edbeff;
 $colorLimitPurpleIc: #c327ff;
-$colorLimitCyanBg: #4BA6B3;
-$colorLimitCyanFg: #D3FAFF;
+$colorLimitCyanBg: #4ba6b3;
+$colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #1795c0;
+
+// Events
+$colorEventPurpleFg: #6433ff;
+$colorEventRedFg: #cc0000;
+$colorEventOrangeFg: orange;
+$colorEventYellowFg: #ffcc00;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -377,12 +422,13 @@ $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 // Time Strip and Lists
-$colorCurrentBg: rgba($colorStatusAlert, 0.3);
-$colorCurrentFg: pullForward($colorBodyFg, 20%);
+$colorCurrentBg: #5872bd;
+$colorCurrentFg: #eee;
 $colorCurrentBorder: #fff;
-$colorFutureBg: rgba($colorKey, 0.2);
-$colorFutureFg: $colorCurrentFg;
+$colorFutureBg: #c6f0ff;
+$colorFutureFg: $colorBodyFg;
 $colorFutureBorder: $colorCurrentBorder;
+$colorGanttSelectedBorder: #fff;
 
 // Tree
 $colorTreeBg: transparent;
@@ -456,33 +502,36 @@ $transInTime: 50ms;
 $transOutTime: 250ms;
 $transIn: all $transInTime ease-in-out;
 $transOut: all $transOutTime ease-in-out;
-$transInBounce: all 200ms cubic-bezier(.47,.01,.25,1.5);
-$transInBounceBig: all 300ms cubic-bezier(.2,1.6,.6,3);
+$transInTransform: transform $transInTime ease-in-out;
+$transOutTransform: transform $transOutTime ease-in-out;
+$transInBounce: all 200ms cubic-bezier(0.47, 0.01, 0.25, 1.5);
+$transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
 
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
-$colorDiscreteItemBg: rgba($colorBodyFg,0.1);
-$colorDiscreteItemCurrentBg: rgba($colorOk,0.3);
+$colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
+$colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
+$scrollContainer: rgba(102, 102, 102, 0.1);
 
 @mixin discreteItem() {
-    background: $colorDiscreteItemBg;
-    border: 1px solid $colorInteriorBorder;
-    border-radius: $controlCr;
+  background: $colorDiscreteItemBg;
+  border: 1px solid $colorInteriorBorder;
+  border-radius: $controlCr;
 
-    &--current-match {
-        background: $colorDiscreteItemCurrentBg;
-    }
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
 
-    .c-input-inline:hover {
-        background: $colorBodyBg;
-    }
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
 }
 
 @mixin discreteItemInnerElem() {
-    border: 1px solid $colorBodyBg;
-    border-radius: $controlCr;
+  border: 1px solid $colorBodyBg;
+  border-radius: $controlCr;
 }
 
 @mixin themedButton($c: $colorBtnBg) {
-    background: $c;
+  background: $c;
 }

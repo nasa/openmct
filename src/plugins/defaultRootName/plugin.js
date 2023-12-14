@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,8 +22,8 @@
 import RootObjectProvider from '../../api/objects/RootObjectProvider.js';
 
 export default function (name) {
-    return function (openmct) {
-        let rootObjectProvider = new RootObjectProvider();
-        rootObjectProvider.updateName(name);
-    };
+  return function (openmct) {
+    let rootObjectProvider = new RootObjectProvider();
+    rootObjectProvider.updateName(name);
+  };
 }

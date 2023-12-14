@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,18 +21,18 @@
  *****************************************************************************/
 import objectPathToUrl from '/src/tools/url';
 export default class OpenInNewTab {
-    constructor(openmct) {
-        this.name = 'Open In New Tab';
-        this.key = 'newTab';
-        this.description = 'Open in a new browser tab';
-        this.group = "windowing";
-        this.priority = 10;
-        this.cssClass = "icon-new-window";
+  constructor(openmct) {
+    this.name = 'Open In New Tab';
+    this.key = 'newTab';
+    this.description = 'Open in a new browser tab';
+    this.group = 'windowing';
+    this.priority = 10;
+    this.cssClass = 'icon-new-window';
 
-        this._openmct = openmct;
-    }
-    invoke(objectPath) {
-        let url = objectPathToUrl(this._openmct, objectPath);
-        window.open(url);
-    }
+    this._openmct = openmct;
+  }
+  invoke(objectPath, urlParams = undefined) {
+    let url = objectPathToUrl(this._openmct, objectPath, urlParams);
+    window.open(url);
+  }
 }

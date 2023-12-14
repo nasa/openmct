@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import LocalStorageObjectProvider from './LocalStorageObjectProvider';
 
 export default function (namespace = '', storageSpace = 'mct') {
-    return function (openmct) {
-        openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
-    };
+  return function (openmct) {
+    openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
+  };
 }

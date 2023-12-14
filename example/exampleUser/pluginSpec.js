@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,31 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
 import ExampleUserProvider from './ExampleUserProvider';
 
-describe("The Example User Plugin", () => {
-    let openmct;
+describe('The Example User Plugin', () => {
+  let openmct;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
-    });
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
 
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
-    });
+  it('is not installed by default', () => {
+    expect(openmct.user.hasProvider()).toBeFalse();
+  });
 
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
+  it('can be installed', () => {
+    openmct.user.on('providerAdded', (provider) => {
+      expect(provider).toBeInstanceOf(ExampleUserProvider);
     });
+    openmct.install(openmct.plugins.example.ExampleUser());
+  });
 });

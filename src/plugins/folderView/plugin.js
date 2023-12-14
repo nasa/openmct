@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,29 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import FolderGridView from './FolderGridView';
+import FolderListView from './FolderListView';
 
-define([
-    './FolderGridView',
-    './FolderListView'
-], function (
-    FolderGridView,
-    FolderListView
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.types.addType('folder', {
-                name: "Folder",
-                key: "folder",
-                description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
-                cssClass: "icon-folder",
-                creatable: true,
-                initialize: function (domainObject) {
-                    domainObject.composition = [];
-                }
-            });
+export default function () {
+  return function install(openmct) {
+    openmct.types.addType('folder', {
+      name: 'Folder',
+      key: 'folder',
+      description:
+        "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+      cssClass: 'icon-folder',
+      creatable: true,
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+      }
+    });
 
-            openmct.objectViews.addProvider(new FolderGridView(openmct));
-            openmct.objectViews.addProvider(new FolderListView(openmct));
-        };
-    };
-});
+    openmct.objectViews.addProvider(new FolderGridView(openmct));
+    openmct.objectViews.addProvider(new FolderListView(openmct));
+  };
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,51 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistPropertiesView from "./TimelistPropertiesView.vue";
+import mount from 'utils/mount';
+
 import { TIMELIST_TYPE } from '../constants';
-import Vue from 'vue';
+import TimelistPropertiesView from './TimelistPropertiesView.vue';
 
 export default function TimeListInspectorViewProvider(openmct) {
-    return {
-        key: 'timelist-inspector',
-        name: 'Timelist Inspector View',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                return false;
+  return {
+    key: 'timelist-inspector',
+    name: 'Timelist Inspector View',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
+
+      let context = selection[0][0].context;
+
+      return context && context.item && context.item.type === TIMELIST_TYPE;
+    },
+    view: function (selection) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TimelistPropertiesView: TimelistPropertiesView
+              },
+              provide: {
+                openmct,
+                domainObject: selection[0][0].context.item
+              },
+              template: '<timelist-properties-view></timelist-properties-view>'
+            },
+            {
+              app: openmct.app,
+              element
             }
-
-            let context = selection[0][0].context;
-
-            return context && context.item
-                && context.item.type === TIMELIST_TYPE;
-        },
-        view: function (selection) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            TimelistPropertiesView: TimelistPropertiesView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject: selection[0][0].context.item
-                        },
-                        template: '<timelist-properties-view></timelist-properties-view>'
-                    });
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+          );
+          _destroy = destroy;
         },
         priority: function () {
-            return 1;
+          return openmct.priority.HIGH + 1;
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

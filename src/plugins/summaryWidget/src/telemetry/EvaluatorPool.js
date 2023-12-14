@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,47 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './SummaryWidgetEvaluator',
-    'objectUtils'
-], function (
-    SummaryWidgetEvaluator,
-    objectUtils
-) {
+define(['./SummaryWidgetEvaluator', 'objectUtils'], function (SummaryWidgetEvaluator, objectUtils) {
+  function EvaluatorPool(openmct) {
+    this.openmct = openmct;
+    this.byObjectId = {};
+    this.byEvaluator = new WeakMap();
+  }
 
-    function EvaluatorPool(openmct) {
-        this.openmct = openmct;
-        this.byObjectId = {};
-        this.byEvaluator = new WeakMap();
+  EvaluatorPool.prototype.get = function (domainObject) {
+    const objectId = objectUtils.makeKeyString(domainObject.identifier);
+    let poolEntry = this.byObjectId[objectId];
+    if (!poolEntry) {
+      poolEntry = {
+        leases: 0,
+        objectId: objectId,
+        evaluator: new SummaryWidgetEvaluator(domainObject, this.openmct)
+      };
+      this.byEvaluator.set(poolEntry.evaluator, poolEntry);
+      this.byObjectId[objectId] = poolEntry;
     }
 
-    EvaluatorPool.prototype.get = function (domainObject) {
-        const objectId = objectUtils.makeKeyString(domainObject.identifier);
-        let poolEntry = this.byObjectId[objectId];
-        if (!poolEntry) {
-            poolEntry = {
-                leases: 0,
-                objectId: objectId,
-                evaluator: new SummaryWidgetEvaluator(domainObject, this.openmct)
-            };
-            this.byEvaluator.set(poolEntry.evaluator, poolEntry);
-            this.byObjectId[objectId] = poolEntry;
-        }
+    poolEntry.leases += 1;
 
-        poolEntry.leases += 1;
+    return poolEntry.evaluator;
+  };
 
-        return poolEntry.evaluator;
-    };
+  EvaluatorPool.prototype.release = function (evaluator) {
+    const poolEntry = this.byEvaluator.get(evaluator);
+    poolEntry.leases -= 1;
+    if (poolEntry.leases === 0) {
+      evaluator.destroy();
+      this.byEvaluator.delete(evaluator);
+      delete this.byObjectId[poolEntry.objectId];
+    }
+  };
 
-    EvaluatorPool.prototype.release = function (evaluator) {
-        const poolEntry = this.byEvaluator.get(evaluator);
-        poolEntry.leases -= 1;
-        if (poolEntry.leases === 0) {
-            evaluator.destroy();
-            this.byEvaluator.delete(evaluator);
-            delete this.byObjectId[poolEntry.objectId];
-        }
-    };
-
-    return EvaluatorPool;
+  return EvaluatorPool;
 });

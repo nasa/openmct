@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,40 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import HyperlinkLayout from './HyperlinkLayout.vue';
-import Vue from 'vue';
 
 export default function HyperlinkProvider(openmct) {
+  return {
+    key: 'hyperlink.view',
+    name: 'Hyperlink',
+    cssClass: 'icon-chain-links',
+    canView(domainObject) {
+      return domainObject.type === 'hyperlink';
+    },
 
-    return {
-        key: 'hyperlink.view',
-        name: 'Hyperlink',
-        cssClass: 'icon-chain-links',
-        canView(domainObject) {
-            return domainObject.type === 'hyperlink';
+    view: function (domainObject) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                HyperlinkLayout
+              },
+              provide: {
+                domainObject
+              },
+              template: '<hyperlink-layout></hyperlink-layout>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-
-        view: function (domainObject) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            HyperlinkLayout
-                        },
-                        provide: {
-                            domainObject
-                        },
-                        template: '<hyperlink-layout></hyperlink-layout>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

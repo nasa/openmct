@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,53 +20,67 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Vue from 'vue';
-import Notebook from './components/Notebook.vue';
+import mount from 'utils/mount';
+
 import Agent from '@/utils/agent/Agent';
 
+import Notebook from './components/NotebookComponent.vue';
+
 export default class NotebookViewProvider {
-    constructor(openmct, name, key, type, cssClass, snapshotContainer) {
-        this.openmct = openmct;
-        this.key = key;
-        this.name = `${name} View`;
-        this.type = type;
-        this.cssClass = cssClass;
-        this.snapshotContainer = snapshotContainer;
-    }
+  constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {
+    this.openmct = openmct;
+    this.key = key;
+    this.name = `${name} View`;
+    this.type = type;
+    this.cssClass = cssClass;
+    this.snapshotContainer = snapshotContainer;
+    this.entryUrlWhitelist = entryUrlWhitelist;
+  }
 
-    canView(domainObject) {
-        return domainObject.type === this.type;
-    }
+  canView(domainObject) {
+    return domainObject.type === this.type;
+  }
 
-    view(domainObject) {
-        let component;
-        let openmct = this.openmct;
-        let snapshotContainer = this.snapshotContainer;
-        let agent = new Agent(window);
+  view(domainObject) {
+    let openmct = this.openmct;
+    let snapshotContainer = this.snapshotContainer;
+    let agent = new Agent(window);
+    let entryUrlWhitelist = this.entryUrlWhitelist;
+    let _destroy = null;
 
-        return {
-            show(container) {
-                component = new Vue({
-                    el: container,
-                    components: {
-                        Notebook
-                    },
-                    provide: {
-                        openmct,
-                        snapshotContainer,
-                        agent
-                    },
-                    data() {
-                        return {
-                            domainObject
-                        };
-                    },
-                    template: '<Notebook :domain-object="domainObject"></Notebook>'
-                });
+    return {
+      show(container) {
+        const { destroy } = mount(
+          {
+            el: container,
+            components: {
+              Notebook
             },
-            destroy() {
-                component.$destroy();
-            }
-        };
-    }
+            provide: {
+              openmct,
+              snapshotContainer,
+              agent,
+              entryUrlWhitelist
+            },
+            data() {
+              return {
+                domainObject
+              };
+            },
+            template: '<Notebook :domain-object="domainObject"></Notebook>'
+          },
+          {
+            app: openmct.app,
+            element: container
+          }
+        );
+        _destroy = destroy;
+      },
+      destroy() {
+        if (_destroy) {
+          _destroy();
+        }
+      }
+    };
+  }
 }

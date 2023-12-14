@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,86 +21,103 @@
  *****************************************************************************/
 
 export default class FaultManagementAPI {
-    constructor(openmct) {
-        this.openmct = openmct;
+  /**
+   * @param {import("openmct").OpenMCT} openmct
+   */
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
+
+  /**
+   * @param {*} provider
+   */
+  addProvider(provider) {
+    this.provider = provider;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  supportsActions() {
+    return (
+      this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined
+    );
+  }
+
+  /**
+   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @returns {Promise.<FaultAPIResponse[]>}
+   */
+  request(domainObject) {
+    if (!this.provider?.supportsRequest(domainObject)) {
+      return Promise.reject();
     }
 
-    addProvider(provider) {
-        this.provider = provider;
+    return this.provider.request(domainObject);
+  }
+
+  /**
+   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @param {Function} callback
+   * @returns {Function} unsubscribe
+   */
+  subscribe(domainObject, callback) {
+    if (!this.provider?.supportsSubscribe(domainObject)) {
+      return Promise.reject();
     }
 
-    supportsActions() {
-        return this.provider?.acknowledgeFault !== undefined && this.provider?.shelveFault !== undefined;
-    }
+    return this.provider.subscribe(domainObject, callback);
+  }
 
-    request(domainObject) {
-        if (!this.provider?.supportsRequest(domainObject)) {
-            return Promise.reject();
-        }
+  /**
+   * @param {Fault} fault
+   * @param {*} ackData
+   */
+  acknowledgeFault(fault, ackData) {
+    return this.provider.acknowledgeFault(fault, ackData);
+  }
 
-        return this.provider.request(domainObject);
-    }
-
-    subscribe(domainObject, callback) {
-        if (!this.provider?.supportsSubscribe(domainObject)) {
-            return Promise.reject();
-        }
-
-        return this.provider.subscribe(domainObject, callback);
-    }
-
-    acknowledgeFault(fault, ackData) {
-        return this.provider.acknowledgeFault(fault, ackData);
-    }
-
-    shelveFault(fault, shelveData) {
-        return this.provider.shelveFault(fault, shelveData);
-    }
+  /**
+   * @param {Fault} fault
+   * @param {*} shelveData
+   * @returns {Promise.<T>}
+   */
+  shelveFault(fault, shelveData) {
+    return this.provider.shelveFault(fault, shelveData);
+  }
 }
 
-/** @typedef {object} Fault
+/**
+ * @typedef {object} TriggerValueInfo
+ * @property {number} value
+ * @property {string} rangeCondition
+ * @property {string} monitoringResult
+ */
+
+/**
+ * @typedef {object} CurrentValueInfo
+ * @property {number} value
+ * @property {string} rangeCondition
+ * @property {string} monitoringResult
+ */
+
+/**
+ * @typedef {object} Fault
+ * @property {boolean} acknowledged
+ * @property {CurrentValueInfo} currentValueInfo
+ * @property {string} id
+ * @property {string} name
+ * @property {string} namespace
+ * @property {number} seqNum
+ * @property {string} severity
+ * @property {boolean} shelved
+ * @property {string} shortDescription
+ * @property {string} triggerTime
+ * @property {TriggerValueInfo} triggerValueInfo
+ */
+
+/**
+ * @typedef {object} FaultAPIResponse
  * @property {string} type
- * @property {object} fault
- * @property {boolean} fault.acknowledged
- * @property {object} fault.currentValueInfo
- * @property {number} fault.currentValueInfo.value
- * @property {string} fault.currentValueInfo.rangeCondition
- * @property {string} fault.currentValueInfo.monitoringResult
- * @property {string} fault.id
- * @property {string} fault.name
- * @property {string} fault.namespace
- * @property {number} fault.seqNum
- * @property {string} fault.severity
- * @property {boolean} fault.shelved
- * @property {string} fault.shortDescription
- * @property {string} fault.triggerTime
- * @property {object} fault.triggerValueInfo
- * @property {number} fault.triggerValueInfo.value
- * @property {string} fault.triggerValueInfo.rangeCondition
- * @property {string} fault.triggerValueInfo.monitoringResult
- * @example
- *  {
- *     "type": "",
- *     "fault": {
- *         "acknowledged": true,
- *         "currentValueInfo": {
- *             "value": 0,
- *             "rangeCondition": "",
- *             "monitoringResult": ""
- *         },
- *         "id": "",
- *         "name": "",
- *         "namespace": "",
- *         "seqNum": 0,
- *         "severity": "",
- *         "shelved": true,
- *         "shortDescription": "",
- *         "triggerTime": "",
- *         "triggerValueInfo": {
- *             "value": 0,
- *             "rangeCondition": "",
- *             "monitoringResult": ""
- *         }
- *     }
- * }
+ * @property {Fault} fault
  */

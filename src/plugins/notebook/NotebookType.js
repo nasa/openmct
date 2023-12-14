@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,66 +23,57 @@
 import { IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration';
 
 export default class NotebookType {
-    constructor(name, description, icon) {
-        this.name = name;
-        this.description = description;
-        this.cssClass = icon;
-        this.creatable = true;
-        this.form = [
-            {
-                key: 'defaultSort',
-                name: 'Entry Sorting',
-                control: 'select',
-                options: [
-                    {
-                        name: 'Newest First',
-                        value: "newest"
-                    },
-                    {
-                        name: 'Oldest First',
-                        value: "oldest"
-                    }
-                ],
-                cssClass: 'l-inline',
-                property: [
-                    "configuration",
-                    "defaultSort"
-                ]
-            },
-            {
-                key: 'sectionTitle',
-                name: 'Section Title',
-                control: 'textfield',
-                cssClass: 'l-inline',
-                required: true,
-                property: [
-                    "configuration",
-                    "sectionTitle"
-                ]
-            },
-            {
-                key: 'pageTitle',
-                name: 'Page Title',
-                control: 'textfield',
-                cssClass: 'l-inline',
-                required: true,
-                property: [
-                    "configuration",
-                    "pageTitle"
-                ]
-            }
-        ];
-    }
+  constructor(name, description, icon) {
+    this.name = name;
+    this.description = description;
+    this.cssClass = icon;
+    this.creatable = true;
+    this.form = [
+      {
+        key: 'defaultSort',
+        name: 'Entry Sorting',
+        control: 'select',
+        options: [
+          {
+            name: 'Newest First',
+            value: 'newest'
+          },
+          {
+            name: 'Oldest First',
+            value: 'oldest'
+          }
+        ],
+        cssClass: 'l-inline',
+        property: ['configuration', 'defaultSort']
+      },
+      {
+        key: 'sectionTitle',
+        name: 'Section Title',
+        control: 'textfield',
+        cssClass: 'l-inline',
+        required: true,
+        property: ['configuration', 'sectionTitle']
+      },
+      {
+        key: 'pageTitle',
+        name: 'Page Title',
+        control: 'textfield',
+        cssClass: 'l-inline',
+        required: true,
+        property: ['configuration', 'pageTitle']
+      }
+    ];
+  }
 
-    initialize(domainObject) {
-        domainObject.configuration = {
-            defaultSort: 'oldest',
-            entries: {},
-            imageMigrationVer: IMAGE_MIGRATION_VER,
-            pageTitle: 'Page',
-            sections: [],
-            sectionTitle: 'Section',
-            type: 'General'
-        };
-    }
+  initialize(domainObject) {
+    domainObject.configuration = {
+      defaultSort: 'oldest',
+      entries: {},
+      imageMigrationVer: IMAGE_MIGRATION_VER,
+      pageTitle: 'Page',
+      sections: [],
+      sectionTitle: 'Section',
+      type: 'General'
+    };
+  }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,17 +21,18 @@
  *****************************************************************************/
 
 define(function () {
-    return {
-        name: 'Telemetry Table',
-        description: 'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
-        creatable: true,
-        cssClass: 'icon-tabular-scrolling',
-        initialize(domainObject) {
-            domainObject.composition = [];
-            domainObject.configuration = {
-                columnWidths: {},
-                hiddenColumns: {}
-            };
-        }
-    };
+  return {
+    name: 'Telemetry Table',
+    description:
+      'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
+    creatable: true,
+    cssClass: 'icon-tabular-scrolling',
+    initialize(domainObject) {
+      domainObject.composition = [];
+      domainObject.configuration = {
+        columnWidths: {},
+        hiddenColumns: {}
+      };
+    }
+  };
 });

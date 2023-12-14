@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,45 +20,54 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import ConditionWidgetComponent from './components/ConditionWidget.vue';
-import Vue from 'vue';
 
 export default function ConditionWidget(openmct) {
-    return {
-        key: 'conditionWidget',
-        name: 'Condition Widget',
-        cssClass: 'icon-condition-widget',
-        canView: function (domainObject) {
-            return domainObject.type === 'conditionWidget';
-        },
-        canEdit: function (domainObject) {
-            return domainObject.type === 'conditionWidget';
-        },
-        view: function (domainObject) {
-            let component;
+  return {
+    key: 'conditionWidget',
+    name: 'Condition Widget',
+    cssClass: 'icon-condition-widget',
+    canView: function (domainObject) {
+      return domainObject.type === 'conditionWidget';
+    },
+    canEdit: function (domainObject) {
+      return domainObject.type === 'conditionWidget';
+    },
+    view: function (domainObject) {
+      let _destroy = null;
 
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            ConditionWidgetComponent: ConditionWidgetComponent
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: '<condition-widget-component></condition-widget-component>'
-                    });
-                },
-                destroy: function (element) {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                ConditionWidgetComponent: ConditionWidgetComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<condition-widget-component></condition-widget-component>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-        priority: function () {
-            return 1;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    },
+    priority: function () {
+      return 1;
+    }
+  };
 }

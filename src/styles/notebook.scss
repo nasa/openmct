@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -104,7 +104,7 @@
     }
 
     &__head {
-        [class*="__"] + [class*="__"] {
+        [class*='__'] + [class*='__'] {
             margin-left: $interiorMargin;
         }
     }
@@ -113,8 +113,7 @@
         flex: 1 1 auto;
     }
 
-
-    &__page-locked,
+    &__page-locked-message,
     &__drag-area {
         border-radius: $controlCr;
         padding: 10px;
@@ -131,14 +130,13 @@
         cursor: pointer;
         justify-content: center;
 
-        [class*="__label"] {
+        [class*='__label'] {
             font-style: italic;
             @include ellipsize();
         }
 
         &:hover {
-            background: rgba($colorKey, 0.2);
-            //color: $colorBodyFg;
+            background: rgba($colorBodyFg, 0.1);
         }
 
         &.drag-active,
@@ -195,7 +193,7 @@
             padding-right: $interiorMarginSm; // Scrollbar kickoff
         }
 
-        [class*="__entry"] + [class*="__entry"] {
+        [class*='__entry'] + [class*='__entry'] {
             margin-top: $interiorMarginSm;
         }
 
@@ -237,7 +235,7 @@
     }
 
     /***** RESTRICTED NOTEBOOK */
-    &__page-locked {
+    &__page-locked-message {
         background: rgba($colorAlert, 0.2);
         display: flex;
         padding: 5px;
@@ -281,8 +279,30 @@
     // A Notebook entry
     $p: $interiorMarginSm;
     @include discreteItem();
+    cursor: pointer;
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
+
+    &:hover {
+        background: rgba($colorBodyFg, 0.3);
+    }
+
+    &.is-selected {
+        background: rgba($colorKey, 0.2);
+
+        .c-ne__text {
+            .c-notebook--page-unlocked & {
+                cursor: text;
+
+                @include hover() {
+                    &:not(.locked) {
+                        background: $colorInputBgHov;
+                    }
+                }
+
+            }
+        }
+    }
 
     &__text,
     &__local-controls {
@@ -295,9 +315,20 @@
         opacity: 0.7;
     }
 
-    &__time-and-creator,
+    &__time-and-creator-and-delete,
+    &__text,
     &__input {
         padding: $p;
+    }
+
+    &__time-and-creator-and-delete {
+        display: flex;
+        align-items: center;
+
+        > * + * {
+            float: right;
+            margin-left: auto;
+        }
     }
 
     &__creator [class*='icon'] {
@@ -307,6 +338,7 @@
     &__time-and-content {
         display: block;
         flex: 1 1 auto;
+        overflow: visible;
 
         > * + * {
             margin-top: $interiorMarginSm;
@@ -324,44 +356,110 @@
     }
 
     &__content {
-        display: flex;
         flex-direction: column;
         flex: 1 1 auto;
+        margin-right: $interiorMarginSm;
+        margin-top: $interiorMargin;
 
-        > [class*="__"] + [class*="__"] {
+        > [class*='__'] + [class*='__'] {
             margin-top: $interiorMarginSm;
         }
     }
 
     &__text {
         min-height: 22px; // Needed in Firefox when field is blank
-
-        &:not(.highlight) {
-            white-space: pre-wrap;
-        }
+        white-space: normal;
 
         .search-highlight {
             @include searchHighlight();
         }
-    }
 
-    &__input {
-        // Appended to __text element when Notebook is not in readOnly mode
-        @include inlineInput;
-        padding-left: $p;
-        padding-right: $p;
+        // Resets and styling for markdown
+        h1, h2, h3, h4, h5 {
+            margin: unset !important;
+            padding: unset !important;
+        }
 
-        @include hover {
-            &:not(:focus, .locked) {
-                background: rgba($colorBodyFg, 0.1);
+        a {
+            text-decoration: underline;
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        > * {
+            &:not(:first-child) {
+                margin-top: $interiorMarginSm;
             }
         }
 
-        &:focus {
-            background: $colorInputBg;
+        p, blockquote, pre {
+            margin: 0;
+
+            &:not(:first-child) {
+                margin-top: $interiorMarginLg;
+            }
+        ;
         }
 
-        white-space: pre-wrap;
+        blockquote {
+            $m: 16px;
+            margin-left: $m;
+            margin-right: $m;
+        }
+
+        ul, ol {
+            padding: 0 0 0 16px;
+        }
+
+        ul {
+            list-style: square;
+        }
+
+        ol {
+            list-style: decimal;
+        }
+
+        li {
+            list-style-type: inherit;
+        }
+
+        table {
+            width: auto;
+        }
+
+        th, td {
+            border: 1px solid rgba($colorBodyFg, 0.7);
+        }
+
+        th {
+            background: rgba($colorBodyFg, 0.2);
+        }
+    }
+
+    &__input {
+        // Textarea
+        //@include inlineInput;
+        @include reactive-input();
+        padding-left: $p;
+        padding-right: $p;
+        overflow: unset;
+        margin-bottom: $interiorMargin;
+        min-height: 5rem;
+        resize: vertical;
+        width: 100%;
+    }
+
+    &__save-button {
+        display: flex;
+        justify-content: flex-end;
+
+        .c-button {
+            $lrP: 15px;
+            padding-left: $lrP;
+            padding-right: $lrP;
+        }
     }
 
     &__section-and-page {
@@ -386,12 +484,16 @@
             opacity: 0.7;
         }
     }
+
+    &__remove {
+        float: right;
+    }
 }
 
 /****************************** EMBEDS */
 @mixin snapThumb() {
     // LEGACY: TODO: refactor when .snap-thumb in New Entry dialog is refactored
-    $d: 30px;
+    $d: 40px;
     border: 1px solid $colorInteriorBorder;
     cursor: pointer;
     width: $d;
@@ -410,19 +512,24 @@
     @include snapThumb();
 }
 
+.c-ne__embeds-wrapper {
+    max-height: 75px;
+    padding-left: $interiorMargin;
+    padding-top: $interiorMargin;
+    display: flex;
+}
+
 .c-ne__embed {
     @include discreteItemInnerElem();
     display: inline-flex;
     flex: 0 0 auto;
     padding: $interiorMargin;
-
-    [class*="__"] + [class*="__"] {
-        margin-left: $interiorMargin;
-    }
+    border: 1px solid $colorInteriorBorder;
 
     &__info {
         display: flex;
         flex-direction: column;
+        margin-left: $interiorMargin;
 
         a {
             color: $colorKey;
@@ -437,9 +544,11 @@
     }
 
     &__link {
+        flex: 1 1 auto;
+
         &:before {
             display: block;
-            font-size: 0.85em;
+            font-size: 1em;
             margin-right: $interiorMarginSm;
         }
     }
@@ -451,6 +560,27 @@
 
     &__snap-thumb {
         @include snapThumb();
+    }
+
+    &__actions {
+        margin: $interiorMarginSm;
+    }
+
+    &__actions-menu {
+        width: 55vh;
+        max-width: 500px;
+        height: 130px;
+        z-index: 70;
+
+        [class*='__icon'] {
+            filter: $colorKeyFilter;
+            margin: 0%;
+            height: 4vh;
+        }
+
+        [class*='__item-description'] {
+            min-width: 200px;
+        }
     }
 }
 
@@ -511,18 +641,22 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: $interiorMarginLg;
-
-    > * {
-        flex: 1 1 auto;
-
-        &:first-child {
-            flex: 0 0 auto;
-        }
-    }
+    padding: $interiorMargin $interiorMarginLg;
 
     > * + * {
         margin-top: $interiorMargin;
+    }
+
+    .l-browse-bar {
+        flex: 0 0 auto;
+    }
+
+    .c-snapshots-h__title {
+        display: flex;
+    }
+
+    .c-snapshots {
+        flex: 1 1 auto;
     }
 }
 
@@ -673,12 +807,12 @@
 
     .ptro-info,
     .ptro-btn-color-checkers-bar,
-    *[title="Font name"],
-    *[title="Stroke color"],
-    *[title="Stroke width"],
-    *[data-id="fontName"],
-    *[data-id="fontStrokeSize"],
-    *[data-id="stroke"] {
+    *[title='Font name'],
+    *[title='Stroke color'],
+    *[title='Stroke width'],
+    *[data-id='fontName'],
+    *[data-id='fontStrokeSize'],
+    *[data-id='stroke'] {
         display: none;
     }
 }
@@ -690,8 +824,9 @@ body.mobile {
     }
 
     .c-notebook__entry {
-        [class*="local-controls"] {
+        [class*='local-controls'] {
             display: none;
+            height: fit-content;
         }
     }
 
@@ -701,14 +836,14 @@ body.mobile {
         .c-ne__time-and-content {
             flex-direction: column;
 
-            > [class*="__"] + [class*="__"] {
+            > [class*='__'] + [class*='__'] {
                 margin-left: 0;
                 margin-top: $interiorMargin;
             }
         }
 
         .c-notebook__entry {
-            [class*="text"] {
+            [class*='text'] {
                 min-height: 0;
                 pointer-events: none;
             }
@@ -719,7 +854,14 @@ body.mobile {
 /****************************** INDICATOR */
 .c-indicator.has-new-snapshot {
     $c: $colorOk;
-    @include pulseProp($animName: flashSnapshot, $dur: 500ms, $iter: infinite, $prop: background, $valStart: rgba($c, 0.4), $valEnd: rgba($c, 0));
+    @include pulseProp(
+            $animName: flashSnapshot,
+            $dur: 500ms,
+            $iter: infinite,
+            $prop: background,
+            $valStart: rgba($c, 0.4),
+            $valEnd: rgba($c, 0)
+    );
 }
 
 /****************************** RESTRICTED NOTEBOOK / SHIFT LOG */

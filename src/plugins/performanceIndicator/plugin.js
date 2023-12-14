@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,43 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 export default function PerformanceIndicator() {
-    return function install(openmct) {
-        let frames = 0;
-        let lastCalculated = performance.now();
-        const indicator = openmct.indicators.simpleIndicator();
+  return function install(openmct) {
+    let frames = 0;
+    let lastCalculated = performance.now();
+    const indicator = openmct.indicators.simpleIndicator();
 
-        indicator.text('~ fps');
-        indicator.statusClass('s-status-info');
-        openmct.indicators.add(indicator);
+    indicator.text('~ fps');
+    indicator.statusClass('s-status-info');
+    openmct.indicators.add(indicator);
 
-        let rafHandle = requestAnimationFrame(incremementFrames);
+    let rafHandle = requestAnimationFrame(incrementFrames);
 
-        openmct.on('destroy', () => {
-            cancelAnimationFrame(rafHandle);
-        });
+    openmct.on('destroy', () => {
+      cancelAnimationFrame(rafHandle);
+    });
 
-        function incremementFrames() {
-            let now = performance.now();
-            if ((now - lastCalculated) < 1000) {
-                frames++;
-            } else {
-                updateFPS(frames);
-                lastCalculated = now;
-                frames = 1;
-            }
+    function incrementFrames() {
+      let now = performance.now();
+      if (now - lastCalculated < 1000) {
+        frames++;
+      } else {
+        updateFPS(frames);
+        lastCalculated = now;
+        frames = 1;
+      }
 
-            rafHandle = requestAnimationFrame(incremementFrames);
-        }
+      rafHandle = requestAnimationFrame(incrementFrames);
+    }
 
-        function updateFPS(fps) {
-            indicator.text(`${fps} fps`);
-            if (fps >= 40) {
-                indicator.statusClass('s-status-on');
-            } else if (fps < 40 && fps >= 20) {
-                indicator.statusClass('s-status-warning');
-            } else {
-                indicator.statusClass('s-status-error');
-            }
-        }
-    };
+    function updateFPS(fps) {
+      indicator.text(`${fps} fps`);
+      if (fps >= 40) {
+        indicator.statusClass('s-status-on');
+      } else if (fps < 40 && fps >= 20) {
+        indicator.statusClass('s-status-warning');
+      } else {
+        indicator.statusClass('s-status-error');
+      }
+    }
+  };
 }

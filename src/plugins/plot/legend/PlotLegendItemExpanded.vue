@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,180 +20,234 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<tr
+  <tr
     class="plot-legend-item"
     :class="{
-        'is-status--missing': isMissing
+      'is-stale': isStale,
+      'is-status--missing': isMissing
     }"
     @mouseover="toggleHover(true)"
     @mouseleave="toggleHover(false)"
->
+  >
     <td class="plot-series-swatch-and-name">
-        <span
-            class="plot-series-color-swatch"
-            :style="{ 'background-color': colorAsHexString }"
-        >
-        </span>
-        <span
-            class="is-status__indicator"
-            title="This item is missing or suspect"
-        ></span>
-        <span class="plot-series-name">{{ name }}</span>
+      <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }">
+      </span>
+      <span class="is-status__indicator" title="This item is missing or suspect"></span>
+      <span
+        ref="seriesName"
+        class="plot-series-name"
+        @mouseover.ctrl="showToolTip"
+        @mouseleave="hideToolTip"
+      >
+        {{ name }}
+      </span>
     </td>
 
     <td v-if="showTimestampWhenExpanded">
-        <span class="plot-series-value cursor-hover hover-value-enabled">
-            {{ formattedXValue }}
-        </span>
+      <span class="plot-series-value cursor-hover hover-value-enabled">
+        {{ formattedXValue }}
+      </span>
     </td>
     <td v-if="showValueWhenExpanded">
-        <span
-            class="plot-series-value cursor-hover hover-value-enabled"
-            :class="[mctLimitStateClass]"
-        >
-            {{ formattedYValue }}
-        </span>
+      <span
+        class="plot-series-value cursor-hover hover-value-enabled"
+        :class="[mctLimitStateClass]"
+      >
+        {{ formattedYValue }}
+      </span>
     </td>
     <td v-if="showUnitsWhenExpanded">
-        <span class="plot-series-value cursor-hover hover-value-enabled">
-            {{ unit }}
-        </span>
+      <span class="plot-series-value cursor-hover hover-value-enabled">
+        {{ unit }}
+      </span>
     </td>
-    <td
-        v-if="showMinimumWhenExpanded"
-        class="mobile-hide"
-    >
-        <span class="plot-series-value">
-            {{ formattedMinY }}
-        </span>
+    <td v-if="showMinimumWhenExpanded" class="mobile-hide">
+      <span class="plot-series-value">
+        {{ formattedMinY }}
+      </span>
     </td>
-    <td
-        v-if="showMaximumWhenExpanded"
-        class="mobile-hide"
-    >
-        <span class="plot-series-value">
-            {{ formattedMaxY }}
-        </span>
+    <td v-if="showMaximumWhenExpanded" class="mobile-hide">
+      <span class="plot-series-value">
+        {{ formattedMaxY }}
+      </span>
     </td>
-</tr>
+  </tr>
 </template>
 
 <script>
-import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
-import eventHelpers from "@/plugins/plot/lib/eventHelpers";
+import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
+import eventHelpers from '@/plugins/plot/lib/eventHelpers';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import configStore from '../configuration/ConfigStore';
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    props: {
-        seriesObject: {
-            type: Object,
-            required: true,
-            default() {
-                return {};
-            }
-        },
-        highlights: {
-            type: Array,
-            default() {
-                return [];
-            }
-        },
-        legend: {
-            type: Object,
-            required: true
-        }
+  mixins: [stalenessMixin, tooltipHelpers],
+  inject: ['openmct', 'domainObject'],
+  props: {
+    seriesKeyString: {
+      type: String,
+      required: true
     },
-    data() {
-        return {
-            isMissing: false,
-            colorAsHexString: '',
-            name: '',
-            unit: '',
-            formattedYValue: '',
-            formattedXValue: '',
-            formattedMinY: '',
-            formattedMaxY: '',
-            mctLimitStateClass: ''
-        };
-    },
-    computed: {
-        showUnitsWhenExpanded() {
-            return this.legend.get('showUnitsWhenExpanded') === true;
-        },
-        showMinimumWhenExpanded() {
-            return this.legend.get('showMinimumWhenExpanded') === true;
-        },
-        showMaximumWhenExpanded() {
-            return this.legend.get('showMaximumWhenExpanded') === true;
-        },
-        showValueWhenExpanded() {
-            return this.legend.get('showValueWhenExpanded') === true;
-        },
-        showTimestampWhenExpanded() {
-            return this.legend.get('showTimestampWhenExpanded') === true;
-        }
-    },
-    watch: {
-        highlights(newHighlights) {
-            const highlightedObject = newHighlights.find(highlight => highlight.series.keyString === this.seriesObject.keyString);
-            if (newHighlights.length === 0 || highlightedObject) {
-                this.initialize(highlightedObject);
-            }
-        }
-    },
-    mounted() {
-        eventHelpers.extend(this);
-        this.listenTo(this.seriesObject, 'change:color', (newColor) => {
-            this.updateColor(newColor);
-        }, this);
-        this.listenTo(this.seriesObject, 'change:name', () => {
-            this.updateName();
-        }, this);
-        this.initialize();
-    },
-    beforeDestroy() {
-        this.stopListening();
-    },
-    methods: {
-        initialize(highlightedObject) {
-            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
-
-            this.isMissing = seriesObject.domainObject.status === 'missing';
-            this.colorAsHexString = seriesObject.get('color').asHexString();
-            this.name = seriesObject.get('name');
-            this.unit = seriesObject.get('unit');
-            const closest = seriesObject.closest;
-            if (closest) {
-                this.formattedYValue = seriesObject.formatY(closest);
-                this.formattedXValue = seriesObject.formatX(closest);
-                this.mctLimitStateClass = seriesObject.closest.mctLimitState ? getLimitClass(seriesObject.closest.mctLimitState, 'c-plot-limit--') : '';
-            } else {
-                this.formattedYValue = '';
-                this.formattedXValue = '';
-                this.mctLimitStateClass = '';
-            }
-
-            const stats = seriesObject.get('stats');
-            if (stats) {
-                this.formattedMinY = seriesObject.formatY(stats.minPoint);
-                this.formattedMaxY = seriesObject.formatY(stats.maxPoint);
-            } else {
-                this.formattedMinY = '';
-                this.formattedMaxY = '';
-            }
-        },
-        updateColor(newColor) {
-            this.colorAsHexString = newColor.asHexString();
-        },
-        updateName(newName) {
-            this.nameWithUnit = this.seriesObject.nameWithUnit();
-        },
-        toggleHover(hover) {
-            this.hover = hover;
-            this.$emit('legendHoverChanged', {
-                seriesKey: this.hover ? this.seriesObject.keyString : ''
-            });
-        }
+    highlights: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
+  },
+  emits: ['legend-hover-changed'],
+  data() {
+    return {
+      isMissing: false,
+      colorAsHexString: '',
+      name: '',
+      unit: '',
+      formattedYValue: '',
+      formattedXValue: '',
+      formattedMinY: '',
+      formattedMaxY: '',
+      mctLimitStateClass: '',
+      loaded: false
+    };
+  },
+  computed: {
+    showUnitsWhenExpanded() {
+      return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
+    },
+    showMinimumWhenExpanded() {
+      return this.loaded && this.legend.get('showMinimumWhenExpanded') === true;
+    },
+    showMaximumWhenExpanded() {
+      return this.loaded && this.legend.get('showMaximumWhenExpanded') === true;
+    },
+    showValueWhenExpanded() {
+      return this.loaded && this.legend.get('showValueWhenExpanded') === true;
+    },
+    showTimestampWhenExpanded() {
+      return this.loaded && this.legend.get('showTimestampWhenExpanded') === true;
+    }
+  },
+  watch: {
+    highlights: {
+      handler(newHighlights) {
+        const highlightedObject = newHighlights.find(
+          (highlight) => highlight.seriesKeyString === this.seriesKeyString
+        );
+        if (newHighlights.length === 0 || highlightedObject) {
+          this.initialize(highlightedObject);
+        }
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.seriesModels = [];
+    eventHelpers.extend(this);
+    this.config = this.getConfig();
+    this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+    this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+    this.config.series.forEach(this.onSeriesAdd, this);
+    this.legend = this.config.legend;
+    this.loaded = true;
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
+  },
+  beforeUnmount() {
+    this.stopListening();
+  },
+  methods: {
+    onSeriesAdd(series, index) {
+      this.seriesModels[index] = series;
+      if (series.keyString === this.seriesKeyString) {
+        this.listenTo(
+          series,
+          'change:color',
+          (newColor) => {
+            this.updateColor(newColor);
+          },
+          this
+        );
+        this.listenTo(
+          series,
+          'change:name',
+          () => {
+            this.updateName();
+          },
+          this
+        );
+        this.subscribeToStaleness(series.domainObject);
+        this.initialize();
+      }
+    },
+    onSeriesRemove(seriesToRemove) {
+      const seriesIndexToRemove = this.seriesModels.findIndex(
+        (series) => series.keyString === seriesToRemove.keyString
+      );
+      this.seriesModels.splice(seriesIndexToRemove, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
+    getConfig() {
+      const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+      return configStore.get(configId);
+    },
+    initialize(highlightedObject) {
+      const seriesKeyStringToUse = highlightedObject?.seriesKeyString || this.seriesKeyString;
+      const seriesObject = this.getSeries(seriesKeyStringToUse);
+
+      this.isMissing = seriesObject.domainObject.status === 'missing';
+      this.colorAsHexString = seriesObject.get('color').asHexString();
+      this.name = seriesObject.get('name');
+      this.unit = seriesObject.get('unit');
+      const closest = seriesObject.closest;
+      if (closest) {
+        this.formattedYValue = seriesObject.formatY(closest);
+        this.formattedXValue = seriesObject.formatX(closest);
+        this.mctLimitStateClass = seriesObject.closest.mctLimitState
+          ? getLimitClass(seriesObject.closest.mctLimitState, 'c-plot-limit--')
+          : '';
+      } else {
+        this.formattedYValue = '';
+        this.formattedXValue = '';
+        this.mctLimitStateClass = '';
+      }
+
+      const stats = seriesObject.get('stats');
+      if (stats) {
+        this.formattedMinY = seriesObject.formatY(stats.minPoint);
+        this.formattedMaxY = seriesObject.formatY(stats.maxPoint);
+      } else {
+        this.formattedMinY = '';
+        this.formattedMaxY = '';
+      }
+    },
+    updateColor(newColor) {
+      this.colorAsHexString = newColor.asHexString();
+    },
+    updateName() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      this.nameWithUnit = seriesObject.nameWithUnit();
+    },
+    toggleHover(hover) {
+      this.hover = hover;
+      this.$emit('legend-hover-changed', {
+        seriesKey: this.hover ? this.seriesKeyString : ''
+      });
+    },
+    async showToolTip() {
+      const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
+      const seriesIdentifier = this.openmct.objects.parseKeyString(this.seriesKeyString);
+      this.buildToolTip(await this.getTelemetryPathString(seriesIdentifier), BELOW, 'seriesName');
+    }
+  }
 };
 </script>

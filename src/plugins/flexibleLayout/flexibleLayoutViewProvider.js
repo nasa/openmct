@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,70 +20,84 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/flexibleLayout.vue',
-    'vue'
-], function (
-    FlexibleLayoutComponent,
-    Vue
-) {
-    function FlexibleLayoutViewProvider(openmct) {
+import mount from 'utils/mount';
+
+import FlexibleLayoutComponent from './components/FlexibleLayout.vue';
+
+const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
+export default class FlexibleLayoutViewProvider {
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.key = FLEXIBLE_LAYOUT_KEY;
+    this.name = 'Flexible Layout';
+    this.cssClass = 'icon-layout-view';
+    this.destroy = null;
+  }
+
+  canView(domainObject) {
+    return domainObject.type === FLEXIBLE_LAYOUT_KEY;
+  }
+
+  canEdit(domainObject) {
+    return domainObject.type === FLEXIBLE_LAYOUT_KEY;
+  }
+
+  view(domainObject, objectPath) {
+    let openmct = this.openmct;
+    let _destroy = null;
+    let component = null;
+
+    return {
+      show(element, isEditing) {
+        const { vNode, destroy } = mount(
+          {
+            components: {
+              FlexibleLayoutComponent
+            },
+            provide: {
+              openmct,
+              objectPath,
+              domainObject
+            },
+            data() {
+              return {
+                isEditing: isEditing
+              };
+            },
+            template:
+              '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
+          },
+          {
+            app: openmct.app,
+            element
+          }
+        );
+        component = vNode.componentInstance;
+        _destroy = destroy;
+      },
+      getSelectionContext() {
         return {
-            key: 'flexible-layout',
-            name: 'FlexibleLayout',
-            cssClass: 'icon-layout-view',
-            canView: function (domainObject) {
-                return domainObject.type === 'flexible-layout';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'flexible-layout';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
-
-                return {
-                    show: function (element, isEditing) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                objectPath,
-                                layoutObject: domainObject
-                            },
-                            data() {
-                                return {
-                                    isEditing: isEditing
-                                };
-                            },
-                            template: '<flexible-layout-component ref="flexibleLayout" :isEditing="isEditing"></flexible-layout-component>'
-                        });
-                    },
-                    getSelectionContext: function () {
-                        return {
-                            item: domainObject,
-                            addContainer: component.$refs.flexibleLayout.addContainer,
-                            deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-                            deleteFrame: component.$refs.flexibleLayout.deleteFrame,
-                            type: 'flexible-layout'
-                        };
-                    },
-                    onEditModeChange: function (isEditing) {
-                        component.isEditing = isEditing;
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
+          item: domainObject,
+          type: 'flexible-layout'
         };
-    }
-
-    return FlexibleLayoutViewProvider;
-});
+      },
+      contextAction(action, ...args) {
+        if (component?.$refs?.flexibleLayout?.[action]) {
+          component.$refs.flexibleLayout[action](...args);
+        }
+      },
+      onEditModeChange(isEditing) {
+        component.isEditing = isEditing;
+      },
+      destroy() {
+        if (_destroy) {
+          _destroy();
+          component = null;
+        }
+      }
+    };
+  }
+  priority() {
+    return 1;
+  }
+}

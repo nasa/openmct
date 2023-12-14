@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,111 +21,136 @@
  *****************************************************************************/
 
 export default class LinkAction {
-    constructor(openmct) {
-        this.name = 'Create Link';
-        this.key = 'link';
-        this.description = 'Create Link to object in another location.';
-        this.cssClass = "icon-link";
-        this.group = "action";
-        this.priority = 7;
+  constructor(openmct) {
+    this.name = 'Create Link';
+    this.key = 'link';
+    this.description = 'Create Link to object in another location.';
+    this.cssClass = 'icon-link';
+    this.group = 'action';
+    this.priority = 7;
 
-        this.openmct = openmct;
+    this.openmct = openmct;
+    this.transaction = null;
+  }
+
+  appliesTo(objectPath) {
+    return true; // link away!
+  }
+
+  invoke(objectPath) {
+    this.object = objectPath[0];
+    this.parent = objectPath[1];
+    this.showForm(this.object, this.parent);
+  }
+
+  inNavigationPath() {
+    return this.openmct.router.path.some((objectInPath) =>
+      this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier)
+    );
+  }
+
+  onSave(changes) {
+    this.startTransaction();
+
+    const inNavigationPath = this.inNavigationPath();
+    if (inNavigationPath && this.openmct.editor.isEditing()) {
+      this.openmct.editor.save();
     }
 
-    appliesTo(objectPath) {
-        return true; // link away!
-    }
+    const parentDomainObjectpath = changes.location || [this.parent];
+    const parent = parentDomainObjectpath[0];
 
-    invoke(objectPath) {
-        this.object = objectPath[0];
-        this.parent = objectPath[1];
-        this.showForm(this.object, this.parent);
-    }
+    this.linkInNewParent(this.object, parent);
 
-    inNavigationPath() {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
-    }
+    return this.saveTransaction();
+  }
 
-    onSave(changes) {
-        let inNavigationPath = this.inNavigationPath();
-        if (inNavigationPath && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
+  linkInNewParent(child, newParent) {
+    let compositionCollection = this.openmct.composition.get(newParent);
+
+    compositionCollection.add(child);
+  }
+
+  showForm(domainObject, parentDomainObject) {
+    const formStructure = {
+      title: `Link "${domainObject.name}" to a New Location`,
+      sections: [
+        {
+          rows: [
+            {
+              name: 'Location',
+              cssClass: 'grows',
+              control: 'locator',
+              parent: parentDomainObject,
+              required: true,
+              validate: this.validate(parentDomainObject),
+              key: 'location'
+            }
+          ]
         }
+      ]
+    };
+    this.openmct.forms.showForm(formStructure).then(this.onSave.bind(this));
+  }
 
-        const parentDomainObjectpath = changes.location || [this.parent];
-        const parent = parentDomainObjectpath[0];
-
-        this.linkInNewParent(this.object, parent);
-    }
-
-    linkInNewParent(child, newParent) {
-        let compositionCollection = this.openmct.composition.get(newParent);
-
-        compositionCollection.add(child);
-    }
-
-    showForm(domainObject, parentDomainObject) {
-        const formStructure = {
-            title: `Link "${domainObject.name}" to a New Location`,
-            sections: [
-                {
-                    rows: [
-                        {
-                            name: "location",
-                            control: "locator",
-                            parent: parentDomainObject,
-                            required: true,
-                            validate: this.validate(parentDomainObject),
-                            key: 'location'
-                        }
-                    ]
-                }
-            ]
+  validate(currentParent) {
+    return (data) => {
+      // default current parent to ROOT, if it's null, then it's a root level item
+      if (!currentParent) {
+        currentParent = {
+          identifier: {
+            key: 'ROOT',
+            namespace: ''
+          }
         };
-        this.openmct.forms.showForm(formStructure)
-            .then(this.onSave.bind(this));
+      }
+
+      const parentCandidatePath = data.value;
+      const parentCandidate = parentCandidatePath[0];
+      const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+
+      if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+        return false;
+      }
+
+      // check if moving to same place
+      if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
+        return false;
+      }
+
+      // check if moving to a child
+      if (
+        parentCandidatePath.some((candidatePath) => {
+          return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
+        })
+      ) {
+        return false;
+      }
+
+      const parentCandidateComposition = parentCandidate.composition;
+      if (
+        parentCandidateComposition &&
+        parentCandidateComposition.indexOf(objectKeystring) !== -1
+      ) {
+        return false;
+      }
+
+      return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+    };
+  }
+  startTransaction() {
+    if (!this.openmct.objects.isTransactionActive()) {
+      this.transaction = this.openmct.objects.startTransaction();
+    }
+  }
+
+  async saveTransaction() {
+    if (!this.transaction) {
+      return;
     }
 
-    validate(currentParent) {
-        return (data) => {
-
-            // default current parent to ROOT, if it's null, then it's a root level item
-            if (!currentParent) {
-                currentParent = {
-                    identifier: {
-                        key: 'ROOT',
-                        namespace: ''
-                    }
-                };
-            }
-
-            const parentCandidatePath = data.value;
-            const parentCandidate = parentCandidatePath[0];
-            const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
-
-            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
-                return false;
-            }
-
-            // check if moving to same place
-            if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
-                return false;
-            }
-
-            // check if moving to a child
-            if (parentCandidatePath.some(candidatePath => {
-                return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
-            })) {
-                return false;
-            }
-
-            const parentCandidateComposition = parentCandidate.composition;
-            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
-                return false;
-            }
-
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
-        };
-    }
+    await this.transaction.commit();
+    this.openmct.objects.endTransaction();
+    this.transaction = null;
+  }
 }

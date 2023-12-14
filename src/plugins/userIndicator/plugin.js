@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,37 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import UserIndicator from './components/UserIndicator.vue';
-import Vue from 'vue';
 
 export default function UserIndicatorPlugin() {
+  function addIndicator(openmct) {
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          UserIndicator
+        },
+        provide: {
+          openmct: openmct
+        },
+        template: '<UserIndicator />'
+      },
+      {
+        app: openmct.app
+      }
+    );
 
-    function addIndicator(openmct) {
-        const userIndicator = new Vue ({
-            components: {
-                UserIndicator
-            },
-            provide: {
-                openmct: openmct
-            },
-            template: '<UserIndicator />'
-        });
+    openmct.indicators.add({
+      key: 'user-indicator',
+      element: vNode.el,
+      priority: openmct.priority.HIGH,
+      destroy: destroy
+    });
+  }
 
-        openmct.indicators.add({
-            key: 'user-indicator',
-            element: userIndicator.$mount().$el,
-            priority: openmct.priority.HIGH
-        });
+  return function install(openmct) {
+    if (openmct.user.hasProvider()) {
+      addIndicator(openmct);
+    } else {
+      // back up if user provider added after indicator installed
+      openmct.user.on('providerAdded', () => {
+        addIndicator(openmct);
+      });
     }
-
-    return function install(openmct) {
-        if (openmct.user.hasProvider()) {
-            addIndicator(openmct);
-        } else {
-            // back up if user provider added after indicator installed
-            openmct.user.on('providerAdded', () => {
-                addIndicator(openmct);
-            });
-        }
-    };
+  };
 }

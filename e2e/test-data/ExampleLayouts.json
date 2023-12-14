@@ -1,0 +1,2180 @@
+{
+  "openmct": {
+    "45b24009-dfed-4023-a30b-d31f5e3a2d87": {
+      "identifier": {
+        "key": "45b24009-dfed-4023-a30b-d31f5e3a2d87",
+        "namespace": ""
+      },
+      "name": "Open MCT Examples 10-05-22",
+      "type": "folder",
+      "composition": [
+        {
+          "key": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+          "namespace": ""
+        },
+        {
+          "key": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+          "namespace": ""
+        }
+      ],
+      "modified": 1664993018467,
+      "location": "mine",
+      "persisted": 1664993018469
+    },
+    "832cd297-38ab-478a-a5ff-f3bfd278e41b": {
+      "identifier": {
+        "key": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+        "namespace": ""
+      },
+      "name": "Display Layout Example 1",
+      "type": "layout",
+      "composition": [
+        {
+          "key": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+          "namespace": ""
+        },
+        {
+          "key": "da187902-64f6-460e-bfbe-c84bd628e126",
+          "namespace": ""
+        },
+        {
+          "key": "03d9a461-8bcd-4821-b405-46b03d6da9b0",
+          "namespace": ""
+        },
+        {
+          "key": "c68ff290-5891-41bd-bfc1-84734fb86a19",
+          "namespace": ""
+        },
+        {
+          "key": "8f72d5f7-7074-4745-9a0b-c5854d31790b",
+          "namespace": ""
+        },
+        {
+          "key": "caf64735-99c2-4906-a2fa-bb47912b2a79",
+          "namespace": ""
+        },
+        {
+          "key": "4b6f1b0d-8a70-4dee-bb6c-36af255bc139",
+          "namespace": ""
+        },
+        {
+          "key": "ee70fbec-2890-4eb5-9e15-15e5890b3138",
+          "namespace": ""
+        },
+        {
+          "key": "152d2a9f-f0f3-408e-bf55-af007840cdef",
+          "namespace": ""
+        },
+        {
+          "key": "6fed1053-3e10-44e3-8e60-4655d19266e0",
+          "namespace": ""
+        },
+        {
+          "key": "e940f59d-e6ef-4a2b-bf82-d81d94627da2",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "items": [
+          {
+            "width": 29,
+            "height": 54,
+            "x": 0,
+            "y": 5,
+            "identifier": {
+              "key": "e230c105-b961-4e01-a056-8f2e8630e185",
+              "namespace": ""
+            },
+            "hasFrame": false,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "e04ae658-c538-464b-a042-363da827717e"
+          },
+          {
+            "stroke": "transparent",
+            "x": 30,
+            "y": 5,
+            "width": 27,
+            "height": 15,
+            "url": "https://s.abcnews.com/images/Technology/mars-rover-2020-illustration-nasa-ht-jc-200305_hpMain_16x9_992.jpg",
+            "type": "image-view",
+            "id": "ed63cc29-80e2-4e2b-a472-3d6d4adbf310"
+          },
+          {
+            "identifier": {
+              "key": "e3131777-c0ef-44f3-9202-4c9c7b864dcc",
+              "namespace": ""
+            },
+            "x": 30,
+            "y": 21,
+            "width": 27,
+            "height": 3,
+            "displayMode": "all",
+            "value": "sin",
+            "stroke": "",
+            "fill": "",
+            "color": "",
+            "fontSize": "default",
+            "font": "default",
+            "type": "telemetry-view",
+            "id": "a212530c-2c8c-4c46-b8e3-62452832d749"
+          },
+          {
+            "identifier": {
+              "key": "6f0c1a8f-cefa-4783-a79e-9f123e8718ba",
+              "namespace": ""
+            },
+            "x": 30,
+            "y": 25,
+            "width": 27,
+            "height": 3,
+            "displayMode": "all",
+            "value": "sin",
+            "stroke": "",
+            "fill": "",
+            "color": "",
+            "fontSize": "default",
+            "font": "default",
+            "type": "telemetry-view",
+            "id": "06c90c9c-6982-4aba-a89d-588530592fa4"
+          },
+          {
+            "width": 27,
+            "height": 30,
+            "x": 30,
+            "y": 29,
+            "identifier": {
+              "key": "8ae9193d-2f79-43bc-a39f-4f89a52da5a3",
+              "namespace": ""
+            },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "b50b1748-ec6f-4ed8-a3d0-065b9f421aed"
+          },
+          {
+            "width": 33,
+            "height": 23,
+            "x": 58,
+            "y": 5,
+            "identifier": {
+              "key": "8f72d5f7-7074-4745-9a0b-c5854d31790b",
+              "namespace": ""
+            },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "bbb714a8-545e-460e-85e8-43a70fa2fd80"
+          },
+          {
+            "width": 39,
+            "height": 10,
+            "x": 92,
+            "y": 49,
+            "identifier": {
+              "key": "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d",
+              "namespace": ""
+            },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "1a52971a-60c3-4bfa-900d-3344f2703e2c"
+          },
+          {
+            "width": 15,
+            "height": 4,
+            "x": 52,
+            "y": 0,
+            "identifier": {
+              "key": "d776581d-443c-47e4-9d5a-f04950842981",
+              "namespace": ""
+            },
+            "hasFrame": false,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "d627e236-b63a-48d0-b12d-942ab9594b98"
+          },
+          {
+            "width": 39,
+            "height": 43,
+            "x": 92,
+            "y": 5,
+            "identifier": {
+              "key": "136523e4-ae71-4ebd-bd75-5394855d7708",
+              "namespace": ""
+            },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "da2dfd37-84d3-4b4d-98f4-133a565b6a2c"
+          },
+          {
+            "width": 33,
+            "height": 30,
+            "x": 58,
+            "y": 29,
+            "identifier": {
+              "key": "152d2a9f-f0f3-408e-bf55-af007840cdef",
+              "namespace": ""
+            },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "35d4375c-8e2b-4feb-896c-c76b1a9b5c9e"
+          },
+          {
+            "width": 19,
+            "height": 4,
+            "x": 16,
+            "y": 0,
+            "identifier": {
+              "key": "6fed1053-3e10-44e3-8e60-4655d19266e0",
+              "namespace": ""
+            },
+            "hasFrame": false,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "09683b4b-474a-479b-bc47-6105c78e14e7"
+          },
+          {
+            "fill": "",
+            "stroke": "",
+            "color": "",
+            "x": 0,
+            "y": 0,
+            "width": 15,
+            "height": 4,
+            "text": "MISSION TIME",
+            "fontSize": "20",
+            "font": "default",
+            "type": "text-view",
+            "id": "b9321c44-0c82-4687-b115-948678276e62"
+          },
+          {
+            "width": 15,
+            "height": 4,
+            "x": 36,
+            "y": 0,
+            "identifier": {
+              "key": "a07a2210-5c85-4fa7-8f83-14979fbf0beb",
+              "namespace": ""
+            },
+            "hasFrame": false,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "ac0d7eb1-b485-458f-bd2a-a63aa87a3a8a"
+          }
+        ],
+        "layoutGrid": [10, 10],
+        "objectStyles": {
+          "ed63cc29-80e2-4e2b-a472-3d6d4adbf310": {
+            "staticStyle": {
+              "style": {
+                "imageUrl": "data:image/jpeg;base64,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"
+              }
+            }
+          }
+        }
+      },
+      "modified": 1664992567772,
+      "location": "45b24009-dfed-4023-a30b-d31f5e3a2d87",
+      "persisted": 1664992594970
+    },
+    "5f6760b7-85c5-4f90-a8b1-c6ba8382a684": {
+      "identifier": {
+        "key": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+        "namespace": ""
+      },
+      "name": "Flexible Layout Example 1",
+      "type": "flexible-layout",
+      "configuration": {
+        "containers": [
+          {
+            "id": "3c8aedca-7413-494a-b389-a4d657c7103c",
+            "frames": [
+              {
+                "id": "19cd7f7d-3cc6-4c97-b832-e178b2c75602",
+                "domainObjectIdentifier": {
+                  "key": "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d",
+                  "namespace": ""
+                },
+                "size": 10,
+                "noFrame": false
+              },
+              {
+                "id": "8dd99a22-99a9-4e0c-8384-4e5072f11c74",
+                "domainObjectIdentifier": {
+                  "key": "1c96da17-bce6-4ddf-bde0-70a5031f9399",
+                  "namespace": ""
+                },
+                "size": 30,
+                "noFrame": false
+              },
+              {
+                "id": "27918937-a5f7-48f3-8c97-ad904da6f885",
+                "domainObjectIdentifier": {
+                  "key": "8ae9193d-2f79-43bc-a39f-4f89a52da5a3",
+                  "namespace": ""
+                },
+                "size": 30,
+                "noFrame": false
+              },
+              {
+                "id": "872e1cc1-a955-40f9-a67a-d65aca32d420",
+                "domainObjectIdentifier": {
+                  "key": "c03cbe46-c5f0-40a8-a703-813ad663e900",
+                  "namespace": ""
+                },
+                "size": 30,
+                "noFrame": false
+              }
+            ],
+            "size": 18
+          },
+          {
+            "id": "3c3f9f05-112e-433b-a6f2-c01bbc6a8f4d",
+            "frames": [
+              {
+                "id": "fd1aea5b-6fe8-40fe-b315-e8313a37d56e",
+                "domainObjectIdentifier": {
+                  "key": "e230c105-b961-4e01-a056-8f2e8630e185",
+                  "namespace": ""
+                },
+                "size": 59,
+                "noFrame": false
+              },
+              {
+                "id": "b9bdc867-492e-4c6f-b963-813908e3a259",
+                "domainObjectIdentifier": {
+                  "key": "136523e4-ae71-4ebd-bd75-5394855d7708",
+                  "namespace": ""
+                },
+                "size": 37,
+                "noFrame": false
+              }
+            ],
+            "size": 66
+          },
+          {
+            "id": "2f145353-b742-4172-b07d-7e2bb8ce17fc",
+            "frames": [
+              {
+                "id": "7d6a2b96-ff11-47ec-a690-0495c7525ff9",
+                "domainObjectIdentifier": {
+                  "key": "d776581d-443c-47e4-9d5a-f04950842981",
+                  "namespace": ""
+                },
+                "size": 5,
+                "noFrame": true
+              },
+              {
+                "id": "5f9b34f9-db81-48fc-84e2-2a1709ecc065",
+                "domainObjectIdentifier": {
+                  "key": "a07a2210-5c85-4fa7-8f83-14979fbf0beb",
+                  "namespace": ""
+                },
+                "size": 5,
+                "noFrame": true
+              },
+              {
+                "id": "c22e76f8-fc29-4685-a5a8-ff088c2ee3ee",
+                "domainObjectIdentifier": {
+                  "key": "4ae303e9-8edb-490b-93c3-cfaadfcdb64a",
+                  "namespace": ""
+                },
+                "size": 45,
+                "noFrame": false
+              },
+              {
+                "id": "c6426188-aec7-466c-a800-10653a3fade6",
+                "domainObjectIdentifier": {
+                  "key": "2a84d91e-8612-43ed-9477-61b9cfbf5c2c",
+                  "namespace": ""
+                },
+                "size": 45,
+                "noFrame": false
+              }
+            ],
+            "size": 16
+          }
+        ],
+        "rowsLayout": false,
+        "objectStyles": {}
+      },
+      "composition": [
+        {
+          "key": "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d",
+          "namespace": ""
+        },
+        {
+          "key": "1c96da17-bce6-4ddf-bde0-70a5031f9399",
+          "namespace": ""
+        },
+        {
+          "key": "8ae9193d-2f79-43bc-a39f-4f89a52da5a3",
+          "namespace": ""
+        },
+        {
+          "key": "4ae303e9-8edb-490b-93c3-cfaadfcdb64a",
+          "namespace": ""
+        },
+        {
+          "key": "2a84d91e-8612-43ed-9477-61b9cfbf5c2c",
+          "namespace": ""
+        },
+        {
+          "key": "c03cbe46-c5f0-40a8-a703-813ad663e900",
+          "namespace": ""
+        },
+        {
+          "key": "e230c105-b961-4e01-a056-8f2e8630e185",
+          "namespace": ""
+        },
+        {
+          "key": "136523e4-ae71-4ebd-bd75-5394855d7708",
+          "namespace": ""
+        },
+        {
+          "key": "d776581d-443c-47e4-9d5a-f04950842981",
+          "namespace": ""
+        },
+        {
+          "key": "a07a2210-5c85-4fa7-8f83-14979fbf0beb",
+          "namespace": ""
+        }
+      ],
+      "modified": 1664992971253,
+      "location": "45b24009-dfed-4023-a30b-d31f5e3a2d87",
+      "persisted": 1664992976071
+    },
+    "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2": {
+      "identifier": {
+        "key": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+        "namespace": ""
+      },
+      "type": "telemetry.plot.stacked",
+      "composition": [
+        {
+          "key": "017ddbe2-1bec-46d2-acc9-5c2ad8fad79d",
+          "namespace": ""
+        },
+        {
+          "key": "b5c72c1c-03fc-42d5-97c4-a34c7dacf872",
+          "namespace": ""
+        },
+        {
+          "key": "b95ad884-7c92-4789-b6e0-e8e90155482e",
+          "namespace": ""
+        },
+        {
+          "key": "10532581-1b49-438f-a2fe-843d412bf201",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "series": [
+          {
+            "identifier": {
+              "key": "6f0c1a8f-cefa-4783-a79e-9f123e8718ba",
+              "namespace": ""
+            },
+            "series": {
+              "markers": true
+            }
+          }
+        ],
+        "yAxis": {},
+        "xAxis": {}
+      },
+      "name": "Merged Telemetry Views",
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1658875540107,
+      "modified": 1658875512306
+    },
+    "da187902-64f6-460e-bfbe-c84bd628e126": {
+      "identifier": {
+        "key": "da187902-64f6-460e-bfbe-c84bd628e126",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "modified": 1657232414748,
+      "persisted": 1657232414748
+    },
+    "03d9a461-8bcd-4821-b405-46b03d6da9b0": {
+      "identifier": {
+        "key": "03d9a461-8bcd-4821-b405-46b03d6da9b0",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1657232414746
+    },
+    "c68ff290-5891-41bd-bfc1-84734fb86a19": {
+      "identifier": {
+        "key": "c68ff290-5891-41bd-bfc1-84734fb86a19",
+        "namespace": ""
+      },
+      "name": "Gauge Needle Dial SWG Large",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "135df6d8-080a-40b8-89b0-301c96174e18",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "dial-needle",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -1000000,
+          "limitHigh": 1000000,
+          "max": 2000000,
+          "min": -2000000,
+          "precision": 2
+        },
+        "objectStyles": {
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "__no_value",
+              "border": "",
+              "color": ""
+            }
+          },
+          "styles": [],
+          "selectedConditionId": ""
+        }
+      },
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "modified": 1658421115305,
+      "persisted": 1658421118049
+    },
+    "8f72d5f7-7074-4745-9a0b-c5854d31790b": {
+      "identifier": {
+        "key": "8f72d5f7-7074-4745-9a0b-c5854d31790b",
+        "namespace": ""
+      },
+      "type": "table",
+      "composition": [
+        {
+          "key": "f4da3027-8296-4faf-b8c1-30b8919c53f4",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "columnWidths": {},
+        "hiddenColumns": {
+          "yesterday": true,
+          "wavelengths": true,
+          "wavelengths-unit": true,
+          "cos": true,
+          "cos-unit": true,
+          "intensities": true
+        },
+        "columnOrder": [],
+        "cellFormat": {},
+        "autosize": true
+      },
+      "name": "SWG Small",
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1657660214977,
+      "modified": 1657660199738
+    },
+    "caf64735-99c2-4906-a2fa-bb47912b2a79": {
+      "identifier": {
+        "key": "caf64735-99c2-4906-a2fa-bb47912b2a79",
+        "namespace": ""
+      },
+      "name": "Gauge Meter Horz SWG Small",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "7ef88d73-8a2d-4b8f-92de-6abb76dd02e9",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "meter-horizontal",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -4.8,
+          "limitHigh": 4,
+          "max": 4.3,
+          "min": -5,
+          "precision": 2
+        }
+      },
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "modified": 1657232414736,
+      "persisted": 1657232414736
+    },
+    "4b6f1b0d-8a70-4dee-bb6c-36af255bc139": {
+      "identifier": {
+        "key": "4b6f1b0d-8a70-4dee-bb6c-36af255bc139",
+        "namespace": ""
+      },
+      "name": "CW 210",
+      "type": "conditionWidget",
+      "configuration": {
+        "objectStyles": {
+          "styles": [
+            {
+              "conditionId": "6248211a-5164-4657-8c86-3484601d5e3c",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#a61c00",
+                "border": "",
+                "color": "#ffffff",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "80708a88-b282-4524-8160-4e73546bff6a",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#38761d",
+                "border": "",
+                "color": "#00ff00",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "14d676d6-5a38-4276-9d15-134f0afa6231",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#cc4125",
+                "border": "",
+                "color": "#f3f3f3",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "",
+                "border": "",
+                "color": "",
+                "output": ""
+              }
+            }
+          ],
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "",
+              "border": "",
+              "color": ""
+            }
+          },
+          "selectedConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "defaultConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "conditionSetIdentifier": {
+            "key": "056bbcb6-1a45-4429-97e6-a8ae74cf55e3",
+            "namespace": ""
+          }
+        },
+        "useConditionSetOutputAsLabel": false
+      },
+      "label": "CW_210 BUS B",
+      "conditionalLabel": "",
+      "modified": 1664992949199,
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1664992949199
+    },
+    "ee70fbec-2890-4eb5-9e15-15e5890b3138": {
+      "identifier": {
+        "key": "ee70fbec-2890-4eb5-9e15-15e5890b3138",
+        "namespace": ""
+      },
+      "name": "Example Imagery",
+      "type": "example.imagery",
+      "configuration": {
+        "imageLocation": "",
+        "imageLoadDelayInMilliSeconds": "50000",
+        "imageSamples": [],
+        "layers": [
+          {
+            "source": "dist/imagery/example-imagery-layer-16x9.png",
+            "name": "16:9",
+            "visible": true
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-safe.png",
+            "name": "Safe",
+            "visible": true
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-scale.png",
+            "name": "Scale",
+            "visible": true
+          }
+        ]
+      },
+      "telemetry": {
+        "values": [
+          {
+            "name": "Name",
+            "key": "name",
+            "source": "name",
+            "hints": {
+              "priority": 0
+            }
+          },
+          {
+            "name": "Time",
+            "key": "utc",
+            "format": "utc",
+            "hints": {
+              "domain": 2,
+              "priority": 1
+            },
+            "source": "utc"
+          },
+          {
+            "name": "Local Time",
+            "key": "local",
+            "format": "local-format",
+            "hints": {
+              "domain": 1,
+              "priority": 2
+            },
+            "source": "local"
+          },
+          {
+            "name": "Image",
+            "key": "url",
+            "format": "image",
+            "hints": {
+              "image": 1,
+              "priority": 3
+            },
+            "layers": [
+              {
+                "source": "dist/imagery/example-imagery-layer-16x9.png",
+                "name": "16:9",
+                "visible": true
+              },
+              {
+                "source": "dist/imagery/example-imagery-layer-safe.png",
+                "name": "Safe",
+                "visible": true
+              },
+              {
+                "source": "dist/imagery/example-imagery-layer-scale.png",
+                "name": "Scale",
+                "visible": true
+              }
+            ],
+            "source": "url"
+          },
+          {
+            "name": "Image Download Name",
+            "key": "imageDownloadName",
+            "format": "imageDownloadName",
+            "hints": {
+              "imageDownloadName": 1,
+              "priority": 4
+            },
+            "source": "imageDownloadName"
+          }
+        ]
+      },
+      "modified": 1664993420994,
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1664993420997
+    },
+    "152d2a9f-f0f3-408e-bf55-af007840cdef": {
+      "identifier": {
+        "key": "152d2a9f-f0f3-408e-bf55-af007840cdef",
+        "namespace": ""
+      },
+      "name": "Gauge Auto Range",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "4625b5f5-415b-42c6-9d97-4f86d5d7a4ef",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "dial-filled",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -12,
+          "limitHigh": 12,
+          "max": 15,
+          "min": -15,
+          "precision": 2
+        }
+      },
+      "modified": 1664991952387,
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1664991968607
+    },
+    "6fed1053-3e10-44e3-8e60-4655d19266e0": {
+      "identifier": {
+        "key": "6fed1053-3e10-44e3-8e60-4655d19266e0",
+        "namespace": ""
+      },
+      "name": "Mission Time",
+      "type": "timer",
+      "configuration": {
+        "timerFormat": "long",
+        "timestamp": 1664755200000,
+        "timezone": "UTC",
+        "timerState": "started",
+        "fontStyle": {
+          "fontSize": "20",
+          "font": "default"
+        },
+        "objectStyles": {
+          "styles": [],
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "",
+              "border": "",
+              "color": "#ffffff"
+            }
+          },
+          "selectedConditionId": ""
+        }
+      },
+      "modified": 1664992594980,
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1664992594980
+    },
+    "e940f59d-e6ef-4a2b-bf82-d81d94627da2": {
+      "identifier": {
+        "key": "e940f59d-e6ef-4a2b-bf82-d81d94627da2",
+        "namespace": ""
+      },
+      "name": "CW 210 2",
+      "type": "conditionWidget",
+      "configuration": {
+        "objectStyles": {
+          "styles": [
+            {
+              "conditionId": "6248211a-5164-4657-8c86-3484601d5e3c",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#cc4125",
+                "border": "",
+                "color": "#f3f3f3",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "80708a88-b282-4524-8160-4e73546bff6a",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#38761d",
+                "border": "",
+                "color": "#00ff00",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "",
+                "border": "",
+                "color": "",
+                "output": ""
+              }
+            }
+          ],
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "",
+              "border": "",
+              "color": ""
+            }
+          },
+          "selectedConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "defaultConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "conditionSetIdentifier": {
+            "key": "a62b89ea-0fa0-46c5-beac-53d1009ac48c",
+            "namespace": ""
+          }
+        },
+        "useConditionSetOutputAsLabel": false,
+        "fontStyle": {
+          "fontSize": "default",
+          "font": "default"
+        }
+      },
+      "label": "CW_210 BUS A",
+      "conditionalLabel": "",
+      "location": "832cd297-38ab-478a-a5ff-f3bfd278e41b",
+      "persisted": 1664992949203,
+      "modified": 1664992949203
+    },
+    "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d": {
+      "identifier": {
+        "key": "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d",
+        "namespace": ""
+      },
+      "name": "Gauge Meter Horz SWG Small",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "ec3b4a3b-97f0-405e-be5a-d0ac15313df9",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "meter-horizontal",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -4.8,
+          "limitHigh": 4,
+          "max": 4.3,
+          "min": -5,
+          "precision": 2
+        }
+      },
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "modified": 1657232414736,
+      "persisted": 1657232414736
+    },
+    "1c96da17-bce6-4ddf-bde0-70a5031f9399": {
+      "identifier": {
+        "key": "1c96da17-bce6-4ddf-bde0-70a5031f9399",
+        "namespace": ""
+      },
+      "name": "Gauge Filled Dial SWG Small",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "7a87b0a0-8a37-4c59-ac29-4d2861a55110",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "dial-filled",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -4.8,
+          "limitHigh": 4,
+          "max": 4.3,
+          "min": -5,
+          "precision": 2
+        }
+      },
+      "modified": 1657232414736,
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1657232414736
+    },
+    "8ae9193d-2f79-43bc-a39f-4f89a52da5a3": {
+      "identifier": {
+        "key": "8ae9193d-2f79-43bc-a39f-4f89a52da5a3",
+        "namespace": ""
+      },
+      "name": "Gauge Needle Dial SWG Large",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "3984ca34-8512-4857-8a4e-56e9be074e00",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "dial-needle",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -1000000,
+          "limitHigh": 1000000,
+          "max": 2000000,
+          "min": -2000000,
+          "precision": 2
+        },
+        "objectStyles": {
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "__no_value",
+              "border": "",
+              "color": ""
+            }
+          },
+          "styles": [],
+          "selectedConditionId": ""
+        }
+      },
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "modified": 1658421115305,
+      "persisted": 1658421118049
+    },
+    "4ae303e9-8edb-490b-93c3-cfaadfcdb64a": {
+      "identifier": {
+        "key": "4ae303e9-8edb-490b-93c3-cfaadfcdb64a",
+        "namespace": ""
+      },
+      "name": "Gauge Meter Vert SWG Large",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "6c530559-b285-40b3-8e76-52f08c112f34",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "meter-vertical",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -1000000,
+          "limitHigh": 1000000,
+          "max": 2000000,
+          "min": -2000000,
+          "precision": 2
+        }
+      },
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "modified": 1657232414737,
+      "persisted": 1657232414737
+    },
+    "2a84d91e-8612-43ed-9477-61b9cfbf5c2c": {
+      "identifier": {
+        "key": "2a84d91e-8612-43ed-9477-61b9cfbf5c2c",
+        "namespace": ""
+      },
+      "name": "Gauge Vertical Meter Inverted",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "691c802f-c53b-4938-8881-f421d02b2770",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "meter-vertical-inverted",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -9,
+          "limitHigh": 9,
+          "max": 10,
+          "min": -10,
+          "precision": 2
+        }
+      },
+      "modified": 1664993313837,
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1664993321002
+    },
+    "c03cbe46-c5f0-40a8-a703-813ad663e900": {
+      "identifier": {
+        "key": "c03cbe46-c5f0-40a8-a703-813ad663e900",
+        "namespace": ""
+      },
+      "name": "SWG 100 Gauge",
+      "type": "gauge",
+      "composition": [
+        {
+          "key": "c1b9f83b-a7db-4047-8dc3-37a2186b9c43",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "gaugeController": {
+          "gaugeType": "dial-needle",
+          "isDisplayMinMax": true,
+          "isDisplayCurVal": true,
+          "isDisplayUnits": true,
+          "isUseTelemetryLimits": false,
+          "limitLow": -20,
+          "limitHigh": 120,
+          "max": 200,
+          "min": -100,
+          "precision": 2
+        },
+        "objectStyles": {}
+      },
+      "modified": 1660006343021,
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1660006343021
+    },
+    "e230c105-b961-4e01-a056-8f2e8630e185": {
+      "identifier": {
+        "key": "e230c105-b961-4e01-a056-8f2e8630e185",
+        "namespace": ""
+      },
+      "type": "telemetry.plot.stacked",
+      "composition": [
+        {
+          "key": "6f0c1a8f-cefa-4783-a79e-9f123e8718ba",
+          "namespace": ""
+        },
+        {
+          "key": "e3131777-c0ef-44f3-9202-4c9c7b864dcc",
+          "namespace": ""
+        },
+        {
+          "key": "fe903b87-0d52-475b-a858-624fa67c378f",
+          "namespace": ""
+        },
+        {
+          "key": "00326dab-02c5-4522-9f68-e9e73758a272",
+          "namespace": ""
+        }
+      ],
+      "configuration": {
+        "series": [
+          {
+            "identifier": {
+              "key": "6f0c1a8f-cefa-4783-a79e-9f123e8718ba",
+              "namespace": ""
+            },
+            "series": {
+              "markers": true
+            }
+          }
+        ],
+        "yAxis": {},
+        "xAxis": {}
+      },
+      "name": "Merged Telemetry Views",
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1658875540107,
+      "modified": 1658875512306
+    },
+    "136523e4-ae71-4ebd-bd75-5394855d7708": {
+      "identifier": {
+        "key": "136523e4-ae71-4ebd-bd75-5394855d7708",
+        "namespace": ""
+      },
+      "name": "Example Imagery",
+      "type": "example.imagery",
+      "configuration": {
+        "imageLocation": "",
+        "imageLoadDelayInMilliSeconds": "50000",
+        "imageSamples": [],
+        "layers": [
+          {
+            "source": "dist/imagery/example-imagery-layer-16x9.png",
+            "name": "16:9",
+            "visible": true
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-safe.png",
+            "name": "Safe",
+            "visible": true
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-scale.png",
+            "name": "Scale",
+            "visible": true
+          }
+        ]
+      },
+      "telemetry": {
+        "values": [
+          {
+            "name": "Name",
+            "key": "name",
+            "source": "name",
+            "hints": {
+              "priority": 0
+            }
+          },
+          {
+            "name": "Time",
+            "key": "utc",
+            "format": "utc",
+            "hints": {
+              "domain": 2,
+              "priority": 1
+            },
+            "source": "utc"
+          },
+          {
+            "name": "Local Time",
+            "key": "local",
+            "format": "local-format",
+            "hints": {
+              "domain": 1,
+              "priority": 2
+            },
+            "source": "local"
+          },
+          {
+            "name": "Image",
+            "key": "url",
+            "format": "image",
+            "hints": {
+              "image": 1,
+              "priority": 3
+            },
+            "layers": [
+              {
+                "source": "dist/imagery/example-imagery-layer-16x9.png",
+                "name": "16:9",
+                "visible": true
+              },
+              {
+                "source": "dist/imagery/example-imagery-layer-safe.png",
+                "name": "Safe",
+                "visible": true
+              },
+              {
+                "source": "dist/imagery/example-imagery-layer-scale.png",
+                "name": "Scale",
+                "visible": true
+              }
+            ],
+            "source": "url"
+          },
+          {
+            "name": "Image Download Name",
+            "key": "imageDownloadName",
+            "format": "imageDownloadName",
+            "hints": {
+              "imageDownloadName": 1,
+              "priority": 4
+            },
+            "source": "imageDownloadName"
+          }
+        ]
+      },
+      "modified": 1664993420994,
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1664993420997
+    },
+    "d776581d-443c-47e4-9d5a-f04950842981": {
+      "identifier": {
+        "key": "d776581d-443c-47e4-9d5a-f04950842981",
+        "namespace": ""
+      },
+      "name": "CW 210",
+      "type": "conditionWidget",
+      "configuration": {
+        "objectStyles": {
+          "styles": [
+            {
+              "conditionId": "6248211a-5164-4657-8c86-3484601d5e3c",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#a61c00",
+                "border": "",
+                "color": "#ffffff",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "80708a88-b282-4524-8160-4e73546bff6a",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#38761d",
+                "border": "",
+                "color": "#00ff00",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "14d676d6-5a38-4276-9d15-134f0afa6231",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#cc4125",
+                "border": "",
+                "color": "#f3f3f3",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "",
+                "border": "",
+                "color": "",
+                "output": ""
+              }
+            }
+          ],
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "",
+              "border": "",
+              "color": ""
+            }
+          },
+          "selectedConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "defaultConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "conditionSetIdentifier": {
+            "key": "0e4342e3-06db-4e13-ba48-b391879b37b6",
+            "namespace": ""
+          }
+        },
+        "useConditionSetOutputAsLabel": false
+      },
+      "label": "CW_210 BUS B",
+      "conditionalLabel": "",
+      "modified": 1664992949199,
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1664992949199
+    },
+    "a07a2210-5c85-4fa7-8f83-14979fbf0beb": {
+      "identifier": {
+        "key": "a07a2210-5c85-4fa7-8f83-14979fbf0beb",
+        "namespace": ""
+      },
+      "name": "CW 210 2",
+      "type": "conditionWidget",
+      "configuration": {
+        "objectStyles": {
+          "styles": [
+            {
+              "conditionId": "6248211a-5164-4657-8c86-3484601d5e3c",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#cc4125",
+                "border": "",
+                "color": "#f3f3f3",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "80708a88-b282-4524-8160-4e73546bff6a",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "#38761d",
+                "border": "",
+                "color": "#00ff00",
+                "output": ""
+              }
+            },
+            {
+              "conditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+              "style": {
+                "isStyleInvisible": "",
+                "backgroundColor": "",
+                "border": "",
+                "color": "",
+                "output": ""
+              }
+            }
+          ],
+          "staticStyle": {
+            "style": {
+              "backgroundColor": "",
+              "border": "",
+              "color": ""
+            }
+          },
+          "selectedConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "defaultConditionId": "7af9f52f-e402-4782-ab28-01d450d506f0",
+          "conditionSetIdentifier": {
+            "key": "ee7ca7b3-04e2-4c91-b73f-01280a92d1cc",
+            "namespace": ""
+          }
+        },
+        "useConditionSetOutputAsLabel": false,
+        "fontStyle": {
+          "fontSize": "default",
+          "font": "default"
+        }
+      },
+      "label": "CW_210 BUS A",
+      "conditionalLabel": "",
+      "location": "5f6760b7-85c5-4f90-a8b1-c6ba8382a684",
+      "persisted": 1664992949203,
+      "modified": 1664992949203
+    },
+    "056bbcb6-1a45-4429-97e6-a8ae74cf55e3": {
+      "identifier": {
+        "key": "056bbcb6-1a45-4429-97e6-a8ae74cf55e3",
+        "namespace": ""
+      },
+      "name": "210 Condition Set",
+      "type": "conditionSet",
+      "configuration": {
+        "conditionTestData": [],
+        "conditionCollection": [
+          {
+            "id": "6248211a-5164-4657-8c86-3484601d5e3c",
+            "configuration": {
+              "name": "High",
+              "output": "HIGH",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
+                  "telemetry": "any",
+                  "operation": "greaterThan",
+                  "input": ["120"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  > 120 "
+          },
+          {
+            "id": "80708a88-b282-4524-8160-4e73546bff6a",
+            "configuration": {
+              "name": "Nom",
+              "output": "NOMINAL",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
+                  "telemetry": "any",
+                  "operation": "between",
+                  "input": ["120", "-20"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  is between 120 and -20 "
+          },
+          {
+            "id": "14d676d6-5a38-4276-9d15-134f0afa6231",
+            "configuration": {
+              "name": "Low",
+              "output": "LOW",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "6707be12-6a6e-4535-bb97-ab5c86f99934",
+                  "telemetry": "any",
+                  "operation": "lessThan",
+                  "input": ["-20"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  < -20 "
+          },
+          {
+            "isDefault": true,
+            "id": "7af9f52f-e402-4782-ab28-01d450d506f0",
+            "configuration": {
+              "name": "Default",
+              "output": "Default",
+              "trigger": "all",
+              "criteria": []
+            },
+            "summary": ""
+          }
+        ]
+      },
+      "composition": [
+        {
+          "key": "10987a9e-74ed-4e31-b820-806deadc9425",
+          "namespace": ""
+        }
+      ],
+      "telemetry": {},
+      "modified": 1660006307115,
+      "location": null,
+      "persisted": 1660006307759
+    },
+    "0e4342e3-06db-4e13-ba48-b391879b37b6": {
+      "identifier": {
+        "key": "0e4342e3-06db-4e13-ba48-b391879b37b6",
+        "namespace": ""
+      },
+      "name": "210 Condition Set",
+      "type": "conditionSet",
+      "configuration": {
+        "conditionTestData": [],
+        "conditionCollection": [
+          {
+            "id": "6248211a-5164-4657-8c86-3484601d5e3c",
+            "configuration": {
+              "name": "High",
+              "output": "HIGH",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
+                  "telemetry": "any",
+                  "operation": "greaterThan",
+                  "input": ["120"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  > 120 "
+          },
+          {
+            "id": "80708a88-b282-4524-8160-4e73546bff6a",
+            "configuration": {
+              "name": "Nom",
+              "output": "NOMINAL",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
+                  "telemetry": "any",
+                  "operation": "between",
+                  "input": ["120", "-20"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  is between 120 and -20 "
+          },
+          {
+            "id": "14d676d6-5a38-4276-9d15-134f0afa6231",
+            "configuration": {
+              "name": "Low",
+              "output": "LOW",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "6707be12-6a6e-4535-bb97-ab5c86f99934",
+                  "telemetry": "any",
+                  "operation": "lessThan",
+                  "input": ["-20"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  < -20 "
+          },
+          {
+            "isDefault": true,
+            "id": "7af9f52f-e402-4782-ab28-01d450d506f0",
+            "configuration": {
+              "name": "Default",
+              "output": "Default",
+              "trigger": "all",
+              "criteria": []
+            },
+            "summary": ""
+          }
+        ]
+      },
+      "composition": [
+        {
+          "key": "1a15f3e4-99a9-4afd-a6fa-dcc822b39cbc",
+          "namespace": ""
+        }
+      ],
+      "telemetry": {},
+      "modified": 1660006307115,
+      "location": null,
+      "persisted": 1660006307759
+    },
+    "a62b89ea-0fa0-46c5-beac-53d1009ac48c": {
+      "identifier": {
+        "key": "a62b89ea-0fa0-46c5-beac-53d1009ac48c",
+        "namespace": ""
+      },
+      "name": "210 Condition Set 2",
+      "type": "conditionSet",
+      "configuration": {
+        "conditionTestData": [],
+        "conditionCollection": [
+          {
+            "id": "6248211a-5164-4657-8c86-3484601d5e3c",
+            "configuration": {
+              "name": "High",
+              "output": "HIGH",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
+                  "telemetry": "any",
+                  "operation": "greaterThan",
+                  "input": ["150"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  > 150 "
+          },
+          {
+            "id": "80708a88-b282-4524-8160-4e73546bff6a",
+            "configuration": {
+              "name": "Nom",
+              "output": "NOMINAL",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
+                  "telemetry": "any",
+                  "operation": "between",
+                  "input": ["50", "-50"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  is between 50 and -50 "
+          },
+          {
+            "isDefault": true,
+            "id": "7af9f52f-e402-4782-ab28-01d450d506f0",
+            "configuration": {
+              "name": "Default",
+              "output": "Default",
+              "trigger": "all",
+              "criteria": []
+            },
+            "summary": ""
+          }
+        ]
+      },
+      "composition": [
+        {
+          "key": "b8b2d336-cdc2-42de-bb6b-c2033e691b35",
+          "namespace": ""
+        }
+      ],
+      "telemetry": {},
+      "location": null,
+      "persisted": 1664992259247,
+      "modified": 1664992250791
+    },
+    "ee7ca7b3-04e2-4c91-b73f-01280a92d1cc": {
+      "identifier": {
+        "key": "ee7ca7b3-04e2-4c91-b73f-01280a92d1cc",
+        "namespace": ""
+      },
+      "name": "210 Condition Set 2",
+      "type": "conditionSet",
+      "configuration": {
+        "conditionTestData": [],
+        "conditionCollection": [
+          {
+            "id": "6248211a-5164-4657-8c86-3484601d5e3c",
+            "configuration": {
+              "name": "High",
+              "output": "HIGH",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "64e49fe7-5b36-43db-8347-4550b910de4c",
+                  "telemetry": "any",
+                  "operation": "greaterThan",
+                  "input": ["150"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  > 150 "
+          },
+          {
+            "id": "80708a88-b282-4524-8160-4e73546bff6a",
+            "configuration": {
+              "name": "Nom",
+              "output": "NOMINAL",
+              "trigger": "any",
+              "criteria": [
+                {
+                  "id": "59f1c4bf-5d36-450c-9668-6546955fc066",
+                  "telemetry": "any",
+                  "operation": "between",
+                  "input": ["50", "-50"],
+                  "metadata": "sin"
+                }
+              ]
+            },
+            "summary": "Match if any criteria are met:  any telemetry Sine  is between 50 and -50 "
+          },
+          {
+            "isDefault": true,
+            "id": "7af9f52f-e402-4782-ab28-01d450d506f0",
+            "configuration": {
+              "name": "Default",
+              "output": "Default",
+              "trigger": "all",
+              "criteria": []
+            },
+            "summary": ""
+          }
+        ]
+      },
+      "composition": [
+        {
+          "key": "17e8e842-c4f0-4c11-b4c6-e729f4018120",
+          "namespace": ""
+        }
+      ],
+      "telemetry": {},
+      "location": null,
+      "persisted": 1664992259247,
+      "modified": 1664992250791
+    },
+    "7a87b0a0-8a37-4c59-ac29-4d2861a55110": {
+      "identifier": {
+        "key": "7a87b0a0-8a37-4c59-ac29-4d2861a55110",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "1c96da17-bce6-4ddf-bde0-70a5031f9399",
+      "persisted": 1657232414746
+    },
+    "6c530559-b285-40b3-8e76-52f08c112f34": {
+      "identifier": {
+        "key": "6c530559-b285-40b3-8e76-52f08c112f34",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "location": "4ae303e9-8edb-490b-93c3-cfaadfcdb64a",
+      "modified": 1657232414748,
+      "persisted": 1657232414748
+    },
+    "4625b5f5-415b-42c6-9d97-4f86d5d7a4ef": {
+      "identifier": {
+        "key": "4625b5f5-415b-42c6-9d97-4f86d5d7a4ef",
+        "namespace": ""
+      },
+      "name": "SWG 10",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "10",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0,
+        "loadDelay": 0
+      },
+      "modified": 1657236492163,
+      "location": "152d2a9f-f0f3-408e-bf55-af007840cdef",
+      "persisted": 1657236492163
+    },
+    "017ddbe2-1bec-46d2-acc9-5c2ad8fad79d": {
+      "identifier": {
+        "key": "017ddbe2-1bec-46d2-acc9-5c2ad8fad79d",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+      "persisted": 1657232414746
+    },
+    "b5c72c1c-03fc-42d5-97c4-a34c7dacf872": {
+      "identifier": {
+        "key": "b5c72c1c-03fc-42d5-97c4-a34c7dacf872",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "location": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+      "modified": 1657232414748,
+      "persisted": 1657232414748
+    },
+    "b95ad884-7c92-4789-b6e0-e8e90155482e": {
+      "identifier": {
+        "key": "b95ad884-7c92-4789-b6e0-e8e90155482e",
+        "namespace": ""
+      },
+      "name": "SWG 10",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "10",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0,
+        "loadDelay": 0
+      },
+      "modified": 1657236492163,
+      "location": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+      "persisted": 1657236492163
+    },
+    "10532581-1b49-438f-a2fe-843d412bf201": {
+      "identifier": {
+        "key": "10532581-1b49-438f-a2fe-843d412bf201",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "modified": 1657149026977,
+      "location": "d78ec1fd-2cea-4b73-8bb6-ba44b09dc3b2",
+      "persisted": 1657149026977
+    },
+    "c1b9f83b-a7db-4047-8dc3-37a2186b9c43": {
+      "identifier": {
+        "key": "c1b9f83b-a7db-4047-8dc3-37a2186b9c43",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "modified": 1657149026977,
+      "location": "c03cbe46-c5f0-40a8-a703-813ad663e900",
+      "persisted": 1657149026977
+    },
+    "6f0c1a8f-cefa-4783-a79e-9f123e8718ba": {
+      "identifier": {
+        "key": "6f0c1a8f-cefa-4783-a79e-9f123e8718ba",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "e230c105-b961-4e01-a056-8f2e8630e185",
+      "persisted": 1657232414746
+    },
+    "e3131777-c0ef-44f3-9202-4c9c7b864dcc": {
+      "identifier": {
+        "key": "e3131777-c0ef-44f3-9202-4c9c7b864dcc",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "location": "e230c105-b961-4e01-a056-8f2e8630e185",
+      "modified": 1657232414748,
+      "persisted": 1657232414748
+    },
+    "fe903b87-0d52-475b-a858-624fa67c378f": {
+      "identifier": {
+        "key": "fe903b87-0d52-475b-a858-624fa67c378f",
+        "namespace": ""
+      },
+      "name": "SWG 10",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "10",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0,
+        "loadDelay": 0
+      },
+      "modified": 1657236492163,
+      "location": "e230c105-b961-4e01-a056-8f2e8630e185",
+      "persisted": 1657236492163
+    },
+    "00326dab-02c5-4522-9f68-e9e73758a272": {
+      "identifier": {
+        "key": "00326dab-02c5-4522-9f68-e9e73758a272",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "modified": 1657149026977,
+      "location": "e230c105-b961-4e01-a056-8f2e8630e185",
+      "persisted": 1657149026977
+    },
+    "135df6d8-080a-40b8-89b0-301c96174e18": {
+      "identifier": {
+        "key": "135df6d8-080a-40b8-89b0-301c96174e18",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414747,
+      "location": "c68ff290-5891-41bd-bfc1-84734fb86a19",
+      "persisted": 1657232414747
+    },
+    "3984ca34-8512-4857-8a4e-56e9be074e00": {
+      "identifier": {
+        "key": "3984ca34-8512-4857-8a4e-56e9be074e00",
+        "namespace": ""
+      },
+      "name": "SWG Large",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "1000000",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414747,
+      "location": "8ae9193d-2f79-43bc-a39f-4f89a52da5a3",
+      "persisted": 1657232414747
+    },
+    "f4da3027-8296-4faf-b8c1-30b8919c53f4": {
+      "identifier": {
+        "key": "f4da3027-8296-4faf-b8c1-30b8919c53f4",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "8f72d5f7-7074-4745-9a0b-c5854d31790b",
+      "persisted": 1657232414746
+    },
+    "7ef88d73-8a2d-4b8f-92de-6abb76dd02e9": {
+      "identifier": {
+        "key": "7ef88d73-8a2d-4b8f-92de-6abb76dd02e9",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "caf64735-99c2-4906-a2fa-bb47912b2a79",
+      "persisted": 1657232414746
+    },
+    "ec3b4a3b-97f0-405e-be5a-d0ac15313df9": {
+      "identifier": {
+        "key": "ec3b4a3b-97f0-405e-be5a-d0ac15313df9",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "cdbbaf4f-ddaf-42c3-8e5e-51aef81d665d",
+      "persisted": 1657232414746
+    },
+    "691c802f-c53b-4938-8881-f421d02b2770": {
+      "identifier": {
+        "key": "691c802f-c53b-4938-8881-f421d02b2770",
+        "namespace": ""
+      },
+      "name": "SWG Small",
+      "type": "generator",
+      "telemetry": {
+        "period": "5",
+        "amplitude": "5",
+        "offset": 0,
+        "dataRateInHz": "5",
+        "phase": 0,
+        "randomness": 0
+      },
+      "modified": 1657232414746,
+      "location": "2a84d91e-8612-43ed-9477-61b9cfbf5c2c",
+      "persisted": 1657232414746
+    },
+    "10987a9e-74ed-4e31-b820-806deadc9425": {
+      "identifier": {
+        "key": "10987a9e-74ed-4e31-b820-806deadc9425",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "modified": 1657149026977,
+      "location": "056bbcb6-1a45-4429-97e6-a8ae74cf55e3",
+      "persisted": 1657149026977
+    },
+    "1a15f3e4-99a9-4afd-a6fa-dcc822b39cbc": {
+      "identifier": {
+        "key": "1a15f3e4-99a9-4afd-a6fa-dcc822b39cbc",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "modified": 1657149026977,
+      "location": "0e4342e3-06db-4e13-ba48-b391879b37b6",
+      "persisted": 1657149026977
+    },
+    "b8b2d336-cdc2-42de-bb6b-c2033e691b35": {
+      "identifier": {
+        "key": "b8b2d336-cdc2-42de-bb6b-c2033e691b35",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "location": "a62b89ea-0fa0-46c5-beac-53d1009ac48c",
+      "persisted": 1664992205660,
+      "modified": 1664992205660
+    },
+    "17e8e842-c4f0-4c11-b4c6-e729f4018120": {
+      "identifier": {
+        "key": "17e8e842-c4f0-4c11-b4c6-e729f4018120",
+        "namespace": ""
+      },
+      "name": "SWG 100",
+      "type": "generator",
+      "telemetry": {
+        "period": 10,
+        "amplitude": "100",
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": "1",
+        "loadDelay": 0
+      },
+      "location": "ee7ca7b3-04e2-4c91-b73f-01280a92d1cc",
+      "persisted": 1664992205660,
+      "modified": 1664992205660
+    }
+  },
+  "rootId": "45b24009-dfed-4023-a30b-d31f5e3a2d87"
+}

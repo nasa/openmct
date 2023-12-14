@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,32 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
+import { MY_ITEMS_KEY } from './createMyItemsIdentifier';
 
 function myItemsInterceptor(openmct, identifierObject, name) {
+  const myItemsModel = {
+    identifier: identifierObject,
+    name,
+    type: 'folder',
+    composition: [],
+    location: 'ROOT'
+  };
 
-    const myItemsModel = {
-        identifier: identifierObject,
-        name,
-        type: "folder",
-        composition: [],
-        location: "ROOT"
-    };
+  return {
+    appliesTo: (identifier) => {
+      return identifier.key === MY_ITEMS_KEY;
+    },
+    invoke: (identifier, object) => {
+      if (!object || openmct.objects.isMissing(object)) {
+        openmct.objects.save(myItemsModel);
 
-    return {
-        appliesTo: (identifier) => {
-            return identifier.key === MY_ITEMS_KEY;
-        },
-        invoke: (identifier, object) => {
-            if (openmct.objects.isMissing(object)) {
-                openmct.objects.save(myItemsModel);
+        return myItemsModel;
+      }
 
-                return myItemsModel;
-            }
-
-            return object;
-        }
-    };
+      return object;
+    },
+    priority: openmct.priority.HIGH
+  };
 }
 
 export default myItemsInterceptor;

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,132 +20,208 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div
-    v-if="loaded"
-    class="js-plot-options-edit"
->
-    <ul
-        v-if="!isStackedPlotObject"
-        class="c-tree"
-    >
-        <h2 title="Display properties for this object">Plot Series</h2>
-        <li
-            v-for="series in plotSeries"
-            :key="series.key"
-        >
-            <series-form
-                :series="series"
-                @seriesUpdated="updateSeriesConfigForObject"
-            />
-        </li>
+  <div v-if="loaded" class="js-plot-options-edit">
+    <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
+      <h2 class="--first" title="Display properties for this object">Plot Series</h2>
+      <li v-for="series in plotSeries" :key="series.key">
+        <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
+      </li>
     </ul>
     <y-axis-form
-        v-if="plotSeries.length && !isStackedPlotObject"
-        class="grid-properties"
-        :y-axis="config.yAxis"
-        @seriesUpdated="updateSeriesConfigForObject"
+      v-for="(yAxisId, index) in yAxesIds"
+      :id="yAxisId.id"
+      :key="`yAxis-${index}`"
+      class="grid-properties js-yaxis-grid-properties"
+      :y-axis="config.yAxis"
+      @series-updated="updateSeriesConfigForObject"
     />
     <ul
-        v-if="isStackedPlotObject || !isStackedPlotNestedObject"
-        class="l-inspector-part"
+      v-if="isStackedPlotObject || !isStackedPlotNestedObject"
+      class="l-inspector-part"
+      aria-label="Legend Properties"
     >
-        <h2 title="Legend options">Legend</h2>
-        <legend-form
-            v-if="plotSeries.length"
-            class="grid-properties"
-            :legend="config.legend"
-        />
+      <h2 class="--first" title="Legend options">Legend</h2>
+      <legend-form class="grid-properties" :legend="config.legend" />
     </ul>
-</div>
+  </div>
 </template>
 <script>
-import SeriesForm from "./forms/SeriesForm.vue";
-import YAxisForm from "./forms/YAxisForm.vue";
-import LegendForm from "./forms/LegendForm.vue";
-import eventHelpers from "../lib/eventHelpers";
-import configStore from "../configuration/ConfigStore";
-import _ from "lodash";
+import _ from 'lodash';
+
+import configStore from '../configuration/ConfigStore';
+import eventHelpers from '../lib/eventHelpers';
+import LegendForm from './forms/LegendForm.vue';
+import SeriesForm from './forms/SeriesForm.vue';
+import YAxisForm from './forms/YAxisForm.vue';
 
 export default {
-    components: {
-        LegendForm,
-        SeriesForm,
-        YAxisForm
+  components: {
+    LegendForm,
+    SeriesForm,
+    YAxisForm
+  },
+  inject: ['openmct', 'domainObject', 'path'],
+  data() {
+    return {
+      config: {},
+      yAxes: [],
+      plotSeries: [],
+      loaded: false
+    };
+  },
+  computed: {
+    isStackedPlotNestedObject() {
+      return this.path.find(
+        (pathObject, pathObjIndex) =>
+          pathObjIndex > 0 && pathObject?.type === 'telemetry.plot.stacked'
+      );
     },
-    inject: ['openmct', 'domainObject', 'path'],
-    data() {
-        return {
-            config: {},
-            plotSeries: [],
-            loaded: false
-        };
+    isStackedPlotObject() {
+      return this.path.find(
+        (pathObject, pathObjIndex) =>
+          pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked'
+      );
     },
-    computed: {
-        isStackedPlotNestedObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex > 0 && pathObject.type === 'telemetry.plot.stacked');
-        },
-        isStackedPlotObject() {
-            return this.path.find((pathObject, pathObjIndex) => pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked');
-        }
-    },
-    mounted() {
-        eventHelpers.extend(this);
-        this.config = this.getConfig();
-        this.registerListeners();
-        this.loaded = true;
-    },
-    beforeDestroy() {
-        this.stopListening();
-    },
-    methods: {
-        getConfig() {
-            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            return configStore.get(this.configId);
-        },
-        registerListeners() {
-            this.config.series.forEach(this.addSeries, this);
-
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
-        },
-
-        addSeries(series, index) {
-            this.$set(this.plotSeries, index, series);
-        },
-
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
-        },
-
-        updateSeriesConfigForObject(config) {
-            const stackedPlotObject = this.path.find((pathObject) => pathObject.type === 'telemetry.plot.stacked');
-            let index = stackedPlotObject.configuration.series.findIndex((seriesConfig) => {
-                return this.openmct.objects.areIdsEqual(seriesConfig.identifier, config.identifier);
-            });
-            if (index < 0) {
-                index = stackedPlotObject.configuration.series.length;
-                const configPath = `configuration.series[${index}]`;
-                let newConfig = {
-                    identifier: config.identifier
-                };
-                _.set(newConfig, `${config.path}`, config.value);
-                this.openmct.objects.mutate(
-                    stackedPlotObject,
-                    configPath,
-                    newConfig
-                );
-            } else {
-                const configPath = `configuration.series[${index}].${config.path}`;
-                this.openmct.objects.mutate(
-                    stackedPlotObject,
-                    configPath,
-                    config.value
-                );
-            }
-
-        }
+    yAxesIds() {
+      return !this.isStackedPlotObject && this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
+  },
+  created() {
+    eventHelpers.extend(this);
+    this.config = this.getConfig();
+  },
+  mounted() {
+    if (!this.isStackedPlotObject) {
+      this.yAxes = [
+        {
+          id: this.config.yAxis.id,
+          seriesCount: 0
+        }
+      ];
+      if (this.config.additionalYAxes) {
+        this.yAxes = this.yAxes.concat(
+          this.config.additionalYAxes.map((yAxis) => {
+            return {
+              id: yAxis.id,
+              seriesCount: 0
+            };
+          })
+        );
+      }
+
+      this.registerListeners();
+    }
+
+    this.loaded = true;
+  },
+  beforeUnmount() {
+    this.stopListening();
+  },
+  methods: {
+    getConfig() {
+      this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+      return configStore.get(this.configId);
+    },
+    registerListeners() {
+      this.config.series.forEach(this.addSeries, this);
+
+      this.listenTo(this.config.series, 'add', this.addSeries, this);
+      this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+    },
+
+    findYAxisForId(yAxisId) {
+      return this.yAxes.find((yAxis) => yAxis.id === yAxisId);
+    },
+
+    setYAxisLabel(yAxisId) {
+      const found = this.findYAxisForId(yAxisId);
+      if (found && found.seriesCount > 0) {
+        const mainYAxisId = this.config.yAxis.id;
+        if (mainYAxisId === yAxisId) {
+          found.label = this.config.yAxis.get('label');
+        } else {
+          const additionalYAxis = this.config.additionalYAxes.find((axis) => axis.id === yAxisId);
+          if (additionalYAxis) {
+            found.label = additionalYAxis.get('label');
+          }
+        }
+      }
+    },
+
+    addSeries(series, index) {
+      const yAxisId = series.get('yAxisId');
+      this.incrementAxisUsageCount(yAxisId);
+      this.plotSeries[index] = series;
+      this.setYAxisLabel(yAxisId);
+
+      if (this.isStackedPlotObject) {
+        return;
+      }
+
+      // If the series moves to a different yAxis, update the seriesCounts for both yAxes
+      // so we can display the configuration options for all used yAxes
+      this.listenTo(
+        series,
+        'change:yAxisId',
+        (newYAxisId, oldYAxisId) => {
+          this.incrementAxisUsageCount(newYAxisId);
+          this.decrementAxisUsageCount(oldYAxisId);
+        },
+        this
+      );
+    },
+
+    removeSeries(series, index) {
+      const yAxisId = series.get('yAxisId');
+      this.decrementAxisUsageCount(yAxisId);
+      this.plotSeries.splice(index, 1);
+      this.setYAxisLabel(yAxisId);
+
+      if (this.isStackedPlotObject) {
+        return;
+      }
+
+      this.stopListening(series, 'change:yAxisId');
+    },
+
+    incrementAxisUsageCount(yAxisId) {
+      this.updateAxisUsageCount(yAxisId, 1);
+    },
+
+    decrementAxisUsageCount(yAxisId) {
+      this.updateAxisUsageCount(yAxisId, -1);
+    },
+
+    updateAxisUsageCount(yAxisId, updateCount) {
+      const foundYAxis = this.findYAxisForId(yAxisId);
+      if (!foundYAxis) {
+        throw new Error(`yAxis with id ${yAxisId} not found`);
+      }
+
+      foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
+    },
+
+    updateSeriesConfigForObject(config) {
+      const stackedPlotObject = this.path.find(
+        (pathObject) => pathObject.type === 'telemetry.plot.stacked'
+      );
+      let index = stackedPlotObject.configuration.series.findIndex((seriesConfig) => {
+        return this.openmct.objects.areIdsEqual(seriesConfig.identifier, config.identifier);
+      });
+      if (index < 0) {
+        index = stackedPlotObject.configuration.series.length;
+        const configPath = `configuration.series[${index}]`;
+        let newConfig = {
+          identifier: config.identifier
+        };
+        _.set(newConfig, `${config.path}`, config.value);
+        this.openmct.objects.mutate(stackedPlotObject, configPath, newConfig);
+      } else {
+        const configPath = `configuration.series[${index}].${config.path}`;
+        this.openmct.objects.mutate(stackedPlotObject, configPath, config.value);
+      }
+    }
+  }
 };
 </script>

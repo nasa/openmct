@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 const PRIORITIES = Object.freeze({
-    HIGH: 1000,
-    DEFAULT: 0,
-    LOW: -1000
+  HIGH: 1000,
+  DEFAULT: 0,
+  LOW: -1000
 });
 export default PRIORITIES;

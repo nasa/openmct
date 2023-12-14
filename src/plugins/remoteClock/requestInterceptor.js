@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,24 +21,30 @@
  *****************************************************************************/
 
 function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
-    let remoteClockLoaded = false;
+  let remoteClockLoaded = false;
 
-    return {
-        appliesTo: () => {
-            // Get the activeClock from the Global Time Context
-            const { activeClock } = openmct.time;
+  return {
+    appliesTo: () => {
+      // Get the activeClock from the Global Time Context
+      const { activeClock } = openmct.time;
 
-            return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
-        },
-        invoke: async (request) => {
-            const { start, end } = await waitForBounds();
-            remoteClockLoaded = true;
-            request.start = start;
-            request.end = end;
+      return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
+    },
+    invoke: async (request) => {
+      const timeContext = request?.timeContext ?? openmct.time;
 
-            return request;
-        }
-    };
+      // Wait for initial bounds if the request is for real-time data.
+      // Otherwise, use the bounds provided by the request.
+      if (timeContext.isRealTime()) {
+        const { start, end } = await waitForBounds();
+        remoteClockLoaded = true;
+        request.start = start;
+        request.end = end;
+      }
+
+      return request;
+    }
+  };
 }
 
 export default remoteClockRequestInterceptor;

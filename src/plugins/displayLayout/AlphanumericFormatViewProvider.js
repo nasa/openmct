@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,78 +20,90 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import AlphanumericFormat from './components/AlphanumericFormat.vue';
 
-import Vue from 'vue';
-
 class AlphanumericFormatView {
-    constructor(openmct, domainObject, objectPath) {
-        this.openmct = openmct;
-        this.domainObject = domainObject;
-        this.objectPath = objectPath;
-        this.component = undefined;
+  constructor(openmct, domainObject, objectPath) {
+    this.openmct = openmct;
+    this.domainObject = domainObject;
+    this.objectPath = objectPath;
+    this._destroy = null;
+    this.component = null;
+  }
+
+  show(element) {
+    const { vNode, destroy } = mount(
+      {
+        el: element,
+        components: {
+          AlphanumericFormat
+        },
+        provide: {
+          openmct: this.openmct,
+          objectPath: this.objectPath,
+          currentView: this
+        },
+        template: '<AlphanumericFormat ref="alphanumericFormat" />'
+      },
+      {
+        app: this.openmct.app,
+        element
+      }
+    );
+    this.component = vNode.componentInstance;
+    this._destroy = destroy;
+  }
+
+  getViewContext() {
+    if (this.component) {
+      return {};
     }
 
-    show(element) {
-        this.component = new Vue({
-            el: element,
-            name: 'AlphanumericFormat',
-            components: {
-                AlphanumericFormat
-            },
-            provide: {
-                openmct: this.openmct,
-                objectPath: this.objectPath,
-                currentView: this
-            },
-            template: '<alphanumeric-format ref="alphanumericFormat"></alphanumeric-format>'
-        });
-    }
+    return this.component.$refs.alphanumericFormat.getViewContext();
+  }
 
-    getViewContext() {
-        if (this.component) {
-            return {};
-        }
+  priority() {
+    return 1;
+  }
 
-        return this.component.$refs.alphanumericFormat.getViewContext();
+  destroy() {
+    if (this._destroy) {
+      this._destroy();
     }
-
-    destroy() {
-        this.component.$destroy();
-        this.component = undefined;
-    }
+  }
 }
 
 export default function AlphanumericFormatViewProvider(openmct, options) {
-    function isTelemetryObject(selectionPath) {
-        let selectedObject = selectionPath[0].context.item;
-        let parentObject = selectionPath[1].context.item;
-        let selectedLayoutItem = selectionPath[0].context.layoutItem;
+  function isTelemetryObject(selectionPath) {
+    let selectedObject = selectionPath[0].context.item;
+    let parentObject = selectionPath[1].context.item;
+    let selectedLayoutItem = selectionPath[0].context.layoutItem;
 
-        return parentObject
-            && parentObject.type === 'layout'
-            && selectedObject
-            && selectedLayoutItem
-            && selectedLayoutItem.type === 'telemetry-view'
-            && openmct.telemetry.isTelemetryObject(selectedObject)
-            && !options.showAsView.includes(selectedObject.type);
+    return (
+      parentObject &&
+      parentObject.type === 'layout' &&
+      selectedObject &&
+      selectedLayoutItem &&
+      selectedLayoutItem.type === 'telemetry-view' &&
+      openmct.telemetry.isTelemetryObject(selectedObject) &&
+      !options.showAsView.includes(selectedObject.type)
+    );
+  }
+
+  return {
+    key: 'alphanumeric-format',
+    name: 'Format',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 1) {
+        return false;
+      }
+
+      return selection.every(isTelemetryObject);
+    },
+    view: function (domainObject, objectPath) {
+      return new AlphanumericFormatView(openmct, domainObject, objectPath);
     }
-
-    return {
-        key: 'alphanumeric-format',
-        name: 'Alphanumeric Format',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 1) {
-                return false;
-            }
-
-            return selection.every(isTelemetryObject);
-        },
-        view: function (domainObject, objectPath) {
-            return new AlphanumericFormatView(openmct, domainObject, objectPath);
-        },
-        priority: function () {
-            return 1;
-        }
-    };
+  };
 }

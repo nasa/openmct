@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,39 +23,39 @@
 import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
+  return function install(openmct) {
+    openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
 
-        openmct.types.addType('conditionWidget', {
-            key: 'conditionWidget',
-            name: "Condition Widget",
-            description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
-            creatable: true,
-            cssClass: 'icon-condition-widget',
-            initialize(domainObject) {
-                domainObject.configuration = {};
-                domainObject.label = 'Condition Widget';
-                domainObject.conditionalLabel = '';
-            },
-            form: [
-                {
-                    "key": "label",
-                    "name": "Label",
-                    "control": "textfield",
-                    property: [
-                        "label"
-                    ],
-                    "required": true,
-                    "cssClass": "l-input"
-                },
-                {
-                    "key": "url",
-                    "name": "URL",
-                    "control": "textfield",
-                    "required": false,
-                    "cssClass": "l-input-lg"
-                }
-            ]
-        });
-    };
+    openmct.types.addType('conditionWidget', {
+      key: 'conditionWidget',
+      name: 'Condition Widget',
+      description:
+        'A button that can be used on its own, or dynamically styled with a Condition Set.',
+      creatable: true,
+      cssClass: 'icon-condition-widget',
+      initialize(domainObject) {
+        domainObject.configuration = {};
+        domainObject.label = 'Condition Widget';
+        domainObject.conditionalLabel = '';
+        domainObject.url = '';
+      },
+      form: [
+        {
+          key: 'label',
+          name: 'Label',
+          control: 'textfield',
+          property: ['label'],
+          required: true,
+          cssClass: 'l-input'
+        },
+        {
+          key: 'url',
+          name: 'URL',
+          control: 'textfield',
+          required: false,
+          cssClass: 'l-input-lg'
+        }
+      ]
+    });
+  };
 }

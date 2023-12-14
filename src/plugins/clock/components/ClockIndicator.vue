@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2022, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,42 +21,44 @@
 -->
 
 <template>
-<div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
+  <div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
     <span class="label c-indicator__label">
-        {{ timeTextValue }}
+      {{ timeTextValue }}
     </span>
-</div>
+  </div>
 </template>
 
 <script>
 import moment from 'moment';
-import ticker from 'utils/clock/Ticker';
+import raf from 'utils/raf';
 
 export default {
-    inject: ['openmct'],
-    props: {
-        indicatorFormat: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return {
-            timeTextValue: null
-        };
-    },
-    mounted() {
-        this.unlisten = ticker.listen(this.tick);
-    },
-    beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
-    },
-    methods: {
-        tick(timestamp) {
-            this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
-        }
+  inject: ['openmct'],
+  props: {
+    indicatorFormat: {
+      type: String,
+      required: true
     }
+  },
+  data() {
+    return {
+      timeTextValue: this.openmct.time.getClock() ? this.openmct.time.now() : undefined
+    };
+  },
+  mounted() {
+    this.tick = raf(this.tick);
+    this.openmct.time.on('tick', this.tick);
+    this.tick(this.timeTextValue);
+  },
+  beforeUnmount() {
+    this.openmct.time.off('tick', this.tick);
+  },
+  methods: {
+    tick(timestamp) {
+      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
+        this.openmct.time.getTimeSystem().name
+      }`;
+    }
+  }
 };
 </script>

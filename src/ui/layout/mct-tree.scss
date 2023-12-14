@@ -1,296 +1,300 @@
 @use 'sass:math';
 
 .c-tree-and-search {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: auto;
+
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &__search {
+    flex: 0 0 auto;
+  }
+
+  &__no-results {
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  &__tree {
     flex: 1 1 auto;
-    overflow: auto;
+    height: 0; // Chrome 73 overflow bug fix
+    padding-right: $interiorMarginSm;
+  }
 
-    > * + * {
-        margin-top: $interiorMargin;
+  .c-tree {
+    flex: 1 1 auto;
+    overflow: hidden;
+    transition: all;
+
+    .c-tree__item-h {
+      width: 100%;
     }
 
-    &__search {
-        flex: 0 0 auto;
+    &__scrollable {
+      overflow: auto;
+      padding-right: $interiorMargin;
     }
 
-    &__no-results {
-        font-style: italic;
-        opacity: 0.6;
+    &__item--empty {
+      // Styling for empty tree items
+      // Indent should allow for c-nav view-control width and icon spacing
+      font-style: italic;
+      padding: $interiorMarginSm * 2 1px;
+      opacity: 0.7;
+      pointer-events: none;
+
+      &:before {
+        content: '';
+        display: inline-block;
+        width: $treeNavArrowD + $interiorMarginLg;
+      }
     }
-
-    &__tree {
-        flex: 1 1 auto;
-        height: 0; // Chrome 73 overflow bug fix
-        padding-right: $interiorMarginSm;
-    }
-
-    .c-tree {
-        flex: 1 1 auto;
-        overflow: hidden;
-        transition: all;
-
-        .c-tree__item-h {
-            width: 100%;
-        }
-
-        &__scrollable {
-            overflow: auto;
-            padding-right: $interiorMargin;
-        }
-
-        &__item--empty {
-            // Styling for empty tree items
-            // Indent should allow for c-nav view-control width and icon spacing
-            font-style: italic;
-            padding: $interiorMarginSm * 2 1px;
-            opacity: 0.7;
-            pointer-events: none;
-
-            &:before {
-                content: '';
-                display: inline-block;
-                width: $treeNavArrowD + $interiorMarginLg;
-            }
-        }
-    }
+  }
 }
 
 .c-tree,
 .c-list {
-    @include userSelectNone();
-    overflow-x: hidden;
-    overflow-y: auto;
+  @include userSelectNone();
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .icon-arrow-nav-to-parent {
+    visibility: hidden;
+
+    &.is-enabled {
+      visibility: visible;
+    }
+  }
+
+  li {
+    position: relative;
+
+    &[class*='__item-h'] {
+      display: block;
+      width: 100%;
+    }
+
+    + li {
+      margin-top: 1px;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    line-height: 110%;
+    padding: $interiorMarginSm $interiorMargin;
+    transition: background 150ms ease;
+
+    &__type-icon {
+      color: $colorItemTreeIcon;
+    }
+
+    @include hover {
+      background: $colorItemTreeHoverBg;
+      //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
+    }
+
+    &.is-navigated-object,
+    &.is-selected {
+      background: $colorItemTreeSelectedBg;
+
+      [class*='__name'] {
+        color: $colorItemTreeSelectedFg;
+      }
+    }
+    &.is-targeted-item {
+      $c: $colorBodyFg;
+      @include pulseProp(
+        $animName: flashTarget,
+        $dur: 500ms,
+        $iter: 8,
+        $prop: background,
+        $valStart: rgba($c, 0.4),
+        $valEnd: rgba($c, 0)
+      );
+    }
+
+    &.is-new {
+      animation-name: animTemporaryHighlight;
+      animation-timing-function: ease-out;
+      animation-duration: 3s;
+      animation-iteration-count: 1;
+    }
+
+    &.is-context-clicked {
+      box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+    }
 
     .icon-arrow-nav-to-parent {
-        visibility: hidden;
+      visibility: hidden;
 
-        &.is-enabled {
-            visibility: visible;
-        }
+      &.is-enabled {
+        visibility: visible;
+      }
     }
-
-    li {
-        position: relative;
-
-        &[class*="__item-h"] {
-            display: block;
-            width: 100%;
-        }
-
-        + li {
-            margin-top: 1px;
-        }
-    }
-
-    &__item {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        line-height: 110%;
-        padding: $interiorMarginSm $interiorMargin;
-        transition: background 150ms ease;
-
-        &__type-icon {
-            color: $colorItemTreeIcon;
-        }
-
-        @include hover {
-            background: $colorItemTreeHoverBg;
-            filter: $filterHov;
-        }
-
-        &.is-navigated-object,
-        &.is-selected {
-            background: $colorItemTreeSelectedBg;
-
-            [class*="__name"] {
-                color: $colorItemTreeSelectedFg;
-            }
-        }
-
-        &.is-new {
-            animation-name: animTemporaryHighlight;
-            animation-timing-function: ease-out;
-            animation-duration: 3s;
-            animation-iteration-count: 1;
-        }
-
-        &.is-context-clicked {
-            box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
-        }
-
-        .icon-arrow-nav-to-parent {
-            visibility: hidden;
-
-            &.is-enabled {
-                visibility: visible;
-            }
-        }
-    }
+  }
 }
 
 .c-tree {
-    padding-right: $interiorMarginSm;
+  padding-right: $interiorMarginSm;
 
-    .c-tree {
-        margin-left: 15px;
+  .c-tree {
+    margin-left: 15px;
+  }
+
+  &__item {
+    border-radius: $smallCr;
+
+    [class*='view-control'] {
+      padding: 2px 10px;
     }
 
-    &__item {
-        border-radius: $smallCr;
-
-        [class*="view-control"] {
-            padding: 2px 10px;
-        }
-
-        > * + * {
-            margin-left: ceil(math.div($interiorMarginSm, 2));
-        }
-
-        @include hover {
-            background: $colorItemTreeHoverBg;
-        }
-
-        // Object labels in trees
-        &__label {
-            flex: 1 1 auto;
-        }
-
-        &.is-alias {
-            // Object is an alias to an original.
-            [class*='__type-icon'] {
-                @include isAlias();
-            }
-        }
-
-        body.mobile & {
-            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
-            height: $mobileTreeItemH;
-            margin-bottom: $interiorMarginSm;
-
-            [class*="view-control"] {
-                width: ceil($mobileTreeItemH * 0.5);
-            }
-        }
-
-        &.is-navigated-object,
-        &.is-selected {
-            background: $colorItemTreeSelectedBg;
-
-            [class*="__label"],
-            [class*="__name"] {
-                color: $colorItemTreeSelectedFg;
-            }
-
-            [class*="__type-icon"]:before {
-                color: $colorItemTreeSelectedIcon;
-            }
-        }
+    > * + * {
+      margin-left: ceil(math.div($interiorMarginSm, 2));
     }
 
-    &__item__label {
-        @include desktop {
-            &:hover {
-                filter: $filterHov;
-            }
-        }
+    @include hover {
+      background: $colorItemTreeHoverBg;
     }
+
+    // Object labels in trees
+    &__label {
+      flex: 1 1 auto;
+    }
+
+    &.is-alias {
+      // Object is an alias to an original.
+      [class*='__type-icon'] {
+        @include isAlias();
+      }
+    }
+
+    body.mobile & {
+      @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+      height: $mobileTreeItemH;
+      margin-bottom: $interiorMarginSm;
+
+      [class*='view-control'] {
+        width: ceil($mobileTreeItemH * 0.5);
+      }
+    }
+
+    &.is-navigated-object,
+    &.is-selected {
+      background: $colorItemTreeSelectedBg;
+
+      [class*='__label'],
+      [class*='__name'] {
+        color: $colorItemTreeSelectedFg;
+      }
+
+      [class*='__type-icon']:before {
+        color: $colorItemTreeSelectedIcon;
+      }
+    }
+  }
 }
 
 .is-editing .is-navigated-object {
-    a[class*="__item__label"] {
-        opacity: 0.4;
+  a[class*='__item__label'] {
+    opacity: 0.4;
 
-        [class*="__name"] {
-            font-style: italic;
-        }
+    [class*='__name'] {
+      font-style: italic;
     }
+  }
 }
 
 .c-tree {
-    &__item {
-        body.mobile & {
-            @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
-            height: $mobileTreeItemH;
-            margin-bottom: $interiorMarginSm;
+  &__item {
+    body.mobile & {
+      @include button($bg: $colorMobilePaneLeftTreeItemBg, $fg: $colorMobilePaneLeftTreeItemFg);
+      height: $mobileTreeItemH;
+      margin-bottom: $interiorMarginSm;
 
-            [class*="view-control"] {
-                width: ceil($mobileTreeItemH * 0.5);
-            }
-        }
+      [class*='view-control'] {
+        width: ceil($mobileTreeItemH * 0.5);
+      }
     }
+  }
 
-    .c-tree {
-        margin-left: $treeItemIndent;
-    }
+  .c-tree {
+    margin-left: $treeItemIndent;
+  }
 }
 
 .c-list {
-    &__item {
-        border-radius: $smallCr;
+  &__item {
+    border-radius: $smallCr;
 
-        &__name {
-            $p: $interiorMarginSm;
-            @include ellipsize();
-            padding-bottom: $p;
-            padding-top: $p;
-        }
+    &__name {
+      $p: $interiorMarginSm;
+      @include ellipsize();
+      padding-bottom: $p;
+      padding-top: $p;
     }
+  }
 }
 
 .c-nav {
-    $dimension: $treeNavArrowD;
+  $dimension: $treeNavArrowD;
 
-    &__up, &__down {
-        flex: 0 0 auto;
-        height: $dimension;
-        width: $dimension;
-        visibility: hidden;
-        position: relative;
-        text-align: center;
+  &__up,
+  &__down {
+    flex: 0 0 auto;
+    height: $dimension;
+    width: $dimension;
+    visibility: hidden;
+    position: relative;
+    text-align: center;
 
-        &.is-enabled {
-            visibility: visible;
-        }
-
-        &:before {
-            // Nav arrow
-            $dimension: 9px;
-            $width: 3px;
-            border: solid $colorItemTreeVC;
-            border-width: 0 $width $width 0;
-            content: '';
-            display: block;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            height: $dimension;
-            width: $dimension;
-        }
-
-        @include desktop {
-            &:hover:before {
-                border-color: $colorItemTreeHoverFg;
-            }
-        }
+    &.is-enabled {
+      visibility: visible;
     }
 
-    &__up:before {
-        transform: translate(-30%, -50%) rotate(135deg);
+    &:before {
+      // Nav arrow
+      $dimension: 9px;
+      $width: 3px;
+      border: solid $colorItemTreeVC;
+      border-width: 0 $width $width 0;
+      content: '';
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: $dimension;
+      width: $dimension;
     }
 
-    &__down:before {
-        transform: translate(-70%, -50%) rotate(-45deg);
+    @include desktop {
+      &:hover:before {
+        border-color: $colorItemTreeHoverFg;
+      }
     }
+  }
+
+  &__up:before {
+    transform: translate(-30%, -50%) rotate(135deg);
+  }
+
+  &__down:before {
+    transform: translate(-70%, -50%) rotate(-45deg);
+  }
 }
 
 .c-selector {
-    &.c-tree-and-search {
-        background: rgba($colorFormLines, 0.1);
-        border-radius: $basicCr;
-        padding: 2px;
-        height: 100%;
-        min-height: 150px;
-    }
+  &.c-tree-and-search {
+    background: rgba($colorFormLines, 0.1);
+    border-radius: $basicCr;
+    padding: 2px;
+    height: 100%;
+    min-height: 150px;
+  }
 }

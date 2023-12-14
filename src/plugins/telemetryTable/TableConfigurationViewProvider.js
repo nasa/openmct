@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,65 +20,65 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'objectUtils',
-    './components/table-configuration.vue',
-    './TelemetryTableConfiguration',
-    'vue'
-], function (
-    objectUtils,
-    TableConfigurationComponent,
-    TelemetryTableConfiguration,
-    Vue
-) {
+import mount from 'utils/mount';
 
-    function TableConfigurationViewProvider(openmct) {
-        return {
-            key: 'table-configuration',
-            name: 'Telemetry Table Configuration',
-            canView: function (selection) {
-                if (selection.length !== 1 || selection[0].length === 0) {
-                    return false;
-                }
+import TableConfigurationComponent from './components/TableConfiguration.vue';
+import TelemetryTableConfiguration from './TelemetryTableConfiguration';
 
-                let object = selection[0][0].context.item;
+export default function TableConfigurationViewProvider(openmct) {
+  return {
+    key: 'table-configuration',
+    name: 'Config',
+    canView: function (selection) {
+      if (selection.length !== 1 || selection[0].length === 0) {
+        return false;
+      }
 
-                return object && object.type === 'table';
+      let object = selection[0][0].context.item;
+
+      return object && object.type === 'table';
+    },
+    view: function (selection) {
+      let _destroy = null;
+      let tableConfiguration;
+      const domainObject = selection[0][0].context.item;
+
+      return {
+        show: function (element) {
+          tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                TableConfiguration: TableConfigurationComponent
+              },
+              provide: {
+                openmct,
+                tableConfiguration
+              },
+              template: '<table-configuration></table-configuration>'
             },
-            view: function (selection) {
-                let component;
-                let domainObject = selection[0][0].context.item;
-                let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
-
-                return {
-                    show: function (element) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                TableConfiguration: TableConfigurationComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                tableConfiguration
-                            },
-                            template: '<table-configuration></table-configuration>'
-                        });
-                    },
-                    destroy: function () {
-                        if (component) {
-                            component.$destroy();
-                            component = undefined;
-                        }
-
-                        tableConfiguration = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
+            {
+              app: openmct.app,
+              element
             }
-        };
-    }
+          );
+          _destroy = destroy;
+        },
+        showTab: function (isEditing) {
+          return isEditing;
+        },
+        priority: function () {
+          return 1;
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
 
-    return TableConfigurationViewProvider;
-});
+          tableConfiguration = undefined;
+        }
+      };
+    }
+  };
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,60 +30,59 @@ import EventEmitter from 'EventEmitter';
  */
 
 export default class DefaultClock extends EventEmitter {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.key = 'clock';
+    this.key = 'clock';
 
-        this.cssClass = 'icon-clock';
-        this.name = 'Clock';
-        this.description = "A default clock for openmct.";
+    this.cssClass = 'icon-clock';
+    this.name = 'Clock';
+    this.description = 'A default clock for openmct.';
+  }
+
+  tick(tickValue) {
+    this.emit('tick', tickValue);
+    this.lastTick = tickValue;
+  }
+
+  /**
+   * Register a listener for the clock. When it ticks, the
+   * clock will provide the time from the configured endpoint
+   *
+   * @param listener
+   * @returns {function} a function for deregistering the provided listener
+   */
+  on(event) {
+    let result = super.on.apply(this, arguments);
+
+    if (this.listeners(event).length === 1) {
+      this.start();
     }
 
-    tick(tickValue) {
-        this.emit("tick", tickValue);
-        this.lastTick = tickValue;
+    return result;
+  }
+
+  /**
+   * Register a listener for the clock. When it ticks, the
+   * clock will provide the current local system time
+   *
+   * @param listener
+   * @returns {function} a function for deregistering the provided listener
+   */
+  off(event) {
+    let result = super.off.apply(this, arguments);
+
+    if (this.listeners(event).length === 0) {
+      this.stop();
     }
 
-    /**
-     * Register a listener for the clock. When it ticks, the
-     * clock will provide the time from the configured endpoint
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    on(event) {
-        let result = super.on.apply(this, arguments);
+    return result;
+  }
 
-        if (this.listeners(event).length === 1) {
-            this.start();
-        }
-
-        return result;
-    }
-
-    /**
-     * Register a listener for the clock. When it ticks, the
-     * clock will provide the current local system time
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    off(event) {
-        let result = super.off.apply(this, arguments);
-
-        if (this.listeners(event).length === 0) {
-            this.stop();
-        }
-
-        return result;
-    }
-
-    /**
-     * @returns {number} The last value provided for a clock tick
-     */
-    currentValue() {
-        return this.lastTick;
-    }
-
+  /**
+   * @returns {number} The last value provided for a clock tick
+   */
+  currentValue() {
+    return this.lastTick;
+  }
 }

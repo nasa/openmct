@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,52 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementInspector from './FaultManagementInspector.vue';
-
-import Vue from 'vue';
+import mount from 'utils/mount';
 
 import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
+import FaultManagementInspector from './FaultManagementInspector.vue';
 
 export default function FaultManagementInspectorViewProvider(openmct) {
-    return {
-        openmct: openmct,
-        key: FAULT_MANAGEMENT_INSPECTOR,
-        name: 'FAULT_MANAGEMENT_TYPE',
-        canView: (selection) => {
-            if (selection.length !== 1 || selection[0].length === 0) {
-                return false;
+  return {
+    openmct: openmct,
+    key: FAULT_MANAGEMENT_INSPECTOR,
+    name: 'Config',
+    canView: (selection) => {
+      if (selection.length !== 1 || selection[0].length === 0) {
+        return false;
+      }
+
+      let object = selection[0][0].context.item;
+
+      return object && object.type === FAULT_MANAGEMENT_TYPE;
+    },
+    view: (selection) => {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                FaultManagementInspector
+              },
+              provide: {
+                openmct
+              },
+              template: '<FaultManagementInspector></FaultManagementInspector>'
+            },
+            {
+              app: openmct.app,
+              element
             }
-
-            let object = selection[0][0].context.item;
-
-            return object && object.type === FAULT_MANAGEMENT_TYPE;
+          );
+          _destroy = destroy;
         },
-        view: (selection) => {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            FaultManagementInspector
-                        },
-                        provide: {
-                            openmct
-                        },
-                        template: '<FaultManagementInspector></FaultManagementInspector>'
-                    });
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+        priority: function () {
+          return openmct.priority.HIGH + 1;
         },
-        priority: () => {
-            return 1;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

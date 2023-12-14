@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,421 +20,413 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { createOpenMct, renderWhenVisible, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
 import DisplayLayoutPlugin from './plugin';
 
 describe('the plugin', function () {
-    let element;
-    let child;
-    let openmct;
-    let displayLayoutDefinition;
+  let element;
+  let child;
+  let openmct;
+  let displayLayoutDefinition;
+
+  beforeEach((done) => {
+    openmct = createOpenMct();
+    openmct.install(
+      new DisplayLayoutPlugin({
+        showAsView: []
+      })
+    );
+    displayLayoutDefinition = openmct.types.get('layout');
+
+    element = document.createElement('div');
+    child = document.createElement('div');
+    element.appendChild(child);
+
+    openmct.on('start', done);
+    openmct.start(child);
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('defines a display layout object type with the correct key', () => {
+    expect(displayLayoutDefinition.definition.name).toEqual('Display Layout');
+  });
+
+  it('provides a view', () => {
+    const testViewObject = {
+      id: 'test-object',
+      type: 'layout',
+      configuration: {
+        items: [
+          {
+            identifier: {
+              namespace: '',
+              key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+            },
+            x: 8,
+            y: 3,
+            width: 10,
+            height: 5,
+            displayMode: 'all',
+            value: 'sin',
+            stroke: '',
+            fill: '',
+            color: '',
+            size: '13px',
+            type: 'telemetry-view',
+            id: 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
+          }
+        ],
+        layoutGrid: [10, 10]
+      }
+    };
+
+    const applicableViews = openmct.objectViews.get(testViewObject, []);
+    let displayLayoutViewProvider = applicableViews.find(
+      (viewProvider) => viewProvider.key === 'layout.view'
+    );
+    expect(displayLayoutViewProvider).toBeDefined();
+  });
+
+  it('renders a display layout view without errors', () => {
+    const testViewObject = {
+      identifier: {
+        namespace: 'test-namespace',
+        key: 'test-key'
+      },
+      type: 'layout',
+      configuration: {
+        items: [],
+        layoutGrid: [10, 10]
+      },
+      composition: []
+    };
+
+    const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
+    let displayLayoutViewProvider = applicableViews.find(
+      (viewProvider) => viewProvider.key === 'layout.view'
+    );
+    let view = displayLayoutViewProvider.view(testViewObject, [testViewObject]);
+    let error;
+
+    try {
+      view.show(child, false, { renderWhenVisible });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeUndefined();
+  });
+
+  describe('on load', () => {
+    let displayLayoutItem;
+    let item;
 
     beforeEach((done) => {
-        openmct = createOpenMct();
-        openmct.install(new DisplayLayoutPlugin({
-            showAsView: []
-        }));
-        displayLayoutDefinition = openmct.types.get('layout');
-
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
-
-        openmct.on('start', done);
-        openmct.start(child);
-    });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
-
-    it('defines a display layout object type with the correct key', () => {
-        expect(displayLayoutDefinition.definition.name).toEqual('Display Layout');
-    });
-
-    it('provides a view', () => {
-        const testViewObject = {
-            id: 'test-object',
-            type: 'layout',
-            configuration: {
-                items: [
-                    {
-
-                        'identifier': {
-                            'namespace': '',
-                            'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                        },
-                        'x': 8,
-                        'y': 3,
-                        'width': 10,
-                        'height': 5,
-                        'displayMode': 'all',
-                        'value': 'sin',
-                        'stroke': '',
-                        'fill': '',
-                        'color': '',
-                        'size': '13px',
-                        'type': 'telemetry-view',
-                        'id': 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
-
-                    }
-                ],
-                layoutGrid: [10, 10]
-            }
-        };
-
-        const applicableViews = openmct.objectViews.get(testViewObject, []);
-        let displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
-        expect(displayLayoutViewProvider).toBeDefined();
-    });
-
-    it('renders a display layout view without errors', () => {
-        const testViewObject = {
-            identifier: {
-                namespace: 'test-namespace',
-                key: 'test-key'
-            },
-            type: 'layout',
-            configuration: {
-                items: [],
-                layoutGrid: [10, 10]
-            },
-            composition: []
-        };
-
-        const applicableViews = openmct.objectViews.get(testViewObject, []);
-        let displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
-        let view = displayLayoutViewProvider.view(testViewObject);
-        let error;
-
-        try {
-            view.show(child, false);
-        } catch (e) {
-            error = e;
+      item = {
+        width: 32,
+        height: 18,
+        x: 78,
+        y: 8,
+        identifier: {
+          namespace: '',
+          key: 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
+        },
+        hasFrame: true,
+        type: 'line-view', // so no telemetry functionality is triggered, just want to test the sync
+        id: 'c0ff485a-344c-4e70-8d83-a9d9998a69fc'
+      };
+      displayLayoutItem = {
+        composition: [
+          // no item in composition, but item in configuration items
+        ],
+        configuration: {
+          items: [item],
+          layoutGrid: [10, 10]
+        },
+        name: 'Display Layout',
+        type: 'layout',
+        identifier: {
+          namespace: '',
+          key: 'c5e636c1-6771-4c9c-b933-8665cab189b3'
         }
+      };
 
-        expect(error).toBeUndefined();
+      const applicableViews = openmct.objectViews.get(displayLayoutItem, []);
+      const displayLayoutViewProvider = applicableViews.find(
+        (viewProvider) => viewProvider.key === 'layout.view'
+      );
+      const view = displayLayoutViewProvider.view(displayLayoutItem, displayLayoutItem);
+      view.show(child, false, { renderWhenVisible });
 
+      nextTick(done);
     });
 
-    describe('on load', () => {
-        let displayLayoutItem;
-        let item;
+    it('will sync composition and layout items', () => {
+      expect(displayLayoutItem.configuration.items.length).toBe(0);
+    });
+  });
 
-        beforeEach((done) => {
-            item = {
-                'width': 32,
-                'height': 18,
-                'x': 78,
-                'y': 8,
-                'identifier': {
-                    'namespace': '',
-                    'key': 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
-                },
-                'hasFrame': true,
-                'type': 'line-view', // so no telemetry functionality is triggered, just want to test the sync
-                'id': 'c0ff485a-344c-4e70-8d83-a9d9998a69fc'
+  describe('the alpha numeric format view', () => {
+    let displayLayoutItem;
+    let telemetryItem;
+    let selection;
 
-            };
-            displayLayoutItem = {
-                'composition': [
-                    // no item in compostion, but item in configuration items
+    beforeEach(() => {
+      displayLayoutItem = {
+        composition: [],
+        configuration: {
+          items: [
+            {
+              identifier: {
+                namespace: '',
+                key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+              },
+              x: 8,
+              y: 3,
+              width: 10,
+              height: 5,
+              displayMode: 'all',
+              value: 'sin',
+              stroke: '',
+              fill: '',
+              color: '',
+              size: '13px',
+              type: 'telemetry-view',
+              id: 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
+            }
+          ],
+          layoutGrid: [10, 10]
+        },
+        name: 'Display Layout',
+        type: 'layout',
+        identifier: {
+          namespace: '',
+          key: 'c5e636c1-6771-4c9c-b933-8665cab189b3'
+        }
+      };
+      telemetryItem = {
+        telemetry: {
+          period: 5,
+          amplitude: 5,
+          offset: 5,
+          dataRateInHz: 5,
+          phase: 5,
+          randomness: 0
+        },
+        name: 'Sine Wave Generator',
+        type: 'generator',
+        modified: 1592851063871,
+        location: 'mine',
+        persisted: 1592851063871,
+        id: '55122607-e65e-44d5-9c9d-9c31a914ca89',
+        identifier: {
+          namespace: '',
+          key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+        }
+      };
+      selection = [
+        [
+          {
+            context: {
+              layoutItem: displayLayoutItem.configuration.items[0],
+              item: telemetryItem,
+              index: 1
+            }
+          },
+          {
+            context: {
+              item: displayLayoutItem,
+              supportsMultiSelect: true
+            }
+          }
+        ]
+      ];
+    });
+
+    it('provides an alphanumeric format view', () => {
+      const displayLayoutAlphaNumFormatView = openmct.inspectorViews.get(selection);
+      expect(displayLayoutAlphaNumFormatView.length).toBeDefined();
+    });
+  });
+
+  describe('the toolbar', () => {
+    let displayLayoutItem;
+    let selection;
+
+    beforeEach(() => {
+      displayLayoutItem = {
+        composition: [],
+        configuration: {
+          items: [
+            {
+              fill: '#666666',
+              stroke: '',
+              x: 1,
+              y: 1,
+              width: 10,
+              height: 5,
+              type: 'box-view',
+              id: '89b88746-d325-487b-aec4-11b79afff9e8'
+            },
+            {
+              fill: '#666666',
+              stroke: '',
+              x: 1,
+              y: 1,
+              width: 10,
+              height: 10,
+              type: 'ellipse-view',
+              id: '19b88746-d325-487b-aec4-11b79afff9z8'
+            },
+            {
+              x: 18,
+              y: 9,
+              x2: 23,
+              y2: 4,
+              stroke: '#666666',
+              type: 'line-view',
+              id: '57d49a28-7863-43bd-9593-6570758916f0'
+            },
+            {
+              identifier: {
+                namespace: '',
+                key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+              },
+              x: 8,
+              y: 3,
+              width: 10,
+              height: 5,
+              displayMode: 'all',
+              value: 'sin',
+              stroke: '',
+              fill: '',
+              color: '',
+              size: '13px',
+              type: 'telemetry-view',
+              id: 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
+            },
+            {
+              width: 32,
+              height: 18,
+              x: 78,
+              y: 8,
+              identifier: {
+                namespace: '',
+                key: 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
+              },
+              hasFrame: true,
+              type: 'subobject-view',
+              id: 'c0ff485a-344c-4e70-8d83-a9d9998a69fc'
+            }
+          ],
+          layoutGrid: [10, 10]
+        },
+        name: 'Display Layout',
+        type: 'layout',
+        identifier: {
+          namespace: '',
+          key: 'c5e636c1-6771-4c9c-b933-8665cab189b3'
+        }
+      };
+      selection = [
+        [
+          {
+            context: {
+              layoutItem: displayLayoutItem.configuration.items[1],
+              index: 1
+            }
+          },
+          {
+            context: {
+              item: displayLayoutItem,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        [
+          {
+            context: {
+              layoutItem: displayLayoutItem.configuration.items[0],
+              index: 0
+            }
+          },
+          {
+            context: {
+              item: displayLayoutItem,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        [
+          {
+            context: {
+              layoutItem: displayLayoutItem.configuration.items[2],
+              item: displayLayoutItem.configuration.items[2],
+              index: 2
+            }
+          },
+          {
+            context: {
+              item: displayLayoutItem,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        [
+          {
+            context: {
+              item: {
+                composition: [
+                  {
+                    namespace: '',
+                    key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+                  }
                 ],
-                'configuration': {
-                    'items': [
-                        item
-                    ],
-                    'layoutGrid': [
-                        10,
-                        10
-                    ]
+                configuration: {
+                  series: [
+                    {
+                      identifier: {
+                        namespace: '',
+                        key: '55122607-e65e-44d5-9c9d-9c31a914ca89'
+                      }
+                    }
+                  ],
+                  yAxis: {},
+                  xAxis: {}
                 },
-                'name': 'Display Layout',
-                'type': 'layout',
-                'identifier': {
-                    'namespace': '',
-                    'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(displayLayoutItem, []);
-            const displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
-            const view = displayLayoutViewProvider.view(displayLayoutItem);
-            view.show(child, false);
-
-            Vue.nextTick(done);
-        });
-
-        it('will sync compostion and layout items', () => {
-            expect(displayLayoutItem.configuration.items.length).toBe(0);
-        });
+                name: 'Unnamed Overlay Plot',
+                type: 'telemetry.plot.overlay',
+                modified: 1594142141929,
+                location: 'mine',
+                identifier: {
+                  namespace: '',
+                  key: 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
+                },
+                persisted: 1594142141929
+              },
+              layoutItem: displayLayoutItem.configuration.items[3],
+              index: 3
+            }
+          },
+          {
+            context: {
+              item: displayLayoutItem,
+              supportsMultiSelect: true
+            }
+          }
+        ]
+      ];
     });
 
-    describe('the alpha numeric format view', () => {
-        let displayLayoutItem;
-        let telemetryItem;
-        let selection;
+    it('provides controls including separators', () => {
+      const displayLayoutToolbar = openmct.toolbars.get(selection);
 
-        beforeEach(() => {
-            displayLayoutItem = {
-                'composition': [
-                ],
-                'configuration': {
-                    'items': [
-                        {
-
-                            'identifier': {
-                                'namespace': '',
-                                'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                            },
-                            'x': 8,
-                            'y': 3,
-                            'width': 10,
-                            'height': 5,
-                            'displayMode': 'all',
-                            'value': 'sin',
-                            'stroke': '',
-                            'fill': '',
-                            'color': '',
-                            'size': '13px',
-                            'type': 'telemetry-view',
-                            'id': 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
-
-                        }
-                    ],
-                    'layoutGrid': [
-                        10,
-                        10
-                    ]
-                },
-                'name': 'Display Layout',
-                'type': 'layout',
-                'identifier': {
-                    'namespace': '',
-                    'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
-                }
-            };
-            telemetryItem = {
-                'telemetry': {
-                    'period': 5,
-                    'amplitude': 5,
-                    'offset': 5,
-                    'dataRateInHz': 5,
-                    'phase': 5,
-                    'randomness': 0
-                },
-                'name': 'Sine Wave Generator',
-                'type': 'generator',
-                'modified': 1592851063871,
-                'location': 'mine',
-                'persisted': 1592851063871,
-                'id': '55122607-e65e-44d5-9c9d-9c31a914ca89',
-                'identifier': {
-                    'namespace': '',
-                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                }
-            };
-            selection = [
-                [{
-                    context: {
-                        'layoutItem': displayLayoutItem.configuration.items[0],
-                        'item': telemetryItem,
-                        'index': 1
-                    }
-                },
-                {
-                    context: {
-                        'item': displayLayoutItem,
-                        'supportsMultiSelect': true
-                    }
-                }]
-            ];
-        });
-
-        it('provides an alphanumeric format view', () => {
-            const displayLayoutAlphaNumFormatView = openmct.inspectorViews.get(selection);
-            expect(displayLayoutAlphaNumFormatView.length).toBeDefined();
-        });
+      expect(displayLayoutToolbar.length).toBe(8);
     });
-
-    describe('the toolbar', () => {
-        let displayLayoutItem;
-        let selection;
-
-        beforeEach(() => {
-            displayLayoutItem = {
-                'composition': [
-                ],
-                'configuration': {
-                    'items': [
-                        {
-                            'fill': '#666666',
-                            'stroke': '',
-                            'x': 1,
-                            'y': 1,
-                            'width': 10,
-                            'height': 5,
-                            'type': 'box-view',
-                            'id': '89b88746-d325-487b-aec4-11b79afff9e8'
-                        },
-                        {
-                            'fill': '#666666',
-                            'stroke': '',
-                            'x': 1,
-                            'y': 1,
-                            'width': 10,
-                            'height': 10,
-                            'type': 'ellipse-view',
-                            'id': '19b88746-d325-487b-aec4-11b79afff9z8'
-                        },
-                        {
-                            'x': 18,
-                            'y': 9,
-                            'x2': 23,
-                            'y2': 4,
-                            'stroke': '#666666',
-                            'type': 'line-view',
-                            'id': '57d49a28-7863-43bd-9593-6570758916f0'
-                        },
-                        {
-
-                            'identifier': {
-                                'namespace': '',
-                                'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                            },
-                            'x': 8,
-                            'y': 3,
-                            'width': 10,
-                            'height': 5,
-                            'displayMode': 'all',
-                            'value': 'sin',
-                            'stroke': '',
-                            'fill': '',
-                            'color': '',
-                            'size': '13px',
-                            'type': 'telemetry-view',
-                            'id': 'deb9f839-80ad-4ccf-a152-5c763ceb7d7e'
-
-                        },
-                        {
-
-                            'width': 32,
-                            'height': 18,
-                            'x': 78,
-                            'y': 8,
-                            'identifier': {
-                                'namespace': '',
-                                'key': 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
-                            },
-                            'hasFrame': true,
-                            'type': 'subobject-view',
-                            'id': 'c0ff485a-344c-4e70-8d83-a9d9998a69fc'
-
-                        }
-                    ],
-                    'layoutGrid': [
-                        10,
-                        10
-                    ]
-                },
-                'name': 'Display Layout',
-                'type': 'layout',
-                'identifier': {
-                    'namespace': '',
-                    'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
-                }
-            };
-            selection = [
-                [{
-                    context: {
-                        'layoutItem': displayLayoutItem.configuration.items[1],
-                        'index': 1
-                    }
-                },
-                {
-                    context: {
-                        'item': displayLayoutItem,
-                        'supportsMultiSelect': true
-                    }
-                }],
-                [{
-                    context: {
-                        'layoutItem': displayLayoutItem.configuration.items[0],
-                        'index': 0
-                    }
-                },
-                {
-                    context: {
-                        item: displayLayoutItem,
-                        'supportsMultiSelect': true
-                    }
-                }],
-                [{
-                    context: {
-                        'layoutItem': displayLayoutItem.configuration.items[2],
-                        'item': displayLayoutItem.configuration.items[2],
-                        'index': 2
-                    }
-                },
-                {
-                    context: {
-                        item: displayLayoutItem,
-                        'supportsMultiSelect': true
-                    }
-                }],
-                [{
-                    context: {
-                        'item': {
-
-                            'composition': [
-                                {
-                                    'namespace': '',
-                                    'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                                }
-                            ],
-                            'configuration': {
-                                'series': [
-                                    {
-                                        'identifier': {
-                                            'namespace': '',
-                                            'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-                                        }
-                                    }
-                                ],
-                                'yAxis': {
-                                },
-                                'xAxis': {
-                                }
-                            },
-                            'name': 'Unnamed Overlay Plot',
-                            'type': 'telemetry.plot.overlay',
-                            'modified': 1594142141929,
-                            'location': 'mine',
-                            'identifier': {
-                                'namespace': '',
-                                'key': 'bdeb91ab-3a7e-4a71-9dd2-39d73644e136'
-                            },
-                            'persisted': 1594142141929
-
-                        },
-                        'layoutItem': displayLayoutItem.configuration.items[3],
-                        'index': 3
-                    }
-                },
-                {
-                    context: {
-                        item: displayLayoutItem,
-                        'supportsMultiSelect': true
-                    }
-                }]
-            ];
-        });
-
-        it('provides controls including separators', () => {
-            const displayLayoutToolbar = openmct.toolbars.get(selection);
-
-            expect(displayLayoutToolbar.length).toBe(8);
-        });
-    });
+  });
 });

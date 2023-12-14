@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,32 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './AutoflowTabularView'
-], function (
-    AutoflowTabularView
-) {
-    return function (options) {
-        return function (openmct) {
-            const views = (openmct.mainViews || openmct.objectViews);
+define(['./AutoflowTabularView'], function (AutoflowTabularView) {
+  return function (options) {
+    return function (openmct) {
+      const views = openmct.mainViews || openmct.objectViews;
 
-            views.addProvider({
-                name: "Autoflow Tabular",
-                key: "autoflow",
-                cssClass: "icon-packet",
-                description: "A tabular view of packet contents.",
-                canView: function (d) {
-                    return !options || (options.type === d.type);
-                },
-                view: function (domainObject) {
-                    return new AutoflowTabularView(
-                        domainObject,
-                        openmct,
-                        document
-                    );
-                }
-            });
-        };
+      views.addProvider({
+        name: 'Autoflow Tabular',
+        key: 'autoflow',
+        cssClass: 'icon-packet',
+        description: 'A tabular view of packet contents.',
+        canView: function (d) {
+          return !options || options.type === d.type;
+        },
+        view: function (domainObject) {
+          return new AutoflowTabularView(domainObject, openmct, document);
+        }
+      });
     };
+  };
 });
-

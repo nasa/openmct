@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,52 +19,52 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const ALLOWED_TYPES = [
-    'telemetry.plot.overlay',
-    'telemetry.plot.stacked',
-    'plan'
-];
-const DISALLOWED_TYPES = [
-    'telemetry.plot.bar-graph',
-    'telemetry.plot.scatter-plot'
-];
+
+const ALLOWED_TYPES = ['telemetry.plot.overlay', 'telemetry.plot.stacked', 'plan', 'gantt-chart'];
+const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
-    function hasNumericTelemetry(domainObject, metadata) {
-        const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
-        if (!hasTelemetry || !metadata) {
-            return false;
-        }
-
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  function hasNumericTelemetry(domainObject, metadata) {
+    const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
+    if (!hasTelemetry || !metadata) {
+      return false;
     }
 
-    function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
+    return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  }
+
+  function hasDomainAndRange(metadata) {
+    return (
+      metadata.valuesForHints(['range']).length > 0 &&
+      metadata.valuesForHints(['domain']).length > 0
+    );
+  }
+
+  function hasImageTelemetry(domainObject, metadata) {
+    if (!metadata) {
+      return false;
     }
 
-    function hasImageTelemetry(domainObject, metadata) {
-        if (!metadata) {
-            return false;
+    return metadata.valuesForHints(['image']).length > 0;
+  }
+
+  return {
+    allow: function (parent, child) {
+      if (parent.type === 'time-strip') {
+        const metadata = openmct.telemetry.getMetadata(child);
+
+        if (
+          !DISALLOWED_TYPES.includes(child.type) &&
+          (hasNumericTelemetry(child, metadata) ||
+            hasImageTelemetry(child, metadata) ||
+            ALLOWED_TYPES.includes(child.type))
+        ) {
+          return true;
         }
 
-        return metadata.valuesForHints(['image']).length > 0;
+        return false;
+      }
+
+      return true;
     }
-
-    return {
-        allow: function (parent, child) {
-            if (parent.type === 'time-strip') {
-                const metadata = openmct.telemetry.getMetadata(child);
-
-                if (!DISALLOWED_TYPES.includes(child.type)
-                    && (hasNumericTelemetry(child, metadata) || hasImageTelemetry(child, metadata) || ALLOWED_TYPES.includes(child.type))) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-    };
+  };
 }

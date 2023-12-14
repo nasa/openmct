@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,23 +21,23 @@
  *****************************************************************************/
 
 define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
-    /**
-     * A {@link Clock} that mocks a "latest available data" type tick source.
-     * This is for testing purposes only, and behaves identically to a local clock.
-     * It DOES NOT tick on receipt of data.
-     * @constructor
-     */
-    function LADClock(period) {
-        LocalClock.call(this, period);
+  /**
+   * A {@link Clock} that mocks a "latest available data" type tick source.
+   * This is for testing purposes only, and behaves identically to a local clock.
+   * It DOES NOT tick on receipt of data.
+   * @constructor
+   */
+  function LADClock(period) {
+    LocalClock.call(this, period);
 
-        this.key = 'test-lad';
-        this.mode = 'lad';
-        this.cssClass = 'icon-suitcase';
-        this.name = 'Latest available data';
-        this.description = "Updates when when new data is available";
-    }
+    this.key = 'test-lad';
+    this.mode = 'lad';
+    this.cssClass = 'icon-suitcase';
+    this.name = 'Latest available data';
+    this.description = 'Updates when when new data is available';
+  }
 
-    LADClock.prototype = Object.create(LocalClock.prototype);
+  LADClock.prototype = Object.create(LocalClock.prototype);
 
-    return LADClock;
+  return LADClock;
 });

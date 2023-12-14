@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,42 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import WebPageComponent from './components/WebPage.vue';
-import Vue from 'vue';
 
 export default function WebPage(openmct) {
-    return {
-        key: 'webPage',
-        name: 'Web Page',
-        cssClass: 'icon-page',
-        canView: function (domainObject) {
-            return domainObject.type === 'webPage';
-        },
-        view: function (domainObject) {
-            let component;
+  return {
+    key: 'webPage',
+    name: 'Web Page',
+    cssClass: 'icon-page',
+    canView: function (domainObject) {
+      return domainObject.type === 'webPage';
+    },
+    view: function (domainObject) {
+      let _destroy = null;
 
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            WebPageComponent: WebPageComponent
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        template: '<web-page-component></web-page-component>'
-                    });
-                },
-                destroy: function (element) {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                WebPageComponent: WebPageComponent
+              },
+              provide: {
+                openmct,
+                domainObject
+              },
+              template: '<web-page-component></web-page-component>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
         },
-        priority: function () {
-            return 1;
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    },
+    priority: function () {
+      return 1;
+    }
+  };
 }

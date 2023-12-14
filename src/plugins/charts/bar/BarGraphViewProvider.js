@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,63 +20,72 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import BarGraphView from './BarGraphView.vue';
+import mount from 'utils/mount';
+
 import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
-import Vue from 'vue';
+import BarGraphView from './BarGraphView.vue';
 
 export default function BarGraphViewProvider(openmct) {
-    function isCompactView(objectPath) {
-        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
-        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
-    }
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
 
-    return {
-        key: BAR_GRAPH_VIEW,
-        name: 'Bar Graph',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
+  return {
+    key: BAR_GRAPH_VIEW,
+    name: 'Bar Graph',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return domainObject && domainObject.type === BAR_GRAPH_KEY;
+    },
+
+    canEdit(domainObject, objectPath) {
+      return domainObject && domainObject.type === BAR_GRAPH_KEY;
+    },
+
+    view(domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
+
+      return {
+        show(element) {
+          let isCompact = isCompactView(objectPath);
+
+          const { vNode, destroy } = mount(
+            {
+              components: {
+                BarGraphView
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
-
-        canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
+        destroy() {
+          _destroy();
         },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            BarGraphView
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            path: objectPath
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<bar-graph-view ref="graphComponent" :options="options"></bar-graph-view>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                },
-                onClearData() {
-                    component.$refs.graphComponent.refreshData();
-                }
-            };
+        onClearData() {
+          component.$refs.graphComponent.refreshData();
         }
-    };
+      };
+    }
+  };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,57 +21,56 @@
  *****************************************************************************/
 
 export default class ConditionSetMetadataProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-    }
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
 
-    supportsMetadata(domainObject) {
-        return domainObject.type === 'conditionSet';
-    }
+  supportsMetadata(domainObject) {
+    return domainObject.type === 'conditionSet';
+  }
 
-    getDomains(domainObject) {
-        return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
-            return {
-                key: ts.key,
-                name: ts.name,
-                format: ts.timeFormat,
-                hints: {
-                    domain: i
-                }
-            };
-        });
-    }
+  getDomains(domainObject) {
+    return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
+      return {
+        key: ts.key,
+        name: ts.name,
+        format: ts.timeFormat,
+        hints: {
+          domain: i
+        }
+      };
+    });
+  }
 
-    getMetadata(domainObject) {
-        const enumerations = domainObject.configuration.conditionCollection
-            .map((condition, index) => {
-                return {
-                    string: condition.configuration.output,
-                    value: index
-                };
-            });
+  getMetadata(domainObject) {
+    const enumerations = domainObject.configuration.conditionCollection.map((condition, index) => {
+      return {
+        string: condition.configuration.output,
+        value: index
+      };
+    });
 
-        return {
-            values: this.getDomains().concat([
-                {
-                    key: "state",
-                    source: "output",
-                    name: "State",
-                    format: "enum",
-                    enumerations: enumerations,
-                    hints: {
-                        range: 1
-                    }
-                },
-                {
-                    key: "output",
-                    name: "Value",
-                    format: "string",
-                    hints: {
-                        range: 2
-                    }
-                }
-            ])
-        };
-    }
+    return {
+      values: this.getDomains().concat([
+        {
+          key: 'state',
+          source: 'output',
+          name: 'State',
+          format: 'enum',
+          enumerations: enumerations,
+          hints: {
+            range: 1
+          }
+        },
+        {
+          key: 'output',
+          name: 'Value',
+          format: 'string',
+          hints: {
+            range: 2
+          }
+        }
+      ])
+    };
+  }
 }
