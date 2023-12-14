@@ -279,7 +279,7 @@ import _ from 'lodash';
 import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import debounce from '../../../utils/debounce';
+import throttle from '../../../utils/throttle';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
@@ -496,7 +496,7 @@ export default {
       });
     }
 
-    this.updateVisibleRows = debounce(this.updateVisibleRows, 1000);
+    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
 
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
