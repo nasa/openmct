@@ -58,7 +58,7 @@ exports.expect = base.expect;
  */
 exports.generateAccessibilityReport = async function (page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
-  builder.withTags(['section508']);
+  builder.withTags(['wcag2aa']);
   // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
   builder.disableRules(['color-contrast']);
   const accessibilityScanResults = await builder.analyze();
