@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
+const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const {
@@ -96,5 +96,9 @@ test.describe('Visual - Notebook', () => {
 
     // Take snapshot of the notebook with the AutoComplete field hidden and with the "Add Tag" button visible
     await percySnapshot(page, `Notebook Annotation de-select blur (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 });

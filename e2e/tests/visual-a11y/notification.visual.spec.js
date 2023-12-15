@@ -24,7 +24,7 @@
  * This test is dedicated to test notification banner functionality and its accessibility attributes.
  */
 
-const { test, expect } = require('../../pluginFixtures');
+const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
@@ -58,5 +58,9 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful'", ()
     // Verify there is no div with role="dialog"
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
     await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 });
