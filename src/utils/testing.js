@@ -279,6 +279,12 @@ export function getMockTelemetry(opts = {}) {
   return telemetry;
 }
 
+// used to inject into tests that require a render
+export function renderWhenVisible(func) {
+  func();
+  return true;
+}
+
 // copy objects a bit more easily
 function copyObj(obj) {
   return JSON.parse(JSON.stringify(obj));

@@ -39,9 +39,9 @@
           :tick-width="yAxis.tickWidth"
           :used-tick-width="plotFirstLeftTickWidth"
           :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth : plotLeftTickWidth"
-          @yKeyChanged="setYAxisKey"
-          @plotYTickWidth="onYTickWidthChange"
-          @toggleAxisVisibility="toggleSeriesForYAxis"
+          @y-key-changed="setYAxisKey"
+          @plot-y-tick-width="onYTickWidthChange"
+          @toggle-axis-visibility="toggleSeriesForYAxis"
         />
       </div>
       <div class="gl-plot-wrapper-display-area-and-x-axis" :style="xAxisStyle">
@@ -66,7 +66,7 @@
             :axis-type="'yAxis'"
             :position="'bottom'"
             :axis-id="yAxis.id"
-            @plotTickWidth="onYTickWidthChange"
+            @plot-tick-width="onYTickWidthChange"
           />
 
           <div
@@ -82,8 +82,8 @@
               :annotation-selections-by-series="annotationSelectionsBySeries"
               :hidden-y-axis-ids="hiddenYAxisIds"
               :annotation-viewing-and-editing-allowed="annotationViewingAndEditingAllowed"
-              @plotReinitializeCanvas="initCanvas"
-              @chartLoaded="initialize"
+              @plot-reinitialize-canvas="initCanvas"
+              @chart-loaded="initialize"
             />
           </div>
 
@@ -177,7 +177,10 @@
 <script>
 import Flatbush from 'flatbush';
 import _ from 'lodash';
+import { useEventBus } from 'utils/useEventBus';
+import { toRaw } from 'vue';
 
+import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
 import MctChart from './chart/MctChart.vue';
@@ -197,7 +200,7 @@ export default {
     MctTicks,
     MctChart
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -241,6 +244,23 @@ export default {
         return undefined;
       }
     }
+  },
+  emits: [
+    'config-loaded',
+    'cursor-guide',
+    'grid-lines',
+    'loading-complete',
+    'loading-updated',
+    'plot-y-tick-width',
+    'highlights',
+    'lock-highlight-point',
+    'status-updated'
+  ],
+  setup() {
+    const { EventBus } = useEventBus();
+    return {
+      EventBus
+    };
   },
   data() {
     return {
@@ -376,7 +396,7 @@ export default {
       );
     }
 
-    this.$emit('configLoaded', true);
+    this.$emit('config-loaded', true);
 
     this.listenTo(this.config.series, 'add', this.addSeries, this);
     this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -394,11 +414,7 @@ export default {
     );
 
     this.openmct.objectViews.on('clearData', this.clearData);
-    this.$on('loadingComplete', () => {
-      if (this.annotationViewingAndEditingAllowed) {
-        this.loadAnnotations();
-      }
-    });
+    this.EventBus.$on('loading-complete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
 
@@ -413,6 +429,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     document.body.removeEventListener('click', this.cancelSelection);
+    this.EventBus.$off('loading-complete', this.loadAnnotationsIfAllowed);
     this.destroy();
   },
   methods: {
@@ -450,9 +467,14 @@ export default {
     cancelSelection(event) {
       if (this.$refs?.plot) {
         const clickedInsidePlot = this.$refs.plot.contains(event.target);
+        // unfortunate side effect from possibly being detached from the DOM when
+        // adding/deleting tags, so closest() won't work
+        const clickedTagEditor = Object.values(TagEditorClassNames).some((className) => {
+          return event.target.classList.contains(className);
+        });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
         const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
-        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption && !clickedTagEditor) {
           this.rectangles = [];
           this.annotationSelectionsBySeries = {};
           this.selectPlot();
@@ -467,9 +489,7 @@ export default {
         const currentXaxis = this.config.xAxis.get('displayRange');
         const currentYaxis = this.config.yAxis.get('displayRange');
         if (!currentXaxis || !currentYaxis) {
-          this.$once('loadingComplete', () => {
-            resolve();
-          });
+          this.EventBus.$once('loading-complete', resolve);
         } else {
           resolve();
         }
@@ -481,7 +501,7 @@ export default {
         // the annotations
         this.freeze();
         // just use first annotation
-        const boundingBoxes = Object.values(selectedAnnotations[0].targets);
+        const boundingBoxes = selectedAnnotations[0].targets;
         let minX = Number.MAX_SAFE_INTEGER;
         let minY = Number.MAX_SAFE_INTEGER;
         let maxX = Number.MIN_SAFE_INTEGER;
@@ -565,31 +585,10 @@ export default {
       const yAxisId = series.get('yAxisId');
       this.updateAxisUsageCount(yAxisId, 1);
       this.seriesModels[index] = series;
-      this.listenTo(
-        series,
-        'change:xKey',
-        (xKey) => {
-          this.setDisplayRange(series, xKey);
-        },
-        this
-      );
-      this.listenTo(
-        series,
-        'change:yKey',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:xKey', this.setDisplayRange.bind(this, series), this);
+      this.listenTo(series, 'change:yKey', this.loadSeriesData.bind(this, series), this);
 
-      this.listenTo(
-        series,
-        'change:interpolate',
-        () => {
-          this.loadSeriesData(series);
-        },
-        this
-      );
+      this.listenTo(series, 'change:interpolate', this.loadSeriesData.bind(this, series), this);
       this.listenTo(series, 'change:yAxisId', this.updateTicksAndSeriesForYAxis, this);
 
       this.loadSeriesData(series);
@@ -619,6 +618,11 @@ export default {
       const foundYAxis = this.yAxes.find((yAxis) => yAxis.id === yAxisId);
       if (foundYAxis) {
         foundYAxis.seriesCount = foundYAxis.seriesCount + updateCountBy;
+      }
+    },
+    loadAnnotationsIfAllowed() {
+      if (this.annotationViewingAndEditingAllowed) {
+        this.loadAnnotations();
       }
     },
     async loadAnnotations() {
@@ -719,12 +723,12 @@ export default {
       this.pending -= 1;
       this.updateLoading();
       if (this.pending === 0) {
-        this.$emit('loadingComplete');
+        this.EventBus.$emit('loading-complete');
       }
     },
 
     updateLoading() {
-      this.$emit('loadingUpdated', this.pending > 0);
+      this.$emit('loading-updated', this.pending > 0);
     },
 
     updateFiltersAndResubscribe(updatedFilters) {
@@ -884,8 +888,8 @@ export default {
 
     marqueeAnnotations(annotationsToSelect) {
       annotationsToSelect.forEach((annotationToSelect) => {
-        Object.keys(annotationToSelect.targets).forEach((targetKeyString) => {
-          const target = annotationToSelect.targets[targetKeyString];
+        annotationToSelect.targets.forEach((target) => {
+          const targetKeyString = target.keyString;
           const series = this.seriesModels.find(
             (seriesModel) => seriesModel.keyString === targetKeyString
           );
@@ -933,16 +937,16 @@ export default {
     },
 
     prepareExistingAnnotationSelection(annotations) {
-      const targetDomainObjects = {};
-      this.config.series.models.forEach((series) => {
-        targetDomainObjects[series.keyString] = series.domainObject;
+      const targetDomainObjects = this.config.series.models.map((series) => {
+        return series.domainObject;
       });
 
-      const targetDetails = {};
+      const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        Object.entries(annotation.targets).forEach(([key, value]) => {
-          targetDetails[key] = value;
+        // for each target, push toRaw
+        annotation.targets.forEach((target) => {
+          targetDetails.push(toRaw(target));
         });
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
@@ -991,9 +995,6 @@ export default {
       this.initCanvas();
 
       this.config.yAxisLabel = this.config.yAxis.get('label');
-
-      this.cursorGuideVertical = this.$refs.cursorGuideVertical;
-      this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
       this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
       this.yAxisListWithRange.forEach((yAxis) => {
@@ -1049,7 +1050,7 @@ export default {
             return previous + current.tickWidth;
           }, 0);
         this.$emit(
-          'plotYTickWidth',
+          'plot-y-tick-width',
           {
             hasMultipleLeftAxes: this.hasMultipleLeftAxes,
             leftTickWidth,
@@ -1122,8 +1123,8 @@ export default {
     },
 
     updateCrosshairs(event) {
-      this.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
-      this.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
+      this.$refs.cursorGuideVertical.style.left = event.clientX - this.chartElementBounds.x + 'px';
+      this.$refs.cursorGuideHorizontal.style.top = event.clientY - this.chartElementBounds.y + 'px';
     },
 
     trackChartElementBounds(event) {
@@ -1202,7 +1203,7 @@ export default {
 
       if (this.isMouseClick() && event.shiftKey) {
         this.lockHighlightPoint = !this.lockHighlightPoint;
-        this.$emit('lockHighlightPoint', this.lockHighlightPoint);
+        this.$emit('lock-highlight-point', this.lockHighlightPoint);
       }
 
       if (this.pan) {
@@ -1356,17 +1357,17 @@ export default {
       document.body.addEventListener('click', this.cancelSelection);
     },
     selectNewPlotAnnotations(boundingBoxPerYAxis, pointsInBoxBySeries, event) {
-      let targetDomainObjects = {};
-      let targetDetails = {};
+      let targetDomainObjects = [];
+      let targetDetails = [];
       let annotations = [];
       Object.keys(pointsInBoxBySeries).forEach((seriesKey) => {
         const seriesModel = this.getSeries(seriesKey);
         const boundingBoxWithId = boundingBoxPerYAxis.find(
           (box) => box.id === seriesModel.get('yAxisId')
         );
-        targetDetails[seriesKey] = boundingBoxWithId?.boundingBox;
+        targetDetails.push({ ...boundingBoxWithId?.boundingBox, keyString: seriesKey });
 
-        targetDomainObjects[seriesKey] = seriesModel.domainObject;
+        targetDomainObjects.push(seriesModel.domainObject);
       });
       this.selectPlotAnnotations({
         targetDetails,
@@ -1378,8 +1379,8 @@ export default {
       const annotationsBySeries = {};
       rawAnnotations.forEach((rawAnnotation) => {
         if (rawAnnotation.targets) {
-          const targetValues = Object.values(rawAnnotation.targets);
-          const targetKeys = Object.keys(rawAnnotation.targets);
+          const targetValues = rawAnnotation.targets;
+          const targetKeys = rawAnnotation.targets.map((target) => target.keyString);
           if (targetValues && targetValues.length) {
             let boundingBoxPerYAxis = [];
             targetValues.forEach((boundingBox, index) => {
@@ -1408,6 +1409,9 @@ export default {
               Object.keys(pointsInBoxBySeries).forEach((seriesKeyString) => {
                 const pointsInBox = pointsInBoxBySeries[seriesKeyString];
                 if (pointsInBox && pointsInBox.length) {
+                  if (!annotationsBySeries[seriesKeyString]) {
+                    annotationsBySeries[seriesKeyString] = [];
+                  }
                   annotationsBySeries[seriesKeyString].push(...pointsInBox);
                 }
               });
@@ -1904,6 +1908,10 @@ export default {
         configStore.deleteStore(this.config.id);
       }
 
+      this.config = {};
+      this.canvas = undefined;
+      this.abortController = undefined;
+
       this.stopListening();
 
       if (this.checkForSize) {
@@ -1927,7 +1935,7 @@ export default {
       this.openmct.objectViews.off('clearData', this.clearData);
     },
     updateStatus(status) {
-      this.$emit('statusUpdated', status);
+      this.$emit('status-updated', status);
     },
     handleWindowResize() {
       const { plotWrapper } = this.$parent.$refs;
@@ -1945,11 +1953,11 @@ export default {
     },
     toggleCursorGuide() {
       this.cursorGuide = !this.cursorGuide;
-      this.$emit('cursorGuide', this.cursorGuide);
+      this.$emit('cursor-guide', this.cursorGuide);
     },
     toggleGridLines() {
       this.gridLines = !this.gridLines;
-      this.$emit('gridLines', this.gridLines);
+      this.$emit('grid-lines', this.gridLines);
     }
   }
 };

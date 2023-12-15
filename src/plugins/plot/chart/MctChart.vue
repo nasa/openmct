@@ -20,13 +20,24 @@
  at runtime from the About dialog for additional information.
 -->
 
-<!-- eslint-disable vue/no-v-html -->
-
 <template>
-  <div class="gl-plot-chart-area">
-    <span v-html="canvasTemplate"></span>
-    <span v-html="canvasTemplate"></span>
-    <div ref="limitArea" class="js-limit-area"></div>
+  <div ref="chart" class="gl-plot-chart-area">
+    <canvas :style="canvasStyle" class="js-overlay-canvas"></canvas>
+    <canvas :style="canvasStyle" class="js-main-canvas"></canvas>
+    <div ref="limitArea" class="js-limit-area">
+      <limit-label
+        v-for="(limitLabel, index) in visibleLimitLabels"
+        :key="index"
+        :point="limitLabel.point"
+        :limit="limitLabel.limit"
+      ></limit-label>
+      <limit-line
+        v-for="(limitLine, index) in visibleLimitLines"
+        :key="index"
+        :point="limitLine.point"
+        :limit="limitLine.limit"
+      ></limit-line>
+    </div>
   </div>
 </template>
 
@@ -87,7 +98,8 @@ const HANDLED_ATTRIBUTES = {
 };
 
 export default {
-  inject: ['openmct', 'domainObject', 'path'],
+  components: { LimitLine, LimitLabel },
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,
@@ -130,11 +142,22 @@ export default {
       required: true
     }
   },
+  emits: ['chart-loaded', 'plot-reinitialize-canvas'],
   data() {
     return {
-      canvasTemplate:
-        '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>'
+      visibleLimitLabels: [],
+      visibleLimitLines: []
     };
+  },
+  computed: {
+    canvasStyle() {
+      return {
+        position: 'absolute',
+        background: 'none',
+        width: '100%',
+        height: '100%'
+      };
+    }
   },
   watch: {
     highlights: {
@@ -174,6 +197,10 @@ export default {
     }
   },
   mounted() {
+    this.chartVisible = true;
+    this.chartContainer = this.$refs.chart;
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
+    this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -216,10 +243,8 @@ export default {
     this.seriesElements = new WeakMap();
     this.seriesLimits = new WeakMap();
 
-    let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll('canvas');
-    const mainCanvas = canvasEls[1];
-    const overlayCanvas = canvasEls[0];
-    if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
+    const canvasReadyForDrawing = this.readyCanvasForDrawing();
+    if (canvasReadyForDrawing) {
       this.draw();
     }
 
@@ -229,10 +254,11 @@ export default {
     this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
-    this.$emit('chartLoaded');
+    this.$emit('chart-loaded');
   },
   beforeUnmount() {
     this.destroy();
+    this.visibilityObserver.unobserve(this.chartContainer);
   },
   methods: {
     getConfig() {
@@ -248,6 +274,26 @@ export default {
       }
 
       return config;
+    },
+    visibilityChanged([entry]) {
+      if (entry.target === this.chartContainer) {
+        const wasVisible = this.chartVisible;
+        this.chartVisible = entry.isIntersecting;
+        if (!this.chartVisible) {
+          // destroy the chart
+          this.destroyCanvas();
+        } else if (!wasVisible && this.chartVisible) {
+          // rebuild the chart
+          this.buildCanvasElements();
+          const canvasInitialized = this.readyCanvasForDrawing();
+          if (canvasInitialized) {
+            this.draw();
+          }
+          this.$emit('plot-reinitialize-canvas');
+        } else if (wasVisible && this.chartVisible) {
+          // ignore, moving on
+        }
+      }
     },
     reDraw(newXKey, oldXKey, series) {
       this.changeInterpolate(newXKey, oldXKey, series);
@@ -394,11 +440,12 @@ export default {
       this.scheduleDraw();
     },
     destroy() {
+      this.destroyCanvas();
       this.isDestroyed = true;
-      this.stopListening();
       this.lines.forEach((line) => line.destroy());
       this.limitLines.forEach((line) => line.destroy());
-      DrawLoader.releaseDrawAPI(this.drawAPI);
+      this.pointSets.forEach((pointSet) => pointSet.destroy());
+      this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
@@ -452,32 +499,51 @@ export default {
         return this.offset[yAxisId].y(pSeries.getYVal(point));
       }.bind(this);
     },
-
-    initializeCanvas(canvas, overlay) {
-      this.canvas = canvas;
-      this.overlay = overlay;
-      this.drawAPI = DrawLoader.getDrawAPI(canvas, overlay);
+    destroyCanvas() {
+      if (this.isDestroyed) {
+        return;
+      }
+      this.stopListening(this.drawAPI);
+      DrawLoader.releaseDrawAPI(this.drawAPI);
+      if (this.chartContainer) {
+        const canvasElements = this.chartContainer.querySelectorAll('canvas');
+        canvasElements.forEach((canvas) => {
+          canvas.parentNode.removeChild(canvas);
+        });
+      }
+    },
+    readyCanvasForDrawing() {
+      const canvasEls = this.chartContainer.querySelectorAll('canvas');
+      const mainCanvas = canvasEls[1];
+      const overlayCanvas = canvasEls[0];
+      this.canvas = mainCanvas;
+      this.overlay = overlayCanvas;
+      this.drawAPI = DrawLoader.getDrawAPI(mainCanvas, overlayCanvas);
       if (this.drawAPI) {
         this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
       }
 
       return Boolean(this.drawAPI);
     },
-    fallbackToCanvas() {
-      this.stopListening(this.drawAPI);
-      DrawLoader.releaseDrawAPI(this.drawAPI);
-      // Have to throw away the old canvas elements and replace with new
-      // canvas elements in order to get new drawing contexts.
+    buildCanvasElements() {
       const div = document.createElement('div');
-      div.innerHTML = this.canvasTemplate + this.canvasTemplate;
+      div.innerHTML = `
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-overlay-canvas"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-main-canvas"></canvas>
+      `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
-      this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
+      this.chartContainer.appendChild(mainCanvas, this.canvas);
       this.canvas = mainCanvas;
-      this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
+      this.chartContainer.appendChild(overlayCanvas, this.overlay);
       this.overlay = overlayCanvas;
+    },
+    fallbackToCanvas() {
+      console.warn(`📈 fallback to 2D canvas`);
+      this.destroyCanvas();
+      this.buildCanvasElements();
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
-      this.$emit('plotReinitializeCanvas');
+      this.$emit('plot-reinitialize-canvas');
     },
     removeChartElement(series) {
       const elements = this.seriesElements.get(toRaw(series));
@@ -619,13 +685,13 @@ export default {
     },
     scheduleDraw() {
       if (!this.drawScheduled) {
-        requestAnimationFrame(this.draw);
-        this.drawScheduled = true;
+        const called = this.renderWhenVisible(this.draw);
+        this.drawScheduled = called;
       }
     },
     draw() {
       this.drawScheduled = false;
-      if (this.isDestroyed) {
+      if (this.isDestroyed || !this.chartVisible) {
         return;
       }
 
@@ -653,6 +719,9 @@ export default {
       });
     },
     updateViewport(yAxisId) {
+      if (!this.chartVisible) {
+        return;
+      }
       const mainYAxisId = this.config.yAxis.get('id');
       const xRange = this.config.xAxis.get('displayRange');
       let yRange;
@@ -706,7 +775,6 @@ export default {
       //console.timeEnd('📈 drawSeries');
     },
     updateLimitLines() {
-      Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
       this.config.series.models.forEach((series) => {
         const yAxisId = series.get('yAxisId');
 
@@ -727,8 +795,11 @@ export default {
       }
 
       let limitPointOverlap = [];
+      //reset
+      this.visibleLimitLabels = [];
+      this.visibleLimitLines = [];
+
       this.limitLines.forEach((limitLine) => {
-        let limitContainerEl = this.$refs.limitArea;
         limitLine.limits.forEach((limit) => {
           if (series.keyString !== limit.seriesKey) {
             return;
@@ -738,31 +809,43 @@ export default {
           if (showLabels) {
             const overlap = this.getLimitOverlap(limit, limitPointOverlap);
             limitPointOverlap.push(overlap);
-            let limitLabelEl = this.getLimitLabel(limit, overlap);
-            limitContainerEl.appendChild(limitLabelEl);
+            this.visibleLimitLabels.push(this.getLimitProps(limit, overlap));
           }
 
-          let limitEl = this.getLimitElement(limit);
-          limitContainerEl.appendChild(limitEl);
+          this.visibleLimitLines.push(this.getLimitElementProps(limit));
         }, this);
       });
     },
     showLabels(seriesKey) {
       return this.showLimitLineLabels?.seriesKey === seriesKey;
     },
+    getLimitElementProps(limit) {
+      let point = {
+        left: 0,
+        top: this.drawAPI.y(limit.point.y)
+      };
+
+      return {
+        point,
+        limit
+      };
+    },
     getLimitElement(limit) {
       let point = {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      const { vNode } = mount(LimitLine, {
+      const { vNode, destroy } = mount(LimitLine, {
         props: {
           point,
           limit
         }
       });
 
-      return vNode.el;
+      return {
+        el: vNode.el,
+        destroy
+      };
     },
     getLimitOverlap(limit, overlapMap) {
       //calculate if limit lines are too close to each other
@@ -793,19 +876,32 @@ export default {
         overlapTop: limitTop
       };
     },
+    getLimitProps(limit, overlap) {
+      let point = {
+        left: 0,
+        top: this.drawAPI.y(limit.point.y)
+      };
+      return {
+        limit: Object.assign({}, overlap, limit),
+        point
+      };
+    },
     getLimitLabel(limit, overlap) {
       let point = {
         left: 0,
         top: this.drawAPI.y(limit.point.y)
       };
-      const { vNode } = mount(LimitLabel, {
+      const { vNode, destroy } = mount(LimitLabel, {
         props: {
           limit: Object.assign({}, overlap, limit),
           point
         }
       });
 
-      return vNode.el;
+      return {
+        el: vNode.el,
+        destroy
+      };
     },
     drawAlarmPoints(alarmSet) {
       this.drawAPI.drawLimitPoints(

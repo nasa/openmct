@@ -27,7 +27,7 @@
 
 <script>
 import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import * as d3Selection from 'd3-selection';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
@@ -55,6 +55,7 @@ export default {
       required: true
     }
   },
+  emits: ['pan-axis', 'end-pan', 'zoom-axis', 'end-zoom'],
   data() {
     return {
       inPanMode: false,
@@ -134,9 +135,9 @@ export default {
       //The D3 scale used depends on the type of time system as d3
       // supports UTC out of the box.
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
       }
 
       this.xAxis.scale(this.xScale);
@@ -206,11 +207,11 @@ export default {
     },
     pan() {
       const panBounds = this.getPanBounds();
-      this.$emit('panAxis', panBounds);
+      this.$emit('pan-axis', panBounds);
     },
     endPan() {
       const panBounds = this.isChangingViewBounds() ? this.getPanBounds() : undefined;
-      this.$emit('endPan', panBounds);
+      this.$emit('end-pan', panBounds);
       this.inPanMode = false;
     },
     getPanBounds() {
@@ -232,7 +233,7 @@ export default {
         left: `${this.dragStartX - this.left}px`
       };
 
-      this.$emit('zoomAxis', {
+      this.$emit('zoom-axis', {
         start: x,
         end: x
       });
@@ -245,7 +246,7 @@ export default {
         width: `${zoomRange.end - zoomRange.start}px`
       };
 
-      this.$emit('zoomAxis', {
+      this.$emit('zoom-axis', {
         start: this.scaleToBounds(zoomRange.start),
         end: this.scaleToBounds(zoomRange.end)
       });
@@ -261,7 +262,7 @@ export default {
       }
 
       this.zoomStyle = {};
-      this.$emit('endZoom', zoomBounds);
+      this.$emit('end-zoom', zoomBounds);
     },
     getZoomRange() {
       const leftBound = this.left;

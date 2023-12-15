@@ -44,8 +44,10 @@
     - [Clocks](#clocks)
       - [Defining and registering clocks](#defining-and-registering-clocks)
       - [Getting and setting active clock](#getting-and-setting-active-clock)
-      - [Stopping an active clock](#stopping-an-active-clock)
+      - [⚠️ \[DEPRECATED\] Stopping an active clock](#️-deprecated-stopping-an-active-clock)
       - [Clock Offsets](#clock-offsets)
+    - [Time Modes](#time-modes)
+      - [Time Mode Helper Methods](#time-mode-helper-methods)
     - [Time Events](#time-events)
       - [List of Time Events](#list-of-time-events)
     - [The Time Conductor](#the-time-conductor)
@@ -91,6 +93,9 @@ of this folder will include a minified javascript file named `openmct.js` as
 well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
+
+> [!WARNING]
+> Open MCT provides a development server via `webpack-dev-server` (`npm start`). **This should be used for development purposes only and should never be deployed to a production environment**.
 
 To start a minimally functional Open MCT application, it is necessary to
 include the Open MCT distributable, enable some basic plugins, and bootstrap
@@ -588,35 +593,108 @@ MinMax queries are issued by plots, and may be issued by other types as well.  T
 #### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data.
-They have a simple structure:
+They have a simple structure, provided here as a TypeScript interface:
 
-- `key`: A `string` that uniquely identifies this formatter.
-- `format`: A `function` that takes a raw telemetry value, and returns a
-  human-readable `string` representation of that value. It has one required
-  argument, and three optional arguments that provide context and can be used
-  for returning scaled representations of a value. An example of this is
-  representing time values in a scale such as the time conductor scale. There
-  are multiple ways of representing a point in time, and by providing a minimum
-  scale value, maximum scale value, and a count, it's possible to provide more
-  useful representations of time given the provided limitations.  
-  - `value`: The raw telemetry value in its native type.
-  - `minValue`: An **optional** argument specifying the minimum displayed
-      value.
-  - `maxValue`: An **optional** argument specifying the maximum displayed
-      value.
-  - `count`: An **optional** argument specifying the number of displayed
-      values.
-- `parse`: A `function` that takes a `string` representation of a telemetry
-  value, and returns the value in its native type. **Note** parse might receive an already-parsed value.  This function should be idempotent.
-- `validate`: A `function` that takes a `string` representation of a telemetry
-  value, and returns a `boolean` value indicating whether the provided string
-  can be parsed.
+```ts
+interface Formatter {
+    key: string; // A string that uniquely identifies this formatter.
+
+    format: (
+        value: any, // The raw telemetry value in its native type.
+        minValue?: number, // An optional argument specifying the minimum displayed value.
+        maxValue?: number, // An optional argument specifying the maximum displayed value.
+        count?: number // An optional argument specifying the number of displayed values.
+    ) => string; // Returns a human-readable string representation of the provided value.
+
+    parse: (
+        value: string | any // A string representation of a telemetry value or an already-parsed value.
+    ) => any; // Returns the value in its native type. This function should be idempotent.
+
+    validate: (value: string) => boolean; // Takes a string representation of a telemetry value and returns a boolean indicating whether the provided string can be parsed.
+}
+```
+
+##### Built-in Formats
+
+Open MCT on its own defines a handful of built-in formats:
+
+###### **Number Format (default):** 
+
+Applied to data with `format: 'number'`
+```js
+valueMetadata = {
+    format: 'number'
+    // ...
+};
+```
+
+```ts
+interface NumberFormatter extends Formatter {
+    parse: (x: any) => number;
+    format: (x: number) => string;
+    validate: (value: any) => boolean;
+}
+```
+###### **String Format**:
+
+Applied to data with `format: 'string'`
+```js
+valueMetadata = {
+    format: 'string'
+    // ...
+};
+```
+```ts
+interface StringFormatter extends Formatter {
+    parse: (value: any) => string;
+    format: (value: string) => string;
+    validate: (value: any) => boolean;
+}
+```
+
+###### **Enum Format**:
+Applied to data with `format: 'enum'`
+```js
+valueMetadata = {
+    format: 'enum',
+    enumerations: [
+    {
+        value: 1,
+        string: 'APPLE'
+    }, 
+    {
+        value: 2,
+        string: 'PEAR',
+    },
+    {
+        value: 3,
+        string: 'ORANGE'
+    }]
+    // ...
+};
+```
+
+Creates a two-way mapping between enum string and value to be used in the `parse` and `format` methods.
+Ex:
+- `formatter.parse('APPLE') === 1;`
+- `formatter.format(1) === 'APPLE';`
+
+```ts
+interface EnumFormatter extends Formatter {
+    parse: (value: string) => string;
+    format: (value: number) => string;
+    validate: (value: any) => boolean;
+}
+```
 
 ##### Registering Formats
 
+Formats implement the following interface (provided here as TypeScript for simplicity):
+
+
 Formats are registered with the Telemetry API using the `addFormat` function. eg.
 
-``` javascript
+```javascript
 openmct.telemetry.addFormat({
     key: 'number-to-string',
     format: function (number) {
@@ -685,8 +763,9 @@ state of the application, and emits events to inform listeners when the state ch
 
 Because the data displayed tends to be time domain data, Open MCT must always
 have at least one time system installed and activated. When you download Open
-MCT, it will be pre-configured to use the UTC time system, which is installed and activated, along with other default plugins, in `index.html`. Installing and activating a time system is simple, and is covered
-[in the next section](#defining-and-registering-time-systems).
+MCT, it will be pre-configured to use the UTC time system, which is installed and activated, 
+along with other default plugins, in `index.html`. Installing and activating a time system 
+is simple, and is covered [in the next section](#defining-and-registering-time-systems).
 
 ### Time Systems and Bounds
 
@@ -737,28 +816,38 @@ numbers in UTC terrestrial time.
 
 #### Getting and Setting the Active Time System
 
-Once registered, a time system can be activated by calling `timeSystem` with
-the timeSystem `key` or an instance of the time system.  If you are not using a
-[clock](#clocks), you must also specify valid [bounds](#time-bounds) for the
-timeSystem.
+Once registered, a time system can be activated by calling `setTimeSystem` with
+the timeSystem `key` or an instance of the time system.  You can also specify 
+valid [bounds](#time-bounds) for the timeSystem.
 
 ```javascript
-openmct.time.timeSystem('utc', bounds);
+openmct.time.setTimeSystem('utc', bounds);
+```
+
+The current time system can be retrieved as well by calling `getTimeSystem`.
+
+```javascript
+openmct.time.getTimeSystem();
 ```
 
 A time system can be immediately activated after registration:
 
 ```javascript
 openmct.time.addTimeSystem(utcTimeSystem);
-openmct.time.timeSystem(utcTimeSystem, bounds);
+openmct.time.setTimeSystem(utcTimeSystem, bounds);
 ```
 
-Setting the active time system will trigger a [`'timeSystem'`](#time-events)
-event.  If you supplied bounds, a [`'bounds'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
+Setting the active time system will trigger a [`'timeSystemChanged'`](#time-events)
+event.  If you supplied bounds, a [`'boundsChanged'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
+
+> ⚠️ **Deprecated**
+> - The method `timeSystem()` is deprecated. Please use `getTimeSystem()` and `setTimeSystem()` as a replacement.
+
+
 
 #### Time Bounds
 
-The TimeAPI provides a getter/setter for querying and setting time bounds. Time
+The TimeAPI provides a getter and setter for querying and setting time bounds. Time
 bounds are simply an object with a `start` and an end `end` attribute.
 
 - `start`: A `number` representing a moment in time in the active [Time System](#defining-and-registering-time-systems).
@@ -768,26 +857,34 @@ telemetry views.
 This will be used as the end of the time period displayed by time-responsive
 telemetry views.
 
-If invoked with bounds, it will set the new time bounds system-wide. If invoked
-without any parameters, it will return the current application-wide time bounds.
+New bounds can be set system wide by calling `setBounds` with [bounds](#time-bounds).
 
 ``` javascript
 const ONE_HOUR = 60 * 60 * 1000;
 let now = Date.now();
-openmct.time.bounds({start: now - ONE_HOUR, now);
+openmct.time.setBounds({start: now - ONE_HOUR, now);
 ```
 
-To respond to bounds change events, listen for the [`'bounds'`](#time-events)
+Calling `getBounds` will return the current application-wide time bounds.
+
+``` javascript
+openmct.time.getBounds();
+```
+
+To respond to bounds change events, listen for the [`'boundsChanged'`](#time-events)
 event.
+
+> ⚠️ **Deprecated**
+> - The method `bounds()` is deprecated and will be removed in a future release. Please use `getBounds()` and `setBounds()` as a replacement.
 
 ### Clocks
 
-The Time API can be set to follow a clock source which will cause the bounds
-to be updated automatically whenever the clock source "ticks". A clock is simply
-an object that supports registration of listeners and periodically invokes its
-listeners with a number. Open MCT supports registration of new clock sources that
-tick on almost anything. A tick occurs when the clock invokes callback functions
-registered by its listeners with a new time value.
+The Time API requires a clock source which will cause the bounds to be updated 
+automatically whenever the clock source "ticks". A clock is simply an object that 
+supports registration of listeners and periodically invokes its listeners with a 
+number. Open MCT supports registration of new clock sources that tick on almost 
+anything. A tick occurs when the clock invokes callback functions registered by its 
+listeners with a new time value.
 
 An example of a clock source is the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
 which emits the current time in UTC every 100ms. Clocks can tick on anything. For
@@ -855,23 +952,29 @@ An example clock implementation is provided in the form of the [LocalClock](http
 
 #### Getting and setting active clock
 
-Once registered a clock can be activated by calling the `clock` function on the
+Once registered a clock can be activated by calling the `setClock` function on the
 Time API passing in the key or instance of a registered clock. Only one clock
 may be active at once, so activating a clock will deactivate any currently
-active clock. [`clockOffsets`](#clock-offsets) must be specified when changing a clock.
+active clock and start the new clock. [`clockOffsets`](#clock-offsets) must be specified when changing a clock.
 
-Setting the clock triggers a [`'clock'`](#time-events) event, followed by a [`'clockOffsets'`](#time-events) event, and then a [`'bounds'`](#time-events) event as the offsets are applied to the clock's currentValue().
+Setting the clock triggers a [`'clockChanged'`](#time-events) event, followed by a [`'clockOffsetsChanged'`](#time-events) event, and then a [`'boundsChanged'`](#time-events) event as the offsets are applied to the clock's currentValue().
 
 ```
-openmct.time.clock(someClock, clockOffsets);
+openmct.time.setClock(someClock, clockOffsets);
 ```
 
 Upon being activated, the time API will listen for tick events on the clock by calling `clock.on`.
 
-The currently active clock (if any) can be retrieved by calling the same
-function without any arguments.
+The currently active clock can be retrieved by calling `getClock`.
 
-#### Stopping an active clock
+```
+openmct.time.getClock();
+```
+
+> ⚠️ **Deprecated**
+> - The method `clock()` is deprecated and will be removed in a future release. Please use `getClock()` and `setClock()` as a replacement.
+
+#### ⚠️ [DEPRECATED] Stopping an active clock
 
 _As of July 2023, this method will be deprecated. Open MCT will always have a ticking clock._
 
@@ -882,12 +985,14 @@ will stop the clock from ticking, and set the active clock to `undefined`.
 openmct.time.stopClock();
 ```
 
+> ⚠️ **Deprecated**
+> - The method `stopClock()` is deprecated and will be removed in a future release.
+
 #### Clock Offsets
 
-When a clock is active, the time bounds of the application will be updated
-automatically each time the clock "ticks". The bounds are calculated based on
-the current value provided by the active clock (via its `tick` event, or its
-`currentValue()` method).
+When in Real-time [mode](#time-modes), the time bounds of the application will be updated automatically each time the 
+clock "ticks". The bounds are calculated based on the current value provided by 
+the active clock (via its `tick` event, or its `currentValue()` method).
 
 Unlike bounds, which represent absolute time values, clock offsets represent
 relative time spans. Offsets are defined as an object with two properties:
@@ -898,21 +1003,77 @@ value provided by a clock's tick callback, or its `currentValue()` function.
 - `end`: A `number` that must be >= 0 and which is used to calculate the end
 bounds on each clock tick.
 
-The `clockOffsets` function can be used to get or set clock offsets. For example,
+The `setClockOffsets` function can be used to get or set clock offsets. For example,
 to show the last fifteen minutes in a ms-based time system:
 
 ```javascript
 var FIFTEEN_MINUTES = 15 * 60 * 1000;
 
-openmct.time.clockOffsets({
+openmct.time.setClockOffsets({
     start: -FIFTEEN_MINUTES,
     end: 0
 })
 ```
 
+The `getClockOffsets` method will return the currently set clock offsets.
+
+```javascript
+openmct.time.getClockOffsets()
+```
+
 **Note:** Setting the clock offsets will trigger an immediate bounds change, as
 new bounds will be calculated based on the `currentValue()` of the active clock.
-Clock offsets are only relevant when a clock source is active.
+Clock offsets are only relevant when in Real-time [mode](#time-modes).
+
+> ⚠️ **Deprecated**
+> - The method `clockOffsets()` is deprecated and will be removed in a future release. Please use `getClockOffsets()` and `setClockOffsets()` as a replacement.
+
+### Time Modes
+
+There are two time modes in Open MCT, "Fixed" and "Real-time". In Real-time mode the 
+time bounds of the application will be updated automatically each time the clock "ticks".
+The bounds are calculated based on the current value provided by the active clock. In 
+Fixed mode, the time bounds are set for a specified time range. When Open MCT is first
+initialized, it will be in Real-time mode.
+
+The `setMode` method can be used to set the current time mode. It accepts a mode argument,
+`'realtime'` or `'fixed'` and it also accepts an optional [offsets](#clock-offsets)/[bounds](#time-bounds) argument dependent
+on the current mode.
+
+``` javascript
+openmct.time.setMode('fixed');
+openmct.time.setMode('fixed', bounds); // with optional bounds
+```
+
+or
+
+``` javascript
+openmct.time.setMode('realtime');
+openmct.time.setMode('realtime', offsets); // with optional offsets
+```
+
+The `getMode` method will return the current time mode, either `'realtime'` or `'fixed'`.
+
+``` javascript
+openmct.time.getMode();
+```
+
+#### Time Mode Helper Methods
+
+There are two methods available to determine the current time mode in Open MCT programmatically,
+`isRealTime` and `isFixed`. Each one will return a boolean value based on the current mode.
+
+``` javascript
+if (openmct.time.isRealTime()) {
+  // do real-time stuff
+}
+```
+
+``` javascript
+if (openmct.time.isFixed()) {
+  // do fixed-time stuff
+}
+```
 
 ### Time Events
 
@@ -921,7 +1082,7 @@ The Time API is a standard event emitter; you can register callbacks for events 
 For example:
 
 ``` javascript
-openmct.time.on('bounds', function callback (newBounds, tick) {
+openmct.time.on('boundsChanged', function callback (newBounds, tick) {
     // Do something with new bounds
 });
 ```
@@ -930,7 +1091,7 @@ openmct.time.on('bounds', function callback (newBounds, tick) {
 
 The events emitted by the Time API are:
 
-- `bounds`: emitted whenever the bounds change.  The callback will be invoked
+- `boundsChanged`: emitted whenever the bounds change.  The callback will be invoked
   with two arguments:
   - `bounds`: A [bounds](#getting-and-setting-bounds) bounds object
     representing a new time period bound by the specified start and send times.
@@ -945,15 +1106,24 @@ The events emitted by the Time API are:
     If `tick` is false,then the bounds change was not due to an automatic tick,
     and a query for historical data may be necessary, depending on your data
     caching strategy, and how significantly the start bound has changed.
-- `timeSystem`: emitted whenever the active time system changes.  The callback will be invoked with a single argument:
+- `timeSystemChanged`: emitted whenever the active time system changes.  The callback will be invoked with a single argument:
   - `timeSystem`: The newly active [time system](#defining-and-registering-time-systems).
-- `clock`: emitted whenever the clock changes.  The callback will be invoked
+- `clockChanged`: emitted whenever the clock changes.  The callback will be invoked
   with a single argument:
   - `clock`: The newly active [clock](#clocks), or `undefined` if an active
     clock has been deactivated.
-- `clockOffsets`: emitted whenever the active clock offsets change.  The
+- `clockOffsetsChanged`: emitted whenever the active clock offsets change.  The
   callback will be invoked with a single argument:
   - `clockOffsets`: The new [clock offsets](#clock-offsets).
+- `modeChanged`: emitted whenever the time [mode](#time-modes) changed. The callback will
+  be invoked with one argument:
+  - `mode`: A string representation of the current time mode, either `'realtime'` or `'fixed'`.
+
+> ⚠️ **Deprecated Events** (These will be removed in a future release):
+> - `bounds` → `boundsChanged`
+> - `timeSystem` → `timeSystemChanged`
+> - `clock` → `clockChanged`
+> - `clockOffsets` → `clockOffsetsChanged`
 
 ### The Time Conductor
 
@@ -1134,3 +1304,59 @@ View provider Example:
     }
 }
 ```
+
+## Visibility-Based Rendering in View Providers
+
+To enhance performance and resource efficiency in OpenMCT, a visibility-based rendering feature has been added. This feature is designed to defer the execution of rendering logic for views that are not currently visible. It ensures that views are only updated when they are in the viewport, similar to how modern browsers handle rendering of inactive tabs but optimized for the OpenMCT tabbed display. It also works when views are scrolled outside the viewport (e.g., in a Display Layout).
+
+### Overview
+
+The show function is responsible for the rendering of a view. An [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) is used internally to determine whether the view is visible. This observer drives the visibility-based rendering feature, accessed via the `renderWhenVisible` function provided in the `viewOptions` parameter.
+
+### Implementing Visibility-Based Rendering
+
+The `renderWhenVisible` function is passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
+
+Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
+
+Here’s the signature for the show function:
+
+`show(element, isEditing, viewOptions)`
+
+  * `element` (HTMLElement) - The DOM element where the view should be rendered.
+  * `isEditing` (boolean) - Indicates whether the view is in editing mode.
+  * `viewOptions` (Object) - An object with configuration options for the view, including:
+    * `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
+
+### Example
+
+An OpenMCT view provider might implement the show function as follows:
+
+```js
+// Define your view provider
+const myViewProvider = {
+  // ... other properties and methods ...
+  show: function (element, isEditing, viewOptions) {
+    // Callback for rendering view content
+    const renderCallback = () => {
+      // Your view rendering logic goes here
+    };
+    
+    // Use the renderWhenVisible function to ensure rendering only happens when view is visible
+    const wasRenderedImmediately = viewOptions.renderWhenVisible(renderCallback);
+
+    // Optionally handle the immediate rendering return value
+    if (wasRenderedImmediately) {
+      console.debug('🪞 Rendering triggered immediately as the view is visible.');
+    } else {
+      console.debug('🛑 Rendering has been deferred until the view becomes visible.');
+    }
+  }
+};
+```
+
+
+Note that `renderWhenVisible` defers rendering while the view is not visible and caters to the latest execution call. This provides responsiveness for dynamic content while ensuring performance optimizations.
+
+Ensure your view logic is prepared to handle potentially multiple deferrals if using this API, as only the last call to renderWhenVisible will be queued for execution upon the view becoming visible.
+

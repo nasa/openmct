@@ -147,16 +147,13 @@ test.describe('Tagging in Notebooks @addInit', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5823'
     });
-
     await createNotebookEntryAndTags(page);
 
     await page.locator('text=To start a new entry, click here or drag and drop any object').click();
-    const entryLocator = `[aria-label="Notebook Entry Input"] >> nth = 1`;
-    await page.locator(entryLocator).click();
-    await page.locator(entryLocator).fill(`An entry without tags`);
-    await page.locator('[aria-label="Notebook Entry Input"] >> nth=1').press('Enter');
+    await page.getByLabel('Notebook Entry Input').fill(`An entry without tags`);
+    await page.locator('.c-ne__save-button > button').click();
 
-    await page.hover('[aria-label="Notebook Entry Input"] >> nth=1');
+    await page.hover('[aria-label="Notebook Entry Display"] >> nth=1');
     await page.locator('button[title="Delete this entry"]').last().click();
     await expect(
       page.locator('text=This action will permanently delete this entry. Do you wish to continue?')
@@ -226,5 +223,23 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
     // Verify the AutoComplete field is hidden
     await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
+  });
+  test('Can start to add a tag, click away, and add a tag', async ({ page }) => {
+    await createNotebookEntryAndTags(page);
+
+    await page.getByRole('tab', { name: 'Annotations' }).click();
+
+    // Click on the body simulating a click outside the autocomplete)
+    await page.locator('body').click();
+    await page.locator(`[aria-label="Notebook Entry"]`).click();
+
+    await page.hover(`button:has-text("Add Tag")`);
+    await page.locator(`button:has-text("Add Tag")`).click();
+
+    // Click inside the tag search input
+    await page.locator('[placeholder="Type to select tag"]').click();
+    // Select the "Driving" tag
+    await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
+    await expect(page.getByLabel('Notebook Entries').getByText('Drilling')).toBeVisible();
   });
 });

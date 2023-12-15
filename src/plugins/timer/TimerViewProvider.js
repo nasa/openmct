@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Timer from './components/Timer.vue';
+import Timer from './components/TimerComponent.vue';
 
 export default function TimerViewProvider(openmct) {
   return {

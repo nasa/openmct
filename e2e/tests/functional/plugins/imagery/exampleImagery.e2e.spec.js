@@ -57,6 +57,10 @@ test.describe('Example Imagery Object', () => {
     await mouseZoomOnImageAndAssert(page, -2);
   });
 
+  test('Compass HUD should be hidden by default', async ({ page }) => {
+    await expect(page.locator('.c-hud')).toBeHidden();
+  });
+
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
     browserName
@@ -198,23 +202,26 @@ test.describe('Example Imagery Object', () => {
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
   });
 
-  test('Can use alt+shift+drag to create a tag', async ({ page }) => {
+  test('Can use alt+shift+drag to create a tag and ensure toolbars disappear', async ({ page }) => {
     const canvas = page.locator('canvas');
     await canvas.hover({ trial: true });
 
     const canvasBoundingBox = await canvas.boundingBox();
     const canvasCenterX = canvasBoundingBox.x + canvasBoundingBox.width / 2;
     const canvasCenterY = canvasBoundingBox.y + canvasBoundingBox.height / 2;
-
     await Promise.all(tagHotkey.map((x) => page.keyboard.down(x)));
     await page.mouse.down();
     // steps not working for me here
     await page.mouse.move(canvasCenterX - 20, canvasCenterY - 20);
     await page.mouse.move(canvasCenterX - 100, canvasCenterY - 100);
+    // toolbar should hide when we're creating annotations with a drag
+    await expect(page.locator('[role="toolbar"][aria-label="Image controls"]')).toBeHidden();
     await page.mouse.up();
+    // toolbar should reappear when we're done creating annotations
+    await expect(page.locator('[role="toolbar"][aria-label="Image controls"]')).toBeVisible();
     await Promise.all(tagHotkey.map((x) => page.keyboard.up(x)));
 
-    //Wait for canvas to stabilize.
+    // Wait for canvas to stabilize.
     await canvas.hover({ trial: true });
 
     // add some tags
@@ -226,6 +233,28 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('button', { name: /Add Tag/ }).click();
     await page.getByPlaceholder('Type to select tag').click();
     await page.getByText('Science').click();
+
+    // click on a separate part of the canvas to ensure no tags appear
+    await page.mouse.click(canvasCenterX + 10, canvasCenterY + 10);
+    await expect(page.getByText('Driving')).toBeHidden();
+    await expect(page.getByText('Science')).toBeHidden();
+
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7083'
+    });
+    // click on annotation again and expect tags to appear
+    await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
+
+    // add another tag and expect it to appear without changing selection
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Drilling').click();
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Drilling')).toBeVisible();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
