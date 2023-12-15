@@ -29,8 +29,6 @@ test.describe('a11y - Default @a11y', () => {
   });
   test('main view @a11y', async ({ page }, testInfo) => {
     const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual([]); // 5
-
-    //expect(accessibilityScanResults.violations.length).toBe(0);
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 });
