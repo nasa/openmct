@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <aside role="complementary" aria-label="Snapshot Indicator">
+  <aside aria-label="Snapshot Indicator">
     <div
       class="c-indicator c-indicator--clickable icon-camera"
       :class="[
