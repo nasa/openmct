@@ -99,6 +99,7 @@ export default {
   },
   beforeUnmount() {
     if (this.plotResizeObserver) {
+      this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
       this.plotResizeObserver.disconnect();
       clearTimeout(this.resizeTimer);
     }
@@ -106,6 +107,8 @@ export default {
     if (this.removeBarColorListener) {
       this.removeBarColorListener();
     }
+
+    Plotly.purge(this.$refs.plot);
   },
   methods: {
     getAxisMinMax(axis) {
