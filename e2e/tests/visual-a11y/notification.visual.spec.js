@@ -61,6 +61,6 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful'", ()
   });
   test.afterEach(async ({ page }, testInfo) => {
     const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual([]);
+    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
   });
 });

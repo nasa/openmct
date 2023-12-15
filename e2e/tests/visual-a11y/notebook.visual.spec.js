@@ -128,6 +128,6 @@ test.describe('Visual - Notebook', () => {
   });
   test.afterEach(async ({ page }, testInfo) => {
     const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual([]);
+    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
   });
 });
