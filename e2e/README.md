@@ -146,7 +146,7 @@ Playwright axe supports a wide range of [WCAG Standards](https://playwright.dev/
 
 ### Reading a a11y test failure
 
-When an a11y test fails, the result must be interpreted in the html test report or the a11y report json artifact stored in the `/test-results/` folder. The json structure should be parsed for `"violations"` by `"id"` and identified `"target"`. Example violation provided for the 'color-contrast-enhanced'.
+When an a11y test fails, the result must be interpreted in the html test report or the a11y report json artifact stored in the `/test-results/` folder. The json structure should be parsed for `"violations"` by `"id"` and identified `"target"`. Example provided for the 'color-contrast-enhanced' violation.
 
 ```json
   "violations": [
@@ -172,6 +172,8 @@ The open source performance tests function in three ways which match their namin
 `./e2e/tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
 
 These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
+
+In addition to the explicit definition of performance tests, we also ensure that our test timeout timing is "tight" to catch performance regressions detectable by action timeouts. i.e. [Notebooks load much slower than they used to #6459](https://github.com/nasa/openmct/issues/6459)
 
 ## Test Architecture and CI
 
