@@ -65,7 +65,7 @@ exports.generateAccessibilityReport = async function (page, testCaseName, option
 
   let reportName = options.reportName || testCaseName;
   let sanitizedReportName = reportName.replace(/\//g, '_');
-  let reportPath = path.join(TEST_RESULTS_DIR, `${sanitizedReportName}.json`);
+  const reportPath = path.join(TEST_RESULTS_DIR, `${sanitizedReportName}.json`);
 
   try {
     if (!fs.existsSync(TEST_RESULTS_DIR)) {
