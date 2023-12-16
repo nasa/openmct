@@ -44,6 +44,9 @@ test.describe('Grand Search', () => {
 
     const createdObjects = await createObjectsForSearch(page);
 
+    // Go back into edit mode for the display layout
+    await page.locator('button[title="Edit"]').click();
+
     // Click [aria-label="OpenMCT Search"] input[type="search"]
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     // Fill [aria-label="OpenMCT Search"] input[type="search"]
