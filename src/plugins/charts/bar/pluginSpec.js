@@ -217,7 +217,6 @@ describe('the plugin', function () {
           'someNamespace:~OpenMCT~outer.test-object.foo.bar'
         ].name
       ).toEqual('A Dotful Object');
-      barGraphView.destroy();
     });
   });
 
@@ -310,7 +309,6 @@ describe('the plugin', function () {
 
       const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
       expect(plotElement).not.toBeNull();
-      barGraphView.destroy();
     });
   });
 
