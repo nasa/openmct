@@ -124,6 +124,30 @@ test.describe('Grand Search', () => {
     await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(
       `Clock D ${myItemsFolderName} Red Folder Blue Folder`
     );
+
+    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Sine');
+  });
+
+  test('Clicking on a search result changes the URL even if the same type is already selected', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7303'
+    });
+
+    const { sineWaveGeneratorAlpha, sineWaveGeneratorBeta } = await createObjectsForSearch(page);
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sine');
+    await waitForSearchCompletion(page);
+    await page.getByLabel('OpenMCT Search').getByText('Sine Wave Generator Alpha').click();
+    const alphaPattern = new RegExp(sineWaveGeneratorAlpha.url.substring(1));
+    await expect(page).toHaveURL(alphaPattern);
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    await page.getByLabel('OpenMCT Search').getByText('Sine Wave Generator Beta').click();
+    const betaPattern = new RegExp(sineWaveGeneratorBeta.url.substring(1));
+    await expect(page).toHaveURL(betaPattern);
   });
 
   test('Validate empty search result', async ({ page }) => {
@@ -305,12 +329,19 @@ async function createObjectsForSearch(page) {
     parent: blueFolder.uuid
   });
 
+  const sineWaveGeneratorAlpha = await createDomainObjectWithDefaults(page, {
+    type: 'Sine Wave Generator',
+    name: 'Sine Wave Generator Alpha'
+  });
+
+  const sineWaveGeneratorBeta = await createDomainObjectWithDefaults(page, {
+    type: 'Sine Wave Generator',
+    name: 'Sine Wave Generator Beta'
+  });
+
   const displayLayout = await createDomainObjectWithDefaults(page, {
     type: 'Display Layout'
   });
-
-  // Go back into edit mode for the display layout
-  await page.locator('button[title="Edit"]').click();
 
   return {
     redFolder,
@@ -319,6 +350,8 @@ async function createObjectsForSearch(page) {
     clockB,
     clockC,
     clockD,
-    displayLayout
+    displayLayout,
+    sineWaveGeneratorAlpha,
+    sineWaveGeneratorBeta
   };
 }
