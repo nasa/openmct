@@ -58,6 +58,7 @@
             height: `${sizedImageHeight}px`
           }"
           @mousedown="handlePanZoomClick"
+          @dblclick="expand"
         >
           <div
             v-for="(layer, index) in visibleLayers"
