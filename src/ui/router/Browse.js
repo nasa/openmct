@@ -108,10 +108,9 @@ class Browse {
       this.#viewObject(this.#browseObject, currentProvider);
       return;
     }
-    const defaultProvider = this.#openmct.objectViews.get(
-      this.#browseObject,
-      this.#openmct.router.path
-    )[0];
+    const routerPath = this.#openmct.router.path;
+    const retrievedObjectViews = this.#openmct.objectViews.get(this.#browseObject, routerPath);
+    const defaultProvider = retrievedObjectViews?.[0];
     if (defaultProvider) {
       this.#openmct.router.updateParams({ view: defaultProvider.key });
     } else {
