@@ -31,7 +31,8 @@ const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {
-    await startAndAddRestrictedNotebookObject(page);
+    const restrictedNotebook = await startAndAddRestrictedNotebookObject(page);
+    await page.goto(restrictedNotebook.url + '?hideTree=true&hideInspector=true');
   });
 
   test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
@@ -58,7 +59,7 @@ test.describe('Visual - Notebook', () => {
       name: 'Dropped Overlay Plot'
     });
 
-    //Open Tree
+    //Open Tree to perform drag
     await page.getByRole('button', { name: 'Browse' }).click();
 
     await expandTreePaneItemByName(page, myItemsFolderName);
