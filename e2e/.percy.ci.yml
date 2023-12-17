@@ -22,3 +22,7 @@ snapshot:
     .c-ne__embed__time{
       opacity: 0 !important;
     }
+    /* Time Conductor Start Time */
+    .c-compact-tc__setting-value{
+      opacity: 0 !important;
+    }
