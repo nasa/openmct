@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
+const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
 const {
   setBoundsToSpanAllActivities,
   setDraftStatusForPlan
@@ -98,7 +98,6 @@ test.describe('Visual - Planning @a11y', () => {
     });
   });
   test.afterEach(async ({ page }, testInfo) => {
-    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

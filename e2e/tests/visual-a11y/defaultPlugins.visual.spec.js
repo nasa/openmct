@@ -26,7 +26,7 @@ are only meant to run against openmct's app.js started by `npm run start` within
 `./e2e/playwright-visual.config.js` file.
 */
 
-const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
+const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const { VISUAL_URL } = require('../../constants');
@@ -98,8 +98,8 @@ test.describe('Visual - Default @a11y', () => {
     // Take a snapshot of the newly created Gauge object
     await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
   });
+
   test.afterEach(async ({ page }, testInfo) => {
-    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

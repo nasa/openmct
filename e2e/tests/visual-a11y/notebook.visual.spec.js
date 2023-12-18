@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const {
@@ -128,7 +128,6 @@ test.describe('Visual - Notebook', () => {
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
   });
   test.afterEach(async ({ page }, testInfo) => {
-    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

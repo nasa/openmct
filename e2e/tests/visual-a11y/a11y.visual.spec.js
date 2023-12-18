@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { expect, test, generateAccessibilityReport } = require('../../avpFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 
 test.describe('a11y - Default @a11y', () => {
@@ -28,7 +28,6 @@ test.describe('a11y - Default @a11y', () => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
   test('main view @a11y', async ({ page }, testInfo) => {
-    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
