@@ -224,4 +224,22 @@ test.describe('Tagging in Notebooks @addInit', () => {
     // Verify the AutoComplete field is hidden
     await expect(page.locator('[placeholder="Type to select tag"]')).toBeHidden();
   });
+  test('Can start to add a tag, click away, and add a tag', async ({ page }) => {
+    await createNotebookEntryAndTags(page);
+
+    await page.getByRole('tab', { name: 'Annotations' }).click();
+
+    // Click on the body simulating a click outside the autocomplete)
+    await page.locator('body').click();
+    await page.locator(`[aria-label="Notebook Entry"]`).click();
+
+    await page.hover(`button:has-text("Add Tag")`);
+    await page.locator(`button:has-text("Add Tag")`).click();
+
+    // Click inside the tag search input
+    await page.locator('[placeholder="Type to select tag"]').click();
+    // Select the "Driving" tag
+    await page.locator('[aria-label="Autocomplete Options"] >> text=Drilling').click();
+    await expect(page.getByLabel('Notebook Entries').getByText('Drilling')).toBeVisible();
+  });
 });

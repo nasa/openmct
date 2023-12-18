@@ -165,6 +165,29 @@ test.describe('Plot Tagging', () => {
 
     await expect(page.getByText('Science')).toBeVisible();
     await expect(page.getByText('Driving')).toBeHidden();
+
+    // click elsewhere
+    await page.locator('body').click();
+    //click on tagged plot point again
+    await canvas.click({
+      position: {
+        x: 100,
+        y: 100
+      }
+    });
+    // Add driving tag again
+    await page.getByText('Annotations').click();
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Driving').click();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Driving')).toBeVisible();
+
+    // Delete Driving again
+    await page.hover('[aria-label="Tag"]:has-text("Driving")');
+    await page.locator('[aria-label="Remove tag Driving"]').click();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Driving')).toBeHidden();
   }
 
   test.beforeEach(async ({ page }) => {

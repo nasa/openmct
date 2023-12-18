@@ -94,6 +94,9 @@ well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
 
+> [!WARNING]
+> Open MCT provides a development server via `webpack-dev-server` (`npm start`). **This should be used for development purposes only and should never be deployed to a production environment**.
+
 To start a minimally functional Open MCT application, it is necessary to
 include the Open MCT distributable, enable some basic plugins, and bootstrap
 the application. The tutorials walk through the process of getting Open MCT up
@@ -1301,3 +1304,61 @@ View provider Example:
     }
 }
 ```
+
+## Visibility-Based Rendering in View Providers
+
+To enhance performance and resource efficiency in OpenMCT, a visibility-based rendering feature has been added. This feature is designed to defer the execution of rendering logic for views that are not currently visible. It ensures that views are only updated when they are in the viewport, similar to how modern browsers handle rendering of inactive tabs but optimized for the OpenMCT tabbed display. It also works when views are scrolled outside the viewport (e.g., in a Display Layout).
+
+### Overview
+
+The show function is responsible for the rendering of a view. An [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) is used internally to determine whether the view is visible. This observer drives the visibility-based rendering feature, accessed via the `renderWhenVisible` function provided in the `viewOptions` parameter.
+
+### Implementing Visibility-Based Rendering
+
+The `renderWhenVisible` function is passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
+
+Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
+
+Monitoring of visibility begins after the first call to `renderWhenVisible` is made.
+
+Here’s the signature for the show function:
+
+`show(element, isEditing, viewOptions)`
+
+  * `element` (HTMLElement) - The DOM element where the view should be rendered.
+  * `isEditing` (boolean) - Indicates whether the view is in editing mode.
+  * `viewOptions` (Object) - An object with configuration options for the view, including:
+    * `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
+
+### Example
+
+An OpenMCT view provider might implement the show function as follows:
+
+```js
+// Define your view provider
+const myViewProvider = {
+  // ... other properties and methods ...
+  show: function (element, isEditing, viewOptions) {
+    // Callback for rendering view content
+    const renderCallback = () => {
+      // Your view rendering logic goes here
+    };
+    
+    // Use the renderWhenVisible function to ensure rendering only happens when view is visible
+    const wasRenderedImmediately = viewOptions.renderWhenVisible(renderCallback);
+
+    // Optionally handle the immediate rendering return value
+    if (wasRenderedImmediately) {
+      console.debug('🪞 Rendering triggered immediately as the view is visible.');
+    } else {
+      console.debug('🛑 Rendering has been deferred until the view becomes visible.');
+    }
+  }
+};
+```
+
+
+Note that `renderWhenVisible` defers rendering while the view is not visible and caters to the latest execution call. This provides responsiveness for dynamic content while ensuring performance optimizations.
+
+Ensure your view logic is prepared to handle potentially multiple deferrals if using this API, as only the last call to renderWhenVisible will be queued for execution upon the view becoming visible.
+

@@ -490,15 +490,7 @@ Our e2e code coverage is captured and combined with our unit test coverage. For 
 
 #### Generating e2e code coverage
 
-Code coverage is collected during test execution using our custom [baseFixture](./baseFixtures.js). The raw coverage files are stored in a `.nyc_report` directory to be converted into a lcov file with the following [nyc](https://github.com/istanbuljs/nyc) command:
-
-```npm run cov:e2e:report```
-
-At this point, the nyc linecov report can be published to [codecov.io](https://about.codecov.io/) with the following command:
-
-```npm run cov:e2e:stable:publish``` for the stable suite running in ubuntu.
-or
-```npm run cov:e2e:full:publish``` for the full suite running against all available platforms.
+Please read more about our code coverage [here](../TESTING.md#code-coverage)
 
 ## Other
 
@@ -548,10 +540,10 @@ A single e2e test in Open MCT is extended to run:
 - How is Open MCT extending default Playwright functionality?
 - What about Component Testing?
 
-### Troubleshooting
+### e2e Troubleshooting
 
-- Why is my test failing on CI and not locally?
-- How can I view the failing tests on CI?
+Please follow the general guide troubleshooting in [the general troubleshooting doc](../TESTING.md#troubleshooting-ci)
+
 - Tests won't start because 'Error: <http://localhost:8080/># is already used...'
 This error will appear when running the tests locally. Sometimes, the webserver is left in an orphaned state and needs to be cleaned up. To clear up the orphaned webserver, execute the following from your Terminal:
 ```lsof -n -i4TCP:8080 | awk '{print$2}' | tail -1 | xargs kill -9```

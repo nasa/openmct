@@ -2,7 +2,7 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.36.2-focal
+      - image: mcr.microsoft.com/playwright:v1.39.0-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
@@ -162,7 +162,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npx playwright@1.36.2 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.39.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
@@ -237,8 +237,8 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node16-lint
-          node-version: lts/gallium
+          name: node20-lint
+          node-version: lts/iron
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -256,8 +256,8 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-chrome-nightly
-          node-version: lts/gallium
+          name: node20-chrome-nightly
+          node-version: lts/iron
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen

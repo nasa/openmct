@@ -122,7 +122,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .nth(1)
       .click();
     // Click Save and Finish Editing Option
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     //Verify Main section reflects updated Name Property
     await expect
