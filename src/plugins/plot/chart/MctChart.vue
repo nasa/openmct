@@ -199,8 +199,8 @@ export default {
   mounted() {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
+    this.drawnOnce = false;
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
-    this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -687,6 +687,10 @@ export default {
       if (!this.drawScheduled) {
         const called = this.renderWhenVisible(this.draw);
         this.drawScheduled = called;
+        if (!this.drawnOnce && called) {
+          this.drawnOnce = true;
+          this.visibilityObserver.observe(this.chartContainer);
+        }
       }
     },
     draw() {
