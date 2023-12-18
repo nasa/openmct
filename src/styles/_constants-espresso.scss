@@ -64,11 +64,12 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: #393939;
+$colorBodyBg: #333;
 $colorBodyFg: #aaaaaa;
+$colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
-$colorHeadBg: #262626;
+$colorHeadBg: #000;
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
@@ -263,7 +264,7 @@ $shdwCursorGuide: rgba(black, 0.4) 0 0 2px;
 $colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $colorSelectFg: $colorBtnFg;
-$colorSelectArw: lighten($colorBtnBg, 20%);
+$colorSelectArw: lighten($colorBtnBg, 20%); // Does this work?
 $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
@@ -316,10 +317,10 @@ $formRowCtrlsH: 14px;
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
-$colorInspectorPropName: pushBack($colorBodyFg, 20%);
-$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorPropName: $colorBodyFgSubtle;
+$colorInspectorPropVal: $colorBodyFgEm;
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
-$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
+$colorInspectorSectionHeaderFg: #bfbfbf;
 
 // Tabs
 $colorTabBg: pullForward($colorBodyBg, 5%);
@@ -383,7 +384,7 @@ $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
-$colorItemFgDetails: pushBack($colorItemFg, 20%);
+$colorItemFgDetails: $colorBodyFgSubtle;
 $shdwItemText: none;
 
 // Tabular (NOT TABS!)
@@ -478,9 +479,9 @@ $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
-$splitterBtnLabelColorFg: #666;
-$splitterCollapsedBtnColorBg: #222;
-$splitterCollapsedBtnColorFg: #555;
+$splitterBtnLabelColorFg: $colorBodyFgSubtle;
+$splitterCollapsedBtnColorBg: $colorHeadBg;
+$splitterCollapsedBtnColorFg: #777;
 $splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
