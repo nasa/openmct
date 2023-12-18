@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const {
   setBoundsToSpanAllActivities,
   setDraftStatusForPlan
