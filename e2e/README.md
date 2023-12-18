@@ -137,8 +137,8 @@ npm run test:e2e:updatesnapshots
 ## Accessibility (a11y) Testing
 
 Accessibility testing in Open MCT is addressed and enforced in two ways:
-1. Open MCT prefers Playwright's locator strategy for [page.getByRole('')](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role). This enforces that the elements on the page are accessible with assistive technolgies but does not enforce conformance to the a11y guidelines (handled in #2)
-2. Open MCT checks for a11y violations and enforces conformance with the [playwright axe plugin](https://playwright.dev/docs/accessibility-testing). The a11y checks are performed in the `afterEach()` of the visual tests. This allows us to leverage the coverage provided visual tests and also specifically address `color-contrast` violations which are specifically exposed in the nature of visual testing.
+1. Open MCT prefers Playwright's locator strategy for [page.getByRole('')](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role). This enforces that the elements on the page are accessible with assistive technologies but does not enforce conformance to the a11y guidelines (handled in #2)
+2. Open MCT checks for a11y violations and enforces conformance with the [playwright axe plugin](https://playwright.dev/docs/accessibility-testing). The a11y checks are performed with the `scanForA11yViolations` in the visual testsuite. This allows us to leverage the coverage provided visual tests and also specifically address `color-contrast` violations which are specifically exposed in the nature of visual testing.
 
 ### a11y Standards (WCAG and Section 508)
 
@@ -149,18 +149,16 @@ Playwright axe supports a wide range of [WCAG Standards](https://playwright.dev/
 When an a11y test fails, the result must be interpreted in the html test report or the a11y report json artifact stored in the `/test-results/` folder. The json structure should be parsed for `"violations"` by `"id"` and identified `"target"`. Example provided for the 'color-contrast-enhanced' violation.
 
 ```json
-  "violations": [
-    ...
+  "violations": 
     {
       "id": "color-contrast-enhanced",
-      ...
       "impact": "serious",
       "html": "<span class=\"label c-indicator__label\">0 Snapshots <button aria-label=\"Show Snapshots\">Show</button></span>",
         "target": [
           ".s-status-off > .label.c-indicator__label"
         ],
         "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 6.51 (foreground color: #aaaaaa, background color: #262626, font size: 8.1pt (10.8px), font weight: normal). Expected contrast ratio of 7:1"
-      },
+      }
 ```
 
 ## Performance Testing
