@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { test, expect, generateAccessibilityReport } = require('../../avpFixtures');
+const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const { VISUAL_URL } = require('../../constants');
 
@@ -100,7 +100,6 @@ test.describe('Grand Search @a11y', () => {
     );
   });
   test.afterEach(async ({ page }, testInfo) => {
-    const accessibilityScanResults = await generateAccessibilityReport(page, testInfo.title);
-    expect(accessibilityScanResults.violations).toEqual(expect.arrayContaining([]));
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
