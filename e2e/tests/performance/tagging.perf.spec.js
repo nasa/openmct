@@ -121,7 +121,7 @@ test.describe('Plot Tagging Performance', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('driv');
     // click on the search result
     await page
-      .getByRole('searchbox', { name: 'OpenMCT Search' })
+      .getByRole('searchbox', { name: 'Search Input' })
       .getByText(/Sine Wave/)
       .first()
       .click();
@@ -216,7 +216,7 @@ test.describe('Plot Tagging Performance', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
     // click on the search result
     await page
-      .getByRole('searchbox', { name: 'OpenMCT Search' })
+      .await page.getByRole('searchbox', { name: 'Search Input' })
       .getByText('Alpha Sine Wave')
       .first()
       .click();
