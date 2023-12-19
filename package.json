@@ -7,6 +7,7 @@
     "@babel/eslint-parser": "7.22.5",
     "@braintree/sanitize-url": "6.0.4",
     "@deploysentinel/playwright": "0.3.4",
+    "@memlab/api": "1.0.25",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.39.0",
