@@ -90,16 +90,23 @@ test.describe('Navigation memory leak is not detected in', () => {
     await navigateToObject(page, 'example-imagery-memory-leak-test');
 
     await asyncTimeout(startDelta + endDelta);
-    const beforeSnapshotPath = path.join(__dirname, './snapshots/s1.heapsnapshot');
-    captureHeapSnapshot(page, beforeSnapshotPath);
+    const beforeSnapshotPath = path.join(
+      __dirname,
+      '../../../test-data/snapshots/data/cur/s1.heapsnapshot'
+    );
+    await captureHeapSnapshot(page, beforeSnapshotPath);
 
     await asyncTimeout(waitPeriod);
-    const afterSnapshotPath = path.join(__dirname, './snapshots/s2.heapsnapshot');
-    captureHeapSnapshot(page, afterSnapshotPath);
+    const afterSnapshotPath = path.join(
+      __dirname,
+      '../../../test-data/snapshots/data/cur/s2.heapsnapshot'
+    );
+    await captureHeapSnapshot(page, afterSnapshotPath);
 
-    const reader = BrowserInteractionResultReader.from(afterSnapshotPath);
+    const snapshotPath = path.join(__dirname, '../../../test-data/snapshots');
+    const reader = BrowserInteractionResultReader.from(snapshotPath);
     const leaks = await findLeaks(reader);
-    console.log('Leaks:', leaks);
+    console.info('Leaks:', leaks);
   });
 
   /**
@@ -136,8 +143,8 @@ test.describe('Navigation memory leak is not detected in', () => {
     const client = await page.context().newCDPSession(page);
 
     const dir = path.dirname(outputPath);
-    console.log(`Output Path: ${outputPath}`);
-    console.log(`Directory: ${dir}`);
+    console.debug(`Output Path: ${outputPath}`);
+    console.debug(`Directory: ${dir}`);
 
     try {
       await fs.mkdir(dir, { recursive: true });
@@ -154,7 +161,7 @@ test.describe('Navigation memory leak is not detected in', () => {
 
     function progressHandler(data) {
       const percent = Math.floor((100 * data.done) / data.total);
-      console.log(`heap snapshot ${percent}% complete`);
+      console.debug(`heap snapshot ${percent}% complete`);
     }
 
     try {
@@ -168,7 +175,7 @@ test.describe('Navigation memory leak is not detected in', () => {
       client.removeListener('HeapProfiler.reportHeapSnapshotProgress', progressHandler);
 
       const fullSnapshot = chunks.join('');
-      fs.writeFileSync(outputPath, fullSnapshot, { encoding: 'UTF-8' });
+      await fs.writeFile(outputPath, fullSnapshot, { encoding: 'UTF-8' });
     } catch (error) {
       console.error('Error while capturing heap snapshot:', error);
     } finally {
