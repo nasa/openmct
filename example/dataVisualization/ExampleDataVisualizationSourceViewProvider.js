@@ -22,57 +22,37 @@
 
 import mount from 'utils/mount';
 
-import InspectorDataVisualizationComponent from './InspectorDataVisualizationComponent.vue';
+import ExampleDataVisualizationSource from './components/ExampleDataVisualizationSource.vue';
 
-export default function InspectorDataVisualizationViewProvider(openmct, configuration) {
-  const {
-    type = 'mmgis',
-    name = 'Data Visualization',
-    placeholderText = '',
-    plotOptions,
-    imageryOptions
-  } = configuration;
-
+export default function ExampleDataVisualizationSourceViewProvider(openmct) {
   return {
-    key: 'inspectorDataVisualizationView',
-    name,
-
-    canView(selection) {
-      const domainObject = selection?.[0]?.[0]?.context?.item;
-
-      return domainObject?.type === type;
+    key: 'exampleDataVisualizationSource',
+    name: 'Example Data Visualization Source',
+    cssClass: 'icon-telemetry',
+    canView: function (domainObject) {
+      return domainObject.type === 'exampleDataVisualizationSource';
     },
-
-    view(selection) {
+    canEdit: function (domainObject) {
+      if (domainObject.type === 'exampleDataVisualizationSource') {
+        return true;
+      }
+    },
+    view: function (domainObject) {
       let _destroy = null;
 
-      const context = selection[0][0].context;
-      const domainObject = context.item;
-      const dataVisualizationContext = context?.dataVisualization ?? {};
-      const timeFormatter =
-        openmct.telemetry.getFormatter('iso') || openmct.telemetry.getFormatter('utc');
-
       return {
-        show(element) {
+        show: function (element, isEditing) {
           const { destroy } = mount(
             {
+              el: element,
               components: {
-                InspectorDataVisualization: InspectorDataVisualizationComponent
+                ExampleDataVisualizationSource
               },
               provide: {
                 openmct,
-                domainObject,
-                timeFormatter,
-                placeholderText,
-                plotOptions,
-                imageryOptions
+                domainObject
               },
-              data() {
-                return {
-                  context: dataVisualizationContext
-                };
-              },
-              template: `<InspectorDataVisualization :context="context" />`
+              template: '<example-data-visualization-source></example-data-visualization-source>'
             },
             {
               app: openmct.app,
@@ -81,15 +61,15 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
           );
           _destroy = destroy;
         },
-        destroy() {
+        destroy: function () {
           if (_destroy) {
             _destroy();
           }
-        },
-        priority() {
-          return openmct.priority.HIGH;
         }
       };
+    },
+    priority: function () {
+      return 1;
     }
   };
 }

@@ -29,6 +29,7 @@ define([
   './myItems/plugin',
   '../../example/generator/plugin',
   '../../example/eventGenerator/plugin',
+  '../../example/dataVisualization/plugin',
   './autoflow/AutoflowTabularPlugin',
   './timeConductor/plugin',
   '../../example/imagery/plugin',
@@ -94,6 +95,7 @@ define([
   MyItems,
   GeneratorPlugin,
   EventGeneratorPlugin,
+  ExampleDataVisualizationSourcePlugin,
   AutoflowPlugin,
   TimeConductorPlugin,
   ExampleImagery,
@@ -158,6 +160,8 @@ define([
   plugins.example.ExampleImagery = ExampleImagery.default;
   plugins.example.ExampleFaultSource = ExampleFaultSource.default;
   plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+  plugins.example.ExampleDataVisualizationSourcePlugin =
+    ExampleDataVisualizationSourcePlugin.default;
   plugins.example.ExampleTags = ExampleTags.default;
   plugins.example.Generator = () => GeneratorPlugin.default;
 
