@@ -391,7 +391,7 @@ define([
       component.$nextTick(() => {
         this.layout = component.$refs.layout;
         this.app = appLayout;
-        this.browseRoutes = new Browse(this);
+        this.browseRoutes = new Browse.default(this);
         window.addEventListener('beforeunload', this.destroy);
         this.router.start();
         this.emit('start');

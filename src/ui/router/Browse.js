@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
-class Browse {
+export default class Browse {
   #navigateCall = 0;
   #browseObject = null;
   #unobserve = undefined;
@@ -166,5 +165,3 @@ class Browse {
     this.#navigateToPath(navigatePath, params.view);
   }
 }
-
-module.exports = Browse;
