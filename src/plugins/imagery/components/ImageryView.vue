@@ -46,7 +46,7 @@
         @start-pan="startPan"
         @toggle-layer-visibility="toggleLayerVisibility"
       />
-      <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
+      <div ref="imageBG" class="c-imagery__main-image__bg">
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
           {{ formatImageAltText }}
         </div>
