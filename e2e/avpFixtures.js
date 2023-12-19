@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -56,6 +55,7 @@ const TEST_RESULTS_DIR = './test-results';
  * @returns {Promise<object|null>} Returns the accessibility scan results if violations are found,
  *                                  otherwise returns null.
  */
+/* eslint-disable no-undef */
 exports.scanForA11yViolations = async function (page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
