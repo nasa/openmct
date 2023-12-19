@@ -20,9 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GaugeViewProvider from './GaugeViewProvider';
-import GaugeFormController from './components/GaugeFormController.vue';
 import mount from 'utils/mount';
+
+import GaugeFormController from './components/GaugeFormController.vue';
+import GaugeCompositionPolicy from './GaugeCompositionPolicy';
+import GaugeViewProvider from './GaugeViewProvider';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],
@@ -164,12 +166,15 @@ export default function () {
         }
       ]
     });
+    openmct.composition.addPolicy(new GaugeCompositionPolicy(openmct).allow);
   };
 
   function getGaugeFormController(openmct) {
+    let destroyComponent;
+
     return {
       show(element, model, onChange) {
-        const { vNode } = mount(
+        const { vNode, destroy } = mount(
           {
             el: element,
             components: {
@@ -184,15 +189,19 @@ export default function () {
                 onChange
               };
             },
-            template: `<GaugeFormController :model="model" @onChange="onChange"></GaugeFormController>`
+            template: `<GaugeFormController :model="model" @on-change="onChange"></GaugeFormController>`
           },
           {
             app: openmct.app,
             element
           }
         );
+        destroyComponent = destroy;
 
         return vNode.componentInstance;
+      },
+      destroy() {
+        destroyComponent();
       }
     };
   }

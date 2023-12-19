@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import _ from 'lodash';
+
+import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
 import CouchDocument from './CouchDocument';
 import CouchObjectQueue from './CouchObjectQueue';
-import { PENDING, CONNECTED, DISCONNECTED, UNKNOWN } from './CouchStatusIndicator';
-import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
-import _ from 'lodash';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
 
 const REV = '_rev';
 const ID = '_id';
@@ -37,6 +38,7 @@ class CouchObjectProvider {
     this.openmct = openmct;
     this.indicator = indicator;
     this.url = options.url;
+    this.useDesignDocuments = options.useDesignDocuments;
     this.namespace = namespace;
     this.objectQueue = {};
     this.observers = {};
@@ -186,7 +188,8 @@ class CouchObjectProvider {
   #normalize(options) {
     if (typeof options === 'string') {
       return {
-        url: options
+        url: options,
+        useDesignDocuments: false
       };
     }
 
@@ -433,6 +436,39 @@ class CouchObjectProvider {
     // but actually search results will be provided by a separate search provider
     // see CouchSearchProvider.js
     return Promise.resolve([]);
+  }
+
+  async getObjectsByView({ designDoc, viewName, keysToSearch }, abortSignal) {
+    const stringifiedKeys = JSON.stringify(keysToSearch);
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}?keys=${stringifiedKeys}&include_docs=true`;
+    let objectModels = [];
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        signal: abortSignal
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `HTTP request failed with status ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      const couchRows = result.rows;
+      couchRows.forEach((couchRow) => {
+        const couchDoc = couchRow.doc;
+        const objectModel = this.#getModel(couchDoc);
+        if (objectModel) {
+          objectModels.push(objectModel);
+        }
+      });
+    } catch (error) {
+      // do nothing
+    }
+    return objectModels;
   }
 
   async getObjectsByFilter(filter, abortSignal) {

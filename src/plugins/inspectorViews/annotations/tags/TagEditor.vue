@@ -29,23 +29,28 @@
       :selected-tag="addedTag.newTag ? null : addedTag"
       :new-tag="addedTag.newTag"
       :added-tags="addedTags"
-      @tagRemoved="tagRemoved"
-      @tagAdded="tagAdded"
+      @tag-removed="tagRemoved"
+      @tag-added="tagAdded"
     />
     <button
       v-show="!userAddingTag && !maxTagsAdded"
       class="c-tag-applier__add-btn c-icon-button c-icon-button--major icon-plus"
+      :class="TagEditorClassNames.ADD_TAG_BUTTON"
       title="Add new tag"
       @click="addTag"
     >
-      <div class="c-icon-button__label c-tag-btn__label">Add Tag</div>
+      <div class="c-icon-button__label c-tag-btn__label" :class="TagEditorClassNames.ADD_TAG_LABEL">
+        Add Tag
+      </div>
     </button>
   </div>
 </template>
 
 <script>
-import TagSelection from './TagSelection.vue';
 import { toRaw } from 'vue';
+
+import TagEditorClassNames from './TagEditorClassNames';
+import TagSelection from './TagSelection.vue';
 
 export default {
   components: {
@@ -68,12 +73,12 @@ export default {
       default: null
     },
     targets: {
-      type: Object,
+      type: Array,
       required: true,
       default: null
     },
     targetDomainObjects: {
-      type: Object,
+      type: Array,
       required: true,
       default: null
     },
@@ -83,10 +88,12 @@ export default {
       default: null
     }
   },
+  emits: ['tags-updated'],
   data() {
     return {
       addedTags: [],
-      userAddingTag: false
+      userAddingTag: false,
+      TagEditorClassNames: TagEditorClassNames
     };
   },
   computed: {
@@ -200,11 +207,8 @@ export default {
         const contentText = `${this.annotationType} tag`;
 
         // need to get raw version of target domain objects for comparisons to work
-        const rawTargetDomainObjects = {};
-        Object.keys(this.targetDomainObjects).forEach((targetDomainObjectKey) => {
-          rawTargetDomainObjects[targetDomainObjectKey] = toRaw(
-            this.targetDomainObjects[targetDomainObjectKey]
-          );
+        const rawTargetDomainObjects = this.targetDomainObjects.map((targetDomainObject) => {
+          return toRaw(targetDomainObject);
         });
         const annotationCreationArguments = {
           name: contentText,

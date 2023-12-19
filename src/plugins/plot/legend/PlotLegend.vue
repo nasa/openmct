@@ -45,8 +45,8 @@
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
-          :series-object="seriesObject"
-          @legendHoverChanged="legendHoverChanged"
+          :series-key-string="seriesObject.keyString"
+          @legend-hover-changed="legendHoverChanged"
         />
       </div>
       <!-- EXPANDED PLOT LEGEND -->
@@ -72,9 +72,9 @@
             <plot-legend-item-expanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
-              :series-object="seriesObject"
+              :series-key-string="seriesObject.keyString"
               :highlights="highlights"
-              @legendHoverChanged="legendHoverChanged"
+              @legend-hover-changed="legendHoverChanged"
             />
           </tbody>
         </table>
@@ -83,10 +83,10 @@
   </div>
 </template>
 <script>
-import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
-import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
 import configStore from '../configuration/ConfigStore';
 import eventHelpers from '../lib/eventHelpers';
+import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
+import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
 
 export default {
   components: {
@@ -108,6 +108,7 @@ export default {
       }
     }
   },
+  emits: ['legend-hover-changed', 'position', 'expanded'],
   data() {
     return {
       isLegendExpanded: false,
@@ -138,17 +139,18 @@ export default {
       return this.loaded && this.legend.get('valueToShowWhenCollapsed');
     }
   },
-  mounted() {
-    this.seriesModels = [];
+  created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
     this.legend = this.config.legend;
+    this.seriesModels = [];
+    this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
+    this.initialize();
+  },
+  mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
-    this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
     this.updatePosition();
-
-    this.initialize();
   },
   beforeUnmount() {
     if (this.objectComposition) {
@@ -213,7 +215,7 @@ export default {
       this.$emit('expanded', this.isLegendExpanded);
     },
     legendHoverChanged(data) {
-      this.$emit('legendHoverChanged', data);
+      this.$emit('legend-hover-changed', data);
     },
     updatePosition() {
       this.$emit('position', this.legend.get('position'));

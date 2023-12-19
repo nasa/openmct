@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import TimelistPlugin from './plugin';
-import { TIMELIST_TYPE } from './constants';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
 import { FIXED_MODE_KEY } from '../../api/time/constants';
+import { TIMELIST_TYPE } from './constants';
+import TimelistPlugin from './plugin';
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -33,7 +34,7 @@ const LIST_ITEM_CLASS = '.js-table__body .js-list-item';
 const LIST_ITEM_VALUE_CLASS = '.js-list-item__value';
 const LIST_ITEM_BODY_CLASS = '.js-table__body th';
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
   let timelistDefinition;
   let element;
   let child;
@@ -45,6 +46,7 @@ xdescribe('the plugin', function () {
   let twoHoursPast = now - 1000 * 60 * 60 * 2;
   let oneHourPast = now - 1000 * 60 * 60;
   let twoHoursFuture = now + 1000 * 60 * 60 * 2;
+  let threeHoursFuture = now + 1000 * 60 * 60 * 3;
   let planObject = {
     identifier: {
       key: 'test-plan-object',
@@ -70,6 +72,14 @@ xdescribe('the plugin', function () {
             type: 'TEST-GROUP',
             color: 'fuchsia',
             textColor: 'black'
+          },
+          {
+            name: 'Sed ut perspiciatis two',
+            start: now,
+            end: threeHoursFuture,
+            type: 'TEST-GROUP',
+            color: 'fuchsia',
+            textColor: 'black'
           }
         ]
       })
@@ -84,13 +94,13 @@ xdescribe('the plugin', function () {
     openmct = createOpenMct({
       timeSystemKey: 'utc',
       bounds: {
-        start: twoHoursPast,
-        end: twoHoursFuture
+        start: twoHoursFuture,
+        end: threeHoursFuture
       }
     });
     openmct.time.setMode(FIXED_MODE_KEY, {
-      start: twoHoursPast,
-      end: twoHoursFuture
+      start: twoHoursFuture,
+      end: threeHoursFuture
     });
     openmct.install(new TimelistPlugin());
 
@@ -209,12 +219,12 @@ xdescribe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, []);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('displays the activities', () => {
       const items = element.querySelectorAll(LIST_ITEM_CLASS);
-      expect(items.length).toEqual(2);
+      expect(items.length).toEqual(1);
     });
 
     it('displays the activity headers', () => {
@@ -225,18 +235,14 @@ xdescribe('the plugin', function () {
     it('displays activity details', (done) => {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      Vue.nextTick(() => {
+      nextTick(() => {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
         expect(itemValues.length).toEqual(4);
-        expect(itemValues[3].innerHTML.trim()).toEqual(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
-        );
-        expect(itemValues[0].innerHTML.trim()).toEqual(
-          timeFormatter.format(twoHoursPast, TIME_FORMAT)
-        );
+        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis');
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
         expect(itemValues[1].innerHTML.trim()).toEqual(
-          timeFormatter.format(oneHourPast, TIME_FORMAT)
+          timeFormatter.format(twoHoursFuture, TIME_FORMAT)
         );
 
         done();
@@ -286,13 +292,13 @@ xdescribe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('loads the plan from composition', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
         expect(items.length).toEqual(2);
       });
@@ -312,7 +318,7 @@ xdescribe('the plugin', function () {
         type: TIMELIST_TYPE,
         id: 'test-object',
         configuration: {
-          sortOrderIndex: 0,
+          sortOrderIndex: 2,
           futureEventsIndex: 1,
           futureEventsDurationIndex: 0,
           futureEventsDuration: 0,
@@ -341,15 +347,34 @@ xdescribe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('activities', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(1);
+        expect(items.length).toEqual(2);
+      });
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[1].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(threeHoursFuture, TIME_FORMAT)
+        );
+        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
       });
     });
   });
@@ -396,15 +421,15 @@ xdescribe('the plugin', function () {
       let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('hides past events', () => {
       mockComposition.emit('add', planObject);
 
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const items = element.querySelectorAll(LIST_ITEM_CLASS);
-        expect(items.length).toEqual(1);
+        expect(items.length).toEqual(2);
       });
     });
   });

@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import FlexibleLayout from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
+import FlexibleLayout from './plugin';
 
 describe('the plugin', function () {
   let element;
@@ -104,7 +105,7 @@ describe('the plugin', function () {
       const flexibleView = flexibleLayoutViewProvider.view(testViewObject, [testViewObject]);
       flexibleView.show(child, false);
 
-      await Vue.nextTick();
+      await nextTick();
       console.log(child);
       const flexTitle = child.querySelector('.c-fl');
 

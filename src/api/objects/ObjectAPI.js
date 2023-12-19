@@ -20,15 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from 'objectUtils';
-import MutableDomainObject from './MutableDomainObject';
-import RootRegistry from './RootRegistry';
-import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
-import InterceptorRegistry from './InterceptorRegistry';
-import Transaction from './Transaction';
+import utils from 'objectUtils';
+
 import ConflictError from './ConflictError';
 import InMemorySearchProvider from './InMemorySearchProvider';
+import InterceptorRegistry from './InterceptorRegistry';
+import MutableDomainObject from './MutableDomainObject';
+import RootObjectProvider from './RootObjectProvider';
+import RootRegistry from './RootRegistry';
+import Transaction from './Transaction';
 
 /**
  * Uniquely identifies a domain object.
@@ -220,7 +221,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
+      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -231,6 +232,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -785,16 +790,20 @@ export default class ObjectAPI {
    * Given an identifier, constructs the original path by walking up its parents
    * @param {module:openmct.ObjectAPI~Identifier} identifier
    * @param {Array<module:openmct.DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
+    if (!domainObject) {
+      return [];
+    }
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(utils.parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }

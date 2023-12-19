@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
 import mount from 'utils/mount';
+
+import Plot from './PlotView.vue';
 
 export default function PlotViewProvider(openmct) {
   function hasNumericTelemetry(domainObject) {
@@ -64,7 +65,7 @@ export default function PlotViewProvider(openmct) {
       let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
           const { vNode, destroy } = mount(
             {
@@ -75,7 +76,8 @@ export default function PlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                renderWhenVisible
               },
               data() {
                 return {

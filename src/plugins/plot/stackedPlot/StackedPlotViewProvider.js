@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StackedPlot from './StackedPlot.vue';
 import mount from 'utils/mount';
+
+import StackedPlot from './StackedPlot.vue';
 
 export default function StackedPlotViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -47,7 +48,7 @@ export default function StackedPlotViewProvider(openmct) {
       let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
 
           const { vNode, destroy } = mount(
@@ -59,7 +60,8 @@ export default function StackedPlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                renderWhenVisible
               },
               data() {
                 return {

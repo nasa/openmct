@@ -19,16 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadPlugin from './plugin.js';
-import Vue from 'vue';
 import {
   createOpenMct,
+  getLatestTelemetry,
   getMockObjects,
   getMockTelemetry,
-  getLatestTelemetry,
-  spyOnBuiltins,
-  resetApplicationState
+  renderWhenVisible,
+  resetApplicationState,
+  spyOnBuiltins
 } from 'utils/testing';
+import { nextTick } from 'vue';
+
+import LadPlugin from './plugin.js';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
 const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';
@@ -224,7 +226,7 @@ describe('The LAD Table', () => {
         (viewProvider) => viewProvider.key === ladTableKey
       );
       ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
-      ladTableView.show(child, true);
+      ladTableView.show(child, true, { renderWhenVisible });
 
       await Promise.all([
         telemetryRequestPromise,
@@ -232,7 +234,7 @@ describe('The LAD Table', () => {
         anotherTelemetryObjectPromise,
         aggregateTelemetryObjectResolve
       ]);
-      await Vue.nextTick();
+      await nextTick();
     });
 
     it('should show one row per object in the composition', () => {
@@ -243,7 +245,7 @@ describe('The LAD Table', () => {
     it('should show the most recent datum from the telemetry producing object', async () => {
       const latestDatum = getLatestTelemetry(mockTelemetry, { timeFormat });
       const expectedDate = utcTimeFormat(latestDatum[timeFormat]);
-      await Vue.nextTick();
+      await nextTick();
       const latestDate = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
       expect(latestDate).toBe(expectedDate);
       const dataType = parent
@@ -253,7 +255,7 @@ describe('The LAD Table', () => {
     });
 
     it('should show aggregate telemetry type with blank data', async () => {
-      await Vue.nextTick();
+      await nextTick();
       const latestData = parent
         .querySelectorAll(TABLE_BODY_ROWS)[1]
         .querySelectorAll('td')[2].innerText;
@@ -281,7 +283,7 @@ describe('The LAD Table', () => {
       const mostRecentTelemetry = getLatestTelemetry(mockTelemetry, { timeFormat });
       const rangeValue = mostRecentTelemetry[range];
       const domainValue = utcTimeFormat(mostRecentTelemetry[domain]);
-      await Vue.nextTick();
+      await nextTick();
       const actualDomainValue = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
       const actualRangeValue = parent.querySelector(TABLE_BODY_FIRST_ROW_THIRD_DATA).innerText;
       expect(actualRangeValue).toBe(rangeValue);
@@ -423,7 +425,7 @@ describe('The LAD Table Set', () => {
       ladTableSetView = ladTableSetViewProvider.view(mockObj.ladTableSet, [mockObj.ladTableSet]);
       ladTableSetView.show(child);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('should show one row per lad table object in the composition', () => {

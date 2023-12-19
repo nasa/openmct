@@ -137,19 +137,15 @@
 </template>
 
 <script>
-import ViewSwitcher from './ViewSwitcher.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
-import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 import { toRaw } from 'vue';
 
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'time-strip.view',
-  'example.imagery'
-];
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { SupportedViewTypes } from '../../utils/constants.js';
+import ViewSwitcher from './ViewSwitcher.vue';
+
 const PLACEHOLDER_OBJECT = {};
 
 export default {
@@ -359,7 +355,7 @@ export default {
     },
     saveAndFinishEditing() {
       let dialog = this.openmct.overlays.progressDialog({
-        progressPerc: 'unknown',
+        progressPerc: null,
         message:
           'Do not navigate away from this page or close this browser tab while this message is displayed.',
         iconClass: 'info',

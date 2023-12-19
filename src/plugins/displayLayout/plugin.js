@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import mount from 'utils/mount';
+
 import CopyToClipboardAction from './actions/CopyToClipboardAction';
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
-import objectUtils from 'objectUtils';
-import mount from 'utils/mount';
 
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
@@ -37,10 +37,9 @@ class DisplayLayoutView {
     this.options = options;
 
     this.component = null;
-    this.app = null;
   }
 
-  show(container, isEditing) {
+  show(container, isEditing, { renderWhenVisible }) {
     const { vNode, destroy } = mount(
       {
         el: container,
@@ -51,8 +50,8 @@ class DisplayLayoutView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           options: this.options,
-          objectUtils,
-          currentView: this
+          currentView: this,
+          renderWhenVisible
         },
         data: () => {
           return {
@@ -83,18 +82,14 @@ class DisplayLayoutView {
   getSelectionContext() {
     return {
       item: this.domainObject,
-      supportsMultiSelect: true,
-      addElement: this.component && this.component.$refs.displayLayout.addElement,
-      removeItem: this.component && this.component.$refs.displayLayout.removeItem,
-      orderItem: this.component && this.component.$refs.displayLayout.orderItem,
-      duplicateItem: this.component && this.component.$refs.displayLayout.duplicateItem,
-      switchViewType: this.component && this.component.$refs.displayLayout.switchViewType,
-      mergeMultipleTelemetryViews:
-        this.component && this.component.$refs.displayLayout.mergeMultipleTelemetryViews,
-      mergeMultipleOverlayPlots:
-        this.component && this.component.$refs.displayLayout.mergeMultipleOverlayPlots,
-      toggleGrid: this.component && this.component.$refs.displayLayout.toggleGrid
+      supportsMultiSelect: true
     };
+  }
+
+  contextAction(action, ...rest) {
+    if (this?.component.$refs.displayLayout[action]) {
+      this.component.$refs.displayLayout[action](...rest);
+    }
   }
 
   onEditModeChange(isEditing) {
@@ -104,6 +99,7 @@ class DisplayLayoutView {
   destroy() {
     if (this._destroy) {
       this._destroy();
+      this.component = undefined;
     }
   }
 }

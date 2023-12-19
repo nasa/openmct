@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import ActionCollection from './ActionCollection';
 import _ from 'lodash';
+
+import ActionCollection from './ActionCollection';
 
 class ActionsAPI extends EventEmitter {
   constructor(openmct) {
@@ -92,7 +93,7 @@ class ActionsAPI extends EventEmitter {
     if (this._actionCollections.has(key)) {
       let actionCollection = this._actionCollections.get(key);
       actionCollection.off('destroy', this._updateCachedActionCollections);
-
+      delete actionCollection.applicableActions;
       this._actionCollections.delete(key);
     }
   }

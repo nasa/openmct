@@ -70,22 +70,23 @@
       :bottom="true"
       :position-x="positionX"
       :position-y="positionY"
-      @popupLoaded="initializePopup"
-      @independentModeUpdated="saveMode"
-      @independentClockUpdated="saveClock"
-      @fixedBoundsUpdated="saveFixedBounds"
-      @clockOffsetsUpdated="saveClockOffsets"
+      @popup-loaded="initializePopup"
+      @independent-mode-updated="saveMode"
+      @independent-clock-updated="saveClock"
+      @fixed-bounds-updated="saveFixedBounds"
+      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS, FIXED_MODE_KEY } from '../../../api/time/constants';
+import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
+
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
-import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
-import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
 import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager';
 
@@ -115,6 +116,7 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     const fixedOffsets = this.openmct.time.getBounds();
     const clockOffsets = this.openmct.time.getClockOffsets();

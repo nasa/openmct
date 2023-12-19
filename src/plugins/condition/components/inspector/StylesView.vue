@@ -38,6 +38,7 @@
       <div class="c-inspect-styles__content">
         <div v-if="staticStyle" class="c-inspect-styles__style">
           <StyleEditor
+            ref="styleEditor"
             class="c-inspect-styles__editor"
             :style-item="staticStyle"
             :is-editing="allowEditing"
@@ -134,16 +135,17 @@
 </template>
 
 <script>
-import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
-import StyleEditor from './StyleEditor.vue';
-import PreviewAction from '@/ui/preview/PreviewAction.js';
+import ConditionDescription from '@/plugins/condition/components/ConditionDescription.vue';
+import ConditionError from '@/plugins/condition/components/ConditionError.vue';
 import {
   getApplicableStylesForItem,
-  getConsolidatedStyleValues,
-  getConditionSetIdentifierForItem
+  getConditionSetIdentifierForItem,
+  getConsolidatedStyleValues
 } from '@/plugins/condition/utils/styleUtils';
-import ConditionError from '@/plugins/condition/components/ConditionError.vue';
-import ConditionDescription from '@/plugins/condition/components/ConditionDescription.vue';
+import PreviewAction from '@/ui/preview/PreviewAction.js';
+
+import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
+import StyleEditor from './StyleEditor.vue';
 
 const NON_SPECIFIC = '??';
 const NON_STYLEABLE_CONTAINER_TYPES = ['layout', 'flexible-layout', 'tabs'];

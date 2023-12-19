@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import mount from 'utils/mount';
+
 import AbstractStatusIndicator from '../AbstractStatusIndicator';
 import OperatorStatusComponent from './OperatorStatus.vue';
 

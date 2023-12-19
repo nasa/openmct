@@ -78,10 +78,10 @@ async function createDomainObjectWithDefaults(
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   //Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click the object specified by 'type'
   await page.click(`li[role='menuitem']:text("${type}")`);
@@ -108,7 +108,7 @@ async function createDomainObjectWithDefaults(
   // Click OK button and wait for Navigate event
   await Promise.all([
     page.waitForLoadState(),
-    page.click('[aria-label="Save"]'),
+    await page.getByRole('button', { name: 'Save' }).click(),
     // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
@@ -120,8 +120,8 @@ async function createDomainObjectWithDefaults(
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
   return {
@@ -179,10 +179,10 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click 'Plan' menu option
   await page.click(`li:text("Plan")`);
@@ -228,17 +228,15 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
   const parentUrl = await getHashUrlToDomainObject(page, parent);
-  // TODO: Make this field even more accessible
-  const name = 'VIPER Rover Heading';
-  const nameInputLocator = page.getByRole('dialog').locator('input[type="text"]');
 
-  await page.goto(`${parentUrl}?hideTree=true`);
+  await page.goto(`${parentUrl}`);
 
-  await page.locator('button:has-text("Create")').click();
+  await page.getByRole('button', { name: 'Create' }).click();
 
   await page.locator('li:has-text("Sine Wave Generator")').click();
 
-  await nameInputLocator.fill(name);
+  const name = 'VIPER Rover Heading';
+  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
 
   // Fill out the fields with default values
   await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
@@ -386,11 +384,13 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
-  // Switch time conductor mode
+  // Switch time conductor mode. Note, need to wait here for URL to update as the router is debounced.
   if (isFixedTimespan) {
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    await page.waitForURL(/tc\.mode=fixed/);
   } else {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    await page.waitForURL(/tc\.mode=local/);
   }
 }
 
@@ -520,6 +520,7 @@ async function setIndependentTimeConductorBounds(page, startDate, endDate) {
 
 /**
  * Set the bounds of the visible conductor in fixed time mode
+ * @private
  * @param {import('@playwright/test').Page} page
  * @param {string} startDate
  * @param {string} endDate
@@ -542,18 +543,6 @@ async function setTimeBounds(page, startDate, endDate) {
       .getByRole('textbox', { name: 'End time' })
       .fill(endDate.toString().substring(11, 19));
   }
-}
-
-/**
- * Selects an inspector tab based on the provided tab name
- *
- * @param {import('@playwright/test').Page} page
- * @param {String} name the name of the tab
- */
-async function selectInspectorTab(page, name) {
-  const inspectorTabs = page.getByRole('tablist');
-  const inspectorTab = inspectorTabs.getByTitle(name);
-  await inspectorTab.click();
 }
 
 /**
@@ -674,7 +663,6 @@ module.exports = {
   setEndOffset,
   setTimeConductorBounds,
   setIndependentTimeConductorBounds,
-  selectInspectorTab,
   waitForPlotsToRender,
   renameObjectFromContextMenu
 };

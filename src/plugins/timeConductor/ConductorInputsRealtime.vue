@@ -55,9 +55,10 @@
 </template>
 
 <script>
-import TimePopupRealtime from './timePopupRealtime.vue';
 import _ from 'lodash';
+
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -92,6 +93,7 @@ export default {
       }
     }
   },
+  emits: ['offsets-updated', 'dismiss-inputs-realtime'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     const durationFormatter = this.getFormatter(
@@ -207,7 +209,7 @@ export default {
       this.formattedBounds.end = this.timeFormatter.format(bounds.end);
     },
     updateCurrentValue() {
-      const currentValue = this.openmct.time.getClock()?.currentValue();
+      const currentValue = this.timeContext.getClock().currentValue();
 
       if (currentValue !== undefined) {
         this.setCurrentValue(currentValue);
@@ -239,13 +241,13 @@ export default {
       let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
       let endOffset = this.durationFormatter.parse(this.offsets.end);
 
-      this.$emit('offsetsUpdated', {
+      this.$emit('offsets-updated', {
         start: startOffset,
         end: endOffset
       });
     },
     dismiss() {
-      this.$emit('dismissInputsRealtime');
+      this.$emit('dismiss-inputs-realtime');
     },
     copy(object) {
       return JSON.parse(JSON.stringify(object));

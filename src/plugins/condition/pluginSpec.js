@@ -20,15 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import ConditionPlugin from './plugin';
+import { nextTick } from 'vue';
+
+import ConditionManager from '@/plugins/condition/ConditionManager';
+
 import stylesManager from '../inspectorViews/styles/StylesManager';
 import StylesView from './components/inspector/StylesView.vue';
-import Vue from 'vue';
-import { getApplicableStylesForItem } from './utils/styleUtils';
-import ConditionManager from '@/plugins/condition/ConditionManager';
+import ConditionPlugin from './plugin';
 import StyleRuleManager from './StyleRuleManager';
 import { IS_OLD_KEY } from './utils/constants';
+import { getApplicableStylesForItem } from './utils/styleUtils';
 
 describe('the plugin', function () {
   let conditionSetDefinition;
@@ -140,6 +143,7 @@ describe('the plugin', function () {
     let conditionWidgetItem;
     let selection;
     let component;
+    let _destroy;
     let styleViewComponentObject;
     const conditionSetDomainObject = {
       configuration: {
@@ -236,8 +240,7 @@ describe('the plugin', function () {
       ];
       let viewContainer = document.createElement('div');
       child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
+      const { vNode, destroy } = mount({
         components: {
           StylesView
         },
@@ -246,17 +249,20 @@ describe('the plugin', function () {
           selection: selection,
           stylesManager
         },
-        template: '<styles-view/>'
+        template: '<styles-view ref="root"/>'
       });
 
-      return Vue.nextTick().then(() => {
-        styleViewComponentObject = component.$root.$children[0];
+      component = vNode.componentInstance;
+      _destroy = destroy;
+
+      return nextTick().then(() => {
+        styleViewComponentObject = component.$refs.root;
         styleViewComponentObject.setEditState(true);
       });
     });
 
     afterEach(() => {
-      component.$destroy();
+      _destroy();
     });
 
     it('does not include the output label when the flag is disabled', () => {
@@ -265,7 +271,7 @@ describe('the plugin', function () {
       styleViewComponentObject.initializeConditionalStyles();
       expect(styleViewComponentObject.conditionalStyles.length).toBe(2);
 
-      return Vue.nextTick().then(() => {
+      return nextTick().then(() => {
         const hasNoOutput =
           styleViewComponentObject.domainObject.configuration.objectStyles.styles.every((style) => {
             return style.style.output === '' || style.style.output === undefined;
@@ -284,7 +290,7 @@ describe('the plugin', function () {
       styleViewComponentObject.useConditionSetOutputAsLabel = true;
       styleViewComponentObject.persistLabelConfiguration();
 
-      return Vue.nextTick().then(() => {
+      return nextTick().then(() => {
         const outputs = styleViewComponentObject.domainObject.configuration.objectStyles.styles.map(
           (style) => {
             return style.style.output;
@@ -304,6 +310,7 @@ describe('the plugin', function () {
     let selection;
     let component;
     let styleViewComponentObject;
+    let _destroy;
     const conditionSetDomainObject = {
       configuration: {
         conditionTestData: [
@@ -558,8 +565,7 @@ describe('the plugin', function () {
       ];
       let viewContainer = document.createElement('div');
       child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
+      const { vNode, destroy } = mount({
         components: {
           StylesView
         },
@@ -568,13 +574,20 @@ describe('the plugin', function () {
           selection: selection,
           stylesManager
         },
-        template: '<styles-view/>'
+        template: '<styles-view ref="root"/>'
       });
 
-      return Vue.nextTick().then(() => {
-        styleViewComponentObject = component.$root.$children[0];
+      component = vNode.componentInstance;
+      _destroy = destroy;
+
+      return nextTick().then(() => {
+        styleViewComponentObject = component.$refs.root;
         styleViewComponentObject.setEditState(true);
       });
+    });
+
+    afterEach(() => {
+      _destroy();
     });
 
     it('initializes the items in the view', () => {
@@ -595,7 +608,7 @@ describe('the plugin', function () {
       expect(styleViewComponentObject.conditionalStyles.length).toBe(2);
       styleViewComponentObject.updateConditionalStyle(conditionalStyle, 'border');
 
-      return Vue.nextTick().then(() => {
+      return nextTick().then(() => {
         expect(styleViewComponentObject.domainObject.configuration.objectStyles).toBeDefined();
         [boxLayoutItem, lineLayoutItem, notCreatableObjectItem].forEach((item) => {
           const itemStyles =
@@ -625,7 +638,7 @@ describe('the plugin', function () {
     it('updates applicable static styles', () => {
       styleViewComponentObject.updateStaticStyle(staticStyle, 'border');
 
-      return Vue.nextTick().then(() => {
+      return nextTick().then(() => {
         expect(styleViewComponentObject.domainObject.configuration.objectStyles).toBeDefined();
         [boxLayoutItem, lineLayoutItem, notCreatableObjectItem].forEach((item) => {
           const itemStyle =

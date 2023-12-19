@@ -21,10 +21,11 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import PlotSeries from './PlotSeries';
-import Collection from './Collection';
 import Color from '@/ui/color/Color';
 import ColorPalette from '@/ui/color/ColorPalette';
+
+import Collection from './Collection';
+import PlotSeries from './PlotSeries';
 
 /**
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
@@ -185,6 +186,12 @@ export default class SeriesCollection extends Collection {
         seriesIdentifier.key === identifier.key
       );
     })[0];
+  }
+
+  destroy() {
+    super.destroy();
+    this.plot = undefined;
+    this.stopListening();
   }
 }
 

@@ -72,6 +72,7 @@ export default {
       }
     }
   },
+  emits: ['delete-section', 'rename-section', 'select-section'],
   data() {
     return {
       popupMenuItems: [],
@@ -104,7 +105,7 @@ export default {
         return;
       }
 
-      this.$emit('deleteSection', this.section.id);
+      this.$emit('delete-section', this.section.id);
     },
     getRemoveDialog() {
       const message =
@@ -129,7 +130,7 @@ export default {
         return;
       }
 
-      this.$emit('selectSection', id);
+      this.$emit('select-section', id);
     },
     renameSection(target) {
       if (!target) {
@@ -144,7 +145,7 @@ export default {
         return;
       }
 
-      this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
+      this.$emit('rename-section', Object.assign(this.section, { name: target.textContent }));
     },
     updateName(event) {
       const { target, keyCode, type } = event;

@@ -36,8 +36,9 @@
 </template>
 
 <script>
-import ActivityProperty from './ActivityProperty.vue';
 import { v4 as uuid } from 'uuid';
+
+import ActivityProperty from './ActivityProperty.vue';
 
 export default {
   components: {
@@ -68,11 +69,11 @@ export default {
           const label = this.activity[key].label;
           const value = String(this.activity[key].value);
 
-          this.$set(this.timeProperties, this.timeProperties.length, {
+          this.timeProperties[this.timeProperties.length] = {
             id: uuid(),
             label,
             value
-          });
+          };
         }
       });
     }

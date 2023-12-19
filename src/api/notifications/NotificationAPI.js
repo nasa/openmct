@@ -30,8 +30,8 @@
  *
  * @namespace platform/api/notifications
  */
-import moment from 'moment';
 import EventEmitter from 'eventemitter3';
+import moment from 'moment';
 
 /**
  * @typedef {object} NotificationProperties
@@ -165,7 +165,7 @@ export default class NotificationAPI extends EventEmitter {
   /**
    * Create a new progress notification. These notifications will contain a progress bar.
    * @param {string} message
-   * @param {number | 'unknown'} progressPerc A value between 0 and 100, or the string 'unknown'.
+   * @param {number | null} progressPerc A value between 0 and 100, or null.
    * @param {string} [progressText] Text description of progress (eg. "10 of 20 objects copied").
    */
   progress(message, progressPerc, progressText) {

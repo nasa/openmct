@@ -45,6 +45,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       field: this.model.value
@@ -60,7 +61,7 @@ export default {
         value: this.field
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

@@ -24,16 +24,17 @@
 </template>
 <script>
 import mount from 'utils/mount';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
-import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import StalenessUtils from '@/utils/staleness';
+
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
-import Plot from '../Plot.vue';
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import Plot from '../PlotView.vue';
+import conditionalStylesMixin from './mixins/objectStyles-mixin';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     childObject: {
       type: Object,
@@ -88,6 +89,14 @@ export default {
       }
     }
   },
+  emits: [
+    'lock-highlight-point',
+    'highlights',
+    'config-loaded',
+    'cursor-guide',
+    'grid-lines',
+    'plot-y-tick-width'
+  ],
   data() {
     return {
       staleObjects: []
@@ -114,30 +123,37 @@ export default {
     },
     staleObjects: {
       handler() {
-        this.isStale = this.staleObjects.length > 0;
         this.updateComponentProp('isStale', this.isStale);
       },
       deep: true
     }
   },
   mounted() {
-    this.stalenessSubscription = {};
     this.updateView();
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
+    this.setupClockChangedEvent((domainObject) => {
+      this.triggerUnsubscribeFromStaleness(domainObject);
+      this.subscribeToStaleness(domainObject);
+    });
   },
   beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
+    if (this.composition) {
+      this.composition.off('add', this.subscribeToStaleness);
+      this.composition.off('remove', this.triggerUnsubscribeFromStaleness);
+    }
 
     if (this.removeSelectable) {
       this.removeSelectable();
     }
 
+    const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+    configStore.deleteStore(configId);
+
     if (this._destroy) {
       this._destroy();
     }
-
-    this.destroyStalenessListeners();
   },
   methods: {
     setEditState(isEditing) {
@@ -158,10 +174,6 @@ export default {
       }
     },
     updateView() {
-      this.isStale = false;
-
-      this.destroyStalenessListeners();
-
       if (this._destroy) {
         this._destroy();
         this.component = null;
@@ -185,19 +197,19 @@ export default {
       const isMissing = openmct.objects.isMissing(object);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
-        this.subscribeToStaleness(object, (isStale) => {
-          this.updateComponentProp('isStale', isStale);
+        this.subscribeToStaleness(object, (stalenessResponse) => {
+          this.updateComponentProp('isStale', stalenessResponse.isStale);
         });
       } else {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(object);
 
-        this.composition.on('add', this.watchStaleness);
-        this.composition.on('remove', this.unwatchStaleness);
+        this.composition.on('add', this.subscribeToStaleness);
+        this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
         this.composition.load();
       }
 
-      const { vNode } = mount(
+      const { vNode, destroy } = mount(
         {
           components: {
             Plot
@@ -205,7 +217,8 @@ export default {
           provide: {
             openmct,
             domainObject: object,
-            path
+            path,
+            renderWhenVisible: this.renderWhenVisible
           },
           data() {
             return {
@@ -235,13 +248,13 @@ export default {
                       :options="options"
                       :parent-y-tick-width="parentYTickWidth"
                       :color-palette="colorPalette"
-                      @loadingUpdated="loadingUpdated"
-                      @configLoaded="onConfigLoaded"
-                      @lockHighlightPoint="onLockHighlightPointUpdated"
+                      @loading-updated="loadingUpdated"
+                      @config-loaded="onConfigLoaded"
+                      @lock-highlight-point="onLockHighlightPointUpdated"
                       @highlights="onHighlightsUpdated"
-                      @plotYTickWidth="onYTickWidthChange"
-                      @cursorGuide="onCursorGuideChange"
-                      @gridLines="onGridLinesChange"/>`
+                      @plot-y-tick-width="onYTickWidthChange"
+                      @cursor-guide="onCursorGuideChange"
+                      @grid-lines="onGridLinesChange"/>`
         },
         {
           app: this.openmct.app,
@@ -249,76 +262,29 @@ export default {
         }
       );
       this.component = vNode.componentInstance;
+      this._destroy = destroy;
 
       if (this.isEditing) {
         this.setSelection();
       }
     },
-    watchStaleness(domainObject) {
-      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-      this.stalenessSubscription[keyString] = {};
-      this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(
-        this.openmct,
-        domainObject
-      );
-
-      this.openmct.telemetry.isStale(domainObject).then((stalenessResponse) => {
-        if (stalenessResponse !== undefined) {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      });
-      const stalenessSubscription = this.openmct.telemetry.subscribeToStaleness(
-        domainObject,
-        (stalenessResponse) => {
-          this.handleStaleness(keyString, stalenessResponse);
-        }
-      );
-
-      this.stalenessSubscription[keyString].unsubscribe = stalenessSubscription;
-    },
-    unwatchStaleness(domainObject) {
-      const SKIP_CHECK = true;
-      const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-      this.stalenessSubscription[keyString].unsubscribe();
-      this.stalenessSubscription[keyString].stalenessUtils.destroy();
-      this.handleStaleness(keyString, { isStale: false }, SKIP_CHECK);
-
-      delete this.stalenessSubscription[keyString];
-    },
-    handleStaleness(keyString, stalenessResponse, skipCheck = false) {
-      if (
-        skipCheck ||
-        this.stalenessSubscription[keyString].stalenessUtils.shouldUpdateStaleness(
-          stalenessResponse
-        )
-      ) {
-        const index = this.staleObjects.indexOf(keyString);
-        const foundStaleObject = index > -1;
-        if (stalenessResponse.isStale && !foundStaleObject) {
-          this.staleObjects.push(keyString);
-        } else if (!stalenessResponse.isStale && foundStaleObject) {
-          this.staleObjects.splice(index, 1);
-        }
-      }
-    },
     onLockHighlightPointUpdated() {
-      this.$emit('lockHighlightPoint', ...arguments);
+      this.$emit('lock-highlight-point', ...arguments);
     },
     onHighlightsUpdated() {
       this.$emit('highlights', ...arguments);
     },
     onConfigLoaded() {
-      this.$emit('configLoaded', ...arguments);
+      this.$emit('config-loaded', ...arguments);
     },
     onYTickWidthChange() {
-      this.$emit('plotYTickWidth', ...arguments);
+      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
-      this.$emit('cursorGuide', ...arguments);
+      this.$emit('cursor-guide', ...arguments);
     },
     onGridLinesChange() {
-      this.$emit('gridLines', ...arguments);
+      this.$emit('grid-lines', ...arguments);
     },
     setSelection() {
       let childContext = {};
@@ -399,20 +365,6 @@ export default {
 
         return this.childObject;
       }
-    },
-    destroyStalenessListeners() {
-      this.triggerUnsubscribeFromStaleness();
-
-      if (this.composition) {
-        this.composition.off('add', this.watchStaleness);
-        this.composition.off('remove', this.unwatchStaleness);
-        this.composition = null;
-      }
-
-      Object.values(this.stalenessSubscription).forEach((stalenessSubscription) => {
-        stalenessSubscription.unsubscribe();
-        stalenessSubscription.stalenessUtils.destroy();
-      });
     }
   }
 };

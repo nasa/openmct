@@ -180,7 +180,7 @@ define(['uuid'], function ({ v4: uuid }) {
       {
         check(domainObject) {
           return (
-            domainObject.type === 'layout' &&
+            domainObject?.type === 'layout' &&
             domainObject.configuration &&
             domainObject.configuration.layout
           );
@@ -201,7 +201,7 @@ define(['uuid'], function ({ v4: uuid }) {
       {
         check(domainObject) {
           return (
-            domainObject.type === 'telemetry.fixed' &&
+            domainObject?.type === 'telemetry.fixed' &&
             domainObject.configuration &&
             domainObject.configuration['fixed-display']
           );
@@ -246,7 +246,7 @@ define(['uuid'], function ({ v4: uuid }) {
       {
         check(domainObject) {
           return (
-            domainObject.type === 'table' &&
+            domainObject?.type === 'table' &&
             domainObject.configuration &&
             domainObject.configuration.table
           );

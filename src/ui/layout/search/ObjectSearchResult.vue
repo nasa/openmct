@@ -54,10 +54,10 @@
 </template>
 
 <script>
-import ObjectPath from '../../components/ObjectPath.vue';
-import identifierToString from '../../../tools/url';
-import PreviewAction from '../../preview/PreviewAction';
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import identifierToString from '../../../tools/url';
+import ObjectPath from '../../components/ObjectPath.vue';
+import PreviewAction from '../../preview/PreviewAction';
 
 export default {
   name: 'ObjectSearchResult',
@@ -75,6 +75,7 @@ export default {
       }
     }
   },
+  emits: ['preview-changed'],
   computed: {
     resultName() {
       return this.result.name;

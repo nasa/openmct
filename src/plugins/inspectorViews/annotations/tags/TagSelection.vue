@@ -29,8 +29,8 @@
         :model="availableTagModel"
         :place-holder-text="'Type to select tag'"
         class="c-tag-selection"
-        :item-css-class="'icon-circle'"
-        @onChange="tagSelected"
+        :item-css-class="`icon-circle ${TagEditorClassNames.TAG_OPTION}`"
+        @on-change="tagSelected"
       />
     </template>
     <template v-else>
@@ -42,6 +42,7 @@
         <button
           v-show="!readOnly"
           class="c-completed-tag-deletion c-tag__remove-btn icon-x-in-circle"
+          :class="TagEditorClassNames.REMOVE_TAG"
           :style="{ textShadow: selectedBackgroundColor + ' 0 0 4px' }"
           :aria-label="`Remove tag ${selectedTagLabel}`"
           @click="removeTag"
@@ -54,6 +55,7 @@
 
 <script>
 import AutoCompleteField from '../../../../api/forms/components/controls/AutoCompleteField.vue';
+import TagEditorClassNames from './TagEditorClassNames';
 
 export default {
   components: {
@@ -86,8 +88,9 @@ export default {
       }
     }
   },
+  emits: ['tag-removed', 'tag-added'],
   data() {
-    return {};
+    return { TagEditorClassNames: TagEditorClassNames };
   },
   computed: {
     availableTagModel() {
@@ -136,7 +139,6 @@ export default {
       }
     }
   },
-  mounted() {},
   methods: {
     getAvailableTagByID(tagID) {
       return this.openmct.annotation.getAvailableTags().find((tag) => {
@@ -144,7 +146,7 @@ export default {
       });
     },
     removeTag() {
-      this.$emit('tagRemoved', this.selectedTag);
+      this.$emit('tag-removed', this.selectedTag);
     },
     tagSelected(autoField) {
       const tagAdded = autoField.model.options.find((option) => {
@@ -155,7 +157,7 @@ export default {
         return false;
       });
       if (tagAdded) {
-        this.$emit('tagAdded', tagAdded.id);
+        this.$emit('tag-added', tagAdded.id);
       }
     }
   }

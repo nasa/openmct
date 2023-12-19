@@ -81,7 +81,7 @@ exports.test = base.test.extend({
    * ```js
    * test.use({
    *   clockOptions: {
-   *       now: 0,
+   *       now: MISSION_TIME,
    *       shouldAdvanceTime: true
    * ```
    * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.

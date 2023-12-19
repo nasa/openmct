@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
-import TabsLayout from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
+import TabsLayout from './plugin';
 
 describe('the plugin', function () {
   let element;
@@ -127,7 +128,7 @@ describe('the plugin', function () {
       let view = tabsLayoutViewProvider.view(testViewObject, []);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('provides a view', () => {
@@ -171,7 +172,7 @@ describe('the plugin', function () {
       let view = tabsLayoutViewProvider.view(testViewObject, []);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     afterEach(() => {
@@ -193,7 +194,7 @@ describe('the plugin', function () {
           const tab = tabEls[i];
 
           tab.click();
-          await Vue.nextTick();
+          await nextTick();
 
           const tabViewEls = element.querySelectorAll('.c-tabs-view__object');
           expect(tabViewEls.length).toEqual(2);
@@ -203,7 +204,7 @@ describe('the plugin', function () {
       it('false, will only keep the current tab view loaded', async () => {
         testViewObject.keep_alive = false;
 
-        await Vue.nextTick();
+        await nextTick();
 
         let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
 

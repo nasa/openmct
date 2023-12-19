@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
-import TabsComponent from './components/tabs.vue';
+
+import TabsComponent from './components/TabsComponent.vue';
 
 const TABS_KEY = 'tabs';
 export default class Tabs {

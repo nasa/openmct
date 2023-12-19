@@ -52,7 +52,7 @@
           :embed="snapshot.embedObject"
           :is-snapshot-container="true"
           :remove-action-string="'Delete Snapshot'"
-          @removeEmbed="removeSnapshot"
+          @remove-embed="removeSnapshot"
         />
       </span>
       <div v-if="!snapshots.length > 0" class="hint">
@@ -63,11 +63,11 @@
 </template>
 
 <script>
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
+import RemoveDialog from '../utils/removeDialog';
 import NotebookEmbed from './NotebookEmbed.vue';
 import PopupMenu from './PopupMenu.vue';
-import RemoveDialog from '../utils/removeDialog';
-import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 
 export default {
   components: {

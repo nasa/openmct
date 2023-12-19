@@ -1,11 +1,12 @@
+import mount from 'utils/mount';
+
 import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
 import BarGraphOptions from './BarGraphOptions.vue';
-import mount from 'utils/mount';
 
 export default function BarGraphInspectorViewProvider(openmct) {
   return {
     key: BAR_GRAPH_INSPECTOR_KEY,
-    name: 'Bar Graph Configuration',
+    name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
         return false;

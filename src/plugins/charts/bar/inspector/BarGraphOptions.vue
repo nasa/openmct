@@ -26,7 +26,7 @@
       <li>
         <series-options
           v-for="series in plotSeries"
-          :key="series.key"
+          :key="series.keyString"
           :item="series"
           :color-palette="colorPalette"
         />
@@ -130,8 +130,9 @@
 </template>
 
 <script>
-import SeriesOptions from './SeriesOptions.vue';
 import ColorPalette from '@/ui/color/ColorPalette';
+
+import SeriesOptions from './SeriesOptions.vue';
 
 export default {
   components: {

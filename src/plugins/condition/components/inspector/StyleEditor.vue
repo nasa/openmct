@@ -78,6 +78,7 @@
     <!-- Save Styles -->
     <toolbar-button
       v-if="canSaveStyle"
+      ref="saveStyleButton"
       class="c-style__toolbar-button--save c-local-controls--show-on-hover c-icon-button c-icon-button--major"
       :options="saveOptions"
       @click="saveItemStyle()"
@@ -86,11 +87,11 @@
 </template>
 
 <script>
-import ToolbarColorPicker from '@/ui/toolbar/components/toolbar-color-picker.vue';
-import ToolbarButton from '@/ui/toolbar/components/toolbar-button.vue';
-import ToolbarToggleButton from '@/ui/toolbar/components/toolbar-toggle-button.vue';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils';
+import ToolbarButton from '@/ui/toolbar/components/ToolbarButton.vue';
+import ToolbarColorPicker from '@/ui/toolbar/components/ToolbarColorPicker.vue';
+import ToolbarToggleButton from '@/ui/toolbar/components/ToolbarToggleButton.vue';
 
 export default {
   name: 'StyleEditor',
@@ -120,6 +121,7 @@ export default {
       required: true
     }
   },
+  emits: ['persist', 'save-style'],
   computed: {
     itemStyle() {
       return getStylesWithoutNoneValue(this.styleItem.style);

@@ -26,11 +26,7 @@ necessarily be used for reference when writing new tests in this area.
 */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const {
-  createDomainObjectWithDefaults,
-  selectInspectorTab,
-  waitForPlotsToRender
-} = require('../../../../appActions');
+const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../../../appActions');
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -75,7 +71,7 @@ test.describe('Stacked Plot', () => {
 
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     await swgBElementsPoolItem.click({ button: 'right' });
     await page
@@ -107,7 +103,7 @@ test.describe('Stacked Plot', () => {
 
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Elements');
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
     const stackedPlotItem1 = page.locator('.c-plot--stacked-container').nth(0);
     const stackedPlotItem2 = page.locator('.c-plot--stacked-container').nth(1);
@@ -139,7 +135,7 @@ test.describe('Stacked Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // assert plot order persists after save - [swgB, swgC, swgA]
     await expect(stackedPlotItem1).toHaveAttribute('aria-label', `Stacked Plot Item ${swgB.name}`);
@@ -152,7 +148,7 @@ test.describe('Stacked Plot', () => {
   }) => {
     await page.goto(stackedPlot.url);
 
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Click on the 1st plot
     await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
@@ -193,7 +189,7 @@ test.describe('Stacked Plot', () => {
     // Go into edit mode
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Click on canvas for the 1st plot
     await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
@@ -238,7 +234,7 @@ test.describe('Stacked Plot', () => {
     // Go into edit mode
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     let legendProperties = await page.locator('[aria-label="Legend Properties"]');
     await legendProperties.locator('[title="Display legends per sub plot."]~div input').uncheck();
@@ -247,7 +243,7 @@ test.describe('Stacked Plot', () => {
 
     // Save (exit edit mode)
     await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await assertAggregateLegendIsVisible(page);
 

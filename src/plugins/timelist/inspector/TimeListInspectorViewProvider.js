@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistPropertiesView from './TimelistPropertiesView.vue';
-import { TIMELIST_TYPE } from '../constants';
 import mount from 'utils/mount';
+
+import { TIMELIST_TYPE } from '../constants';
+import TimelistPropertiesView from './TimelistPropertiesView.vue';
 
 export default function TimeListInspectorViewProvider(openmct) {
   return {

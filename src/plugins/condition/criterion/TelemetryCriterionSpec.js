@@ -20,8 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryCriterion from './TelemetryCriterion';
 import { getMockTelemetry } from 'utils/testing';
+
+import TelemetryCriterion from './TelemetryCriterion';
 
 let openmct = {};
 let mockListener;
@@ -87,7 +88,9 @@ describe('The telemetry criterion', function () {
       'timeSystem',
       'bounds',
       'getAllTimeSystems',
-      'getContextForView'
+      'getContextForView',
+      'on',
+      'off'
     ]);
     openmct.time.timeSystem.and.returnValue({ key: 'system' });
     openmct.time.bounds.and.returnValue({
@@ -96,6 +99,8 @@ describe('The telemetry criterion', function () {
     });
     openmct.time.getAllTimeSystems.and.returnValue([{ key: 'system' }]);
     openmct.time.getContextForView.and.returnValue({});
+    openmct.time.on.and.returnValue(() => {});
+    openmct.time.off.and.returnValue(() => {});
 
     testCriterionDefinition = {
       id: 'test-criterion-id',

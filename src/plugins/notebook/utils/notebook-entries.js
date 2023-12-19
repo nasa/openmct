@@ -1,5 +1,11 @@
-import objectLink from '../../../ui/mixins/object-link';
 import { v4 as uuid } from 'uuid';
+
+import objectLink from '../../../ui/mixins/object-link';
+import {
+  createNotebookImageDomainObject,
+  getThumbnailURLFromImageUrl,
+  saveNotebookImageDomainObject
+} from './notebook-image';
 
 async function getUsername(openmct) {
   let username = null;
@@ -60,13 +66,14 @@ export function selectEntry({
   onAnnotationChange,
   notebookAnnotations
 }) {
-  const targetDetails = {};
   const keyString = openmct.objects.makeKeyString(domainObject.identifier);
-  targetDetails[keyString] = {
-    entryId
-  };
-  const targetDomainObjects = {};
-  targetDomainObjects[keyString] = domainObject;
+  const targetDetails = [
+    {
+      entryId,
+      keyString
+    }
+  ];
+  const targetDomainObjects = [domainObject];
   openmct.selection.select(
     [
       {
@@ -114,24 +121,72 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   return params.join('&');
 }
 
-export async function createNewEmbed(snapshotMeta, snapshot = '') {
-  const { bounds, link, objectPath, openmct } = snapshotMeta;
-  const domainObject = objectPath[0];
-  const domainObjectType = openmct.types.get(domainObject.type);
+export function createNewImageEmbed(image, openmct, imageName = '') {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        const base64Data = reader.result;
+        const blobUrl = URL.createObjectURL(image);
+        const imageDomainObject = createNotebookImageDomainObject(base64Data);
+        await saveNotebookImageDomainObject(openmct, imageDomainObject);
+        const imageThumbnailURL = await getThumbnailURLFromImageUrl(blobUrl);
 
-  const cssClass =
-    domainObjectType && domainObjectType.definition
+        const snapshot = {
+          fullSizeImageObjectIdentifier: imageDomainObject.identifier,
+          thumbnailImage: {
+            src: imageThumbnailURL
+          }
+        };
+
+        const embedMetaData = {
+          bounds: openmct.time.bounds(),
+          link: null,
+          objectPath: null,
+          openmct,
+          userImage: true,
+          imageName
+        };
+
+        const createdEmbed = await createNewEmbed(embedMetaData, snapshot);
+        resolve(createdEmbed);
+      } catch (error) {
+        console.error(`${error.message} - unable to embed image ${imageName}`, error);
+        openmct.notifications.error(`${error.message} -- unable to embed image ${imageName}`);
+      }
+    };
+
+    reader.readAsDataURL(image);
+  });
+}
+
+export async function createNewEmbed(snapshotMeta, snapshot = '') {
+  const { bounds, link, objectPath, openmct, userImage } = snapshotMeta;
+  let name = null;
+  let type = null;
+  let cssClass = 'icon-object-unknown';
+  let domainObject = null;
+  let historicLink = null;
+  if (objectPath?.length > 0) {
+    domainObject = objectPath[0];
+    const domainObjectType = openmct.types.get(domainObject.type);
+    cssClass = domainObjectType?.definition
       ? domainObjectType.definition.cssClass
       : 'icon-object-unknown';
+    name = domainObject.name;
+    type = domainObject.identifier.key;
+    historicLink = link
+      ? getHistoricLinkInFixedMode(openmct, bounds, link)
+      : objectLink.computed.objectLink.call({
+          objectPath,
+          openmct
+        });
+  } else if (userImage) {
+    cssClass = 'icon-image';
+    name = snapshotMeta.imageName;
+  }
+
   const date = openmct.time.now();
-  const historicLink = link
-    ? getHistoricLinkInFixedMode(openmct, bounds, link)
-    : objectLink.computed.objectLink.call({
-        objectPath,
-        openmct
-      });
-  const name = domainObject.name;
-  const type = domainObject.identifier.key;
   const createdBy = await getUsername(openmct);
 
   return {
@@ -152,7 +207,7 @@ export async function addNotebookEntry(
   openmct,
   domainObject,
   notebookStorage,
-  embed = null,
+  passedEmbeds = [],
   entryText = ''
 ) {
   if (!openmct || !domainObject || !notebookStorage) {
@@ -162,7 +217,9 @@ export async function addNotebookEntry(
   const date = openmct.time.now();
   const configuration = domainObject.configuration;
   const entries = configuration.entries || {};
-  const embeds = embed ? [embed] : [];
+  // if embeds isn't an array, make it one
+  const embedsNormalized =
+    passedEmbeds && !Array.isArray(passedEmbeds) ? [passedEmbeds] : passedEmbeds;
 
   const id = `entry-${uuid()}`;
   const [createdBy, createdByRole] = await Promise.all([
@@ -175,7 +232,7 @@ export async function addNotebookEntry(
     createdBy,
     createdByRole,
     text: entryText,
-    embeds
+    embeds: embedsNormalized
   };
 
   const newEntries = addEntryIntoPage(notebookStorage, entries, entry);

@@ -1,6 +1,6 @@
-import ImageryViewComponent from './components/ImageryView.vue';
-
 import mount from 'utils/mount';
+
+import ImageryViewComponent from './components/ImageryView.vue';
 
 const DEFAULT_IMAGE_FRESHNESS_OPTIONS = {
   fadeOutDelayTime: '0s',
@@ -35,6 +35,7 @@ export default class ImageryView {
           domainObject: this.domainObject,
           objectPath: alternateObjectPath || this.objectPath,
           imageFreshnessOptions: this.options?.imageFreshness || DEFAULT_IMAGE_FRESHNESS_OPTIONS,
+          showCompassHUD: this.options?.showCompassHUD,
           currentView: this
         },
         data() {

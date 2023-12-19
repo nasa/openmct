@@ -25,24 +25,29 @@
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
-    @move="(gridDelta) => $emit('move', gridDelta)"
-    @endMove="() => $emit('endMove')"
+    @move="move"
+    @end-move="endMove"
   >
-    <div
-      class="c-text-view u-style-receiver js-style-receiver"
-      :data-font-size="item.fontSize"
-      :data-font="item.font"
-      :class="[styleClass]"
-      :style="style"
-    >
-      <div class="c-text-view__text">{{ item.text }}</div>
-    </div>
+    <template #content>
+      <div
+        class="c-text-view u-style-receiver js-style-receiver"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
+        :class="[styleClass]"
+        :style="style"
+        role="application"
+        aria-roledescription="draggable text"
+        aria-label="Text"
+      >
+        <div class="c-text-view__text">{{ item.text }}</div>
+      </div>
+    </template>
   </layout-frame>
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import LayoutFrame from './LayoutFrame.vue';
 
 export default {
   makeDefinition(openmct, gridSize, element) {
@@ -84,6 +89,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     style() {
       let size;
@@ -127,9 +133,17 @@ export default {
       this.initSelect
     );
   },
-  unmounted() {
+  beforeUnmount() {
     if (this.removeSelectable) {
       this.removeSelectable();
+    }
+  },
+  methods: {
+    move(gridDelta) {
+      this.$emit('move', gridDelta);
+    },
+    endMove() {
+      this.$emit('end-move');
     }
   }
 };

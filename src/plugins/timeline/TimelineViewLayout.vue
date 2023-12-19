@@ -48,11 +48,13 @@
 </template>
 
 <script>
-import TimelineObjectView from './TimelineObjectView.vue';
-import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import { getValidatedData } from '../plan/util';
 import _ from 'lodash';
+
+import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+
+import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
+import { getValidatedData, getValidatedGroups } from '../plan/util';
+import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
   definition: {
@@ -106,7 +108,8 @@ export default {
       let objectPath = [domainObject].concat(this.objectPath.slice());
       let rowCount = 0;
       if (domainObject.type === 'plan') {
-        rowCount = Object.keys(getValidatedData(domainObject)).length;
+        const planData = getValidatedData(domainObject);
+        rowCount = getValidatedGroups(domainObject, planData).length;
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
       }

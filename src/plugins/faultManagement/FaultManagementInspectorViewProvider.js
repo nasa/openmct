@@ -20,17 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FaultManagementInspector from './FaultManagementInspector.vue';
-
 import mount from 'utils/mount';
 
 import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
+import FaultManagementInspector from './FaultManagementInspector.vue';
 
 export default function FaultManagementInspectorViewProvider(openmct) {
   return {
     openmct: openmct,
     key: FAULT_MANAGEMENT_INSPECTOR,
-    name: 'Fault Management Configuration',
+    name: 'Config',
     canView: (selection) => {
       if (selection.length !== 1 || selection[0].length === 0) {
         return false;

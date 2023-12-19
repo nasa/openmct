@@ -1,6 +1,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
 import ConditionWidgetPlugin from './plugin';
-import Vue from 'vue';
 
 describe('the plugin', function () {
   const CONDITION_WIDGET_KEY = 'conditionWidget';
@@ -147,7 +148,7 @@ describe('the plugin', function () {
       let view = conditionWidgetView.view(testViewObject, element);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('provides a view', () => {
@@ -183,7 +184,7 @@ describe('the plugin', function () {
     );
     conditionWidgetView.show(urlChild);
 
-    await Vue.nextTick();
+    await nextTick();
 
     const domainUrl = mockConditionObject[CONDITION_WIDGET_KEY].url;
     expect(urlParent.innerHTML).toContain(

@@ -62,9 +62,9 @@
 </template>
 
 <script>
+import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 import ObjectPath from '../components/ObjectPath.vue';
 import PreviewAction from '../preview/PreviewAction';
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
 
 export default {
   name: 'RecentObjectsListItem',
@@ -87,6 +87,7 @@ export default {
       required: true
     }
   },
+  emits: ['open-and-scroll-to', 'preview-changed'],
   computed: {
     isAlias() {
       return this.openmct.objects.isObjectPathToALink(this.domainObject, this.objectPath)
@@ -135,7 +136,7 @@ export default {
       event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
     },
     openAndScrollTo(navigationPath) {
-      this.$emit('openAndScrollTo', navigationPath);
+      this.$emit('open-and-scroll-to', navigationPath);
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

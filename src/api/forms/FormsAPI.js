@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FormController from './FormController';
-import FormProperties from './components/FormProperties.vue';
-
 import _ from 'lodash';
 import mount from 'utils/mount';
+
+import FormProperties from './components/FormProperties.vue';
+import FormController from './FormController';
 
 export default class FormsAPI {
   constructor(openmct) {
@@ -171,7 +171,7 @@ export default class FormsAPI {
           };
         },
         template:
-          '<FormProperties :model="formStructure" @onChange="onChange" @onCancel="onCancel" @onSave="onSave"></FormProperties>'
+          '<FormProperties :model="formStructure" @on-change="onChange" @on-cancel="onCancel" @on-save="onSave"></FormProperties>'
       },
       {
         element,

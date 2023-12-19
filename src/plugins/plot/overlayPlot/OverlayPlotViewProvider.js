@@ -19,8 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Plot from '../Plot.vue';
 import mount from 'utils/mount';
+
+import Plot from '../PlotView.vue';
 
 export default function OverlayPlotViewProvider(openmct) {
   function isCompactView(objectPath) {
@@ -46,7 +47,7 @@ export default function OverlayPlotViewProvider(openmct) {
       let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
           const { vNode, destroy } = mount(
             {
@@ -57,7 +58,8 @@ export default function OverlayPlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                renderWhenVisible
               },
               data() {
                 return {

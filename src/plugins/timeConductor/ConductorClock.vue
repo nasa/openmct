@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import clockMixin from './clock-mixin';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import clockMixin from './clock-mixin';
 
 export default {
   mixins: [clockMixin],
@@ -58,6 +58,7 @@ export default {
       }
     }
   },
+  emits: ['clock-updated'],
   data() {
     const activeClock = this.getActiveClock();
 
@@ -109,7 +110,7 @@ export default {
       const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
       option.offsets = offsets;
 
-      this.$emit('clockUpdated', option);
+      this.$emit('clock-updated', option);
     },
     getMatchingConfig(options) {
       const matchers = {

@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '@/utils/testing';
-import TimelinePlugin from './plugin';
-import Vue from 'vue';
 import EventEmitter from 'EventEmitter';
+import { nextTick } from 'vue';
 
-xdescribe('the plugin', function () {
+import { createOpenMct, resetApplicationState } from '@/utils/testing';
+
+import TimelinePlugin from './plugin';
+
+describe('the plugin', function () {
   let objectDef;
   let appHolder;
   let element;
@@ -93,6 +95,12 @@ xdescribe('the plugin', function () {
   };
 
   beforeEach((done) => {
+    // Mock clientWidth value
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      value: 500
+    });
+
     appHolder = document.createElement('div');
     appHolder.style.width = '640px';
     appHolder.style.height = '480px';
@@ -142,6 +150,7 @@ xdescribe('the plugin', function () {
   });
 
   afterEach(() => {
+    delete HTMLElement.prototype.clientWidth;
     return resetApplicationState(openmct);
   });
 
@@ -175,11 +184,11 @@ xdescribe('the plugin', function () {
       let view = timelineView.view(testViewObject, mockObjectPath);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('provides a view', async () => {
-      await Vue.nextTick();
+      await nextTick();
       expect(timelineView).toBeDefined();
     });
 
@@ -231,12 +240,12 @@ xdescribe('the plugin', function () {
       let view = timelineView.view(timelineDomainObject, [timelineDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
-    it('loads the plan from composition', async () => {
-      await Vue.nextTick();
-      await Vue.nextTick();
+    xit('loads the plan from composition', async () => {
+      await nextTick();
+      await nextTick();
       const items = element.querySelectorAll('.js-timeline__content');
       expect(items.length).toEqual(1);
     });
@@ -258,11 +267,11 @@ xdescribe('the plugin', function () {
       let view = timelineView.view(testViewObject, mockObjectPath);
       view.show(child, true);
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
-    it('displays an independent time conductor with saved options - local clock', () => {
-      return Vue.nextTick(() => {
+    xit('displays an independent time conductor with saved options - local clock', () => {
+      return nextTick(() => {
         const independentTimeConductorEl = element.querySelector(
           '.c-timeline-holder > .c-conductor__controls'
         );
@@ -299,11 +308,11 @@ xdescribe('the plugin', function () {
       let view = timelineView.view(testViewObject2, mockObjectPath);
       view.show(child, true);
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
-    it('displays an independent time conductor with saved options - fixed timespan', () => {
-      return Vue.nextTick(() => {
+    xit('displays an independent time conductor with saved options - fixed timespan', () => {
+      return nextTick(() => {
         const independentTimeConductorEl = element.querySelector(
           '.c-timeline-holder > .c-conductor__controls'
         );

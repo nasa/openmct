@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import mount from 'utils/mount';
-import FlexibleLayoutComponent from './components/flexibleLayout.vue';
+
+import FlexibleLayoutComponent from './components/FlexibleLayout.vue';
 
 const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
 export default class FlexibleLayoutViewProvider {
@@ -77,11 +78,13 @@ export default class FlexibleLayoutViewProvider {
       getSelectionContext() {
         return {
           item: domainObject,
-          addContainer: component.$refs.flexibleLayout.addContainer,
-          deleteContainer: component.$refs.flexibleLayout.deleteContainer,
-          deleteFrame: component.$refs.flexibleLayout.deleteFrame,
           type: 'flexible-layout'
         };
+      },
+      contextAction(action, ...args) {
+        if (component?.$refs?.flexibleLayout?.[action]) {
+          component.$refs.flexibleLayout[action](...args);
+        }
       },
       onEditModeChange(isEditing) {
         component.isEditing = isEditing;

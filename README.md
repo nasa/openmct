@@ -1,8 +1,10 @@
-# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) 
+# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![codecov](https://codecov.io/gh/nasa/openmct/branch/master/graph/badge.svg?token=7DQIipp3ej)](https://codecov.io/gh/nasa/openmct) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/b2e34b17/openmct) [![npm version](https://img.shields.io/npm/v/openmct.svg)](https://www.npmjs.com/package/openmct) ![CodeQL](https://github.com/nasa/openmct/workflows/CodeQL/badge.svg)
 
 Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
-Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+> [!NOTE]
+> Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
+
 
 Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
 
@@ -14,19 +16,32 @@ Once you've created something amazing with Open MCT, showcase your work in our G
 Building and running Open MCT in your local dev environment is very easy. Be sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/) installed, then follow the directions below. Need additional information? Check out the [Getting Started](https://nasa.github.io/openmct/getting-started/) page on our website.
 (These instructions assume you are installing as a non-root user; developers have [reported issues](https://github.com/nasa/openmct/issues/1151) running these steps with root privileges.)
 
-1. Clone the source code
+1. Clone the source code:
 
- `git clone https://github.com/nasa/openmct.git`
+```
+git clone https://github.com/nasa/openmct.git
+```
 
-2. Install development dependencies. Note: Check the package.json engine for our tested and supported node versions.
+2. (Optional) Install the correct node version using [nvm](https://github.com/nvm-sh/nvm):
 
- `npm install`
+```
+nvm install
+```
 
-3. Run a local development server
+3. Install development dependencies (Note: Check the `package.json` engine for our tested and supported node versions): 
 
- `npm start`
+```
+npm install
+```
 
-Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
+4. Run a local development server:
+
+```
+npm start
+```
+
+> [!IMPORTANT]
+> Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
 Open MCT is built using [`npm`](http://npmjs.com/) and [`webpack`](https://webpack.js.org/).
 
@@ -40,8 +55,12 @@ The clearest examples for developing Open MCT plugins are in the
 [tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
-We want Open MCT to be as easy to use, install, run, and develop for as
-possible, and your feedback will help us get there! Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
+> [!NOTE]
+> We want Open MCT to be as easy to use, install, run, and develop for as
+> possible, and your feedback will help us get there! 
+> Feedback can be provided via [GitHub issues](https://github.com/nasa/openmct/issues/new/choose), 
+> [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions), 
+> or by emailing us at [arc-dl-openmct@mail.nasa.gov](mailto:arc-dl-openmct@mail.nasa.gov).
 
 ## Developing Applications With Open MCT
 
@@ -50,6 +69,8 @@ For more on developing with Open MCT, see our documentation for a guide on [Deve
 ## Compatibility
 
 This is a fast moving project and we do our best to test and support the widest possible range of browsers, operating systems, and nodejs APIs. We have a published list of support available in our package.json's `browserslist` key.
+
+The project uses `nvm` to ensure the node and npm version used, is coherent in all projects. Install nvm (non-windows), [here](https://github.com/nvm-sh/nvm) or the windows equivalent [here](https://github.com/coreybutler/nvm-windows)
 
 If you encounter an issue with a particular browser, OS, or nodejs API, please file a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose)
 
@@ -106,6 +127,8 @@ Each test suite generates a report in CircleCI. For a complete overview of testi
 
 Our code coverage is generated during the runtime of our unit, e2e, and visual tests. The combination of those reports is published to [codecov.io](https://app.codecov.io/gh/nasa/openmct/)
 
+For more on the specifics of our code coverage setup, [see](TESTING.md#code-coverage)
+
 # Glossary
 
 Certain terms are used throughout Open MCT with consistent meanings
@@ -161,3 +184,17 @@ You might still be using legacy API if your source code
 
 ### What should I do if I am using legacy API?
 Please refer to [the modern Open MCT API](https://nasa.github.io/openmct/documentation/). Post any questions to the [Discussions section](https://github.com/nasa/openmct/discussions) of the Open MCT GitHub repository.
+
+## Related Repos
+
+> [!NOTE]
+> Although Open MCT functions as a standalone project, it is primarily an extensible framework intended to be used as a dependency with users' own plugins and packaging. Furthermore, Open MCT is intended to be used with an HTTP server such as Apache or Nginx. A great example of hosting Open MCT with Apache is `openmct-quickstart` and can be found in the table below.
+
+| Repository | Description |
+| --- | --- |
+| [openmct-tutorial](https://github.com/nasa/openmct-tutorial) | A great place for beginners to learn how to use and extend Open MCT. |
+| [openmct-quickstart](https://github.com/scottbell/openmct-quickstart) | A working example of Open MCT integrated with Apache HTTP server, YAMCS telemetry, and Couch DB for persistence.
+| [Open MCT YAMCS Plugin](https://github.com/akhenry/openmct-yamcs) | Plugin for integrating YAMCS telemetry and command server with Open MCT. |
+| [openmct-performance](https://github.com/unlikelyzero/openmct-performance) | Resources for performance testing Open MCT. |
+| [openmct-as-a-dependency](https://github.com/unlikelyzero/openmct-as-a-dependency) | An advanced guide for users on how to build, develop, and test Open MCT when it's used as a dependency. |
+

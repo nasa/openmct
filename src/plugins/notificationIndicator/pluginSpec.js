@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import NotificationIndicatorPlugin from './plugin.js';
-import Vue from 'vue';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { nextTick } from 'vue';
+
+import NotificationIndicatorPlugin from './plugin.js';
 
 describe('the plugin', () => {
   let notificationIndicatorPlugin;
@@ -57,7 +58,7 @@ describe('the plugin', () => {
     beforeEach(() => {
       parentElement.append(indicatorElement);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('notifies the user of the number of notifications', () => {

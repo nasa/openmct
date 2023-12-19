@@ -20,20 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import EventEmitter from 'EventEmitter';
+import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import PlotVuePlugin from '../plugin';
-import Vue from 'vue';
-import Plot from '../Plot.vue';
-import configStore from '../configuration/ConfigStore';
-import EventEmitter from 'EventEmitter';
-import PlotOptions from '../inspector/PlotOptions.vue';
+import { nextTick } from 'vue';
 
-xdescribe('the plugin', function () {
+import configStore from '../configuration/ConfigStore';
+import PlotOptions from '../inspector/PlotOptions.vue';
+import Plot from '../PlotView.vue';
+import PlotVuePlugin from '../plugin';
+
+describe('the plugin', function () {
   let element;
   let child;
   let openmct;
@@ -147,13 +150,13 @@ xdescribe('the plugin', function () {
     openmct.startHeadless();
   });
 
-  afterEach((done) => {
+  afterEach(async () => {
     openmct.time.timeSystem('utc', {
       start: 0,
       end: 1
     });
     configStore.deleteAll();
-    resetApplicationState(openmct).then(done).catch(done);
+    await resetApplicationState(openmct);
   });
 
   afterAll(() => {
@@ -184,15 +187,15 @@ xdescribe('the plugin', function () {
     let testTelemetryObject;
     let testTelemetryObject2;
     let config;
-    let component;
     let mockComposition;
+    let destroyPlot;
 
     afterAll(() => {
-      component.$destroy();
+      destroyPlot();
       openmct.router.path = null;
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testTelemetryObject = {
         identifier: {
           namespace: '',
@@ -301,46 +304,54 @@ xdescribe('the plugin', function () {
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
       let viewContainer = document.createElement('div');
-      child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
-        components: {
-          Plot
+      child.appendChild(viewContainer);
+      const composition = openmct.composition.get(overlayPlotObject);
+      const { destroy } = mount(
+        {
+          components: {
+            Plot
+          },
+          provide: {
+            openmct,
+            domainObject: overlayPlotObject,
+            composition,
+            path: [overlayPlotObject],
+            renderWhenVisible
+          },
+          template: '<plot ref="plotComponent"></plot>'
         },
-        provide: {
-          openmct: openmct,
-          domainObject: overlayPlotObject,
-          composition: openmct.composition.get(overlayPlotObject),
-          path: [overlayPlotObject]
-        },
-        template: '<plot ref="plotComponent"></plot>'
-      });
+        {
+          element: child
+        }
+      );
 
-      return telemetryPromise.then(Vue.nextTick()).then(() => {
-        const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
-        config = configStore.get(configId);
-      });
+      destroyPlot = destroy;
+
+      await telemetryPromise;
+      await nextTick();
+
+      const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
+      config = configStore.get(configId);
     });
 
-    it('Renders multiple Y-axis for the telemetry objects', (done) => {
+    it('Renders multiple Y-axis for the telemetry objects', async () => {
       config.yAxis.set('displayRange', {
         min: 10,
         max: 20
       });
-      Vue.nextTick(() => {
-        let yAxisElement = element.querySelectorAll(
-          '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
-        );
-        expect(yAxisElement.length).toBe(2);
-        done();
-      });
+      await nextTick();
+      let yAxisElement = element.querySelectorAll(
+        '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
+      );
+      expect(yAxisElement.length).toBe(2);
     });
 
     describe('the inspector view', () => {
       let inspectorComponent;
       let viewComponentObject;
       let selection;
-      beforeEach((done) => {
+      let destroyPlotOptions;
+      beforeEach(async () => {
         selection = [
           [
             {
@@ -357,40 +368,43 @@ xdescribe('the plugin', function () {
           ]
         ];
 
-        let viewContainer = document.createElement('div');
-        child.append(viewContainer);
-        inspectorComponent = new Vue({
-          el: viewContainer,
-          components: {
-            PlotOptions
+        const viewContainer = document.createElement('div');
+        child.appendChild(viewContainer);
+        const { vNode, destroy } = mount(
+          {
+            components: {
+              PlotOptions
+            },
+            provide: {
+              openmct,
+              domainObject: selection[0][0].context.item,
+              path: [selection[0][0].context.item]
+            },
+            template: '<plot-options ref="plotOptionsRef"/>'
           },
-          provide: {
-            openmct: openmct,
-            domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item]
-          },
-          template: '<plot-options/>'
-        });
+          {
+            element: viewContainer
+          }
+        );
+        inspectorComponent = vNode.componentInstance;
+        destroyPlotOptions = destroy;
 
-        Vue.nextTick(() => {
-          viewComponentObject = inspectorComponent.$root.$children[0];
-          done();
-        });
+        await nextTick();
+        viewComponentObject = inspectorComponent.$refs.plotOptionsRef;
       });
 
       afterEach(() => {
+        destroyPlotOptions();
         openmct.router.path = null;
       });
 
       describe('in edit mode', () => {
         let editOptionsEl;
 
-        beforeEach((done) => {
+        beforeEach(async () => {
           viewComponentObject.setEditState(true);
-          Vue.nextTick(() => {
-            editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
-            done();
-          });
+          await nextTick();
+          editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
         });
 
         it('shows multiple yAxis options', () => {
@@ -419,15 +433,15 @@ xdescribe('the plugin', function () {
   describe('The overlay plot view with single axes', () => {
     let testTelemetryObject;
     let config;
-    let component;
     let mockComposition;
+    let destroyOverlayPlot;
 
     afterAll(() => {
-      component.$destroy();
+      destroyOverlayPlot();
       openmct.router.path = null;
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       testTelemetryObject = {
         identifier: {
           namespace: '',
@@ -481,41 +495,46 @@ xdescribe('the plugin', function () {
       };
 
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-      let viewContainer = document.createElement('div');
-      child.append(viewContainer);
-      component = new Vue({
-        el: viewContainer,
-        components: {
-          Plot
+      const composition = openmct.composition.get(overlayPlotObject);
+      const viewContainer = document.createElement('div');
+      child.appendChild(viewContainer);
+      const { destroy } = mount(
+        {
+          components: {
+            Plot
+          },
+          provide: {
+            openmct: openmct,
+            domainObject: overlayPlotObject,
+            composition,
+            path: [overlayPlotObject],
+            renderWhenVisible
+          },
+          template: '<plot ref="plotComponent"></plot>'
         },
-        provide: {
-          openmct: openmct,
-          domainObject: overlayPlotObject,
-          composition: openmct.composition.get(overlayPlotObject),
-          path: [overlayPlotObject]
-        },
-        template: '<plot ref="plotComponent"></plot>'
-      });
+        {
+          element: viewContainer
+        }
+      );
 
-      return telemetryPromise.then(Vue.nextTick()).then(() => {
-        const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
-        config = configStore.get(configId);
-      });
+      destroyOverlayPlot = destroy;
+
+      await telemetryPromise;
+      await nextTick();
+      const configId = openmct.objects.makeKeyString(overlayPlotObject.identifier);
+      config = configStore.get(configId);
     });
 
-    it('Renders single Y-axis for the telemetry object', (done) => {
+    it('Renders single Y-axis for the telemetry object', async () => {
       config.yAxis.set('displayRange', {
         min: 10,
         max: 20
       });
-      Vue.nextTick(() => {
-        let yAxisElement = element.querySelectorAll(
-          '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
-        );
-        expect(yAxisElement.length).toBe(1);
-        done();
-      });
+      await nextTick();
+      let yAxisElement = element.querySelectorAll(
+        '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
+      );
+      expect(yAxisElement.length).toBe(1);
     });
   });
 });
