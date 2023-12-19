@@ -120,15 +120,13 @@ jobs:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
-      node-version:
-        type: string
       suite: #stable or full
         type: string
     executor: pw-focal-development
-    parallelism: 4
+    parallelism: 6
     steps:
       - build_and_install:
-          node-version: <<parameters.node-version>>
+          node-version: lts/hydrogen
       - when: #Only install chrome-beta when running the 'full' suite to save $$$
           condition:
             equal: ['full', <<parameters.suite>>]
@@ -155,13 +153,10 @@ jobs:
           steps:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-couchdb:
-    parameters:
-      node-version:
-        type: string
     executor: ubuntu
     steps:
       - build_and_install:
-          node-version: <<parameters.node-version>>
+          node-version: lts/hydrogen
       - run: npx playwright@1.39.0 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
@@ -189,15 +184,28 @@ jobs:
             equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  perf-test:
-    parameters:
-      node-version:
-        type: string
+  mem-test:
     executor: pw-focal-development
     steps:
       - build_and_install:
-          node-version: <<parameters.node-version>>
+          node-version: lts/hydrogen
       - run: npm run test:perf:memory
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  perf-test:
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
       - store_test_results:
@@ -211,16 +219,14 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  visual-test:
+  visual-a11y-tests:
     parameters:
-      node-version:
-        type: string
       suite:
         type: string # ci or full
     executor: pw-focal-development
     steps:
       - build_and_install:
-          node-version: <<parameters.node-version>>
+          node-version: lts/hydrogen
       - run: npm run test:e2e:visual:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
@@ -244,14 +250,12 @@ workflows:
           node-version: lts/hydrogen
       - e2e-test:
           name: e2e-stable
-          node-version: lts/hydrogen
           suite: stable
-      - perf-test:
-          node-version: lts/hydrogen
-      - visual-test:
+      - mem-test
+      - perf-test
+      - visual-a11y-tests:
           name: visual-test-ci
           suite: ci
-          node-version: lts/hydrogen
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
@@ -265,16 +269,13 @@ workflows:
           node-version: lts/hydrogen
       - e2e-test:
           name: e2e-full-nightly
-          node-version: lts/hydrogen
           suite: full
-      - perf-test:
-          node-version: lts/hydrogen
-      - visual-test:
+      - mem-test
+      - perf-test
+      - visual-a11y-tests:
           name: visual-test-nightly
           suite: full
-          node-version: lts/hydrogen
-      - e2e-couchdb:
-          node-version: lts/hydrogen
+      - e2e-couchdb
     triggers:
       - schedule:
           cron: '0 0 * * *'

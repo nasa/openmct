@@ -24,14 +24,14 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { test, expect } = require('../../pluginFixtures');
+const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const { VISUAL_URL } = require('../../constants');
 
 const percySnapshot = require('@percy/playwright');
 
-test.describe('Grand Search', () => {
-  let clock;
+test.describe('Grand Search @a11y', () => {
+  let conditionWidget;
   let displayLayout;
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
@@ -41,9 +41,9 @@ test.describe('Grand Search', () => {
       name: 'Visual Test Display Layout'
     });
 
-    clock = await createDomainObjectWithDefaults(page, {
-      type: 'Clock',
-      name: 'Visual Test Clock',
+    conditionWidget = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Widget',
+      name: 'Visual Condition Widget',
       parent: displayLayout.uuid
     });
   });
@@ -52,29 +52,27 @@ test.describe('Grand Search', () => {
     page,
     theme
   }) => {
-    const searchInput = page.getByRole('searchbox', { name: 'Search Input' });
-    const searchResults = page.getByRole('searchbox', { name: 'OpenMCT Search' });
     // Navigate to display layout
     await page.goto(displayLayout.url);
 
-    // Search for the clock object
-    await searchInput.click();
-    await searchInput.fill(clock.name);
-    await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
+    // Search for the object
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill(conditionWidget.name);
+    await expect(page.getByLabel('Search Result').getByText(conditionWidget.name)).toBeVisible();
 
     //Searching for an object returns that object in the grandsearch
-    await percySnapshot(page, `Searching for Clock Object (theme: '${theme}')`);
+    await percySnapshot(page, `Searching for Object (theme: '${theme}')`);
 
     // Enter Edit mode on the Display Layout
     await page.getByRole('button', { name: 'Edit' }).click();
 
-    // Navigate to the clock object while in edit mode on the display layout
-    await searchInput.click();
-    await searchResults.getByText('Visual Test Clock').click();
+    // Navigate to the object while in edit mode on the display layout
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
+    await page.getByLabel('Search Result').getByText(conditionWidget.name).click();
 
     await percySnapshot(
       page,
-      `Preview for clock should display when editing enabled and search item clicked (theme: '${theme}')`
+      `Preview should display when editing enabled and search item clicked (theme: '${theme}')`
     );
 
     // Close the preview
@@ -88,17 +86,20 @@ test.describe('Grand Search', () => {
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Search for the clock object
-    await searchInput.click();
-    await searchInput.fill(clock.name);
-    await expect(searchResults.getByText('Visual Test Clock')).toBeVisible();
+    // Search for the object
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill(conditionWidget.name);
+    await expect(page.getByLabel('Search Result').getByText(conditionWidget.name)).toBeVisible();
 
-    // Navigate to the clock object while not in edit mode on the display layout
-    await searchResults.getByText('Visual Test Clock').click();
+    // Navigate to the object while not in edit mode on the display layout
+    await page.getByLabel('Search Result').getByText(conditionWidget.name).click();
 
     await percySnapshot(
       page,
       `Clicking on search results should navigate to them if not editing (theme: '${theme}')`
     );
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
