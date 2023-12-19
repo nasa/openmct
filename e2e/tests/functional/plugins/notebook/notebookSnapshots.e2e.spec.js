@@ -176,7 +176,7 @@ test.describe('Snapshot image tests', () => {
     });
   });
 
-  test.only('Can drop an image onto a notebook and create a new entry', async ({ page }) => {
+  test('Can drop an image onto a notebook and create a new entry', async ({ page }) => {
     const imageData = await fs.readFile(
       path.resolve(__dirname, '../../../../../src/images/favicons/favicon-96x96.png')
     );
