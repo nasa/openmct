@@ -25,7 +25,7 @@ Tests to verify plot tagging performance.
 */
 
 const { test, expect } = require('../../pluginFixtures');
-const { basicTagsTests, createTags, testTelemetryItem } = require('../../plotTagsUtils');
+const { basicTagsTests, createTags, testTelemetryItem } = require('../../helper/plotTagsUtils');
 const {
   createDomainObjectWithDefaults,
   setRealTimeMode,

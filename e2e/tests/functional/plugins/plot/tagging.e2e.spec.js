@@ -97,7 +97,7 @@ test.describe('Plot Tagging', () => {
     await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
 
     // Click on the search object result
-    await page.getByLabel('Search Result').getByText('Alpha Sine Wave').first().click();
+    await page.getByLabel('OpenMCT Search').getByText('Alpha Sine Wave').first().click();
 
     await waitForPlotsToRender(page);
 

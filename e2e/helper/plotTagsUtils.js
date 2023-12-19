@@ -126,12 +126,10 @@ export async function basicTagsTests(page) {
   // Search for Science Tag
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
   await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
-  await expect(page.getByLabel('Search Result').getByText('Alpha Sine Wave').nth(0)).toContainText(
-    'Science'
-  );
-  await expect(
-    page.getByLabel('Search Result').getByText('Alpha Sine Wave').nth(0)
-  ).not.toContainText('Drilling');
+
+  //Expect Science Tag to be present and and Driving Tags to be deleted
+  await expect(page.getByLabel('Search Result').first()).toContainText('Science');
+  await expect(page.getByLabel('Search Result').first()).not.toContainText('Driving');
 
   // Search for Driving Tag and expect nothing found
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
@@ -142,11 +140,10 @@ export async function basicTagsTests(page) {
 
   await waitForPlotsToRender(page);
 
+  //Navigate to the Inspector and check that all tags have been removed
   await expect(page.getByRole('tab', { name: 'Annotations' })).not.toHaveClass(/is-current/);
   await page.getByRole('tab', { name: 'Annotations' }).click();
   await expect(page.getByRole('tab', { name: 'Annotations' })).toHaveClass(/is-current/);
-
-  //Verify that the tags have been removed
   await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
   const canvas = page.locator('canvas').nth(1);
