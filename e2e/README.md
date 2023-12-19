@@ -134,17 +134,19 @@ npm install
 npm run test:e2e:updatesnapshots
 ```
 
-## Accessibility (a11y) Testing
+## Automated Accessibility (a11y) Testing
 
-Accessibility testing in Open MCT is addressed and enforced in two ways:
-1. Open MCT prefers Playwright's locator strategy for [page.getByRole('')](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role). This enforces that the elements on the page are accessible with assistive technologies but does not enforce conformance to the a11y guidelines (handled in #2)
-2. Open MCT checks for a11y violations and enforces conformance with the [playwright axe plugin](https://playwright.dev/docs/accessibility-testing). The a11y checks are performed with the `scanForA11yViolations` in the visual testsuite. This allows us to leverage the coverage provided visual tests and also specifically address `color-contrast` violations which are specifically exposed in the nature of visual testing.
+Open MCT incorporates accessibility testing through two primary methods to ensure its compliance with accessibility standards:
+
+1. **Usage of Playwright's Locator Strategy**: Open MCT utilizes Playwright's locator strategy, specifically the [page.getByRole('') function](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role), to ensure that web elements are accessible via assistive technologies. This approach focuses on the accessibility of elements rather than full adherence to a11y guidelines, which is covered in the second method.
+
+2. **Enforcing a11y Guidelines with Playwright Axe Plugin**: To rigorously enforce a11y guideline compliance, Open MCT employs the [playwright axe plugin](https://playwright.dev/docs/accessibility-testing). This is achieved through the `scanForA11yViolations` function within the visual testing suite. This method not only benefits from the existing coverage of the visual tests but also targets specific a11y issues, such as `color-contrast` violations, which are particularly pertinent in the context of visual testing.
 
 ### a11y Standards (WCAG and Section 508)
 
 Playwright axe supports a wide range of [WCAG Standards](https://playwright.dev/docs/accessibility-testing#scanning-for-wcag-violations) to test against. Open MCT is testing against the [Section 508](https://www.section508.gov/test/testing-overview/) accessibility guidelines with the intent to support higher standards over time. As of 2024, Section508 requirements now map completely to WCAG 2.0 AA. In the future, Section 508 requirements may map to WCAG 2.1 AA.
 
-### Reading a a11y test failure
+### Reading an a11y test failure
 
 When an a11y test fails, the result must be interpreted in the html test report or the a11y report json artifact stored in the `/test-results/` folder. The json structure should be parsed for `"violations"` by `"id"` and identified `"target"`. Example provided for the 'color-contrast-enhanced' violation.
 
