@@ -71,13 +71,16 @@ $colorGenBg: #fff;
 $colorHeadBg: #eee;
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
+$colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyFg: #fff;
-$colorKeyHov: #00c0f6;
+$colorKeyHov: lighten($colorKey, 10%); //#00c0f6;
+$colorKeyBgHov: lighten($colorKeyBg, 10%);
 $colorKeyFilter: invert(37%) sepia(100%) saturate(686%) hue-rotate(157deg) brightness(102%)
   contrast(102%);
 $colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) brightness(97%)
   contrast(102%);
 $colorKeySelectedBg: $colorKey;
+$colorKeySubtle: pullForward($colorKey, 10%);
 $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: $colorBodyFg;
@@ -237,8 +240,8 @@ $colorBtnFg: #fff;
 $colorBtnReverseFg: $colorBodyBg;
 $colorBtnReverseBg: $colorBodyFg;
 $colorBtnFgHov: $colorBtnFg;
-$colorBtnMajorBg: $colorKey;
-$colorBtnMajorBgHov: $colorKeyHov;
+$colorBtnMajorBg: $colorKeyBg;
+$colorBtnMajorBgHov: $colorKeyBgHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
 $colorBtnCautionBg: #f16f6f;

@@ -72,13 +72,16 @@ $colorGenBg: #222;
 $colorHeadBg: #000;
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
+$colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyFg: #fff;
 $colorKeyHov: lighten($colorKey, 10%);
+$colorKeyBgHov: lighten($colorKeyBg, 10%);
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%)
   contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
   contrast(100%);
-$colorKeySelectedBg: $colorKey;
+$colorKeySelectedBg: $colorKeyBg;
+$colorKeySubtle: pushBack($colorKey, 10%);
 $uiColor: #0093ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
@@ -143,7 +146,6 @@ $colorPausedFg: #333;
 // Base variations
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
-$colorKeySubtle: pushBack($colorKey, 10%);
 
 // Time Colors
 $colorTimeCommonFg: #eee;
@@ -238,8 +240,8 @@ $colorBtnFg: pullForward($colorBodyFg, 10%);
 $colorBtnReverseFg: pullForward($colorBtnFg, 10%);
 $colorBtnReverseBg: pullForward($colorBtnBg, 10%);
 $colorBtnFgHov: $colorBtnFg;
-$colorBtnMajorBg: $colorKey;
-$colorBtnMajorBgHov: $colorKeyHov;
+$colorBtnMajorBg: $colorKeyBg;
+$colorBtnMajorBgHov: $colorKeyBgHov;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
 $colorBtnCautionBg: $colorStatusAlert;
@@ -264,7 +266,7 @@ $shdwCursorGuide: rgba(black, 0.4) 0 0 2px;
 $colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $colorSelectFg: $colorBtnFg;
-$colorSelectArw: lighten($colorBtnBg, 20%); // Does this work?
+$colorSelectArw: #777777; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
@@ -367,8 +369,8 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #6bedff;
 
 // Events
-$colorEventPurpleFg: #6433ff;
-$colorEventRedFg: #cc0000;
+$colorEventPurpleFg: #7d52ff;
+$colorEventRedFg: #f40000;
 $colorEventOrangeFg: orange;
 $colorEventYellowFg: #ffcc00;
 

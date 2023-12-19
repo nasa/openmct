@@ -258,11 +258,8 @@
   &__indicators {
     flex: 1 1 auto;
     flex-wrap: wrap;
+    font-size: 11px;
     justify-content: flex-end;
-
-    .c-indicator .label {
-      font-size: 0.9em;
-    }
   }
 
   /******************************* MAIN AREA */

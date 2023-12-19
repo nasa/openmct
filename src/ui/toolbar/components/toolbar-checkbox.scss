@@ -25,7 +25,7 @@
     position: absolute;
 
     &:checked + label > .c-custom-checkbox__box {
-      background: $colorKey;
+      background: $colorKeyBg;
       &:before {
         color: $colorKeyFg;
         content: $glyph-icon-check;

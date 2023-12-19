@@ -75,8 +75,10 @@ $colorGenBg: #222;
 $colorHeadBg: #262626;
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
+$colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyFg: #fff;
 $colorKeyHov: #26d8ff;
+$colorKeyBgHov: lighten($colorKeyBg, 10%);
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%)
   contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
@@ -369,8 +371,8 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #6bedff;
 
 // Events
-$colorEventPurpleFg: #6433ff;
-$colorEventRedFg: #cc0000;
+$colorEventPurpleFg: #7d52ff;
+$colorEventRedFg: #f40000;
 $colorEventOrangeFg: orange;
 $colorEventYellowFg: #ffcc00;
 
