@@ -20,23 +20,28 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div
-    class="c-indicator c-indicator--clickable icon-camera"
-    :class="[
-      { 's-status-off': snapshotCount === 0 },
-      { 's-status-on': snapshotCount > 0 },
-      { 's-status-caution': snapshotCount === snapshotMaxCount },
-      { 'has-new-snapshot': flashIndicator }
-    ]"
-  >
-    <span class="label c-indicator__label">
-      {{ indicatorTitle }}
-      <button @click="toggleSnapshot">
-        {{ expanded ? 'Hide' : 'Show' }}
-      </button>
-    </span>
-    <span class="c-indicator__count">{{ snapshotCount }}</span>
-  </div>
+  <aside aria-label="Snapshot Indicator">
+    <div
+      class="c-indicator c-indicator--clickable icon-camera"
+      :class="[
+        { 's-status-off': snapshotCount === 0 },
+        { 's-status-on': snapshotCount > 0 },
+        { 's-status-caution': snapshotCount === snapshotMaxCount },
+        { 'has-new-snapshot': flashIndicator }
+      ]"
+    >
+      <span class="label c-indicator__label">
+        {{ indicatorTitle }}
+        <button
+          :aria-label="expanded ? 'Hide Snapshots' : 'Show Snapshots'"
+          @click="toggleSnapshot"
+        >
+          {{ expanded ? 'Hide' : 'Show' }}
+        </button>
+      </span>
+      <span class="c-indicator__count">{{ snapshotCount }}</span>
+    </div>
+  </aside>
 </template>
 
 <script>
