@@ -25,6 +25,7 @@ Tests to verify plot tagging performance.
 */
 
 const { test, expect } = require('../../pluginFixtures');
+const { basicTagsTests, createTags, testTelemetryItem } = require('../../helper/plotTagsUtils');
 const {
   createDomainObjectWithDefaults,
   setRealTimeMode,
@@ -33,135 +34,6 @@ const {
 } = require('../../appActions');
 
 test.describe('Plot Tagging Performance', () => {
-  /**
-   * Given a canvas and a set of points, tags the points on the canvas.
-   * @param {import('@playwright/test').Page} page
-   * @param {HTMLCanvasElement} canvas a telemetry item with a plot
-   * @param {Number} xEnd a telemetry item with a plot
-   * @param {Number} yEnd a telemetry item with a plot
-   * @returns {Promise}
-   */
-  async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
-    await canvas.hover({ trial: true });
-
-    //Alt+Shift Drag Start to select some points to tag
-    await page.keyboard.down('Alt');
-    await page.keyboard.down('Shift');
-
-    await canvas.dragTo(canvas, {
-      sourcePosition: {
-        x: 1,
-        y: 1
-      },
-      targetPosition: {
-        x: xEnd,
-        y: yEnd
-      }
-    });
-
-    //Alt Drag End
-    await page.keyboard.up('Alt');
-    await page.keyboard.up('Shift');
-
-    //Wait for canvas to stabilize.
-    await canvas.hover({ trial: true });
-
-    // add some tags
-    await page.getByText('Annotations').click();
-    await page.getByRole('button', { name: /Add Tag/ }).click();
-    await page.getByPlaceholder('Type to select tag').click();
-    await page.getByText('Driving').click();
-
-    await page.getByRole('button', { name: /Add Tag/ }).click();
-    await page.getByPlaceholder('Type to select tag').click();
-    await page.getByText('Science').click();
-  }
-
-  /**
-   * Given a telemetry item (e.g., a Sine Wave Generator) with a plot, tests that the plot can be tagged.
-   * @param {import('@playwright/test').Page} page
-   * @param {import('../../../../appActions').CreatedObjectInfo} telemetryItem a telemetry item with a plot
-   * @returns {Promise}
-   */
-  async function testTelemetryItem(page, telemetryItem) {
-    // Check that telemetry item also received the tag
-    await page.goto(telemetryItem.url);
-
-    await expect(page.getByText('No tags to display for this item')).toBeVisible();
-
-    const canvas = page.locator('canvas').nth(1);
-
-    //Wait for canvas to stabilize.
-    await canvas.hover({ trial: true });
-
-    // click on the tagged plot point
-    await canvas.click({
-      position: {
-        x: 100,
-        y: 100
-      }
-    });
-
-    await expect(page.getByText('Science')).toBeVisible();
-    await expect(page.getByText('Driving')).toBeHidden();
-  }
-
-  /**
-   * Given a page, tests that tags are searchable, deletable, and persist across reloads.
-   * @param {import('@playwright/test').Page} page
-   * @returns {Promise}
-   */
-  async function basicTagsTests(page) {
-    // Search for Driving
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-
-    // Clicking elsewhere should cause annotation selection to be cleared
-    await expect(page.getByText('No tags to display for this item')).toBeVisible();
-
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('driv');
-    // click on the search result
-    await page
-      .getByRole('searchbox', { name: 'OpenMCT Search' })
-      .getByText(/Sine Wave/)
-      .first()
-      .click();
-
-    // Delete Driving
-    await page.hover('[aria-label="Tag"]:has-text("Driving")');
-    await page.locator('[aria-label="Remove tag Driving"]').click();
-
-    // Search for Science
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-    await expect(page.locator('[aria-label="Search Result"]').nth(0)).toContainText('Science');
-    await expect(page.locator('[aria-label="Search Result"]').nth(0)).not.toContainText('Drilling');
-
-    // Search for Driving
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('driv');
-    await expect(page.getByText('No results found')).toBeVisible();
-
-    //Reload Page
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    // wait for plots to load
-    await waitForPlotsToRender(page);
-
-    await page.getByText('Annotations').click();
-    await expect(page.getByText('No tags to display for this item')).toBeVisible();
-
-    const canvas = page.locator('canvas').nth(1);
-    // click on the tagged plot point
-    await canvas.click({
-      position: {
-        x: 100,
-        y: 100
-      }
-    });
-
-    await expect(page.getByText('Science')).toBeVisible();
-    await expect(page.getByText('Driving')).toBeHidden();
-  }
-
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -212,18 +84,15 @@ test.describe('Plot Tagging Performance', () => {
     await setRealTimeMode(page);
 
     // Search for Science
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
+    await page.getByRole('searchbox', { name: 'Search Input' });
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
+
     // click on the search result
-    await page
-      .getByRole('searchbox', { name: 'OpenMCT Search' })
-      .getByText('Alpha Sine Wave')
-      .first()
-      .click();
-    // wait for plots to load
-    await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+    await page.getByLabel('Search Result').getByText('Alpha Sine Wave').first().click();
+
+    await waitForPlotsToRender(page);
     // expect plot to be paused
-    await expect(page.locator('[title="Resume displaying real-time data"]')).toBeVisible();
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
 
     await setFixedTimeMode(page);
   });

@@ -51,11 +51,13 @@ Next, you should walk through our implementation of Playwright in Open MCT:
 
 ## Types of e2e Testing
 
-e2e testing describes the layer at which a test is performed without prescribing the assertions which are made. Generally, when writing an e2e test, we have three choices to make on an assertion strategy:
+e2e testing describes the layer at which a test is performed without prescribing the assertions which are made. Generally, when writing an e2e test, we have five choices to make on an assertion strategy:
 
 1. Functional - Verifies the functional correctness of the application. Sometimes interchanged with e2e or regression testing.
 2. Visual - Verifies the "look and feel" of the application and can only detect _undesirable changes when compared to a previous baseline_.
 3. Snapshot - Similar to Visual in that it captures the "look" of the application and can only detect _undesirable changes when compared to a previous baseline_. **Generally not preferred due to advanced setup necessary.**
+4. Accessibility - Verifies that the application meets the accessibility standards defined by the [WCAG organization](https://www.w3.org/WAI/standards-guidelines/wcag/).
+5. Performance - Verifies that application provides a performant experience. Like Snapshot testing, these tests are generally not recommended due to their difficulty in providing a consistent result.
 
 When choosing between the different testing strategies, think only about the assertion that is made at the end of the series of test steps. "I want to verify that the Timer plugin functions correctly" vs "I want to verify that the Timer plugin does not look different than originally designed".
 
@@ -132,6 +134,35 @@ npm install
 npm run test:e2e:updatesnapshots
 ```
 
+## Automated Accessibility (a11y) Testing
+
+Open MCT incorporates accessibility testing through two primary methods to ensure its compliance with accessibility standards:
+
+1. **Usage of Playwright's Locator Strategy**: Open MCT utilizes Playwright's locator strategy, specifically the [page.getByRole('') function](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role), to ensure that web elements are accessible via assistive technologies. This approach focuses on the accessibility of elements rather than full adherence to a11y guidelines, which is covered in the second method.
+
+2. **Enforcing a11y Guidelines with Playwright Axe Plugin**: To rigorously enforce a11y guideline compliance, Open MCT employs the [playwright axe plugin](https://playwright.dev/docs/accessibility-testing). This is achieved through the `scanForA11yViolations` function within the visual testing suite. This method not only benefits from the existing coverage of the visual tests but also targets specific a11y issues, such as `color-contrast` violations, which are particularly pertinent in the context of visual testing.
+
+### a11y Standards (WCAG and Section 508)
+
+Playwright axe supports a wide range of [WCAG Standards](https://playwright.dev/docs/accessibility-testing#scanning-for-wcag-violations) to test against. Open MCT is testing against the [Section 508](https://www.section508.gov/test/testing-overview/) accessibility guidelines with the intent to support higher standards over time. As of 2024, Section508 requirements now map completely to WCAG 2.0 AA. In the future, Section 508 requirements may map to WCAG 2.1 AA.
+
+### Reading an a11y test failure
+
+When an a11y test fails, the result must be interpreted in the html test report or the a11y report json artifact stored in the `/test-results/` folder. The json structure should be parsed for `"violations"` by `"id"` and identified `"target"`. Example provided for the 'color-contrast-enhanced' violation.
+
+```json
+  "violations": 
+    {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "html": "<span class=\"label c-indicator__label\">0 Snapshots <button aria-label=\"Show Snapshots\">Show</button></span>",
+        "target": [
+          ".s-status-off > .label.c-indicator__label"
+        ],
+        "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 6.51 (foreground color: #aaaaaa, background color: #262626, font size: 8.1pt (10.8px), font weight: normal). Expected contrast ratio of 7:1"
+      }
+```
+
 ## Performance Testing
 
 The open source performance tests function in three ways which match their naming and folder structure:
@@ -141,6 +172,8 @@ The open source performance tests function in three ways which match their namin
 `./e2e/tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
 
 These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
+
+In addition to the explicit definition of performance tests, we also ensure that our test timeout timing is "tight" to catch performance regressions detectable by action timeouts. i.e. [Notebooks load much slower than they used to #6459](https://github.com/nasa/openmct/issues/6459)
 
 ## Test Architecture and CI
 
@@ -161,8 +194,8 @@ Our file structure follows the type of type of testing being excercised at the e
 |`./tests/performance/`        | Performance tests which should be run on every commit.|
 |`./tests/performance/contract/` | A subset of performance tests which are designed to provide a contract between the open source tests which are run on every commit and the downstream tests which are run post merge and with other frameworks.|
 |`./tests/performance/memory`  | A subset of performance tests which are designed to test for memory leaks.|
-|`./tests/visual/`             | Visual tests.|
-|`./tests/visual/component/`             | Visual tests which are only run against a single component.|
+|`./tests/visual-a11y/`             | Visual tests and accessibility tests.|
+|`./tests/visual-a11y/component/`             | Visual and accessibility tests which are only run against a single component.|
 |`./appActions.js`             | Contains common methods which can be leveraged by test case authors to quickly move through the application when writing new tests.|
 |`./baseFixture.js`            | Contains base fixtures which only extend default `@playwright/test` functionality. The expectation is that these fixtures will be removed as the native Playwright API improves|
 
@@ -180,7 +213,7 @@ Open MCT is leveraging the [config file](https://playwright.dev/docs/test-config
 |`./playwright-local.config.js` | Used when running locally|
 |`./playwright-performance.config.js` | Used when running performance tests in CI or locally|
 |`./playwright-performance-devmode.config.js` | Used when running performance tests in CI or locally|
-|`./playwright-visual.config.js` | Used to run the visual tests in CI or locally|
+|`./playwright-visual-a11y.config.js` | Used to run the visual and a11y tests in CI or locally|
 
 #### Test Tags
 
@@ -191,6 +224,7 @@ Current list of test tags:
 |Test Tag|Description|
 |:-:|-|
 |`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
+|`@a11y` | Test case or test suite to execute playwright-axe accessibility checks and generate a11y reports.|
 |`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
 |`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB). See [note](#utilizing-localstorage)|
@@ -216,7 +250,7 @@ CircleCI
 - Stable e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
-- Visual tests are run in a single resolution on the default `espresso` theme
+- Visual and a11y tests are run in a single resolution on the default `espresso` theme
 
 #### 2. Per-Merge Testing
 
@@ -232,7 +266,7 @@ Nightly Testing in Circle CI
 - Full e2e suite against ubuntu and chrome, firefox, and an MMOC resolution profile
 - Performance tests against ubuntu and chrome
 - CouchDB suite
-- Visual Tests are run in the full profile
+- Visual and a11y Tests are run in the full profile
 
 Github Actions / Workflow
 
@@ -405,7 +439,7 @@ By adhering to this principle, we can create tests that are both robust and refl
 5. **Hide the Tree and Inspector**: Generally, your test will not require comparisons involving the tree and inspector. These aspects are covered in component-specific tests (explained below). To exclude them from the comparison by default, navigate to the root of the main view with the tree and inspector hidden:
     - `await page.goto('./#/browse/mine?hideTree=true&hideInspector=true')`
 
-6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual/component/` folder and limit the scope of the comparison to that component. For instance:
+6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual-a11y/component/` folder and limit the scope of the comparison to that component. For instance:
     ```js
     await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
         scope: treePane
