@@ -201,7 +201,7 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  perf-test-localhost:
+  perf-test:
     executor: pw-focal-development
     steps:
       - build_and_install:
@@ -252,7 +252,7 @@ workflows:
           name: e2e-stable
           suite: stable
       - perf-test-mem
-      - perf-test-localhost
+      - perf-test
       - visual-test:
           name: visual-test-ci
           suite: ci
@@ -271,7 +271,7 @@ workflows:
           name: e2e-full-nightly
           suite: full
       - perf-test-mem
-      - perf-test-localhost
+      - perf-test
       - visual-test:
           name: visual-test-nightly
           suite: full
