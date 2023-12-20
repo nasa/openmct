@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-wait-for-timeout */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -47,11 +48,12 @@ const memoryLeakFilePath = path.resolve(
  *
  */
 
-test.describe('Navigation memory leak is not detected in', () => {
+test.describe('Telemetry eviction for', () => {
   test.slow();
   const startDelta = 60000;
   const endDelta = 15000;
-  const waitPeriod = 1000;
+  const waitPeriod = 2000;
+  const snapshotsPath = path.join(__dirname, '../../../test-data/snapshots');
   test.beforeEach(async ({ page }) => {
     // Go to baseURL
     await page.goto(
@@ -89,24 +91,24 @@ test.describe('Navigation memory leak is not detected in', () => {
   test.only('imagery', async ({ page }) => {
     await navigateToObject(page, 'example-imagery-memory-leak-test');
 
-    await asyncTimeout(startDelta + endDelta);
-    const beforeSnapshotPath = path.join(
-      __dirname,
-      '../../../test-data/snapshots/data/cur/s1.heapsnapshot'
-    );
-    await captureHeapSnapshot(page, beforeSnapshotPath);
+    console.debug(`⏲️  Waiting ${waitPeriod}ms...`);
+    await page.waitForTimeout(waitPeriod);
+    const stage1SnapshotPath = path.join(snapshotsPath, `/data/cur/s1.heapsnapshot`);
+    await captureHeapSnapshot(page, stage1SnapshotPath);
 
-    await asyncTimeout(waitPeriod);
-    const afterSnapshotPath = path.join(
-      __dirname,
-      '../../../test-data/snapshots/data/cur/s2.heapsnapshot'
-    );
-    await captureHeapSnapshot(page, afterSnapshotPath);
+    console.debug(`⏲️  Waiting ${waitPeriod}ms...`);
+    await page.waitForTimeout(waitPeriod);
+    const stage2SnapshotPath = path.join(snapshotsPath, 'data/cur/s2.heapsnapshot');
+    await captureHeapSnapshot(page, stage2SnapshotPath);
 
-    const snapshotPath = path.join(__dirname, '../../../test-data/snapshots');
-    const reader = BrowserInteractionResultReader.from(snapshotPath);
+    console.debug(`⏲️  Waiting ${waitPeriod}ms...`);
+    await page.waitForTimeout(waitPeriod);
+    const stage3SnapshotPath = path.join(snapshotsPath, 'data/cur/s3.heapsnapshot');
+    await captureHeapSnapshot(page, stage3SnapshotPath);
+
+    const reader = BrowserInteractionResultReader.from(snapshotsPath);
     const leaks = await findLeaks(reader);
-    console.info('Leaks:', leaks);
+    expect(leaks.length).toEqual(0);
   });
 
   /**
@@ -134,17 +136,10 @@ test.describe('Navigation memory leak is not detected in', () => {
     await page.waitForTimeout(1400);
   }
 
-  function asyncTimeout(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   async function captureHeapSnapshot(page, outputPath) {
-    await forceGC(page);
     const client = await page.context().newCDPSession(page);
 
     const dir = path.dirname(outputPath);
-    console.debug(`Output Path: ${outputPath}`);
-    console.debug(`Directory: ${dir}`);
 
     try {
       await fs.mkdir(dir, { recursive: true });
@@ -159,25 +154,18 @@ test.describe('Navigation memory leak is not detected in', () => {
       chunks.push(data.chunk);
     }
 
-    function progressHandler(data) {
-      const percent = Math.floor((100 * data.done) / data.total);
-      console.debug(`heap snapshot ${percent}% complete`);
-    }
-
     try {
       client.on('HeapProfiler.addHeapSnapshotChunk', dataHandler);
-      client.on('HeapProfiler.reportHeapSnapshotProgress', progressHandler);
-
+      console.debug(`🚮 Running garbage collection...`);
+      await forceGC(page);
       await client.send('HeapProfiler.enable');
-      await client.send('HeapProfiler.takeHeapSnapshot', { reportProgress: true });
-
+      console.debug(`📸 Capturing heap snapshot to ${outputPath}`);
+      await client.send('HeapProfiler.takeHeapSnapshot');
       client.removeListener('HeapProfiler.addHeapSnapshotChunk', dataHandler);
-      client.removeListener('HeapProfiler.reportHeapSnapshotProgress', progressHandler);
-
       const fullSnapshot = chunks.join('');
       await fs.writeFile(outputPath, fullSnapshot, { encoding: 'UTF-8' });
     } catch (error) {
-      console.error('Error while capturing heap snapshot:', error);
+      console.error('🛑 Error while capturing heap snapshot:', error);
     } finally {
       await client.detach();
     }
