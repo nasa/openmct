@@ -35,11 +35,11 @@
         'l-shell__head--minify-indicators': !headExpanded
       }"
     >
-      <CreateButton class="l-shell__create-button" />
-      <GrandSearch ref="grand-search" />
+      <CreateButton class="l-shell__head-section l-shell__create-button" />
+      <GrandSearch ref="grand-search" class="l-shell__head-section" />
       <StatusIndicators class="l-shell__head-section l-shell__indicators" />
       <button
-        class="l-shell__head__collapse-button c-icon-button"
+        class="l-shell__head-section l-shell__head__collapse-button c-icon-button"
         :class="
           headExpanded
             ? 'l-shell__head__collapse-button--collapse'
