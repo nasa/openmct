@@ -5,7 +5,7 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
   retries: 0, // Visual tests should never retry due to snapshot comparison errors. Leaving as a shim
-  testDir: 'tests/visual',
+  testDir: 'tests/visual-a11y',
   testMatch: '**/*.visual.spec.js', // only run visual tests
   timeout: 60 * 1000,
   workers: 1, //Lower stress on Circle CI Agent for Visual tests https://github.com/percy/cli/discussions/1067

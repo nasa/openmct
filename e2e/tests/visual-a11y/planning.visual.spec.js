@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const {
   setBoundsToSpanAllActivities,
   setDraftStatusForPlan
@@ -32,7 +32,7 @@ const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
-test.describe('Visual - Planning', () => {
+test.describe('Visual - Planning @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -96,5 +96,8 @@ test.describe('Visual - Planning', () => {
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
       scope: snapshotScope
     });
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

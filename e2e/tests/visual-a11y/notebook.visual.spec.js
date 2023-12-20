@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
 const {
@@ -31,7 +31,8 @@ const { VISUAL_URL } = require('../../constants');
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {
-    await startAndAddRestrictedNotebookObject(page);
+    const restrictedNotebook = await startAndAddRestrictedNotebookObject(page);
+    await page.goto(restrictedNotebook.url + '?hideTree=true&hideInspector=true');
   });
 
   test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
@@ -58,7 +59,7 @@ test.describe('Visual - Notebook', () => {
       name: 'Dropped Overlay Plot'
     });
 
-    //Open Tree
+    //Open Tree to perform drag
     await page.getByRole('button', { name: 'Browse' }).click();
 
     await expandTreePaneItemByName(page, myItemsFolderName);
@@ -125,5 +126,8 @@ test.describe('Visual - Notebook', () => {
 
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
