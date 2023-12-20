@@ -460,33 +460,31 @@ test.describe('Example Imagery in Display Layout', () => {
 
 test.describe('Example Imagery in Flexible layout', () => {
   let flexibleLayout;
-  test.describe('Example Imagery in Flexible layout', () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto('./', { waitUntil: 'domcontentloaded' });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-      flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
+    flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
 
-      // Create Example Imagery inside the Flexible Layout
-      await createDomainObjectWithDefaults(page, {
-        type: 'Example Imagery',
-        parent: flexibleLayout.uuid
-      });
-
-      // Navigate back to Flexible Layout
-      await page.goto(flexibleLayout.url);
+    // Create Example Imagery inside the Flexible Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery',
+      parent: flexibleLayout.uuid
     });
 
-    test('Can double-click on the image to view large image', async ({ page }) => {
-      // Double-click on the image to open large view
-      const imageElement = await page.waitForSelector('.image-wrapper');
-      await imageElement.dblclick();
+    // Navigate back to Flexible Layout
+    await page.goto(flexibleLayout.url);
+  });
 
-      // Check if the large view is visible
-      await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+  test('Can double-click on the image to view large image', async ({ page }) => {
+    // Double-click on the image to open large view
+    const imageElement = await page.waitForSelector('.image-wrapper');
+    await imageElement.dblclick();
 
-      // Close the large view
-      await page.getByLabel('Close').click();
-    });
+    // Check if the large view is visible
+    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+
+    // Close the large view
+    await page.getByLabel('Close').click();
   });
 
   // let flexibleLayout;
