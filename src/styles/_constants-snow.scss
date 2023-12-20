@@ -87,7 +87,10 @@ $shdwBtnsOverlay: none;
 
 // Base colors
 $colorBodyBg: #fcfcfc;
+$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
 $colorBodyFg: #666;
+$colorBodyFgSubtle: #888;
 $colorBodyFgEm: #333;
 $colorGenBg: #fff;
 $colorHeadBg: #eee;
@@ -97,12 +100,10 @@ $colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyFg: #fff;
 $colorKeyHov: lighten($colorKey, 10%); //#00c0f6;
 $colorKeyBgHov: lighten($colorKeyBg, 10%);
-$colorKeyFilter: invert(37%) sepia(100%) saturate(686%) hue-rotate(157deg) brightness(102%)
-  contrast(102%);
-$colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) brightness(97%)
-  contrast(102%);
+$colorKeyFilter: invert(37%) sepia(100%) saturate(686%) hue-rotate(157deg) brightness(102%) contrast(102%);
+$colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) brightness(97%) contrast(102%);
 $colorKeySelectedBg: $colorKey;
-$colorKeySubtle: pullForward($colorKey, 10%);
+$colorKeySubtle: pushBack($colorKey, 20%);
 $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: $colorBodyFg;
@@ -129,14 +130,11 @@ $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 $colorStatusFg: #999;
 $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
-$colorStatusInfoFilter: invert(64%) sepia(42%) saturate(416%) hue-rotate(85deg) brightness(93%)
-  contrast(93%);
+$colorStatusInfoFilter: invert(64%) sepia(42%) saturate(416%) hue-rotate(85deg) brightness(93%) contrast(93%);
 $colorStatusAlert: #ff8a0d;
-$colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316deg) brightness(114%)
-  contrast(107%);
+$colorStatusAlertFilter: invert(89%) sepia(26%) saturate(5035%) hue-rotate(316deg) brightness(114%) contrast(107%);
 $colorStatusError: #da0004;
-$colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%)
-  contrast(114%);
+$colorStatusErrorFilter: invert(8%) sepia(96%) saturate(4511%) hue-rotate(352deg) brightness(136%) contrast(114%);
 $colorStatusBtnBg: #666; // Where is this used?
 $colorStatusPartialBg: #c9d6ff;
 $colorStatusCompleteBg: #a4e4b4;
@@ -164,11 +162,6 @@ $colorFilter: $colorFilterBg; // Standalone against $colorBodyBg
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
 
-// Base variations
-$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
-$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
-$colorKeySubtle: pushBack($colorKey, 20%);
-
 // Time Colors
 $colorTimeCommonFg: #eee;
 $colorTimeFixed: #59554c;
@@ -181,7 +174,6 @@ $colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
 $colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
 $colorTimeFixedBtnBgMajor: #a09375;
 $colorTimeFixedBtnFgMajor: #fff;
-
 $colorTimeRealtime: #445890;
 $colorTimeRealtimeBg: $colorTimeRealtime;
 $colorTimeRealtimeFg: #eee;
@@ -192,24 +184,25 @@ $colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
 $colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
 $colorTimeRealtimeBtnBgMajor: #588ffa;
 $colorTimeRealtimeBtnFgMajor: #fff;
-
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(0.8);
 $timeConductorActiveBg: $colorKey;
 $timeConductorActivePanBg: #a0cde1;
 
-/************************************************** BROWSING */
+// Browse
 $browseFrameColor: pullForward($colorBodyBg, 10%);
 $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layouts when frame is showing
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(0.9);
+
+// Missing Items
 $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.4;
 $borderMissing: 1px dashed $colorAlert !important;
 
-/************************************************** EDITING */
+// Edit
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
@@ -232,10 +225,7 @@ $editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make h
 $editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
 $editFrameSelectedShdw: rgba(black, 0.5) 0 1px 5px 2px;
 $editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
-$editFrameMovebarColorFg: pullForward(
-  $editFrameMovebarColorBg,
-  20%
-); // Grippy lines, container size text
+$editFrameMovebarColorFg: pullForward($editFrameMovebarColorBg, 20%); // Grippy lines, container size text
 $editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
 $editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
 $editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
@@ -529,7 +519,7 @@ $transOutTransform: transform $transOutTime ease-in-out;
 $transInBounce: all 200ms cubic-bezier(0.47, 0.01, 0.25, 1.5);
 $transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
 
-// Discrete items, like Notebook entries, Widget rules
+// Discrete items
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
