@@ -19,12 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
 const fs = require('fs').promises;
+const path = require('path');
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 
@@ -176,7 +177,9 @@ test.describe('Snapshot image tests', () => {
   });
 
   test('Can drop an image onto a notebook and create a new entry', async ({ page }) => {
-    const imageData = await fs.readFile('src/images/favicons/favicon-96x96.png');
+    const imageData = await fs.readFile(
+      path.resolve(__dirname, '../../../../../src/images/favicons/favicon-96x96.png')
+    );
     const imageArray = new Uint8Array(imageData);
     const fileData = Array.from(imageArray);
 
@@ -201,14 +204,17 @@ test.describe('Snapshot image tests', () => {
     // drop another image onto the entry
     await page.dispatchEvent('.c-snapshots', 'drop', { dataTransfer: dropTransfer });
 
+    const secondThumbnail = page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).nth(1);
+    await secondThumbnail.waitFor({ state: 'attached' });
     // expect two embedded images now
     expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(2);
 
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More options').click();
 
     await page.getByRole('menuitem', { name: /Remove This Embed/ }).click();
-
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    // Ensure that the thumbnail is removed before we assert
+    await secondThumbnail.waitFor({ state: 'detached' });
 
     // expect one embedded image now as we deleted the other
     expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(1);
