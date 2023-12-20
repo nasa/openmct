@@ -44,10 +44,6 @@
     @include desktop() {
       margin-bottom: $interiorMargin;
     }
-
-    [class*='button'] {
-      color: $colorBtnMajorBg;
-    }
   }
 
   &--reacts {
