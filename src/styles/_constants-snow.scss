@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/****************************************************** SNOW THEME CONSTANTS */
-
+/****************************************************** SNOW THEME */
 // Fonts
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
@@ -42,6 +41,29 @@ $bodyFont: $heroFont;
   font-size: $size;
 }
 
+@mixin discreteItem() {
+  background: $colorDiscreteItemBg;
+  border: 1px solid $colorInteriorBorder;
+  border-radius: $controlCr;
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid $colorBodyBg;
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: $c;
+}
+
 // Functions
 @function buttonBg($c: $colorBtnBg) {
   @return $c;
@@ -55,7 +77,7 @@ $bodyFont: $heroFont;
   @return lighten($val, $amt);
 }
 
-// General
+/**************************************************** CONSTANTS */
 $fontBaseSize: 12px;
 $smallCr: 2px;
 $controlCr: 3px;
@@ -191,10 +213,7 @@ $borderMissing: 1px dashed $colorAlert !important;
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
-$editUIColorHov: pullForward(
-  saturate($uiColor, 10%),
-  20%
-); // Hover color when $editUIColor is applied as a base color
+$editUIColorHov: pullForward(saturate($uiColor, 10%),20%); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
 $editUIBaseColorFg: #4c4c4c; // Toolbar button icon colors, etc.
@@ -516,26 +535,3 @@ $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: rgba(102, 102, 102, 0.1);
-
-@mixin discreteItem() {
-  background: $colorDiscreteItemBg;
-  border: 1px solid $colorInteriorBorder;
-  border-radius: $controlCr;
-
-  &--current-match {
-    background: $colorDiscreteItemCurrentBg;
-  }
-
-  .c-input-inline:hover {
-    background: $colorBodyBg;
-  }
-}
-
-@mixin discreteItemInnerElem() {
-  border: 1px solid $colorBodyBg;
-  border-radius: $controlCr;
-}
-
-@mixin themedButton($c: $colorBtnBg) {
-  background: $c;
-}
