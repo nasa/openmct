@@ -38,6 +38,7 @@
     <div class="l-view-section">
       <stacked-plot-item
         v-for="objectWrapper in compositionObjects"
+        ref="stackedPlotItems"
         :key="objectWrapper.keyString"
         class="c-plot--stacked-container"
         :child-object="objectWrapper.object"
@@ -75,7 +76,7 @@ export default {
     StackedPlotItem,
     PlotLegend
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,

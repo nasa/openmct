@@ -81,7 +81,7 @@ async function createDomainObjectWithDefaults(
   await page.goto(`${parentUrl}`);
 
   //Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click the object specified by 'type'
   await page.click(`li[role='menuitem']:text("${type}")`);
@@ -108,7 +108,7 @@ async function createDomainObjectWithDefaults(
   // Click OK button and wait for Navigate event
   await Promise.all([
     page.waitForLoadState(),
-    page.click('[aria-label="Save"]'),
+    await page.getByRole('button', { name: 'Save' }).click(),
     // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
@@ -120,8 +120,8 @@ async function createDomainObjectWithDefaults(
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
   return {
@@ -182,7 +182,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.goto(`${parentUrl}`);
 
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click 'Plan' menu option
   await page.click(`li:text("Plan")`);
@@ -231,7 +231,7 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.goto(`${parentUrl}`);
 
-  await page.locator('button:has-text("Create")').click();
+  await page.getByRole('button', { name: 'Create' }).click();
 
   await page.locator('li:has-text("Sine Wave Generator")').click();
 

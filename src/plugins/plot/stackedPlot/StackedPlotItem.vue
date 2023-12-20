@@ -34,7 +34,7 @@ import conditionalStylesMixin from './mixins/objectStyles-mixin';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     childObject: {
       type: Object,
@@ -217,7 +217,8 @@ export default {
           provide: {
             openmct,
             domainObject: object,
-            path
+            path,
+            renderWhenVisible: this.renderWhenVisible
           },
           data() {
             return {

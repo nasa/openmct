@@ -274,7 +274,8 @@ export default {
     'change-section-page',
     'update-entry',
     'editing-entry',
-    'entry-selection'
+    'entry-selection',
+    'update-annotations'
   ],
   data() {
     return {
@@ -410,7 +411,7 @@ export default {
       this.manageEmbedLayout();
       this.timestampAndUpdate();
     },
-    convertMarkDownToHtml(text) {
+    convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
         breaks: true,
         renderer: this.renderer
@@ -638,13 +639,16 @@ export default {
       this.entry.text = restoredQuoteBrackets;
       this.timestampAndUpdate();
     },
+    updateAnnotations(newAnnotations) {
+      this.$emit('update-annotations', newAnnotations);
+    },
     selectAndEmitEntry(event, entry) {
       selectEntry({
         element: this.$refs.entry,
         entryId: entry.id,
         domainObject: this.domainObject,
         openmct: this.openmct,
-        onAnnotationChange: this.timestampAndUpdate,
+        onAnnotationChange: this.updateAnnotations,
         notebookAnnotations: this.notebookAnnotations
       });
       event.stopPropagation();

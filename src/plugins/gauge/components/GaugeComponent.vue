@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-gauge__wrapper js-gauge-wrapper" :class="gaugeClasses" :title="gaugeTitle">
+  <div
+    ref="gaugeWrapper"
+    class="c-gauge__wrapper js-gauge-wrapper"
+    :class="gaugeClasses"
+    :title="gaugeTitle"
+  >
     <template v-if="typeDial">
       <svg
         ref="gauge"
@@ -226,7 +231,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter">
+      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>
@@ -339,7 +344,7 @@ const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],
-  inject: ['openmct', 'domainObject', 'composition'],
+  inject: ['openmct', 'domainObject', 'composition', 'renderWhenVisible'],
   data() {
     let gaugeController = this.domainObject.configuration.gaugeController;
 
@@ -402,10 +407,10 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = Math.max(
-        this.rangeLow.toString().length,
-        this.rangeHigh.toString().length
-      );
+      const RANGE_CHARS_MAX =
+        this.rangeLow && this.rangeHigh
+          ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length)
+          : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },
@@ -728,8 +733,7 @@ export default {
         return;
       }
 
-      this.isRendering = true;
-      requestAnimationFrame(() => {
+      this.isRendering = this.renderWhenVisible(() => {
         this.isRendering = false;
 
         this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);

@@ -26,7 +26,7 @@
       <li>
         <series-options
           v-for="series in plotSeries"
-          :key="series.key"
+          :key="series.keyString"
           :item="series"
           :color-palette="colorPalette"
         />

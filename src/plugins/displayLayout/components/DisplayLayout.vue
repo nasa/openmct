@@ -27,6 +27,7 @@
       'is-multi-selected': selectedLayoutItems.length > 1,
       'allow-editing': isEditing
     }"
+    :aria-label="`${domainObject.name} Layout`"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"
@@ -36,6 +37,8 @@
       :grid-size="gridSize"
       :show-grid="showGrid"
       :grid-dimensions="gridDimensions"
+      :aria-label="`${domainObject.name} Layout Grid`"
+      :aria-hidden="showGrid ? 'false' : 'true'"
     />
     <div
       v-if="shouldDisplayLayoutDimensions"

@@ -55,6 +55,67 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
+  test('Generate display layout with 2 child display layouts', async ({ page, context }) => {
+    // Create Display Layout
+    const parent = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Parent Display Layout'
+    });
+    const child1 = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Layout 1',
+      parent: parent.uuid
+    });
+    const child2 = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Layout 2',
+      parent: parent.uuid
+    });
+
+    await page.goto(parent.url);
+    await page.getByLabel('Edit').click();
+    await page.getByLabel(`${child2.name} Layout Grid`).hover();
+    await page.getByLabel('Move Sub-object Frame').nth(1).click();
+    await page.getByLabel('X:').fill('30');
+
+    await page.getByLabel(`${child1.name} Layout Grid`).hover();
+    await page.getByLabel('Move Sub-object Frame').first().click();
+    await page.getByLabel('Y:').fill('30');
+
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    //Save localStorage for future test execution
+    await context.storageState({
+      path: path.join(__dirname, '../../../e2e/test-data/display_layout_with_child_layouts.json')
+    });
+  });
+
+  test('Generate flexible layout with 2 child display layouts', async ({ page, context }) => {
+    // Create Display Layout
+    const parent = await createDomainObjectWithDefaults(page, {
+      type: 'Flexible Layout',
+      name: 'Parent Flexible Layout'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Layout 1',
+      parent: parent.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Layout 2',
+      parent: parent.uuid
+    });
+
+    await page.goto(parent.url);
+
+    //Save localStorage for future test execution
+    await context.storageState({
+      path: path.join(__dirname, '../../../e2e/test-data/flexible_layout_with_child_layouts.json')
+    });
+  });
+
   // TODO: Visual test for the generated object here
   // - Move to using appActions to create the overlay plot
   //   and embedded standard telemetry object

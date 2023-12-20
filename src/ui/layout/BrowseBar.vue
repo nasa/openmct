@@ -143,15 +143,9 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import { SupportedViewTypes } from '../../utils/constants.js';
 import ViewSwitcher from './ViewSwitcher.vue';
 
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'time-strip.view',
-  'example.imagery'
-];
 const PLACEHOLDER_OBJECT = {};
 
 export default {

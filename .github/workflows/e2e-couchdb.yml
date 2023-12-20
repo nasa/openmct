@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/hydrogen'
 
@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      
+
       - run: npm install --cache ~/.npm --no-audit --progress=false
 
       - name: Login to DockerHub
@@ -36,8 +36,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - run: npx playwright@1.36.2 install
+
+      - run: npx playwright@1.39.0 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |

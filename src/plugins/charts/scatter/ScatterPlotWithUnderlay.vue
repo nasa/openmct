@@ -131,6 +131,8 @@ export default {
     if (this.unobserveColorChanges) {
       this.unobserveColorChanges();
     }
+
+    Plotly.purge(this.$refs.plot);
   },
   methods: {
     getUnderlayPlotData() {

@@ -94,6 +94,9 @@ well as assets such as html, css, and images necessary for the UI.
 
 ## Starting an Open MCT application
 
+> [!WARNING]
+> Open MCT provides a development server via `webpack-dev-server` (`npm start`). **This should be used for development purposes only and should never be deployed to a production environment**.
+
 To start a minimally functional Open MCT application, it is necessary to
 include the Open MCT distributable, enable some basic plugins, and bootstrap
 the application. The tutorials walk through the process of getting Open MCT up
@@ -590,35 +593,108 @@ MinMax queries are issued by plots, and may be issued by other types as well.  T
 #### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data.
-They have a simple structure:
+They have a simple structure, provided here as a TypeScript interface:
 
-- `key`: A `string` that uniquely identifies this formatter.
-- `format`: A `function` that takes a raw telemetry value, and returns a
-  human-readable `string` representation of that value. It has one required
-  argument, and three optional arguments that provide context and can be used
-  for returning scaled representations of a value. An example of this is
-  representing time values in a scale such as the time conductor scale. There
-  are multiple ways of representing a point in time, and by providing a minimum
-  scale value, maximum scale value, and a count, it's possible to provide more
-  useful representations of time given the provided limitations.  
-  - `value`: The raw telemetry value in its native type.
-  - `minValue`: An **optional** argument specifying the minimum displayed
-      value.
-  - `maxValue`: An **optional** argument specifying the maximum displayed
-      value.
-  - `count`: An **optional** argument specifying the number of displayed
-      values.
-- `parse`: A `function` that takes a `string` representation of a telemetry
-  value, and returns the value in its native type. **Note** parse might receive an already-parsed value.  This function should be idempotent.
-- `validate`: A `function` that takes a `string` representation of a telemetry
-  value, and returns a `boolean` value indicating whether the provided string
-  can be parsed.
+```ts
+interface Formatter {
+    key: string; // A string that uniquely identifies this formatter.
+
+    format: (
+        value: any, // The raw telemetry value in its native type.
+        minValue?: number, // An optional argument specifying the minimum displayed value.
+        maxValue?: number, // An optional argument specifying the maximum displayed value.
+        count?: number // An optional argument specifying the number of displayed values.
+    ) => string; // Returns a human-readable string representation of the provided value.
+
+    parse: (
+        value: string | any // A string representation of a telemetry value or an already-parsed value.
+    ) => any; // Returns the value in its native type. This function should be idempotent.
+
+    validate: (value: string) => boolean; // Takes a string representation of a telemetry value and returns a boolean indicating whether the provided string can be parsed.
+}
+```
+
+##### Built-in Formats
+
+Open MCT on its own defines a handful of built-in formats:
+
+###### **Number Format (default):** 
+
+Applied to data with `format: 'number'`
+```js
+valueMetadata = {
+    format: 'number'
+    // ...
+};
+```
+
+```ts
+interface NumberFormatter extends Formatter {
+    parse: (x: any) => number;
+    format: (x: number) => string;
+    validate: (value: any) => boolean;
+}
+```
+###### **String Format**:
+
+Applied to data with `format: 'string'`
+```js
+valueMetadata = {
+    format: 'string'
+    // ...
+};
+```
+```ts
+interface StringFormatter extends Formatter {
+    parse: (value: any) => string;
+    format: (value: string) => string;
+    validate: (value: any) => boolean;
+}
+```
+
+###### **Enum Format**:
+Applied to data with `format: 'enum'`
+```js
+valueMetadata = {
+    format: 'enum',
+    enumerations: [
+    {
+        value: 1,
+        string: 'APPLE'
+    }, 
+    {
+        value: 2,
+        string: 'PEAR',
+    },
+    {
+        value: 3,
+        string: 'ORANGE'
+    }]
+    // ...
+};
+```
+
+Creates a two-way mapping between enum string and value to be used in the `parse` and `format` methods.
+Ex:
+- `formatter.parse('APPLE') === 1;`
+- `formatter.format(1) === 'APPLE';`
+
+```ts
+interface EnumFormatter extends Formatter {
+    parse: (value: string) => string;
+    format: (value: number) => string;
+    validate: (value: any) => boolean;
+}
+```
 
 ##### Registering Formats
 
+Formats implement the following interface (provided here as TypeScript for simplicity):
+
+
 Formats are registered with the Telemetry API using the `addFormat` function. eg.
 
-``` javascript
+```javascript
 openmct.telemetry.addFormat({
     key: 'number-to-string',
     format: function (number) {
@@ -1228,3 +1304,61 @@ View provider Example:
     }
 }
 ```
+
+## Visibility-Based Rendering in View Providers
+
+To enhance performance and resource efficiency in OpenMCT, a visibility-based rendering feature has been added. This feature is designed to defer the execution of rendering logic for views that are not currently visible. It ensures that views are only updated when they are in the viewport, similar to how modern browsers handle rendering of inactive tabs but optimized for the OpenMCT tabbed display. It also works when views are scrolled outside the viewport (e.g., in a Display Layout).
+
+### Overview
+
+The show function is responsible for the rendering of a view. An [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) is used internally to determine whether the view is visible. This observer drives the visibility-based rendering feature, accessed via the `renderWhenVisible` function provided in the `viewOptions` parameter.
+
+### Implementing Visibility-Based Rendering
+
+The `renderWhenVisible` function is passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
+
+Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
+
+Monitoring of visibility begins after the first call to `renderWhenVisible` is made.
+
+Here’s the signature for the show function:
+
+`show(element, isEditing, viewOptions)`
+
+  * `element` (HTMLElement) - The DOM element where the view should be rendered.
+  * `isEditing` (boolean) - Indicates whether the view is in editing mode.
+  * `viewOptions` (Object) - An object with configuration options for the view, including:
+    * `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
+
+### Example
+
+An OpenMCT view provider might implement the show function as follows:
+
+```js
+// Define your view provider
+const myViewProvider = {
+  // ... other properties and methods ...
+  show: function (element, isEditing, viewOptions) {
+    // Callback for rendering view content
+    const renderCallback = () => {
+      // Your view rendering logic goes here
+    };
+    
+    // Use the renderWhenVisible function to ensure rendering only happens when view is visible
+    const wasRenderedImmediately = viewOptions.renderWhenVisible(renderCallback);
+
+    // Optionally handle the immediate rendering return value
+    if (wasRenderedImmediately) {
+      console.debug('🪞 Rendering triggered immediately as the view is visible.');
+    } else {
+      console.debug('🛑 Rendering has been deferred until the view becomes visible.');
+    }
+  }
+};
+```
+
+
+Note that `renderWhenVisible` defers rendering while the view is not visible and caters to the latest execution call. This provides responsiveness for dynamic content while ensuring performance optimizations.
+
+Ensure your view logic is prepared to handle potentially multiple deferrals if using this API, as only the last call to renderWhenVisible will be queued for execution upon the view becoming visible.
+

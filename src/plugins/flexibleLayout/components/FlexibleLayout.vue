@@ -59,7 +59,7 @@
         <resize-handle
           v-if="index !== containers.length - 1"
           :index="index"
-          :orientation="rowsLayout ? 'vertical' : 'horizontal'"
+          :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
           :is-editing="isEditing"
           @init-move="startContainerResizing"
           @move="containerResizing"
