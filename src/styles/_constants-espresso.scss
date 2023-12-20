@@ -513,6 +513,7 @@ $transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
+$colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
 @mixin discreteItem() {

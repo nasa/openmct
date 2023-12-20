@@ -129,7 +129,7 @@
     }
 
     &__header {
-      font-size: floor(12px * 0.9);
+      font-size: 11px;
     }
 
     &__label {
@@ -146,7 +146,7 @@
       display: none; // Hidden by default
       background-color: $splitterCollapsedBtnColorBg;
       color: $splitterCollapsedBtnColorFg;
-      font-size: 0.9em;
+      //font-size: 0.9em;
 
       &:hover {
         background-color: $splitterCollapsedBtnColorBgHov;
@@ -226,7 +226,7 @@
           left: 0;
           height: auto;
           width: 100%;
-          padding: $interiorMargin 2px;
+          padding: $interiorMargin 1px;
 
           [class*='label'] {
             text-orientation: mixed;

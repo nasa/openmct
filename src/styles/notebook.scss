@@ -283,8 +283,8 @@
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
-    &:hover {
-        background: rgba($colorBodyFg, 0.3);
+    @include hover() {
+        background: $colorDiscreteItemBgHov;
     }
 
     &.is-selected {
@@ -299,7 +299,6 @@
                         background: $colorInputBgHov;
                     }
                 }
-
             }
         }
     }
