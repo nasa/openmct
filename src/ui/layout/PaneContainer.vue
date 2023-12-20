@@ -39,7 +39,7 @@
       :title="expandTitle"
       @click="toggleCollapse"
     >
-      <span class="l-pane__expand-button__label">{{ label }}</span>
+      <span class="l-pane__expand-button__label icon-plus">{{ label }}</span>
     </button>
     <div class="l-pane__contents">
       <slot></slot>

@@ -22,6 +22,7 @@
 
 <template>
   <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="search">
+    <SearchResultsDropDown ref="searchResultsDropDown" />
     <search
       ref="shell-search"
       class="c-gsearch__input"
@@ -30,7 +31,6 @@
       @clear="searchEverything"
       @click="showSearchResults"
     />
-    <SearchResultsDropDown ref="searchResultsDropDown" />
   </div>
 </template>
 

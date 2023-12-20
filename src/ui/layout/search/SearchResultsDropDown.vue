@@ -21,47 +21,45 @@
 -->
 
 <template>
-  <div class="c-gsearch__dropdown">
-    <div v-show="resultsShown" class="c-gsearch__results-wrapper">
-      <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
-        <div
-          v-if="objectResults && objectResults.length"
-          ref="objectResults"
-          class="c-gsearch__results-section"
-          role="listbox"
-        >
-          <div class="c-gsearch__results-section-title">Object Results</div>
-          <object-search-result
-            v-for="objectResult in objectResults"
-            :key="openmct.objects.makeKeyString(objectResult.identifier)"
-            :result="objectResult"
-            @preview-changed="previewChanged"
-            @click="selectedResult"
-          />
-        </div>
-        <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
-          <div class="c-gsearch__results-section-title">Annotation Results</div>
-          <annotation-search-result
-            v-for="annotationResult in annotationResults"
-            :key="makeKeyForAnnotationResult(annotationResult)"
-            :result="annotationResult"
-            @click="selectedResult"
-          />
-        </div>
-        <div v-if="searchLoading" class="c-gsearch__result-pane-msg">
-          <div class="hint">Searching...</div>
-          <progress-bar :model="{ progressPerc: null }" />
-        </div>
-        <div
-          v-if="
-            !searchLoading &&
-            (!annotationResults || !annotationResults.length) &&
-            (!objectResults || !objectResults.length)
-          "
-          class="c-gsearch__result-pane-msg"
-        >
-          <div class="hint">No results found</div>
-        </div>
+  <div v-show="resultsShown" class="c-gsearch__dropdown">
+    <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
+      <div
+        v-if="objectResults && objectResults.length"
+        ref="objectResults"
+        class="c-gsearch__results-section"
+        role="listbox"
+      >
+        <div class="c-gsearch__results-section-title">Object Results</div>
+        <object-search-result
+          v-for="objectResult in objectResults"
+          :key="openmct.objects.makeKeyString(objectResult.identifier)"
+          :result="objectResult"
+          @preview-changed="previewChanged"
+          @click="selectedResult"
+        />
+      </div>
+      <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
+        <div class="c-gsearch__results-section-title">Annotation Results</div>
+        <annotation-search-result
+          v-for="annotationResult in annotationResults"
+          :key="makeKeyForAnnotationResult(annotationResult)"
+          :result="annotationResult"
+          @click="selectedResult"
+        />
+      </div>
+      <div v-if="searchLoading" class="c-gsearch__result-pane-msg">
+        <div class="hint">Searching...</div>
+        <progress-bar :model="{ progressPerc: null }" />
+      </div>
+      <div
+        v-if="
+          !searchLoading &&
+          (!annotationResults || !annotationResults.length) &&
+          (!objectResults || !objectResults.length)
+        "
+        class="c-gsearch__result-pane-msg"
+      >
+        <div class="hint">No results found</div>
       </div>
     </div>
   </div>

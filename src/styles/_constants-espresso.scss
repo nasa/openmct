@@ -105,7 +105,7 @@ $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) br
 $colorKeySelectedBg: $colorKeyBg;
 $colorKeySubtle: pushBack($colorKey, 10%);
 $uiColor: #0093ff; // Resize bars, splitter bars, etc.
-$colorInteriorBorder: rgba($colorBodyFg, 0.1);
+$colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
 $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
@@ -351,7 +351,7 @@ $colorIndicatorOn: $colorOk;
 $colorIndicatorOff: #777777;
 $colorIndicatorBgHov: rgba($colorHeadFg, 0.1);
 $colorIndicatorMenuBg: $colorHeadBg;
-$colorIndicatorMenuBgShdw: rgba(white, 0.6) 0 0 6px;
+$colorIndicatorMenuBgShdw: rgba(white, 0.3) 0 0 10px 1px;
 $colorIndicatorMenuFg: $colorHeadFg;
 $colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
 
@@ -492,8 +492,8 @@ $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: $colorBodyFgSubtle;
 $splitterCollapsedBtnColorBg: $colorHeadBg;
-$splitterCollapsedBtnColorFg: #777;
-$splitterCollapsedBtnColorBgHov: $colorKey;
+$splitterCollapsedBtnColorFg: #757575;
+$splitterCollapsedBtnColorBgHov: $colorKeyBg;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
 
 // Mobile

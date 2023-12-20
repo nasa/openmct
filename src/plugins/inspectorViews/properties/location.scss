@@ -1,22 +1,23 @@
 .c-path,
 .c-location {
   // Path is two or more items, not clickable
-  // Location used in Inspector, is clickable
+  // Location used in Inspector and search results, is clickable
   display: flex;
 
   &__item {
     display: flex;
+    font-size: 11px;
     align-items: center;
     min-width: 0;
 
     &:not(:last-child) {
       &:after {
-        // color: $colorInspectorPropName;
+        // Right-pointing arrow
+        color: $colorBodyFgSubtle;
         content: $glyph-icon-arrow-right;
         font-family: symbolsfont;
         font-size: 0.7em;
         margin-left: $interiorMarginSm;
-        opacity: 0.8;
       }
     }
   }
