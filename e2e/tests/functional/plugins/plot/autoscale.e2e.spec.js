@@ -24,7 +24,7 @@
 Testsuite for plot autoscale.
 */
 
-const { selectInspectorTab, createDomainObjectWithDefaults } = require('../../../../appActions');
+const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { test, expect } = require('../../../../pluginFixtures');
 test.use({
   viewport: {
@@ -60,7 +60,7 @@ test.describe('Autoscale', () => {
     // enter edit mode
     await page.click('button[title="Edit"]');
 
-    await selectInspectorTab(page, 'Config');
+    await page.getByRole('tab', { name: 'Config' }).click();
     await turnOffAutoscale(page);
 
     await setUserDefinedMinAndMax(page, '-2', '2');
@@ -68,7 +68,7 @@ test.describe('Autoscale', () => {
     // save
     await page.click('button[title="Save"]');
     await Promise.all([
-      page.locator('li[title = "Save and Finish Editing"]').click(),
+      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
       //Wait for Save Banner to appear
       page.waitForSelector('.c-message-banner__message')
     ]);

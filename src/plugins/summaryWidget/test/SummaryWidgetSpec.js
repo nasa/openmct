@@ -22,7 +22,7 @@
 
 import SummaryWidget from '../src/SummaryWidget';
 
-xdescribe('The Summary Widget', function () {
+describe('The Summary Widget', function () {
   let summaryWidget;
   let mockDomainObject;
   let mockOldDomainObject;
@@ -89,9 +89,9 @@ xdescribe('The Summary Widget', function () {
     summaryWidget.show(mockContainer);
   });
 
-  it('queries with legacyId', function () {
-    expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
-  });
+    xit('queries with legacyId', function () {
+      expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
+    });
 
   it('adds its DOM element to the view', function () {
     expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
@@ -144,7 +144,7 @@ xdescribe('The Summary Widget', function () {
     expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
   });
 
-  it('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
+  xit('shows configuration interfaces when in edit mode, and hides them otherwise', function () {
     setTimeout(function () {
       summaryWidget.onEdit([]);
       expect(summaryWidget.editing).toEqual(false);
@@ -159,7 +159,7 @@ xdescribe('The Summary Widget', function () {
     }, 100);
   });
 
-  it('unregisters any registered listeners on a destroy', function () {
+  xit('unregisters any registered listeners on a destroy', function () {
     setTimeout(function () {
       summaryWidget.destroy();
       expect(listenCallbackSpy).toHaveBeenCalled();

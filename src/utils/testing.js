@@ -36,8 +36,7 @@ const DEFAULT_TIME_OPTIONS = {
 };
 
 export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
-  let openmct = new MCT();
-  openmct = markRaw(openmct);
+  const openmct = markRaw(new MCT());
   openmct.install(openmct.plugins.LocalStorage());
   openmct.install(openmct.plugins.UTCTimeSystem());
   openmct.setAssetPath('/base');
@@ -278,6 +277,12 @@ export function getMockTelemetry(opts = {}) {
   }
 
   return telemetry;
+}
+
+// used to inject into tests that require a render
+export function renderWhenVisible(func) {
+  func();
+  return true;
 }
 
 // copy objects a bit more easily

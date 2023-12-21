@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { v4 as uuid } from 'uuid';
+import { uuid } from "uuid";
 
 export default function Migrations(openmct) {
   function getColumnNameKeyMap(domainObject) {
@@ -181,7 +181,7 @@ export default function Migrations(openmct) {
     {
       check(domainObject) {
         return (
-          domainObject.type === 'layout' &&
+          domainObject?.type === 'layout' &&
           domainObject.configuration &&
           domainObject.configuration.layout
         );
@@ -202,7 +202,7 @@ export default function Migrations(openmct) {
     {
       check(domainObject) {
         return (
-          domainObject.type === 'telemetry.fixed' &&
+          domainObject?.type === 'telemetry.fixed' &&
           domainObject.configuration &&
           domainObject.configuration['fixed-display']
         );
@@ -247,7 +247,7 @@ export default function Migrations(openmct) {
     {
       check(domainObject) {
         return (
-          domainObject.type === 'table' &&
+          domainObject?.type === 'table' &&
           domainObject.configuration &&
           domainObject.configuration.table
         );
@@ -276,4 +276,4 @@ export default function Migrations(openmct) {
       }
     }
   ];
-}
+};

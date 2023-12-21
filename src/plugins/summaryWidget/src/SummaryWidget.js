@@ -228,18 +228,19 @@ SummaryWidget.prototype.addOrRemoveDragIndicator = function () {
   });
 };
 
-/**
- * Update the widget's appearance from the configuration of the active rule
- */
-SummaryWidget.prototype.updateWidget = function () {
-  const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
-  const activeRule = this.rulesById[this.activeId];
-  this.applyStyle(this.domElement.querySelector('#widget'), activeRule.getProperty('style'));
-  this.domElement.querySelector('#widget').title = activeRule.getProperty('message');
-  this.domElement.querySelector('#widgetLabel').innerHTML = activeRule.getProperty('label');
-  this.domElement.querySelector('#widgetIcon').classList =
-    WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
-};
+  /**
+   * Update the widget's appearance from the configuration of the active rule
+   */
+  SummaryWidget.prototype.updateWidget = function () {
+    const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
+    const activeRule = this.rulesById[this.activeId];
+
+    this.applyStyle(this.domElement.querySelector('#widget'), activeRule.getProperty('style'));
+    this.domElement.querySelector('#widget').title = activeRule.getProperty('message');
+    this.domElement.querySelector('#widgetLabel').textContent = activeRule.getProperty('label');
+    this.domElement.querySelector('#widgetIcon').classList =
+      WIDGET_ICON_CLASS + ' ' + activeRule.getProperty('icon');
+  };
 
 /**
  * Get the active rule and update the Widget's appearance.

@@ -30,7 +30,8 @@ const REQUEST_DEFAULTS = {
   randomness: 0,
   phase: 0,
   loadDelay: 0,
-  infinityValues: false
+  infinityValues: false,
+  exceedFloat32: false
 };
 
 export default function GeneratorProvider(openmct, StalenessProvider) {
@@ -54,7 +55,8 @@ GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request)
     'randomness',
     'phase',
     'loadDelay',
-    'infinityValues'
+    'infinityValues',
+    'exceedFloat32'
   ];
 
   request = request || {};

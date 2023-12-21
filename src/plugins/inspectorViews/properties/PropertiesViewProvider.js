@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Properties from './Properties.vue';
+import Properties from './PropertiesComponent.vue';
 
 export default function PropertiesViewProvider(openmct) {
   return {

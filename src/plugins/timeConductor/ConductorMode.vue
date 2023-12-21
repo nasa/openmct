@@ -64,6 +64,7 @@ export default {
       }
     }
   },
+  emits: ['mode-updated'],
   data() {
     const mode = this.openmct.time.getMode();
 
@@ -101,7 +102,7 @@ export default {
     setMode(mode) {
       this.setViewFromMode(mode);
 
-      this.$emit('modeUpdated', mode);
+      this.$emit('mode-updated', mode);
     }
   }
 };

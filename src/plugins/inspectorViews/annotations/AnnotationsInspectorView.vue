@@ -65,7 +65,7 @@ export default {
       }
 
       return this.loadedAnnotations.filter((annotation) => {
-        return !annotation.tags && !annotation._deleted;
+        return !annotation.tags;
       });
     },
     tagAnnotations() {
@@ -74,7 +74,7 @@ export default {
       }
 
       return this.loadedAnnotations.filter((annotation) => {
-        return !annotation.tags && !annotation._deleted;
+        return !annotation.tags;
       });
     },
     multiSelection() {
@@ -94,10 +94,10 @@ export default {
       return this?.selection?.[0]?.[0]?.context?.item;
     },
     targetDetails() {
-      return this?.selection?.[0]?.[0]?.context?.targetDetails ?? {};
+      return this?.selection?.[0]?.[0]?.context?.targetDetails ?? [];
     },
     shouldShowTagsEditor() {
-      const showingTagsEditor = Object.keys(this.targetDetails).length > 0;
+      const showingTagsEditor = this.targetDetails?.length > 0;
 
       if (showingTagsEditor) {
         return true;
@@ -106,7 +106,7 @@ export default {
       return false;
     },
     targetDomainObjects() {
-      return this?.selection?.[0]?.[0]?.context?.targetDomainObjects ?? {};
+      return this?.selection?.[0]?.[0]?.context?.targetDomainObjects ?? [];
     },
     selectedAnnotations() {
       return this?.selection?.[0]?.[0]?.context?.annotations;
@@ -167,9 +167,8 @@ export default {
       this.unobserveEntries = {};
 
       this.selection = selection;
-      const targetKeys = Object.keys(this.targetDomainObjects);
-      targetKeys.forEach((targetKey) => {
-        const targetObject = this.targetDomainObjects[targetKey];
+      this.targetDomainObjects.forEach((targetObject) => {
+        const targetKey = targetObject.keyString;
         this.lastLocalAnnotationCreations[targetKey] = targetObject?.annotationLastCreated ?? 0;
         if (!this.unobserveEntries[targetKey]) {
           this.unobserveEntries[targetKey] = this.openmct.objects.observe(

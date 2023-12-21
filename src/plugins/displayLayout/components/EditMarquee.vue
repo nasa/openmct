@@ -58,6 +58,7 @@ export default {
       validator: (arr) => arr && arr.length === 2 && arr.every((el) => typeof el === 'number')
     }
   },
+  emits: ['end-resize'],
   data() {
     return {
       dragPosition: undefined
@@ -182,7 +183,7 @@ export default {
         y: marqueeEnd.y - marqueeStart.y
       };
 
-      this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
+      this.$emit('end-resize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.marqueeStartPosition = undefined;

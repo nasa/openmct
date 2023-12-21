@@ -44,17 +44,16 @@ export default function BarGraphViewProvider(openmct) {
       return domainObject && domainObject.type === BAR_GRAPH_KEY;
     },
 
-    view: function (domainObject, objectPath) {
+    view(domainObject, objectPath) {
       let _destroy = null;
       let component = null;
 
       return {
-        show: function (element) {
+        show(element) {
           let isCompact = isCompactView(objectPath);
 
           const { vNode, destroy } = mount(
             {
-              el: element,
               components: {
                 BarGraphView
               },
@@ -80,7 +79,7 @@ export default function BarGraphViewProvider(openmct) {
           _destroy = destroy;
           component = vNode.componentInstance;
         },
-        destroy: function () {
+        destroy() {
           _destroy();
         },
         onClearData() {

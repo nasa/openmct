@@ -22,7 +22,7 @@
 
 import ConditionManager from '../src/ConditionManager';
 
-xdescribe('A Summary Widget Condition Manager', function () {
+describe('A Summary Widget Condition Manager', function () {
   let conditionManager;
   let mockDomainObject;
   let mockCompObject1;
@@ -181,7 +181,12 @@ xdescribe('A Summary Widget Condition Manager', function () {
       }
     };
 
-    mockComposition = jasmine.createSpyObj('composition', ['on', 'off', 'load', 'triggerCallback']);
+    mockComposition = jasmine.createSpyObj('composition', [
+      'on',
+      'off',
+      'load',
+      'triggerCallback'
+    ]);
     mockComposition.on.and.callFake(function (event, callback, context) {
       mockEventCallbacks[event] = callback.bind(context);
     });
@@ -358,7 +363,7 @@ xdescribe('A Summary Widget Condition Manager', function () {
     });
   });
 
-  it('populates its LAD cache with historical data on load, if available', function (done) {
+  xit('populates its LAD cache with historical data on load, if available', function (done) {
     expect(telemetryRequests.length).toBe(2);
     expect(telemetryRequests[0].object).toBe(mockCompObject1);
     expect(telemetryRequests[1].object).toBe(mockCompObject2);
@@ -379,7 +384,7 @@ xdescribe('A Summary Widget Condition Manager', function () {
     telemetryRequests[1].resolve([mockTelemetryValues.mockCompObject2]);
   });
 
-  it('updates its LAD cache upon receiving telemetry and invokes the appropriate handlers', function () {
+  xit('updates its LAD cache upon receiving telemetry and invokes the appropriate handlers', function () {
     mockTelemetryAPI.triggerTelemetryCallback('mockCompObject1');
     expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual(
       'Its a different string'

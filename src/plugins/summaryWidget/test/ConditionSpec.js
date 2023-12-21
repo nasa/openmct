@@ -22,7 +22,7 @@
 
 import Condition from '../src/Condition';
 
-xdescribe('A summary widget condition', function () {
+describe('A summary widget condition', function () {
   let testCondition;
   let mockConfig;
   let mockConditionManager;

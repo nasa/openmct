@@ -25,7 +25,10 @@
  */
 
 const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+const {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject
+} = require('../../../../appActions');
 const uuid = require('uuid').v4;
 
 test.describe('Gauge', () => {
@@ -53,7 +56,7 @@ test.describe('Gauge', () => {
     await editButtonLocator.click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await saveButtonLocator.click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the gauge
     const swg2 = await createDomainObjectWithDefaults(page, {
@@ -132,5 +135,51 @@ test.describe('Gauge', () => {
     await page.click('button[aria-label="Save"]');
 
     // TODO: Verify changes in the UI
+  });
+
+  test('Gauge does not display NaN when data not available', async ({ page }) => {
+    // Create a Gauge
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge'
+    });
+
+    // Create a Sine Wave Generator in the Gauge with a loading delay
+    const swgWith5sDelay = await createExampleTelemetryObject(page, gauge.uuid);
+
+    await page.goto(swgWith5sDelay.url);
+    await page.getByTitle('More options').click();
+    await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+
+    //Edit Example Telemetry Object to include 5s loading Delay
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Wait until the URL is updated
+    await page.waitForURL(`**/${gauge.uuid}/*`);
+
+    // Nav to the Gauge
+    await page.goto(gauge.url);
+    const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
+    expect(gaugeNoDataText).toBe('--');
+  });
+
+  test('Gauge enforces composition policy', async ({ page }) => {
+    // Create a Gauge
+    await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Unnamed Gauge'
+    });
+
+    // Try to create a Folder into the Gauge. Should be disallowed.
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Folder/ }).click();
+    await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+    await page.getByLabel('Cancel').click();
+
+    // Try to create a Display Layout into the Gauge. Should be disallowed.
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Display Layout/ }).click();
+    await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
   });
 });

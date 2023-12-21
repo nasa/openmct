@@ -20,14 +20,7 @@ import IconPalette from './input/IconPalette';
  * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
  * @param {element} container The DOM element which contains this summary widget
  */
-export default function Rule(
-  ruleConfig,
-  domainObject,
-  openmct,
-  conditionManager,
-  widgetDnD,
-  container
-) {
+export default function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
   eventHelpers.extend(this);
   const self = this;
   const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
@@ -162,8 +155,11 @@ export default function Rule(
   function onDragStart(event) {
     document.querySelectorAll('.t-drag-indicator').forEach((indicator) => {
       // eslint-disable-next-line no-invalid-this
-      const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
-      indicator.innerHTML = ruleHeader;
+      const ruleHeader = self.domElement
+        .querySelectorAll('.widget-rule-header')[0]
+        .cloneNode(true);
+      indicator.textContent = '';
+      indicator.appendChild(ruleHeader);
     });
     self.widgetDnD.setDragImage(
       self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true)
@@ -235,8 +231,8 @@ export default function Rule(
   this.listenTo(this.toggleConfigButton, 'click', toggleConfig);
   this.listenTo(this.trigger, 'change', onTriggerInput);
 
-  this.title.innerHTML = self.config.name;
-  this.description.innerHTML = self.config.description;
+  this.title.innerText = self.config.name;
+  this.description.innerText = self.config.description;
   this.trigger.value = self.config.trigger;
 
   this.listenTo(this.grippy, 'mousedown', onDragStart);
@@ -452,7 +448,7 @@ Rule.prototype.refreshConditions = function () {
       const lastOfType = self.conditionArea.querySelector('li:last-of-type');
       lastOfType.parentNode.insertBefore($condition, lastOfType);
       if (loopCnt > 0) {
-        $condition.querySelector('.t-condition-context').innerHTML = triggerContextStr + ' when';
+        $condition.querySelector('.t-condition-context').innerText = triggerContextStr + ' when';
       }
 
       loopCnt++;
@@ -524,6 +520,6 @@ Rule.prototype.generateDescription = function () {
   }
 
   description = description === '' ? this.config.description : description;
-  this.description.innerHTML = self.config.description;
+  this.description.innerText = self.config.description;
   this.config.description = description;
 };

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 const INSPECTOR_SELECTOR_PREFIX = '.c-inspect-properties__';
 
@@ -67,7 +67,7 @@ describe('the inspector', () => {
 
   it('displays default details for selection', async () => {
     openmct.selection.select(selection);
-    await Vue.nextTick();
+    await nextTick();
 
     const details = getDetails();
     const [title, type, createdBy, modifiedBy, notes, timestamp] = details;
@@ -92,7 +92,7 @@ describe('the inspector', () => {
     folderItem.modified = modifiedTimestamp;
 
     openmct.selection.select(selection);
-    await Vue.nextTick();
+    await nextTick();
 
     const details = getDetails();
     const timestamp = details[details.length - 1];
@@ -115,7 +115,7 @@ describe('the inspector', () => {
     selection[0].context.details = customDetails;
 
     openmct.selection.select(selection);
-    await Vue.nextTick();
+    await nextTick();
 
     const details = getDetails();
 

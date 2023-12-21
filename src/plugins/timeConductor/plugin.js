@@ -23,7 +23,7 @@
 import { markRaw } from 'vue';
 
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
-import Conductor from './Conductor.vue';
+import Conductor from './ConductorComponent.vue';
 
 function isTruthy(a) {
   return Boolean(a);

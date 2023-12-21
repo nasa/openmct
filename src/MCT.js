@@ -45,6 +45,7 @@ import ToolbarRegistry from './ui/registries/ToolbarRegistry';
 import ViewRegistry from './ui/registries/ViewRegistry';
 import ApplicationRouter from './ui/router/ApplicationRouter';
 import Browse from './ui/router/Browse';
+import AppLayout from './ui/layout/AppLayout.vue';
 
 /**
  * Open MCT is an extensible web application for building mission
