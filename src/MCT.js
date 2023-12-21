@@ -38,6 +38,7 @@ import plugins from './plugins/plugins';
 import RemoveActionPlugin from './plugins/remove/plugin';
 import Selection from './selection/Selection';
 import components from './ui/components/components';
+import AppLayout from './ui/layout/AppLayout.vue';
 import Layout from './ui/layout/Layout.vue';
 import PreviewPlugin from './ui/preview/plugin';
 import InspectorViewRegistry from './ui/registries/InspectorViewRegistry';
@@ -45,7 +46,6 @@ import ToolbarRegistry from './ui/registries/ToolbarRegistry';
 import ViewRegistry from './ui/registries/ViewRegistry';
 import ApplicationRouter from './ui/router/ApplicationRouter';
 import Browse from './ui/router/Browse';
-import AppLayout from './ui/layout/AppLayout.vue';
 
 /**
  * Open MCT is an extensible web application for building mission

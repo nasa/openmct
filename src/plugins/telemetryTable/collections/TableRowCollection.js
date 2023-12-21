@@ -154,43 +154,43 @@ export default class TableRowCollection extends EventEmitter {
     });
   }
 
-    mergeSortedRows(incomingRows) {
-      const mergedRows = [];
-      let existingRowIndex = 0;
-      let incomingRowIndex = 0;
+  mergeSortedRows(incomingRows) {
+    const mergedRows = [];
+    let existingRowIndex = 0;
+    let incomingRowIndex = 0;
 
-      while (existingRowIndex < this.rows.length && incomingRowIndex < incomingRows.length) {
-        const existingRow = this.rows[existingRowIndex];
-        const incomingRow = incomingRows[incomingRowIndex];
+    while (existingRowIndex < this.rows.length && incomingRowIndex < incomingRows.length) {
+      const existingRow = this.rows[existingRowIndex];
+      const incomingRow = incomingRows[incomingRowIndex];
 
-        const inPlaceIndex = this.getInPlaceUpdateIndex(incomingRow);
-        if (inPlaceIndex > -1) {
-          this.updateRowInPlace(incomingRow, inPlaceIndex);
-          incomingRowIndex++;
+      const inPlaceIndex = this.getInPlaceUpdateIndex(incomingRow);
+      if (inPlaceIndex > -1) {
+        this.updateRowInPlace(incomingRow, inPlaceIndex);
+        incomingRowIndex++;
+      } else {
+        if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
+          mergedRows.push(existingRow);
+          existingRowIndex++;
         } else {
-          if (this.firstRowInSortOrder(existingRow, incomingRow) === existingRow) {
-            mergedRows.push(existingRow);
-            existingRowIndex++;
-          } else {
-            mergedRows.push(incomingRow);
-            incomingRowIndex++;
-          }
+          mergedRows.push(incomingRow);
+          incomingRowIndex++;
         }
       }
+    }
 
-      // tail of existing rows is all that is left to merge
-      if (existingRowIndex < this.rows.length) {
-        for (existingRowIndex; existingRowIndex < this.rows.length; existingRowIndex++) {
-          mergedRows.push(this.rows[existingRowIndex]);
-        }
+    // tail of existing rows is all that is left to merge
+    if (existingRowIndex < this.rows.length) {
+      for (existingRowIndex; existingRowIndex < this.rows.length; existingRowIndex++) {
+        mergedRows.push(this.rows[existingRowIndex]);
       }
+    }
 
-      // tail of incoming rows is all that is left to merge
-      if (incomingRowIndex < incomingRows.length) {
-        for (incomingRowIndex; incomingRowIndex < incomingRows.length; incomingRowIndex++) {
-          mergedRows.push(incomingRows[incomingRowIndex]);
-        }
+    // tail of incoming rows is all that is left to merge
+    if (incomingRowIndex < incomingRows.length) {
+      for (incomingRowIndex; incomingRowIndex < incomingRows.length; incomingRowIndex++) {
+        mergedRows.push(incomingRows[incomingRowIndex]);
       }
+    }
 
     this.rows = mergedRows;
   }

@@ -20,7 +20,14 @@ import IconPalette from './input/IconPalette';
  * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
  * @param {element} container The DOM element which contains this summary widget
  */
-export default function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
+export default function Rule(
+  ruleConfig,
+  domainObject,
+  openmct,
+  conditionManager,
+  widgetDnD,
+  container
+) {
   eventHelpers.extend(this);
   const self = this;
   const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
@@ -155,9 +162,7 @@ export default function Rule(ruleConfig, domainObject, openmct, conditionManager
   function onDragStart(event) {
     document.querySelectorAll('.t-drag-indicator').forEach((indicator) => {
       // eslint-disable-next-line no-invalid-this
-      const ruleHeader = self.domElement
-        .querySelectorAll('.widget-rule-header')[0]
-        .cloneNode(true);
+      const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
       indicator.textContent = '';
       indicator.appendChild(ruleHeader);
     });

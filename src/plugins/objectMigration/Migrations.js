@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 
 export default function Migrations(openmct) {
   function getColumnNameKeyMap(domainObject) {
@@ -276,4 +276,4 @@ export default function Migrations(openmct) {
       }
     }
   ];
-};
+}

@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin';
 import EventGeneratorPlugin from '../../example/eventGenerator/plugin';
 import ExampleTags from '../../example/exampleTags/plugin';
 import ExampleUser from '../../example/exampleUser/plugin';
 import ExampleFaultSource from '../../example/faultManagement/exampleFaultSource';
-import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin';
 import GeneratorPlugin from '../../example/generator/plugin';
 import ExampleImagery from '../../example/imagery/plugin';
 import AutoflowPlugin from './autoflow/AutoflowTabularPlugin';
@@ -47,6 +47,7 @@ import GaugePlugin from './gauge/GaugePlugin';
 import GoToOriginalAction from './goToOriginalAction/plugin';
 import Hyperlink from './hyperlink/plugin';
 import ImageryPlugin from './imagery/plugin';
+import InspectorDataVisualization from './inspectorDataVisualization/plugin';
 import InspectorViews from './inspectorViews/plugin';
 import ObjectInterceptors from './interceptors/plugin';
 import ISOTimeFormat from './ISOTimeFormat/plugin';
@@ -83,7 +84,6 @@ import UTCTimeSystem from './utcTimeSystem/plugin';
 import ViewDatumAction from './viewDatumAction/plugin';
 import ViewLargeAction from './viewLargeAction/plugin';
 import WebPagePlugin from './webPage/plugin';
-import InspectorDataVisualization from './inspectorDataVisualization/plugin';
 
 const plugins = {};
 
@@ -92,8 +92,7 @@ plugins.example.ExampleUser = ExampleUser;
 plugins.example.ExampleImagery = ExampleImagery;
 plugins.example.ExampleFaultSource = ExampleFaultSource;
 plugins.example.EventGeneratorPlugin = EventGeneratorPlugin;
-plugins.example.ExampleDataVisualizationSourcePlugin =
-  ExampleDataVisualizationSourcePlugin.default;
+plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationSourcePlugin.default;
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
 

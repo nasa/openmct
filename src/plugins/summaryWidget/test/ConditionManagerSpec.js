@@ -181,12 +181,7 @@ describe('A Summary Widget Condition Manager', function () {
       }
     };
 
-    mockComposition = jasmine.createSpyObj('composition', [
-      'on',
-      'off',
-      'load',
-      'triggerCallback'
-    ]);
+    mockComposition = jasmine.createSpyObj('composition', ['on', 'off', 'load', 'triggerCallback']);
     mockComposition.on.and.callFake(function (event, callback, context) {
       mockEventCallbacks[event] = callback.bind(context);
     });

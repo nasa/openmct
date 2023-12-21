@@ -89,9 +89,9 @@ describe('The Summary Widget', function () {
     summaryWidget.show(mockContainer);
   });
 
-    xit('queries with legacyId', function () {
-      expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
-    });
+  xit('queries with legacyId', function () {
+    expect(mockObjectService.getObjects).toHaveBeenCalledWith(['testNamespace:testKey']);
+  });
 
   it('adds its DOM element to the view', function () {
     expect(mockContainer.getElementsByClassName('w-summary-widget').length).toBeGreaterThan(0);
