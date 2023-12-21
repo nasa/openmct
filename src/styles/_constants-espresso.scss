@@ -89,13 +89,13 @@ $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 $colorBodyBg: #2c2c2c;
 $colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
 $colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
-$colorBodyFg: #aaaaaa;
+$colorBodyFg: #acacac;
 $colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
 $colorHeadBg: #000;
 $colorHeadFg: $colorBodyFg;
-$colorKey: #0099cc;
+$colorKey: #009fd4;
 $colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyFg: #fff;
 $colorKeyHov: lighten($colorKey, 10%);
@@ -114,7 +114,7 @@ $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Object labels
-$objectLabelTypeIconOpacity: 0.7;
+$objectLabelTypeIconOpacity: 0.8; //JOHN
 $objectLabelNameColorFg: lighten($colorBodyFg, 10%);
 
 // Layout
