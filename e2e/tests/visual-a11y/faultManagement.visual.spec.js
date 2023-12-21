@@ -21,12 +21,12 @@
  *****************************************************************************/
 /* global __dirname */
 const path = require('path');
-const { test } = require('../../pluginFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 
 const utils = require('../../helper/faultUtils');
 
-test.describe('Fault Management Visual Tests', () => {
+test.describe('Fault Management Visual Tests - @a11y', () => {
   test('icon test', async ({ page, theme }) => {
     await page.addInitScript({
       path: path.join(__dirname, '../../helper/', 'addInitFaultManagementPlugin.js')
@@ -86,5 +86,8 @@ test.describe('Fault Management Visual Tests', () => {
       page,
       `Selected faults highlight the ability to Acknowledge or Shelve above the fault list (theme: '${theme}')`
     );
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

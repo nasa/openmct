@@ -26,13 +26,13 @@
  * @property {Object<string, import('@playwright/test').Locator>} LayoutLocator
  */
 
-const { test } = require('../../pluginFixtures');
+const { test, scanForA11yViolations } = require('../../avpFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
 const percySnapshot = require('@percy/playwright');
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
-test.describe('Visual - Display Layout', () => {
+test.describe('Visual - Display Layout - @a11y', () => {
   test('Resize Marquee surrounds selection', async ({ page, theme }) => {
     const baseline = await setupBaseline(page);
     const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
@@ -69,6 +69,9 @@ test.describe('Visual - Display Layout', () => {
     await percySnapshot(page, `Parent Object in nested layout selected (theme: '${theme}')`, {
       scope: snapshotScope
     });
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
 

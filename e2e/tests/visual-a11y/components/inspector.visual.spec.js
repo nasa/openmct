@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
+const { test, scanForA11yViolations } = require('../../../avpFixtures');
 const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
 const percySnapshot = require('@percy/playwright');
 
@@ -52,5 +52,8 @@ test.describe('Visual - Controlled Clock', () => {
     await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
       scope: inspectorPane
     });
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

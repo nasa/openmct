@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { expect, test } = require('../../pluginFixtures');
+const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 const VISUAL_URL = require('../../constants').VISUAL_URL;
@@ -73,5 +73,8 @@ test.describe('Visual - LAD Table', () => {
       page,
       `LAD Table w/ Sine Wave Generator columns expanded (theme: ${theme})`
     );
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
+const { test, scanForA11yViolations } = require('../../../avpFixtures');
 const {
   expandTreePaneItemByName,
   createDomainObjectWithDefaults
@@ -94,5 +94,8 @@ test.describe('Visual - Tree Pane', () => {
     await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
       scope: treePane
     });
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

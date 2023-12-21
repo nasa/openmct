@@ -24,7 +24,7 @@
 Tests the branding associated with the default deployment. At least the about modal for now
 */
 
-const { test, expect } = require('../../../pluginFixtures');
+const { test, expect, scanForA11yViolations } = require('../../../avpFixtures');
 const percySnapshot = require('@percy/playwright');
 const VISUAL_URL = require('../../../constants').VISUAL_URL;
 
@@ -49,5 +49,8 @@ test.describe('Visual - Branding', () => {
 
     // Take a snapshot of the About modal
     await percySnapshot(page, `About (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
