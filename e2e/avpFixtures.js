@@ -37,7 +37,9 @@ const fs = require('fs');
 const path = require('path');
 const { test, expect } = require('./pluginFixtures');
 const AxeBuilder = require('@axe-core/playwright').default;
+const { findLeaks, BrowserInteractionResultReader } = require('@memlab/api');
 
+const snapshotsPath = path.join(__dirname, '../../../test-data/snapshots');
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';
 
@@ -55,8 +57,7 @@ const TEST_RESULTS_DIR = './test-results';
  * @returns {Promise<object|null>} Returns the accessibility scan results if violations are found,
  *                                  otherwise returns null.
  */
-/* eslint-disable no-undef */
-exports.scanForA11yViolations = async function (page, testCaseName, options = {}) {
+async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
   // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
@@ -93,5 +94,122 @@ exports.scanForA11yViolations = async function (page, testCaseName, options = {}
   }
 };
 
-exports.expect = expect;
-exports.test = test;
+// Function to get JSHeapUsedSize
+function getHeapSize(page) {
+  return page.evaluate(() => {
+    if (window.performance && window.performance.memory) {
+      return window.performance.memory.usedJSHeapSize;
+    }
+    return null;
+  });
+};
+
+async function forceGC(page, repeat = 6) {
+  const client = await page.context().newCDPSession(page);
+  for (let i = 0; i < repeat; i++) {
+    await client.send('HeapProfiler.collectGarbage');
+    // wait for a while and let GC do the job
+    await page.waitForTimeout(200);
+  }
+  await page.waitForTimeout(1400);
+}
+
+async function captureHeapSnapshot(page, outputPath) {
+  const client = await page.context().newCDPSession(page);
+
+  const dir = path.dirname(outputPath);
+
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch (error) {
+    if (error.code !== 'EEXIST') {
+      throw error; // Throw the error if it is not because the directory already exists
+    }
+  }
+  const chunks = [];
+
+  function dataHandler(data) {
+    chunks.push(data.chunk);
+  }
+
+  try {
+    client.on('HeapProfiler.addHeapSnapshotChunk', dataHandler);
+    console.debug(`🚮 Running garbage collection...`);
+    await forceGC(page);
+    await client.send('HeapProfiler.enable');
+    console.debug(`📸 Capturing heap snapshot to ${outputPath}`);
+    await client.send('HeapProfiler.takeHeapSnapshot');
+    client.removeListener('HeapProfiler.addHeapSnapshotChunk', dataHandler);
+    const fullSnapshot = chunks.join('');
+    await fs.writeFile(outputPath, fullSnapshot, { encoding: 'UTF-8' });
+  } catch (error) {
+    console.error('🛑 Error while capturing heap snapshot:', error);
+  } finally {
+    await client.detach();
+  }
+}
+
+/**
+   *
+   * @param {import('@playwright/test').Page} page
+   * @param {*} objectName
+   * @returns
+   */
+async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
+  await page.getByRole('searchbox', { name: 'Search Input' }).click();
+  // Fill Search input
+  await page.getByRole('searchbox', { name: 'Search Input' }).fill(objectName);
+
+  //Search Result Appears and is clicked
+  await page.getByText(objectName, { exact: true }).click();
+
+  // Register a finalization listener on the root node for the view. This tends to be the last thing to be
+  // garbage collected since it has either direct or indirect references to all resources used by the view. Therefore it's a pretty good proxy
+  // for detecting memory leaks.
+  await page.evaluate(() => {
+    window.gcPromise = new Promise((resolve) => {
+      // eslint-disable-next-line no-undef
+      window.fr = new FinalizationRegistry(resolve);
+      window.fr.register(
+        window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild,
+        'navigatedObject',
+        window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild
+      );
+    });
+  });
+
+  // Nav back to folder
+  await page.goto('./#/browse/mine');
+
+  // This next code block blocks until the finalization listener is called and the gcPromise resolved. This means that the root node for the view has been garbage collected.
+  // In the event that the root node is not garbage collected, the gcPromise will never resolve and the test will time out.
+  await page.evaluate(() => {
+    const gcPromise = window.gcPromise;
+    window.gcPromise = null;
+
+    // Manually invoke the garbage collector once all references are removed.
+    window.gc();
+
+    return gcPromise;
+  });
+
+  // Clean up the finalization registry since we don't need it any more.
+  await page.evaluate(() => {
+    window.fr = null;
+  });
+
+  // If we get here without timing out, it means the garbage collection promise resolved and the test passed.
+  return true;
+}
+
+exports = {
+  scanForA11yViolations,
+  getHeapSize,
+  forceGC,
+  captureHeapSnapshot,
+  findLeaks,
+  navigateToObjectAndDetectMemoryLeak,
+  BrowserInteractionResultReader,
+  test,
+  expect
+};
