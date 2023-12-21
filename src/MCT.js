@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* eslint-disable no-undef */
 import EventEmitter from 'EventEmitter';
-import Vue from 'vue';
+import * as Vue from 'vue';
 
 import api from './api/api';
 import BrandingAPI from './api/Branding';
@@ -37,9 +37,7 @@ import MoveActionPlugin from './plugins/move/plugin';
 import plugins from './plugins/plugins';
 import RemoveActionPlugin from './plugins/remove/plugin';
 import Selection from './selection/Selection';
-import components from './ui/components/components';
-import AppLayout from './ui/layout/AppLayout.vue';
-import Layout from './ui/layout/Layout.vue';
+import Layout from './ui/layout/AppLayout.vue';
 import PreviewPlugin from './ui/preview/plugin';
 import InspectorViewRegistry from './ui/registries/InspectorViewRegistry';
 import ToolbarRegistry from './ui/registries/ToolbarRegistry';
@@ -64,7 +62,6 @@ import Browse from './ui/router/Browse';
  */
 export class MCT extends EventEmitter {
   plugins = plugins;
-  components = components;
 
   /**
    * Tracks current selection state of the application.
@@ -331,7 +328,7 @@ export class MCT extends EventEmitter {
     if (!isHeadlessMode) {
       const appLayout = Vue.createApp({
         components: {
-          Layout: Layout
+          Layout
         },
         provide: {
           openmct: Vue.markRaw(this)
