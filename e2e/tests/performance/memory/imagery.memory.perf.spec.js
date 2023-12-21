@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { forceGC, getHeapSize, test, expect } = require('../../avpFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../appActions.js');
+const { forceGC, getHeapSize, test, expect } = require('../../../avpFixtures.js');
+const { createDomainObjectWithDefaults } = require('../../../appActions.js');
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 const snapshotPath = 'e2e/test-data/heapsnapshots/data/cur/';
 

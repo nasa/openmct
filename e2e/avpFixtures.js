@@ -202,7 +202,7 @@ async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
   return true;
 }
 
-exports = {
+module.exports = {
   scanForA11yViolations,
   getHeapSize,
   forceGC,
