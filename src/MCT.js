@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* eslint-disable no-undef */
 import EventEmitter from 'EventEmitter';
-import * as Vue from 'vue';
+import { createApp, markRaw } from 'vue/dist/vue.esm-bundler';
 
 import api from './api/api';
 import BrandingAPI from './api/Branding';
@@ -326,18 +326,11 @@ export class MCT extends EventEmitter {
      * @memberof module:openmct.MCT~
      */
     if (!isHeadlessMode) {
-      const appLayout = Vue.createApp({
-        components: {
-          Layout
-        },
-        provide: {
-          openmct: Vue.markRaw(this)
-        },
-        template: '<Layout ref="layout"></Layout>'
-      });
+      const appLayout = createApp(Layout);
+      appLayout.provide('openmct', markRaw(this));
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
-        this.layout = component.$refs.layout;
+        this.layout = component;
         this.app = appLayout;
         Browse(this);
         window.addEventListener('beforeunload', this.destroy);
