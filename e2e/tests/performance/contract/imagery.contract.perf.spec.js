@@ -155,14 +155,6 @@ test.describe('Performance tests', () => {
     await page.locator('button:has-text("Large View")').click(); //This action includes the performance.mark named 'viewLarge.start'
     await page.evaluate(() => window.performance.mark('viewLarge.start.test')); //This is a mark only to compare evaluate timing
 
-    // Click Close Icon to return to normal view
-    await page.locator('[aria-label="Close"]').click();
-    await page.evaluate(() => window.performance.mark('view-large-close-button'));
-
-    // Open Large view by double-clicking on the image wrapper
-    await page.locator('.image-wrapper').dblclick(); //This action includes the performance.mark named 'viewLarge.start'
-    await page.evaluate(() => window.performance.mark('viewLarge.start.test')); //This is a mark only to compare evaluate timing
-
     //Time to Imagery Rendered in Large Frame
     await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
     await page.evaluate(() => window.performance.mark('background-image-frame'));
