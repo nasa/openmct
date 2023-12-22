@@ -25,13 +25,13 @@
     class="c-fl-container"
     :style="[{ 'flex-basis': sizeString }]"
     :class="{ 'is-empty': !frames.length }"
-    role="group"
-    :aria-label="`Container ${container.id}`"
+    role="grid"
   >
     <div
       v-show="isEditing"
       class="c-fl-container__header"
       draggable="true"
+      role="gridcell"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
@@ -44,12 +44,13 @@
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div class="c-fl-container__frames-holder">
+    <div role="rowheader" class="c-fl-container__frames-holder">
       <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
+          role="gridcell"
           :container-index="index"
           :is-editing="isEditing"
           :object-path="objectPath"

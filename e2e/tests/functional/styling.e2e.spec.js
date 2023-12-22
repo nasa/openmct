@@ -81,7 +81,7 @@ test.describe('Flexible Layout styling', () => {
 
     // Select flexible layout column
     // await page.getByLabel('Stacked Plot Frame').click();
-    await page.getByRole('group', { name: /Container \b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/ }).click();
+    await page.getByRole('gridcell', { name: '50%' }).first().click();
 
     // Expect to find no styles tab
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
