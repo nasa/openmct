@@ -169,6 +169,6 @@ plugins.OperatorStatus = OperatorStatus;
 plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
-plugins.InspectorDataVisualization = InspectorDataVisualization.default;
+plugins.InspectorDataVisualization = InspectorDataVisualization;
 
 export default plugins;
