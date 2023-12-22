@@ -92,7 +92,7 @@ plugins.example.ExampleUser = ExampleUser;
 plugins.example.ExampleImagery = ExampleImagery;
 plugins.example.ExampleFaultSource = ExampleFaultSource;
 plugins.example.EventGeneratorPlugin = EventGeneratorPlugin;
-plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationSourcePlugin.default;
+plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationSourcePlugin;
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
 

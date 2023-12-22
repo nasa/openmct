@@ -185,7 +185,7 @@ export default class TelemetryTable extends EventEmitter {
     }
 
     this.stalenessSubscription[keyString] = {};
-    this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils.default(
+    this.stalenessSubscription[keyString].stalenessUtils = new StalenessUtils(
       this.openmct,
       domainObject
     );
