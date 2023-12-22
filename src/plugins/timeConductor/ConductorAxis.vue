@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import * as d3Axis from 'd3-axis';
+import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
-import * as d3Selection from 'd3-selection';
+import { select } from 'd3-selection';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
@@ -78,9 +78,9 @@ export default {
     }
   },
   mounted() {
-    let vis = d3Selection.select(this.$refs.axisHolder).append('svg:svg');
+    let vis = select(this.$refs.axisHolder).append('svg:svg');
 
-    this.xAxis = d3Axis.axisTop();
+    this.xAxis = axisTop();
     this.dragging = false;
 
     // draw x axis with labels. CSS is used to position them.
