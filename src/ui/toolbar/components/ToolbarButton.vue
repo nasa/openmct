@@ -24,6 +24,8 @@
     <div
       ref="button"
       class="c-icon-button"
+      role="menuitem"
+      :aria-label="options.title"
       :title="options.title"
       :class="{
         [options.icon]: true,
