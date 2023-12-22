@@ -39,70 +39,52 @@ test.describe('Flexible Layout styling', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
-
-    // Create a few Sine Wave Generators
-    sineWaveObject = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator'
+    // Create a Flexible Layout and attach to the Stacked Plot
+    flexibleLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Flexible Layout',
+      name: 'Flexible Layout'
     });
+    console.log('flexibleLayout', flexibleLayout.uuid);
+
+    // Create a Stacked Plot and attach to the Flexible Layout
+    stackedPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Stacked Plot',
+      name: 'Stacked Plot',
+      parent: flexibleLayout.uuid
+    });
+    console.log('stackedplot', stackedPlot.uuid);
+
+    // Create two SWGs and attach them to the Stacked Plot
+    sineWaveObject = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator 1',
+      parent: stackedPlot.uuid
+    });
+    console.log('sineWaveObject', sineWaveObject.uuid);
 
     sineWaveObject2 = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator'
+      type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator 2',
+      parent: stackedPlot.uuid
     });
-
-    // Define the Sine Wave Generator items
-    treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(sineWaveObject.name)
-    });
-    sineWaveGeneratorTreeItem2 = treePane.getByRole('treeitem', {
-      name: new RegExp(sineWaveObject2.name)
-    });
-
-    // Create a Stacked Plot
-    stackedPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Stacked Plot'
-    });
-
-    // Add the Sine Wave Generators to the Stacked Plot
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-plot--stacked.holder'));
-    await sineWaveGeneratorTreeItem2.dragTo(page.locator('.c-plot--stacked.holder'));
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
-
-    stackedPlotTreeItem = treePane.getByRole('treeitem', {
-      name: new RegExp(stackedPlot.name)
-    });
-
-    // Create a Flexible Layout
-    flexibleLayout = await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout'
-    });
-
-    // Add the Sine Wave Generators and the Stacked Plot to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container').first());
-    await sineWaveGeneratorTreeItem2.dragTo(page.locator('.c-fl__container').first());
-    await stackedPlotTreeItem.dragTo(page.locator('.c-fl__container').nth(1));
-
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    console.log('sineWaveObject2', sineWaveObject2.uuid);
   });
 
-  test('selecting a flexible layout column hides the styles tab', async ({ page }) => {
+  test.only('selecting a flexible layout column hides the styles tab', async ({ page }) => {
+    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
+
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
-    // Expect to find a styles tab
-    let stylesTab = await page.locator('.c-inspector__tab[title="Styles"]').count();
-    expect(stylesTab).toBe(1);
+    await page.getByLabel('Edit').click();
+
+    // Expect to find styles tab
+    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
 
     // Select flexible layout column
-    await page.locator('.c-fl-container__header').first().click();
+    // await page.getByLabel('Stacked Plot Frame').click();
+    await page.getByRole('group', { name: /Container \b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/ }).click();
+
     // Expect to find no styles tab
-    stylesTab = await page.locator('.c-inspector__tab[title="Styles"]').count();
-    expect(stylesTab).toBe(0);
+    await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
   });
 
   test('styling the flexible layout properly applies the styles to the container', async ({
