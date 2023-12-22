@@ -23,6 +23,7 @@
   <div ref="createButton" class="c-create-button--w">
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
+      :disabled="isEditing"
       @click.prevent.stop="showCreateMenu"
     >
       <span class="c-button__label">Create</span>
@@ -31,10 +32,19 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import CreateAction from '@/plugins/formActions/CreateAction';
+
+import { useIsEditing } from '../composables/editor';
 
 export default {
   inject: ['openmct'],
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return { isEditing };
+  },
   data: function () {
     return {
       menuItems: {},
