@@ -77,11 +77,11 @@ const timeBetweenSnapshots = 2 * 1000;
 //   });
 // });
 
-test.describe('Performance - Telemetry Memory Tests', () => {
+test.describe.only('Performance - Telemetry Memory Tests', () => {
   let overlayPlot;
   let alphaSineWave;
   let baseHeapSize;
-  let secondHeapSize;
+  let heapSizes;
 
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -104,7 +104,8 @@ test.describe('Performance - Telemetry Memory Tests', () => {
     const initialHeapSize = await getHeapSize(page);
     console.log(`Initial JSHeapUsedSize: ${initialHeapSize}`);
   });
-  test.only('Plots memory does not grow unbounded', async ({ page }) => {
+
+  test('Plots memory does not grow unbounded', async ({ page }) => {
     await page.goto(
       `${overlayPlot.url}?tc.mode=local&tc.startDelta=${startDelta}&tc.endDelta=${endDelta}&tc.timeSystem=utc&view=grid`,
       { waitUntil: 'domcontentloaded' }
@@ -113,16 +114,23 @@ test.describe('Performance - Telemetry Memory Tests', () => {
     await page.waitForTimeout(saturationPeriod);
 
     await forceGC(page);
-    // Get and compare JSHeapUsedSize at different points in the test
     baseHeapSize = await getHeapSize(page);
     console.log(`Initial JSHeapUsedSize: ${baseHeapSize}`);
 
-    await page.waitForTimeout(timeBetweenSnapshots);
-    await forceGC(page);
-    secondHeapSize = await getHeapSize(page);
-    console.log(`Second JSHeapUsedSize: ${secondHeapSize}`);
+    heapSizes = [];
+    for (let i = 0; i < 10; i++) {
+      await page.waitForTimeout(timeBetweenSnapshots);
+      await forceGC(page);
+      const heapSize = await getHeapSize(page);
+      console.log(`Heap Size at iteration ${i}: ${heapSize}`);
+      heapSizes.push(heapSize);
+    }
   });
+
   test.afterEach(async ({ page }) => {
-    expect(secondHeapSize).toBeLessThanOrEqual(baseHeapSize);
+    heapSizes.forEach(heapSize => {
+      expect(heapSize).toBeLessThanOrEqual(baseHeapSize);
+    });
   });
 });
+
