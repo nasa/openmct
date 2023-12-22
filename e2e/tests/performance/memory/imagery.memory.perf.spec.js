@@ -117,6 +117,7 @@ test.describe.only('Performance - Telemetry Memory Tests', () => {
     baseHeapSize = await getHeapSize(page);
     console.log(`Initial JSHeapUsedSize: ${baseHeapSize}`);
 
+    //Temporarily monitor how long it takes memory to grow
     heapSizes = [];
     for (let i = 0; i < 10; i++) {
       await page.waitForTimeout(timeBetweenSnapshots);
