@@ -94,7 +94,13 @@ async function scanForA11yViolations(page, testCaseName, options = {}) {
   }
 };
 
-// Function to get JSHeapUsedSize
+/**
+ * Gets the used JS heap size from the page.
+ * 
+ * @param {import('@playwright/test').Page} page - The page from which to get the heap size.
+ * @returns {Promise<number|null>} The used JS heap size in bytes, or null if not available.
+ * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
+ */
 function getHeapSize(page) {
   return page.evaluate(() => {
     if (window.performance && window.performance.memory) {
@@ -104,19 +110,31 @@ function getHeapSize(page) {
   });
 };
 
+/**
+ * Forces garbage collection. Useful for getting accurate memory usage in 'getHeapSize'.
+ * 
+ * @param {import('@playwright/test').Page} page - The page on which to force garbage collection.
+ * @param {number} [repeat=6] - Number of times to repeat the garbage collection process.
+ * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
+ */
 async function forceGC(page, repeat = 6) {
-  const client = await page.context().newCDPSession(page);
   for (let i = 0; i < repeat; i++) {
     await client.send('HeapProfiler.collectGarbage');
     // wait for a while and let GC do the job
     await page.waitForTimeout(200);
   }
   await page.waitForTimeout(1400);
-}
+};
 
+/**
+ * Captures a heap snapshot and saves it to a specified path by attaching to the CDP session.
+ * 
+ * @param {import('@playwright/test').Page} page - The page from which to capture the heap snapshot.
+ * @param {string} outputPath - The file path where the heap snapshot will be saved.
+ * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
+ */
 async function captureHeapSnapshot(page, outputPath) {
   const client = await page.context().newCDPSession(page);
-
   const dir = path.dirname(outputPath);
 
   try {
@@ -145,27 +163,27 @@ async function captureHeapSnapshot(page, outputPath) {
   } catch (error) {
     console.error('🛑 Error while capturing heap snapshot:', error);
   } finally {
-    await client.detach();
+    await client.detach(); // Ensure that the client is detached after the operation
   }
 }
 
 /**
-   *
-   * @param {import('@playwright/test').Page} page
-   * @param {*} objectName
-   * @returns
-   */
+ * Navigates to an object in the application and checks for memory leaks by forcing garbage collection.
+ * 
+ * @param {import('@playwright/test').Page} page - The page on which the navigation and memory leak detection will be performed.
+ * @param {string} objectName - The name of the object to navigate to.
+ * @returns {Promise<boolean>} Returns true if no memory leak is detected.
+ * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
+ */
 async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
   // Fill Search input
   await page.getByRole('searchbox', { name: 'Search Input' }).fill(objectName);
 
-  //Search Result Appears and is clicked
+  // Search Result Appears and is clicked
   await page.getByText(objectName, { exact: true }).click();
 
-  // Register a finalization listener on the root node for the view. This tends to be the last thing to be
-  // garbage collected since it has either direct or indirect references to all resources used by the view. Therefore it's a pretty good proxy
-  // for detecting memory leaks.
+  // Register a finalization listener on the root node for the view.
   await page.evaluate(() => {
     window.gcPromise = new Promise((resolve) => {
       // eslint-disable-next-line no-undef
@@ -181,26 +199,25 @@ async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
   // Nav back to folder
   await page.goto('./#/browse/mine');
 
-  // This next code block blocks until the finalization listener is called and the gcPromise resolved. This means that the root node for the view has been garbage collected.
-  // In the event that the root node is not garbage collected, the gcPromise will never resolve and the test will time out.
-  await page.evaluate(() => {
+  // Invoke garbage collection using forceGC
+  await forceGC(page);
+
+  // Wait for the garbage collection promise to resolve.
+  const gcCompleted = await page.evaluate(() => {
     const gcPromise = window.gcPromise;
     window.gcPromise = null;
-
-    // Manually invoke the garbage collector once all references are removed.
-    window.gc();
 
     return gcPromise;
   });
 
-  // Clean up the finalization registry since we don't need it any more.
+  // Clean up the finalization registry
   await page.evaluate(() => {
     window.fr = null;
   });
 
-  // If we get here without timing out, it means the garbage collection promise resolved and the test passed.
-  return true;
+  return gcCompleted;
 }
+
 
 module.exports = {
   scanForA11yViolations,
