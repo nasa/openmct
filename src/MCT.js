@@ -210,15 +210,6 @@ export class MCT extends EventEmitter {
   forms = new FormsAPI(this);
   branding = BrandingAPI;
 
-  /**
-   * MCT's annotation API that enables
-   * human-created comments and categorization linked to data products
-   * @type {module:openmct.AnnotationAPI}
-   * @memberof module:openmct.MCT#
-   * @name annotation
-   */
-  annotation = new AnnotationAPI(this);
-
   constructor() {
     super();
     EventEmitter.call(this);
