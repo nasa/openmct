@@ -56,7 +56,7 @@ import LocalStorage from './localStorage/plugin';
 import LocalTimeSystem from './localTimeSystem/plugin';
 import MyItems from './myItems/plugin';
 import NewFolderAction from './newFolderAction/plugin';
-import * as Notebook from './notebook/plugin';
+import { NotebookPlugin, RestrictedNotebookPlugin } from './notebook/plugin';
 import NotificationIndicator from './notificationIndicator/plugin';
 import ObjectMigration from './objectMigration/plugin';
 import OpenInNewTabAction from './openInNewTabAction/plugin';
