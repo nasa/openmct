@@ -76,140 +76,6 @@ import Browse from './ui/router/Browse';
  * @memberof module:openmct
  */
 export class MCT extends EventEmitter {
-  plugins = plugins;
-
-  /**
-   * Tracks current selection state of the application.
-   * @private
-   */
-  selection = new Selection(this);
-
-  /**
-   * MCT's time conductor, which may be used to synchronize view contents
-   * for telemetry- or time-based views.
-   * @type {module:openmct.TimeConductor}
-   * @memberof module:openmct.MCT#
-   * @name conductor
-   */
-  time = new TimeAPI(this);
-
-  /**
-   * An interface for interacting with the composition of domain objects.
-   * The composition of a domain object is the list of other domain
-   * objects it "contains" (for instance, that should be displayed
-   * beneath it in the tree.)
-   *
-   * `composition` may be called as a function, in which case it acts
-   * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
-   *
-   * @type {module:openmct.CompositionAPI}
-   * @memberof module:openmct.MCT#
-   * @name composition
-   */
-  composition = new CompositionAPI(this);
-
-  /**
-   * Registry for views of domain objects which should appear in the
-   * main viewing area.
-   *
-   * @type {module:openmct.ViewRegistry}
-   * @memberof module:openmct.MCT#
-   * @name objectViews
-   */
-  objectViews = new ViewRegistry();
-
-  /**
-   * Registry for views which should appear in the Inspector area.
-   * These views will be chosen based on the selection state.
-   *
-   * @type {module:openmct.InspectorViewRegistry}
-   * @memberof module:openmct.MCT#
-   * @name inspectorViews
-   */
-  inspectorViews = new InspectorViewRegistry();
-
-  /**
-   * Registry for views which should appear in Edit Properties
-   * dialogs, and similar user interface elements used for
-   * modifying domain objects external to its regular views.
-   *
-   * @type {module:openmct.ViewRegistry}
-   * @memberof module:openmct.MCT#
-   * @name propertyEditors
-   */
-  propertyEditors = new ViewRegistry();
-
-  /**
-   * Registry for views which should appear in the toolbar area while
-   * editing. These views will be chosen based on the selection state.
-   *
-   * @type {module:openmct.ToolbarRegistry}
-   * @memberof module:openmct.MCT#
-   * @name toolbars
-   */
-  toolbars = new ToolbarRegistry();
-
-  /**
-   * Registry for domain object types which may exist within this
-   * instance of Open MCT.
-   *
-   * @type {module:openmct.TypeRegistry}
-   * @memberof module:openmct.MCT#
-   * @name types
-   */
-  types = new TypeRegistry();
-
-  /**
-   * An interface for interacting with domain objects and the domain
-   * object hierarchy.
-   *
-   * @type {module:openmct.ObjectAPI}
-   * @memberof module:openmct.MCT#
-   * @name objects
-   */
-  objects = new ObjectAPI(this.types, this);
-
-  /**
-   * An interface for retrieving and interpreting telemetry data associated
-   * with a domain object.
-   *
-   * @type {module:openmct.TelemetryAPI}
-   * @memberof module:openmct.MCT#
-   * @name telemetry
-   */
-  telemetry = new TelemetryAPI(this);
-
-  /**
-   * An interface for creating new indicators and changing them dynamically.
-   *
-   * @type {module:openmct.IndicatorAPI}
-   * @memberof module:openmct.MCT#
-   * @name indicators
-   */
-  indicators = new IndicatorAPI(this);
-
-  /**
-   * MCT's user awareness management, to enable user and
-   * role specific functionality.
-   * @type {module:openmct.UserAPI}
-   * @memberof module:openmct.MCT#
-   * @name user
-   */
-  user = new UserAPI(this);
-
-  notifications = new NotificationAPI();
-  editor = new EditorAPI(this);
-  overlays = new OverlayAPI();
-  tooltips = new ToolTipAPI();
-  menus = new MenuAPI(this);
-  actions = new ActionsAPI(this);
-  status = new StatusAPI(this);
-  priority = PriorityAPI;
-  router = new ApplicationRouter(this);
-  faults = new FaultManagementAPI(this);
-  forms = new FormsAPI(this);
-  branding = BrandingAPI;
-
   constructor() {
     super();
     EventEmitter.call(this);
@@ -223,6 +89,140 @@ export class MCT extends EventEmitter {
 
     this.destroy = this.destroy.bind(this);
     this.defaultClock = 'local';
+
+    this.plugins = plugins;
+
+    /**
+     * Tracks current selection state of the application.
+     * @private
+     */
+    this.selection = new Selection(this);
+
+    /**
+     * MCT's time conductor, which may be used to synchronize view contents
+     * for telemetry- or time-based views.
+     * @type {module:openmct.TimeConductor}
+     * @memberof module:openmct.MCT#
+     * @name conductor
+     */
+    this.time = new TimeAPI(this);
+
+    /**
+     * An interface for interacting with the composition of domain objects.
+     * The composition of a domain object is the list of other domain
+     * objects it "contains" (for instance, that should be displayed
+     * beneath it in the tree.)
+     *
+     * `composition` may be called as a function, in which case it acts
+     * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
+     *
+     * @type {module:openmct.CompositionAPI}
+     * @memberof module:openmct.MCT#
+     * @name composition
+     */
+    this.composition = new CompositionAPI(this);
+
+    /**
+     * Registry for views of domain objects which should appear in the
+     * main viewing area.
+     *
+     * @type {module:openmct.ViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name objectViews
+     */
+    this.objectViews = new ViewRegistry();
+
+    /**
+     * Registry for views which should appear in the Inspector area.
+     * These views will be chosen based on the selection state.
+     *
+     * @type {module:openmct.InspectorViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name inspectorViews
+     */
+    this.inspectorViews = new InspectorViewRegistry();
+
+    /**
+     * Registry for views which should appear in Edit Properties
+     * dialogs, and similar user interface elements used for
+     * modifying domain objects external to its regular views.
+     *
+     * @type {module:openmct.ViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name propertyEditors
+     */
+    this.propertyEditors = new ViewRegistry();
+
+    /**
+     * Registry for views which should appear in the toolbar area while
+     * editing. These views will be chosen based on the selection state.
+     *
+     * @type {module:openmct.ToolbarRegistry}
+     * @memberof module:openmct.MCT#
+     * @name toolbars
+     */
+    this.toolbars = new ToolbarRegistry();
+
+    /**
+     * Registry for domain object types which may exist within this
+     * instance of Open MCT.
+     *
+     * @type {module:openmct.TypeRegistry}
+     * @memberof module:openmct.MCT#
+     * @name types
+     */
+    this.types = new TypeRegistry();
+
+    /**
+     * An interface for interacting with domain objects and the domain
+     * object hierarchy.
+     *
+     * @type {module:openmct.ObjectAPI}
+     * @memberof module:openmct.MCT#
+     * @name objects
+     */
+    this.objects = new ObjectAPI(this.types, this);
+
+    /**
+     * An interface for retrieving and interpreting telemetry data associated
+     * with a domain object.
+     *
+     * @type {module:openmct.TelemetryAPI}
+     * @memberof module:openmct.MCT#
+     * @name telemetry
+     */
+    this.telemetry = new TelemetryAPI(this);
+
+    /**
+     * An interface for creating new indicators and changing them dynamically.
+     *
+     * @type {module:openmct.IndicatorAPI}
+     * @memberof module:openmct.MCT#
+     * @name indicators
+     */
+    this.indicators = new IndicatorAPI(this);
+
+    /**
+     * MCT's user awareness management, to enable user and
+     * role specific functionality.
+     * @type {module:openmct.UserAPI}
+     * @memberof module:openmct.MCT#
+     * @name user
+     */
+    this.user = new UserAPI(this);
+
+    this.notifications = new NotificationAPI();
+    this.editor = new EditorAPI(this);
+    this.overlays = new OverlayAPI();
+    this.tooltips = new ToolTipAPI();
+    this.menus = new MenuAPI(this);
+    this.actions = new ActionsAPI(this);
+    this.status = new StatusAPI(this);
+    this.priority = PriorityAPI;
+    this.router = new ApplicationRouter(this);
+    this.faults = new FaultManagementAPI(this);
+    this.forms = new FormsAPI(this);
+    this.branding = BrandingAPI;
 
     /**
      * MCT's annotation API that enables
