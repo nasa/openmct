@@ -85,3 +85,33 @@ ToolbarRegistry.prototype.addProvider = function (provider) {
 
   this.providers[key] = provider;
 };
+
+/**
+ * Exposes types of toolbars in Open MCT.
+ *
+ * @interface ToolbarProvider
+ * @property {string} key a unique identifier for this toolbar
+ * @property {string} name the human-readable name of this toolbar
+ * @property {string} [description] a longer-form description (typically
+ *           a single sentence or short paragraph) of this kind of toolbar
+ * @memberof module:openmct
+ */
+
+/**
+ * Checks if this provider can supply toolbar for a selection.
+ *
+ * @method forSelection
+ * @memberof module:openmct.ToolbarProvider#
+ * @param {module:openmct.selection} selection
+ * @returns {boolean} 'true' if the toolbar applies to the provided selection,
+ *          otherwise 'false'.
+ */
+
+/**
+ * Provides controls that comprise a toolbar.
+ *
+ * @method toolbar
+ * @memberof module:openmct.ToolbarProvider#
+ * @param {object} selection the selection object
+ * @returns {Object[]} an array of objects defining controls for the toolbar.
+ */

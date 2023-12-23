@@ -23,10 +23,25 @@
 import EventEmitter from 'EventEmitter';
 import { createApp, markRaw } from 'vue/dist/vue.esm-bundler';
 
-import api from './api/api';
+import ActionsAPI from './api/actions/ActionsAPI';
+import AnnotationAPI from './api/annotation/AnnotationAPI';
 import BrandingAPI from './api/Branding';
+import CompositionAPI from './api/composition/CompositionAPI';
+import EditorAPI from './api/Editor';
+import FaultManagementAPI from './api/faultmanagement/FaultManagementAPI';
+import FormsAPI from './api/forms/FormsAPI';
+import IndicatorAPI from './api/indicators/IndicatorAPI';
+import MenuAPI from './api/menu/MenuAPI';
+import NotificationAPI from './api/notifications/NotificationAPI';
+import ObjectAPI from './api/objects/ObjectAPI';
 import OverlayAPI from './api/overlays/OverlayAPI';
+import PriorityAPI from './api/priority/PriorityAPI';
+import StatusAPI from './api/status/StatusAPI';
+import TelemetryAPI from './api/telemetry/TelemetryAPI';
+import TimeAPI from './api/time/TimeAPI';
 import ToolTipAPI from './api/tooltips/ToolTipAPI';
+import TypeRegistry from './api/types/TypeRegistry';
+import UserAPI from './api/user/UserAPI';
 import DuplicateActionPlugin from './plugins/duplicate/plugin';
 import ExportAsJSONAction from './plugins/exportAsJSONAction/plugin';
 import ImageryPlugin from './plugins/imagery/plugin';
@@ -76,7 +91,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name conductor
    */
-  time = new api.TimeAPI(this);
+  time = new TimeAPI(this);
 
   /**
    * An interface for interacting with the composition of domain objects.
@@ -91,7 +106,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name composition
    */
-  composition = new api.CompositionAPI(this);
+  composition = new CompositionAPI(this);
 
   /**
    * Registry for views of domain objects which should appear in the
@@ -142,7 +157,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name types
    */
-  types = new api.TypeRegistry();
+  types = new TypeRegistry();
 
   /**
    * An interface for interacting with domain objects and the domain
@@ -152,7 +167,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name objects
    */
-  objects = new api.ObjectAPI(this.types, this);
+  objects = new ObjectAPI(this.types, this);
 
   /**
    * An interface for retrieving and interpreting telemetry data associated
@@ -162,7 +177,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name telemetry
    */
-  telemetry = new api.TelemetryAPI(this);
+  telemetry = new TelemetryAPI(this);
 
   /**
    * An interface for creating new indicators and changing them dynamically.
@@ -171,7 +186,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name indicators
    */
-  indicators = new api.IndicatorAPI(this);
+  indicators = new IndicatorAPI(this);
 
   /**
    * MCT's user awareness management, to enable user and
@@ -180,19 +195,19 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name user
    */
-  user = new api.UserAPI(this);
+  user = new UserAPI(this);
 
-  notifications = new api.NotificationAPI();
-  editor = new api.EditorAPI(this);
+  notifications = new NotificationAPI();
+  editor = new EditorAPI(this);
   overlays = new OverlayAPI();
   tooltips = new ToolTipAPI();
-  menus = new api.MenuAPI(this);
-  actions = new api.ActionsAPI(this);
-  status = new api.StatusAPI(this);
-  priority = api.PriorityAPI;
+  menus = new MenuAPI(this);
+  actions = new ActionsAPI(this);
+  status = new StatusAPI(this);
+  priority = PriorityAPI;
   router = new ApplicationRouter(this);
-  faults = new api.FaultManagementAPI(this);
-  forms = new api.FormsAPI(this);
+  faults = new FaultManagementAPI(this);
+  forms = new FormsAPI(this);
   branding = BrandingAPI;
 
   /**
@@ -202,7 +217,7 @@ export class MCT extends EventEmitter {
    * @memberof module:openmct.MCT#
    * @name annotation
    */
-  annotation = new api.AnnotationAPI(this);
+  annotation = new AnnotationAPI(this);
 
   constructor() {
     super();
@@ -225,7 +240,7 @@ export class MCT extends EventEmitter {
      * @memberof module:openmct.MCT#
      * @name annotation
      */
-    this.annotation = new api.AnnotationAPI(this);
+    this.annotation = new AnnotationAPI(this);
 
     // Plugins that are installed by default
     this.install(this.plugins.Plot());
