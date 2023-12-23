@@ -38,20 +38,20 @@ import TypeRegistry from './types/TypeRegistry';
 import UserAPI from './user/UserAPI';
 
 export default {
-  ActionsAPI: ActionsAPI,
-  CompositionAPI: CompositionAPI,
-  EditorAPI: EditorAPI,
-  FaultManagementAPI: FaultManagementAPI,
-  FormsAPI: FormsAPI,
-  IndicatorAPI: IndicatorAPI,
-  MenuAPI: MenuAPI,
-  NotificationAPI: NotificationAPI,
-  ObjectAPI: ObjectAPI,
-  PriorityAPI: PriorityAPI,
-  StatusAPI: StatusAPI,
-  TelemetryAPI: TelemetryAPI,
-  TimeAPI: TimeAPI,
-  TypeRegistry: TypeRegistry,
-  UserAPI: UserAPI,
-  AnnotationAPI: AnnotationAPI
+  ActionsAPI,
+  CompositionAPI,
+  EditorAPI,
+  FaultManagementAPI,
+  FormsAPI,
+  IndicatorAPI,
+  MenuAPI,
+  NotificationAPI,
+  ObjectAPI,
+  PriorityAPI,
+  StatusAPI,
+  TelemetryAPI,
+  TimeAPI,
+  TypeRegistry,
+  UserAPI,
+  AnnotationAPI
 };
