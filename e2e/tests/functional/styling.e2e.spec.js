@@ -179,8 +179,8 @@ test.describe('Flexible Layout styling', () => {
     page
   }) => {
     // Set background and font color on Stacked Plot object
-    const backgroundColor = 'rgb(91, 15, 0)';
-    const textColor = 'rgb(230, 184, 175)';
+    const backgroundColor = '#5b0f00';
+    const textColor = '#e6b8af';
     const inheritedBackgroundColor = '#000000'; // inherited from the theme
     const inheritedColor = '#aaaaaa'; // inherited from the body style
 
@@ -217,6 +217,7 @@ test.describe('Flexible Layout styling', () => {
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
+    //Select the 'No Style' option
     await setStyles(page, 'No Style', 'No Style', page.getByLabel('Stacked Plot Frame'));
 
     // Check styles using checkStyles function
@@ -260,8 +261,8 @@ function hexToRGB(hex) {
  * Sets the background and text color of a given element.
  *
  * @param {object} page - The Playwright page object.
- * @param {string} backgroundColorHex - The hex value of the background color to set.
- * @param {string} textColorHex - The hex value of the text color to set.
+ * @param {string} backgroundColorHex - The hex value of the background color to set, or 'No Style'.
+ * @param {string} textColorHex - The hex value of the text color to set, or 'No Style'.
  * @param {object} locator - The Playwright locator for the element whose style is to be set.
  */
 async function setStyles(page, backgroundColorHex, textColorHex, locator) {
