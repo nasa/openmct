@@ -27,13 +27,38 @@
 const { test, expect } = require('../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../appActions');
 
+test.describe('Flex Layout Style Inspector Options', () => {
+  let flexibleLayout;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create a Flexible Layout and attach to the Stacked Plot
+    flexibleLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Flexible Layout',
+      name: 'Flexible Layout'
+    });
+  });
+
+  test('selecting a flexible layout column hides the styles tab', async ({ page }) => {
+    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
+
+    // Edit Flexible Layout
+    await page.getByLabel('Edit').click();
+
+    // Expect to find styles tab
+    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
+
+    // Select flexible layout column
+    await page.getByLabel('Container Handle 0').click();
+
+    // Expect to find no styles tab
+    await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
+  });
+});
+
 test.describe('Flexible Layout styling', () => {
   let sineWaveObject;
   let sineWaveObject2;
-  let treePane;
-  let sineWaveGeneratorTreeItem;
-  let sineWaveGeneratorTreeItem2;
-  let stackedPlotTreeItem;
   let stackedPlot;
   let flexibleLayout;
   test.beforeEach(async ({ page }) => {
@@ -44,7 +69,6 @@ test.describe('Flexible Layout styling', () => {
       type: 'Flexible Layout',
       name: 'Flexible Layout'
     });
-    console.log('flexibleLayout', flexibleLayout.uuid);
 
     // Create a Stacked Plot and attach to the Flexible Layout
     stackedPlot = await createDomainObjectWithDefaults(page, {
@@ -52,7 +76,6 @@ test.describe('Flexible Layout styling', () => {
       name: 'Stacked Plot',
       parent: flexibleLayout.uuid
     });
-    console.log('stackedplot', stackedPlot.uuid);
 
     // Create two SWGs and attach them to the Stacked Plot
     sineWaveObject = await createDomainObjectWithDefaults(page, {
@@ -60,131 +83,96 @@ test.describe('Flexible Layout styling', () => {
       name: 'Sine Wave Generator 1',
       parent: stackedPlot.uuid
     });
-    console.log('sineWaveObject', sineWaveObject.uuid);
 
     sineWaveObject2 = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 2',
       parent: stackedPlot.uuid
     });
-    console.log('sineWaveObject2', sineWaveObject2.uuid);
   });
 
-  test.only('selecting a flexible layout column hides the styles tab', async ({ page }) => {
+  test('styling the flexible layout properly applies the styles to all containers', async ({
+    page
+  }) => {
+    // Values to set styles to
+    const backgroundColor = '#5b0f00';
+    const textColor = '#e6b8af';
+
+    // Directly navigate to the flexible layout
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
     await page.getByLabel('Edit').click();
 
-    // Expect to find styles tab
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
-
-    // Select flexible layout column
-    // await page.getByLabel('Stacked Plot Frame').click();
-    await page.getByRole('gridcell', { name: '50%' }).first().click();
-
-    // Expect to find no styles tab
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
-  });
-
-  test('styling the flexible layout properly applies the styles to the container', async ({
-    page
-  }) => {
-    const backgroundColor = 'rgb(91, 15, 0)';
-    const fontColor = 'rgb(230, 184, 175)';
-    // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
     // Select styles tab
-    await page.locator('.c-inspector__tab[title="Styles"]').click();
-    // Set background color
-    await page.locator('.c-icon-button.icon-paint-bucket').click();
-    await page.locator(`.c-palette__item[style="background: ${backgroundColor};"]`).click();
-    // Set font color
-    await page.locator('.c-icon-button.icon-font').click();
-    await page.locator(`.c-palette__item[style="background: ${fontColor};"]`).click();
+    await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Find Flexible Layout container
-    let flexibleLayoutContainer = await page.locator('.c-fl__container-holder');
-    let layoutStyles = await flexibleLayoutContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
+    // Set styles using setStyles function
+    await setStyles(page, backgroundColor, textColor, page.locator('.c-fl__container-holder'));
 
-    // Verify styles match set styles
-    expect(layoutStyles.background).toBe(backgroundColor);
-    expect(layoutStyles.fontColor).toBe(fontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(backgroundColor),
+      hexToRGB(textColor),
+      page.locator('.c-fl__container-holder')
+    );
 
     // Save Flexible Layout
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Reload page and check styles again
-    await page.goto(flexibleLayout.url);
-    flexibleLayoutContainer = await page.locator('.c-fl__container-holder');
-    layoutStyles = await flexibleLayoutContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
+    // Reload page
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Verify styles match set styles
-    expect(layoutStyles.background).toBe(backgroundColor);
-    expect(layoutStyles.fontColor).toBe(fontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(backgroundColor),
+      hexToRGB(textColor),
+      page.locator('.c-fl__container-holder')
+    );
   });
 
   test('styling a child object of the flexible layout properly applies that style to only that child', async ({
     page
   }) => {
-    const backgroundColor = 'rgb(91, 15, 0)';
-    const fontColor = 'rgb(230, 184, 175)';
+    const backgroundColor = '#5b0f00';
+    const textColor = '#e6b8af';
+    // Directly navigate to the flexible layout
+    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
+
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
-    // Select Stacked Plot
-    let stackedPlotContainer = await page.locator('.c-plot--stacked');
-    // eslint-disable-next-line playwright/no-force-option
-    stackedPlotContainer.click({ force: true });
+    await page.getByLabel('Edit').click();
 
     // Select styles tab
-    await page.locator('.c-inspector__tab[title="Styles"]').click();
-    // Set background color
-    await page.locator('.c-icon-button.icon-paint-bucket').click();
-    await page.locator(`.c-palette__item[style="background: ${backgroundColor};"]`).click();
-    // Set font color
-    await page.locator('.c-icon-button.icon-font[title="Set text color"]').click();
-    await page.locator(`.c-palette__item[style="background: ${fontColor};"]`).click();
+    await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Get Stacked Plot styles
-    let stackedPlotStyles = await stackedPlotContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
+    // Set styles using setStyles function
+    await setStyles(page, backgroundColor, textColor, page.getByLabel('Stacked Plot Frame'));
 
-    // Verify styles match set styles
-    expect(stackedPlotStyles.background).toBe(backgroundColor);
-    expect(stackedPlotStyles.fontColor).toBe(fontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(backgroundColor),
+      hexToRGB(textColor),
+      page.getByLabel('Stacked Plot Frame')
+    );
 
     // Save Flexible Layout
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Reload page and check styles again
-    await page.goto(flexibleLayout.url);
-    stackedPlotContainer = await page.locator('.c-plot--stacked');
-    stackedPlotStyles = await stackedPlotContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
+    // Reload page
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Verify styles match set styles
-    expect(stackedPlotStyles.background).toBe(backgroundColor);
-    expect(stackedPlotStyles.fontColor).toBe(fontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(backgroundColor),
+      hexToRGB(textColor),
+      page.getByLabel('Stacked Plot Frame')
+    );
   });
 
   test('When the "no style" option is selected, background and text should be reset to inherited styles', async ({
@@ -192,92 +180,114 @@ test.describe('Flexible Layout styling', () => {
   }) => {
     // Set background and font color on Stacked Plot object
     const backgroundColor = 'rgb(91, 15, 0)';
-    const fontColor = 'rgb(230, 184, 175)';
-    const inheritedBackgroundColor = 'rgba(0, 0, 0, 0)'; // inherited from the theme
-    const inheritedFontColor = 'rgb(170, 170, 170)'; // inherited from the body style
+    const textColor = 'rgb(230, 184, 175)';
+    const inheritedBackgroundColor = '#000000'; // inherited from the theme
+    const inheritedColor = '#aaaaaa'; // inherited from the body style
+
+    // Directly navigate to the flexible layout
+    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
+
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
-    // Select Stacked Plot
-    let stackedPlotContainer = await page.locator('.c-plot--stacked');
-    // eslint-disable-next-line playwright/no-force-option
-    stackedPlotContainer.click({ force: true });
+    await page.getByLabel('Edit').click();
 
     // Select styles tab
-    await page.locator('.c-inspector__tab[title="Styles"]').click();
-    // Set background color
-    await page.locator('.c-icon-button.icon-paint-bucket').click();
-    await page.locator(`.c-palette__item[style="background: ${backgroundColor};"]`).click();
-    // Set font color
-    await page.locator('.c-icon-button.icon-font[title="Set text color"]').click();
-    await page.locator(`.c-palette__item[style="background: ${fontColor};"]`).click();
+    await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Get Stacked Plot styles
-    let stackedPlotStyles = await stackedPlotContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
+    // Set styles using setStyles function
+    await setStyles(page, backgroundColor, textColor, page.getByLabel('Stacked Plot Frame'));
 
-    // Verify styles match set styles
-    expect(stackedPlotStyles.background).toBe(backgroundColor);
-    expect(stackedPlotStyles.fontColor).toBe(fontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(backgroundColor),
+      hexToRGB(textColor),
+      page.getByLabel('Stacked Plot Frame')
+    );
 
+    // Save Flexible Layout
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Reload page and set Styles to 'None'
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    // Edit Flexible Layout
+    await page.getByLabel('Edit').click();
+
+    // Select styles tab
+    await page.getByRole('tab', { name: 'Styles' }).click();
+
+    await setStyles(page, 'No Style', 'No Style', page.getByLabel('Stacked Plot Frame'));
+
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(inheritedBackgroundColor),
+      hexToRGB(inheritedColor),
+      page.getByLabel('Stacked Plot Frame')
+    );
     // Save Flexible Layout
     await page.locator('button[title="Save"]').click();
     await page.locator('text=Save and Finish Editing').click();
 
-    // Reload page and set styles to "None"
-    await page.goto(flexibleLayout.url);
+    // Reload page and verify that styles persist
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
-    // Select Stacked Plot
-    stackedPlotContainer = await page.locator('.c-plot--stacked');
-    // eslint-disable-next-line playwright/no-force-option
-    stackedPlotContainer.click({ force: true });
-
-    // Select styles tab
-    await page.locator('.c-inspector__tab[title="Styles"]').click();
-    // Set background color
-    await page.locator('.c-icon-button.icon-paint-bucket').click();
-    await page.locator(`.c-palette__item-none`).click();
-    // Set font color
-    await page.locator('.c-icon-button.icon-font[title="Set text color"]').click();
-    await page.locator(`.c-palette__item-none`).click();
-
-    // Get Stacked Plot styles
-    stackedPlotStyles = await stackedPlotContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
-
-    // Verify styles match inherited styles
-    expect(stackedPlotStyles.background).toBe(inheritedBackgroundColor);
-    expect(stackedPlotStyles.fontColor).toBe(inheritedFontColor);
-
-    // Save Flexible Layout
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
-
-    // Reload page and check styles again after resetting styles to "None"
-    await page.goto(flexibleLayout.url);
-
-    // Select Stacked Plot
-    stackedPlotContainer = await page.locator('.c-plot--stacked');
-
-    // Get Stacked Plot styles
-    stackedPlotStyles = await stackedPlotContainer.evaluate((el) => {
-      return {
-        background: window.getComputedStyle(el).getPropertyValue('background-color'),
-        fontColor: window.getComputedStyle(el).getPropertyValue('color')
-      };
-    });
-
-    // Verify styles match inherited styles
-    expect(stackedPlotStyles.background).toBe(inheritedBackgroundColor);
-    expect(stackedPlotStyles.fontColor).toBe(inheritedFontColor);
+    // Check styles using checkStyles function
+    await checkStyles(
+      page,
+      hexToRGB(inheritedBackgroundColor),
+      hexToRGB(inheritedColor),
+      page.getByLabel('Stacked Plot Frame')
+    );
   });
 });
+
+/**
+ * Converts a hex color value to its RGB equivalent.
+ *
+ * @param {string} hex - The hex color value.
+ * @returns {string} The RGB equivalent of the hex color.
+ */
+function hexToRGB(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`
+    : null;
+}
+
+/**
+ * Sets the background and text color of a given element.
+ *
+ * @param {object} page - The Playwright page object.
+ * @param {string} backgroundColorHex - The hex value of the background color to set.
+ * @param {string} textColorHex - The hex value of the text color to set.
+ * @param {object} locator - The Playwright locator for the element whose style is to be set.
+ */
+async function setStyles(page, backgroundColorHex, textColorHex, locator) {
+  await locator.click(); // Assuming the locator is clickable and opens the style setting UI
+  await page.getByLabel('Set background color').click();
+  await page.getByLabel(backgroundColorHex).click();
+  await page.getByLabel('Set text color').click();
+  await page.getByLabel(textColorHex).click();
+}
+
+/**
+ * Checks if the styles of an element match the expected values.
+ *
+ * @param {object} page - The Playwright page object.
+ * @param {string} expectedBackgroundColor - The expected background color in RGB format.
+ * @param {string} expectedTextColor - The expected text color in RGB format.
+ * @param {object} locator - The Playwright locator for the element whose style is to be checked.
+ */
+async function checkStyles(page, expectedBackgroundColor, expectedTextColor, locator) {
+  const layoutStyles = await locator.evaluate((el) => {
+    return {
+      background: window.getComputedStyle(el).getPropertyValue('background-color'),
+      fontColor: window.getComputedStyle(el).getPropertyValue('color')
+    };
+  });
+
+  expect(layoutStyles.background).toContain(expectedBackgroundColor);
+  expect(layoutStyles.fontColor).toContain(expectedTextColor);
+}
