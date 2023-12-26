@@ -31,7 +31,8 @@
       v-show="isEditing"
       class="c-fl-container__header"
       draggable="true"
-      role="gridcell"
+      role="columnheader"
+      :aria-label="`Container Handle ${index}`"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
@@ -44,13 +45,14 @@
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div role="rowheader" class="c-fl-container__frames-holder">
+    <div role="row" class="c-fl-container__frames-holder">
       <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
           role="gridcell"
+          :aria-label="`Container Frame ${index}`"
           :container-index="index"
           :is-editing="isEditing"
           :object-path="objectPath"
