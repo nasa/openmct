@@ -20,72 +20,66 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* eslint-disable no-undef */
-define([
-  'EventEmitter',
-  './api/api',
-  './api/overlays/OverlayAPI',
-  './api/tooltips/ToolTipAPI',
-  './selection/Selection',
-  './plugins/plugins',
-  './ui/registries/ViewRegistry',
-  './plugins/imagery/plugin',
-  './ui/registries/InspectorViewRegistry',
-  './ui/registries/ToolbarRegistry',
-  './ui/router/ApplicationRouter',
-  './ui/router/Browse',
-  './ui/layout/AppLayout.vue',
-  './ui/preview/plugin',
-  './api/Branding',
-  './plugins/licenses/plugin',
-  './plugins/remove/plugin',
-  './plugins/move/plugin',
-  './plugins/linkAction/plugin',
-  './plugins/duplicate/plugin',
-  './plugins/importFromJSONAction/plugin',
-  './plugins/exportAsJSONAction/plugin',
-  'vue'
-], function (
-  EventEmitter,
-  api,
-  OverlayAPI,
-  ToolTipAPI,
-  Selection,
-  plugins,
-  ViewRegistry,
-  ImageryPlugin,
-  InspectorViewRegistry,
-  ToolbarRegistry,
-  ApplicationRouter,
-  Browse,
-  Layout,
-  PreviewPlugin,
-  BrandingAPI,
-  LicensesPlugin,
-  RemoveActionPlugin,
-  MoveActionPlugin,
-  LinkActionPlugin,
-  DuplicateActionPlugin,
-  ImportFromJSONAction,
-  ExportAsJSONAction,
-  Vue
-) {
-  /**
-   * Open MCT is an extensible web application for building mission
-   * control user interfaces. This module is itself an instance of
-   * [MCT]{@link module:openmct.MCT}, which provides an interface for
-   * configuring and executing the application.
-   *
-   * @exports openmct
-   */
+import EventEmitter from 'EventEmitter';
+import { createApp, markRaw } from 'vue';
 
-  /**
-   * The Open MCT application. This may be configured by installing plugins
-   * or registering extensions before the application is started.
-   * @constructor
-   * @memberof module:openmct
-   */
-  function MCT() {
+import ActionsAPI from './api/actions/ActionsAPI';
+import AnnotationAPI from './api/annotation/AnnotationAPI';
+import BrandingAPI from './api/Branding';
+import CompositionAPI from './api/composition/CompositionAPI';
+import EditorAPI from './api/Editor';
+import FaultManagementAPI from './api/faultmanagement/FaultManagementAPI';
+import FormsAPI from './api/forms/FormsAPI';
+import IndicatorAPI from './api/indicators/IndicatorAPI';
+import MenuAPI from './api/menu/MenuAPI';
+import NotificationAPI from './api/notifications/NotificationAPI';
+import ObjectAPI from './api/objects/ObjectAPI';
+import OverlayAPI from './api/overlays/OverlayAPI';
+import PriorityAPI from './api/priority/PriorityAPI';
+import StatusAPI from './api/status/StatusAPI';
+import TelemetryAPI from './api/telemetry/TelemetryAPI';
+import TimeAPI from './api/time/TimeAPI';
+import ToolTipAPI from './api/tooltips/ToolTipAPI';
+import TypeRegistry from './api/types/TypeRegistry';
+import UserAPI from './api/user/UserAPI';
+import DuplicateActionPlugin from './plugins/duplicate/plugin';
+import ExportAsJSONAction from './plugins/exportAsJSONAction/plugin';
+import ImageryPlugin from './plugins/imagery/plugin';
+import ImportFromJSONAction from './plugins/importFromJSONAction/plugin';
+import LicensesPlugin from './plugins/licenses/plugin';
+import LinkActionPlugin from './plugins/linkAction/plugin';
+import MoveActionPlugin from './plugins/move/plugin';
+import plugins from './plugins/plugins';
+import RemoveActionPlugin from './plugins/remove/plugin';
+import Selection from './selection/Selection';
+import Layout from './ui/layout/AppLayout.vue';
+import PreviewPlugin from './ui/preview/plugin';
+import InspectorViewRegistry from './ui/registries/InspectorViewRegistry';
+import ToolbarRegistry from './ui/registries/ToolbarRegistry';
+import ViewRegistry from './ui/registries/ViewRegistry';
+import ApplicationRouter from './ui/router/ApplicationRouter';
+import Browse from './ui/router/Browse';
+
+/**
+ * Open MCT is an extensible web application for building mission
+ * control user interfaces. This module is itself an instance of
+ * [MCT]{@link module:openmct.MCT}, which provides an interface for
+ * configuring and executing the application.
+ *
+ * @exports openmct
+ */
+
+/**
+ * The Open MCT application. This may be configured by installing plugins
+ * or registering extensions before the application is started.
+ * @constructor
+ * @memberof module:openmct
+ */
+export class MCT extends EventEmitter {
+  constructor() {
+    super();
     EventEmitter.call(this);
+
     this.buildInfo = {
       version: __OPENMCT_VERSION__,
       buildDate: __OPENMCT_BUILD_DATE__,
@@ -95,169 +89,140 @@ define([
 
     this.destroy = this.destroy.bind(this);
     this.defaultClock = 'local';
-    [
-      /**
-       * Tracks current selection state of the application.
-       * @private
-       */
-      ['selection', () => new Selection.default(this)],
 
-      /**
-       * MCT's time conductor, which may be used to synchronize view contents
-       * for telemetry- or time-based views.
-       * @type {module:openmct.TimeConductor}
-       * @memberof module:openmct.MCT#
-       * @name conductor
-       */
-      ['time', () => new api.TimeAPI(this)],
+    this.plugins = plugins;
 
-      /**
-       * An interface for interacting with the composition of domain objects.
-       * The composition of a domain object is the list of other domain
-       * objects it "contains" (for instance, that should be displayed
-       * beneath it in the tree.)
-       *
-       * `composition` may be called as a function, in which case it acts
-       * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
-       *
-       * @type {module:openmct.CompositionAPI}
-       * @memberof module:openmct.MCT#
-       * @name composition
-       */
-      ['composition', () => new api.CompositionAPI.default(this)],
+    /**
+     * Tracks current selection state of the application.
+     * @private
+     */
+    this.selection = new Selection(this);
 
-      /**
-       * Registry for views of domain objects which should appear in the
-       * main viewing area.
-       *
-       * @type {module:openmct.ViewRegistry}
-       * @memberof module:openmct.MCT#
-       * @name objectViews
-       */
-      ['objectViews', () => new ViewRegistry()],
+    /**
+     * MCT's time conductor, which may be used to synchronize view contents
+     * for telemetry- or time-based views.
+     * @type {module:openmct.TimeConductor}
+     * @memberof module:openmct.MCT#
+     * @name conductor
+     */
+    this.time = new TimeAPI(this);
 
-      /**
-       * Registry for views which should appear in the Inspector area.
-       * These views will be chosen based on the selection state.
-       *
-       * @type {module:openmct.InspectorViewRegistry}
-       * @memberof module:openmct.MCT#
-       * @name inspectorViews
-       */
-      ['inspectorViews', () => new InspectorViewRegistry.default()],
+    /**
+     * An interface for interacting with the composition of domain objects.
+     * The composition of a domain object is the list of other domain
+     * objects it "contains" (for instance, that should be displayed
+     * beneath it in the tree.)
+     *
+     * `composition` may be called as a function, in which case it acts
+     * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
+     *
+     * @type {module:openmct.CompositionAPI}
+     * @memberof module:openmct.MCT#
+     * @name composition
+     */
+    this.composition = new CompositionAPI(this);
 
-      /**
-       * Registry for views which should appear in Edit Properties
-       * dialogs, and similar user interface elements used for
-       * modifying domain objects external to its regular views.
-       *
-       * @type {module:openmct.ViewRegistry}
-       * @memberof module:openmct.MCT#
-       * @name propertyEditors
-       */
-      ['propertyEditors', () => new ViewRegistry()],
+    /**
+     * Registry for views of domain objects which should appear in the
+     * main viewing area.
+     *
+     * @type {module:openmct.ViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name objectViews
+     */
+    this.objectViews = new ViewRegistry();
 
-      /**
-       * Registry for views which should appear in the toolbar area while
-       * editing. These views will be chosen based on the selection state.
-       *
-       * @type {module:openmct.ToolbarRegistry}
-       * @memberof module:openmct.MCT#
-       * @name toolbars
-       */
-      ['toolbars', () => new ToolbarRegistry()],
+    /**
+     * Registry for views which should appear in the Inspector area.
+     * These views will be chosen based on the selection state.
+     *
+     * @type {module:openmct.InspectorViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name inspectorViews
+     */
+    this.inspectorViews = new InspectorViewRegistry();
 
-      /**
-       * Registry for domain object types which may exist within this
-       * instance of Open MCT.
-       *
-       * @type {module:openmct.TypeRegistry}
-       * @memberof module:openmct.MCT#
-       * @name types
-       */
-      ['types', () => new api.TypeRegistry()],
+    /**
+     * Registry for views which should appear in Edit Properties
+     * dialogs, and similar user interface elements used for
+     * modifying domain objects external to its regular views.
+     *
+     * @type {module:openmct.ViewRegistry}
+     * @memberof module:openmct.MCT#
+     * @name propertyEditors
+     */
+    this.propertyEditors = new ViewRegistry();
 
-      /**
-       * An interface for interacting with domain objects and the domain
-       * object hierarchy.
-       *
-       * @type {module:openmct.ObjectAPI}
-       * @memberof module:openmct.MCT#
-       * @name objects
-       */
-      ['objects', () => new api.ObjectAPI.default(this.types, this)],
+    /**
+     * Registry for views which should appear in the toolbar area while
+     * editing. These views will be chosen based on the selection state.
+     *
+     * @type {module:openmct.ToolbarRegistry}
+     * @memberof module:openmct.MCT#
+     * @name toolbars
+     */
+    this.toolbars = new ToolbarRegistry();
 
-      /**
-       * An interface for retrieving and interpreting telemetry data associated
-       * with a domain object.
-       *
-       * @type {module:openmct.TelemetryAPI}
-       * @memberof module:openmct.MCT#
-       * @name telemetry
-       */
-      ['telemetry', () => new api.TelemetryAPI.default(this)],
+    /**
+     * Registry for domain object types which may exist within this
+     * instance of Open MCT.
+     *
+     * @type {module:openmct.TypeRegistry}
+     * @memberof module:openmct.MCT#
+     * @name types
+     */
+    this.types = new TypeRegistry();
 
-      /**
-       * An interface for creating new indicators and changing them dynamically.
-       *
-       * @type {module:openmct.IndicatorAPI}
-       * @memberof module:openmct.MCT#
-       * @name indicators
-       */
-      ['indicators', () => new api.IndicatorAPI(this)],
+    /**
+     * An interface for interacting with domain objects and the domain
+     * object hierarchy.
+     *
+     * @type {module:openmct.ObjectAPI}
+     * @memberof module:openmct.MCT#
+     * @name objects
+     */
+    this.objects = new ObjectAPI(this.types, this);
 
-      /**
-       * MCT's user awareness management, to enable user and
-       * role specific functionality.
-       * @type {module:openmct.UserAPI}
-       * @memberof module:openmct.MCT#
-       * @name user
-       */
-      ['user', () => new api.UserAPI(this)],
+    /**
+     * An interface for retrieving and interpreting telemetry data associated
+     * with a domain object.
+     *
+     * @type {module:openmct.TelemetryAPI}
+     * @memberof module:openmct.MCT#
+     * @name telemetry
+     */
+    this.telemetry = new TelemetryAPI(this);
 
-      ['notifications', () => new api.NotificationAPI()],
+    /**
+     * An interface for creating new indicators and changing them dynamically.
+     *
+     * @type {module:openmct.IndicatorAPI}
+     * @memberof module:openmct.MCT#
+     * @name indicators
+     */
+    this.indicators = new IndicatorAPI(this);
 
-      ['editor', () => new api.EditorAPI.default(this)],
+    /**
+     * MCT's user awareness management, to enable user and
+     * role specific functionality.
+     * @type {module:openmct.UserAPI}
+     * @memberof module:openmct.MCT#
+     * @name user
+     */
+    this.user = new UserAPI(this);
 
-      ['overlays', () => new OverlayAPI.default()],
-
-      ['tooltips', () => new ToolTipAPI.default()],
-
-      ['menus', () => new api.MenuAPI(this)],
-
-      ['actions', () => new api.ActionsAPI(this)],
-
-      ['status', () => new api.StatusAPI(this)],
-
-      ['priority', () => api.PriorityAPI],
-
-      ['router', () => new ApplicationRouter(this)],
-
-      ['faults', () => new api.FaultManagementAPI.default(this)],
-
-      ['forms', () => new api.FormsAPI.default(this)],
-
-      ['branding', () => BrandingAPI.default],
-
-      /**
-       * MCT's annotation API that enables
-       * human-created comments and categorization linked to data products
-       * @type {module:openmct.AnnotationAPI}
-       * @memberof module:openmct.MCT#
-       * @name annotation
-       */
-      ['annotation', () => new api.AnnotationAPI(this)]
-    ].forEach((apiEntry) => {
-      const apiName = apiEntry[0];
-      const apiObject = apiEntry[1]();
-
-      Object.defineProperty(this, apiName, {
-        value: apiObject,
-        enumerable: false,
-        configurable: false,
-        writable: true
-      });
-    });
+    this.notifications = new NotificationAPI();
+    this.editor = new EditorAPI(this);
+    this.overlays = new OverlayAPI();
+    this.tooltips = new ToolTipAPI();
+    this.menus = new MenuAPI(this);
+    this.actions = new ActionsAPI(this);
+    this.status = new StatusAPI(this);
+    this.priority = PriorityAPI;
+    this.router = new ApplicationRouter(this);
+    this.faults = new FaultManagementAPI(this);
+    this.forms = new FormsAPI(this);
+    this.branding = BrandingAPI;
 
     /**
      * MCT's annotation API that enables
@@ -266,23 +231,23 @@ define([
      * @memberof module:openmct.MCT#
      * @name annotation
      */
-    this.annotation = new api.AnnotationAPI(this);
+    this.annotation = new AnnotationAPI(this);
 
     // Plugins that are installed by default
     this.install(this.plugins.Plot());
-    this.install(this.plugins.TelemetryTable.default());
-    this.install(PreviewPlugin.default());
-    this.install(LicensesPlugin.default());
-    this.install(RemoveActionPlugin.default());
-    this.install(MoveActionPlugin.default());
-    this.install(LinkActionPlugin.default());
-    this.install(DuplicateActionPlugin.default());
-    this.install(ExportAsJSONAction.default());
-    this.install(ImportFromJSONAction.default());
-    this.install(this.plugins.FormActions.default());
+    this.install(this.plugins.TelemetryTable());
+    this.install(PreviewPlugin());
+    this.install(LicensesPlugin());
+    this.install(RemoveActionPlugin());
+    this.install(MoveActionPlugin());
+    this.install(LinkActionPlugin());
+    this.install(DuplicateActionPlugin());
+    this.install(ExportAsJSONAction());
+    this.install(ImportFromJSONAction());
+    this.install(this.plugins.FormActions());
     this.install(this.plugins.FolderView());
     this.install(this.plugins.Tabs());
-    this.install(ImageryPlugin.default());
+    this.install(ImageryPlugin());
     this.install(this.plugins.FlexibleLayout());
     this.install(this.plugins.GoToOriginalAction());
     this.install(this.plugins.OpenInNewTabAction());
@@ -300,26 +265,20 @@ define([
     this.install(this.plugins.Gauge());
     this.install(this.plugins.InspectorViews());
   }
-
-  MCT.prototype = Object.create(EventEmitter.prototype);
-
-  MCT.prototype.MCT = MCT;
-
   /**
    * Set path to where assets are hosted.  This should be the path to main.js.
    * @memberof module:openmct.MCT#
    * @method setAssetPath
    */
-  MCT.prototype.setAssetPath = function (assetPath) {
+  setAssetPath(assetPath) {
     this._assetPath = assetPath;
-  };
-
+  }
   /**
    * Get path to where assets are hosted.
    * @memberof module:openmct.MCT#
    * @method getAssetPath
    */
-  MCT.prototype.getAssetPath = function () {
+  getAssetPath() {
     const assetPathLength = this._assetPath && this._assetPath.length;
     if (!assetPathLength) {
       return '/';
@@ -330,8 +289,7 @@ define([
     }
 
     return this._assetPath;
-  };
-
+  }
   /**
    * Start running Open MCT. This should be called only after any plugins
    * have been installed.
@@ -341,10 +299,7 @@ define([
    * @param {HTMLElement} [domElement] the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  MCT.prototype.start = function (
-    domElement = document.body.firstElementChild,
-    isHeadlessMode = false
-  ) {
+  start(domElement = document.body.firstElementChild, isHeadlessMode = false) {
     // Create element to mount Layout if it doesn't exist
     if (domElement === null) {
       domElement = document.createElement('div');
@@ -376,20 +331,12 @@ define([
      * @event start
      * @memberof module:openmct.MCT~
      */
-
     if (!isHeadlessMode) {
-      const appLayout = Vue.createApp({
-        components: {
-          Layout: Layout.default
-        },
-        provide: {
-          openmct: Vue.markRaw(this)
-        },
-        template: '<Layout ref="layout"></Layout>'
-      });
+      const appLayout = createApp(Layout);
+      appLayout.provide('openmct', markRaw(this));
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
-        this.layout = component.$refs.layout;
+        this.layout = component;
         this.app = appLayout;
         Browse(this);
         window.addEventListener('beforeunload', this.destroy);
@@ -402,14 +349,12 @@ define([
       this.router.start();
       this.emit('start');
     }
-  };
-
-  MCT.prototype.startHeadless = function () {
+  }
+  startHeadless() {
     let unreachableNode = document.createElement('div');
 
     return this.start(unreachableNode, true);
-  };
-
+  }
   /**
    * Install a plugin in MCT.
    *
@@ -417,17 +362,13 @@ define([
    *     invoked with the mct instance.
    * @memberof module:openmct.MCT#
    */
-  MCT.prototype.install = function (plugin) {
+  install(plugin) {
     plugin(this);
-  };
+  }
 
-  MCT.prototype.destroy = function () {
+  destroy() {
     window.removeEventListener('beforeunload', this.destroy);
     this.emit('destroy');
     this.router.destroy();
-  };
-
-  MCT.prototype.plugins = plugins;
-
-  return MCT;
-});
+  }
+}

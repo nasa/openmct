@@ -20,39 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../SummaryWidgetViewPolicy'], function (SummaryWidgetViewPolicy) {
-  describe('SummaryWidgetViewPolicy', function () {
-    let policy;
-    let domainObject;
-    let view;
-    beforeEach(function () {
-      policy = new SummaryWidgetViewPolicy();
-      domainObject = jasmine.createSpyObj('domainObject', ['getModel']);
-      domainObject.getModel.and.returnValue({});
-      view = {};
-    });
+import SummaryWidgetViewPolicy from '../SummaryWidgetViewPolicy';
 
-    it('returns true for other object types', function () {
-      domainObject.getModel.and.returnValue({
-        type: 'random'
-      });
-      expect(policy.allow(view, domainObject)).toBe(true);
-    });
+describe('SummaryWidgetViewPolicy', function () {
+  let policy;
+  let domainObject;
+  let view;
+  beforeEach(function () {
+    policy = new SummaryWidgetViewPolicy();
+    domainObject = jasmine.createSpyObj('domainObject', ['getModel']);
+    domainObject.getModel.and.returnValue({});
+    view = {};
+  });
 
-    it('allows summary widget view for summary widgets', function () {
-      domainObject.getModel.and.returnValue({
-        type: 'summary-widget'
-      });
-      view.key = 'summary-widget-viewer';
-      expect(policy.allow(view, domainObject)).toBe(true);
+  it('returns true for other object types', function () {
+    domainObject.getModel.and.returnValue({
+      type: 'random'
     });
+    expect(policy.allow(view, domainObject)).toBe(true);
+  });
 
-    it('disallows other views for summary widgets', function () {
-      domainObject.getModel.and.returnValue({
-        type: 'summary-widget'
-      });
-      view.key = 'other view';
-      expect(policy.allow(view, domainObject)).toBe(false);
+  it('allows summary widget view for summary widgets', function () {
+    domainObject.getModel.and.returnValue({
+      type: 'summary-widget'
     });
+    view.key = 'summary-widget-viewer';
+    expect(policy.allow(view, domainObject)).toBe(true);
+  });
+
+  it('disallows other views for summary widgets', function () {
+    domainObject.getModel.and.returnValue({
+      type: 'summary-widget'
+    });
+    view.key = 'other view';
+    expect(policy.allow(view, domainObject)).toBe(false);
   });
 });

@@ -76,7 +76,8 @@ const config = {
       MCT: path.join(projectRootDir, 'src/MCT'),
       testUtils: path.join(projectRootDir, 'src/utils/testUtils.js'),
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
-      utils: path.join(projectRootDir, 'src/utils')
+      utils: path.join(projectRootDir, 'src/utils'),
+      vue: 'vue/dist/vue.esm-bundler'
     }
   },
   plugins: [

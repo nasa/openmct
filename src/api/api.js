@@ -20,24 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-  './actions/ActionsAPI',
-  './composition/CompositionAPI',
-  './Editor',
-  './faultmanagement/FaultManagementAPI',
-  './forms/FormsAPI',
-  './indicators/IndicatorAPI',
-  './menu/MenuAPI',
-  './notifications/NotificationAPI',
-  './objects/ObjectAPI',
-  './priority/PriorityAPI',
-  './status/StatusAPI',
-  './telemetry/TelemetryAPI',
-  './time/TimeAPI',
-  './types/TypeRegistry',
-  './user/UserAPI',
-  './annotation/AnnotationAPI'
-], function (
+import ActionsAPI from './actions/ActionsAPI';
+import AnnotationAPI from './annotation/AnnotationAPI';
+import CompositionAPI from './composition/CompositionAPI';
+import EditorAPI from './Editor';
+import FaultManagementAPI from './faultmanagement/FaultManagementAPI';
+import FormsAPI from './forms/FormsAPI';
+import IndicatorAPI from './indicators/IndicatorAPI';
+import MenuAPI from './menu/MenuAPI';
+import NotificationAPI from './notifications/NotificationAPI';
+import ObjectAPI from './objects/ObjectAPI';
+import PriorityAPI from './priority/PriorityAPI';
+import StatusAPI from './status/StatusAPI';
+import TelemetryAPI from './telemetry/TelemetryAPI';
+import TimeAPI from './time/TimeAPI';
+import TypeRegistry from './types/TypeRegistry';
+import UserAPI from './user/UserAPI';
+
+export default {
   ActionsAPI,
   CompositionAPI,
   EditorAPI,
@@ -54,23 +54,4 @@ define([
   TypeRegistry,
   UserAPI,
   AnnotationAPI
-) {
-  return {
-    ActionsAPI: ActionsAPI.default,
-    CompositionAPI: CompositionAPI,
-    EditorAPI: EditorAPI,
-    FaultManagementAPI: FaultManagementAPI,
-    FormsAPI: FormsAPI,
-    IndicatorAPI: IndicatorAPI.default,
-    MenuAPI: MenuAPI.default,
-    NotificationAPI: NotificationAPI.default,
-    ObjectAPI: ObjectAPI,
-    PriorityAPI: PriorityAPI.default,
-    StatusAPI: StatusAPI.default,
-    TelemetryAPI: TelemetryAPI,
-    TimeAPI: TimeAPI.default,
-    TypeRegistry: TypeRegistry.default,
-    UserAPI: UserAPI.default,
-    AnnotationAPI: AnnotationAPI.default
-  };
-});
+};
