@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* eslint-disable no-undef */
 import EventEmitter from 'EventEmitter';
-import { createApp, markRaw } from 'vue/dist/vue.esm-bundler';
+import { createApp, markRaw } from 'vue';
 
 import ActionsAPI from './api/actions/ActionsAPI';
 import AnnotationAPI from './api/annotation/AnnotationAPI';
