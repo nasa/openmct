@@ -40,8 +40,8 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11
   }) => {
     // Create a clock domain object
     await createDomainObjectWithDefaults(page, {
-      type: 'Folder',
-      name: 'Default Folder'
+      type: 'Condition Widget',
+      name: 'Visual Condition Widget'
     });
     // Click on the div with role="alert" that has "Save successful" text
     await page.locator('div[role="alert"]:has-text("Save successful")').click();
