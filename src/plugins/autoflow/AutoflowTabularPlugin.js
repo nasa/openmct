@@ -35,7 +35,7 @@ export default function (options) {
         return !options || options.type === d.type;
       },
       view: function (domainObject) {
-        return new AutoflowTabularView(domainObject, openmct, document);
+        return new AutoflowTabularView(domainObject, openmct);
       }
     });
   };

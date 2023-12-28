@@ -34,8 +34,9 @@
 </template>
 
 <script>
+import { sanitizeUrl } from '@braintree/sanitize-url';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
 
 export default {
   mixins: [tooltipHelpers],

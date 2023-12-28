@@ -99,7 +99,10 @@ function makeKeyString(identifier) {
     return identifier.key;
   }
 
-  return [identifier.namespace.replace(/:/g, '\\:'), identifier.key].join(':');
+  return [
+    identifier.namespace.replaceAll(/:/g, '\\:').replaceAll(/\\/g, '\\\\'),
+    identifier.key
+  ].join(':');
 }
 
 /**
