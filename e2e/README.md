@@ -574,6 +574,15 @@ A single e2e test in Open MCT is extended to run:
 - How is Open MCT extending default Playwright functionality?
 - What about Component Testing?
 
+### Writing Tests
+
+Playwright provides 3 supported methods of debugging and authoring tests:
+- A 'watch mode' for running tests locally and debugging on the fly
+- A 'debug mode' for debugging tests and writing assertions against tests
+- A 'VSCode plugin' for debugging tests within the VSCode IDE.
+
+Generally, we encourage folks to use the watch mode and provide a script `npm run test:e2e:watch` which launches the launch mode ui and enables hot reloading on the dev server.
+
 ### e2e Troubleshooting
 
 Please follow the general guide troubleshooting in [the general troubleshooting doc](../TESTING.md#troubleshooting-ci)
