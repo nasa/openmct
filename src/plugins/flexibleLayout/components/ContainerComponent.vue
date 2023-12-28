@@ -32,7 +32,7 @@
       class="c-fl-container__header"
       draggable="true"
       role="columnheader"
-      :aria-label="`Container Handle ${index}`"
+      :aria-label="`Container Handle ${index + 1}`"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
