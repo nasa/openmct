@@ -20,100 +20,102 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples, averageDatumCallback) {
-    this.telemetryAPI = telemetryAPI;
-    this.timeAPI = timeAPI;
+export default function TelemetryAverager(
+  telemetryAPI,
+  timeAPI,
+  domainObject,
+  samples,
+  averageDatumCallback
+) {
+  this.telemetryAPI = telemetryAPI;
+  this.timeAPI = timeAPI;
 
-    this.domainObject = domainObject;
-    this.samples = samples;
-    this.averagingWindow = [];
+  this.domainObject = domainObject;
+  this.samples = samples;
+  this.averagingWindow = [];
 
-    this.rangeKey = undefined;
-    this.rangeFormatter = undefined;
-    this.setRangeKeyAndFormatter();
+  this.rangeKey = undefined;
+  this.rangeFormatter = undefined;
+  this.setRangeKeyAndFormatter();
 
-    // Defined dynamically based on current time system
-    this.domainKey = undefined;
-    this.domainFormatter = undefined;
+  // Defined dynamically based on current time system
+  this.domainKey = undefined;
+  this.domainFormatter = undefined;
 
-    this.averageDatumCallback = averageDatumCallback;
+  this.averageDatumCallback = averageDatumCallback;
+}
+
+TelemetryAverager.prototype.createAverageDatum = function (telemetryDatum) {
+  this.setDomainKeyAndFormatter();
+
+  const timeValue = this.domainFormatter.parse(telemetryDatum);
+  const rangeValue = this.rangeFormatter.parse(telemetryDatum);
+
+  this.averagingWindow.push(rangeValue);
+
+  if (this.averagingWindow.length < this.samples) {
+    // We do not have enough data to produce an average
+    return;
+  } else if (this.averagingWindow.length > this.samples) {
+    //Do not let averaging window grow beyond defined sample size
+    this.averagingWindow.shift();
   }
 
-  TelemetryAverager.prototype.createAverageDatum = function (telemetryDatum) {
-    this.setDomainKeyAndFormatter();
+  const averageValue = this.calculateMean();
 
-    const timeValue = this.domainFormatter.parse(telemetryDatum);
-    const rangeValue = this.rangeFormatter.parse(telemetryDatum);
+  const meanDatum = {};
+  meanDatum[this.domainKey] = timeValue;
+  meanDatum.value = averageValue;
 
-    this.averagingWindow.push(rangeValue);
+  this.averageDatumCallback(meanDatum);
+};
 
-    if (this.averagingWindow.length < this.samples) {
-      // We do not have enough data to produce an average
-      return;
-    } else if (this.averagingWindow.length > this.samples) {
-      //Do not let averaging window grow beyond defined sample size
-      this.averagingWindow.shift();
-    }
+/**
+ * @private
+ */
+TelemetryAverager.prototype.calculateMean = function () {
+  let sum = 0;
+  let i = 0;
 
-    const averageValue = this.calculateMean();
+  for (; i < this.averagingWindow.length; i++) {
+    sum += this.averagingWindow[i];
+  }
 
-    const meanDatum = {};
-    meanDatum[this.domainKey] = timeValue;
-    meanDatum.value = averageValue;
+  return sum / this.averagingWindow.length;
+};
 
-    this.averageDatumCallback(meanDatum);
-  };
+/**
+ * The mean telemetry filter produces domain values in whatever time
+ * system is currently selected from the conductor. Because this can
+ * change dynamically, the averager needs to be updated regularly with
+ * the current domain.
+ * @private
+ */
+TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
+  const domainKey = this.timeAPI.timeSystem().key;
+  if (domainKey !== this.domainKey) {
+    this.domainKey = domainKey;
+    this.domainFormatter = this.getFormatter(domainKey);
+  }
+};
 
-  /**
-   * @private
-   */
-  TelemetryAverager.prototype.calculateMean = function () {
-    let sum = 0;
-    let i = 0;
+/**
+ * @private
+ */
+TelemetryAverager.prototype.setRangeKeyAndFormatter = function () {
+  const metadatas = this.telemetryAPI.getMetadata(this.domainObject);
+  const rangeValues = metadatas.valuesForHints(['range']);
 
-    for (; i < this.averagingWindow.length; i++) {
-      sum += this.averagingWindow[i];
-    }
+  this.rangeKey = rangeValues[0].key;
+  this.rangeFormatter = this.getFormatter(this.rangeKey);
+};
 
-    return sum / this.averagingWindow.length;
-  };
+/**
+ * @private
+ */
+TelemetryAverager.prototype.getFormatter = function (key) {
+  const objectMetadata = this.telemetryAPI.getMetadata(this.domainObject);
+  const valueMetadata = objectMetadata.value(key);
 
-  /**
-   * The mean telemetry filter produces domain values in whatever time
-   * system is currently selected from the conductor. Because this can
-   * change dynamically, the averager needs to be updated regularly with
-   * the current domain.
-   * @private
-   */
-  TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
-    const domainKey = this.timeAPI.timeSystem().key;
-    if (domainKey !== this.domainKey) {
-      this.domainKey = domainKey;
-      this.domainFormatter = this.getFormatter(domainKey);
-    }
-  };
-
-  /**
-   * @private
-   */
-  TelemetryAverager.prototype.setRangeKeyAndFormatter = function () {
-    const metadatas = this.telemetryAPI.getMetadata(this.domainObject);
-    const rangeValues = metadatas.valuesForHints(['range']);
-
-    this.rangeKey = rangeValues[0].key;
-    this.rangeFormatter = this.getFormatter(this.rangeKey);
-  };
-
-  /**
-   * @private
-   */
-  TelemetryAverager.prototype.getFormatter = function (key) {
-    const objectMetadata = this.telemetryAPI.getMetadata(this.domainObject);
-    const valueMetadata = objectMetadata.value(key);
-
-    return this.telemetryAPI.getValueFormatter(valueMetadata);
-  };
-
-  return TelemetryAverager;
-});
+  return this.telemetryAPI.getValueFormatter(valueMetadata);
+};

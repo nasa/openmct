@@ -19,22 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['./TelemetryTableColumn.js'], function (TelemetryTableColumn) {
-  class TelemetryTableNameColumn extends TelemetryTableColumn {
-    constructor(openmct, telemetryObject, metadatum) {
-      super(openmct, metadatum);
 
-      this.telemetryObject = telemetryObject;
-    }
+import TelemetryTableColumn from './TelemetryTableColumn';
 
-    getRawValue() {
-      return this.telemetryObject.name;
-    }
+export default class TelemetryTableNameColumn extends TelemetryTableColumn {
+  constructor(openmct, telemetryObject, metadatum) {
+    super(openmct, metadatum);
 
-    getFormattedValue() {
-      return this.telemetryObject.name;
-    }
+    this.telemetryObject = telemetryObject;
   }
 
-  return TelemetryTableNameColumn;
-});
+  getRawValue() {
+    return this.telemetryObject.name;
+  }
+
+  getFormattedValue() {
+    return this.telemetryObject.name;
+  }
+}

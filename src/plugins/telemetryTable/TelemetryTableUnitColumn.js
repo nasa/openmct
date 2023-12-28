@@ -19,38 +19,38 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['./TelemetryTableColumn.js'], function (TelemetryTableColumn) {
-  class TelemetryTableUnitColumn extends TelemetryTableColumn {
-    constructor(openmct, metadatum) {
-      super(openmct, metadatum);
-      this.isUnit = true;
-      this.titleValue += ' Unit';
-      this.formatter = {
-        format: (datum) => {
-          return this.metadatum.unit;
-        },
-        parse: (datum) => {
-          return this.metadatum.unit;
-        }
-      };
-    }
+import TelemetryTableColumn from './TelemetryTableColumn.js';
 
-    getKey() {
-      return this.metadatum.key + '-unit';
-    }
-
-    getTitle() {
-      return this.metadatum.name + ' Unit';
-    }
-
-    getRawValue(telemetryDatum) {
-      return this.metadatum.unit;
-    }
-
-    getFormattedValue(telemetryDatum) {
-      return this.formatter.format(telemetryDatum);
-    }
+class TelemetryTableUnitColumn extends TelemetryTableColumn {
+  constructor(openmct, metadatum) {
+    super(openmct, metadatum);
+    this.isUnit = true;
+    this.titleValue += ' Unit';
+    this.formatter = {
+      format: (datum) => {
+        return this.metadatum.unit;
+      },
+      parse: (datum) => {
+        return this.metadatum.unit;
+      }
+    };
   }
 
-  return TelemetryTableUnitColumn;
-});
+  getKey() {
+    return this.metadatum.key + '-unit';
+  }
+
+  getTitle() {
+    return this.metadatum.name + ' Unit';
+  }
+
+  getRawValue(telemetryDatum) {
+    return this.metadatum.unit;
+  }
+
+  getFormattedValue(telemetryDatum) {
+    return this.formatter.format(telemetryDatum);
+  }
+}
+
+export default TelemetryTableUnitColumn;

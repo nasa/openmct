@@ -19,15 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['./URLIndicator'], function URLIndicatorPlugin(URLIndicator) {
-  return function (opts) {
-    return function install(openmct) {
-      const simpleIndicator = openmct.indicators.simpleIndicator();
-      const urlIndicator = new URLIndicator(opts, simpleIndicator);
+import URLIndicator from './URLIndicator';
 
-      openmct.indicators.add(simpleIndicator);
+export default function URLIndicatorPlugin(opts) {
+  return function install(openmct) {
+    const simpleIndicator = openmct.indicators.simpleIndicator();
+    const urlIndicator = new URLIndicator(opts, simpleIndicator);
 
-      return urlIndicator;
-    };
+    openmct.indicators.add(simpleIndicator);
+
+    return urlIndicator;
   };
-});
+}
