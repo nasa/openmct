@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../appActions');
-const { test, expect } = require('../../pluginFixtures');
+const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../../appActions');
+const { test, expect } = require('../../../pluginFixtures');
 
 test.describe('Tabs View', () => {
   test('Renders tabbed elements nicely', async ({ page }) => {

@@ -35,7 +35,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { test, expect } = require('./pluginFixtures');
+const { test, expect } = require('../pluginFixtures');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 // Constants for repeated values

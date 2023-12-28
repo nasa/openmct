@@ -34,14 +34,14 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
-  test("Create a clock, click on 'Save successful' banner and dismiss it", async ({
+  test("Create a folder, click on 'Save successful' banner and dismiss it", async ({
     page,
     theme
   }) => {
     // Create a clock domain object
     await createDomainObjectWithDefaults(page, {
-      type: 'Clock',
-      name: 'Default Clock'
+      type: 'Folder',
+      name: 'Default Folder'
     });
     // Click on the div with role="alert" that has "Save successful" text
     await page.locator('div[role="alert"]:has-text("Save successful")').click();
