@@ -33,6 +33,7 @@
       :class="{
         'c-fl--rows': rowsLayout === true
       }"
+      aria-label="Flexible Layout Style Target"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
         <drop-hint

@@ -57,8 +57,6 @@ test.describe('Flex Layout Style Inspector Options', () => {
 });
 
 test.describe('Flexible Layout styling', () => {
-  let sineWaveObject;
-  let sineWaveObject2;
   let stackedPlot;
   let flexibleLayout;
   test.beforeEach(async ({ page }) => {
@@ -78,13 +76,13 @@ test.describe('Flexible Layout styling', () => {
     });
 
     // Create two SWGs and attach them to the Stacked Plot
-    sineWaveObject = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 1',
       parent: stackedPlot.uuid
     });
 
-    sineWaveObject2 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 2',
       parent: stackedPlot.uuid
@@ -108,14 +106,18 @@ test.describe('Flexible Layout styling', () => {
     await page.getByRole('tab', { name: 'Styles' }).click();
 
     // Set styles using setStyles function
-    await setStyles(page, backgroundColor, textColor, page.locator('.c-fl__container-holder'));
+    await setStyles(
+      page,
+      backgroundColor,
+      textColor,
+      page.getByLabel('Flexible Layout Style Target')
+    );
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.locator('.c-fl__container-holder')
+      page.getByLabel('Flexible Layout Style Target')
     );
 
     // Save Flexible Layout
@@ -127,10 +129,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.locator('.c-fl__container-holder')
+      page.getByLabel('Flexible Layout Style Target')
     );
   });
 
@@ -153,10 +154,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.getByLabel('Stacked Plot Frame')
+      page.getByLabel('Stacked Plot Style Target')
     );
 
     // Save Flexible Layout
@@ -168,10 +168,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.getByLabel('Stacked Plot Frame')
+      page.getByLabel('Stacked Plot Style Target')
     );
   });
 
@@ -181,8 +180,8 @@ test.describe('Flexible Layout styling', () => {
     // Set background and font color on Stacked Plot object
     const backgroundColor = '#5b0f00';
     const textColor = '#e6b8af';
-    const inheritedBackgroundColor = '#000000'; // inherited from the theme
     const inheritedColor = '#aaaaaa'; // inherited from the body style
+    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)';
 
     // Directly navigate to the flexible layout
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
@@ -198,10 +197,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.getByLabel('Stacked Plot Frame')
+      page.getByLabel('Stacked Plot Style Target')
     );
 
     // Save Flexible Layout
@@ -222,10 +220,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
-      hexToRGB(inheritedBackgroundColor),
+      NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
-      page.getByLabel('Stacked Plot Frame')
+      page.getByLabel('Stacked Plot Style Target')
     );
     // Save Flexible Layout
     await page.locator('button[title="Save"]').click();
@@ -236,10 +233,9 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
-      page,
-      hexToRGB(inheritedBackgroundColor),
+      NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
-      page.getByLabel('Stacked Plot Frame')
+      page.getByLabel('Stacked Plot Style Target')
     );
   });
 });
@@ -260,10 +256,10 @@ function hexToRGB(hex) {
 /**
  * Sets the background and text color of a given element.
  *
- * @param {object} page - The Playwright page object.
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
  * @param {string} backgroundColorHex - The hex value of the background color to set, or 'No Style'.
  * @param {string} textColorHex - The hex value of the text color to set, or 'No Style'.
- * @param {object} locator - The Playwright locator for the element whose style is to be set.
+ * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be set.
  */
 async function setStyles(page, backgroundColorHex, textColorHex, locator) {
   await locator.click(); // Assuming the locator is clickable and opens the style setting UI
@@ -276,12 +272,11 @@ async function setStyles(page, backgroundColorHex, textColorHex, locator) {
 /**
  * Checks if the styles of an element match the expected values.
  *
- * @param {object} page - The Playwright page object.
  * @param {string} expectedBackgroundColor - The expected background color in RGB format.
  * @param {string} expectedTextColor - The expected text color in RGB format.
- * @param {object} locator - The Playwright locator for the element whose style is to be checked.
+ * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be checked.
  */
-async function checkStyles(page, expectedBackgroundColor, expectedTextColor, locator) {
+async function checkStyles(expectedBackgroundColor, expectedTextColor, locator) {
   const layoutStyles = await locator.evaluate((el) => {
     return {
       background: window.getComputedStyle(el).getPropertyValue('background-color'),
