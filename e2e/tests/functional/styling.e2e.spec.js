@@ -49,7 +49,7 @@ test.describe('Flex Layout Style Inspector Options', () => {
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
 
     // Select flexible layout column
-    await page.getByLabel('Container Handle 0').click();
+    await page.getByLabel('Container Handle 1').click();
 
     // Expect to find no styles tab
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
@@ -106,18 +106,13 @@ test.describe('Flexible Layout styling', () => {
     await page.getByRole('tab', { name: 'Styles' }).click();
 
     // Set styles using setStyles function
-    await setStyles(
-      page,
-      backgroundColor,
-      textColor,
-      page.getByLabel('Flexible Layout Style Target')
-    );
+    await setStyles(page, backgroundColor, textColor, page.getByLabel('Flexible Layout Column'));
 
     // Check styles using checkStyles function
     await checkStyles(
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.getByLabel('Flexible Layout Style Target')
+      page.getByLabel('Flexible Layout Column')
     );
 
     // Save Flexible Layout
@@ -131,7 +126,7 @@ test.describe('Flexible Layout styling', () => {
     await checkStyles(
       hexToRGB(backgroundColor),
       hexToRGB(textColor),
-      page.getByLabel('Flexible Layout Style Target')
+      page.getByLabel('Flexible Layout Column')
     );
   });
 

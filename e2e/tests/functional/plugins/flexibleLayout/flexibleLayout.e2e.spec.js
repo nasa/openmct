@@ -308,11 +308,12 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
-    await page.getByRole('group', { name: 'Container' }).nth(1).click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    const flexRows = page.getByLabel('Flexible Layout Row');
+    expect(await flexRows.count()).toEqual(0);
     await page.getByTitle('Columns layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(1);
+    expect(await flexRows.count()).toEqual(1);
     await page.getByTitle('Rows layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    expect(await flexRows.count()).toEqual(0);
   });
 });
