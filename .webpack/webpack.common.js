@@ -6,12 +6,13 @@ This is the OpenMCT common webpack file. It is imported by the other three webpa
 There are separate npm scripts to use these configurations, though simply running `npm install`
 will use the default production configuration.
 */
-import path from 'path';
+import path from 'node:path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import fs from 'fs';
-import { execSync } from 'child_process';
+import fs from 'node:fs';
+import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 import { VueLoaderPlugin } from 'vue-loader';
 let gitRevision = 'error-retrieving-revision';
@@ -28,7 +29,7 @@ try {
   console.warn(err);
 }
 
-const projectRootDir = new URL('../', import.meta.url).pathname;
+const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
 
 /** @type {import('webpack').Configuration} */
 const config = {
