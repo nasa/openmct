@@ -32,10 +32,11 @@
       <div
         v-for="section in formSections"
         :key="section.id"
+        :aria-labelledby="'sectionTitle'"
         class="c-form__section"
         :class="section.cssClass"
       >
-        <h2 v-if="section.name" class="c-form__section-header">
+        <h2 v-if="section.name" :id="'sectionTitle' + section.id" class="c-form__section-header">
           {{ section.name }}
         </h2>
         <FormRow
