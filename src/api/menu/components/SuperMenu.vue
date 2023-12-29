@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-menu" :class="[options.menuClass, 'c-super-menu']" :style="styleObject">
+  <div
+    :aria-label="getLabel"
+    class="c-menu"
+    :class="[options.menuClass, 'c-super-menu']"
+    :style="styleObject"
+  >
     <ul
       v-if="options.actions.length && options.actions[0].length"
       role="menu"
@@ -87,6 +92,12 @@ export default {
     return {
       hoveredItem: {}
     };
+  },
+  computed: {
+    getLabel() {
+      const label = this.options.label ? `${this.options.label} Super Menu` : 'Super Menu';
+      return label;
+    }
   },
   methods: {
     toggleItemDescription(action = {}) {

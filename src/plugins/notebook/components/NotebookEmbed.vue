@@ -36,7 +36,8 @@
         </a>
         <button
           class="c-ne__embed__actions c-icon-button icon-3-dots"
-          title="More options"
+          title="More actions"
+          aria-label="More actions"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
       </div>

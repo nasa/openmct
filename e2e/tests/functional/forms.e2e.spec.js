@@ -157,7 +157,7 @@ test.describe('Persistence operations @couchdb', () => {
     });
 
     // Open the edit form for the clock object
-    await page.click('button[title="More options"]');
+    await page.click('button[title="More actions"]');
     await page.click('li[title="Edit properties of this object."]');
 
     // Modify the display format from default 12hr -> 24hr and click 'Save'

@@ -85,7 +85,7 @@ test.describe('Timer with target date', () => {
 
   test('Can count down to a target date', async ({ page }) => {
     // Set the target date to 2024-11-24 03:30:00
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
     await page.getByPlaceholder('YYYY-MM-DD').fill('2024-11-24');
     await page.locator('input[name="hour"]').fill('3');
@@ -108,7 +108,7 @@ test.describe('Timer with target date', () => {
 
   test('Can count up from a target date', async ({ page }) => {
     // Set the target date to 2020-11-23 03:30:00
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
     await page.getByPlaceholder('YYYY-MM-DD').fill('2020-11-23');
     await page.locator('input[name="hour"]').fill('3');
@@ -159,7 +159,7 @@ async function triggerTimerContextMenuAction(page, timerUrl, action) {
  */
 async function triggerTimer3dotMenuAction(page, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
-  const threeDotMenuButton = 'button[title="More options"]';
+  const threeDotMenuButton = 'button[title="More actions"]';
   let isActionAvailable = false;
   let iterations = 0;
   // Dismiss/open the 3dot menu until the action is available
