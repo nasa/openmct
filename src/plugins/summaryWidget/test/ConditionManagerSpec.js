@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionManager from '../src/ConditionManager';
+import ConditionManager from '../src/ConditionManager.js';
 
 describe('A Summary Widget Condition Manager', function () {
   let conditionManager;

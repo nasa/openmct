@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider';
-import ToolBarProvider from './toolbarProvider';
-import Container from './utils/container';
+import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider.js';
+import ToolBarProvider from './toolbarProvider.js';
+import Container from './utils/container.js';
 
 export default function plugin() {
   return function install(openmct) {

@@ -1,6 +1,6 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import CustomStringFormatter from './CustomStringFormatter';
+import CustomStringFormatter from './CustomStringFormatter.js';
 
 const CUSTOM_FORMATS = [
   {

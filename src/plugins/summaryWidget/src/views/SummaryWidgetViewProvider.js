@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidgetEditView from '../SummaryWidget';
-import SummaryWidgetView from './SummaryWidgetView';
+import SummaryWidgetEditView from '../SummaryWidget.js';
+import SummaryWidgetView from './SummaryWidgetView.js';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 export default function SummaryWidgetViewProvider(openmct) {

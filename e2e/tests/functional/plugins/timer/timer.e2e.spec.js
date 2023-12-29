@@ -25,7 +25,7 @@ const {
   openObjectTreeContextMenu,
   createDomainObjectWithDefaults
 } = require('../../../../appActions');
-import { MISSION_TIME } from '../../../../constants';
+import { MISSION_TIME } from '../../../../constants.js';
 
 test.describe('Timer', () => {
   let timer;

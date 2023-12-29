@@ -22,7 +22,7 @@
 
 import objectUtils from 'objectUtils';
 
-import SummaryWidgetEvaluator from './SummaryWidgetEvaluator';
+import SummaryWidgetEvaluator from './SummaryWidgetEvaluator.js';
 
 export default function EvaluatorPool(openmct) {
   this.openmct = openmct;

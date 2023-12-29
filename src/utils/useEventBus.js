@@ -1,4 +1,4 @@
-import emitter from 'tiny-emitter/instance';
+import emitter from 'tiny-emitter/instance.js';
 import { ref } from 'vue';
 
 export function useEventBus() {

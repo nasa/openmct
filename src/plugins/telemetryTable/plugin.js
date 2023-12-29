@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import TableConfigurationViewProvider from './TableConfigurationViewProvider';
-import TelemetryTableType from './TelemetryTableType';
-import TelemetryTableViewProvider from './TelemetryTableViewProvider';
-import TelemetryTableViewActions from './ViewActions';
+import TableConfigurationViewProvider from './TableConfigurationViewProvider.js';
+import TelemetryTableType from './TelemetryTableType.js';
+import TelemetryTableViewProvider from './TelemetryTableViewProvider.js';
+import TelemetryTableViewActions from './ViewActions.js';
 
 export default function plugin() {
   return function install(openmct) {

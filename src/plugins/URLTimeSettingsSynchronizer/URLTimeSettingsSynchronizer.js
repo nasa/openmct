@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';

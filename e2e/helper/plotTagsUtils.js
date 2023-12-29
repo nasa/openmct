@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { expect } from '../pluginFixtures';
+import { expect } from '../pluginFixtures.js';
 const { waitForPlotsToRender } = require('../appActions');
 
 /**

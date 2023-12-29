@@ -48,7 +48,7 @@ import momentDurationFormatSetup from 'moment-duration-format';
 import moment from 'moment-timezone';
 import raf from 'utils/raf';
 
-import throttle from '../../../utils/throttle';
+import throttle from '../../../utils/throttle.js';
 const refreshRateSeconds = 2;
 
 momentDurationFormatSetup(moment);

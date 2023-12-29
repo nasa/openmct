@@ -1,4 +1,4 @@
-import Palette from './Palette';
+import Palette from './Palette.js';
 
 // The colors that will be used to instantiate this palette if none are provided
 const DEFAULT_COLORS = [

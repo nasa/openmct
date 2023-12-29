@@ -1,8 +1,8 @@
 import EventEmitter from 'EventEmitter';
 
-import * as templateHelpers from '../../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../../utils/template/templateHelpers.js';
 import paletteTemplate from '../../res/input/paletteTemplate.html';
-import eventHelpers from '../eventHelpers';
+import eventHelpers from '../eventHelpers.js';
 
 /**
  * Instantiates a new Open MCT Color Palette input

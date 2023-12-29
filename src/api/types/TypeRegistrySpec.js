@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TypeRegistry from './TypeRegistry';
+import TypeRegistry from './TypeRegistry.js';
 
 describe('The Type API', function () {
   let typeRegistryInstance;

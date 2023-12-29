@@ -23,8 +23,8 @@
 import _ from 'lodash';
 import objectUtils from 'objectUtils';
 
-import eventHelpers from '../eventHelpers';
-import SummaryWidgetRule from './SummaryWidgetRule';
+import eventHelpers from '../eventHelpers.js';
+import SummaryWidgetRule from './SummaryWidgetRule.js';
 
 /**
  * evaluates rules defined in a summary widget against either lad or

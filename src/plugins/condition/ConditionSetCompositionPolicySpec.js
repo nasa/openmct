@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
+import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy.js';
 
 describe('ConditionSetCompositionPolicy', () => {
   let policy;

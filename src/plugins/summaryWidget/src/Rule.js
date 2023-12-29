@@ -1,12 +1,12 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import * as templateHelpers from '../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../utils/template/templateHelpers.js';
 import ruleTemplate from '../res/ruleTemplate.html';
-import Condition from './Condition';
-import eventHelpers from './eventHelpers';
-import ColorPalette from './input/ColorPalette';
-import IconPalette from './input/IconPalette';
+import Condition from './Condition.js';
+import eventHelpers from './eventHelpers.js';
+import ColorPalette from './input/ColorPalette.js';
+import IconPalette from './input/IconPalette.js';
 
 /**
  * An object representing a summary widget rule. Maintains a set of text

@@ -1,4 +1,4 @@
-import KeySelect from '../../src/input/KeySelect';
+import KeySelect from '../../src/input/KeySelect.js';
 
 describe('A select for choosing composition object properties', function () {
   let mockConfig;

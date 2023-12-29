@@ -30,7 +30,7 @@ import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;

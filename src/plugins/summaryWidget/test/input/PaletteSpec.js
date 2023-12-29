@@ -1,4 +1,4 @@
-import Palette from '../../src/input/Palette';
+import Palette from '../../src/input/Palette.js';
 
 describe('A generic Open MCT palette input', function () {
   let palette;

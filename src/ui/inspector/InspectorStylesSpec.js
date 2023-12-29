@@ -27,14 +27,14 @@ import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
-import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
+import stylesManager from '../../plugins/inspectorViews/styles/StylesManager.js';
 import {
   mockMultiSelectionMixedStyles,
   mockMultiSelectionNonSpecificStyles,
   mockMultiSelectionSameStyles,
   mockStyle,
   mockTelemetryTableSelection
-} from './InspectorStylesSpecMocks';
+} from './InspectorStylesSpecMocks.js';
 
 describe('the inspector', () => {
   let openmct;

@@ -1,6 +1,6 @@
 import mount from 'utils/mount';
 
-import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants.js';
 import BarGraphOptions from './BarGraphOptions.vue';
 
 export default function BarGraphInspectorViewProvider(openmct) {

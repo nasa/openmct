@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DefaultClock from '../../utils/clock/DefaultClock';
+import DefaultClock from '../../utils/clock/DefaultClock.js';
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
  * application based on UTC time values provided by a ticking local clock,

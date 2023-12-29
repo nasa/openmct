@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
+import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants.js';
 import FaultManagementInspector from './FaultManagementInspector.vue';
 
 export default function FaultManagementInspectorViewProvider(openmct) {

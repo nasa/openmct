@@ -1,4 +1,4 @@
-import ConditionEvaluator from '../src/ConditionEvaluator';
+import ConditionEvaluator from '../src/ConditionEvaluator.js';
 
 describe('A Summary Widget Rule Evaluator', function () {
   let evaluator;

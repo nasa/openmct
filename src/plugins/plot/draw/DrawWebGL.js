@@ -22,8 +22,8 @@
 
 import EventEmitter from 'EventEmitter';
 
-import eventHelpers from '../lib/eventHelpers';
-import { MARKER_SHAPES } from './MarkerShapes';
+import eventHelpers from '../lib/eventHelpers.js';
+import { MARKER_SHAPES } from './MarkerShapes.js';
 
 // WebGL shader sources (for drawing plain colors)
 const FRAGMENT_SHADER = `

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import FiltersInspectorViewProvider from './FiltersInspectorViewProvider';
+import FiltersInspectorViewProvider from './FiltersInspectorViewProvider.js';
 
 export default function plugin(supportedObjectTypesArray) {
   return function install(openmct) {

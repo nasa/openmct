@@ -79,8 +79,8 @@
 </template>
 
 <script>
-import Container from '../utils/container';
-import Frame from '../utils/frame';
+import Container from '../utils/container.js';
+import Frame from '../utils/frame.js';
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
 import ResizeHandle from './ResizeHandle.vue';

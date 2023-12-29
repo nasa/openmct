@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 
-import SimpleIndicator from './SimpleIndicator';
+import SimpleIndicator from './SimpleIndicator.js';
 
 class IndicatorAPI extends EventEmitter {
   constructor(openmct) {

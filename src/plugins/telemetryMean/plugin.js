@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MeanTelemetryProvider from './src/MeanTelemetryProvider';
+import MeanTelemetryProvider from './src/MeanTelemetryProvider.js';
 
 const DEFAULT_SAMPLES = 10;
 

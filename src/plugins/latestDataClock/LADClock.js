@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LocalClock from '../../../src/plugins/utcTimeSystem/LocalClock';
+import LocalClock from '../../../src/plugins/utcTimeSystem/LocalClock.js';
 
 class LADClock extends LocalClock {
   /**

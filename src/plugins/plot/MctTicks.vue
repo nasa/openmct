@@ -71,9 +71,9 @@
 </template>
 
 <script>
-import configStore from './configuration/ConfigStore';
-import eventHelpers from './lib/eventHelpers';
-import { getFormattedTicks, getLogTicks, ticks } from './tickUtils';
+import configStore from './configuration/ConfigStore.js';
+import eventHelpers from './lib/eventHelpers.js';
+import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
 

@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LocalTimeFormat from './LocalTimeFormat';
-import LocalTimeSystem from './LocalTimeSystem';
+import LocalTimeFormat from './LocalTimeFormat.js';
+import LocalTimeSystem from './LocalTimeSystem.js';
 
 export default function () {
   return function (openmct) {
