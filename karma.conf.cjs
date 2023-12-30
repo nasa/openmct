@@ -45,7 +45,7 @@ module.exports = async (config) => {
     basePath: '',
     frameworks: ['jasmine', 'webpack'],
     files: [
-      'index-test.js',
+      'index-test.cjs',
       // included means: should the files be included in the browser using <script> tag?
       // We don't want them as a <script> because the shared worker source
       // needs loaded remotely by the shared worker process.
@@ -102,7 +102,7 @@ module.exports = async (config) => {
       failFast: false
     },
     preprocessors: {
-      'index-test.js': ['webpack', 'sourcemap']
+      'index-test.cjs': ['webpack', 'sourcemap']
     },
     webpack: webpackConfig,
     webpackMiddleware: {
