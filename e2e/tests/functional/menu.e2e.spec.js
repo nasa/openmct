@@ -32,7 +32,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../../../helper/addNoneditableObject.js', import.meta.url))
+      path: fileURLToPath(new URL('../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 
