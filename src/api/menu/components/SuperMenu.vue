@@ -21,7 +21,7 @@
 -->
 <template>
   <div
-    :aria-label="getLabel"
+    :aria-label="optionsLabel"
     class="c-menu"
     :class="[options.menuClass, 'c-super-menu']"
     :style="styleObject"
@@ -94,7 +94,7 @@ export default {
     };
   },
   computed: {
-    getLabel() {
+    optionsLabel() {
       const label = this.options.label ? `${this.options.label} Super Menu` : 'Super Menu';
       return label;
     }
