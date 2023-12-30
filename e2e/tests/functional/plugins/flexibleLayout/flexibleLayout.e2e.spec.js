@@ -266,7 +266,7 @@ test.describe('Flexible Layout', () => {
 
 test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
   test.use({
-    storageState: fileURLToPath(new URL(import.meta.url, LOCALSTORAGE_PATH))
+    storageState: LOCALSTORAGE_PATH
   });
 
   test.beforeEach(async ({ page }) => {

@@ -24,7 +24,6 @@ import { createDomainObjectWithDefaults } from '../appActions.js';
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 /**
