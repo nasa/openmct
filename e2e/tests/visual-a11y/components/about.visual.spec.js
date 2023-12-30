@@ -24,9 +24,10 @@
 Tests the branding associated with the default deployment. At least the about modal for now
 */
 
-const { test, expect } = require('../../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
+
+import { VISUAL_URL } from '../../../constants';
+import { expect, test } from '../../../pluginFixtures';
 
 test.describe('Visual - Branding', () => {
   test.beforeEach(async ({ page }) => {

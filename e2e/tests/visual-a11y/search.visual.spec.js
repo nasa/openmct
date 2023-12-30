@@ -24,11 +24,11 @@
 This test suite is dedicated to tests which verify search functionality.
 */
 
-const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { VISUAL_URL } = require('../../constants');
+import percySnapshot from '@percy/playwright';
 
-const percySnapshot = require('@percy/playwright');
+import { createDomainObjectWithDefaults } from '../../appActions';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures';
+import { VISUAL_URL } from '../../constants';
 
 test.describe('Grand Search @a11y', () => {
   let conditionWidget;

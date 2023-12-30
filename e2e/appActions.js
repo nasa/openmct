@@ -54,9 +54,9 @@
  * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
  */
 
-const Buffer = require('buffer').Buffer;
-const genUuid = require('uuid').v4;
-const { expect } = require('@playwright/test');
+import { expect } from '@playwright/test';
+import { Buffer } from 'buffer';
+import { v4 as genUuid } from 'uuid';
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
