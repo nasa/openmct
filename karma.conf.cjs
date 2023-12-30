@@ -22,17 +22,17 @@
 
 /*global module,process*/
 
-module.exports = (config) => {
+module.exports = async (config) => {
   let webpackConfig;
   let browsers;
   let singleRun;
 
   if (process.env.KARMA_DEBUG) {
-    webpackConfig = require('./.webpack/webpack.dev.js');
+    webpackConfig = (await import('./.webpack/webpack.dev.js')).default;
     browsers = ['ChromeDebugging'];
     singleRun = false;
   } else {
-    webpackConfig = require('./.webpack/webpack.coverage.js');
+    webpackConfig = (await import('./.webpack/webpack.coverage.js')).default;
     browsers = ['ChromeHeadless'];
     singleRun = true;
   }
