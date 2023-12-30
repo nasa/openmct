@@ -138,12 +138,11 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
   return notebook;
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
-  enterTextEntry,
-  dragAndDropEmbed,
-  startAndAddRestrictedNotebookObject,
-  lockPage,
+export {
+  createNotebookAndEntry,
   createNotebookEntryAndTags,
-  createNotebookAndEntry
+  dragAndDropEmbed,
+  enterTextEntry,
+  lockPage,
+  startAndAddRestrictedNotebookObject
 };

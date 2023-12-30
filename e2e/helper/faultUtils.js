@@ -265,29 +265,28 @@ async function openFaultRowMenu(page, rowNumber) {
     .click();
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
-  navigateToFaultManagementWithExample,
-  navigateToFaultManagementWithStaticExample,
-  navigateToFaultManagementWithoutExample,
-  navigateToFaultItemInTree,
+export {
   acknowledgeFault,
-  shelveMultipleFaults,
   acknowledgeMultipleFaults,
-  shelveFault,
   changeViewTo,
-  sortFaultsBy,
-  enterSearchTerm,
   clearSearch,
-  selectFaultItem,
-  getHighestSeverity,
-  getLowestSeverity,
-  getFaultResultCount,
+  enterSearchTerm,
   getFault,
   getFaultByName,
   getFaultName,
-  getFaultSeverity,
   getFaultNamespace,
+  getFaultResultCount,
+  getFaultSeverity,
   getFaultTriggerTime,
-  openFaultRowMenu
+  getHighestSeverity,
+  getLowestSeverity,
+  navigateToFaultItemInTree,
+  navigateToFaultManagementWithExample,
+  navigateToFaultManagementWithoutExample,
+  navigateToFaultManagementWithStaticExample,
+  openFaultRowMenu,
+  selectFaultItem,
+  shelveFault,
+  shelveMultipleFaults,
+  sortFaultsBy
 };

@@ -25,7 +25,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 */
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import nbUtils from '../../../../helper/notebookUtils.js';
+import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {

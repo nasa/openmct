@@ -23,7 +23,7 @@
 import percySnapshot from '@percy/playwright';
 import path from 'path';
 
-import utils from '../../helper/faultUtils.js';
+import * as utils from '../../helper/faultUtils.js';
 import { test } from '../../pluginFixtures.js';
 
 test.describe('Fault Management Visual Tests', () => {

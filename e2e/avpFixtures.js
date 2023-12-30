@@ -57,7 +57,7 @@ const TEST_RESULTS_DIR = './test-results';
  *                                  otherwise returns null.
  */
 /* eslint-disable no-undef */
-exports.scanForA11yViolations = async function (page, testCaseName, options = {}) {
+export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
   // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
@@ -92,7 +92,6 @@ exports.scanForA11yViolations = async function (page, testCaseName, options = {}
     console.log('No accessibility violations found, no report generated.');
     return null;
   }
-};
+}
 
-exports.expect = expect;
-exports.test = test;
+export { expect, test };

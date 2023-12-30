@@ -118,7 +118,7 @@ const theme = 'espresso';
  */
 const myItemsFolderName = 'My Items';
 
-exports.test = test.extend({
+const extendedTest = test.extend({
   // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
   theme: [theme, { option: true }],
   // eslint-disable-next-line no-shadow
@@ -143,19 +143,18 @@ exports.test = test.extend({
   }
 });
 
-exports.expect = expect;
-exports.request = request;
+export { expect, request, extendedTest as test };
 
 /**
  * Takes a readable stream and returns a string.
  * @param {ReadableStream} readable - the readable stream
  * @return {Promise<String>} the stringified stream
  */
-exports.streamToString = async function (readable) {
+export async function streamToString(readable) {
   let result = '';
   for await (const chunk of readable) {
     result += chunk;
   }
 
   return result;
-};
+}

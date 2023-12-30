@@ -28,8 +28,7 @@
  * GitHub issues.
  */
 
-import base from '@playwright/test';
-const { expect, request } = base;
+import { expect, request, test } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import sinon from 'sinon';
@@ -68,7 +67,7 @@ function waitForAnimations(locator) {
  */
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
-exports.test = base.test.extend({
+const extendedTest = test.extend({
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
    * the Time Indicator Clock to be in a specific state.
@@ -201,6 +200,4 @@ exports.test = base.test.extend({
   }
 });
 
-exports.expect = expect;
-exports.request = request;
-exports.waitForAnimations = waitForAnimations;
+export { expect, request, extendedTest as test, waitForAnimations };

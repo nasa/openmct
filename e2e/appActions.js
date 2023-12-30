@@ -644,8 +644,7 @@ async function renameObjectFromContextMenu(page, url, newName) {
   await page.click('[aria-label="Save"]');
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
+export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
@@ -653,16 +652,16 @@ module.exports = {
   expandEntireTree,
   expandTreePaneItemByName,
   getCanvasPixels,
-  getHashUrlToDomainObject,
   getFocusedObjectUuid,
+  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
+  renameObjectFromContextMenu,
+  setEndOffset,
   setFixedTimeMode,
+  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
-  setEndOffset,
   setTimeConductorBounds,
-  setIndependentTimeConductorBounds,
-  waitForPlotsToRender,
-  renameObjectFromContextMenu
+  waitForPlotsToRender
 };
