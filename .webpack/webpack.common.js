@@ -57,6 +57,7 @@ const config = {
     filename: '[name].js',
     path: path.resolve(projectRootDir, 'dist'),
     library: 'openmct',
+    libraryExport: 'default',
     libraryTarget: 'umd',
     publicPath: '',
     hashFunction: 'xxhash64',
