@@ -19,12 +19,23 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import fs from 'fs';
+
 import { createPlanFromJSON } from '../../../appActions.js';
-import { assertPlanActivities, assertPlanOrderedSwimLanes } from '../../../helper/planningUtils.js';
-import { addPlanGetInterceptor } from '../../../helper/planningUtils.js';
+import {
+  addPlanGetInterceptor,
+  assertPlanActivities,
+  assertPlanOrderedSwimLanes
+} from '../../../helper/planningUtils.js';
 import { test } from '../../../pluginFixtures.js';
-import testPlan1 from '../../../test-data/examplePlans/ExamplePlan_Small1.json';
-import testPlanWithOrderedLanes from '../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json';
+
+const testPlan1 = fs.readFileSync(
+  new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+);
+
+const testPlanWithOrderedLanes = fs.readFileSync(
+  new URL('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json', import.meta.url)
+);
 
 test.describe('Plan', () => {
   let plan;

@@ -32,7 +32,7 @@
  * and is additionally verified in the validation test suites below.
  */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { createDomainObjectWithDefaults, createExampleTelemetryObject } from '../../appActions.js';
 import { MISSION_TIME } from '../../constants.js';
@@ -224,14 +224,18 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     await page.getByRole('button', { name: 'OK' }).click();
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json')
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
+      )
     });
   });
 });
 
 test.describe('Validate Overlay Plot with Telemetry Object @localStorage @generatedata', () => {
   test.use({
-    storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json')
+    storageState: fileURLToPath(
+      new URL('../../../e2e/test-data/overlay_plot_storage.json', import.meta.url)
+    )
   });
   test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -273,9 +277,8 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
 
 test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorage @generatedata', () => {
   test.use({
-    storageState: path.join(
-      __dirname,
-      '../../../e2e/test-data/overlay_plot_with_delay_storage.json'
+    storageState: fileURLToPath(
+      new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
     )
   });
   test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {

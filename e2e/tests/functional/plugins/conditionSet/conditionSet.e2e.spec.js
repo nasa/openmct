@@ -26,7 +26,7 @@ suite is sharing state between tests which is considered an anti-pattern. Implem
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
@@ -51,7 +51,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+      path: fileURLToPath(
+        new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+      )
     });
 
     //Set object identifier from url
@@ -64,7 +66,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
   //Load localStorage for subsequent tests
   test.use({
-    storageState: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+    storageState: fileURLToPath(
+      new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+    )
   });
 
   //Begin suite of tests again localStorage
