@@ -24,13 +24,13 @@
 This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const {
-  enterTextEntry,
+import { createDomainObjectWithDefaults } from '../../../../appActions';
+import {
   createNotebookAndEntry,
-  createNotebookEntryAndTags
-} = require('../../../../helper/notebookUtils');
+  createNotebookEntryAndTags,
+  enterTextEntry
+} from '../../../../helper/notebookUtils';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Tagging in Notebooks @addInit', () => {
   test.beforeEach(async ({ page }) => {

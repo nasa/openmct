@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* global __dirname */
-const path = require('path');
-const { test } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
+import percySnapshot from '@percy/playwright';
+import path from 'path';
 
-const utils = require('../../helper/faultUtils');
+import utils from '../../helper/faultUtils';
+import { test } from '../../pluginFixtures';
 
 test.describe('Fault Management Visual Tests', () => {
   test('icon test', async ({ page, theme }) => {

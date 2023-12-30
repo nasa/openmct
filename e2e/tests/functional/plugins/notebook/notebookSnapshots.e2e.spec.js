@@ -24,10 +24,11 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+import fs from 'fs/promises';
+import path from 'path';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 const NOTEBOOK_NAME = 'Notebook';
 

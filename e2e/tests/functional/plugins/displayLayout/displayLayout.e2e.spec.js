@@ -20,15 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* global __dirname */
-const { test, expect } = require('../../../../pluginFixtures');
-const path = require('path');
-const {
+import path from 'path';
+
+import {
   createDomainObjectWithDefaults,
-  setStartOffset,
   setFixedTimeMode,
+  setIndependentTimeConductorBounds,
   setRealTimeMode,
-  setIndependentTimeConductorBounds
-} = require('../../../../appActions');
+  setStartOffset
+} from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 const LOCALSTORAGE_PATH = path.resolve(
   __dirname,

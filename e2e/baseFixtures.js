@@ -28,12 +28,12 @@
  * GitHub issues.
  */
 
-const base = require('@playwright/test');
+import base from '@playwright/test';
 const { expect, request } = base;
-const fs = require('fs');
-const path = require('path');
-const { v4: uuid } = require('uuid');
-const sinon = require('sinon');
+import fs from 'fs';
+import path from 'path';
+import sinon from 'sinon';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Takes a `ConsoleMessage` and returns a formatted string. Used to enable console log error detection.

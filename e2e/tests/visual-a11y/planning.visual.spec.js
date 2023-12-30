@@ -20,15 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, scanForA11yViolations } = require('../../avpFixtures');
-const {
-  setBoundsToSpanAllActivities,
-  setDraftStatusForPlan
-} = require('../../helper/planningUtils');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
-const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
-const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions';
+import { scanForA11yViolations, test } from '../../avpFixtures';
+import { VISUAL_URL } from '../../constants';
+import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils';
+import examplePlanSmall from '../../test-data/examplePlans/ExamplePlan_Small2.json';
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 

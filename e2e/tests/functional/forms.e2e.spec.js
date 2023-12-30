@@ -24,10 +24,11 @@
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const genUuid = require('uuid').v4;
-const path = require('path');
+import path from 'path';
+import { v4 as genUuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions';
+import { expect, test } from '../../pluginFixtures';
 
 const TEST_FOLDER = 'test folder';
 const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';

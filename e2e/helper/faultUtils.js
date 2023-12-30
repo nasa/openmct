@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* global __dirname */
-const path = require('path');
+import path from 'path';
 
 /**
  * @param {import('@playwright/test').Page} page

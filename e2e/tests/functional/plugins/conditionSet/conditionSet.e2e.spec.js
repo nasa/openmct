@@ -26,12 +26,13 @@ suite is sharing state between tests which is considered an anti-pattern. Implem
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('../../../../pluginFixtures.js');
-const {
+import path from 'path';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;

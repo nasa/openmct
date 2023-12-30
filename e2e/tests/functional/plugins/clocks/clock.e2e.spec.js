@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Clock.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures';
 
 test.describe('Clock Generator CRUD Operations', () => {
   test('Timezone dropdown will collapse when clicked outside or on dropdown icon again', async ({

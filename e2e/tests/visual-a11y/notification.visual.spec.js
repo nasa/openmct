@@ -24,10 +24,11 @@
  * This test is dedicated to test notification banner functionality and its accessibility attributes.
  */
 
-const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults } from '../../appActions';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures';
+import { VISUAL_URL } from '../../constants';
 
 test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11y", () => {
   test.beforeEach(async ({ page }) => {

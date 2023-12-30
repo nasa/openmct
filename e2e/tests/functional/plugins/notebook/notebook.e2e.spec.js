@@ -24,10 +24,11 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
-const path = require('path');
+import path from 'path';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions';
+import nbUtils from '../../../../helper/notebookUtils';
+import { expect, streamToString, test } from '../../../../pluginFixtures';
 
 const NOTEBOOK_NAME = 'Notebook';
 

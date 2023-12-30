@@ -24,18 +24,14 @@
 Tests to verify plot tagging functionality.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
-  basicTagsTests,
-  createTags,
-  testTelemetryItem
-} = require('../../../../helper/plotTagsUtils');
-const {
+import {
   createDomainObjectWithDefaults,
-  setRealTimeMode,
   setFixedTimeMode,
+  setRealTimeMode,
   waitForPlotsToRender
-} = require('../../../../appActions');
+} from '../../../../appActions';
+import { basicTagsTests, createTags, testTelemetryItem } from '../../../../helper/plotTagsUtils';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Plot Tagging', () => {
   test.beforeEach(async ({ page }) => {

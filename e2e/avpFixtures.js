@@ -33,10 +33,11 @@
  * existing ones.
  */
 
-const fs = require('fs');
-const path = require('path');
-const { test, expect } = require('./pluginFixtures');
-const AxeBuilder = require('@axe-core/playwright').default;
+import AxeBuilder from '@axe-core/playwright';
+import fs from 'fs';
+import path from 'path';
+
+import { expect, test } from './pluginFixtures';
 
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';

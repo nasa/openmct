@@ -21,12 +21,13 @@
  *****************************************************************************/
 /* global __dirname */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import path from 'path';
+
+import {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 const LOCALSTORAGE_PATH = path.resolve(
   __dirname,

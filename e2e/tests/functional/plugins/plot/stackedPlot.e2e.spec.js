@@ -25,8 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;

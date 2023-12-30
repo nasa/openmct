@@ -21,9 +21,10 @@
  *****************************************************************************/
 /* global __dirname */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const path = require('path');
+import path from 'path';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Testing numeric data with inspector data visualization (i.e., data pivoting)', () => {
   test.beforeEach(async ({ page }) => {

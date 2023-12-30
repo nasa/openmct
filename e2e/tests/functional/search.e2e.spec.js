@@ -23,9 +23,10 @@
  * This test suite is dedicated to tests which verify search functionalities.
  */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { v4: uuid } = require('uuid');
+import { v4 as uuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions';
+import { expect, test } from '../../pluginFixtures';
 
 test.describe('Grand Search', () => {
   const searchResultSelector = '.c-gsearch-result__title';

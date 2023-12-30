@@ -32,13 +32,11 @@
  * and is additionally verified in the validation test suites below.
  */
 
-const { test, expect } = require('../../pluginFixtures.js');
-const {
-  createDomainObjectWithDefaults,
-  createExampleTelemetryObject
-} = require('../../appActions.js');
-const { MISSION_TIME } = require('../../constants.js');
-const path = require('path');
+import path from 'path';
+
+import { createDomainObjectWithDefaults, createExampleTelemetryObject } from '../../appActions.js';
+import { MISSION_TIME } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 

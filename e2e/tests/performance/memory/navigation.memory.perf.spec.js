@@ -21,8 +21,8 @@
  *****************************************************************************/
 /* global __dirname */
 
-const { test, expect } = require('@playwright/test');
-const path = require('path');
+import { expect, test } from '@playwright/test';
+import path from 'path';
 
 const memoryLeakFilePath = path.resolve(
   __dirname,

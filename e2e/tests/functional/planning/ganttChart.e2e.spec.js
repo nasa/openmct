@@ -19,15 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test, expect } = require('../../../pluginFixtures');
-const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Small2.json');
-const {
-  assertPlanActivities,
-  setBoundsToSpanAllActivities
-} = require('../../../helper/planningUtils');
-const { getPreciseDuration } = require('../../../../src/utils/duration');
+import { getPreciseDuration } from '../../../../src/utils/duration';
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions';
+import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../../helper/planningUtils';
+import { expect, test } from '../../../pluginFixtures';
+import testPlan1 from '../../../test-data/examplePlans/ExamplePlan_Small1.json';
+import testPlan2 from '../../../test-data/examplePlans/ExamplePlan_Small2.json';
 
 test.describe('Gantt Chart', () => {
   let ganttChart;

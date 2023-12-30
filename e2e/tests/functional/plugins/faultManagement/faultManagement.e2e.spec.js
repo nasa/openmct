@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const utils = require('../../../../helper/faultUtils');
+import utils from '../../../../helper/faultUtils';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {

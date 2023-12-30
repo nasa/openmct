@@ -24,8 +24,9 @@
  * This test suite is dedicated to testing the operator status plugin.
  */
 
-const path = require('path');
-const { test, expect } = require('../../../../pluginFixtures');
+import path from 'path';
+
+import { expect, test } from '../../../../pluginFixtures';
 
 /*
 

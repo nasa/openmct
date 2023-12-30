@@ -3,7 +3,7 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-const { devices } = require('@playwright/test');
+import { devices } from '@playwright/test';
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {

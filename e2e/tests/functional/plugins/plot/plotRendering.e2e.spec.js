@@ -25,8 +25,8 @@
  *
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, getCanvasPixels } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, getCanvasPixels } from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Plot Rendering', () => {
   let sineWaveGeneratorObject;

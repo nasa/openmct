@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { waitForPlotsToRender } from '../appActions';
 import { expect } from '../pluginFixtures.js';
-const { waitForPlotsToRender } = require('../appActions');
 
 /**
  * Given a canvas and a set of points, tags the points on the canvas.

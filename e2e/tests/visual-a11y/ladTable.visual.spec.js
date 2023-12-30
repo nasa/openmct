@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { expect, test } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults } from '../../appActions';
+import { VISUAL_URL } from '../../constants';
+import { expect, test } from '../../pluginFixtures';
 
 test.describe('Visual - LAD Table', () => {
   /** @type {import('@playwright/test').Locator} */

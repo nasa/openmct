@@ -24,9 +24,9 @@
 This test suite is dedicated to tests which verify persistability checks
 */
 
-const { test, expect } = require('../../baseFixtures.js');
+import path from 'path';
 
-const path = require('path');
+import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Persistence operations @addInit', () => {
   // add non persistable root item

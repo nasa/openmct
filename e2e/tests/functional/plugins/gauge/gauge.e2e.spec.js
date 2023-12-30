@@ -24,12 +24,13 @@
  * This test suite is dedicated to testing the Gauge component.
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { v4 as uuid } from 'uuid';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
-const uuid = require('uuid').v4;
+} from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Gauge', () => {
   test.beforeEach(async ({ page }) => {

@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../appActions');
+import { createDomainObjectWithDefaults } from '../appActions';
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
-const path = require('path');
+import path from 'path';
 
 /**
  * @param {import('@playwright/test').Page} page

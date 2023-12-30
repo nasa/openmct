@@ -480,7 +480,7 @@ The following contains a list of tips and tricks which don't exactly fit into a 
 It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior (i.e. Tree not rendering), only use this sparingly. To do this, use the `overrideClock` fixture as such:
 
 ```js
-const { test, expect } = require('../../pluginFixtures.js');
+import { test, expect } from '../../pluginFixtures.js';
 
 test.describe('foo test suite', () => {
   

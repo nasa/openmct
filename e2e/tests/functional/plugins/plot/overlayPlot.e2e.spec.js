@@ -25,12 +25,12 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
   waitForPlotsToRender
-} = require('../../../../appActions');
+} from '../../../../appActions';
+import { expect, test } from '../../../../pluginFixtures';
 
 test.describe('Overlay Plot', () => {
   test.beforeEach(async ({ page }) => {

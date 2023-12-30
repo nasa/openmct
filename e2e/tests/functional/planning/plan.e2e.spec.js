@@ -19,15 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON } = require('../../../appActions');
-const { addPlanGetInterceptor } = require('../../../helper/planningUtils.js');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const testPlanWithOrderedLanes = require('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json');
-const {
-  assertPlanActivities,
-  assertPlanOrderedSwimLanes
-} = require('../../../helper/planningUtils');
+import { createPlanFromJSON } from '../../../appActions';
+import { assertPlanActivities, assertPlanOrderedSwimLanes } from '../../../helper/planningUtils';
+import { addPlanGetInterceptor } from '../../../helper/planningUtils.js';
+import { test } from '../../../pluginFixtures';
+import testPlan1 from '../../../test-data/examplePlans/ExamplePlan_Small1.json';
+import testPlanWithOrderedLanes from '../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json';
 
 test.describe('Plan', () => {
   let plan;
