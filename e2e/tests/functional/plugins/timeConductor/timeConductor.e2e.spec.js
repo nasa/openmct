@@ -26,8 +26,8 @@ import {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds
-} from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
   test('validate start time does not exceeds end time', async ({ page }) => {

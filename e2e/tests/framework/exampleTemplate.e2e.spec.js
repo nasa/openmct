@@ -45,8 +45,8 @@
  */
 
 // Structure: Some standard Imports. Please update the required pathing.
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 /**
  * Structure:

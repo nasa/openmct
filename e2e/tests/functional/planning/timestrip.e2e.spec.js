@@ -24,8 +24,8 @@ import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
   setIndependentTimeConductorBounds
-} from '../../../appActions';
-import { expect, test } from '../../../pluginFixtures';
+} from '../../../appActions.js';
+import { expect, test } from '../../../pluginFixtures.js';
 
 const testPlan = {
   TEST_GROUP: [

@@ -37,7 +37,7 @@ import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
 import path from 'path';
 
-import { expect, test } from './pluginFixtures';
+import { expect, test } from './pluginFixtures.js';
 
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';

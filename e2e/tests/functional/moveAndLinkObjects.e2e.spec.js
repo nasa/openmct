@@ -24,8 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving & linking objects.
 */
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Move & link item tests', () => {
   test('Create a basic object and verify that it can be moved to another folder', async ({

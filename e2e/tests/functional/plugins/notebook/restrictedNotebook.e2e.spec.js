@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { openObjectTreeContextMenu } from '../../../../appActions';
+import { openObjectTreeContextMenu } from '../../../../appActions.js';
 import {
   dragAndDropEmbed,
   enterTextEntry,
   lockPage,
   startAndAddRestrictedNotebookObject
-} from '../../../../helper/notebookUtils';
-import { expect, streamToString, test } from '../../../../pluginFixtures';
+} from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';

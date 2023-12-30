@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { waitForPlotsToRender } from '../appActions';
+import { waitForPlotsToRender } from '../appActions.js';
 import { expect } from '../pluginFixtures.js';
 
 /**

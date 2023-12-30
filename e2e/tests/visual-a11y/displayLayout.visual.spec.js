@@ -28,9 +28,9 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { VISUAL_URL } from '../../constants';
-import { test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { VISUAL_URL } from '../../constants.js';
+import { test } from '../../pluginFixtures.js';
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {

@@ -26,9 +26,9 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 import path from 'path';
 
-import { createDomainObjectWithDefaults } from '../../../../appActions';
-import nbUtils from '../../../../helper/notebookUtils';
-import { expect, streamToString, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import nbUtils from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const NOTEBOOK_NAME = 'Notebook';
 

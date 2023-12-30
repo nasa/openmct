@@ -25,8 +25,8 @@
  *
  */
 
-import { createDomainObjectWithDefaults, getCanvasPixels } from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults, getCanvasPixels } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
   let sineWaveGeneratorObject;

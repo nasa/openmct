@@ -22,10 +22,10 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions';
-import { scanForA11yViolations, test } from '../../avpFixtures';
-import { VISUAL_URL } from '../../constants';
-import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils';
+import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {

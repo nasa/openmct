@@ -22,9 +22,9 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { VISUAL_URL } from '../../constants';
-import { expect, test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { VISUAL_URL } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - LAD Table', () => {
   /** @type {import('@playwright/test').Locator} */

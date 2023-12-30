@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { scanForA11yViolations, test } from '../../avpFixtures';
-import { VISUAL_URL } from '../../constants';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
 test.describe('a11y - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {

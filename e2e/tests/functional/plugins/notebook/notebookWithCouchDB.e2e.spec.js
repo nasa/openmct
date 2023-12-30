@@ -24,9 +24,9 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
 
-import { createDomainObjectWithDefaults } from '../../../../appActions';
-import nbUtils from '../../../../helper/notebookUtils';
-import { expect, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import nbUtils from '../../../../helper/notebookUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {
   let testNotebook;

@@ -23,8 +23,8 @@
 import percySnapshot from '@percy/playwright';
 import path from 'path';
 
-import utils from '../../helper/faultUtils';
-import { test } from '../../pluginFixtures';
+import utils from '../../helper/faultUtils.js';
+import { test } from '../../pluginFixtures.js';
 
 test.describe('Fault Management Visual Tests', () => {
   test('icon test', async ({ page, theme }) => {

@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from '../../../../helper/faultUtils';
-import { expect, test } from '../../../../pluginFixtures';
+import utils from '../../../../helper/faultUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {

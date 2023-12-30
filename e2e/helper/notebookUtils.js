@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults } from '../appActions';
+import { createDomainObjectWithDefaults } from '../appActions.js';
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';

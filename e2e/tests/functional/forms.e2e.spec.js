@@ -27,8 +27,8 @@ This test suite is dedicated to tests which verify form functionality in isolati
 import path from 'path';
 import { v4 as genUuid } from 'uuid';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const TEST_FOLDER = 'test folder';
 const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';

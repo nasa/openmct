@@ -25,7 +25,7 @@
  *
  */
 
-import { expect, test } from '../../pluginFixtures';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
   test.use({ failOnConsoleError: false });

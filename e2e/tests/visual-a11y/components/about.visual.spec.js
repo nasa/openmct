@@ -26,8 +26,8 @@ Tests the branding associated with the default deployment. At least the about mo
 
 import percySnapshot from '@percy/playwright';
 
-import { VISUAL_URL } from '../../../constants';
-import { expect, test } from '../../../pluginFixtures';
+import { VISUAL_URL } from '../../../constants.js';
+import { expect, test } from '../../../pluginFixtures.js';
 
 test.describe('Visual - Branding', () => {
   test.beforeEach(async ({ page }) => {

@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults, openObjectTreeContextMenu } from '../../../../appActions';
+import { createDomainObjectWithDefaults, openObjectTreeContextMenu } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
-import { expect, test } from '../../../../pluginFixtures';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Timer', () => {
   let timer;

@@ -26,7 +26,7 @@
 
 import path from 'path';
 
-import { expect, test } from '../../../../pluginFixtures';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 /*
 

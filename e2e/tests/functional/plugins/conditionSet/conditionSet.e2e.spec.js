@@ -31,7 +31,7 @@ import path from 'path';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} from '../../../../appActions';
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;

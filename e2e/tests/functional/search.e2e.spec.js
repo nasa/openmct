@@ -25,8 +25,8 @@
 
 import { v4 as uuid } from 'uuid';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, test } from '../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Grand Search', () => {
   const searchResultSelector = '.c-gsearch-result__title';

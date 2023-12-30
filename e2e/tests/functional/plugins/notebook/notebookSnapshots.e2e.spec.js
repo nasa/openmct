@@ -27,8 +27,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 import fs from 'fs/promises';
 import path from 'path';
 
-import { createDomainObjectWithDefaults } from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 const NOTEBOOK_NAME = 'Notebook';
 

@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { getPreciseDuration } from '../../../../src/utils/duration';
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions';
-import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../../helper/planningUtils';
-import { expect, test } from '../../../pluginFixtures';
+import { getPreciseDuration } from '../../../../src/utils/duration.js';
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../../helper/planningUtils.js';
+import { expect, test } from '../../../pluginFixtures.js';
 import testPlan1 from '../../../test-data/examplePlans/ExamplePlan_Small1.json';
 import testPlan2 from '../../../test-data/examplePlans/ExamplePlan_Small2.json';
 

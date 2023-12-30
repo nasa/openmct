@@ -26,10 +26,10 @@
  * and appActions. These fixtures should be generalized across all plugins.
  */
 
-// import { createDomainObjectWithDefaults } from './appActions';
+// import { createDomainObjectWithDefaults } from './appActions.js';
 import path from 'path';
 
-import { expect, request, test } from './baseFixtures';
+import { expect, request, test } from './baseFixtures.js';
 
 /**
  * @typedef {Object} ObjectCreateOptions

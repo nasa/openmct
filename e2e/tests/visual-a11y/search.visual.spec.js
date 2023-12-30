@@ -26,9 +26,9 @@ This test suite is dedicated to tests which verify search functionality.
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, scanForA11yViolations, test } from '../../avpFixtures';
-import { VISUAL_URL } from '../../constants';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
 test.describe('Grand Search @a11y', () => {
   let conditionWidget;

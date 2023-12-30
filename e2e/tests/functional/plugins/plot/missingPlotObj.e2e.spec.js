@@ -24,7 +24,7 @@
 Tests to verify log plot functionality when objects are missing
 */
 
-import { expect, test } from '../../../../pluginFixtures';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Handle missing object for plots', () => {
   test('Displays empty div for missing stacked plot item @unstable', async ({

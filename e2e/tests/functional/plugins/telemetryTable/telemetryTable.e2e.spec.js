@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Telemetry Table', () => {
   test('unpauses and filters data when paused by button and user changes bounds', async ({

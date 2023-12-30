@@ -22,10 +22,10 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions';
-import { scanForA11yViolations, test } from '../../avpFixtures';
-import { VISUAL_URL } from '../../constants';
-import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils';
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 import examplePlanSmall from '../../test-data/examplePlans/ExamplePlan_Small2.json';
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';

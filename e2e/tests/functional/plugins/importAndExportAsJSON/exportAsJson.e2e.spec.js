@@ -26,7 +26,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
-import { expect, test } from '../../../../baseFixtures';
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('ExportAsJSON', () => {
   test.fixme(

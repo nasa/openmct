@@ -26,8 +26,8 @@ import path from 'path';
 import {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
-} from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 const LOCALSTORAGE_PATH = path.resolve(
   __dirname,

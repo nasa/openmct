@@ -28,9 +28,9 @@ are only meant to run against openmct's app.js started by `npm run start` within
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions';
-import { expect, scanForA11yViolations, test } from '../../avpFixtures';
-import { VISUAL_URL } from '../../constants';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
 test.describe('Visual - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {

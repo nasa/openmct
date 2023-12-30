@@ -29,8 +29,8 @@ import { v4 as uuid } from 'uuid';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Gauge', () => {
   test.beforeEach(async ({ page }) => {

@@ -29,8 +29,8 @@ import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
   waitForPlotsToRender
-} from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Overlay Plot', () => {
   test.beforeEach(async ({ page }) => {

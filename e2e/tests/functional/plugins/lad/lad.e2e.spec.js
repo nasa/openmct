@@ -26,8 +26,8 @@ import {
   setFixedTimeMode,
   setRealTimeMode,
   setStartOffset
-} from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Testing LAD table configuration', () => {
   let ladTable;

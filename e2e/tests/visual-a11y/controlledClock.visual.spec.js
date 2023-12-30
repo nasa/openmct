@@ -27,8 +27,8 @@ clockOptions plugin fixture.
 
 import percySnapshot from '@percy/playwright';
 
-import { MISSION_TIME, VISUAL_URL } from '../../constants';
-import { expect, test } from '../../pluginFixtures';
+import { MISSION_TIME, VISUAL_URL } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {

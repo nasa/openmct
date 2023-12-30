@@ -33,7 +33,7 @@ comfortable running this test during a live mission?" Avoid creating or deleting
 Make no assumptions about the order that elements appear in the DOM.
 */
 
-import { expect, test } from '../../pluginFixtures';
+import { expect, test } from '../../pluginFixtures.js';
 
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({
   page

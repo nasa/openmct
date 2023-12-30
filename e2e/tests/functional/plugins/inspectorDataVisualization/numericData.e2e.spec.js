@@ -23,8 +23,8 @@
 
 import path from 'path';
 
-import { createDomainObjectWithDefaults } from '../../../../appActions';
-import { expect, test } from '../../../../pluginFixtures';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Testing numeric data with inspector data visualization (i.e., data pivoting)', () => {
   test.beforeEach(async ({ page }) => {

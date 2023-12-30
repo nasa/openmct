@@ -29,9 +29,9 @@ import {
   setFixedTimeMode,
   setRealTimeMode,
   waitForPlotsToRender
-} from '../../../../appActions';
-import { basicTagsTests, createTags, testTelemetryItem } from '../../../../helper/plotTagsUtils';
-import { expect, test } from '../../../../pluginFixtures';
+} from '../../../../appActions.js';
+import { basicTagsTests, createTags, testTelemetryItem } from '../../../../helper/plotTagsUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Tagging', () => {
   test.beforeEach(async ({ page }) => {
