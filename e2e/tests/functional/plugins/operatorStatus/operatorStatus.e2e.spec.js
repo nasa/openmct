@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 /*
  * This test suite is dedicated to testing the operator status plugin.
  */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -42,10 +41,10 @@ test.describe('Operator Status', () => {
   test.beforeEach(async ({ page }) => {
     // FIXME: determine if plugins will be added to index.html or need to be injected
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitExampleUser.js')
+      path: fileURLToPath(new URL('../../../../helper/addInitExampleUser.js', import.meta.url))
     });
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitOperatorStatus.js')
+      path: fileURLToPath(new URL('../../../../helper/addInitOperatorStatus.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();

@@ -27,7 +27,7 @@
  */
 
 // import { createDomainObjectWithDefaults } from './appActions.js';
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { expect, request, test } from './baseFixtures.js';
 
@@ -126,7 +126,9 @@ const extendedTest = test.extend({
     // eslint-disable-next-line playwright/no-conditional-in-test
     if (theme === 'snow') {
       //inject snow theme
-      await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+      await page.addInitScript({
+        path: fileURLToPath(new URL('./helper/useSnowTheme.js', import.meta.url))
+      });
     }
 
     // Attach info about the currently running test and its project.

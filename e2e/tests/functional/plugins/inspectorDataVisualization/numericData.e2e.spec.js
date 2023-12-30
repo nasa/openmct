@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -30,7 +29,9 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
   test.beforeEach(async ({ page }) => {
     // eslint-disable-next-line no-undef
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitDataVisualization.js')
+      path: fileURLToPath(
+        new URL('../../../../helper/addInitDataVisualization.js', import.meta.url)
+      )
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });

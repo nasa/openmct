@@ -19,14 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithExample(page) {
-  await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProvider.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitExampleFaultProvider.js', import.meta.url))
+  });
 
   await navigateToFaultItemInTree(page);
 }
@@ -36,7 +38,7 @@ async function navigateToFaultManagementWithExample(page) {
  */
 async function navigateToFaultManagementWithStaticExample(page) {
   await page.addInitScript({
-    path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js')
+    path: fileURLToPath(new URL('./addInitExampleFaultProviderStatic.js', import.meta.url))
   });
 
   await navigateToFaultItemInTree(page);
@@ -46,7 +48,9 @@ async function navigateToFaultManagementWithStaticExample(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithoutExample(page) {
-  await page.addInitScript({ path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitFaultManagementPlugin.js', import.meta.url))
+  });
 
   await navigateToFaultItemInTree(page);
 }

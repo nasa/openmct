@@ -19,12 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 import { v4 as genUuid } from 'uuid';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
@@ -73,7 +73,7 @@ test.describe('Form Validation Behavior', () => {
 test.describe('Form File Input Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js')
+      path: fileURLToPath(new URL('../../../../helper/addInitFileInputObject.js', import.meta.url))
     });
   });
 
@@ -110,7 +110,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addNoneditableObject.js')
+      path: fileURLToPath(new URL('../../../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 

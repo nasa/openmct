@@ -19,12 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify persistability checks
 */
 
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { expect, test } from '../../baseFixtures.js';
 
@@ -32,7 +32,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addNoneditableObject.js')
+      path: fileURLToPath(new URL('../../../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 

@@ -32,6 +32,7 @@ import { expect, request, test } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import sinon from 'sinon';
+import { fileURLToPath } from 'url';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -96,7 +97,7 @@ const extendedTest = test.extend({
     async ({ context, clockOptions }, use) => {
       if (clockOptions !== undefined) {
         await context.addInitScript({
-          path: path.join(__dirname, '../', './node_modules/sinon/pkg/sinon.js')
+          path: fileURLToPath(new URL('../node_modules/sinon/pkg/sinon.js', import.meta.url))
         });
         await context.addInitScript((options) => {
           window.__clock = sinon.useFakeTimers(options);

@@ -25,6 +25,7 @@ import { createDomainObjectWithDefaults } from '../appActions.js';
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -69,7 +70,9 @@ async function commitEntry(page) {
  */
 async function startAndAddRestrictedNotebookObject(page) {
   // eslint-disable-next-line no-undef
-  await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitRestrictedNotebook.js', import.meta.url))
+  });
   await page.goto('./', { waitUntil: 'domcontentloaded' });
 
   return createDomainObjectWithDefaults(page, {

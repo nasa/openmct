@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 import percySnapshot from '@percy/playwright';
-import path from 'path';
+import { fileURLToPath } from 'url';
 
 import * as utils from '../../helper/faultUtils.js';
 import { test } from '../../pluginFixtures.js';
@@ -29,7 +28,7 @@ import { test } from '../../pluginFixtures.js';
 test.describe('Fault Management Visual Tests', () => {
   test('icon test', async ({ page, theme }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper/', 'addInitFaultManagementPlugin.js')
+      path: fileURLToPath(new URL('../../helper/addInitFaultManagementPlugin.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 

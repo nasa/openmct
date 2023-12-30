@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
 suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
