@@ -73,7 +73,7 @@ test.describe('Form Validation Behavior', () => {
 test.describe('Form File Input Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../../../helper/addInitFileInputObject.js', import.meta.url))
+      path: fileURLToPath(new URL('../../helper/addInitFileInputObject.js', import.meta.url))
     });
   });
 
