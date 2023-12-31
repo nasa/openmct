@@ -29,11 +29,15 @@ import {
 } from '../../../helper/planningUtils.js';
 import { expect, test } from '../../../pluginFixtures.js';
 
-const testPlan1 = fs.readFileSync(
-  new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+const testPlan1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
 );
-const testPlan2 = fs.readFileSync(
-  new URL('../../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url)
+const testPlan2 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url)
+  )
 );
 
 test.describe('Gantt Chart', () => {

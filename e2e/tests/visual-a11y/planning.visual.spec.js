@@ -28,8 +28,8 @@ import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 
-const examplePlanSmall = fs.readFileSync(
-  new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url)
+const examplePlanSmall = JSON.parse(
+  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';

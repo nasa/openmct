@@ -29,12 +29,16 @@ import {
 } from '../../../helper/planningUtils.js';
 import { test } from '../../../pluginFixtures.js';
 
-const testPlan1 = fs.readFileSync(
-  new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+const testPlan1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
 );
 
-const testPlanWithOrderedLanes = fs.readFileSync(
-  new URL('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json', import.meta.url)
+const testPlanWithOrderedLanes = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json', import.meta.url)
+  )
 );
 
 test.describe('Plan', () => {
