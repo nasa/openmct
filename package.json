@@ -7,7 +7,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.8.2",
     "@babel/eslint-parser": "7.23.3",
-    "@braintree/sanitize-url": "6.0.4",
+    "@braintree/sanitize-url": "7.0.0",
     "@deploysentinel/playwright": "0.3.4",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
