@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div :aria-label="getLabel" class="c-menu" :class="options.menuClass" :style="styleObject">
+  <div :aria-label="optionsLabel" class="c-menu" :class="options.menuClass" :style="styleObject">
     <ul v-if="options.actions.length && options.actions[0].length" role="menu">
       <template v-for="(actionGroups, index) in options.actions" :key="index">
         <div role="group">
@@ -67,7 +67,7 @@ export default {
   mixins: [popupMenuMixin],
   inject: ['options'],
   computed: {
-    getLabel() {
+    optionsLabel() {
       const label = this.options.label ? `${this.options.label} Menu` : 'Menu';
       return label;
     }
