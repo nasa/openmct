@@ -21,59 +21,22 @@
  *****************************************************************************/
 
 /**
- * This test is dedicated to test styling of various plugins
+ * This test is dedicated to test styling of flex layouts
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
+const { test } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { hexToRGB, setStyles, checkStyles } = require('../../../../helper/stylingUtils');
 
-test.describe('Style Inspector Options', () => {
-  let flexibleLayout;
-  test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-    // Create a Flexible Layout and attach to the Stacked Plot
-    flexibleLayout = await createDomainObjectWithDefaults(page, {
-      type: 'Flexible Layout',
-      name: 'Flexible Layout'
-    });
-    // Create a Stacked Plot and attach to the Flexible Layout
-    await createDomainObjectWithDefaults(page, {
-      type: 'Stacked Plot',
-      name: 'Stacked Plot',
-      parent: flexibleLayout.uuid
-    });
-  });
-
-  test('styles button appears when appropriate component selected', async ({ page }) => {
-    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
-
-    // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
-
-    // The overall Flex Layout or Stacked Plot itself MUST be style-able.
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
-
-    // Select flexible layout column
-    await page.getByLabel('Container Handle 1').click();
-
-    // Flex Layout containers should NOT be style-able.
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeHidden();
-
-    // Select Flex Layout Column
-    await page.getByLabel('Flexible Layout Column').click();
-
-    // The overall Flex Layout or Stacked Plot itself MUST be style-able.
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
-
-    // Select Stacked Layout Column
-    await page.getByLabel('Stacked Plot Frame').click();
-
-    // The overall Flex Layout or Stacked Plot itself MUST be style-able.
-    await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
-  });
-});
+const setBorderColor = '#ff00ff';
+const setBackgroundColor = '#5b0f00';
+const setTextColor = '#e6b8af';
+const defaultFrameBorderColor = '#e6b8af'; //default border color
+const defaultBorderTargetColor = '#aaaaaa';
+const defaultTextColor = '#aaaaaa'; // default text color
+const inheritedColor = '#aaaaaa'; // inherited from the body style
+const pukeGreen = '#6aa84f'; //Ugliest green known to man
+const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 
 test.describe('Flexible Layout styling', () => {
   let stackedPlot;
@@ -102,13 +65,9 @@ test.describe('Flexible Layout styling', () => {
     });
   });
 
-  test('styling the flexible layout properly applies the styles to all containers', async ({
+  test('styling the flexible layout properly applies the styles to flex layout', async ({
     page
   }) => {
-    // Set background and font color on first Flex Colum
-    const setBackgroundColor = '#5b0f00';
-    const setTextColor = '#e6b8af';
-
     // Directly navigate to the flexible layout
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
@@ -121,13 +80,15 @@ test.describe('Flexible Layout styling', () => {
     // Set styles using setStyles function
     await setStyles(
       page,
+      setBorderColor,
       setBackgroundColor,
       setTextColor,
       page.getByLabel('Flexible Layout Column')
     );
 
-    // Check styles using checkStyles function
+    // Flex Layout Column matches set styles
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('Flexible Layout Column')
@@ -140,23 +101,26 @@ test.describe('Flexible Layout styling', () => {
     // Reload page
     await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Check styles using checkStyles function
+    // Check styles of overall Flex Layout
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('Flexible Layout Column')
     );
 
-    // Check styles on StackedPlot1
+    // Check styles on StackedPlot1. Note: https://github.com/nasa/openmct/issues/7337
     await checkStyles(
-      hexToRGB(setBackgroundColor),
+      hexToRGB(defaultFrameBorderColor),
+      NO_STYLE_RGBA,
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
     );
 
-    // Check styles on StackedPlot2
+    // Check styles on StackedPlot2. Note: https://github.com/nasa/openmct/issues/7337
     await checkStyles(
-      hexToRGB(setBackgroundColor),
+      hexToRGB(defaultFrameBorderColor),
+      NO_STYLE_RGBA,
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
     );
@@ -165,12 +129,6 @@ test.describe('Flexible Layout styling', () => {
   test('styling a child object of the flexible layout properly applies that style to only that child', async ({
     page
   }) => {
-    // Set background and font color on Stacked Plot object
-    const setBackgroundColor = '#5b0f00';
-    const setTextColor = '#e6b8af';
-    const defaultTextColor = '#aaaaaa'; // default text color
-    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
-
     // Directly navigate to the flexible layout
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
@@ -180,8 +138,9 @@ test.describe('Flexible Layout styling', () => {
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Check styles on StackedPlot2
+    // Check styles on StackedPlot1
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
@@ -189,16 +148,24 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot2
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
     );
 
     // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
-    await setStyles(page, setBackgroundColor, setTextColor, page.getByLabel('StackedPlot1 Frame'));
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('StackedPlot1 Frame')
+    );
 
     // Check styles on StackedPlot1
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
@@ -206,6 +173,7 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot2
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
@@ -220,6 +188,7 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot1
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
@@ -227,33 +196,28 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot2
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
     );
   });
 
-  test('a previously styled object will keep its style properties if modified as part of a flex layout', async ({
+  test('if an overall style has been applied to the parent layout or plot, the individual styling should be able to coexist with that', async ({
     page
   }) => {
-    // Set background and font color on Stacked Plot object
-    const setBackgroundColor = '#5b0f00';
-    const setTextColor = '#e6b8af';
-    const defaultTextColor = '#aaaaaa'; // default text color
-    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
-
     //Navigate to stackedPlot
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-    // Edit Flexible Layout
+    // Edit stackedPlot
     await page.getByLabel('Edit').click();
 
-    // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
     // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
     await setStyles(
       page,
+      setBorderColor,
       setBackgroundColor,
       setTextColor,
       page.getByLabel('Stacked Plot Style Target').locator('div')
@@ -272,32 +236,34 @@ test.describe('Flexible Layout styling', () => {
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Check styles on StackedPlot1
+    // Check styles on StackedPlot1 to match the set colors
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
     );
 
-    // Check styles on StackedPlot2
+    // Check styles on StackedPlot2 to verify they are the default
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
     );
 
     // Set styles using setStyles function on StackedPlot2
-    await setStyles(page, setBackgroundColor, setTextColor, page.getByLabel('StackedPlot2 Frame'));
-
-    // Check styles on StackedPlot1
-    await checkStyles(
-      hexToRGB(setBackgroundColor),
-      hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('StackedPlot2 Frame')
     );
 
     // Check styles on StackedPlot2
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
@@ -312,6 +278,7 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot1
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
@@ -319,20 +286,11 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles on StackedPlot2
     await checkStyles(
-      NO_STYLE_RGBA,
-      hexToRGB(defaultTextColor),
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
       page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
     );
-  });
-
-  test('When the "no style" option is selected, background and text should be reset to inherited styles', async ({
-    page
-  }) => {
-    // Set background and font color on Stacked Plot object
-    const backgroundColor = '#5b0f00';
-    const textColor = '#e6b8af';
-    const inheritedColor = '#aaaaaa'; // inherited from the body style
-    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)';
 
     // Directly navigate to the flexible layout
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
@@ -343,13 +301,69 @@ test.describe('Flexible Layout styling', () => {
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
+    // Set Flex Layout Column to puke green
+    await setStyles(
+      page,
+      pukeGreen,
+      pukeGreen,
+      pukeGreen,
+      page.getByLabel('Flexible Layout Column')
+    );
+    // Save Flexible Layout
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Flex Layout Column matches set styles
+    await checkStyles(
+      hexToRGB(pukeGreen),
+      hexToRGB(pukeGreen),
+      hexToRGB(pukeGreen),
+      page.getByLabel('Flexible Layout Column')
+    );
+
+    // Check styles on StackedPlot1 matches previously set colors
+    await checkStyles(
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+    );
+
+    // Check styles on StackedPlot2 matches previous set colors
+    await checkStyles(
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+    );
+  });
+
+  test('when the "no style" option is selected, background and text should be reset to inherited styles', async ({
+    page
+  }) => {
+    // Directly navigate to the flexible layout
+    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
+
+    // Edit Flexible Layout
+    await page.getByLabel('Edit').click();
+
+    // Select styles tab
+    await page.getByRole('tab', { name: 'Styles' }).click();
+
     // Set styles using setStyles function
-    await setStyles(page, backgroundColor, textColor, page.getByLabel('StackedPlot1 Frame'));
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('StackedPlot1 Frame')
+    );
 
     // Check styles using checkStyles function
     await checkStyles(
-      hexToRGB(backgroundColor),
-      hexToRGB(textColor),
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
     );
 
@@ -367,10 +381,17 @@ test.describe('Flexible Layout styling', () => {
     await page.getByRole('tab', { name: 'Styles' }).click();
 
     //Select the 'No Style' option
-    await setStyles(page, 'No Style', 'No Style', page.getByLabel('StackedPlot1 Frame'));
+    await setStyles(
+      page,
+      'No Style',
+      'No Style',
+      'No Style',
+      page.getByLabel('StackedPlot1 Frame')
+    );
 
     // Check styles using checkStyles function
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
@@ -384,6 +405,7 @@ test.describe('Flexible Layout styling', () => {
 
     // Check styles using checkStyles function
     await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')

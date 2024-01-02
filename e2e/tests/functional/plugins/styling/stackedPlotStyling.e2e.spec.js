@@ -21,12 +21,22 @@
  *****************************************************************************/
 
 /**
- * This test is dedicated to test styling of various plugins
+ * This test is dedicated to test styling of stacked plots
  */
 
 const { test, expect } = require('../../../../pluginFixtures');
 const { createDomainObjectWithDefaults } = require('../../../../appActions');
 const { hexToRGB, setStyles, checkStyles } = require('../../../../helper/stylingUtils');
+
+const setBorderColor = '#ff00ff';
+const setBackgroundColor = '#5b0f00';
+const setTextColor = '#e6b8af';
+const defaultFrameBorderColor = '#e6b8af'; //default border color
+const defaultBorderTargetColor = '#aaaaaa';
+const defaultTextColor = '#aaaaaa'; // default text color
+const inheritedColor = '#aaaaaa'; // inherited from the body style
+const pukeGreen = '#6aa84f'; //Ugliest green known to man
+const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 
 test.describe('Stacked Plot styling', () => {
   let stackedPlot;
@@ -53,40 +63,33 @@ test.describe('Stacked Plot styling', () => {
     });
   });
 
-  test('styling the flexible layout properly applies the styles to all containers', async ({
+  test('styling the overlay plot properly applies the styles to all containers', async ({
     page
   }) => {
-    // Set background and font color on first Flex Colum
-    const setBackgroundColor = '#5b0f00';
-    const setTextColor = '#e6b8af';
+    // Directly navigate to the stackedplot
+    await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-    // Directly navigate to the flexible layout
-    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
-
-    // Edit Flexible Layout
     await page.getByLabel('Edit').click();
 
-    // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Set styles using setStyles function
     await setStyles(
       page,
+      setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('Flexible Layout Column')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1').getByLabel('Stacked Plot Style Target')
     );
 
-    // Check styles using checkStyles function
-    await checkStyles(
-      hexToRGB(setBackgroundColor),
-      hexToRGB(setTextColor),
-      page.getByLabel('Flexible Layout Column')
-    );
-
-    // Save Flexible Layout
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+    );
 
     // Reload page
     await page.reload({ waitUntil: 'domcontentloaded' });
