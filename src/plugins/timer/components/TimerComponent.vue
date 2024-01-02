@@ -44,12 +44,11 @@
 </template>
 
 <script>
+import momentDurationFormatSetup from 'moment-duration-format';
+import moment from 'moment-timezone';
 import raf from 'utils/raf';
 
 import throttle from '../../../utils/throttle';
-
-const moment = require('moment-timezone');
-const momentDurationFormatSetup = require('moment-duration-format');
 const refreshRateSeconds = 2;
 
 momentDurationFormatSetup(moment);

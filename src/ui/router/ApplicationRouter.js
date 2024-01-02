@@ -19,11 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
-const LocationBar = require('location-bar');
-const EventEmitter = require('EventEmitter');
-const _ = require('lodash');
+import EventEmitter from 'EventEmitter';
+import LocationBar from 'location-bar';
+import _ from 'lodash';
 
 class ApplicationRouter extends EventEmitter {
   /**
@@ -439,4 +438,4 @@ function paramsToObject(searchParams) {
   return params;
 }
 
-module.exports = ApplicationRouter;
+export default ApplicationRouter;

@@ -20,78 +20,75 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./EvaluatorPool', './SummaryWidgetEvaluator'], function (
-  EvaluatorPool,
-  SummaryWidgetEvaluator
-) {
-  describe('EvaluatorPool', function () {
-    let pool;
-    let openmct;
-    let objectA;
-    let objectB;
+import EvaluatorPool from './EvaluatorPool';
 
-    beforeEach(function () {
-      openmct = {
-        composition: jasmine.createSpyObj('compositionAPI', ['get']),
-        objects: jasmine.createSpyObj('objectAPI', ['observe'])
-      };
-      openmct.composition.get.and.callFake(function () {
-        const compositionCollection = jasmine.createSpyObj('compositionCollection', [
-          'load',
-          'on',
-          'off'
-        ]);
-        compositionCollection.load.and.returnValue(Promise.resolve());
+describe('EvaluatorPool', function () {
+  let pool;
+  let openmct;
+  let objectA;
+  let objectB;
 
-        return compositionCollection;
-      });
-      openmct.objects.observe.and.callFake(function () {
-        return function () {};
-      });
-      pool = new EvaluatorPool(openmct);
-      objectA = {
-        identifier: {
-          namespace: 'someNamespace',
-          key: 'someKey'
-        },
-        configuration: {
-          ruleOrder: []
-        }
-      };
-      objectB = {
-        identifier: {
-          namespace: 'otherNamespace',
-          key: 'otherKey'
-        },
-        configuration: {
-          ruleOrder: []
-        }
-      };
+  beforeEach(function () {
+    openmct = {
+      composition: jasmine.createSpyObj('compositionAPI', ['get']),
+      objects: jasmine.createSpyObj('objectAPI', ['observe'])
+    };
+    openmct.composition.get.and.callFake(function () {
+      const compositionCollection = jasmine.createSpyObj('compositionCollection', [
+        'load',
+        'on',
+        'off'
+      ]);
+      compositionCollection.load.and.returnValue(Promise.resolve());
+
+      return compositionCollection;
     });
-
-    it('returns new evaluators for different objects', function () {
-      const evaluatorA = pool.get(objectA);
-      const evaluatorB = pool.get(objectB);
-      expect(evaluatorA).not.toBe(evaluatorB);
+    openmct.objects.observe.and.callFake(function () {
+      return function () {};
     });
+    pool = new EvaluatorPool(openmct);
+    objectA = {
+      identifier: {
+        namespace: 'someNamespace',
+        key: 'someKey'
+      },
+      configuration: {
+        ruleOrder: []
+      }
+    };
+    objectB = {
+      identifier: {
+        namespace: 'otherNamespace',
+        key: 'otherKey'
+      },
+      configuration: {
+        ruleOrder: []
+      }
+    };
+  });
 
-    it('returns the same evaluator for the same object', function () {
-      const evaluatorA = pool.get(objectA);
-      const evaluatorB = pool.get(objectA);
-      expect(evaluatorA).toBe(evaluatorB);
+  it('returns new evaluators for different objects', function () {
+    const evaluatorA = pool.get(objectA);
+    const evaluatorB = pool.get(objectB);
+    expect(evaluatorA).not.toBe(evaluatorB);
+  });
 
-      const evaluatorC = pool.get(JSON.parse(JSON.stringify(objectA)));
-      expect(evaluatorA).toBe(evaluatorC);
-    });
+  it('returns the same evaluator for the same object', function () {
+    const evaluatorA = pool.get(objectA);
+    const evaluatorB = pool.get(objectA);
+    expect(evaluatorA).toBe(evaluatorB);
 
-    it('returns new evaluator when old is released', function () {
-      const evaluatorA = pool.get(objectA);
-      const evaluatorB = pool.get(objectA);
-      expect(evaluatorA).toBe(evaluatorB);
-      pool.release(evaluatorA);
-      pool.release(evaluatorB);
-      const evaluatorC = pool.get(objectA);
-      expect(evaluatorA).not.toBe(evaluatorC);
-    });
+    const evaluatorC = pool.get(JSON.parse(JSON.stringify(objectA)));
+    expect(evaluatorA).toBe(evaluatorC);
+  });
+
+  it('returns new evaluator when old is released', function () {
+    const evaluatorA = pool.get(objectA);
+    const evaluatorB = pool.get(objectA);
+    expect(evaluatorA).toBe(evaluatorB);
+    pool.release(evaluatorA);
+    pool.release(evaluatorB);
+    const evaluatorC = pool.get(objectA);
+    expect(evaluatorA).not.toBe(evaluatorC);
   });
 });

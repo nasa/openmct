@@ -115,7 +115,7 @@
     "test:e2e:visual:ci": "percy exec --config ./e2e/.percy.ci.yml --partial -- npx playwright test --config=e2e/playwright-visual-a11y.config.js --project=chrome --grep-invert @unstable",
     "test:e2e:visual:full": "percy exec --config ./e2e/.percy.nightly.yml -- npx playwright test --config=e2e/playwright-visual-a11y.config.js --grep-invert @unstable",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js --grep-invert @couchdb",
-    "test:e2e:watch": "npx playwright test --ui --config=e2e/playwright-ci.config.js",
+    "test:e2e:watch": "npx playwright test --ui --config=e2e/playwright-watch.config.js",
     "test:perf:contract": "npx playwright test --config=e2e/playwright-performance-dev.config.js",
     "test:perf:localhost": "npx playwright test --config=e2e/playwright-performance-prod.config.js --project=chrome",
     "test:perf:memory": "npx playwright test --config=e2e/playwright-performance-prod.config.js --project=chrome-memory",
