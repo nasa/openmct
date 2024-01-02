@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidgetTelemetryProvider from './SummaryWidgetTelemetryProvider';
+import SummaryWidgetTelemetryProvider from './SummaryWidgetTelemetryProvider.js';
 
 xdescribe('SummaryWidgetTelemetryProvider', function () {
   let telemObjectA;

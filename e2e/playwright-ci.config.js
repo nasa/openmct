@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-const { devices } = require('@playwright/test');
+import { devices } from '@playwright/test';
 const MAX_FAILURES = 5;
 const NUM_WORKERS = 2;
 
@@ -81,4 +80,4 @@ const config = {
   ]
 };
 
-module.exports = config;
+export default config;

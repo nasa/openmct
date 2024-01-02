@@ -1,11 +1,11 @@
 import { v4 as uuid } from 'uuid';
 
-import objectLink from '../../../ui/mixins/object-link';
+import objectLink from '../../../ui/mixins/object-link.js';
 import {
   createNotebookImageDomainObject,
   getThumbnailURLFromImageUrl,
   saveNotebookImageDomainObject
-} from './notebook-image';
+} from './notebook-image.js';
 
 async function getUsername(openmct) {
   let username = null;

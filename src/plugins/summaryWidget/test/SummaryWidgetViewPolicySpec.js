@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidgetViewPolicy from '../SummaryWidgetViewPolicy';
+import SummaryWidgetViewPolicy from '../SummaryWidgetViewPolicy.js';
 
 describe('SummaryWidgetViewPolicy', function () {
   let policy;

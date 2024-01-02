@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import InspectorDataVisualizationViewProvider from './InspectorDataVisualizationViewProvider';
+import InspectorDataVisualizationViewProvider from './InspectorDataVisualizationViewProvider.js';
 
 export default function (options) {
   return function (openmct) {

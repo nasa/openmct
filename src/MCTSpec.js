@@ -22,7 +22,7 @@
 
 import * as testUtils from 'utils/testing';
 
-import plugins from './plugins/plugins';
+import plugins from './plugins/plugins.js';
 
 describe('MCT', function () {
   let openmct;

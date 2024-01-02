@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import objectPathToUrl from '/src/tools/url';
+import objectPathToUrl from '/src/tools/url.js';
 export default class OpenInNewTab {
   constructor(openmct) {
     this.name = 'Open In New Tab';

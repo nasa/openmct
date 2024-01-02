@@ -19,15 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 const NOTEBOOK_NAME = 'Notebook';
 
@@ -178,7 +179,9 @@ test.describe('Snapshot image tests', () => {
 
   test('Can drop an image onto a notebook and create a new entry', async ({ page }) => {
     const imageData = await fs.readFile(
-      path.resolve(__dirname, '../../../../../src/images/favicons/favicon-96x96.png')
+      fileURLToPath(
+        new URL('../../../../../src/images/favicons/favicon-96x96.png', import.meta.url)
+      )
     );
     const imageArray = new Uint8Array(imageData);
     const fileData = Array.from(imageArray);

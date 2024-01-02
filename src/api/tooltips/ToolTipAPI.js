@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Tooltip from './ToolTip';
+import Tooltip from './ToolTip.js';
 
 /**
  * @readonly

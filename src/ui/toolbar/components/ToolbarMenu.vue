@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import toggle from '../../mixins/toggle-mixin';
+import toggle from '../../mixins/toggle-mixin.js';
 export default {
   mixins: [toggle],
   props: {

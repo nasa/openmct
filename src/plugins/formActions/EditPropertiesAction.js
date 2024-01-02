@@ -22,8 +22,8 @@
 
 import _ from 'lodash';
 
-import CreateWizard from './CreateWizard';
-import PropertiesAction from './PropertiesAction';
+import CreateWizard from './CreateWizard.js';
+import PropertiesAction from './PropertiesAction.js';
 
 export default class EditPropertiesAction extends PropertiesAction {
   constructor(openmct) {

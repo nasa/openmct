@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceClassifier from './DeviceClassifier';
-import DeviceMatchers from './DeviceMatchers';
+import DeviceClassifier from './DeviceClassifier.js';
+import DeviceMatchers from './DeviceMatchers.js';
 
 const AGENT_METHODS = ['isMobile', 'isPhone', 'isTablet', 'isPortrait', 'isLandscape', 'isTouch'];
 const TEST_PERMUTATIONS = [

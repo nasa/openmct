@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants';
+import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
 
 class StoragePersistance {
   getActiveRole() {

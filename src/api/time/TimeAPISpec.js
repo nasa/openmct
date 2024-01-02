@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct } from 'utils/testing';
 
-import TimeAPI from './TimeAPI';
+import TimeAPI from './TimeAPI.js';
 
 describe('The Time API', function () {
   let api;

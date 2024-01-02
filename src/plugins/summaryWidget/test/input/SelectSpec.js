@@ -1,4 +1,4 @@
-import Select from '../../src/input/Select';
+import Select from '../../src/input/Select.js';
 
 describe('A select wrapper', function () {
   let select;

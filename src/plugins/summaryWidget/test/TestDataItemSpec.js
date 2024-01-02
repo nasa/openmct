@@ -1,4 +1,4 @@
-import TestDataItem from '../src/TestDataItem';
+import TestDataItem from '../src/TestDataItem.js';
 
 describe('A summary widget test data item', function () {
   let testDataItem;

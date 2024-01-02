@@ -24,14 +24,14 @@
 Tests to verify plot tagging performance.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { basicTagsTests, createTags, testTelemetryItem } = require('../../helper/plotTagsUtils');
-const {
+import {
   createDomainObjectWithDefaults,
-  setRealTimeMode,
   setFixedTimeMode,
+  setRealTimeMode,
   waitForPlotsToRender
-} = require('../../appActions');
+} from '../../appActions.js';
+import { basicTagsTests, createTags, testTelemetryItem } from '../../helper/plotTagsUtils.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Plot Tagging Performance', () => {
   test.beforeEach(async ({ page }) => {

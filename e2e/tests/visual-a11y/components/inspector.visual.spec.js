@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
-const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
-const percySnapshot = require('@percy/playwright');
+import percySnapshot from '@percy/playwright';
+
+import { MISSION_TIME, VISUAL_URL } from '../../../constants.js';
+import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';

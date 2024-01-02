@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidget from '../src/SummaryWidget';
+import SummaryWidget from '../src/SummaryWidget.js';
 
 describe('The Summary Widget', function () {
   let summaryWidget;

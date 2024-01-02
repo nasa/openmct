@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import OPERATIONS from './operations';
+import OPERATIONS from './operations.js';
 
 export default function SummaryWidgetCondition(definition) {
   this.object = definition.object;

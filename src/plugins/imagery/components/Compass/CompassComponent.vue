@@ -48,7 +48,7 @@
 <script>
 import CompassHud from './CompassHud.vue';
 import CompassRose from './CompassRose.vue';
-import { rotate } from './utils';
+import { rotate } from './utils.js';
 
 export default {
   components: {

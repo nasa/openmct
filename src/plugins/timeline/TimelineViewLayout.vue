@@ -53,7 +53,7 @@ import _ from 'lodash';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import { getValidatedData, getValidatedGroups } from '../plan/util';
+import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {

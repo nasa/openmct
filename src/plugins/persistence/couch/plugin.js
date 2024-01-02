@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-import CouchSearchProvider from './CouchSearchProvider';
-import CouchStatusIndicator from './CouchStatusIndicator';
+import CouchObjectProvider from './CouchObjectProvider.js';
+import CouchSearchProvider from './CouchSearchProvider.js';
+import CouchStatusIndicator from './CouchStatusIndicator.js';
 
 const NAMESPACE = '';
 const LEGACY_SPACE = 'mct';

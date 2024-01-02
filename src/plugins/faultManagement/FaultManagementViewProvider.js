@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants';
+import { FAULT_MANAGEMENT_TYPE, FAULT_MANAGEMENT_VIEW } from './constants.js';
 import FaultManagementView from './FaultManagementView.vue';
 
 export default class FaultManagementViewProvider {

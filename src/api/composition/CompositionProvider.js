@@ -21,7 +21,7 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import objectUtils from '../objects/object-utils';
+import objectUtils from '../objects/object-utils.js';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject

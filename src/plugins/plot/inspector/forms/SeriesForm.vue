@@ -127,8 +127,8 @@ import _ from 'lodash';
 
 import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
-import { MARKER_SHAPES } from '../../draw/MarkerShapes';
-import { coerce, objectPath, validate } from './formUtil';
+import { MARKER_SHAPES } from '../../draw/MarkerShapes.js';
+import { coerce, objectPath, validate } from './formUtil.js';
 
 export default {
   components: {

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import compositionLoader from './composition-loader';
+import compositionLoader from './composition-loader.js';
 import GridItem from './GridItem.vue';
 
 export default {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { OPERATIONS } from './operations';
+import { OPERATIONS } from './operations.js';
 let isOneOfOperation = OPERATIONS.find((operation) => operation.name === 'isOneOf');
 let isNotOneOfOperation = OPERATIONS.find((operation) => operation.name === 'isNotOneOf');
 let isBetween = OPERATIONS.find((operation) => operation.name === 'between');

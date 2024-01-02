@@ -41,8 +41,8 @@
 <script>
 import _ from 'lodash';
 
-import DRAWING_OBJECT_TYPES from '../DrawingObjectTypes';
-import LayoutDrag from './../LayoutDrag';
+import DRAWING_OBJECT_TYPES from '../DrawingObjectTypes.js';
+import LayoutDrag from './../LayoutDrag.js';
 
 export default {
   inject: ['openmct'],

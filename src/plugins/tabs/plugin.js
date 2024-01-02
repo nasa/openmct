@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Tabs from './tabs';
+import Tabs from './tabs.js';
 
 export default function plugin() {
   return function install(openmct) {

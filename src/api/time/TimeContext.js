@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 
-import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
+import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
 
 class TimeContext extends EventEmitter {
   constructor() {

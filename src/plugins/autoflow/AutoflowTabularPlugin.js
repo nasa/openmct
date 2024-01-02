@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AutoflowTabularView from './AutoflowTabularView';
+import AutoflowTabularView from './AutoflowTabularView.js';
 
 export default function (options) {
   return function (openmct) {

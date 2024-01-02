@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EvaluatorPool from './EvaluatorPool';
+import EvaluatorPool from './EvaluatorPool.js';
 
 describe('EvaluatorPool', function () {
   let pool;

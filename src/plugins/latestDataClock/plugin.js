@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LADClock from './LADClock';
+import LADClock from './LADClock.js';
 
 export default function () {
   return function (openmct) {

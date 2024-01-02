@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants.js';
 import BarGraphView from './BarGraphView.vue';
 
 export default function BarGraphViewProvider(openmct) {

@@ -1,5 +1,5 @@
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import CompositionCollection from './CompositionCollection';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import CompositionCollection from './CompositionCollection.js';
 
 describe('The Composition API', function () {
   let publicAPI;

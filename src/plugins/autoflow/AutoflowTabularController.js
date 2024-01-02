@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AutoflowTabularRowController from './AutoflowTabularRowController';
+import AutoflowTabularRowController from './AutoflowTabularRowController.js';
 
 /**
  * Controller for an Autoflow Tabular View. Subscribes to telemetry

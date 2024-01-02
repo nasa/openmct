@@ -20,22 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ActionsAPI from './actions/ActionsAPI';
-import AnnotationAPI from './annotation/AnnotationAPI';
-import CompositionAPI from './composition/CompositionAPI';
-import EditorAPI from './Editor';
-import FaultManagementAPI from './faultmanagement/FaultManagementAPI';
-import FormsAPI from './forms/FormsAPI';
-import IndicatorAPI from './indicators/IndicatorAPI';
-import MenuAPI from './menu/MenuAPI';
-import NotificationAPI from './notifications/NotificationAPI';
-import ObjectAPI from './objects/ObjectAPI';
-import PriorityAPI from './priority/PriorityAPI';
-import StatusAPI from './status/StatusAPI';
-import TelemetryAPI from './telemetry/TelemetryAPI';
-import TimeAPI from './time/TimeAPI';
-import TypeRegistry from './types/TypeRegistry';
-import UserAPI from './user/UserAPI';
+import ActionsAPI from './actions/ActionsAPI.js';
+import AnnotationAPI from './annotation/AnnotationAPI.js';
+import CompositionAPI from './composition/CompositionAPI.js';
+import EditorAPI from './Editor.js';
+import FaultManagementAPI from './faultmanagement/FaultManagementAPI.js';
+import FormsAPI from './forms/FormsAPI.js';
+import IndicatorAPI from './indicators/IndicatorAPI.js';
+import MenuAPI from './menu/MenuAPI.js';
+import NotificationAPI from './notifications/NotificationAPI.js';
+import ObjectAPI from './objects/ObjectAPI.js';
+import PriorityAPI from './priority/PriorityAPI.js';
+import StatusAPI from './status/StatusAPI.js';
+import TelemetryAPI from './telemetry/TelemetryAPI.js';
+import TimeAPI from './time/TimeAPI.js';
+import TypeRegistry from './types/TypeRegistry.js';
+import UserAPI from './user/UserAPI.js';
 
 export default {
   ActionsAPI,
