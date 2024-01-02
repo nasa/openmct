@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StaticModelProvider from './StaticModelProvider';
+import StaticModelProvider from './StaticModelProvider.js';
 
 export default function StaticRootPlugin(options) {
   const rootIdentifier = {

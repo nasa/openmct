@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { deleteNotebookEntries } from '../utils/notebook-entries.js';
+import { getDefaultNotebook } from '../utils/notebook-storage.js';
 import Page from './PageComponent.vue';
 
 export default {

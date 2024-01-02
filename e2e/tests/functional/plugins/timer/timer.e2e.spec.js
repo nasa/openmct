@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
-  openObjectTreeContextMenu,
-  createDomainObjectWithDefaults
-} = require('../../../../appActions');
-import { MISSION_TIME } from '../../../../constants';
+import {
+  createDomainObjectWithDefaults,
+  openObjectTreeContextMenu
+} from '../../../../appActions.js';
+import { MISSION_TIME } from '../../../../constants.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Timer', () => {
   let timer;

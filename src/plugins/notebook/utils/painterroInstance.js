@@ -1,6 +1,6 @@
 import Painterro from 'painterro';
 
-import { getThumbnailURLFromImageUrl } from './notebook-image';
+import { getThumbnailURLFromImageUrl } from './notebook-image.js';
 
 const DEFAULT_CONFIG = {
   activeColor: '#ff0000',

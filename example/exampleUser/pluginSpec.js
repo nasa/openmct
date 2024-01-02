@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing.js';
+import ExampleUserProvider from './ExampleUserProvider.js';
 
 describe('The Example User Plugin', () => {
   let openmct;

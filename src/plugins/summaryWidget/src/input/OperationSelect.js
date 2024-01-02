@@ -1,5 +1,5 @@
-import eventHelpers from '../eventHelpers';
-import Select from './Select';
+import eventHelpers from '../eventHelpers.js';
+import Select from './Select.js';
 
 /**
  * Create a {Select} element whose composition is dynamically updated with

@@ -33,8 +33,8 @@ comfortable running this test during a live mission?" Avoid creating or deleting
 Make no assumptions about the order that elements appear in the DOM.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, expandEntireTree } = require('../../appActions');
+import { createDomainObjectWithDefaults, expandEntireTree } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Verify tooltips', () => {
   let folder1;

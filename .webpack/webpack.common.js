@@ -1,5 +1,3 @@
-/* global __dirname module */
-
 /*
 This is the OpenMCT common webpack file. It is imported by the other three webpack configurations:
  - webpack.prod.js - the production configuration for OpenMCT (default)
@@ -8,27 +6,30 @@ This is the OpenMCT common webpack file. It is imported by the other three webpa
 There are separate npm scripts to use these configurations, though simply running `npm install`
 will use the default production configuration.
 */
-const path = require('path');
-const packageDefinition = require('../package.json');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import path from 'node:path';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import fs from 'node:fs';
+import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const { VueLoaderPlugin } = require('vue-loader');
+import { VueLoaderPlugin } from 'vue-loader';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
+const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
+
 try {
-  gitRevision = require('child_process').execSync('git rev-parse HEAD').toString().trim();
-  gitBranch = require('child_process')
-    .execSync('git rev-parse --abbrev-ref HEAD')
+  gitRevision = execSync('git rev-parse HEAD').toString().trim();
+  gitBranch = execSync('git rev-parse --abbrev-ref HEAD')
     .toString()
     .trim();
 } catch (err) {
   console.warn(err);
 }
 
-const projectRootDir = path.resolve(__dirname, '..');
+const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -56,6 +57,7 @@ const config = {
     filename: '[name].js',
     path: path.resolve(projectRootDir, 'dist'),
     library: 'openmct',
+    libraryExport: 'default',
     libraryTarget: 'umd',
     publicPath: '',
     hashFunction: 'xxhash64',
@@ -183,4 +185,4 @@ const config = {
   }
 };
 
-module.exports = config;
+export default config;

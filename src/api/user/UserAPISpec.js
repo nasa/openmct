@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import { MULTIPLE_PROVIDER_ERROR } from './constants';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider.js';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import { MULTIPLE_PROVIDER_ERROR } from './constants.js';
 
 const USERNAME = 'Test User';
 const EXAMPLE_ROLE = 'flight';

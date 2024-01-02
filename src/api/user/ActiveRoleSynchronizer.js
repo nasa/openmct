@@ -1,4 +1,4 @@
-import { ACTIVE_ROLE_BROADCAST_CHANNEL_NAME } from './constants';
+import { ACTIVE_ROLE_BROADCAST_CHANNEL_NAME } from './constants.js';
 
 class ActiveRoleSynchronizer {
   #roleChannel;

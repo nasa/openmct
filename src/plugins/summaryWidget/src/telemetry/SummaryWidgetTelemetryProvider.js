@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EvaluatorPool from './EvaluatorPool';
+import EvaluatorPool from './EvaluatorPool.js';
 
 export default function SummaryWidgetTelemetryProvider(openmct) {
   this.pool = new EvaluatorPool(openmct);

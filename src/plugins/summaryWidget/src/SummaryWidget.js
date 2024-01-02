@@ -1,12 +1,12 @@
 import * as urlSanitizeLib from '@braintree/sanitize-url';
 
-import * as templateHelpers from '../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../utils/template/templateHelpers.js';
 import widgetTemplate from '../res/widgetTemplate.html';
-import ConditionManager from './ConditionManager';
-import eventHelpers from './eventHelpers';
-import Rule from './Rule';
-import TestDataManager from './TestDataManager';
-import WidgetDnD from './WidgetDnD';
+import ConditionManager from './ConditionManager.js';
+import eventHelpers from './eventHelpers.js';
+import Rule from './Rule.js';
+import TestDataManager from './TestDataManager.js';
+import WidgetDnD from './WidgetDnD.js';
 
 //default css configuration for new rules
 const DEFAULT_PROPS = {

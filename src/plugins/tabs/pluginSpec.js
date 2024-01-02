@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import TabsLayout from './plugin';
+import TabsLayout from './plugin.js';
 
 describe('the plugin', function () {
   let element;

@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import clockPlugin from './plugin';
+import clockPlugin from './plugin.js';
 
 describe('Clock plugin:', () => {
   let openmct;

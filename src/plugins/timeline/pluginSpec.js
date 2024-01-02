@@ -25,7 +25,7 @@ import { nextTick } from 'vue';
 
 import { createOpenMct, resetApplicationState } from '@/utils/testing';
 
-import TimelinePlugin from './plugin';
+import TimelinePlugin from './plugin.js';
 
 describe('the plugin', function () {
   let objectDef;

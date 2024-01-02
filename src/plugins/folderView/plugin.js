@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import FolderGridView from './FolderGridView';
-import FolderListView from './FolderListView';
+import FolderGridView from './FolderGridView.js';
+import FolderListView from './FolderListView.js';
 
 export default function () {
   return function install(openmct) {

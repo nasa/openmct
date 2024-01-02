@@ -21,8 +21,8 @@
  *****************************************************************************/
 /* eslint-disable no-invalid-this */
 
-import MeanTelemetryProvider from './MeanTelemetryProvider';
-import MockTelemetryApi from './MockTelemetryApi';
+import MeanTelemetryProvider from './MeanTelemetryProvider.js';
+import MockTelemetryApi from './MockTelemetryApi.js';
 
 const RANGE_KEY = 'value';
 

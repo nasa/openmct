@@ -22,7 +22,7 @@
 
 import objectUtils from 'objectUtils';
 
-import TelemetryAverager from './TelemetryAverager';
+import TelemetryAverager from './TelemetryAverager.js';
 
 export default function MeanTelemetryProvider(openmct) {
   this.openmct = openmct;

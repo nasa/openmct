@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import * as NotebookStorage from './notebook-storage';
+import * as NotebookStorage from './notebook-storage.js';
 
 const notebookSection = {
   id: 'temp-section',

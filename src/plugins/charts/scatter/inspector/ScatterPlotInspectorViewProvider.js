@@ -1,6 +1,6 @@
 import mount from 'utils/mount';
 
-import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants';
+import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants.js';
 import PlotOptions from './PlotOptions.vue';
 
 export default function ScatterPlotInspectorViewProvider(openmct) {

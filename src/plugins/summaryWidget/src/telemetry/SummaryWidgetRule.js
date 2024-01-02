@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidgetCondition from './SummaryWidgetCondition';
+import SummaryWidgetCondition from './SummaryWidgetCondition.js';
 
 export default function SummaryWidgetRule(definition) {
   this.name = definition.name;

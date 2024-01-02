@@ -22,7 +22,7 @@
 
 import * as testingUtils from 'utils/testing';
 
-import URLIndicatorPlugin from './URLIndicatorPlugin';
+import URLIndicatorPlugin from './URLIndicatorPlugin.js';
 
 describe('The URLIndicator', function () {
   let openmct;

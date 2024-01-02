@@ -24,8 +24,8 @@
 Testsuite for plot autoscale.
 */
 
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const { test, expect } = require('../../../../pluginFixtures');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 test.use({
   viewport: {
     width: 1280,

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SummaryWidgetRule from './SummaryWidgetRule';
+import SummaryWidgetRule from './SummaryWidgetRule.js';
 
 describe('SummaryWidgetRule', function () {
   let rule;

@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu } = require('../../../../appActions');
-const {
-  lockPage,
+import { openObjectTreeContextMenu } from '../../../../appActions.js';
+import {
   dragAndDropEmbed,
   enterTextEntry,
+  lockPage,
   startAndAddRestrictedNotebookObject
-} = require('../../../../helper/notebookUtils');
+} from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';

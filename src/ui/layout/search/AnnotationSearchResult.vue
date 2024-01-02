@@ -56,9 +56,9 @@
 import { Marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
-import { identifierToString } from '../../../../src/tools/url';
+import { identifierToString } from '../../../../src/tools/url.js';
 import ObjectPath from '../../components/ObjectPath.vue';
-import PreviewAction from '../../preview/PreviewAction';
+import PreviewAction from '../../preview/PreviewAction.js';
 
 export default {
   name: 'AnnotationSearchResult',

@@ -336,8 +336,8 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util.js';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';

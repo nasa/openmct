@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import URLIndicator from './URLIndicator';
+import URLIndicator from './URLIndicator.js';
 
 export default function URLIndicatorPlugin(opts) {
   return function install(openmct) {

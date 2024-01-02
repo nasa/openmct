@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { TRIGGER } from './constants';
-import { evaluateResults } from './evaluator';
+import { TRIGGER } from './constants.js';
+import { evaluateResults } from './evaluator.js';
 
 describe('evaluate results', () => {
   // const allTrue = [true, true, true, true, true];

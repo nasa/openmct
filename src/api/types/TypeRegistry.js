@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Type from './Type';
+import Type from './Type.js';
 
 const UNKNOWN_TYPE = new Type({
   key: 'unknown',

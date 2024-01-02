@@ -31,10 +31,10 @@ import {
 } from 'utils/testing';
 import { nextTick, ref } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotOptions from '../inspector/PlotOptions.vue';
-import PlotVuePlugin from '../plugin';
+import PlotVuePlugin from '../plugin.js';
 import StackedPlot from './StackedPlot.vue';
 
 describe('the plugin', function () {

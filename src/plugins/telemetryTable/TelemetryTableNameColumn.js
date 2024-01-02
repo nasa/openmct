@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryTableColumn from './TelemetryTableColumn';
+import TelemetryTableColumn from './TelemetryTableColumn.js';
 
 export default class TelemetryTableNameColumn extends TelemetryTableColumn {
   constructor(openmct, telemetryObject, metadatum) {

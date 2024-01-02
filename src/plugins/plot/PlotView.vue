@@ -65,10 +65,10 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import ImageExporter from '../../exporters/ImageExporter';
+import ImageExporter from '../../exporters/ImageExporter.js';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
 import PlotLegend from './legend/PlotLegend.vue';
-import eventHelpers from './lib/eventHelpers';
+import eventHelpers from './lib/eventHelpers.js';
 import MctPlot from './MctPlot.vue';
 
 export default {

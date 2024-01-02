@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import timerPlugin from './plugin';
+import timerPlugin from './plugin.js';
 
 xdescribe('Timer plugin:', () => {
   let openmct;

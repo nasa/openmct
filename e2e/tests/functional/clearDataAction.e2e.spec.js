@@ -24,8 +24,8 @@
 Verify that the "Clear Data" menu action performs as expected for various object types.
 */
 
-const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../appActions.js');
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 

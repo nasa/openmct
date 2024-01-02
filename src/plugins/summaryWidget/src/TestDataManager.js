@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-import * as templateHelpers from '../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../utils/template/templateHelpers.js';
 import testDataTemplate from '../res/testDataTemplate.html';
-import eventHelpers from './eventHelpers';
-import TestDataItem from './TestDataItem';
+import eventHelpers from './eventHelpers.js';
+import TestDataItem from './TestDataItem.js';
 
 /**
  * Controls the input and usage of test data in the summary widget.

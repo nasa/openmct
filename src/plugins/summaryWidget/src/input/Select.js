@@ -1,8 +1,8 @@
 import EventEmitter from 'EventEmitter';
 
-import * as templateHelpers from '../../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../../utils/template/templateHelpers.js';
 import selectTemplate from '../../res/input/selectTemplate.html';
-import eventHelpers from '../eventHelpers';
+import eventHelpers from '../eventHelpers.js';
 
 /**
  * Wraps an HTML select element, and provides methods for dynamically altering

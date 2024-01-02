@@ -25,7 +25,7 @@ This test suite is dedicated to testing our use of our custom fixtures to verify
 that they are working as expected.
 */
 
-const { test } = require('../../pluginFixtures.js');
+import { test } from '../../pluginFixtures.js';
 
 // eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('pluginFixtures tests', () => {

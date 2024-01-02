@@ -1,4 +1,4 @@
-import raf from './raf';
+import raf from './raf.js';
 
 describe('The raf utility function', () => {
   it('Throttles function calls that arrive in quick succession using Request Animation Frame', () => {

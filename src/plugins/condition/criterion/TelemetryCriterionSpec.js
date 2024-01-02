@@ -22,7 +22,7 @@
 
 import { getMockTelemetry } from 'utils/testing';
 
-import TelemetryCriterion from './TelemetryCriterion';
+import TelemetryCriterion from './TelemetryCriterion.js';
 
 let openmct = {};
 let mockListener;

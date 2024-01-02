@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import toggleMixin from '../../mixins/toggle-mixin';
+import toggleMixin from '../../mixins/toggle-mixin.js';
 
 export default {
   mixins: [toggleMixin],

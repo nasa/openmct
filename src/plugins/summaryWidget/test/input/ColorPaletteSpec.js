@@ -1,4 +1,4 @@
-import ColorPalette from '../../src/input/ColorPalette';
+import ColorPalette from '../../src/input/ColorPalette.js';
 
 describe('An Open MCT color palette', function () {
   let colorPalette;

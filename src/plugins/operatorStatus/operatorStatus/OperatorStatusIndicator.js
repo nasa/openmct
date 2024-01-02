@@ -21,7 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import AbstractStatusIndicator from '../AbstractStatusIndicator';
+import AbstractStatusIndicator from '../AbstractStatusIndicator.js';
 import OperatorStatusComponent from './OperatorStatus.vue';
 
 export default class OperatorStatusIndicator extends AbstractStatusIndicator {

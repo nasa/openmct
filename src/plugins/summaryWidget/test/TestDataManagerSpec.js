@@ -1,4 +1,4 @@
-import TestDataManager from '../src/TestDataManager';
+import TestDataManager from '../src/TestDataManager.js';
 
 describe('A Summary Widget Rule', function () {
   let mockDomainObject;
