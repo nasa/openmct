@@ -39,12 +39,15 @@ function hexToRGB(hex) {
  * Sets the background and text color of a given element.
  *
  * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {string} borderColorHex - The hex value of the border color to set, or 'No Style'.
  * @param {string} backgroundColorHex - The hex value of the background color to set, or 'No Style'.
  * @param {string} textColorHex - The hex value of the text color to set, or 'No Style'.
  * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be set.
  */
-async function setStyles(page, backgroundColorHex, textColorHex, locator) {
+async function setStyles(page, borderColorHex, backgroundColorHex, textColorHex, locator) {
   await locator.click(); // Assuming the locator is clickable and opens the style setting UI
+  await page.getByLabel('Set border color').click();
+  await page.getByLabel(borderColorHex).click();
   await page.getByLabel('Set background color').click();
   await page.getByLabel(backgroundColorHex).click();
   await page.getByLabel('Set text color').click();
@@ -54,18 +57,25 @@ async function setStyles(page, backgroundColorHex, textColorHex, locator) {
 /**
  * Checks if the styles of an element match the expected values.
  *
+ * @param {string} expectedBorderColor - The expected border color in RGB format. Default is '#e6b8af' or 'rgb(230, 184, 175)'
  * @param {string} expectedBackgroundColor - The expected background color in RGB format.
- * @param {string} expectedTextColor - The expected text color in RGB format.
+ * @param {string} expectedTextColor - The expected text color in RGB format. Default is #aaaaaa or 'rgb(170, 170, 170)'
  * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be checked.
  */
-async function checkStyles(expectedBackgroundColor, expectedTextColor, locator) {
+async function checkStyles(
+  expectedBorderColor,
+  expectedBackgroundColor,
+  expectedTextColor,
+  locator
+) {
   const layoutStyles = await locator.evaluate((el) => {
     return {
+      border: window.getComputedStyle(el).getPropertyValue('border-top-color'), //infer the left, right, and bottom
       background: window.getComputedStyle(el).getPropertyValue('background-color'),
       fontColor: window.getComputedStyle(el).getPropertyValue('color')
     };
   });
-
+  expect(layoutStyles.border).toContain(expectedBorderColor);
   expect(layoutStyles.background).toContain(expectedBackgroundColor);
   expect(layoutStyles.fontColor).toContain(expectedTextColor);
 }
