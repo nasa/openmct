@@ -113,7 +113,7 @@ test.describe('Flexible Layout styling @a11y', () => {
   });
 });
 
-test.describe.only('Stacked Plot styling @a11y', () => {
+test.describe('Stacked Plot styling @a11y', () => {
   let stackedPlot;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });

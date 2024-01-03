@@ -25,7 +25,7 @@ import { expect } from '../pluginFixtures.js';
 /**
  * Converts a hex color value to its RGB equivalent.
  *
- * @param {string} hex - The hex color value.
+ * @param {string} hex - The hex color value. i.e. '#5b0f00'
  * @returns {string} The RGB equivalent of the hex color.
  */
 function hexToRGB(hex) {
@@ -83,19 +83,22 @@ async function checkStyles(
 /**
  * Checks if the font Styles of an element match the expected values.
  *
- * @param {string} expectedFontSize - The expected border color in RGB format. Default is '#e6b8af' or 'rgb(230, 184, 175)'
- * @param {string} expectedFontType - The expected text color in RGB format. Default is #aaaaaa or 'rgb(170, 170, 170)'
+ * @param {string} expectedFontSize - The expected font size in '72px' format. Default is 'Default'
+ * @param {string} expectedFontWeight - The expected font Type. Format as '700' for bold. Default is 'Default'
+ * @param {string} expectedFontFamily - The expected font Type. Format unkown. Default is 'Default'
  * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be checked.
  */
-async function checkFontStyles(expectedFontSize, expectedFontType, locator) {
+async function checkFontStyles(expectedFontSize, expectedFontWeight, expectedFontFamily, locator) {
   const layoutStyles = await locator.evaluate((el) => {
     return {
       fontSize: window.getComputedStyle(el).getPropertyValue('font-size'),
-      fontType: window.getComputedStyle(el).getPropertyValue('font-family')
+      fontWeight: window.getComputedStyle(el).getPropertyValue('font-weight'),
+      fontFamily: window.getComputedStyle(el).getPropertyValue('font-family')
     };
   });
   expect(layoutStyles.fontSize).toContain(expectedFontSize);
-  expect(layoutStyles.fontFamily).toContain(expectedFontType);
+  expect(layoutStyles.fontWeight).toContain(expectedFontWeight);
+  expect(layoutStyles.fontFamily).toContain(expectedFontFamily);
 }
 
 export { checkFontStyles, checkStyles, hexToRGB, setStyles };

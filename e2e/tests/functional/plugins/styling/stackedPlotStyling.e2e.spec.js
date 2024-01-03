@@ -31,19 +31,17 @@ import {
   hexToRGB,
   setStyles
 } from '../../../../helper/stylingUtils.js';
-import { expect, test } from '../../../../pluginFixtures.js';
+import { test } from '../../../../pluginFixtures.js';
 
 const setBorderColor = '#ff00ff';
 const setBackgroundColor = '#5b0f00';
 const setTextColor = '#e6b8af';
-const defaultFrameBorderColor = '#e6b8af'; //default border color
-const defaultBorderTargetColor = '#aaaaaa';
 const defaultTextColor = '#aaaaaa'; // default text color
-const inheritedColor = '#aaaaaa'; // inherited from the body style
-const pukeGreen = '#6aa84f'; //Ugliest green known to man
 const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 const setFontSize = '72px';
-const setFontType = 'sans-serif'; //Andale Mono", sans-serif
+const setFontWeight = '700'; //bold for monospace bold
+// eslint-disable-next-line prettier/prettier
+const setFontFamily = "\"Andale Mono\", sans-serif";
 
 test.describe('Stacked Plot styling', () => {
   let stackedPlot;
@@ -92,13 +90,9 @@ test.describe('Stacked Plot styling', () => {
     await page.getByLabel('Set Font Size').click();
     await page.getByRole('menuitem', { name: '72px' }).click();
 
-    //Set Font Type to Monospace Bold
+    //Set Font Type to Monospace Bold. See setFontWeight and setFontFamily variables
     await page.getByLabel('Set Font Type').click();
     await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
-
-    //Save
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await checkStyles(
       hexToRGB(setBorderColor),
@@ -107,7 +101,16 @@ test.describe('Stacked Plot styling', () => {
       page.getByLabel('Stacked Plot Style Target')
     );
 
-    await checkFontStyles(setFontSize, setFontType, page.getByLabel('Stacked Plot Item Sine Wave Generator 1'));
+    await checkFontStyles(
+      setFontSize,
+      setFontWeight,
+      setFontFamily,
+      page.getByLabel('Stacked Plot Style Target')
+    );
+
+    //Save
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Reload page
     await page.reload({ waitUntil: 'domcontentloaded' });
@@ -117,6 +120,13 @@ test.describe('Stacked Plot styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
+      page.getByLabel('Stacked Plot Style Target')
+    );
+
+    await checkFontStyles(
+      setFontSize,
+      setFontWeight,
+      setFontFamily,
       page.getByLabel('Stacked Plot Style Target')
     );
 
@@ -133,6 +143,13 @@ test.describe('Stacked Plot styling', () => {
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
       page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
+    );
+
+    await checkFontStyles(
+      setFontSize,
+      setFontWeight,
+      setFontFamily,
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
   });
 
@@ -168,6 +185,15 @@ test.describe('Stacked Plot styling', () => {
       setTextColor,
       page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
+
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator 1').click();
+    //Set Font Size to 72
+    await page.getByLabel('Set Font Size').click();
+    await page.getByRole('menuitem', { name: '72px' }).click();
+
+    //Set Font Type to Monospace Bold. See setFontWeight and setFontFamily variables
+    await page.getByLabel('Set Font Type').click();
+    await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
 
     // Save Flexible Layout
     await page.getByRole('button', { name: 'Save' }).click();
