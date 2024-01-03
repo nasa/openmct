@@ -23,7 +23,7 @@
 import mount from 'utils/mount';
 
 import SelectionComponent from './components/SelectionComponent.vue';
-import Overlay from './Overlay';
+import Overlay from './Overlay.js';
 
 class Selection extends Overlay {
   constructor({

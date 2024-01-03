@@ -26,12 +26,13 @@ are only meant to run against openmct's app.js started by `npm run start` within
 `./e2e/playwright-visual.config.js` file.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { VISUAL_URL } = require('../../constants');
+import percySnapshot from '@percy/playwright';
 
-test.describe('Visual - Default', () => {
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+
+test.describe('Visual - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -97,5 +98,9 @@ test.describe('Visual - Default', () => {
 
     // Take a snapshot of the newly created Gauge object
     await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

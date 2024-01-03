@@ -490,7 +490,8 @@
     "Blockquotes",
     "oger",
     "lcovonly",
-    "gcov"
+    "gcov",
+    "WCAG"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [

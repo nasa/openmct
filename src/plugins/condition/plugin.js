@@ -21,9 +21,9 @@
  *****************************************************************************/
 import { v4 as uuid } from 'uuid';
 
-import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
-import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
-import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
+import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy.js';
+import ConditionSetMetadataProvider from './ConditionSetMetadataProvider.js';
+import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider.js';
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 
 export default function ConditionPlugin() {

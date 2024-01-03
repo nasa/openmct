@@ -1,4 +1,4 @@
-import { MENU_PLACEMENT } from '../menu';
+import { MENU_PLACEMENT } from '../menu.js';
 export default {
   methods: {
     /**

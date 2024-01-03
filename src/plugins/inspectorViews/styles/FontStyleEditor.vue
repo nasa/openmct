@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { FONT_SIZES, FONTS } from './constants';
+import { FONT_SIZES, FONTS } from './constants.js';
 
 export default {
   inject: ['openmct'],

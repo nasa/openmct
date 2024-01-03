@@ -1,7 +1,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ConditionWidgetPlugin from './plugin';
+import ConditionWidgetPlugin from './plugin.js';
 
 describe('the plugin', function () {
   const CONDITION_WIDGET_KEY = 'conditionWidget';

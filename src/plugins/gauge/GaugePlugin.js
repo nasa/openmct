@@ -23,8 +23,8 @@
 import mount from 'utils/mount';
 
 import GaugeFormController from './components/GaugeFormController.vue';
-import GaugeCompositionPolicy from './GaugeCompositionPolicy';
-import GaugeViewProvider from './GaugeViewProvider';
+import GaugeCompositionPolicy from './GaugeCompositionPolicy.js';
+import GaugeViewProvider from './GaugeViewProvider.js';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],

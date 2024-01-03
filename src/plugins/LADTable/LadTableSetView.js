@@ -23,7 +23,7 @@
 import mount from 'utils/mount';
 
 import LadTableSet from './components/LadTableSet.vue';
-import LADTableConfiguration from './LADTableConfiguration';
+import LADTableConfiguration from './LADTableConfiguration.js';
 
 export default class LadTableSetView {
   constructor(openmct, domainObject, objectPath) {

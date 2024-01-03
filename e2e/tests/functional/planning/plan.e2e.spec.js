@@ -19,10 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test } = require('../../../pluginFixtures');
-const { createPlanFromJSON } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const { assertPlanActivities } = require('../../../helper/planningUtils');
+import fs from 'fs';
+
+import { createPlanFromJSON } from '../../../appActions.js';
+import {
+  addPlanGetInterceptor,
+  assertPlanActivities,
+  assertPlanOrderedSwimLanes
+} from '../../../helper/planningUtils.js';
+import { test } from '../../../pluginFixtures.js';
+
+const testPlan1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
+);
+
+const testPlanWithOrderedLanes = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json', import.meta.url)
+  )
+);
 
 test.describe('Plan', () => {
   let plan;
@@ -35,5 +52,15 @@ test.describe('Plan', () => {
 
   test('Displays all plan events', async ({ page }) => {
     await assertPlanActivities(page, testPlan1, plan.url);
+  });
+
+  test('Displays plans with ordered swim lanes configuration', async ({ page }) => {
+    // Add configuration for swim lanes
+    await addPlanGetInterceptor(page);
+    // Create the plan
+    const planWithSwimLanes = await createPlanFromJSON(page, {
+      json: testPlanWithOrderedLanes
+    });
+    await assertPlanOrderedSwimLanes(page, testPlanWithOrderedLanes, planWithSwimLanes.url);
   });
 });

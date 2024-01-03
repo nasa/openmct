@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
@@ -57,4 +56,4 @@ const config = {
   ]
 };
 
-module.exports = config;
+export default config;

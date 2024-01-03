@@ -19,15 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
-const path = require('path');
+import { fileURLToPath } from 'url';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import * as nbUtils from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const NOTEBOOK_NAME = 'Notebook';
 
@@ -278,7 +279,7 @@ test.describe('Notebook entry tests', () => {
   test.beforeEach(async ({ page }) => {
     // eslint-disable-next-line no-undef
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
+      path: fileURLToPath(new URL('../../../../helper/addInitNotebookWithUrls.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 

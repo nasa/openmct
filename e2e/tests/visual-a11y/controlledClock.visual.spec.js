@@ -21,33 +21,39 @@
  *****************************************************************************/
 
 /*
-Tests the branding associated with the default deployment. At least the about modal for now
+Collection of Visual Tests set to run with browser clock manipulate made possible with the
+clockOptions plugin fixture.
 */
 
-const { test, expect } = require('../../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
 
-test.describe('Visual - Branding', () => {
+import { MISSION_TIME, VISUAL_URL } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
+
+test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
+  test.use({
+    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: false //Don't advance the clock
+    }
+  });
 
-  test('Visual - About Modal', async ({ page, theme }) => {
-    // Click About button
-    await page.click('.l-shell__app-logo');
-
-    // Modify the Build information in 'about' to be consistent run-over-run
-    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-    await expect(versionInformationLocator).toBeEnabled();
-    await versionInformationLocator.evaluate(
-      (node) =>
-        (node.innerHTML =
-          '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
+  test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.locator('a').filter({ hasText: 'Overlay Plot with 5s Delay' }).click();
+    //Ensure that we're on the Unnamed Overlay Plot object
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+      'Overlay Plot with 5s Delay'
     );
 
-    // Take a snapshot of the About modal
-    await percySnapshot(page, `About (theme: '${theme}')`);
+    //Wait for canvas to be rendered and stop animating, but plot should not be loaded. Cannot use waitForPlotsToRender
+    await page.locator('canvas >> nth=1').hover({ trial: true });
+
+    //Take snapshot of Sine Wave Generator within Overlay Plot
+    await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
   });
 });

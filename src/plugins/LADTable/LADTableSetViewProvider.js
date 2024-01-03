@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LadTableSetView from './LadTableSetView';
+import LadTableSetView from './LadTableSetView.js';
 
 export default function LADTableSetViewProvider(openmct) {
   return {

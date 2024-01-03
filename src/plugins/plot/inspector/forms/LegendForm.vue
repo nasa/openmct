@@ -136,7 +136,7 @@
 <script>
 import _ from 'lodash';
 
-import { coerce, objectPath, validate } from './formUtil';
+import { coerce, objectPath, validate } from './formUtil.js';
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],

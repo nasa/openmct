@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { checkIfOld } from './time';
+import { checkIfOld } from './time.js';
 
 describe('time related utils', () => {
   let subscription;

@@ -124,8 +124,8 @@
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import PlotOptionsItem from './PlotOptionsItem.vue';
 
 export default {

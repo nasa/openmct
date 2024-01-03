@@ -33,7 +33,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
   mixins: [stalenessMixin],

@@ -1,7 +1,7 @@
 import Moment from 'moment';
 import { saveAs } from 'saveAs';
 
-import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants.js';
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
 const ALLOWED_TYPES = [NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE];

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryView from './ImageryView';
+import ImageryView from './ImageryView.js';
 
 export default function ImageryViewProvider(openmct, options) {
   const type = 'example.imagery';

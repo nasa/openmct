@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import CouchDBSearchFolderPlugin from './plugin';
+import CouchDBSearchFolderPlugin from './plugin.js';
 
 describe('the plugin', function () {
   let identifier = {

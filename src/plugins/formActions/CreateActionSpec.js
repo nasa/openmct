@@ -22,7 +22,7 @@
 import { debounce } from 'lodash';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import CreateAction from './CreateAction';
+import CreateAction from './CreateAction.js';
 
 let parentObject;
 let parentObjectPath;

@@ -19,18 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
-const LOCALSTORAGE_PATH = path.resolve(
-  __dirname,
-  '../../../../test-data/flexible_layout_with_child_layouts.json'
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/flexible_layout_with_child_layouts.json', import.meta.url)
 );
 
 test.describe('Flexible Layout', () => {
@@ -267,7 +266,7 @@ test.describe('Flexible Layout', () => {
 
 test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
   test.use({
-    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+    storageState: LOCALSTORAGE_PATH
   });
 
   test.beforeEach(async ({ page }) => {

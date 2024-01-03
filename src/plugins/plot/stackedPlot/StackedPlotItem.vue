@@ -30,7 +30,7 @@ import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurati
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import Plot from '../PlotView.vue';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
+import conditionalStylesMixin from './mixins/objectStyles-mixin.js';
 
 export default {
   mixins: [conditionalStylesMixin, stalenessMixin],

@@ -20,19 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
-const {
-  setBoundsToSpanAllActivities,
-  setDraftStatusForPlan
-} = require('../../helper/planningUtils');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../appActions');
-const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
-const examplePlanSmall = require('../../test-data/examplePlans/ExamplePlan_Small2.json');
+import percySnapshot from '@percy/playwright';
+import fs from 'fs';
+
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
+
+const examplePlanSmall = JSON.parse(
+  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
+);
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
-test.describe('Visual - Planning', () => {
+test.describe('Visual - Planning @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -96,5 +98,8 @@ test.describe('Visual - Planning', () => {
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
       scope: snapshotScope
     });
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

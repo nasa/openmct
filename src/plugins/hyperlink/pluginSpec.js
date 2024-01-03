@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import HyperlinkPlugin from './plugin';
+import HyperlinkPlugin from './plugin.js';
 
 function getView(openmct, domainObj, objectPath) {
   const applicableViews = openmct.objectViews.get(domainObj, objectPath);

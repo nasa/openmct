@@ -1,4 +1,4 @@
-import printj from 'printj';
+import { sprintf } from 'printj';
 
 export default class CustomStringFormatter {
   constructor(openmct, valueMetadata, itemFormat) {
@@ -14,7 +14,7 @@ export default class CustomStringFormatter {
     }
 
     if (!this.itemFormat.startsWith('&')) {
-      return printj.sprintf(this.itemFormat, datum[this.valueMetadata.key]);
+      return sprintf(this.itemFormat, datum[this.valueMetadata.key]);
     }
 
     try {

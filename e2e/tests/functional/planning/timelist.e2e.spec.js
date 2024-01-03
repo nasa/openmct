@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../pluginFixtures');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../../appActions');
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import { expect, test } from '../../../pluginFixtures.js';
 const { getEarliestStartTime } = require('../../../helper/planningUtils');
 const examplePlanSmall3 = require('../../../test-data/examplePlans/ExamplePlan_Small3.json');
 

@@ -38,7 +38,7 @@ import { v4 as uuid } from 'uuid';
 
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 
-import toggleMixin from '../../toggle-check-box-mixin';
+import toggleMixin from '../../toggle-check-box-mixin.js';
 
 export default {
   components: {

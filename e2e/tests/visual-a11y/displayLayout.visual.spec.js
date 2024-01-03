@@ -26,10 +26,11 @@
  * @property {Object<string, import('@playwright/test').Locator>} LayoutLocator
  */
 
-const { test } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
-const percySnapshot = require('@percy/playwright');
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { VISUAL_URL } from '../../constants.js';
+import { test } from '../../pluginFixtures.js';
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {

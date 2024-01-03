@@ -22,17 +22,17 @@
 
 /*global module,process*/
 
-module.exports = (config) => {
+module.exports = async (config) => {
   let webpackConfig;
   let browsers;
   let singleRun;
 
   if (process.env.KARMA_DEBUG) {
-    webpackConfig = require('./.webpack/webpack.dev.js');
+    webpackConfig = (await import('./.webpack/webpack.dev.js')).default;
     browsers = ['ChromeDebugging'];
     singleRun = false;
   } else {
-    webpackConfig = require('./.webpack/webpack.coverage.js');
+    webpackConfig = (await import('./.webpack/webpack.coverage.js')).default;
     browsers = ['ChromeHeadless'];
     singleRun = true;
   }
@@ -45,7 +45,7 @@ module.exports = (config) => {
     basePath: '',
     frameworks: ['jasmine', 'webpack'],
     files: [
-      'index-test.js',
+      'index-test.cjs',
       // included means: should the files be included in the browser using <script> tag?
       // We don't want them as a <script> because the shared worker source
       // needs loaded remotely by the shared worker process.
@@ -102,7 +102,7 @@ module.exports = (config) => {
       failFast: false
     },
     preprocessors: {
-      'index-test.js': ['webpack', 'sourcemap']
+      'index-test.cjs': ['webpack', 'sourcemap']
     },
     webpack: webpackConfig,
     webpackMiddleware: {
