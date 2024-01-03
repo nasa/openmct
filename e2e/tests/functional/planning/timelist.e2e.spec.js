@@ -19,12 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
 import { getEarliestStartTime } from '../../../helper/planningUtils';
 import { expect, test } from '../../../pluginFixtures.js';
-import examplePlanSmall3 from '../../../test-data/examplePlans/ExamplePlan_Small3.json';
 
+const examplePlanSmall3 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small3.json', import.meta.url)
+  )
+);
 // eslint-disable-next-line no-unused-vars
 const START_TIME_COLUMN = 0;
 // eslint-disable-next-line no-unused-vars
