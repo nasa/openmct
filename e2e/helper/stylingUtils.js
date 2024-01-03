@@ -85,7 +85,7 @@ async function checkStyles(
  *
  * @param {string} expectedFontSize - The expected font size in '72px' format. Default is 'Default'
  * @param {string} expectedFontWeight - The expected font Type. Format as '700' for bold. Default is 'Default'
- * @param {string} expectedFontFamily - The expected font Type. Format unkown. Default is 'Default'
+ * @param {string} expectedFontFamily - The expected font Type. Format as "\"Andale Mono\", sans-serif". Default is 'Default'
  * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be checked.
  */
 async function checkFontStyles(expectedFontSize, expectedFontWeight, expectedFontFamily, locator) {
