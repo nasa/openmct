@@ -80,4 +80,22 @@ async function checkStyles(
   expect(layoutStyles.fontColor).toContain(expectedTextColor);
 }
 
-export { checkStyles, hexToRGB, setStyles };
+/**
+ * Checks if the font Styles of an element match the expected values.
+ *
+ * @param {string} expectedFontSize - The expected border color in RGB format. Default is '#e6b8af' or 'rgb(230, 184, 175)'
+ * @param {string} expectedFontType - The expected text color in RGB format. Default is #aaaaaa or 'rgb(170, 170, 170)'
+ * @param {import('@playwright/test').Locator} locator - The Playwright locator for the element whose style is to be checked.
+ */
+async function checkFontStyles(expectedFontSize, expectedFontType, locator) {
+  const layoutStyles = await locator.evaluate((el) => {
+    return {
+      fontSize: window.getComputedStyle(el).getPropertyValue('font-size'),
+      fontType: window.getComputedStyle(el).getPropertyValue('font-family')
+    };
+  });
+  expect(layoutStyles.fontSize).toContain(expectedFontSize);
+  expect(layoutStyles.fontFamily).toContain(expectedFontType);
+}
+
+export { checkFontStyles, checkStyles, hexToRGB, setStyles };
