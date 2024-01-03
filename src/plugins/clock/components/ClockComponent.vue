@@ -22,7 +22,13 @@
 
 <template>
   <div class="u-contents">
-    <div class="c-clock l-time-display u-style-receiver js-style-receiver">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-label="Clock"
+      class="c-clock l-time-display u-style-receiver js-style-receiver"
+    >
       <div class="c-clock__timezone">
         {{ timeZoneAbbr }}
       </div>
