@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import { getEarliestStartTime } from '../../../helper/planningUtils';
 import { expect, test } from '../../../pluginFixtures.js';
-const { getEarliestStartTime } = require('../../../helper/planningUtils');
-const examplePlanSmall3 = require('../../../test-data/examplePlans/ExamplePlan_Small3.json');
+import examplePlanSmall3 from '../../../test-data/examplePlans/ExamplePlan_Small3.json';
 
 // eslint-disable-next-line no-unused-vars
 const START_TIME_COLUMN = 0;
