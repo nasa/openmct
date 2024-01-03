@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-preview-window js-preview-window">
+  <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
       ref="previewHeader"
       :current-view="currentViewProvider"
