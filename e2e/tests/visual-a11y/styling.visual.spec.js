@@ -162,6 +162,14 @@ test.describe.only('Stacked Plot styling @a11y', () => {
       page.getByRole('tab', { name: 'Styles' }) //Workaround for https://github.com/nasa/openmct/issues/7229
     );
 
+    //Set Font Size to 72
+    await page.getByLabel('Set Font Size').click();
+    await page.getByRole('menuitem', { name: '72px' }).click();
+
+    //Set Font Type to Monospace Bold
+    await page.getByLabel('Set Font Type').click();
+    await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
+
     await percySnapshot(page, `Edit Mode StackedPlot Styled (theme: '${theme}')`);
 
     await setStyles(
