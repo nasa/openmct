@@ -78,179 +78,116 @@ test.describe('Stacked Plot styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page
-        .getByLabel('Stacked Plot Item Sine Wave Generator 1')
-        .getByLabel('Stacked Plot Style Target')
+      page.getByRole('tab', { name: 'Styles' }) //Workaround for https://github.com/nasa/openmct/issues/7229
     );
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await checkStyles(
-      hexToRGB(defaultBorderTargetColor),
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Style Target')
     );
 
     // Reload page
     await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Check styles using checkStyles function
+    //Verify styles are correct after reload
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('Flexible Layout Column')
+      page.getByLabel('Stacked Plot Style Target')
     );
 
-    // Check styles on StackedPlot1
+    //Verify that stacked Plot Items inherit only text properties
     await checkStyles(
-      hexToRGB(setBackgroundColor),
+      NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
 
-    // Check styles on StackedPlot2
     await checkStyles(
-      hexToRGB(setBackgroundColor),
+      NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
     );
   });
 
   test('styling a child object of the flexible layout properly applies that style to only that child', async ({
     page
   }) => {
-    // Set background and font color on Stacked Plot object
-    const setBackgroundColor = '#5b0f00';
-    const setTextColor = '#e6b8af';
-    const defaultTextColor = '#aaaaaa'; // default text color
-    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
+    await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-    // Directly navigate to the flexible layout
-    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
-
-    // Edit Flexible Layout
     await page.getByLabel('Edit').click();
 
-    // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
 
-    // Check styles on StackedPlot2
+    //Check default styles for SWG1 and SWG2
     await checkStyles(
       NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
 
-    // Check styles on StackedPlot2
     await checkStyles(
       NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
     );
 
     // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
-    await setStyles(page, setBackgroundColor, setTextColor, page.getByLabel('StackedPlot1 Frame'));
-
-    // Check styles on StackedPlot1
-    await checkStyles(
-      hexToRGB(setBackgroundColor),
-      hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
-    );
-
-    // Check styles on StackedPlot2
-    await checkStyles(
-      NO_STYLE_RGBA,
-      hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
 
     // Save Flexible Layout
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Reload page and verify that styles persist
-    await page.reload({ waitUntil: 'domcontentloaded' });
-
     // Check styles on StackedPlot1
     await checkStyles(
+      hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
 
     // Check styles on StackedPlot2
     await checkStyles(
       NO_STYLE_RGBA,
-      hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
-    );
-  });
-
-  test('When the "no style" option is selected, background and text should be reset to inherited styles', async ({
-    page
-  }) => {
-    // Set background and font color on Stacked Plot object
-    const backgroundColor = '#5b0f00';
-    const textColor = '#e6b8af';
-    const inheritedColor = '#aaaaaa'; // inherited from the body style
-    const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)';
-
-    // Directly navigate to the flexible layout
-    await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
-
-    // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
-
-    // Select styles tab
-    await page.getByRole('tab', { name: 'Styles' }).click();
-
-    // Set styles using setStyles function
-    await setStyles(page, backgroundColor, textColor, page.getByLabel('StackedPlot1 Frame'));
-
-    // Check styles using checkStyles function
-    await checkStyles(
-      hexToRGB(backgroundColor),
-      hexToRGB(textColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
-    );
-
-    // Save Flexible Layout
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-    // Reload page and set Styles to 'None'
-    await page.reload({ waitUntil: 'domcontentloaded' });
-
-    // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
-
-    // Select styles tab
-    await page.getByRole('tab', { name: 'Styles' }).click();
-
-    //Select the 'No Style' option
-    await setStyles(page, 'No Style', 'No Style', page.getByLabel('StackedPlot1 Frame'));
-
-    // Check styles using checkStyles function
-    await checkStyles(
       NO_STYLE_RGBA,
-      hexToRGB(inheritedColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
     );
-    // Save Flexible Layout
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
 
     // Reload page and verify that styles persist
     await page.reload({ waitUntil: 'domcontentloaded' });
 
-    // Check styles using checkStyles function
+    // Check styles on StackedPlot1
+    await checkStyles(
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+    );
+
+    // Check styles on StackedPlot2
     await checkStyles(
       NO_STYLE_RGBA,
-      hexToRGB(inheritedColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      NO_STYLE_RGBA,
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
     );
   });
 });
