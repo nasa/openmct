@@ -71,13 +71,14 @@ test.describe('Stacked Plot styling', () => {
   test('styling the overlay plot properly applies the styles to all containers', async ({
     page
   }) => {
-    // Directly navigate to the stackedplot
+    // Directly navigate to the stacked plot
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
     await page.getByLabel('Edit').click();
 
     await page.getByRole('tab', { name: 'Styles' }).click();
 
+    //Set styles on overall stacked plot
     await setStyles(
       page,
       setBorderColor,
@@ -94,6 +95,7 @@ test.describe('Stacked Plot styling', () => {
     await page.getByLabel('Set Font Type').click();
     await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
 
+    //Check styles of stacked plot
     await checkStyles(
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
@@ -101,6 +103,7 @@ test.describe('Stacked Plot styling', () => {
       page.getByLabel('Stacked Plot Style Target')
     );
 
+    //Check font styles of stacked plot
     await checkFontStyles(
       setFontSize,
       setFontWeight,
@@ -186,6 +189,7 @@ test.describe('Stacked Plot styling', () => {
       page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
     );
 
+    //Set Font Styles on SWG1 but not SWG2
     await page.getByLabel('Stacked Plot Item Sine Wave Generator 1').click();
     //Set Font Size to 72
     await page.getByLabel('Set Font Size').click();
