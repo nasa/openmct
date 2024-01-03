@@ -24,7 +24,7 @@
     <div ref="fontSizeMenu" class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-icon-button c-button--menu icon-font-size"
-        aria-label="Font Size"
+        aria-label="Set Font Size"
         @click.prevent.stop="showFontSizeMenu"
       >
         <span class="c-button__label">{{ fontSizeLabel }}</span>
@@ -33,7 +33,7 @@
     <div ref="fontMenu" class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-icon-button c-button--menu icon-font"
-        aria-label="Font Type"
+        aria-label="Set Font Type"
         @click.prevent.stop="showFontMenu"
       >
         <span class="c-button__label">{{ fontTypeLabel }}</span>
