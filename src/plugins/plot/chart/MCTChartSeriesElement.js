@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 
 /** @abstract */
 export default class MCTChartSeriesElement {

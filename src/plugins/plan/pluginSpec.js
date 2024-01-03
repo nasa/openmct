@@ -25,7 +25,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
 import Properties from '../inspectorViews/properties/PropertiesComponent.vue';
-import PlanPlugin from '../plan/plugin';
+import PlanPlugin from '../plan/plugin.js';
 
 describe('the plugin', function () {
   let planDefinition;

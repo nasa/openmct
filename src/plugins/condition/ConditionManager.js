@@ -23,8 +23,8 @@
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 
-import Condition from './Condition';
-import { getLatestTimestamp } from './utils/time';
+import Condition from './Condition.js';
+import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
   constructor(conditionSetDomainObject, openmct) {

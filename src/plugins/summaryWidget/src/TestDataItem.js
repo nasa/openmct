@@ -1,10 +1,10 @@
 import EventEmitter from 'EventEmitter';
 
-import * as templateHelpers from '../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../utils/template/templateHelpers.js';
 import itemTemplate from '../res/testDataItemTemplate.html';
-import eventHelpers from './eventHelpers';
-import KeySelect from './input/KeySelect';
-import ObjectSelect from './input/ObjectSelect';
+import eventHelpers from './eventHelpers.js';
+import KeySelect from './input/KeySelect.js';
+import ObjectSelect from './input/ObjectSelect.js';
 
 /**
  * An object representing a single mock telemetry value

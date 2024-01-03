@@ -64,11 +64,11 @@
 <script>
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import ImageExporter from '../../../exporters/ImageExporter';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import ImageExporter from '../../../exporters/ImageExporter.js';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ObjectSelect from '../../src/input/ObjectSelect';
+import ObjectSelect from '../../src/input/ObjectSelect.js';
 
 describe('A select for choosing composition objects', function () {
   let mockConfig;

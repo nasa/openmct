@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import WorkerInterface from './WorkerInterface';
+import WorkerInterface from './WorkerInterface.js';
 
 const REQUEST_DEFAULTS = {
   amplitude: 1,

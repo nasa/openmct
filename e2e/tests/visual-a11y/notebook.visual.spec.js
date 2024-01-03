@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, scanForA11yViolations } = require('../../avpFixtures');
-const percySnapshot = require('@percy/playwright');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
-const {
-  startAndAddRestrictedNotebookObject,
-  enterTextEntry
-} = require('../../helper/notebookUtils');
-const { VISUAL_URL } = require('../../constants');
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {

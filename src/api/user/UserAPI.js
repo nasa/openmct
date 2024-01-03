@@ -22,10 +22,10 @@
 
 import EventEmitter from 'EventEmitter';
 
-import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants';
-import StatusAPI from './StatusAPI';
-import StoragePersistance from './StoragePersistance';
-import User from './User';
+import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants.js';
+import StatusAPI from './StatusAPI.js';
+import StoragePersistance from './StoragePersistance.js';
+import User from './User.js';
 
 class UserAPI extends EventEmitter {
   /**

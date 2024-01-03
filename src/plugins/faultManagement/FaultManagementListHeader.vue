@@ -53,7 +53,7 @@
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
 
-import { SORT_ITEMS } from './constants';
+import { SORT_ITEMS } from './constants.js';
 
 export default {
   components: {

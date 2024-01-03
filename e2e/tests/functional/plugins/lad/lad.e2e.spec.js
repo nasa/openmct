@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
-  setStartOffset,
+  openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
-  openObjectTreeContextMenu
-} = require('../../../../appActions');
+  setStartOffset
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Testing LAD table configuration', () => {
   let ladTable;

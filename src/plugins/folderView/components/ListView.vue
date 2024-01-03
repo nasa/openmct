@@ -87,7 +87,7 @@
 <script>
 import _ from 'lodash';
 
-import compositionLoader from './composition-loader';
+import compositionLoader from './composition-loader.js';
 import ListItem from './ListItem.vue';
 
 export default {

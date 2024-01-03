@@ -35,7 +35,7 @@
 <script>
 import mount from 'utils/mount';
 
-import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
 

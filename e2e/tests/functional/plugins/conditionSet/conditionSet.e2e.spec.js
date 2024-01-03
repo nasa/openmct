@@ -19,19 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
 suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('../../../../pluginFixtures.js');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
 let getConditionSetIdentifierFromUrl;
@@ -50,7 +50,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+      path: fileURLToPath(
+        new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+      )
     });
 
     //Set object identifier from url
@@ -63,7 +65,9 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
   //Load localStorage for subsequent tests
   test.use({
-    storageState: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+    storageState: fileURLToPath(
+      new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+    )
   });
 
   //Begin suite of tests again localStorage

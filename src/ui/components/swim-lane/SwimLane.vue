@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 
 export default {
   mixins: [tooltipHelpers],

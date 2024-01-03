@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Rule from '../src/Rule';
+import Rule from '../src/Rule.js';
 
 describe('A Summary Widget Rule', function () {
   let mockRuleConfig;

@@ -24,9 +24,10 @@
  * This test suite is dedicated to testing the Scatter Plot component.
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const uuid = require('uuid').v4;
+import { v4 as uuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Scatter Plot', () => {
   let scatterPlot;

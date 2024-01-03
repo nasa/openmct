@@ -24,8 +24,8 @@
 This test suite is dedicated to tests which verify Open MCT's Notification functionality
 */
 
-const { createDomainObjectWithDefaults, createNotification } = require('../../appActions');
-const { test, expect } = require('../../pluginFixtures');
+import { createDomainObjectWithDefaults, createNotification } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Notifications List', () => {
   test.fixme('Notifications can be dismissed individually', async ({ page }) => {

@@ -19,15 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const genUuid = require('uuid').v4;
-const path = require('path');
+import { fileURLToPath } from 'url';
+import { v4 as genUuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const TEST_FOLDER = 'test folder';
 const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
@@ -72,7 +73,7 @@ test.describe('Form Validation Behavior', () => {
 test.describe('Form File Input Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js')
+      path: fileURLToPath(new URL('../../helper/addInitFileInputObject.js', import.meta.url))
     });
   });
 
@@ -109,7 +110,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addNoneditableObject.js')
+      path: fileURLToPath(new URL('../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 

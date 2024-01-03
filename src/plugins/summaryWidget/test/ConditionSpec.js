@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Condition from '../src/Condition';
+import Condition from '../src/Condition.js';
 
 describe('A summary widget condition', function () {
   let testCondition;

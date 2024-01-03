@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify branding related components.
 */
 
-const { test, expect } = require('../../baseFixtures.js');
+import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Branding tests', () => {
   test('About Modal launches with basic branding properties', async ({ page }) => {

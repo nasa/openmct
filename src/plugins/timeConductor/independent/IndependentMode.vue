@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import toggleMixin from '../../../ui/mixins/toggle-mixin';
-import modeMixin from '../mode-mixin';
+import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
+import modeMixin from '../mode-mixin.js';
 
 export default {
   mixins: [toggleMixin, modeMixin],

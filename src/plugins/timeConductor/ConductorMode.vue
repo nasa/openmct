@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import modeMixin from './mode-mixin';
+import modeMixin from './mode-mixin.js';
 
 const TEST_IDS = true;
 

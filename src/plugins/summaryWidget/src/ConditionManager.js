@@ -2,7 +2,7 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 import objectUtils from 'objectUtils';
 
-import ConditionEvaluator from './ConditionEvaluator';
+import ConditionEvaluator from './ConditionEvaluator.js';
 
 /**
  * Provides a centralized content manager for conditions in the summary widget.

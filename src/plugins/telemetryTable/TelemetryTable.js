@@ -23,13 +23,13 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import StalenessUtils from '../../utils/staleness';
-import TableRowCollection from './collections/TableRowCollection';
-import TelemetryTableColumn from './TelemetryTableColumn';
-import TelemetryTableConfiguration from './TelemetryTableConfiguration';
-import TelemetryTableNameColumn from './TelemetryTableNameColumn';
-import TelemetryTableRow from './TelemetryTableRow';
-import TelemetryTableUnitColumn from './TelemetryTableUnitColumn';
+import StalenessUtils from '../../utils/staleness.js';
+import TableRowCollection from './collections/TableRowCollection.js';
+import TelemetryTableColumn from './TelemetryTableColumn.js';
+import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
+import TelemetryTableNameColumn from './TelemetryTableNameColumn.js';
+import TelemetryTableRow from './TelemetryTableRow.js';
+import TelemetryTableUnitColumn from './TelemetryTableUnitColumn.js';
 
 export default class TelemetryTable extends EventEmitter {
   constructor(domainObject, openmct) {

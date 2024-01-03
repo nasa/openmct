@@ -1,6 +1,6 @@
 import EventEmitter from 'EventEmitter';
 
-import * as templateHelpers from '../../../utils/template/templateHelpers';
+import * as templateHelpers from '../../../utils/template/templateHelpers.js';
 import ruleImageTemplate from '../res/ruleImageTemplate.html';
 
 /**

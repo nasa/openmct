@@ -1,4 +1,4 @@
-import IconPalette from '../../src/input/IconPalette';
+import IconPalette from '../../src/input/IconPalette.js';
 
 describe('An Open MCT icon palette', function () {
   let iconPalette;

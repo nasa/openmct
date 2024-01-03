@@ -1,7 +1,7 @@
-import SummaryWidgetMetadataProvider from './src/telemetry/SummaryWidgetMetadataProvider';
-import SummaryWidgetTelemetryProvider from './src/telemetry/SummaryWidgetTelemetryProvider';
-import SummaryWidgetViewProvider from './src/views/SummaryWidgetViewProvider';
-import SummaryWidgetsCompositionPolicy from './SummaryWidgetsCompositionPolicy';
+import SummaryWidgetMetadataProvider from './src/telemetry/SummaryWidgetMetadataProvider.js';
+import SummaryWidgetTelemetryProvider from './src/telemetry/SummaryWidgetTelemetryProvider.js';
+import SummaryWidgetViewProvider from './src/views/SummaryWidgetViewProvider.js';
+import SummaryWidgetsCompositionPolicy from './SummaryWidgetsCompositionPolicy.js';
 
 export default function plugin() {
   const widgetType = {

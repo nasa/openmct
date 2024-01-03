@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import OperationSelect from '../../src/input/OperationSelect';
+import OperationSelect from '../../src/input/OperationSelect.js';
 
 describe('A select for choosing composition object properties', function () {
   let mockConfig;

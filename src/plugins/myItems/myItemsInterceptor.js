@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MY_ITEMS_KEY } from './createMyItemsIdentifier';
+import { MY_ITEMS_KEY } from './createMyItemsIdentifier.js';
 
 function myItemsInterceptor(openmct, identifierObject, name) {
   const myItemsModel = {

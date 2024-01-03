@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EditPropertiesAction from './EditPropertiesAction';
+import EditPropertiesAction from './EditPropertiesAction.js';
 
 export default function () {
   return function (openmct) {

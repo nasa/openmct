@@ -1,4 +1,4 @@
-import { installTheme } from './installTheme';
+import { installTheme } from './installTheme.js';
 
 export default function plugin() {
   return function install(openmct) {

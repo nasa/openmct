@@ -1,17 +1,14 @@
-/* global __dirname module */
-
 /*
 This configuration should be used for production installs.
 It is the default webpack configuration.
 */
-const path = require('path');
-const webpack = require('webpack');
-const { merge } = require('webpack-merge');
 
-const common = require('./webpack.common');
-const projectRootDir = path.resolve(__dirname, '..');
+import webpack from 'webpack';
+import { merge } from 'webpack-merge';
 
-module.exports = merge(common, {
+import common from './webpack.common.js';
+
+export default merge(common, {
   mode: 'production',
   plugins: [
     new webpack.DefinePlugin({

@@ -22,7 +22,7 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import ActionCollection from './ActionCollection';
+import ActionCollection from './ActionCollection.js';
 
 class ActionsAPI extends EventEmitter {
   constructor(openmct) {
