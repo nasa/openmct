@@ -194,7 +194,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     //Searching for a tag which does not exist should return an empty result
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-    await expect(page.locator('text=No results found')).toBeVisible();
+    await expect(page.getByText('No results found')).toBeVisible();
   });
 });
 
