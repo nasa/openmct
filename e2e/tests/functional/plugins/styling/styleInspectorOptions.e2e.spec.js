@@ -24,8 +24,8 @@
  * This test is dedicated to test styling changes in the inspector tool
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Style Inspector Options', () => {
   let flexibleLayout;

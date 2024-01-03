@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { expect } = require('../pluginFixtures');
+import { expect } from '../pluginFixtures.js';
 
 /**
  * Converts a hex color value to its RGB equivalent.
@@ -80,9 +80,4 @@ async function checkStyles(
   expect(layoutStyles.fontColor).toContain(expectedTextColor);
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
-  checkStyles,
-  setStyles,
-  hexToRGB
-};
+export { checkStyles, hexToRGB, setStyles };

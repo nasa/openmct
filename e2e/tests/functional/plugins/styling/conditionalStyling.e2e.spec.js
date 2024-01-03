@@ -24,7 +24,7 @@
  * This test is dedicated to test conditional styling
  */
 
-const { test } = require('../../../../pluginFixtures');
+import { test } from '../../../../pluginFixtures.js';
 
 test.describe('Conditional Styling', () => {
   test.fixme(

@@ -24,9 +24,9 @@
  * This test is dedicated to test styling of stacked plots
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const { hexToRGB, setStyles, checkStyles } = require('../../../../helper/stylingUtils');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { checkStyles, hexToRGB, setStyles } from '../../../../helper/stylingUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 const setBorderColor = '#ff00ff';
 const setBackgroundColor = '#5b0f00';
@@ -78,7 +78,9 @@ test.describe('Stacked Plot styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1').getByLabel('Stacked Plot Style Target')
+      page
+        .getByLabel('Stacked Plot Item Sine Wave Generator 1')
+        .getByLabel('Stacked Plot Style Target')
     );
 
     await page.getByRole('button', { name: 'Save' }).click();

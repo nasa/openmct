@@ -24,9 +24,9 @@
  * This test is dedicated to test styling of flex layouts
  */
 
-const { test } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const { hexToRGB, setStyles, checkStyles } = require('../../../../helper/stylingUtils');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { checkStyles, hexToRGB, setStyles } from '../../../../helper/stylingUtils.js';
+import { test } from '../../../../pluginFixtures.js';
 
 const setBorderColor = '#ff00ff';
 const setBackgroundColor = '#5b0f00';
