@@ -25,7 +25,12 @@
  */
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import { checkStyles, hexToRGB, setStyles } from '../../../../helper/stylingUtils.js';
+import {
+  checkFontStyles,
+  checkStyles,
+  hexToRGB,
+  setStyles
+} from '../../../../helper/stylingUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 const setBorderColor = '#ff00ff';
@@ -37,6 +42,8 @@ const defaultTextColor = '#aaaaaa'; // default text color
 const inheritedColor = '#aaaaaa'; // inherited from the body style
 const pukeGreen = '#6aa84f'; //Ugliest green known to man
 const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
+const setFontSize = '72px';
+const setFontType = 'sans-serif'; //Andale Mono", sans-serif
 
 test.describe('Stacked Plot styling', () => {
   let stackedPlot;
@@ -81,6 +88,15 @@ test.describe('Stacked Plot styling', () => {
       page.getByRole('tab', { name: 'Styles' }) //Workaround for https://github.com/nasa/openmct/issues/7229
     );
 
+    //Set Font Size to 72
+    await page.getByLabel('Set Font Size').click();
+    await page.getByRole('menuitem', { name: '72px' }).click();
+
+    //Set Font Type to Monospace Bold
+    await page.getByLabel('Set Font Type').click();
+    await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
+
+    //Save
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -90,6 +106,8 @@ test.describe('Stacked Plot styling', () => {
       hexToRGB(setTextColor),
       page.getByLabel('Stacked Plot Style Target')
     );
+
+    await checkFontStyles(setFontSize, setFontType, page.getByLabel('Stacked Plot Item Sine Wave Generator 1'));
 
     // Reload page
     await page.reload({ waitUntil: 'domcontentloaded' });
