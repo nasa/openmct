@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 
 export default {
   inject: ['openmct', 'configuration'],

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ISOTimeFormat from './ISOTimeFormat';
+import ISOTimeFormat from './ISOTimeFormat.js';
 
 export default function () {
   return function install(openmct) {

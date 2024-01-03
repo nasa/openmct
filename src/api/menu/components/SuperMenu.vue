@@ -79,7 +79,7 @@
   </div>
 </template>
 <script>
-import popupMenuMixin from '../mixins/popupMenuMixin';
+import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
   inject: ['options'],

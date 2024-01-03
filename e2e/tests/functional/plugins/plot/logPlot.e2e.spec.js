@@ -25,8 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { setTimeConductorBounds } = require('../../../../appActions');
+import { setTimeConductorBounds } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Log plot tests', () => {
   test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({

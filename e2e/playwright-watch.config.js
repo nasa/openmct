@@ -8,12 +8,11 @@ const NUM_WORKERS = 2;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
+  retries: 0, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
   testDir: 'tests',
-  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
   timeout: 60 * 1000,
   webServer: {
-    command: 'npm run start:coverage',
+    command: 'npm run start', //Start in dev mode for hot reloading
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
@@ -31,38 +30,9 @@ const config = {
   projects: [
     {
       name: 'chrome',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
+      testMatch: '**/*.spec.js', // run all tests
       use: {
         browserName: 'chromium'
-      }
-    },
-    {
-      name: 'MMOC',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
-      grepInvert: /@snapshot/,
-      use: {
-        browserName: 'chromium',
-        viewport: {
-          width: 2560,
-          height: 1440
-        }
-      }
-    },
-    {
-      name: 'firefox',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
-      grepInvert: /@snapshot/,
-      use: {
-        browserName: 'firefox'
-      }
-    },
-    {
-      name: 'chrome-beta', //Only Chrome Beta is available on ubuntu -- not chrome canary
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
-      grepInvert: /@snapshot/,
-      use: {
-        browserName: 'chromium',
-        channel: 'chrome-beta'
       }
     }
   ],

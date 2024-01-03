@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LADTableView from './LADTableView';
+import LADTableView from './LADTableView.js';
 
 export default class LADTableViewProvider {
   constructor(openmct) {

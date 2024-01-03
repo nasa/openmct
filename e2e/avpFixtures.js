@@ -33,13 +33,16 @@
  * existing ones.
  */
 
-const fs = require('fs');
-const path = require('path');
-const { test, expect } = require('./pluginFixtures');
-const AxeBuilder = require('@axe-core/playwright').default;
-const { findLeaks, BrowserInteractionResultReader } = require('@memlab/api');
+import { fileURLToPath } from 'node:url';
 
-const snapshotsPath = path.join(__dirname, '../../../test-data/snapshots');
+import AxeBuilder from '@axe-core/playwright';
+import { BrowserInteractionResultReader, findLeaks } from '@memlab/api';
+import fs from 'fs';
+import path from 'path';
+
+import { expect, test } from './pluginFixtures.js';
+
+const snapshotsPath = fileURLToPath(new URL('../../../test-data/snapshots', import.meta.url));
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';
 
@@ -57,6 +60,7 @@ const TEST_RESULTS_DIR = './test-results';
  * @returns {Promise<object|null>} Returns the accessibility scan results if violations are found,
  *                                  otherwise returns null.
  */
+
 async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
@@ -92,11 +96,11 @@ async function scanForA11yViolations(page, testCaseName, options = {}) {
     console.log('No accessibility violations found, no report generated.');
     return null;
   }
-};
+}
 
 /**
  * Gets the used JS heap size from the page.
- * 
+ *
  * @param {import('@playwright/test').Page} page - The page from which to get the heap size.
  * @returns {Promise<number|null>} The used JS heap size in bytes, or null if not available.
  * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
@@ -108,11 +112,11 @@ function getHeapSize(page) {
     }
     return null;
   });
-};
+}
 
 /**
  * Forces garbage collection. Useful for getting accurate memory usage in 'getHeapSize'.
- * 
+ *
  * @param {import('@playwright/test').Page} page - The page on which to force garbage collection.
  * @param {number} [repeat=6] - Number of times to repeat the garbage collection process.
  * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
@@ -124,11 +128,11 @@ async function forceGC(page, repeat = 6) {
     await page.waitForTimeout(200);
   }
   await page.waitForTimeout(1400);
-};
+}
 
 /**
  * Captures a heap snapshot and saves it to a specified path by attaching to the CDP session.
- * 
+ *
  * @param {import('@playwright/test').Page} page - The page from which to capture the heap snapshot.
  * @param {string} outputPath - The file path where the heap snapshot will be saved.
  * @note Can only be executed when running the 'chrome-memory' Playwright config at e2e/playwright-performance-prod.config.js.
@@ -159,7 +163,7 @@ async function captureHeapSnapshot(page, outputPath) {
     await client.send('HeapProfiler.takeHeapSnapshot');
     client.removeListener('HeapProfiler.addHeapSnapshotChunk', dataHandler);
     const fullSnapshot = chunks.join('');
-    await fs.writeFile(outputPath, fullSnapshot, { encoding: 'UTF-8' });
+    fs.writeFile(outputPath, fullSnapshot, { encoding: 'UTF-8' });
   } catch (error) {
     console.error('🛑 Error while capturing heap snapshot:', error);
   } finally {
@@ -169,7 +173,7 @@ async function captureHeapSnapshot(page, outputPath) {
 
 /**
  * Navigates to an object in the application and checks for memory leaks by forcing garbage collection.
- * 
+ *
  * @param {import('@playwright/test').Page} page - The page on which the navigation and memory leak detection will be performed.
  * @param {string} objectName - The name of the object to navigate to.
  * @returns {Promise<boolean>} Returns true if no memory leak is detected.
@@ -218,15 +222,14 @@ async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
   return gcCompleted;
 }
 
-
-module.exports = {
-  scanForA11yViolations,
-  getHeapSize,
-  forceGC,
-  captureHeapSnapshot,
-  findLeaks,
-  navigateToObjectAndDetectMemoryLeak,
+export {
   BrowserInteractionResultReader,
-  test,
-  expect
+  captureHeapSnapshot,
+  expect,
+  findLeaks,
+  forceGC,
+  getHeapSize,
+  navigateToObjectAndDetectMemoryLeak,
+  scanForA11yViolations,
+  test
 };

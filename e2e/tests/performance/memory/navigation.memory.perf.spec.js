@@ -19,15 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-const { test, expect } = require('@playwright/test');
-const path = require('path');
-const { navigateToObjectAndDetectMemoryLeak } = require('../../../avpFixtures.js');
+import { fileURLToPath } from 'node:url';
 
-const memoryLeakFilePath = path.resolve(
-  __dirname,
-  '../../../../e2e/test-data/memory-leak-detection.json'
+import { expect, test } from '@playwright/test';
+
+import { navigateToObjectAndDetectMemoryLeak } from '../../../avpFixtures.js';
+
+const memoryLeakFilePath = fileURLToPath(
+  new URL('../../../../e2e/test-data/memory-leak-detection.json', import.meta.url)
 );
 
 /**
@@ -47,7 +47,7 @@ const memoryLeakFilePath = path.resolve(
  *
  */
 
-test.describe.only('Navigation memory leak is not detected in', () => {
+test.describe('Navigation memory leak is not detected in', () => {
   test.beforeEach(async ({ page }) => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });

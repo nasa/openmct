@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import * as NotebookEntries from './notebook-entries';
+import * as NotebookEntries from './notebook-entries.js';
 
 const notebookStorage = {
   name: 'notebook',

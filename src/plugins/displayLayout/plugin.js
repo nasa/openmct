@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import CopyToClipboardAction from './actions/CopyToClipboardAction';
+import CopyToClipboardAction from './actions/CopyToClipboardAction.js';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';

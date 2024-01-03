@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { filter__proto__ } from '../../utils/sanitization';
+import { filter__proto__ } from '../../utils/sanitization.js';
 
 export default class LocalStorageObjectProvider {
   constructor(spaceKey = 'mct') {

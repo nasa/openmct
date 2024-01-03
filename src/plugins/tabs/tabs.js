@@ -47,7 +47,7 @@ export default class Tabs {
     let component = null;
 
     return {
-      show: function (element, editMode) {
+      show(element, editMode) {
         const { vNode, destroy } = mount(
           {
             el: element,

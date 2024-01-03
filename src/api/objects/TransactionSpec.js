@@ -1,6 +1,6 @@
 import utils from 'objectUtils';
 
-import Transaction from './Transaction';
+import Transaction from './Transaction.js';
 
 let openmct = {};
 let objectAPI;

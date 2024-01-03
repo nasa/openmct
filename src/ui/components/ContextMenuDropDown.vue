@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import contextMenu from '../mixins/context-menu-gesture';
+import contextMenu from '../mixins/context-menu-gesture.js';
 
 export default {
   mixins: [contextMenu],

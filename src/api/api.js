@@ -20,24 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-  './actions/ActionsAPI',
-  './composition/CompositionAPI',
-  './Editor',
-  './faultmanagement/FaultManagementAPI',
-  './forms/FormsAPI',
-  './indicators/IndicatorAPI',
-  './menu/MenuAPI',
-  './notifications/NotificationAPI',
-  './objects/ObjectAPI',
-  './priority/PriorityAPI',
-  './status/StatusAPI',
-  './telemetry/TelemetryAPI',
-  './time/TimeAPI',
-  './types/TypeRegistry',
-  './user/UserAPI',
-  './annotation/AnnotationAPI'
-], function (
+import ActionsAPI from './actions/ActionsAPI.js';
+import AnnotationAPI from './annotation/AnnotationAPI.js';
+import CompositionAPI from './composition/CompositionAPI.js';
+import EditorAPI from './Editor.js';
+import FaultManagementAPI from './faultmanagement/FaultManagementAPI.js';
+import FormsAPI from './forms/FormsAPI.js';
+import IndicatorAPI from './indicators/IndicatorAPI.js';
+import MenuAPI from './menu/MenuAPI.js';
+import NotificationAPI from './notifications/NotificationAPI.js';
+import ObjectAPI from './objects/ObjectAPI.js';
+import PriorityAPI from './priority/PriorityAPI.js';
+import StatusAPI from './status/StatusAPI.js';
+import TelemetryAPI from './telemetry/TelemetryAPI.js';
+import TimeAPI from './time/TimeAPI.js';
+import TypeRegistry from './types/TypeRegistry.js';
+import UserAPI from './user/UserAPI.js';
+
+export default {
   ActionsAPI,
   CompositionAPI,
   EditorAPI,
@@ -54,23 +54,4 @@ define([
   TypeRegistry,
   UserAPI,
   AnnotationAPI
-) {
-  return {
-    ActionsAPI: ActionsAPI.default,
-    CompositionAPI: CompositionAPI,
-    EditorAPI: EditorAPI,
-    FaultManagementAPI: FaultManagementAPI,
-    FormsAPI: FormsAPI,
-    IndicatorAPI: IndicatorAPI.default,
-    MenuAPI: MenuAPI.default,
-    NotificationAPI: NotificationAPI.default,
-    ObjectAPI: ObjectAPI,
-    PriorityAPI: PriorityAPI.default,
-    StatusAPI: StatusAPI.default,
-    TelemetryAPI: TelemetryAPI,
-    TimeAPI: TimeAPI.default,
-    TypeRegistry: TypeRegistry.default,
-    UserAPI: UserAPI.default,
-    AnnotationAPI: AnnotationAPI.default
-  };
-});
+};

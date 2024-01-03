@@ -21,8 +21,8 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import TelemetryAPI from './TelemetryAPI';
-import TelemetryCollection from './TelemetryCollection';
+import TelemetryAPI from './TelemetryAPI.js';
+import TelemetryCollection from './TelemetryCollection.js';
 
 describe('Telemetry API', () => {
   let openmct;

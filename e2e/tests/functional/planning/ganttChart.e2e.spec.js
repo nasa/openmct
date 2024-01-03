@@ -19,15 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test, expect } = require('../../../pluginFixtures');
-const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Small2.json');
-const {
+import fs from 'fs';
+
+import { getPreciseDuration } from '../../../../src/utils/duration.js';
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import {
   assertPlanActivities,
   setBoundsToSpanAllActivities
-} = require('../../../helper/planningUtils');
-const { getPreciseDuration } = require('../../../../src/utils/duration');
+} from '../../../helper/planningUtils.js';
+import { expect, test } from '../../../pluginFixtures.js';
+
+const testPlan1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
+);
+const testPlan2 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url)
+  )
+);
 
 test.describe('Gantt Chart', () => {
   let ganttChart;

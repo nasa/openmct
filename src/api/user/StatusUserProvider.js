@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import UserProvider from './UserProvider';
+import UserProvider from './UserProvider.js';
 
 export default class StatusUserProvider extends UserProvider {
   /**

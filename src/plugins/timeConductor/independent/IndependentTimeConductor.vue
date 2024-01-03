@@ -83,12 +83,12 @@
 <script>
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
-import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
-import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager';
+import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager.js';
 
 export default {
   components: {

@@ -24,7 +24,7 @@ import {
   FAULT_MANAGEMENT_NAMESPACE,
   FAULT_MANAGEMENT_TYPE,
   FAULT_MANAGEMENT_VIEW
-} from './constants';
+} from './constants.js';
 
 export default class FaultManagementObjectProvider {
   constructor(openmct) {

@@ -31,7 +31,7 @@ TODO:
 
 */
 
-const { test, expect } = require('@playwright/test');
+import { expect, test } from '@playwright/test';
 
 const notebookFilePath = 'e2e/test-data/PerformanceNotebook.json';
 

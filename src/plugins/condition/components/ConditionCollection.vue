@@ -81,7 +81,7 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import ConditionManager from '../ConditionManager';
+import ConditionManager from '../ConditionManager.js';
 import Condition from './ConditionItem.vue';
 
 export default {

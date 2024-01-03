@@ -23,8 +23,8 @@
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import CreateWizard from './CreateWizard';
-import PropertiesAction from './PropertiesAction';
+import CreateWizard from './CreateWizard.js';
+import PropertiesAction from './PropertiesAction.js';
 
 export default class CreateAction extends PropertiesAction {
   #transaction;

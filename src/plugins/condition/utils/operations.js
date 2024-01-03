@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { IS_OLD_KEY, IS_STALE_KEY } from './constants';
+import { IS_OLD_KEY, IS_STALE_KEY } from './constants.js';
 
 function convertToNumbers(input) {
   let numberInputs = [];

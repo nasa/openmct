@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider.js';
 
 const USERNAME = 'Coach McGuirk';
 

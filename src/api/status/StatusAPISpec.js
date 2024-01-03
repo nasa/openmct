@@ -1,4 +1,4 @@
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
 import StatusAPI from './StatusAPI.js';
 
 describe('The Status API', () => {

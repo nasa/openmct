@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MCTChartSeriesElement from './MCTChartSeriesElement';
+import MCTChartSeriesElement from './MCTChartSeriesElement.js';
 
 // TODO: Is this needed? This is identical to MCTChartLineLinear. Why is it a different class?
 export default class MCTChartPointSet extends MCTChartSeriesElement {
