@@ -107,8 +107,6 @@ test.describe('Time List', () => {
         parent: timelist.uuid
       });
 
-      await page.goto(timelist.url);
-
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
@@ -118,13 +116,14 @@ test.describe('Time List', () => {
       );
 
       // Verify all events are displayed
-      const eventCount = await page.locator('.js-list-item').count();
-      await expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
+      const eventCount = await page.getByRole('row').count();
+      // subtracting one for the header
+      await expect(eventCount - 1).toEqual(testPlan.TEST_GROUP.length);
     });
 
     await test.step('Does not show milliseconds in times', async () => {
-      // Get the first activity
-      const row = page.locator('.js-list-item').first();
+      // Get an activity
+      const row = page.getByRole('row').nth(2);
       // Verify that none fo the times have milliseconds displayed.
       // Example: 2024-11-17T16:00:00Z is correct and 2024-11-17T16:00:00.000Z is wrong
 
