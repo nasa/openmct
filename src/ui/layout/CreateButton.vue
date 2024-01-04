@@ -23,6 +23,7 @@
   <div ref="createButton" class="c-create-button--w">
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
+      :aria-disabled="isEditing"
       @click.prevent.stop="showCreateMenu"
     >
       <span class="c-button__label">Create</span>
@@ -57,6 +58,12 @@ export default {
       });
     }
   },
+  mounted() {
+    this.openmct.editor.on('isEditing', this.toggleEdit);
+  },
+  unmounted() {
+    this.openmct.editor.off('isEditing', this.toggleEdit);
+  },
   methods: {
     getItems() {
       let keys = this.openmct.types.listKeys();
@@ -88,6 +95,9 @@ export default {
       };
 
       this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
+    },
+    toggleEdit(isEditing) {
+      this.isEditing = isEditing;
     },
     create(key) {
       const createAction = new CreateAction(this.openmct, key, this.openmct.router.path[0]);
