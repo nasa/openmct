@@ -38,9 +38,9 @@ const setBackgroundColor = '#5b0f00';
 const setTextColor = '#e6b8af';
 const defaultTextColor = '#aaaaaa'; // default text color
 const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
+const DEFAULT_PLOT_VIEW_BORDER_COLOR = '#AAAAAA';
 const setFontSize = '72px';
 const setFontWeight = '700'; //bold for monospace bold
-// eslint-disable-next-line prettier/prettier
 const setFontFamily = '"Andale Mono", sans-serif';
 
 test.describe('Stacked Plot styling', () => {
@@ -163,8 +163,6 @@ test.describe('Stacked Plot styling', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7338'
     });
-
-    const DEFAULT_PLOT_VIEW_BORDER_COLOR = '#AAAAAA';
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
     await page.getByLabel('Edit').click();
