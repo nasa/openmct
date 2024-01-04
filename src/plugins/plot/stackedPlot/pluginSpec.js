@@ -520,10 +520,8 @@ describe('the plugin', function () {
       let conditionalStylesContainer = element.querySelectorAll(
         '.c-plot--stacked-container .js-style-receiver'
       );
-      console.warn(conditionalStylesContainer.length);
       let hasStyles = 0;
       conditionalStylesContainer.forEach((el) => {
-        console.warn('style', el.style);
         if (el.style.backgroundColor) {
           hasStyles++;
         }
