@@ -22,6 +22,7 @@
 <template>
   <div :aria-label="`Stacked Plot Item ${childObject.name}`">
     <Plot
+      ref="plotComponent"
       :hide-legend="hideLegend"
       :limit-line-labels="showLimitLineLabels"
       :grid-lines="gridLines"
