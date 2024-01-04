@@ -164,7 +164,6 @@ export default {
     updateView() {
       //If this object is not persistable, then package it with it's parent
       const object = this.getPlotObject();
-      this.isMissing = this.openmct.objects.isMissing(object);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object);
