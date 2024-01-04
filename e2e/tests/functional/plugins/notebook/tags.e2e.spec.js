@@ -179,7 +179,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can delete objects with tags and neither return in search', async ({ page }) => {
     await createNotebookEntryAndTags(page);
     // Delete Notebook
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     await page.locator('li[title="Remove this object from its containing object."]').click();
     await page.locator('button:has-text("OK")').click();
     await page.goto('./', { waitUntil: 'domcontentloaded' });

@@ -131,7 +131,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
     // Make Link from Telemetry Object to Overlay Plot
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
 
     // Select 'Create Link' from dropdown
     await page.getByRole('menuitem', { name: ' Create Link' }).click();
@@ -206,7 +206,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
 
     //Edit Example Telemetry Object to include 5s loading Delay

@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-toolbar__separator"></div>
+  <div role="separator" class="c-toolbar__separator"></div>
 </template>
 
 <script>
