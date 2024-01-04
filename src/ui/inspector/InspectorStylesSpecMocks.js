@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const mockTelemetryTableSelection = [
+const mockTelemetryTableSelection = [
   [
     {
       context: {
@@ -37,7 +37,7 @@ export const mockTelemetryTableSelection = [
   ]
 ];
 
-export const mockStyle = {
+const mockStyle = {
   backgroundColor: '#ff0000',
   border: '#ff0000',
   color: '#ff0000'
@@ -194,17 +194,25 @@ const mockTextBox5Path = {
   }
 };
 
-export const mockMultiSelectionSameStyles = [
+const mockMultiSelectionSameStyles = [
   [mockTextBox2Path, mockDisplayLayoutPath],
   [mockTextBox3Path, mockDisplayLayoutPath]
 ];
 
-export const mockMultiSelectionMixedStyles = [
+const mockMultiSelectionMixedStyles = [
   [mockTextBox1Path, mockDisplayLayoutPath],
   [mockTextBox2Path, mockDisplayLayoutPath]
 ];
 
-export const mockMultiSelectionNonSpecificStyles = [
+const mockMultiSelectionNonSpecificStyles = [
   [mockTextBox4Path, mockDisplayLayoutPath],
   [mockTextBox5Path, mockDisplayLayoutPath]
 ];
+
+export {
+  mockMultiSelectionMixedStyles,
+  mockMultiSelectionNonSpecificStyles,
+  mockMultiSelectionSameStyles,
+  mockStyle,
+  mockTelemetryTableSelection
+};

@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import IndependentTimeContext from '@/api/time/IndependentTimeContext';
+
 function copyRelatedMetadata(metadata) {
   let compare = metadata.comparisonFunction;
   let copiedMetadata = JSON.parse(JSON.stringify(metadata));
@@ -27,8 +29,6 @@ function copyRelatedMetadata(metadata) {
 
   return copiedMetadata;
 }
-
-import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 export default class RelatedTelemetry {
   constructor(openmct, domainObject, telemetryKeys, timeContext) {
     this._openmct = openmct;

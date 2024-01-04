@@ -30,7 +30,7 @@ const DEFAULT_VIEW_PRIORITY = 100;
  * @interface ViewRegistry
  * @memberof module:openmct
  */
-export default function ViewRegistry() {
+function ViewRegistry() {
   EventEmitter.apply(this);
   this.providers = {};
 }
@@ -270,3 +270,5 @@ ViewRegistry.prototype.getByVPID = function (vpid) {
  * @param {*} object the object to be edit
  * @returns {module:openmct.View} an editable view of this domain object
  */
+
+export default ViewRegistry;

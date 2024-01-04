@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export function getValidatedData(domainObject) {
+function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
 
@@ -123,3 +123,5 @@ export function getContrastingColor(hexColor) {
 
   return cBrightness > cThreshold ? '#000000' : '#ffffff';
 }
+
+export { getValidatedData };

@@ -20,13 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function TelemetryAverager(
-  telemetryAPI,
-  timeAPI,
-  domainObject,
-  samples,
-  averageDatumCallback
-) {
+/**
+ * Constructs a new TelemetryAverager instance.
+ * @param {TelemetryAPI} telemetryAPI - The telemetry API.
+ * @param {TimeAPI} timeAPI - The time API.
+ * @param {Object} domainObject - The domain object.
+ * @param {number} samples - The number of samples to average.
+ * @param {Function} averageDatumCallback - The callback function to handle the averaged datum.
+ * @constructor
+ */
+function TelemetryAverager(telemetryAPI, timeAPI, domainObject, samples, averageDatumCallback) {
   this.telemetryAPI = telemetryAPI;
   this.timeAPI = timeAPI;
 
@@ -119,3 +122,5 @@ TelemetryAverager.prototype.getFormatter = function (key) {
 
   return this.telemetryAPI.getValueFormatter(valueMetadata);
 };
+
+export default TelemetryAverager;

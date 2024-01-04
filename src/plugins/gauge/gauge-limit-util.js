@@ -5,11 +5,16 @@ const GAUGE_LIMITS = {
   q4: 270
 };
 
-export const DIAL_VALUE_DEG_OFFSET = 45;
+const DIAL_VALUE_DEG_OFFSET = 45;
 
-// type: low, high
-// quadrant: low, mid, high, max
-export function getLimitDegree(type, quadrant) {
+/**
+ * Retrieves the limit degree based on the type and quadrant.
+ *
+ * @param {string} type - The type of limit ('low' or 'high').
+ * @param {string} quadrant - The quadrant of the gauge ('low', 'mid', 'high', or 'max').
+ * @returns {number} - The limit degree based on the type and quadrant.
+ */
+function getLimitDegree(type, quadrant) {
   if (quadrant === 'max') {
     return GAUGE_LIMITS.q4 + DIAL_VALUE_DEG_OFFSET;
   }
@@ -34,3 +39,5 @@ function getHighLimitDegree(quadrant) {
     return GAUGE_LIMITS.q2 + DIAL_VALUE_DEG_OFFSET;
   }
 }
+
+export { DIAL_VALUE_DEG_OFFSET, getLimitDegree };

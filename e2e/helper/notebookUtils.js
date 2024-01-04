@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { fileURLToPath } from 'url';
+
 import { createDomainObjectWithDefaults } from '../appActions.js';
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
-import { fileURLToPath } from 'url';
 
 /**
  * @param {import('@playwright/test').Page} page

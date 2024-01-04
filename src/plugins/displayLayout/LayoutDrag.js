@@ -47,36 +47,56 @@
  * @constructor
  * @memberof platform/features/layout
  */
-export default function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
+function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
   this.rawPosition = rawPosition;
   this.posFactor = posFactor;
   this.dimFactor = dimFactor;
   this.gridSize = gridSize;
 }
 
-// Convert a delta from pixel coordinates to grid coordinates,
-// rounding to whole-number grid coordinates.
+/**
+ * Convert a delta from pixel coordinates to grid coordinates,
+ * rounding to whole-number grid coordinates.
+ * @param {number[]} gridSize the size of each grid element, in pixels
+ * @param {number[]} pixelDelta the offset from the original position, in pixels
+ * @returns {number[]} the delta in grid coordinates
+ */
 function toGridDelta(gridSize, pixelDelta) {
   return pixelDelta.map(function (v, i) {
     return Math.round(v / gridSize[i]);
   });
 }
 
-// Utility function to perform element-by-element multiplication
+/**
+ * Utility function to perform element-by-element multiplication.
+ * @param {number[]} array the array to be multiplied
+ * @param {number[]} factors the factors to multiply with
+ * @returns {number[]} the resulting array after multiplication
+ */
 function multiply(array, factors) {
   return array.map(function (v, i) {
     return v * factors[i];
   });
 }
 
-// Utility function to perform element-by-element addition
+/**
+ * Utility function to perform element-by-element addition.
+ * @param {number[]} array the array to be added
+ * @param {number[]} other the array to be added with
+ * @returns {number[]} the resulting array after addition
+ */
 function add(array, other) {
   return array.map(function (v, i) {
     return v + other[i];
   });
 }
 
-// Utility function to perform element-by-element max-choosing
+/**
+ * Utility function to perform element-by-element max-choosing.
+ * @param {number[]} array the array to be compared
+ * @param {number[]} other the array to be compared with
+ * @returns {number[]} the resulting array after max-choosing
+ */
 function max(array, other) {
   return array.map(function (v, i) {
     return Math.max(v, other[i]);
@@ -106,3 +126,5 @@ LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
     position: max(add(this.rawPosition.position, multiply(gridDelta, this.posFactor)), [0, 0])
   };
 };
+
+export default LayoutDrag;

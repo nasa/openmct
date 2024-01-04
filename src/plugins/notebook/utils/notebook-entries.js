@@ -7,6 +7,15 @@ import {
   saveNotebookImageDomainObject
 } from './notebook-image.js';
 
+const DEFAULT_CLASS = 'notebook-default';
+
+const TIME_BOUNDS = {
+  START_BOUND: 'tc.startBound',
+  END_BOUND: 'tc.endBound',
+  START_DELTA: 'tc.startDelta',
+  END_DELTA: 'tc.endDelta'
+};
+
 async function getUsername(openmct) {
   let username = null;
 
@@ -27,15 +36,7 @@ async function getActiveRole(openmct) {
   return role;
 }
 
-export const DEFAULT_CLASS = 'notebook-default';
-const TIME_BOUNDS = {
-  START_BOUND: 'tc.startBound',
-  END_BOUND: 'tc.endBound',
-  START_DELTA: 'tc.startDelta',
-  END_DELTA: 'tc.endDelta'
-};
-
-export function addEntryIntoPage(notebookStorage, entries, entry) {
+function addEntryIntoPage(notebookStorage, entries, entry) {
   const defaultSectionId = notebookStorage.defaultSectionId;
   const defaultPageId = notebookStorage.defaultPageId;
   if (!defaultSectionId || !defaultPageId) {
@@ -58,7 +59,17 @@ export function addEntryIntoPage(notebookStorage, entries, entry) {
   return newEntries;
 }
 
-export function selectEntry({
+/**
+ * Selects an entry in the notebook.
+ * @param {Object} options - The options for selecting the entry.
+ * @param {HTMLElement} options.element - The HTML element representing the entry.
+ * @param {string} options.entryId - The ID of the entry.
+ * @param {Object} options.domainObject - The domain object associated with the entry.
+ * @param {Object} options.openmct - The Open MCT object.
+ * @param {Function} options.onAnnotationChange - The callback function for annotation changes.
+ * @param {Object} options.notebookAnnotations - The annotations for the notebook.
+ */
+function selectEntry({
   element,
   entryId,
   domainObject,
@@ -93,7 +104,14 @@ export function selectEntry({
   );
 }
 
-export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
+/**
+ * Retrieves the historic link in fixed mode based on the provided parameters.
+ * @param {Object} openmct - The Open MCT object.
+ * @param {Object} bounds - The time bounds.
+ * @param {string} historicLink - The historic link.
+ * @returns {string} The historic link in fixed mode.
+ */
+function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   if (historicLink.includes('tc.mode=fixed')) {
     return historicLink;
   }
@@ -121,7 +139,14 @@ export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
   return params.join('&');
 }
 
-export function createNewImageEmbed(image, openmct, imageName = '') {
+/**
+ * Creates a new image embed object based on the provided image and metadata.
+ * @param {File} image - The image file to embed.
+ * @param {Object} openmct - The Open MCT object.
+ * @param {string} [imageName=''] - The name of the image.
+ * @returns {Promise<Object>} A promise that resolves to the newly created image embed object.
+ */
+function createNewImageEmbed(image, openmct, imageName = '') {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -160,7 +185,24 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
   });
 }
 
-export async function createNewEmbed(snapshotMeta, snapshot = '') {
+/**
+ * Creates a new embed object based on the provided snapshot metadata.
+ * @param {Object} snapshotMeta - The snapshot metadata.
+ * @param {Object} [snapshot=''] - The snapshot data.
+ * @returns {Promise<Object>} A promise that resolves to the newly created embed object.
+ * The embed object has the following properties:
+ * - bounds: The bounds of the embed.
+ * - createdOn: The current date and time.
+ * - createdBy: The username obtained asynchronously.
+ * - cssClass: The CSS class for the embed.
+ * - domainObject: The domain object associated with the embed.
+ * - historicLink: The historic link for the embed.
+ * - id: A unique identifier for the embed.
+ * - name: The name of the embed.
+ * - snapshot: The snapshot data.
+ * - type: The type of the embed.
+ */
+async function createNewEmbed(snapshotMeta, snapshot = '') {
   const { bounds, link, objectPath, openmct, userImage } = snapshotMeta;
   let name = null;
   let type = null;
@@ -203,7 +245,16 @@ export async function createNewEmbed(snapshotMeta, snapshot = '') {
   };
 }
 
-export async function addNotebookEntry(
+/**
+ * Adds a notebook entry to the specified domain object.
+ * @param {OpenMCT} openmct - The OpenMCT instance.
+ * @param {DomainObject} domainObject - The domain object to add the entry to.
+ * @param {NotebookStorage} notebookStorage - The notebook storage.
+ * @param {Array} [passedEmbeds=[]] - Optional array of embeds.
+ * @param {string} [entryText=''] - Optional entry text.
+ * @returns {Promise<string>} The ID of the added entry.
+ */
+async function addNotebookEntry(
   openmct,
   domainObject,
   notebookStorage,
@@ -243,7 +294,14 @@ export async function addNotebookEntry(
   return id;
 }
 
-export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
+/**
+ * Retrieves the notebook entries for the selected section and page.
+ * @param {object} domainObject - The domain object containing the notebook entries.
+ * @param {object} selectedSection - The selected section of the notebook.
+ * @param {object} selectedPage - The selected page of the notebook.
+ * @returns {array} - An array of notebook entries.
+ */
+function getNotebookEntries(domainObject, selectedSection, selectedPage) {
   if (!domainObject || !selectedSection || !selectedPage || !domainObject.configuration) {
     return;
   }
@@ -266,7 +324,7 @@ export function getNotebookEntries(domainObject, selectedSection, selectedPage) 
   return specificEntries;
 }
 
-export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
+function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
   if (!domainObject || !selectedSection || !selectedPage) {
     return;
   }
@@ -284,7 +342,7 @@ export function getEntryPosById(entryId, domainObject, selectedSection, selected
   return foundId;
 }
 
-export function deleteNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
+function deleteNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
   if (!domainObject || !selectedSection) {
     return;
   }
@@ -309,10 +367,24 @@ export function deleteNotebookEntries(openmct, domainObject, selectedSection, se
   mutateObject(openmct, domainObject, 'configuration.entries', entries);
 }
 
-export function mutateObject(openmct, object, key, value) {
+function mutateObject(openmct, object, key, value) {
   openmct.objects.mutate(object, key, value);
 }
 
 function addDefaultClass(domainObject, openmct) {
   openmct.status.set(domainObject.identifier, DEFAULT_CLASS);
 }
+
+export {
+  addEntryIntoPage,
+  addNotebookEntry,
+  createNewEmbed,
+  createNewImageEmbed,
+  DEFAULT_CLASS,
+  deleteNotebookEntries,
+  getEntryPosById,
+  getHistoricLinkInFixedMode,
+  getNotebookEntries,
+  mutateObject,
+  selectEntry
+};

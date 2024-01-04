@@ -45,12 +45,12 @@
 <script>
 import Plotly from 'plotly-basic';
 
+import { getValidatedData } from '@/plugins/plan/util';
+
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
   RIGHT: 94
 };
-
-import { getValidatedData } from '@/plugins/plan/util';
 
 const PATH_COLORS = ['blue', 'red', 'green'];
 const MARKER_COLOR = 'white';

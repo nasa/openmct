@@ -26,7 +26,7 @@
  * @interface ToolbarRegistry
  * @memberof module:openmct
  */
-export default function ToolbarRegistry() {
+function ToolbarRegistry() {
   this.providers = {};
 }
 
@@ -115,3 +115,5 @@ ToolbarRegistry.prototype.addProvider = function (provider) {
  * @param {object} selection the selection object
  * @returns {Object[]} an array of objects defining controls for the toolbar.
  */
+
+export default ToolbarRegistry;

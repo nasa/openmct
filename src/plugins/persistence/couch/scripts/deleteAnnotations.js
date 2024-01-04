@@ -21,7 +21,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const process = require('process');
+import process from 'process';
 
 async function main() {
   try {

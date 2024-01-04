@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const IMAGE_HINT_KEY = 'image';
 const IMAGE_THUMBNAIL_HINT_KEY = 'thumbnail';
 const IMAGE_DOWNLOAD_NAME_HINT_KEY = 'imageDownloadName';
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],

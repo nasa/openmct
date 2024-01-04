@@ -25,15 +25,15 @@
  * Originally created by hudsonfoo on 09/02/16
  */
 
+import html2canvas from 'html2canvas';
+import { saveAs } from 'saveAs';
+import { v4 as uuid } from 'uuid';
+
 function replaceDotsWithUnderscores(filename) {
   const regex = /\./gi;
 
   return filename.replace(regex, '_');
 }
-
-import html2canvas from 'html2canvas';
-import { saveAs } from 'saveAs';
-import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
   constructor(openmct) {

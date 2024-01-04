@@ -20,15 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const matcher = /\/openmct.js$/;
-if (document.currentScript) {
-  let src = document.currentScript.src;
-  if (src && matcher.test(src)) {
-    // eslint-disable-next-line no-undef
-    __webpack_public_path__ = src.replace(matcher, '') + '/';
-  }
-}
-
 /**
  * @typedef {object} BuildInfo
  * @property {string} version
@@ -75,6 +66,15 @@ if (document.currentScript) {
  */
 
 import { MCT } from './src/MCT.js';
+
+const matcher = /\/openmct.js$/;
+if (document.currentScript) {
+  let src = document.currentScript.src;
+  if (src && matcher.test(src)) {
+    // eslint-disable-next-line no-undef
+    __webpack_public_path__ = src.replace(matcher, '') + '/';
+  }
+}
 
 /** @type {OpenMCT} */
 const openmct = new MCT();

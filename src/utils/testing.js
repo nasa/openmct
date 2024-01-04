@@ -35,7 +35,12 @@ const DEFAULT_TIME_OPTIONS = {
   }
 };
 
-export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
+/**
+ * Creates an instance of Open MCT with the specified time system options.
+ * @param {Object} [timeSystemOptions=DEFAULT_TIME_OPTIONS] - The time system options.
+ * @returns {MCT} The created Open MCT instance.
+ */
+function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   const openmct = markRaw(new MCT());
   openmct.install(openmct.plugins.LocalStorage());
   openmct.install(openmct.plugins.UTCTimeSystem());
@@ -54,7 +59,12 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
   return openmct;
 }
 
-export function createMouseEvent(eventName) {
+/**
+ * Creates a new MouseEvent with the specified event name.
+ * @param {string} eventName - The name of the event.
+ * @returns {MouseEvent} The created MouseEvent.
+ */
+function createMouseEvent(eventName) {
   return new MouseEvent(eventName, {
     bubbles: true,
     cancelable: true,
@@ -62,7 +72,14 @@ export function createMouseEvent(eventName) {
   });
 }
 
-export function spyOnBuiltins(functionNames, object = window) {
+/**
+ * Spies on built-in functions.
+ *
+ * @param {Array<string>} functionNames - An array of function names to spy on.
+ * @param {Object} [object=window] - The object on which the functions are defined (default is the global `window` object).
+ * @throws {string} If a built-in spy function is already defined for a function name.
+ */
+function spyOnBuiltins(functionNames, object = window) {
   functionNames.forEach((functionName) => {
     if (nativeFunctions[functionName]) {
       throw `Builtin spy function already defined for ${functionName}`;
@@ -77,12 +94,23 @@ export function spyOnBuiltins(functionNames, object = window) {
   });
 }
 
-export function clearBuiltinSpies() {
+/**
+ * Clears the built-in spies by restoring the original functions.
+ * @param {Object[]} nativeFunctions - The array of native functions to clear.
+ */
+function clearBuiltinSpies() {
   nativeFunctions.forEach(clearBuiltinSpy);
   nativeFunctions = [];
 }
 
-export function resetApplicationState(openmct) {
+/**
+ * Resets the application state by clearing built-in spies and destroying the openmct instance.
+ * If the window location hash is not empty, it will reset the hash and resolve the promise after the hash change event.
+ * If the window location hash is empty, it will immediately resolve the promise.
+ * @param {Object} openmct - The openmct instance to destroy (optional).
+ * @returns {Promise} A promise that resolves after the application state has been reset.
+ */
+function resetApplicationState(openmct) {
   let promise;
 
   clearBuiltinSpies();
@@ -108,12 +136,17 @@ export function resetApplicationState(openmct) {
   return promise;
 }
 
-// required: key
-// optional: element, keyCode, type
-export function simulateKeyEvent(opts) {
+/**
+ * Simulates a keyboard event.
+ * @param {Object} opts - The options for the keyboard event.
+ * @param {string} opts.key - The key value of the event.
+ * @param {HTMLElement} [opts.element=document] - The element to dispatch the event on.
+ * @param {number} [opts.keyCode] - The key code of the event.
+ * @param {string} [opts.type='keydown'] - The type of the event.
+ */
+function simulateKeyEvent(opts) {
   if (!opts.key) {
     console.warn('simulateKeyEvent needs a key');
-
     return;
   }
 
@@ -129,11 +162,22 @@ export function simulateKeyEvent(opts) {
   el.dispatchEvent(event);
 }
 
+/**
+ * Restores the original implementation of a built-in function by assigning the native function back to the object.
+ * @param {Object} funcDefinition - The definition of the built-in function.
+ */
 function clearBuiltinSpy(funcDefinition) {
   funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
 
-export function getLatestTelemetry(telemetry = [], opts = {}) {
+/**
+ * Get the latest telemetry data from an array of telemetry objects.
+ * @param {Object[]} telemetry - The array of telemetry objects.
+ * @param {Object} opts - Options for getting the latest telemetry.
+ * @param {string} [opts.timeFormat='utc'] - The time format to use for comparison.
+ * @returns {Object} The latest telemetry object.
+ */
+function getLatestTelemetry(telemetry = [], opts = {}) {
   let latest = [];
   let timeFormat = opts.timeFormat || 'utc';
 
@@ -146,23 +190,39 @@ export function getLatestTelemetry(telemetry = [], opts = {}) {
   return latest;
 }
 
-// EXAMPLE:
-// getMockObjects({
-//     name: 'Jamie Telemetry',
-//     keys: ['test','other','yeah','sup'],
-//     format: 'local',
-//     telemetryConfig: {
-//          hints: {
-//              test: {
-//                  domain: 1
-//              },
-//              other: {
-//                  range: 2
-//              }
-//          }
-//      }
-// })
-export function getMockObjects(opts = {}) {
+/**
+ * Generates mock objects based on the provided options.
+ *
+ * Example usage:
+ * getMockObjects({
+ *     name: 'Jamie Telemetry',
+ *     keys: ['test','other','yeah','sup'],
+ *     format: 'local',
+ *     telemetryConfig: {
+ *         hints: {
+ *             test: {
+ *                 domain: 1
+ *             },
+ *             other: {
+ *                 range: 2
+ *             }
+ *         }
+ *     }
+ * })
+ *
+ * @param {Object} opts - Options for generating mock objects.
+ * @param {string} [opts.type='default'] - The type of mock objects to generate.
+ * @param {string[]} [opts.objectKeyStrings] - The object keys to include in the mock objects.
+ * @param {Object} [opts.telemetryConfig] - Configuration for customizing the telemetry data in the mock objects.
+ * @param {string[]} [opts.telemetryConfig.keys] - The keys to include in the telemetry data.
+ * @param {string} [opts.telemetryConfig.format='utc'] - The format of the telemetry data.
+ * @param {Object} [opts.telemetryConfig.hints] - The hints for each telemetry key.
+ * @param {Object} [opts.overwrite] - Object containing fields to overwrite in the generated mock objects.
+ * @returns {Object} The generated mock objects.
+ * @throws {string} Throws an error if the optional parameter "objectKeyStrings" is provided but is not an array of string object keys.
+ * @throws {string} Throws an error if no mock object is found for a given object key and type.
+ */
+function getMockObjects(opts = {}) {
   opts.type = opts.type || 'default';
   if (opts.objectKeyStrings && !Array.isArray(opts.objectKeyStrings)) {
     throw `"getMockObjects" optional parameter "objectKeyStrings" must be an array of string object keys`;
@@ -239,14 +299,17 @@ export function getMockObjects(opts = {}) {
   return requestedMocks;
 }
 
-// EXAMPLE:
-// getMockTelemetry({
-//     name: 'My Telemetry',
-//     keys: ['test','other','yeah','sup'],
-//     count: 8,
-//     format: 'local'
-// })
-export function getMockTelemetry(opts = {}) {
+/**
+ * Generates mock telemetry data.
+ * @param {Object} opts - Options for generating mock telemetry.
+ * @param {number} [opts.count=2] - The number of telemetry data points to generate.
+ * @param {string} [opts.format='utc'] - The format of the telemetry data.
+ * @param {string} [opts.name='Mock Telemetry Datum'] - The name of the telemetry data.
+ * @param {string[]} [opts.keys] - The keys to include in the telemetry data.
+ * @param {number} [opts.keyCount] - The number of keys to include in the telemetry data.
+ * @returns {Object[]} An array of mock telemetry data points.
+ */
+function getMockTelemetry(opts = {}) {
   let count = opts.count || 2;
   let format = opts.format || 'utc';
   let name = opts.name || 'Mock Telemetry Datum';
@@ -280,7 +343,7 @@ export function getMockTelemetry(opts = {}) {
 }
 
 // used to inject into tests that require a render
-export function renderWhenVisible(func) {
+function renderWhenVisible(func) {
   func();
   return true;
 }
@@ -362,3 +425,16 @@ function setMockObjects() {
     }
   };
 }
+
+export {
+  clearBuiltinSpies,
+  createMouseEvent,
+  createOpenMct,
+  getLatestTelemetry,
+  getMockObjects,
+  getMockTelemetry,
+  renderWhenVisible,
+  resetApplicationState,
+  simulateKeyEvent,
+  spyOnBuiltins
+};

@@ -35,15 +35,15 @@
 </template>
 
 <script>
-const DEFAULT_DURATION_FORMATTER = 'duration';
-const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
-const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
-const DEFAULT_RECORDS_LENGTH = 10;
-
 import { millisecondsToDHMS } from 'utils/duration';
 
 import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
+
+const DEFAULT_DURATION_FORMATTER = 'duration';
+const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
+const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
+const DEFAULT_RECORDS_LENGTH = 10;
 
 export default {
   inject: ['openmct', 'configuration'],

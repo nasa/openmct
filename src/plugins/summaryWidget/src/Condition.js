@@ -30,16 +30,13 @@ import ObjectSelect from './input/ObjectSelect.js';
 import OperationSelect from './input/OperationSelect.js';
 
 /**
- * Represents an individual condition for a summary widget rule. Manages the
- * associated inputs and view.
- * @param {Object} conditionConfig The configuration for this condition, consisting
- *                                of object, key, operation, and values fields
- * @param {number} index the index of this Condition object in it's parent Rule's data model,
- *                        to be injected into callbacks for removes
- * @param {ConditionManager} conditionManager A ConditionManager instance for populating
- *                                            selects with configuration data
+ * Represents an individual condition for a summary widget rule. Manages the associated inputs and view.
+ * @param {Object} conditionConfig The configuration for this condition, consisting of object, key, operation, and values fields
+ * @param {number} index the index of this Condition object in it's parent Rule's data model to be injected into callbacks for removes
+ * @param {ConditionManager} conditionManager A ConditionManager instance for populating selects with configuration data
+ * @constructor
  */
-export default function Condition(conditionConfig, index, conditionManager) {
+function Condition(conditionConfig, index, conditionManager) {
   eventHelpers.extend(this);
   this.config = conditionConfig;
   this.index = index;
@@ -248,3 +245,5 @@ Condition.prototype.generateSelectOptions = function () {
 
   return fragment;
 };
+
+export default Condition;

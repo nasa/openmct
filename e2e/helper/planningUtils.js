@@ -31,7 +31,7 @@ import { expect } from '../pluginFixtures.js';
  * @param {object} plan The raw plan json to assert against
  * @param {string} objectUrl The URL of the object to assert against (plan or gantt chart)
  */
-export async function assertPlanActivities(page, plan, objectUrl) {
+async function assertPlanActivities(page, plan, objectUrl) {
   const groups = Object.keys(plan);
   for (const group of groups) {
     for (let i = 0; i < plan[group].length; i++) {
@@ -88,7 +88,7 @@ function activitiesWithinTimeBounds(start1, end1, start2, end2) {
  * @param {object} plan The raw plan json to assert against
  * @param {string} objectUrl The URL of the object to assert against (plan or gantt chart)
  */
-export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
+async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
   // Switch to the plan view
   await page.goto(`${objectUrl}?view=plan.view`);
   const planGroups = await page
@@ -112,7 +112,7 @@ export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
  * @param {object} planJson
  * @param {string} planObjectUrl
  */
-export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl) {
+async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl) {
   const activities = Object.values(planJson).flat();
   // Get the earliest start value
   const start = Math.min(...activities.map((activity) => activity.start));
@@ -129,13 +129,13 @@ export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl
  * @param {import('@playwright/test').Page} page
  * @param {import('../../appActions').CreatedObjectInfo} plan
  */
-export async function setDraftStatusForPlan(page, plan) {
+async function setDraftStatusForPlan(page, plan) {
   await page.evaluate(async (planObject) => {
     await window.openmct.status.set(planObject.uuid, 'draft');
   }, plan);
 }
 
-export async function addPlanGetInterceptor(page) {
+async function addPlanGetInterceptor(page) {
   await page.waitForLoadState('load');
   await page.evaluate(async () => {
     await window.openmct.objects.addGetInterceptor({
@@ -154,3 +154,11 @@ export async function addPlanGetInterceptor(page) {
     });
   });
 }
+
+export {
+  addPlanGetInterceptor,
+  assertPlanActivities,
+  assertPlanOrderedSwimLanes,
+  setBoundsToSpanAllActivities,
+  setDraftStatusForPlan
+};
