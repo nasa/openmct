@@ -41,7 +41,7 @@ const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 const setFontSize = '72px';
 const setFontWeight = '700'; //bold for monospace bold
 // eslint-disable-next-line prettier/prettier
-const setFontFamily = "\"Andale Mono\", sans-serif";
+const setFontFamily = '"Andale Mono", sans-serif';
 
 test.describe('Stacked Plot styling', () => {
   let stackedPlot;
@@ -156,91 +156,87 @@ test.describe('Stacked Plot styling', () => {
     );
   });
 
-  test.fixme(
-    'styling a child object of the flexible layout properly applies that style to only that child',
-    async ({ page }) => {
-      test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/7338'
-      });
-      await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
+  test('styling a child object of the flexible layout properly applies that style to only that child', async ({
+    page
+  }) => {
+    const DEFAULT_PLOT_VIEW_BORDER_COLOR = '#AAAAAA';
+    await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-      await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit').click();
 
-      await page.getByRole('tab', { name: 'Styles' }).click();
+    await page.getByRole('tab', { name: 'Styles' }).click();
 
-      //Check default styles for SWG1 and SWG2
-      await checkStyles(
-        NO_STYLE_RGBA,
-        NO_STYLE_RGBA,
-        hexToRGB(defaultTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
-      );
+    //Check default styles for SWG1 and SWG2
+    await checkStyles(
+      NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+    );
 
-      await checkStyles(
-        NO_STYLE_RGBA,
-        NO_STYLE_RGBA,
-        hexToRGB(defaultTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
-      );
+    await checkStyles(
+      NO_STYLE_RGBA,
+      NO_STYLE_RGBA,
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
+    );
 
-      // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
-      await setStyles(
-        page,
-        setBorderColor,
-        setBackgroundColor,
-        setTextColor,
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
-      );
+    // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+    );
 
-      //Set Font Styles on SWG1 but not SWG2
-      await page.getByLabel('Stacked Plot Item Sine Wave Generator 1').click();
-      //Set Font Size to 72
-      await page.getByLabel('Set Font Size').click();
-      await page.getByRole('menuitem', { name: '72px' }).click();
+    //Set Font Styles on SWG1 but not SWG2
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator 1').click();
+    //Set Font Size to 72
+    await page.getByLabel('Set Font Size').click();
+    await page.getByRole('menuitem', { name: '72px' }).click();
 
-      //Set Font Type to Monospace Bold. See setFontWeight and setFontFamily variables
-      await page.getByLabel('Set Font Type').click();
-      await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
+    //Set Font Type to Monospace Bold. See setFontWeight and setFontFamily variables
+    await page.getByLabel('Set Font Type').click();
+    await page.getByRole('menuitem', { name: 'Monospace Bold' }).click();
 
-      // Save Flexible Layout
-      await page.getByRole('button', { name: 'Save' }).click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    // Save Flexible Layout
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-      // Check styles on StackedPlot1
-      await checkStyles(
-        hexToRGB(setBorderColor),
-        hexToRGB(setBackgroundColor),
-        hexToRGB(setTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
-      );
+    // Check styles on StackedPlot1
+    await checkStyles(
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('Plot Container Style Target').first()
+    );
 
-      // Check styles on StackedPlot2
-      await checkStyles(
-        NO_STYLE_RGBA,
-        NO_STYLE_RGBA,
-        hexToRGB(defaultTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
-      );
+    // Check styles on StackedPlot2
+    await checkStyles(
+      hexToRGB(DEFAULT_PLOT_VIEW_BORDER_COLOR),
+      NO_STYLE_RGBA,
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Plot Container Style Target').nth(1)
+    );
 
-      // Reload page and verify that styles persist
-      await page.reload({ waitUntil: 'domcontentloaded' });
+    // Reload page and verify that styles persist
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-      // Check styles on StackedPlot1
-      await checkStyles(
-        hexToRGB(setBorderColor),
-        hexToRGB(setBackgroundColor),
-        hexToRGB(setTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
-      );
+    // Check styles on StackedPlot1
+    await checkStyles(
+      hexToRGB(setBorderColor),
+      hexToRGB(setBackgroundColor),
+      hexToRGB(setTextColor),
+      page.getByLabel('Plot Container Style Target').first()
+    );
 
-      // Check styles on StackedPlot2
-      await checkStyles(
-        NO_STYLE_RGBA,
-        NO_STYLE_RGBA,
-        hexToRGB(defaultTextColor),
-        page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
-      );
-    }
-  );
+    // Check styles on StackedPlot2
+    await checkStyles(
+      hexToRGB(DEFAULT_PLOT_VIEW_BORDER_COLOR),
+      NO_STYLE_RGBA,
+      hexToRGB(defaultTextColor),
+      page.getByLabel('Plot Container Style Target').nth(1)
+    );
+  });
 });

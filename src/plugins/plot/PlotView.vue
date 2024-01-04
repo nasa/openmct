@@ -24,6 +24,7 @@
     <div
       ref="plotContainer"
       class="l-view-section u-style-receiver js-style-receiver"
+      aria-label="Plot Container Style Target"
       :class="{ 's-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced' }"
     >
       <progress-bar
