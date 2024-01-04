@@ -1,23 +1,21 @@
-const LEGACY_FILES = ['example/**'];
 module.exports = {
   env: {
     browser: true,
     es6: true,
     jasmine: true,
-    amd: true
+    amd: false
   },
   globals: {
     _: 'readonly'
   },
-  plugins: ['prettier', 'unicorn', 'simple-import-sort'],
+  plugins: ['prettier', 'unicorn', 'simple-import-sort', 'import'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
     'plugin:vue/vue3-recommended',
     'plugin:you-dont-need-lodash-underscore/compatible',
     'plugin:prettier/recommended',
-    'plugin:no-unsanitized/DOM',
-    'plugin:import/recommended'
+    'plugin:no-unsanitized/DOM'
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -153,9 +151,19 @@ module.exports = {
         cases: {
           pascalCase: true
         },
-        ignore: ['^.*\\.js$']
+        ignore: ['^.*\\.js$', '.eslintrc\\.cjs']
       }
     ],
+    'import/no-amd': 'error',
+    'import/no-commonjs': 'error',
+    'import/no-nodejs-modules': 'error',
+    'import/named': 'error',
+    'import/no-webpack-loader-syntax': 'error',
+    'import/exports-last': 'warn',
+    'import/first': 'error',
+    'import/no-import-module-exports': 'error',
+    'import/no-mutable-exports': 'error',
+    'import/no-unused-modules': 'error',
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
@@ -163,7 +171,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: LEGACY_FILES,
+      files: ['example/**'],
       rules: {
         'no-unused-vars': [
           'error',
@@ -176,6 +184,12 @@ module.exports = {
         'no-nested-ternary': 'off',
         'no-var': 'off',
         'one-var': 'off'
+      }
+    },
+    {
+      files: ['*.eslintrc.cjs'],
+      env: {
+        node: true
       }
     }
   ]
