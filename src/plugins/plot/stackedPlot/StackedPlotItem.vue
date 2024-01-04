@@ -128,7 +128,7 @@ export default {
   data() {
     return {
       staleObjects: [],
-      isMissing: true,
+      isMissing: false,
       loading: true
     };
   },
@@ -177,7 +177,7 @@ export default {
     updateView() {
       //If this object is not persistable, then package it with it's parent
       const object = this.getPlotObject();
-      const isMissing = this.openmct.objects.isMissing(object);
+      this.isMissing = this.openmct.objects.isMissing(object);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object, (stalenessResponse) => {
@@ -191,59 +191,6 @@ export default {
         this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
         this.composition.load();
       }
-
-      // const { vNode, destroy } = mount(
-      //   {
-      //     components: {
-      //       Plot
-      //     },
-      //     provide: {
-      //       openmct,
-      //       domainObject: object,
-      //       path,
-      //       renderWhenVisible: this.renderWhenVisible
-      //     },
-      //     data() {
-      //       return {
-      //         ...getProps(),
-      //         onYTickWidthChange,
-      //         onLockHighlightPointUpdated,
-      //         onHighlightsUpdated,
-      //         onConfigLoaded,
-      //         onCursorGuideChange,
-      //         onGridLinesChange,
-      //         isMissing,
-      //         loading: false
-      //       };
-      //     },
-      //     methods: {
-
-      //     },
-      //   template: `
-      //           <Plot ref="plotComponent" v-if="!isMissing"
-      //               :class="{'is-stale': isStale}"
-      //               :grid-lines="gridLines"
-      //               :hide-legend="hideLegend"
-      //               :cursor-guide="cursorGuide"
-      //               :parent-limit-line-labels="limitLineLabels"
-      //               :options="options"
-      //               :parent-y-tick-width="parentYTickWidth"
-      //               :color-palette="colorPalette"
-      // @loading-updated="loadingUpdated"
-      // @config-loaded="onConfigLoaded"
-      // @lock-highlight-point="onLockHighlightPointUpdated"
-      // @highlights="onHighlightsUpdated"
-      // @plot-y-tick-width="onYTickWidthChange"
-      // @cursor-guide="onCursorGuideChange"
-      // @grid-lines="onGridLinesChange"/>`
-      // },
-      //   {
-      //     app: this.openmct.app,
-      //     element: this.$el
-      //   }
-      // );
-      // this.component = vNode.componentInstance;
-      // this._destroy = destroy;
 
       if (this.isEditing) {
         this.setSelection();
@@ -278,7 +225,7 @@ export default {
       this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
     },
     getPlotObject() {
-      if (this.childObject?.configuration?.series) {
+      if (this.childObject.configuration?.series) {
         //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
         return this.childObject;
       } else {
