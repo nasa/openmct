@@ -196,7 +196,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .first()
       .click();
     // Click hamburger button
-    await page.locator('[title="More options"]').click();
+    await page.locator('[title="More actions"]').click();
 
     // Click 'Remove' and press OK
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
@@ -366,7 +366,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Edit SWG to add 8 second loading delay to simulate the case
     // where telemetry is not available.
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
     await page.getByLabel('Save').click();

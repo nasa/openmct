@@ -46,7 +46,7 @@ test.describe('Visual - LAD Table', () => {
     });
 
     //Modify SWG to create a really stable SWG
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
 
     await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
 
