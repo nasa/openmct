@@ -20,6 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
+  <div class="c-table-indicator">
+    <span :style="prevCSS" class="prev" @click="prevPage()">Prev</span>
+    <span class="current" style="padding: 0 10px 0 10px">{{ currentPageDisplay }}</span>
+    <span style="pointer: cursor" class="next" @click="nextPage()">Next</span>
+  </div>
   <div class="c-table-indicator" :class="{ 'is-filtering': filterNames.length > 0 }">
     <div
       v-if="filterNames.length > 0"
@@ -68,11 +73,20 @@ export default {
       type: Number,
       default: 0
     },
+    itemsPerPage: {
+      type: Number,
+      default: 1
+    },
+    currentPage: {
+      type: Number,
+      default: 0
+    },
     totalRows: {
       type: Number,
       default: 0
     }
   },
+  emits: ['prevPage', 'nextPage'],
   data() {
     return {
       filterNames: [],
@@ -89,6 +103,20 @@ export default {
       return Object.values(this.filteredTelemetry).some((filters) => {
         return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
       });
+    },
+    currentPageDisplay() {
+      const start = (this.currentPage === 0 ? 0 : this.currentPage * this.itemsPerPage) + 1;
+      const end = (this.currentPage + 1) * this.itemsPerPage;
+
+      return `${start} - ${end}`;
+    },
+    prevCSS() {
+      return this.currentPage === 0
+        ? {
+            color: 'grey',
+            'pointer-events': 'none'
+          }
+        : {};
     },
     label() {
       if (this.hasMixedFilters) {
@@ -114,6 +142,16 @@ export default {
     this.table.configuration.off('change', this.handleConfigurationChanges);
   },
   methods: {
+    prevPage() {
+      if (this.currentPage === 0) {
+        return;
+      }
+
+      this.$emit('prev-page');
+    },
+    nextPage() {
+      this.$emit('next-page');
+    },
     setFilterNames() {
       let names = [];
       let composition = this.openmct.composition.get(this.table.configuration.domainObject);
