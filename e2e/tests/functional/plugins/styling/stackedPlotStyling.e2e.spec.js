@@ -159,6 +159,11 @@ test.describe('Stacked Plot styling', () => {
   test('styling a child object of the flexible layout properly applies that style to only that child', async ({
     page
   }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7338'
+    });
+
     const DEFAULT_PLOT_VIEW_BORDER_COLOR = '#AAAAAA';
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
