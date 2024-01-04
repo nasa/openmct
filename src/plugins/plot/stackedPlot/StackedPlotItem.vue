@@ -122,11 +122,6 @@ export default {
     'grid-lines',
     'plot-y-tick-width'
   ],
-  data() {
-    return {
-      loading: true
-    };
-  },
   mounted() {
     this.updateView();
     this.isEditing = this.openmct.editor.isEditing();
