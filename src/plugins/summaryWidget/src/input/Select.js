@@ -9,7 +9,7 @@ import eventHelpers from '../eventHelpers.js';
  * its composition from the data model
  * @constructor
  */
-export default function Select() {
+function Select() {
   eventHelpers.extend(this);
 
   const self = this;
@@ -41,6 +41,7 @@ export default function Select() {
 /**
  * Get the DOM element representing this Select in the view
  * @return {Element}
+ * @memberof Select.prototype
  */
 Select.prototype.getDOM = function () {
   return this.domElement;
@@ -50,8 +51,8 @@ Select.prototype.getDOM = function () {
  * Register a callback with this select: supported callback is change
  * @param {string} event The key for the event to listen to
  * @param {function} callback The function that this rule will invoke on this event
- * @param {Object} context A reference to a scope to use as the context for
- *                         context for the callback function
+ * @param {Object} context A reference to a scope to use as the context for context for the callback function
+ * @memberof Select.prototype
  */
 Select.prototype.on = function (event, callback, context) {
   if (this.supportedCallbacks.includes(event)) {
@@ -66,6 +67,7 @@ Select.prototype.on = function (event, callback, context) {
  * @param {string} event The key for the event to stop listening to
  * @param {function} callback The function to unregister
  * @param {Object} context A reference to a scope to use as the context for the callback function
+ * @memberof Select.prototype
  */
 Select.prototype.off = function (event, callback, context) {
   if (this.supportedCallbacks.includes(event)) {
@@ -76,8 +78,9 @@ Select.prototype.off = function (event, callback, context) {
 };
 
 /**
- * Update the select element in the view from the current state of the data
- * model
+ * Update the select element in the view from the current state of the data model.
+ * @function
+ * @memberof Select.prototype
  */
 Select.prototype.populate = function () {
   const self = this;
@@ -102,6 +105,7 @@ Select.prototype.populate = function () {
  * Add a single option to this select
  * @param {string} value The value for the new option
  * @param {string} label The human-readable text for the new option
+ * @memberof Select.prototype
  */
 Select.prototype.addOption = function (value, label) {
   this.options.push([value, label]);
@@ -111,6 +115,7 @@ Select.prototype.addOption = function (value, label) {
 /**
  * Set the available options for this select. Replaces any existing options
  * @param {string[][]} options An array of [value, label] pairs to display
+ * @memberof Select.prototype
  */
 Select.prototype.setOptions = function (options) {
   this.options = options;
@@ -122,6 +127,7 @@ Select.prototype.setOptions = function (options) {
  * callbacks with the new value. If the value doesn't exist in this select's
  * model, its state will not change.
  * @param {string} value The value to set as the selected option
+ * @memberof Select.prototype
  */
 Select.prototype.setSelected = function (value) {
   let selectedIndex = 0;
@@ -141,11 +147,15 @@ Select.prototype.setSelected = function (value) {
 /**
  * Get the value of the currently selected item
  * @return {string}
+ * @memberof Select.prototype
  */
 Select.prototype.getSelected = function () {
   return this.domElement.querySelector('select').value;
 };
 
+/**
+ * @memberof Select.prototype
+ */
 Select.prototype.hide = function () {
   this.domElement.classList.add('hidden');
   if (this.domElement.querySelector('.equal-to')) {
@@ -153,6 +163,9 @@ Select.prototype.hide = function () {
   }
 };
 
+/**
+ * @memberof Select.prototype
+ */
 Select.prototype.show = function () {
   this.domElement.classList.remove('hidden');
   if (this.domElement.querySelector('.equal-to')) {
@@ -160,6 +173,11 @@ Select.prototype.show = function () {
   }
 };
 
+/**
+ * @memberof Select.prototype
+ */
 Select.prototype.destroy = function () {
   this.stopListening();
 };
+
+export default Select;

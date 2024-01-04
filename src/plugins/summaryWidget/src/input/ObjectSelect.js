@@ -13,7 +13,7 @@ import Select from './Select.js';
  * @param {string[][]} baseOptions A set of [value, label] keyword pairs to
  *                                 display regardless of the composition state
  */
-export default function ObjectSelect(config, manager, baseOptions) {
+function ObjectSelect(config, manager, baseOptions) {
   const self = this;
 
   this.config = config;
@@ -84,3 +84,5 @@ ObjectSelect.prototype.generateOptions = function () {
   });
   this.select.setOptions(items);
 };
+
+export default ObjectSelect;

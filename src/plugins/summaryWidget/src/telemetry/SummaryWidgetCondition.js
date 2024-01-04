@@ -22,7 +22,16 @@
 
 import OPERATIONS from './operations.js';
 
-export default function SummaryWidgetCondition(definition) {
+/**
+ * Represents a condition for a summary widget.
+ *
+ * @param {Object} definition - The definition object for the condition.
+ * @param {string} definition.object - The object to evaluate the condition on.
+ * @param {string} definition.key - The key of the property to evaluate.
+ * @param {Array} definition.values - The values to compare against.
+ * @constructor
+ */
+function SummaryWidgetCondition(definition) {
   this.object = definition.object;
   this.key = definition.key;
   this.values = definition.values;
@@ -72,3 +81,5 @@ SummaryWidgetCondition.prototype.evaluateState = function (state) {
 
   return this.comparator(testValues);
 };
+
+export default SummaryWidgetCondition;

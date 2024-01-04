@@ -156,7 +156,6 @@ module.exports = {
     ],
     'import/no-amd': 'error',
     'import/no-commonjs': 'error',
-    'import/no-nodejs-modules': 'error',
     'import/named': 'error',
     'import/no-webpack-loader-syntax': 'error',
     'import/exports-last': 'warn',

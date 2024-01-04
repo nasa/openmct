@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function MockTelemetryApi() {
+/**
+ * Represents a mock telemetry API.
+ * @constructor
+ */
+function MockTelemetryApi() {
   this.createSpy('subscribe');
   this.createSpy('getMetadata');
 
@@ -95,3 +99,5 @@ MockTelemetryApi.prototype.createSpy = function (functionName) {
   spyOn(this, functionName);
   this[functionName].and.callThrough();
 };
+
+export default MockTelemetryApi;

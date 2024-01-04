@@ -22,14 +22,38 @@
 
 import EvaluatorPool from './EvaluatorPool.js';
 
-export default function SummaryWidgetTelemetryProvider(openmct) {
+/**
+ * Represents a SummaryWidgetTelemetryProvider.
+ *
+ * @param {Object} openmct - The OpenMCT object.
+ * @constructor
+ */
+function SummaryWidgetTelemetryProvider(openmct) {
+  /**
+   * The evaluator pool for managing evaluators.
+   * @type {EvaluatorPool}
+   */
   this.pool = new EvaluatorPool(openmct);
 }
 
+/**
+ * Checks if the telemetry provider supports the request for the given domain object and options.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @param {Object} options - The options for the request.
+ * @returns {boolean} - True if the request is supported, false otherwise.
+ */
 SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
   return domainObject.type === 'summary-widget';
 };
 
+/**
+ * Makes a request for telemetry data for the given domain object and options.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @param {Object} options - The options for the request.
+ * @returns {Promise} - A promise that resolves to an array of telemetry data.
+ */
 SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
   if (options.strategy !== 'latest' && options.size !== 1) {
     return Promise.resolve([]);
@@ -46,10 +70,23 @@ SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, optio
   );
 };
 
+/**
+ * Checks if the telemetry provider supports subscribing to telemetry updates for the given domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {boolean} - True if subscribing is supported, false otherwise.
+ */
 SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
   return domainObject.type === 'summary-widget';
 };
 
+/**
+ * Subscribes to telemetry updates for the given domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @param {Function} callback - The callback function to be called when telemetry updates occur.
+ * @returns {Function} - A function to unsubscribe from telemetry updates.
+ */
 SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
   const evaluator = this.pool.get(domainObject);
   const unsubscribe = evaluator.subscribe(callback);
@@ -59,3 +96,5 @@ SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, cal
     unsubscribe();
   }.bind(this);
 };
+
+export default SummaryWidgetTelemetryProvider;

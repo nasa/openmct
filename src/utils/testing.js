@@ -192,8 +192,18 @@ function getLatestTelemetry(telemetry = [], opts = {}) {
 
 /**
  * Generates mock objects based on the provided options.
- *
- * Example usage:
+ * @param {Object} opts - Options for generating mock objects.
+ * @param {string} [opts.type='default'] - The type of mock objects to generate.
+ * @param {string[]} [opts.objectKeyStrings] - The object keys to include in the mock objects.
+ * @param {Object} [opts.telemetryConfig] - Configuration for customizing the telemetry data in the mock objects.
+ * @param {string[]} [opts.telemetryConfig.keys] - The keys to include in the telemetry data.
+ * @param {string} [opts.telemetryConfig.format='utc'] - The format of the telemetry data.
+ * @param {Object} [opts.telemetryConfig.hints] - The hints for each telemetry key.
+ * @param {Object} [opts.overwrite] - Object containing fields to overwrite in the generated mock objects.
+ * @returns {Object} The generated mock objects.
+ * @throws {string} Throws an error if the optional parameter "objectKeyStrings" is provided but is not an array of string object keys.
+ * @throws {string} Throws an error if no mock object is found for a given object key and type.
+ * @example
  * getMockObjects({
  *     name: 'Jamie Telemetry',
  *     keys: ['test','other','yeah','sup'],
@@ -210,17 +220,6 @@ function getLatestTelemetry(telemetry = [], opts = {}) {
  *     }
  * })
  *
- * @param {Object} opts - Options for generating mock objects.
- * @param {string} [opts.type='default'] - The type of mock objects to generate.
- * @param {string[]} [opts.objectKeyStrings] - The object keys to include in the mock objects.
- * @param {Object} [opts.telemetryConfig] - Configuration for customizing the telemetry data in the mock objects.
- * @param {string[]} [opts.telemetryConfig.keys] - The keys to include in the telemetry data.
- * @param {string} [opts.telemetryConfig.format='utc'] - The format of the telemetry data.
- * @param {Object} [opts.telemetryConfig.hints] - The hints for each telemetry key.
- * @param {Object} [opts.overwrite] - Object containing fields to overwrite in the generated mock objects.
- * @returns {Object} The generated mock objects.
- * @throws {string} Throws an error if the optional parameter "objectKeyStrings" is provided but is not an array of string object keys.
- * @throws {string} Throws an error if no mock object is found for a given object key and type.
  */
 function getMockObjects(opts = {}) {
   opts.type = opts.type || 'default';

@@ -17,7 +17,16 @@ import Select from './Select.js';
  */
 const NULLVALUE = '- Select Comparison -';
 
-export default function OperationSelect(config, keySelect, manager, changeCallback) {
+/**
+ * Represents a select element for operations in the OperationSelect component.
+ *
+ * @param {Object} config - The configuration object for the OperationSelect.
+ * @param {KeySelect} keySelect - The KeySelect instance linked to this OperationSelect.
+ * @param {ConditionManager} manager - The ConditionManager instance.
+ * @param {Function} changeCallback - The callback function to be called on change event.
+ * @constructor
+ */
+function OperationSelect(config, keySelect, manager, changeCallback) {
   eventHelpers.extend(this);
   const self = this;
 
@@ -37,10 +46,11 @@ export default function OperationSelect(config, keySelect, manager, changeCallba
   }
 
   /**
-   * Change event handler for the {KeySelect} to which this OperationSelect instance
+   * Change event handler for the KeySelect to which this OperationSelect instance
    * is linked. Loads the operations applicable to the given telemetry property and updates
-   * its select element's composition
-   * @param {Object} key The key identifying the newly selected property
+   * its select element's composition.
+   *
+   * @param {Object} key - The key identifying the newly selected property.
    * @private
    */
   function onKeyChange(key) {
@@ -54,8 +64,8 @@ export default function OperationSelect(config, keySelect, manager, changeCallba
 
   /**
    * Event handler for the initial metadata load event from the associated
-   * ConditionManager. Retrieves telemetry property types and updates the
-   * select
+   * ConditionManager. Retrieves telemetry property types and updates the select.
+   *
    * @private
    */
   function onMetadataLoad() {
@@ -117,3 +127,5 @@ OperationSelect.prototype.loadOptions = function (key) {
 OperationSelect.prototype.destroy = function () {
   this.stopListening();
 };
+
+export default OperationSelect;

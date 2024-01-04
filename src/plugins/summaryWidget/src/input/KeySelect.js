@@ -16,7 +16,7 @@ import Select from './Select.js';
  */
 const NULLVALUE = '- Select Field -';
 
-export default function KeySelect(config, objectSelect, manager, changeCallback) {
+function KeySelect(config, objectSelect, manager, changeCallback) {
   const self = this;
 
   this.config = config;
@@ -91,3 +91,5 @@ KeySelect.prototype.generateOptions = function () {
 KeySelect.prototype.destroy = function () {
   this.objectSelect.destroy();
 };
+
+export default KeySelect;

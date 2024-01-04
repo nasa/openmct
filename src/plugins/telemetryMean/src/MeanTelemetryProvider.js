@@ -24,11 +24,41 @@ import objectUtils from 'objectUtils';
 
 import TelemetryAverager from './TelemetryAverager.js';
 
-export default function MeanTelemetryProvider(openmct) {
+/**
+ * Represents a MeanTelemetryProvider.
+ *
+ * @param {Object} openmct - The OpenMCT object.
+ * @constructor
+ */
+function MeanTelemetryProvider(openmct) {
+  /**
+   * The OpenMCT object.
+   * @type {Object}
+   */
   this.openmct = openmct;
+
+  /**
+   * The telemetry API provided by OpenMCT.
+   * @type {Object}
+   */
   this.telemetryAPI = openmct.telemetry;
+
+  /**
+   * The time API provided by OpenMCT.
+   * @type {Object}
+   */
   this.timeAPI = openmct.time;
+
+  /**
+   * The object API provided by OpenMCT.
+   * @type {Object}
+   */
   this.objectAPI = openmct.objects;
+
+  /**
+   * The per-object providers.
+   * @type {Object}
+   */
   this.perObjectProviders = {};
 }
 
@@ -131,3 +161,5 @@ function logError(error) {
     console.error(error);
   }
 }
+
+export default MeanTelemetryProvider;

@@ -27,11 +27,14 @@ import eventHelpers from '../eventHelpers.js';
 import SummaryWidgetRule from './SummaryWidgetRule.js';
 
 /**
- * evaluates rules defined in a summary widget against either lad or
+ * Evaluates rules defined in a summary widget against either LAD or
  * realtime state.
  *
+ * @param {Object} domainObject - The domain object representing the summary widget.
+ * @param {Object} openmct - The Open MCT object.
+ * @constructor
  */
-export default function SummaryWidgetEvaluator(domainObject, openmct) {
+function SummaryWidgetEvaluator(domainObject, openmct) {
   this.openmct = openmct;
   this.baseState = {};
 
@@ -50,6 +53,10 @@ eventHelpers.extend(SummaryWidgetEvaluator.prototype);
 
 /**
  * Subscribes to realtime telemetry for the given summary widget.
+ *
+ * @param {Function} callback - The callback function to be invoked when new telemetry data is available.
+ * @returns {Function} - The unsubscribe function.
+ * @private
  */
 SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
   let active = true;
@@ -83,8 +90,10 @@ SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
 };
 
 /**
- * Returns a promise for a telemetry datum obtained by evaluating the
- * current lad data.
+ * Returns a promise for a telemetry datum obtained by evaluating the current lad data.
+ *
+ * @param {Object} options - The options for requesting the latest telemetry datum.
+ * @returns {Promise<Object>} - A promise that resolves to the latest telemetry datum.
  */
 SummaryWidgetEvaluator.prototype.requestLatest = function (options) {
   return this.getBaseStateClone()
@@ -106,12 +115,22 @@ SummaryWidgetEvaluator.prototype.requestLatest = function (options) {
     );
 };
 
+/**
+ * Updates the rules based on the domain object's configuration.
+ *
+ * @param {Object} domainObject - The domain object containing the configuration.
+ */
 SummaryWidgetEvaluator.prototype.updateRules = function (domainObject) {
   this.rules = domainObject.configuration.ruleOrder.map(function (ruleId) {
     return new SummaryWidgetRule(domainObject.configuration.ruleConfigById[ruleId]);
   });
 };
 
+/**
+ * Adds a child object to the base state.
+ *
+ * @param {Object} childObject - The child object to be added.
+ */
 SummaryWidgetEvaluator.prototype.addChild = function (childObject) {
   const childId = objectUtils.makeKeyString(childObject.identifier);
   const metadata = this.openmct.telemetry.getMetadata(childObject);
@@ -125,11 +144,21 @@ SummaryWidgetEvaluator.prototype.addChild = function (childObject) {
   };
 };
 
+/**
+ * Removes a child object from the base state.
+ *
+ * @param {Object} childObject - The child object to be removed.
+ */
 SummaryWidgetEvaluator.prototype.removeChild = function (childObject) {
   const childId = objectUtils.makeKeyString(childObject.identifier);
   delete this.baseState[childId];
 };
 
+/**
+ * Loads the base state.
+ *
+ * @returns {Promise} - A promise that resolves when the base state is loaded.
+ */
 SummaryWidgetEvaluator.prototype.load = function () {
   return this.loadPromise;
 };
@@ -139,6 +168,8 @@ SummaryWidgetEvaluator.prototype.load = function () {
  * states are shallow cloned, and then assembled and returned as a new base
  * state.  Allows object states to be mutated while sharing telemetry
  * metadata and formats.
+ *
+ * @returns {Promise<Object>} - A promise that resolves to the cloned base state object.
  */
 SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
   return this.load().then(
@@ -154,7 +185,10 @@ SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
  * Subscribes to realtime updates for a given objectState, and invokes
  * the supplied callback when objectState has been updated.  Returns
  * a function to unsubscribe.
- * @private.
+ * @param {Function} callback - The callback function to be invoked when the object state is updated.
+ * @param {Object} objectState - The object state to subscribe to.
+ * @returns {Function} - The unsubscribe function.
+ * @private
  */
 SummaryWidgetEvaluator.prototype.subscribeToObjectState = function (callback, objectState) {
   return this.openmct.telemetry.subscribe(
@@ -170,6 +204,9 @@ SummaryWidgetEvaluator.prototype.subscribeToObjectState = function (callback, ob
 /**
  * Given an object state, will return a promise that is resolved when the
  * object state has been updated from the LAD.
+ * @param {Object} options - The options for updating the object state.
+ * @param {Object} objectState - The object state to be updated.
+ * @returns {Promise} - A promise that resolves when the object state is updated.
  * @private.
  */
 SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
@@ -188,7 +225,11 @@ SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, o
 
 /**
  * Returns an object containing all domain values in a datum.
- * @private.
+ *
+ * @param {string} childId - The ID of the child object.
+ * @param {Object} datum - The telemetry datum.
+ * @returns {Object} - An object containing all domain values in the datum.
+ * @private
  */
 SummaryWidgetEvaluator.prototype.getTimestamps = function (childId, datum) {
   const timestampedDatum = {};
@@ -200,8 +241,12 @@ SummaryWidgetEvaluator.prototype.getTimestamps = function (childId, datum) {
 };
 
 /**
- * Given a base datum(containing timestamps) and rule index, adds values
+ * Given a base datum (containing timestamps) and rule index, adds values
  * from the matching rule.
+ *
+ * @param {number} ruleIndex - The index of the rule.
+ * @param {Object} baseDatum - The base datum object.
+ * @returns {Object} - The updated base datum object.
  * @private
  */
 SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDatum) {
@@ -224,7 +269,11 @@ SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDa
  * Datum timestamps will be taken from the "latest" datum in the `state`
  * where "latest" is the datum with the largest value for the given
  * `timestampKey`.
- * @private.
+ *
+ * @param {Object} state - The state object to evaluate.
+ * @param {string} timestampKey - The key to identify the timestamp.
+ * @returns {Object|undefined} - The summary widget telemetry datum, or undefined if required data is missing.
+ * @private
  */
 SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
   const hasRequiredData = Object.keys(state).reduce(function (itDoes, k) {
@@ -261,3 +310,5 @@ SummaryWidgetEvaluator.prototype.destroy = function () {
   this.stopListening();
   this.removeObserver();
 };
+
+export default SummaryWidgetEvaluator;

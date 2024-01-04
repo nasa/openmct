@@ -17,7 +17,7 @@ import ObjectSelect from './input/ObjectSelect.js';
  *                           for populating selects with configuration data
  * @constructor
  */
-export default function TestDataItem(itemConfig, index, conditionManager) {
+function TestDataItem(itemConfig, index, conditionManager) {
   eventHelpers.extend(this);
   this.config = itemConfig;
   this.index = index;
@@ -188,3 +188,5 @@ TestDataItem.prototype.generateValueInput = function (key) {
     inputArea.append(this.valueInput);
   }
 };
+
+export default TestDataItem;

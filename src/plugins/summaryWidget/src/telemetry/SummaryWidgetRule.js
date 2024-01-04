@@ -22,23 +22,75 @@
 
 import SummaryWidgetCondition from './SummaryWidgetCondition.js';
 
-export default function SummaryWidgetRule(definition) {
+/**
+ * Represents a SummaryWidgetRule.
+ *
+ * @param {Object} definition - The rule definition.
+ * @constructor
+ */
+function SummaryWidgetRule(definition) {
+  /**
+   * The name of the rule.
+   * @type {string}
+   */
   this.name = definition.name;
+
+  /**
+   * The label of the rule.
+   * @type {string}
+   */
   this.label = definition.label;
+
+  /**
+   * The ID of the rule.
+   * @type {string}
+   */
   this.id = definition.id;
+
+  /**
+   * The icon of the rule.
+   * @type {string}
+   */
   this.icon = definition.icon;
+
+  /**
+   * The style of the rule.
+   * @type {string}
+   */
   this.style = definition.style;
+
+  /**
+   * The message of the rule.
+   * @type {string}
+   */
   this.message = definition.message;
+
+  /**
+   * The description of the rule.
+   * @type {string}
+   */
   this.description = definition.description;
+
+  /**
+   * The conditions of the rule.
+   * @type {SummaryWidgetCondition[]}
+   */
   this.conditions = definition.conditions.map(function (cDefinition) {
     return new SummaryWidgetCondition(cDefinition);
   });
+
+  /**
+   * The trigger type of the rule.
+   * @type {string}
+   */
   this.trigger = definition.trigger;
 }
 
 /**
- * Evaluate the given rule against a telemetryState and return true if it
- * matches.
+ * Evaluate the given rule against a telemetryState and return true if it matches.
+ *
+ * @param {Object} telemetryState - The telemetry state.
+ * @returns {boolean} - True if the rule matches, false otherwise.
  */
 SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
   let i;
@@ -66,3 +118,5 @@ SummaryWidgetRule.prototype.evaluate = function (telemetryState) {
     throw new Error('Invalid rule trigger: ' + this.trigger);
   }
 };
+
+export default SummaryWidgetRule;

@@ -24,7 +24,13 @@ import objectUtils from 'objectUtils';
 
 import SummaryWidgetEvaluator from './SummaryWidgetEvaluator.js';
 
-export default function EvaluatorPool(openmct) {
+/**
+ * Represents a pool of evaluators for objects in Open MCT.
+ *
+ * @param {Object} openmct - The Open MCT object.
+ * @constructor
+ */
+function EvaluatorPool(openmct) {
   this.openmct = openmct;
   this.byObjectId = {};
   this.byEvaluator = new WeakMap();
@@ -57,3 +63,5 @@ EvaluatorPool.prototype.release = function (evaluator) {
     delete this.byObjectId[poolEntry.objectId];
   }
 };
+
+export default EvaluatorPool;

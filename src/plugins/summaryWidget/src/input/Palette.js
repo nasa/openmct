@@ -14,7 +14,7 @@ import eventHelpers from '../eventHelpers.js';
  *                         palette item in the view; how this data is represented is
  *                         up to the descendent class
  */
-export default function Palette(cssClass, container, items) {
+function Palette(cssClass, container, items) {
   eventHelpers.extend(this);
 
   const self = this;
@@ -179,3 +179,5 @@ Palette.prototype.toggleNullOption = function () {
     this.domElement.querySelector('.c-palette__item-none').style.display = 'none';
   }
 };
+
+export default Palette;

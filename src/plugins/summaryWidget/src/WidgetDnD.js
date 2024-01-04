@@ -9,7 +9,7 @@ import ruleImageTemplate from '../res/ruleImageTemplate.html';
  * @param {string[]} ruleOrder An array of rule IDs representing the current rule order
  * @param {Object} rulesById An object mapping rule IDs to rule configurations
  */
-export default function WidgetDnD(container, ruleOrder, rulesById) {
+function WidgetDnD(container, ruleOrder, rulesById) {
   this.container = container;
   this.ruleOrder = ruleOrder;
   this.rulesById = rulesById;
@@ -160,3 +160,5 @@ WidgetDnD.prototype.drop = function (event) {
     this.imageContainer.hide();
   }
 };
+
+export default WidgetDnD;

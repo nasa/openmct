@@ -20,14 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function SummaryWidgetMetadataProvider(openmct) {
+/**
+ * Represents a SummaryWidgetMetadataProvider.
+ *
+ * @param {Object} openmct - The openmct object.
+ * @constructor
+ */
+function SummaryWidgetMetadataProvider(openmct) {
+  /**
+   * The openmct object.
+   * @type {Object}
+   */
   this.openmct = openmct;
 }
 
+/**
+ * Check if the metadata provider supports the given domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {boolean} - True if the metadata provider supports the domain object, false otherwise.
+ */
 SummaryWidgetMetadataProvider.prototype.supportsMetadata = function (domainObject) {
   return domainObject.type === 'summary-widget';
 };
 
+/**
+ * Get the domains for the given domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {Object[]} - An array of domain objects.
+ */
 SummaryWidgetMetadataProvider.prototype.getDomains = function (domainObject) {
   return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
     return {
@@ -41,6 +63,12 @@ SummaryWidgetMetadataProvider.prototype.getDomains = function (domainObject) {
   });
 };
 
+/**
+ * Get the metadata for the given domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {Object} - The metadata object.
+ */
 SummaryWidgetMetadataProvider.prototype.getMetadata = function (domainObject) {
   const ruleOrder = domainObject.configuration.ruleOrder || [];
   const enumerations = ruleOrder
@@ -107,3 +135,5 @@ SummaryWidgetMetadataProvider.prototype.getMetadata = function (domainObject) {
 
   return metadata;
 };
+
+export default SummaryWidgetMetadataProvider;

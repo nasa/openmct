@@ -12,7 +12,7 @@ import TestDataItem from './TestDataItem.js';
  * @param {ConditionManager} conditionManager A conditionManager instance
  * @param {MCT} openmct and MCT instance
  */
-export default function TestDataManager(domainObject, conditionManager, openmct) {
+function TestDataManager(domainObject, conditionManager, openmct) {
   eventHelpers.extend(this);
   const self = this;
 
@@ -196,3 +196,5 @@ TestDataManager.prototype.destroy = function () {
     item.remove();
   });
 };
+
+export default TestDataManager;
