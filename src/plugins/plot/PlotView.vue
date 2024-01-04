@@ -20,12 +20,18 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="plotWrapper" class="c-plot holder holder-plot has-control-bar" :class="staleClass">
+  <div
+    ref="plotWrapper"
+    class="c-plot holder holder-plot has-control-bar"
+    :class="isStale && 'is-stale'"
+  >
     <div
       ref="plotContainer"
       class="l-view-section u-style-receiver js-style-receiver"
       aria-label="Plot Container Style Target"
-      :class="{ 's-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced' }"
+      :class="{
+        's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
+      }"
     >
       <progress-bar
         v-show="!!loading"
@@ -157,9 +163,6 @@ export default {
     },
     gridLinesProp() {
       return this.gridLines ?? !this.options.compact;
-    },
-    staleClass() {
-      return this.isStale ? 'is-stale' : '';
     },
     plotLegendPositionClass() {
       return this.position ? `plot-legend-${this.position}` : '';

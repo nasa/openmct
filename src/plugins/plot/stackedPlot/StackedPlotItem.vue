@@ -30,16 +30,13 @@
       :parent-y-tick-width="parentYTickWidth"
       :options="options"
       :color-palette="colorPalette"
-      :is-stale="isStale"
-      :is-missing="isMissing"
-      :loading="loading"
+      :class="isStale && 'is-stale'"
       @config-loaded="onConfigLoaded"
       @lock-highlight-point="onLockHighlightPointUpdated"
       @highlights="onHighlightsUpdated"
       @plot-y-tick-width="onYTickWidthChange"
       @cursor-guide="onCursorGuideChange"
       @grid-lines="onGridLinesChange"
-      @loading-updated="loadingUpdated"
     />
   </div>
 </template>
@@ -127,8 +124,6 @@ export default {
   ],
   data() {
     return {
-      staleObjects: [],
-      isMissing: false,
       loading: true
     };
   },
@@ -171,18 +166,13 @@ export default {
         }
       }
     },
-    loadingUpdated(loading) {
-      this.loading = loading;
-    },
     updateView() {
       //If this object is not persistable, then package it with it's parent
       const object = this.getPlotObject();
       this.isMissing = this.openmct.objects.isMissing(object);
 
       if (this.openmct.telemetry.isTelemetryObject(object)) {
-        this.subscribeToStaleness(object, (stalenessResponse) => {
-          this.updateComponentProp('isStale', stalenessResponse.isStale);
-        });
+        this.subscribeToStaleness(object);
       } else {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(object);
