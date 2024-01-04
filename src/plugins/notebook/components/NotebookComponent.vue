@@ -96,7 +96,7 @@
         </div>
         <div
           v-if="selectedPage && !selectedPage.isLocked"
-          :class="{ disabled: activeTransaction }"
+          :aria-disabled="activeTransaction"
           class="c-notebook__drag-area icon-plus"
           @click="newEntry(null, $event)"
           @dragover="dragOver"

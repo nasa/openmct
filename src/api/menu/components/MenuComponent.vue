@@ -28,7 +28,8 @@
             v-for="action in actionGroups"
             :key="action.name"
             role="menuitem"
-            :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
+            :aria-disabled="action.isDisabled"
+            :class="action.cssClass"
             :title="action.description"
             @click="action.onItemClicked"
           >
@@ -50,7 +51,8 @@
         v-for="action in options.actions"
         :key="action.name"
         role="menuitem"
-        :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
+        :aria-disabled="action.isDisabled"
+        :class="action.cssClass"
         :title="action.description"
         @click="action.onItemClicked"
       >
