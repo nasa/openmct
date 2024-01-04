@@ -4,6 +4,10 @@
 # Requires Git > 2.23
 # See https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt
 
+# vue-eslint update 2019
+14a0f84c1bcd56886d7c9e4e6afa8f7d292734e5
+# eslint changes 2022
+d80b6923541704ab925abf0047cbbc58735c27e2
 # Copyright year update 2022
 4a9744e916d24122a81092f6b7950054048ba860
 # Copyright year update 2023

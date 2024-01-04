@@ -128,7 +128,8 @@
         ></button>
         <button
           class="l-browse-bar__actions c-icon-button icon-3-dots"
-          title="More options"
+          title="More actions"
+          aria-label="More actions"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
       </div>
@@ -361,6 +362,10 @@ export default {
         iconClass: 'info',
         title: 'Saving'
       });
+
+      const currentSelection = this.openmct.selection.selected[0];
+      const parentObject = currentSelection[currentSelection.length - 1];
+      this.openmct.selection.select(parentObject);
 
       return this.openmct.editor
         .save()

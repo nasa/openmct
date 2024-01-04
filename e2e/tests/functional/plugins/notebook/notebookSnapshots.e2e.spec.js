@@ -105,7 +105,7 @@ test.describe('Snapshot Container tests', () => {
   test.fixme(
     'A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu',
     async ({ page }) => {
-      await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More options').click();
+      await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
       await page.getByRole('menuitem', { name: ' View Snapshot' }).click();
       await expect(page.locator('.c-overlay__outer')).toBeVisible();
       await page.getByTitle('Annotate').click();
@@ -118,7 +118,7 @@ test.describe('Snapshot Container tests', () => {
     }
   );
   test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More options').click();
+    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
     await expect(page.locator('.c-overlay__outer')).toBeVisible();
   });
@@ -212,7 +212,7 @@ test.describe('Snapshot image tests', () => {
     // expect two embedded images now
     expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(2);
 
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More options').click();
+    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
 
     await page.getByRole('menuitem', { name: /Remove This Embed/ }).click();
     await page.getByRole('button', { name: 'Ok', exact: true }).click();

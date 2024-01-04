@@ -23,8 +23,9 @@
 <template>
   <div
     v-if="loaded"
-    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar u-style-receiver js-style-receiver"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    aria-label="Stacked Plot Style Target"
   >
     <plot-legend
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
