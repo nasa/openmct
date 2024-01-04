@@ -39,6 +39,7 @@ export default {
   data: function () {
     return {
       menuItems: {},
+      isEditing: this.openmct.editor.isEditing(),
       selectedMenuItem: {},
       opened: false
     };
