@@ -273,7 +273,7 @@ describe('The LAD Table', () => {
       expect(rowName).toBe(expectedName);
     });
 
-    fit('should show the correct values for the datum based on domain and range hints', async () => {
+    it('should show the correct values for the datum based on domain and range hints', async () => {
       const range = mockObj.telemetry.telemetry.values.find((val) => {
         return val.hints && val.hints.range !== undefined;
       }).key;
