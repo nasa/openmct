@@ -29,7 +29,7 @@
  * @param openmct a reference to the openmct application
  * @param {Function} callback a callback to invoke with "last updated" timestamps
  */
-export default function AutoflowTabularRowController(domainObject, data, openmct, callback) {
+function AutoflowTabularRowController(domainObject, data, openmct, callback) {
   this.domainObject = domainObject;
   this.data = data;
   this.openmct = openmct;
@@ -89,3 +89,5 @@ AutoflowTabularRowController.prototype.destroy = function () {
     this.unsubscribe();
   }
 };
+
+export default AutoflowTabularRowController;

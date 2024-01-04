@@ -20,10 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function SummaryWidgetsCompositionPolicy(openmct) {
+/**
+ * SummaryWidgetsCompositionPolicy constructor function.
+ * @param {Object} openmct - The Open MCT object.
+ * @constructor
+ */
+function SummaryWidgetsCompositionPolicy(openmct) {
   this.openmct = openmct;
 }
 
+/**
+ * Check if a child object is allowed to be added to a parent object.
+ * @param {Object} parent - The parent object.
+ * @param {Object} child - The child object.
+ * @returns {boolean} - True if the child is allowed, false otherwise.
+ */
 SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
   const parentType = parent.type;
 
@@ -33,3 +44,5 @@ SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
 
   return true;
 };
+
+export default SummaryWidgetsCompositionPolicy;

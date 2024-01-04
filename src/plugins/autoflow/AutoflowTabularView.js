@@ -25,87 +25,90 @@ import AutoflowTabularConstants from './AutoflowTabularConstants.js';
 import AutoflowTabularController from './AutoflowTabularController.js';
 import VueView from './VueView.js';
 
-const ROW_HEIGHT = AutoflowTabularConstants.ROW_HEIGHT;
-const SLIDER_HEIGHT = AutoflowTabularConstants.SLIDER_HEIGHT;
-const INITIAL_COLUMN_WIDTH = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
-const MAX_COLUMN_WIDTH = AutoflowTabularConstants.MAX_COLUMN_WIDTH;
-const COLUMN_WIDTH_STEP = AutoflowTabularConstants.COLUMN_WIDTH_STEP;
+const { ROW_HEIGHT, SLIDER_HEIGHT, INITIAL_COLUMN_WIDTH, MAX_COLUMN_WIDTH, COLUMN_WIDTH_STEP } =
+  AutoflowTabularConstants;
 
 /**
- * Implements the Autoflow Tabular view of a domain object.
+ * Implements the Autoflow Tabular view of a domain object using Vue.
+ * Extends VueView to utilize Vue.js functionalities.
  */
-export default function AutoflowTabularView(domainObject, openmct) {
-  const data = {
-    items: [],
-    columns: [],
-    width: INITIAL_COLUMN_WIDTH,
-    filter: '',
-    updated: 'No updates',
-    rowCount: 1
-  };
-  const controller = new AutoflowTabularController(domainObject, data, openmct);
-  let interval;
+export default class AutoflowTabularView extends VueView {
+  /**
+   * Create an AutoflowTabularView instance.
+   * @param {Object} domainObject - The domain object to be displayed.
+   * @param {Object} openmct - The Open MCT instance.
+   */
+  constructor(domainObject, openmct) {
+    const data = {
+      items: [],
+      columns: [],
+      width: INITIAL_COLUMN_WIDTH,
+      filter: '',
+      updated: 'No updates',
+      rowCount: 1
+    };
 
-  VueView.call(this, {
-    data: data,
-    methods: {
-      increaseColumnWidth: function () {
-        data.width += COLUMN_WIDTH_STEP;
-        data.width = data.width > MAX_COLUMN_WIDTH ? INITIAL_COLUMN_WIDTH : data.width;
-      },
-      reflow: function () {
-        let column = [];
-        let index = 0;
-        const filteredItems = data.items.filter(function (item) {
-          return item.name.toLowerCase().indexOf(data.filter.toLowerCase()) !== -1;
-        });
+    super({
+      data: data,
+      methods: {
+        increaseColumnWidth: () => {
+          data.width += COLUMN_WIDTH_STEP;
+          data.width = data.width > MAX_COLUMN_WIDTH ? INITIAL_COLUMN_WIDTH : data.width;
+        },
+        reflow: () => {
+          let column = [];
+          let index = 0;
+          const filteredItems = data.items.filter((item) =>
+            item.name.toLowerCase().includes(data.filter.toLowerCase())
+          );
 
-        data.columns = [];
+          data.columns = [];
 
-        while (index < filteredItems.length) {
-          if (column.length >= data.rowCount) {
-            data.columns.push(column);
-            column = [];
+          while (index < filteredItems.length) {
+            if (column.length >= data.rowCount) {
+              data.columns.push(column);
+              column = [];
+            }
+
+            column.push(filteredItems[index]);
+            index += 1;
           }
 
-          column.push(filteredItems[index]);
-          index += 1;
+          if (column.length > 0) {
+            data.columns.push(column);
+          }
         }
-
-        if (column.length > 0) {
-          data.columns.push(column);
+      },
+      watch: {
+        filter: 'reflow',
+        items: 'reflow',
+        rowCount: 'reflow'
+      },
+      template: autoflowTemplate,
+      unmounted: () => {
+        this.controller.destroy();
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = undefined;
         }
+      },
+      mounted: function () {
+        this.controller.activate();
+
+        const updateRowHeight = () => {
+          const tabularArea = this.$refs.autoflowItems;
+          const height = tabularArea ? tabularArea.clientHeight : 0;
+          const available = height - SLIDER_HEIGHT;
+          const rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
+          data.rowCount = rows;
+        };
+
+        this.interval = setInterval(updateRowHeight, 50);
+        this.$nextTick(updateRowHeight);
       }
-    },
-    watch: {
-      filter: 'reflow',
-      items: 'reflow',
-      rowCount: 'reflow'
-    },
-    template: autoflowTemplate,
-    unmounted: function () {
-      controller.destroy();
+    });
 
-      if (interval) {
-        clearInterval(interval);
-        interval = undefined;
-      }
-    },
-    mounted: function () {
-      controller.activate();
-
-      const updateRowHeight = function () {
-        const tabularArea = this.$refs.autoflowItems;
-        const height = tabularArea ? tabularArea.clientHeight : 0;
-        const available = height - SLIDER_HEIGHT;
-        const rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
-        data.rowCount = rows;
-      }.bind(this);
-
-      interval = setInterval(updateRowHeight, 50);
-      this.$nextTick(updateRowHeight);
-    }
-  });
+    this.controller = new AutoflowTabularController(domainObject, data, openmct);
+    this.interval = undefined;
+  }
 }
-
-AutoflowTabularView.prototype = Object.create(VueView.prototype);

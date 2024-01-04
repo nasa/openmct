@@ -12,7 +12,7 @@ import ConditionEvaluator from './ConditionEvaluator.js';
  * @param {Object} domainObject the Summary Widget domain object
  * @param {MCT} openmct an MCT instance
  */
-export default function ConditionManager(domainObject, openmct) {
+function ConditionManager(domainObject, openmct) {
   this.domainObject = domainObject;
   this.openmct = openmct;
 
@@ -381,3 +381,5 @@ ConditionManager.prototype.destroy = function () {
   this.composition.off('remove', this.onCompositionRemove, this);
   this.composition.off('load', this.onCompositionLoad, this);
 };
+
+export default ConditionManager;

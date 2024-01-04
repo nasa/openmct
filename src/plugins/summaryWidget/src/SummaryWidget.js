@@ -23,7 +23,7 @@ const DEFAULT_PROPS = {
  * @param {Object} domainObject The domain Object represented by this Widget
  * @param {MCT} openmct An MCT instance
  */
-export default function SummaryWidget(domainObject, openmct) {
+function SummaryWidget(domainObject, openmct) {
   eventHelpers.extend(this);
 
   this.domainObject = domainObject;
@@ -391,3 +391,5 @@ SummaryWidget.prototype.applyStyle = function (elem, style) {
 SummaryWidget.prototype.updateDomainObject = function () {
   this.openmct.objects.mutate(this.domainObject, 'configuration', this.domainObject.configuration);
 };
+
+export default SummaryWidget;

@@ -40,7 +40,7 @@ const DATE_FORMATS = [DATE_FORMAT, 'YYYY-MM-DD h:mm:ss a', 'YYYY-MM-DD h:mm a', 
  * @constructor
  * @memberof platform/commonUI/formats
  */
-export default function LocalTimeFormat() {
+function LocalTimeFormat() {
   this.key = 'local-format';
 }
 
@@ -64,3 +64,5 @@ LocalTimeFormat.prototype.parse = function (text) {
 LocalTimeFormat.prototype.validate = function (text) {
   return moment(text, DATE_FORMATS).isValid();
 };
+
+export default LocalTimeFormat;

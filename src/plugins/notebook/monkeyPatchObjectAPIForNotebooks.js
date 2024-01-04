@@ -7,6 +7,13 @@ import {
   isNotebookType
 } from './notebook-constants.js';
 
+/**
+ * Monkey patch for the openmct.objects.save method.
+ *
+ * @param {Object} openmct - The openmct object.
+ * @returns {void}
+ */
+// eslint-disable-next-line import/exports-last
 export default function (openmct) {
   const apiSave = openmct.objects.save.bind(openmct.objects);
 

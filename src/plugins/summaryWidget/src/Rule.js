@@ -20,14 +20,7 @@ import IconPalette from './input/IconPalette.js';
  * @param {WidgetDnD} widgetDnD A WidgetDnD instance to handle dragging and dropping rules
  * @param {element} container The DOM element which contains this summary widget
  */
-export default function Rule(
-  ruleConfig,
-  domainObject,
-  openmct,
-  conditionManager,
-  widgetDnD,
-  container
-) {
+function Rule(ruleConfig, domainObject, openmct, conditionManager, widgetDnD, container) {
   eventHelpers.extend(this);
   const self = this;
   const THUMB_ICON_CLASS = 'c-sw__icon js-sw__icon';
@@ -528,3 +521,5 @@ Rule.prototype.generateDescription = function () {
   this.description.innerText = self.config.description;
   this.config.description = description;
 };
+
+export default Rule;

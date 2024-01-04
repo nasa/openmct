@@ -34,70 +34,126 @@ const REQUEST_DEFAULTS = {
   exceedFloat32: false
 };
 
-export default function GeneratorProvider(openmct, StalenessProvider) {
-  this.openmct = openmct;
-  this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
+/**
+ * GeneratorProvider class for providing telemetry data.
+ */
+class GeneratorProvider {
+  /**
+   * Creates an instance of GeneratorProvider.
+   *
+   * @param {Object} openmct - The OpenMCT instance.
+   * @param {Object} StalenessProvider - The StalenessProvider instance.
+   */
+  constructor(openmct, StalenessProvider) {
+    this.openmct = openmct;
+    this.workerInterface = new WorkerInterface(openmct, StalenessProvider);
+  }
+
+  /**
+   * Checks if telemetry can be provided for the given domain object.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @returns {boolean} True if the provider can provide telemetry, false otherwise.
+   */
+  canProvideTelemetry(domainObject) {
+    return domainObject.type === 'generator';
+  }
+
+  /**
+   * Supports request for telemetry data.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @returns {boolean} True if supports requests, false otherwise.
+   */
+  supportsRequest(domainObject) {
+    return this.canProvideTelemetry(domainObject);
+  }
+
+  /**
+   * Supports subscription for telemetry data.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @returns {boolean} True if supports subscriptions, false otherwise.
+   */
+  supportsSubscribe(domainObject) {
+    return this.canProvideTelemetry(domainObject);
+  }
+
+  /**
+   * Creates a worker request based on domain object and request options.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @param {Object} request - Request options.
+   * @returns {Object} The worker request.
+   */
+  makeWorkerRequest(domainObject, request) {
+    const props = [
+      'amplitude',
+      'period',
+      'offset',
+      'dataRateInHz',
+      'randomness',
+      'phase',
+      'loadDelay',
+      'infinityValues',
+      'exceedFloat32'
+    ];
+
+    request = request || {};
+    const workerRequest = {};
+
+    props.forEach(function processProp(prop) {
+      if (
+        domainObject.telemetry &&
+        Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)
+      ) {
+        workerRequest[prop] = domainObject.telemetry[prop];
+      }
+
+      if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
+        workerRequest[prop] = request[prop];
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
+        workerRequest[prop] = REQUEST_DEFAULTS[prop];
+      }
+
+      workerRequest[prop] = Number(workerRequest[prop]);
+    });
+
+    workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    workerRequest.name = domainObject.name;
+
+    return workerRequest;
+  }
+
+  /**
+   * Requests telemetry data for a domain object.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @param {Object} request - Request options.
+   * @returns {Promise} Promise that resolves with the requested telemetry data.
+   */
+  request(domainObject, request) {
+    const workerRequest = this.makeWorkerRequest(domainObject, request);
+    workerRequest.start = request.start;
+    workerRequest.end = request.end;
+
+    return this.workerInterface.request(workerRequest);
+  }
+
+  /**
+   * Subscribes to telemetry data updates for a domain object.
+   *
+   * @param {Object} domainObject - The domain object.
+   * @param {Function} callback - Callback to handle the telemetry data updates.
+   * @returns {Function} A function to unsubscribe from the data updates.
+   */
+  subscribe(domainObject, callback) {
+    const workerRequest = this.makeWorkerRequest(domainObject, {});
+
+    return this.workerInterface.subscribe(workerRequest, callback);
+  }
 }
 
-GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
-  return domainObject.type === 'generator';
-};
-
-GeneratorProvider.prototype.supportsRequest = GeneratorProvider.prototype.supportsSubscribe =
-  GeneratorProvider.prototype.canProvideTelemetry;
-
-GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
-  var props = [
-    'amplitude',
-    'period',
-    'offset',
-    'dataRateInHz',
-    'randomness',
-    'phase',
-    'loadDelay',
-    'infinityValues',
-    'exceedFloat32'
-  ];
-
-  request = request || {};
-
-  var workerRequest = {};
-
-  props.forEach(function (prop) {
-    if (
-      domainObject.telemetry &&
-      Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)
-    ) {
-      workerRequest[prop] = domainObject.telemetry[prop];
-    }
-
-    if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
-      workerRequest[prop] = request[prop];
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
-      workerRequest[prop] = REQUEST_DEFAULTS[prop];
-    }
-
-    workerRequest[prop] = Number(workerRequest[prop]);
-  });
-
-  workerRequest.id = this.openmct.objects.makeKeyString(domainObject.identifier);
-  workerRequest.name = domainObject.name;
-
-  return workerRequest;
-};
-
-GeneratorProvider.prototype.request = function (domainObject, request) {
-  var workerRequest = this.makeWorkerRequest(domainObject, request);
-  workerRequest.start = request.start;
-  workerRequest.end = request.end;
-
-  return this.workerInterface.request(workerRequest);
-};
-
-GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-  var workerRequest = this.makeWorkerRequest(domainObject, {});
-
-  return this.workerInterface.subscribe(workerRequest, callback);
-};
+export default GeneratorProvider;

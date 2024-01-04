@@ -20,6 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Module exports a function to install custom types in OpenMCT.
+ *
+ * @module example-imagery-plugin
+ */
+
 const DEFAULT_IMAGE_SAMPLES = [
   'https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg',
   'https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg',
@@ -45,8 +51,14 @@ const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;
 
 let openmctInstance;
 
-export default function () {
-  return function install(openmct) {
+/**
+ * Installs the example imagery plugin into an OpenMCT instance.
+ *
+ * @param {Object} openmct - The OpenMCT instance.
+ * @returns {Function} Function to install the plugin.
+ */
+function installPlugin(openmct) {
+  return function install() {
     openmctInstance = openmct;
     openmct.types.addType('example.imagery', {
       key: 'example.imagery',
@@ -55,7 +67,7 @@ export default function () {
       description:
         'For development use. Creates example imagery data that mimics a live imagery stream.',
       creatable: true,
-      initialize: (object) => {
+      initialize: function initializeObject(object) {
         object.configuration = {
           imageLocation: '',
           imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS,
@@ -147,25 +159,35 @@ export default function () {
     });
 
     const formatThumbnail = {
-      format: function (url) {
+      format: function formatUrl(url) {
         return `${url}?w=100&h=100`;
       }
     };
 
-    openmct.telemetry.addFormat({
-      key: 'thumbnail',
-      ...formatThumbnail
-    });
+    openmct.telemetry.addFormat({ key: 'thumbnail', ...formatThumbnail });
     openmct.telemetry.addProvider(getRealtimeProvider(openmct));
     openmct.telemetry.addProvider(getHistoricalProvider(openmct));
     openmct.telemetry.addProvider(getLadProvider(openmct));
   };
 }
 
+/**
+ * Generates a random value between min and max.
+ *
+ * @param {number} min - Minimum value.
+ * @param {number} max - Maximum value.
+ * @returns {number} A random number between min and max.
+ */
 function getCompassValues(min, max) {
   return min + Math.random() * (max - min);
 }
 
+/**
+ * Retrieves image samples from the configuration.
+ *
+ * @param {Object} configuration - The configuration object.
+ * @returns {Array<string>} Array of image sample URLs.
+ */
 function getImageSamples(configuration) {
   let imageSamples = DEFAULT_IMAGE_SAMPLES;
 
@@ -176,14 +198,27 @@ function getImageSamples(configuration) {
   return imageSamples;
 }
 
+/**
+ * Splits a comma-separated list of image URLs from configuration.
+ *
+ * @param {Object} configuration - The configuration object.
+ * @returns {Array<string>} Array of image URLs.
+ */
 function getImageUrlListFromConfig(configuration) {
   return configuration.imageLocation.split(',');
 }
 
+/**
+ * Determines the image load delay for a domain object.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {number} The determined image load delay in milliseconds.
+ */
 function getImageLoadDelay(domainObject) {
   const imageLoadDelay = Math.trunc(
     Number(domainObject.configuration.imageLoadDelayInMilliSeconds)
   );
+
   if (!imageLoadDelay) {
     openmctInstance.objects.mutate(
       domainObject,
@@ -207,35 +242,50 @@ function getImageLoadDelay(domainObject) {
   return imageLoadDelay;
 }
 
+/**
+ * Provides a realtime telemetry data stream.
+ *
+ * @param {Object} openmct - The OpenMCT instance.
+ * @returns {Object} The realtime provider object.
+ */
 function getRealtimeProvider(openmct) {
   return {
-    supportsSubscribe: (domainObject) => domainObject.type === 'example.imagery',
-    subscribe: (domainObject, callback) => {
+    supportsSubscribe: function supportsSubscribe(domainObject) {
+      return domainObject.type === 'example.imagery';
+    },
+    subscribe: function subscribe(domainObject, callback) {
       const delay = getImageLoadDelay(domainObject);
-      const interval = setInterval(() => {
+      const interval = setInterval(function emitData() {
         const imageSamples = getImageSamples(domainObject.configuration);
         const datum = pointForTimestamp(openmct.time.now(), domainObject.name, imageSamples, delay);
         callback(datum);
       }, delay);
 
-      return () => {
+      return function unsubscribe() {
         clearInterval(interval);
       };
     }
   };
 }
 
+/**
+ * Provides historical telemetry data.
+ *
+ * @param {Object} openmct - The OpenMCT instance.
+ * @returns {Object} The historical provider object.
+ */
 function getHistoricalProvider(openmct) {
   return {
-    supportsRequest: (domainObject, options) => {
+    supportsRequest: function supportsRequest(domainObject, options) {
       return domainObject.type === 'example.imagery' && options.strategy !== 'latest';
     },
-    request: (domainObject, options) => {
+    request: function request(domainObject, options) {
       const delay = getImageLoadDelay(domainObject);
       let start = options.start;
       const end = Math.min(options.end, openmct.time.now());
       const data = [];
-      while (start <= end && data.length < delay) {
+
+      while (start <= end) {
         const imageSamples = getImageSamples(domainObject.configuration);
         const generatedDataPoint = pointForTimestamp(start, domainObject.name, imageSamples, delay);
         data.push(generatedDataPoint);
@@ -247,12 +297,18 @@ function getHistoricalProvider(openmct) {
   };
 }
 
+/**
+ * Provides the latest available data (LAD).
+ *
+ * @param {Object} openmct - The OpenMCT instance.
+ * @returns {Object} The LAD provider object.
+ */
 function getLadProvider(openmct) {
   return {
-    supportsRequest: (domainObject, options) => {
+    supportsRequest: function supportsRequest(domainObject, options) {
       return domainObject.type === 'example.imagery' && options.strategy === 'latest';
     },
-    request: (domainObject, options) => {
+    request: function request(domainObject, options) {
       const delay = getImageLoadDelay(domainObject);
       const datum = pointForTimestamp(
         openmct.time.now(),
@@ -266,6 +322,15 @@ function getLadProvider(openmct) {
   };
 }
 
+/**
+ * Generates a telemetry point for a given timestamp.
+ *
+ * @param {number} timestamp - The timestamp for the telemetry point.
+ * @param {string} name - The name of the telemetry point.
+ * @param {Array<string>} imageSamples - Array of image sample URLs.
+ * @param {number} delay - The delay between telemetry points.
+ * @returns {Object} The telemetry point.
+ */
 function pointForTimestamp(timestamp, name, imageSamples, delay) {
   const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
   const urlItems = url.split('/');
@@ -290,3 +355,5 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     imageDownloadName
   };
 }
+
+export default installPlugin;

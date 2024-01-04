@@ -20,25 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function DOMObserver(element) {
-  this.element = element;
-  this.observers = [];
-}
+/**
+ * DOMObserver class for observing changes in the DOM.
+ */
+class DOMObserver {
+  /**
+   * Create a DOMObserver instance.
+   * @param {Element} element - The DOM element to observe.
+   */
+  constructor(element) {
+    this.element = element;
+    this.observers = [];
+  }
 
-DOMObserver.prototype.when = function (latchFunction) {
-  return new Promise(
-    function (resolve, reject) {
-      //Test latch function at least once
+  /**
+   * Wait until the latch function returns true.
+   * @param {Function} latchFunction - The function to test for latch condition.
+   * @returns {Promise} A promise that resolves when the latch condition is true.
+   */
+  when(latchFunction) {
+    return new Promise((resolve, reject) => {
+      // Test latch function at least once
       if (latchFunction()) {
         resolve();
       } else {
-        //Latch condition not true yet, create observer on DOM and test again on change.
+        // Latch condition not true yet, create observer on DOM and test again on change.
         const config = {
           attributes: true,
           childList: true,
           subtree: true
         };
-        const observer = new MutationObserver(function () {
+        const observer = new MutationObserver(() => {
           if (latchFunction()) {
             resolve();
           }
@@ -46,14 +58,17 @@ DOMObserver.prototype.when = function (latchFunction) {
         observer.observe(this.element, config);
         this.observers.push(observer);
       }
-    }.bind(this)
-  );
-};
+    });
+  }
 
-DOMObserver.prototype.destroy = function () {
-  this.observers.forEach(
-    function (observer) {
+  /**
+   * Destroy all the observers.
+   */
+  destroy() {
+    this.observers.forEach((observer) => {
       observer.disconnect();
-    }.bind(this)
-  );
-};
+    });
+  }
+}
+
+export default DOMObserver;

@@ -26,96 +26,97 @@ import AutoflowTabularRowController from './AutoflowTabularRowController.js';
  * Controller for an Autoflow Tabular View. Subscribes to telemetry
  * associated with children of the domain object and passes that
  * information on to the view.
- *
- * @param {DomainObject} domainObject the object being viewed
- * @param {*} data the view data
- * @param openmct a reference to the openmct application
  */
-export default function AutoflowTabularController(domainObject, data, openmct) {
-  this.composition = openmct.composition.get(domainObject);
-  this.data = data;
-  this.openmct = openmct;
+class AutoflowTabularController {
+  /**
+   * Initialize the AutoflowTabularController.
+   * @param {DomainObject} domainObject - The object being viewed.
+   * @param {*} data - The view data.
+   * @param {*} openmct - A reference to the OpenMCT application.
+   */
+  constructor(domainObject, data, openmct) {
+    this.composition = openmct.composition.get(domainObject);
+    this.data = data;
+    this.openmct = openmct;
 
-  this.rows = {};
-  this.controllers = {};
+    this.rows = {};
+    this.controllers = {};
 
-  this.addRow = this.addRow.bind(this);
-  this.removeRow = this.removeRow.bind(this);
+    this.addRow = this.addRow.bind(this);
+    this.removeRow = this.removeRow.bind(this);
+  }
+
+  /**
+   * Set the "Last Updated" value to be displayed.
+   * @param {String} value - The value to display.
+   * @private
+   */
+  trackLastUpdated(value) {
+    this.data.updated = value;
+  }
+
+  /**
+   * Respond to an `add` event from composition by adding a new row.
+   * @param {Object} childObject - The child domain object to add.
+   * @private
+   */
+  addRow(childObject) {
+    const identifier = childObject.identifier;
+    const id = [identifier.namespace, identifier.key].join(':');
+
+    if (!this.rows[id]) {
+      this.rows[id] = {
+        classes: '',
+        name: childObject.name,
+        value: undefined
+      };
+      this.controllers[id] = new AutoflowTabularRowController(
+        childObject,
+        this.rows[id],
+        this.openmct,
+        this.trackLastUpdated.bind(this)
+      );
+      this.controllers[id].activate();
+      this.data.items.push(this.rows[id]);
+    }
+  }
+
+  /**
+   * Respond to a `remove` event from composition by removing any related row.
+   * @param {Object} identifier - The identifier of the object to remove.
+   * @private
+   */
+  removeRow(identifier) {
+    const id = [identifier.namespace, identifier.key].join(':');
+
+    if (this.rows[id]) {
+      this.data.items = this.data.items.filter((item) => item !== this.rows[id]);
+      this.controllers[id].destroy();
+      delete this.controllers[id];
+      delete this.rows[id];
+    }
+  }
+
+  /**
+   * Activate this controller; begin listening for changes.
+   */
+  activate() {
+    this.composition.on('add', this.addRow);
+    this.composition.on('remove', this.removeRow);
+    this.composition.load();
+  }
+
+  /**
+   * Destroy this controller; detach any associated resources.
+   */
+  destroy() {
+    Object.keys(this.controllers).forEach((id) => {
+      this.controllers[id].destroy();
+    });
+    this.controllers = {};
+    this.composition.off('add', this.addRow);
+    this.composition.off('remove', this.removeRow);
+  }
 }
 
-/**
- * Set the "Last Updated" value to be displayed.
- * @param {String} value the value to display
- * @private
- */
-AutoflowTabularController.prototype.trackLastUpdated = function (value) {
-  this.data.updated = value;
-};
-
-/**
- * Respond to an `add` event from composition by adding a new row.
- * @private
- */
-AutoflowTabularController.prototype.addRow = function (childObject) {
-  const identifier = childObject.identifier;
-  const id = [identifier.namespace, identifier.key].join(':');
-
-  if (!this.rows[id]) {
-    this.rows[id] = {
-      classes: '',
-      name: childObject.name,
-      value: undefined
-    };
-    this.controllers[id] = new AutoflowTabularRowController(
-      childObject,
-      this.rows[id],
-      this.openmct,
-      this.trackLastUpdated.bind(this)
-    );
-    this.controllers[id].activate();
-    this.data.items.push(this.rows[id]);
-  }
-};
-
-/**
- * Respond to an `remove` event from composition by removing any
- * related row.
- * @private
- */
-AutoflowTabularController.prototype.removeRow = function (identifier) {
-  const id = [identifier.namespace, identifier.key].join(':');
-
-  if (this.rows[id]) {
-    this.data.items = this.data.items.filter(
-      function (item) {
-        return item !== this.rows[id];
-      }.bind(this)
-    );
-    this.controllers[id].destroy();
-    delete this.controllers[id];
-    delete this.rows[id];
-  }
-};
-
-/**
- * Activate this controller; begin listening for changes.
- */
-AutoflowTabularController.prototype.activate = function () {
-  this.composition.on('add', this.addRow);
-  this.composition.on('remove', this.removeRow);
-  this.composition.load();
-};
-
-/**
- * Destroy this controller; detach any associated resources.
- */
-AutoflowTabularController.prototype.destroy = function () {
-  Object.keys(this.controllers).forEach(
-    function (id) {
-      this.controllers[id].destroy();
-    }.bind(this)
-  );
-  this.controllers = {};
-  this.composition.off('add', this.addRow);
-  this.composition.off('remove', this.removeRow);
-};
+export default AutoflowTabularController;

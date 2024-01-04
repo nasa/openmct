@@ -36,6 +36,13 @@ function EvaluatorPool(openmct) {
   this.byEvaluator = new WeakMap();
 }
 
+/**
+ * Get the evaluator for the given domain object.
+ * If the evaluator does not exist in the pool, create a new one.
+ *
+ * @param {Object} domainObject - The domain object.
+ * @returns {SummaryWidgetEvaluator} The evaluator for the domain object.
+ */
 EvaluatorPool.prototype.get = function (domainObject) {
   const objectId = objectUtils.makeKeyString(domainObject.identifier);
   let poolEntry = this.byObjectId[objectId];
@@ -54,6 +61,11 @@ EvaluatorPool.prototype.get = function (domainObject) {
   return poolEntry.evaluator;
 };
 
+/**
+ * Release the evaluator and remove it from the pool if no longer in use.
+ *
+ * @param {SummaryWidgetEvaluator} evaluator - The evaluator to release.
+ */
 EvaluatorPool.prototype.release = function (evaluator) {
   const poolEntry = this.byEvaluator.get(evaluator);
   poolEntry.leases -= 1;

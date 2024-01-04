@@ -23,9 +23,16 @@
 /**
  * Policy determining which views can apply to summary widget.  Disables
  * any view other than normal summary widget view.
+ * @constructor
  */
-export default function SummaryWidgetViewPolicy() {}
+function SummaryWidgetViewPolicy() {}
 
+/**
+ * Determines whether a view is allowed for a given domain object.
+ * @param {View} view - The view to check.
+ * @param {DomainObject} domainObject - The domain object to check against.
+ * @returns {boolean} - True if the view is allowed, false otherwise.
+ */
 SummaryWidgetViewPolicy.prototype.allow = function (view, domainObject) {
   if (domainObject.getModel().type === 'summary-widget') {
     return view.key === 'summary-widget-viewer';
@@ -33,3 +40,5 @@ SummaryWidgetViewPolicy.prototype.allow = function (view, domainObject) {
 
   return true;
 };
+
+export default SummaryWidgetViewPolicy;

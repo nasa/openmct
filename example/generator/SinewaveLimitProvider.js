@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-var PURPLE = {
+const PURPLE = {
     sin: 2.2,
     cos: 2.2
   },
@@ -67,96 +67,119 @@ var PURPLE = {
     }
   };
 
-export default function SinewaveLimitProvider() {}
+/**
+ * SinewaveLimitProvider class provides limit evaluation for sinewave data.
+ */
+class SinewaveLimitProvider {
+  /**
+   * Determines if the SinewaveLimitProvider supports limits for the given domain object.
+   *
+   * @param {Object} domainObject - The domain object to check.
+   * @returns {boolean} True if supports limits, false otherwise.
+   */
+  supportsLimits(domainObject) {
+    return domainObject.type === 'generator';
+  }
 
-SinewaveLimitProvider.prototype.supportsLimits = function (domainObject) {
-  return domainObject.type === 'generator';
-};
+  /**
+   * Provides a limit evaluator for the given domain object.
+   *
+   * @param {Object} domainObject - The domain object to get the limit evaluator for.
+   * @returns {Object} The limit evaluator.
+   */
+  getLimitEvaluator(domainObject) {
+    return {
+      evaluate: function evaluate(datum, valueMetadata) {
+        var range = valueMetadata && valueMetadata.key;
 
-SinewaveLimitProvider.prototype.getLimitEvaluator = function (domainObject) {
-  return {
-    evaluate: function (datum, valueMetadata) {
-      var range = valueMetadata && valueMetadata.key;
-
-      if (datum[range] > RED[range]) {
-        return LIMITS.rh;
-      }
-
-      if (datum[range] < -RED[range]) {
-        return LIMITS.rl;
-      }
-
-      if (datum[range] > YELLOW[range]) {
-        return LIMITS.yh;
-      }
-
-      if (datum[range] < -YELLOW[range]) {
-        return LIMITS.yl;
-      }
-    }
-  };
-};
-
-SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
-  return {
-    limits: function () {
-      return Promise.resolve({
-        WATCH: {
-          low: {
-            color: 'cyan',
-            sin: -CYAN.sin,
-            cos: -CYAN.cos
-          },
-          high: {
-            color: 'cyan',
-            ...CYAN
-          }
-        },
-        WARNING: {
-          low: {
-            color: 'yellow',
-            sin: -YELLOW.sin,
-            cos: -YELLOW.cos
-          },
-          high: {
-            color: 'yellow',
-            ...YELLOW
-          }
-        },
-        DISTRESS: {
-          low: {
-            color: 'orange',
-            sin: -ORANGE.sin,
-            cos: -ORANGE.cos
-          },
-          high: {
-            color: 'orange',
-            ...ORANGE
-          }
-        },
-        CRITICAL: {
-          low: {
-            color: 'red',
-            sin: -RED.sin,
-            cos: -RED.cos
-          },
-          high: {
-            color: 'red',
-            ...RED
-          }
-        },
-        SEVERE: {
-          low: {
-            color: 'purple',
-            sin: -PURPLE.sin,
-            cos: -PURPLE.cos
-          },
-          high: {
-            color: 'purple',
-            ...PURPLE
-          }
+        if (datum[range] > RED[range]) {
+          return LIMITS.rh;
         }
-      });
-    }
-  };
-};
+
+        if (datum[range] < -RED[range]) {
+          return LIMITS.rl;
+        }
+
+        if (datum[range] > YELLOW[range]) {
+          return LIMITS.yh;
+        }
+
+        if (datum[range] < -YELLOW[range]) {
+          return LIMITS.yl;
+        }
+      }
+    };
+  }
+
+  /**
+   * Retrieves the limits for the given domain object.
+   *
+   * @param {Object} domainObject - The domain object to get limits for.
+   * @returns {Object} The limits.
+   */
+  getLimits(domainObject) {
+    return {
+      limits: function limits() {
+        return Promise.resolve({
+          WATCH: {
+            low: {
+              color: 'cyan',
+              sin: -CYAN.sin,
+              cos: -CYAN.cos
+            },
+            high: {
+              color: 'cyan',
+              ...CYAN
+            }
+          },
+          WARNING: {
+            low: {
+              color: 'yellow',
+              sin: -YELLOW.sin,
+              cos: -YELLOW.cos
+            },
+            high: {
+              color: 'yellow',
+              ...YELLOW
+            }
+          },
+          DISTRESS: {
+            low: {
+              color: 'orange',
+              sin: -ORANGE.sin,
+              cos: -ORANGE.cos
+            },
+            high: {
+              color: 'orange',
+              ...ORANGE
+            }
+          },
+          CRITICAL: {
+            low: {
+              color: 'red',
+              sin: -RED.sin,
+              cos: -RED.cos
+            },
+            high: {
+              color: 'red',
+              ...RED
+            }
+          },
+          SEVERE: {
+            low: {
+              color: 'purple',
+              sin: -PURPLE.sin,
+              cos: -PURPLE.cos
+            },
+            high: {
+              color: 'purple',
+              ...PURPLE
+            }
+          }
+        });
+      }
+    };
+  }
+}
+
+export default SinewaveLimitProvider;

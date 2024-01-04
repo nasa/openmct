@@ -1,5 +1,7 @@
 import Select from './Select.js';
 
+const NULLVALUE = '- Select Field -';
+
 /**
  * Create a {Select} element whose composition is dynamically updated with
  * the telemetry fields of a particular domain object
@@ -14,8 +16,6 @@ import Select from './Select.js';
  * @param {function} changeCallback A change event callback to register with this
  *                                  select on initialization
  */
-const NULLVALUE = '- Select Field -';
-
 function KeySelect(config, objectSelect, manager, changeCallback) {
   const self = this;
 

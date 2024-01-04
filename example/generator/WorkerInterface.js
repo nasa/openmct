@@ -22,84 +22,134 @@
 
 import { v4 as uuid } from 'uuid';
 
-export default function WorkerInterface(openmct, StalenessProvider) {
-  // eslint-disable-next-line no-undef
-  const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
-  this.StalenessProvider = StalenessProvider;
-  this.worker = new Worker(workerUrl);
-  this.worker.onmessage = this.onMessage.bind(this);
-  this.callbacks = {};
-  this.staleTelemetryIds = {};
+/**
+ * WorkerInterface class manages communication with web workers.
+ */
+class WorkerInterface {
+  /**
+   * Creates an instance of WorkerInterface.
+   *
+   * @param {Object} openmct - The OpenMCT instance.
+   * @param {Object} StalenessProvider - The StalenessProvider instance.
+   */
+  constructor(openmct, StalenessProvider) {
+    // eslint-disable-next-line no-undef
+    const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
+    this.StalenessProvider = StalenessProvider;
+    this.worker = new Worker(workerUrl);
+    this.worker.onmessage = this.onMessage.bind(this);
+    this.callbacks = {};
+    this.staleTelemetryIds = {};
 
-  this.watchStaleness();
+    this.watchStaleness();
+  }
+
+  /**
+   * Watches for staleness events and updates the stale telemetry IDs.
+   */
+  watchStaleness() {
+    this.StalenessProvider.on(
+      'stalenessEvent',
+      function handleStalenessEvent({ id, isStale }) {
+        this.staleTelemetryIds[id] = isStale;
+      }.bind(this)
+    );
+  }
+
+  /**
+   * Handles messages received from the worker.
+   *
+   * @param {Object} message - The message received from the worker.
+   */
+  onMessage(message) {
+    message = message.data;
+    const callback = this.callbacks[message.id];
+    if (callback) {
+      callback(message);
+    }
+  }
+
+  /**
+   * Dispatches a message to the worker.
+   *
+   * @param {string} request - The request type.
+   * @param {Object} data - The data to send.
+   * @param {Function} [callback] - The callback function.
+   * @returns {string} The message ID.
+   */
+  dispatch(request, data, callback) {
+    const message = {
+      request: request,
+      data: data,
+      id: uuid()
+    };
+
+    if (callback) {
+      this.callbacks[message.id] = callback;
+    }
+
+    this.worker.postMessage(message);
+
+    return message.id;
+  }
+
+  /**
+   * Sends a request to the worker and returns a promise.
+   *
+   * @param {Object} request - The request object.
+   * @returns {Promise} A promise that resolves or rejects based on the worker response.
+   */
+  request(request) {
+    const deferred = {};
+    const promise = new Promise(function handlePromise(resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
+    let messageId;
+
+    const callback = function callback(message) {
+      if (message.error) {
+        deferred.reject(message.error);
+      } else {
+        deferred.resolve(message.data);
+      }
+
+      delete this.callbacks[messageId];
+    }.bind(this);
+
+    messageId = this.dispatch('request', request, callback);
+
+    return promise;
+  }
+
+  /**
+   * Subscribes to data updates from the worker.
+   *
+   * @param {Object} request - The subscription request.
+   * @param {Function} cb - The callback to handle data updates.
+   * @returns {Function} Unsubscribe function.
+   */
+  subscribe(request, cb) {
+    const { id, loadDelay } = request;
+    const messageId = this.dispatch(
+      'subscribe',
+      request,
+      function handleSubscription(message) {
+        if (!this.staleTelemetryIds[id]) {
+          setTimeout(function emitData() {
+            cb(message.data);
+          }, Math.max(loadDelay, 0));
+        }
+      }.bind(this)
+    );
+
+    return function unsubscribe() {
+      this.dispatch('unsubscribe', {
+        id: messageId
+      });
+      delete this.callbacks[messageId];
+    }.bind(this);
+  }
 }
 
-WorkerInterface.prototype.watchStaleness = function () {
-  this.StalenessProvider.on('stalenessEvent', ({ id, isStale }) => {
-    this.staleTelemetryIds[id] = isStale;
-  });
-};
-
-WorkerInterface.prototype.onMessage = function (message) {
-  message = message.data;
-  var callback = this.callbacks[message.id];
-  if (callback) {
-    callback(message);
-  }
-};
-
-WorkerInterface.prototype.dispatch = function (request, data, callback) {
-  var message = {
-    request: request,
-    data: data,
-    id: uuid()
-  };
-
-  if (callback) {
-    this.callbacks[message.id] = callback;
-  }
-
-  this.worker.postMessage(message);
-
-  return message.id;
-};
-
-WorkerInterface.prototype.request = function (request) {
-  var deferred = {};
-  var promise = new Promise(function (resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  var messageId;
-
-  let self = this;
-  function callback(message) {
-    if (message.error) {
-      deferred.reject(message.error);
-    } else {
-      deferred.resolve(message.data);
-    }
-
-    delete self.callbacks[messageId];
-  }
-
-  messageId = this.dispatch('request', request, callback.bind(this));
-
-  return promise;
-};
-
-WorkerInterface.prototype.subscribe = function (request, cb) {
-  const { id, loadDelay } = request;
-  const messageId = this.dispatch('subscribe', request, (message) => {
-    if (!this.staleTelemetryIds[id]) {
-      setTimeout(() => cb(message.data), Math.max(loadDelay, 0));
-    }
-  });
-
-  return function () {
-    this.dispatch('unsubscribe', {
-      id: messageId
-    });
-    delete this.callbacks[messageId];
-  }.bind(this);
-};
+export default WorkerInterface;

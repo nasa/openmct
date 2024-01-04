@@ -19,12 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-// Set of connection states; changing among these states will be
-// reflected in the indicator's appearance.
-// CONNECTED: Everything nominal, expect to be able to read/write.
-// DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
-// PENDING: Still trying to connect, and haven't failed yet.
+// Set of connection states
 const CONNECTED = {
   statusClass: 's-status-on'
 };
@@ -34,78 +29,108 @@ const PENDING = {
 const DISCONNECTED = {
   statusClass: 's-status-warning-hi'
 };
-export default function URLIndicator(options, simpleIndicator) {
-  this.bindMethods();
-  this.count = 0;
 
-  this.indicator = simpleIndicator;
-  this.setDefaultsFromOptions(options);
-  this.setIndicatorToState(PENDING);
+/**
+ * URLIndicator class for monitoring and displaying the connection status of a URL.
+ */
+class URLIndicator {
+  /**
+   * Create a URLIndicator.
+   * @param {Object} options - Configuration options for the URLIndicator.
+   * @param {Object} simpleIndicator - The indicator object used for display.
+   */
+  constructor(options, simpleIndicator) {
+    this.bindMethods();
+    this.count = 0;
 
-  this.fetchUrl();
-  setInterval(this.fetchUrl, this.interval);
-}
+    this.indicator = simpleIndicator;
+    this.setDefaultsFromOptions(options);
+    this.setIndicatorToState(PENDING);
 
-URLIndicator.prototype.setIndicatorToState = function (state) {
-  switch (state) {
-    case CONNECTED: {
-      this.indicator.text(this.label + ' is connected');
-      this.indicator.description(
-        this.label + ' is online, checking status every ' + this.interval + ' milliseconds.'
-      );
-      break;
-    }
-
-    case PENDING: {
-      this.indicator.text('Checking status of ' + this.label + ' please stand by...');
-      this.indicator.description('Checking status of ' + this.label + ' please stand by...');
-      break;
-    }
-
-    case DISCONNECTED: {
-      this.indicator.text(this.label + ' is offline');
-      this.indicator.description(
-        this.label + ' is offline, checking status every ' + this.interval + ' milliseconds'
-      );
-      break;
-    }
+    this.fetchUrl();
+    setInterval(this.fetchUrl, this.interval);
   }
 
-  this.indicator.statusClass(state.statusClass);
-};
+  /**
+   * Binds methods to the instance context.
+   */
+  bindMethods() {
+    this.fetchUrl = this.fetchUrl.bind(this);
+    this.handleSuccess = this.handleSuccess.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.setIndicatorToState = this.setIndicatorToState.bind(this);
+  }
 
-URLIndicator.prototype.fetchUrl = function () {
-  fetch(this.URLpath)
-    .then((response) => {
-      if (response.ok) {
-        this.handleSuccess();
-      } else {
+  /**
+   * Sets the indicator to a specified state.
+   * @param {Object} state - The state to set the indicator to.
+   */
+  setIndicatorToState(state) {
+    switch (state) {
+      case CONNECTED:
+        this.indicator.text(this.label + ' is connected');
+        this.indicator.description(
+          this.label + ' is online, checking status every ' + this.interval + ' milliseconds.'
+        );
+        break;
+
+      case PENDING:
+        this.indicator.text('Checking status of ' + this.label + ' please stand by...');
+        this.indicator.description('Checking status of ' + this.label + ' please stand by...');
+        break;
+
+      case DISCONNECTED:
+        this.indicator.text(this.label + ' is offline');
+        this.indicator.description(
+          this.label + ' is offline, checking status every ' + this.interval + ' milliseconds'
+        );
+        break;
+    }
+
+    this.indicator.statusClass(state.statusClass);
+  }
+
+  /**
+   * Fetches the URL and sets the indicator state based on the response.
+   */
+  fetchUrl() {
+    fetch(this.URLpath)
+      .then((response) => {
+        if (response.ok) {
+          this.handleSuccess();
+        } else {
+          this.handleError();
+        }
+      })
+      .catch(() => {
         this.handleError();
-      }
-    })
-    .catch((error) => {
-      this.handleError();
-    });
-};
+      });
+  }
 
-URLIndicator.prototype.handleError = function (e) {
-  this.setIndicatorToState(DISCONNECTED);
-};
+  /**
+   * Handles errors in fetching the URL.
+   */
+  handleError() {
+    this.setIndicatorToState(DISCONNECTED);
+  }
 
-URLIndicator.prototype.handleSuccess = function () {
-  this.setIndicatorToState(CONNECTED);
-};
+  /**
+   * Handles successful fetching of the URL.
+   */
+  handleSuccess() {
+    this.setIndicatorToState(CONNECTED);
+  }
 
-URLIndicator.prototype.setDefaultsFromOptions = function (options) {
-  this.URLpath = options.url;
-  this.label = options.label || options.url;
-  this.interval = options.interval || 10000;
-  this.indicator.iconClass(options.iconClass || 'icon-chain-links');
-};
+  /**
+   * Sets default values from options.
+   * @param {Object} options - The options to set defaults from.
+   */
+  setDefaultsFromOptions(options) {
+    this.URLpath = options.url;
+    this.label = options.label || options.url;
+    this.interval = options.interval || 10000;
+    this.indicator.iconClass(options.iconClass || 'icon-chain-links');
+  }
+}
 
-URLIndicator.prototype.bindMethods = function () {
-  this.fetchUrl = this.fetchUrl.bind(this);
-  this.handleSuccess = this.handleSuccess.bind(this);
-  this.handleError = this.handleError.bind(this);
-  this.setIndicatorToState = this.setIndicatorToState.bind(this);
-};
+export default URLIndicator;

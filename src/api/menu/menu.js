@@ -26,7 +26,7 @@ import { h } from 'vue';
 import MenuComponent from './components/MenuComponent.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
 
-export const MENU_PLACEMENT = {
+const MENU_PLACEMENT = {
   TOP: 'top',
   TOP_LEFT: 'top-left',
   TOP_RIGHT: 'top-right',
@@ -37,7 +37,16 @@ export const MENU_PLACEMENT = {
   RIGHT: 'right'
 };
 
+/**
+ * Represents a Menu that extends EventEmitter functionality.
+ * This class provides methods to show and dismiss menus, and manages their lifecycle.
+ */
 class Menu extends EventEmitter {
+  /**
+   * Creates a Menu instance.
+   * @param {Object} options - Configuration options for the menu.
+   * @param {Function} [options.onDestroy] - Callback function for the 'destroy' event.
+   */
   constructor(options) {
     super();
 
@@ -46,12 +55,17 @@ class Menu extends EventEmitter {
       this.once('destroy', options.onDestroy);
     }
 
+    // Binding methods to ensure the correct 'this' context
     this.dismiss = this.dismiss.bind(this);
     this.show = this.show.bind(this);
     this.showMenu = this.showMenu.bind(this);
     this.showSuperMenu = this.showSuperMenu.bind(this);
   }
 
+  /**
+   * Dismisses the menu and removes the associated event listener.
+   * Emits a 'destroy' event on dismissal.
+   */
   dismiss() {
     if (this.destroy) {
       this.destroy();
@@ -61,6 +75,10 @@ class Menu extends EventEmitter {
     this.emit('destroy');
   }
 
+  /**
+   * Shows a menu using the MenuComponent.
+   * Renders the menu and sets up necessary destruction logic.
+   */
   showMenu() {
     if (this.destroy) {
       return;
@@ -80,6 +98,10 @@ class Menu extends EventEmitter {
     this.show();
   }
 
+  /**
+   * Shows a super menu using the SuperMenuComponent.
+   * Renders the super menu and sets up necessary destruction logic.
+   */
   showSuperMenu() {
     const { vNode, destroy } = mount({
       data() {
@@ -102,10 +124,13 @@ class Menu extends EventEmitter {
     this.show();
   }
 
+  /**
+   * Appends the menu element to the document body and adds an event listener for dismissal.
+   */
   show() {
     document.body.appendChild(this.el);
     document.addEventListener('click', this.dismiss);
   }
 }
 
-export default Menu;
+export { Menu, MENU_PLACEMENT };
