@@ -128,7 +128,7 @@ test.describe('Gauge', () => {
 
     // Create the gauge with defaults
     await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    await page.click('button[title="More options"]');
+    await page.click('button[title="More actions"]');
     await page.click('li[role="menuitem"]:has-text("Edit Properties")');
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
@@ -148,7 +148,7 @@ test.describe('Gauge', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, gauge.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
 
     //Edit Example Telemetry Object to include 5s loading Delay

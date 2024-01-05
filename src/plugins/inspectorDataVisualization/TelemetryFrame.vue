@@ -29,7 +29,8 @@
       </span>
       <button
         ref="menu-button"
-        title="More options"
+        title="More actions"
+        aria-label="More actions"
         class="l-browse-bar__actions c-icon-button icon-3-dots"
         @click="toggleMenu"
       ></button>

@@ -45,7 +45,7 @@ test.describe('Clear Data Action', () => {
   test('works as expected with Example Imagery', async ({ page }) => {
     await expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
     // Click the "Clear Data" menu action
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     const clearDataMenuItem = page.getByRole('menuitem', {
       name: 'Clear Data'
     });

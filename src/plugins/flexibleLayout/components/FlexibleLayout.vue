@@ -29,10 +29,11 @@
     </div>
 
     <div
-      class="c-fl__container-holder"
+      class="c-fl__container-holder u-style-receiver js-style-receiver"
       :class="{
         'c-fl--rows': rowsLayout === true
       }"
+      :aria-label="`Flexible Layout ${rowsLayout ? 'Row' : 'Column'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
         <drop-hint
