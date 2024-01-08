@@ -25,7 +25,6 @@ import { fileURLToPath } from 'url';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('User Roles', () => {
-  // verify that operator status is visible
   test('Role prompting', async ({ page }) => {
     await page.addInitScript({
       path: fileURLToPath(new URL('../../helper/addInitExampleUser.js', import.meta.url))
