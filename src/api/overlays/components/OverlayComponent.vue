@@ -34,6 +34,7 @@
         class="c-overlay__contents js-notebook-snapshot-item-wrapper"
         tabindex="0"
         aria-modal="true"
+        aria-label="Overlay"
         role="dialog"
       ></div>
       <div v-if="buttons" class="c-overlay__button-bar">
