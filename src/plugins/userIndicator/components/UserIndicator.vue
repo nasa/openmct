@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-indicator icon-person c-indicator--clickable">
-    <span class="label c-indicator__label">
+    <span class="label c-indicator__label" aria-label="User Role">
       {{ role ? `${userName}: ${role}` : userName }}
       <button v-if="availableRoles?.length > 1" @click="promptForRoleSelection">Change Role</button>
     </span>
@@ -67,15 +67,15 @@ export default {
       this.role = activeRole;
       this.availableRoles = await this.openmct.user.getPossibleRoles();
 
-      // clear role if it's not available
-      if (!this.availableRoles.includes(this.role)) {
+      // clear role if it's not in list of available roles, e.g., removed by admin
+      if (!this.availableRoles?.includes(this.role)) {
         this.role = null;
         UserAPI.setActiveRole(null);
       }
 
       // see if we need to prompt for role selection
       if (!this.role) {
-        this.promptForRoleSelection();
+        this.promptForRoleSelection(this.availableRoles);
       } else {
         // only notify the user if they have more than one role available
         if (this.availableRoles.length > 1) {
@@ -83,8 +83,10 @@ export default {
         }
       }
     },
-    async promptForRoleSelection() {
-      this.availableRoles = await this.openmct.user.getPossibleRoles();
+    async promptForRoleSelection(passedAvailableRoles) {
+      if (!passedAvailableRoles) {
+        this.availableRoles = await this.openmct.user.getPossibleRoles();
+      }
       const selectionOptions = this.availableRoles.map((role) => ({
         key: role,
         name: role
