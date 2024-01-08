@@ -74,6 +74,8 @@
             :style="getVisibleLayerStyles(layer)"
           ></div>
           <img
+            role="img"
+            aria-label="Focused Image"
             ref="focusedImage"
             class="c-imagery__main-image__image js-imageryView-image"
             :src="imageUrl"
