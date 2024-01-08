@@ -185,9 +185,13 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     //Partial match for "Science" should only return Science
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
-    await expect(page.locator('[aria-label="Search Result"]').first()).toContainText('Science');
-    await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText('Driving');
-    await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText(
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).toContainText(
+      'Science'
+    );
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).not.toContainText(
+      'Driving'
+    );
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).not.toContainText(
       'Drilling'
     );
 

@@ -188,7 +188,7 @@ test.describe('Grand Search', () => {
     // Verify that one result is found
     await expect(searchResults).toBeVisible();
     expect(await searchResults.count()).toBe(1);
-    await expect(searchResults).toHaveText(folderName);
+    await expect(searchResults).toContainText(folderName);
   });
 
   test('Search results are debounced @couchdb', async ({ page }) => {
