@@ -25,24 +25,46 @@ import { fileURLToPath } from 'url';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('User Roles', () => {
-  test.beforeEach(async ({ page }) => {
-    // FIXME: determine if plugins will be added to index.html or need to be injected
+  // verify that operator status is visible
+  test('Role prompting', async ({ page }) => {
     await page.addInitScript({
       path: fileURLToPath(new URL('../../helper/addInitExampleUser.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
 
-  // verify that operator status is visible
-  test('Role prompting', async ({ page }) => {
+    // we have multiple available roles, so it should prompt the user
     await expect(page.getByText('Select Role')).toBeVisible();
     await page.getByRole('combobox').selectOption('driver');
     await page.getByRole('button', { name: 'Select' }).click();
     await expect(page.getByLabel('User Role')).toContainText('driver');
 
+    // attempt changing the role to another valid available role
     await page.getByRole('button', { name: 'Change Role' }).click();
     await page.getByRole('combobox').selectOption('flight');
     await page.getByRole('button', { name: 'Select' }).click();
     await expect(page.getByLabel('User Role')).toContainText('flight');
+
+    // reload page
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    // should still be logged in as flight, and tell the user as much
+    await expect(page.getByLabel('User Role')).toContainText('flight');
+    await expect(page.getByText("You're logged in as role flight")).toBeVisible();
+
+    // change active role in local storage to "apple_role", a bogus role not in the list of available roles
+    await page.evaluate(() => {
+      const openmct = window.openmct;
+      openmct.user.setActiveRole('apple_role');
+    });
+
+    // reload page
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    // verify that role is prompted
+    await expect(page.getByText('Select Role')).toBeVisible();
+
+    // select real role of "driver"
+    await page.getByRole('combobox').selectOption('driver');
+    await page.getByRole('button', { name: 'Select' }).click();
+    await expect(page.getByLabel('User Role')).toContainText('driver');
   });
 });
