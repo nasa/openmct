@@ -46,13 +46,20 @@
         @start-pan="startPan"
         @toggle-layer-visibility="toggleLayerVisibility"
       />
-      <div ref="imageBG" class="c-imagery__main-image__bg">
+      <div
+        ref="imageBG"
+        class="c-imagery__main-image__bg"
+        aria-label="Background Image"
+        role="button"
+      >
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
           {{ formatImageAltText }}
         </div>
         <div
+          role="button"
           ref="focusedImageWrapper"
           class="image-wrapper"
+          aria-label="Image Wrapper"
           :style="{
             width: `${sizedImageWidth}px`,
             height: `${sizedImageHeight}px`

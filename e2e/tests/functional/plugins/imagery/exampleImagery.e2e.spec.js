@@ -477,11 +477,11 @@ test.describe('Example Imagery in Flexible layout', () => {
 
   test('Can double-click on the image to view large image', async ({ page }) => {
     // Double-click on the image to open large view
-    const imageElement = await page.waitForSelector('.image-wrapper');
+    const imageElement = await page.getByRole('button', { name: 'Image Wrapper' });
     await imageElement.dblclick();
 
     // Check if the large view is visible
-    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+    await page.getByRole('button', { name: 'Background Image', state: 'visible' });
 
     // Close the large view
     await page.getByLabel('Close').click();
