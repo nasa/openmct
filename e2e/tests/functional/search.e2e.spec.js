@@ -218,7 +218,9 @@ test.describe('Grand Search', () => {
     // 1.  batched request for latest telemetry using the bulk API
     expect(networkRequests.length).toBe(1);
 
-    await expect(page.getByRole('listbox', { name: 'Results' })).toContainText('Clock A');
+    await expect(page.locator('[aria-label="Object Search Result"]').first()).toContainText(
+      'Clock A'
+    );
   });
 
   test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
