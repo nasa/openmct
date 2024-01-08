@@ -23,8 +23,8 @@
 <template>
   <div
     class="c-gsearch-result c-gsearch-result--object"
-    aria-label="Search Result"
-    role="presentation"
+    aria-label="Object Search Result"
+    role="listitem"
   >
     <div class="c-gsearch-result__type-icon" :class="resultTypeIcon"></div>
     <div

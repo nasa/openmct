@@ -23,11 +23,11 @@
 <template>
   <div
     class="c-gsearch-result c-gsearch-result--annotation"
-    aria-label="Search Result"
-    role="presentation"
+    aria-label="Annotation Search Result"
+    role="listitem"
   >
     <div class="c-gsearch-result__type-icon" :class="resultTypeIcon"></div>
-    <div class="c-gsearch-result__body" aria-label="Annotation Search Result">
+    <div class="c-gsearch-result__body">
       <div class="c-gsearch-result__title" @click="clickedResult">
         {{ getResultName }}
       </div>
