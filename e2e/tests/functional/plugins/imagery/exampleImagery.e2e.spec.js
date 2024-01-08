@@ -25,9 +25,9 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-const { waitForAnimations } = require('../../../../baseFixtures');
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import { waitForAnimations } from '../../../../baseFixtures.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];

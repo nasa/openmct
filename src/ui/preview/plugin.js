@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PreviewAction from './PreviewAction.js';
-import ViewHistoricalDataAction from './ViewHistoricalDataAction';
+import ViewHistoricalDataAction from './ViewHistoricalDataAction.js';
 
 export default function () {
   return function (openmct) {

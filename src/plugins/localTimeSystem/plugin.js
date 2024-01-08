@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./LocalTimeSystem', './LocalTimeFormat'], function (LocalTimeSystem, LocalTimeFormat) {
-  return function () {
-    return function (openmct) {
-      openmct.time.addTimeSystem(new LocalTimeSystem());
-      openmct.telemetry.addFormat(new LocalTimeFormat());
-    };
+import LocalTimeFormat from './LocalTimeFormat.js';
+import LocalTimeSystem from './LocalTimeSystem.js';
+
+export default function () {
+  return function (openmct) {
+    openmct.time.addTimeSystem(new LocalTimeSystem());
+    openmct.telemetry.addFormat(new LocalTimeFormat());
   };
-});
+}

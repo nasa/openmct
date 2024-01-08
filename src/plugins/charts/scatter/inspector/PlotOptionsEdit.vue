@@ -65,8 +65,8 @@
   </div>
 </template>
 <script>
-import Color from '../../../../ui/color/Color';
-import ColorPalette from '../../../../ui/color/ColorPalette';
+import Color from '../../../../ui/color/Color.js';
+import ColorPalette from '../../../../ui/color/ColorPalette.js';
 import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 
 export default {

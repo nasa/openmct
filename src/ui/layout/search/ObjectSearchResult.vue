@@ -54,10 +54,10 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import identifierToString from '../../../tools/url';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import identifierToString from '../../../tools/url.js';
 import ObjectPath from '../../components/ObjectPath.vue';
-import PreviewAction from '../../preview/PreviewAction';
+import PreviewAction from '../../preview/PreviewAction.js';
 
 export default {
   name: 'ObjectSearchResult',

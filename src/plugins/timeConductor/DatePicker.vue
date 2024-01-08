@@ -78,7 +78,7 @@
 <script>
 import moment from 'moment';
 
-import toggleMixin from '../../ui/mixins/toggle-mixin';
+import toggleMixin from '../../ui/mixins/toggle-mixin.js';
 
 const TIME_NAMES = {
   hours: 'Hour',

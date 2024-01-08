@@ -23,9 +23,9 @@
 import { getOperatorText } from '@/plugins/condition/utils/operations';
 import StalenessUtils from '@/utils/staleness';
 
-import { evaluateResults } from '../utils/evaluator';
-import { checkIfOld, getLatestTimestamp } from '../utils/time';
-import TelemetryCriterion from './TelemetryCriterion';
+import { evaluateResults } from '../utils/evaluator.js';
+import { checkIfOld, getLatestTimestamp } from '../utils/time.js';
+import TelemetryCriterion from './TelemetryCriterion.js';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
   /**

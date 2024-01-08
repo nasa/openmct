@@ -22,7 +22,7 @@
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator.js';
 import CouchPlugin from './plugin.js';
 
 describe('the plugin', () => {

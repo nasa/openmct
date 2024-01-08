@@ -55,7 +55,7 @@
 
 <script>
 import AutoCompleteField from '../../../../api/forms/components/controls/AutoCompleteField.vue';
-import TagEditorClassNames from './TagEditorClassNames';
+import TagEditorClassNames from './TagEditorClassNames.js';
 
 export default {
   components: {

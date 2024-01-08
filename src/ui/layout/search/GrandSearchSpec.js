@@ -24,8 +24,8 @@ import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
-import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
+import ExampleTagsPlugin from '../../../../example/exampleTags/plugin.js';
+import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin.js';
 import GrandSearch from './GrandSearch.vue';
 
 describe('GrandSearch', () => {

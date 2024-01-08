@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import ActionCollection from './ActionCollection';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import ActionCollection from './ActionCollection.js';
 
 describe('The ActionCollection', () => {
   let openmct;

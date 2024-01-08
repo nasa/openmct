@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import HyperlinkProvider from './HyperlinkProvider';
+import HyperlinkProvider from './HyperlinkProvider.js';
 
 export default function () {
   return function install(openmct) {

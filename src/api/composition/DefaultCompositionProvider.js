@@ -21,8 +21,8 @@
  *****************************************************************************/
 import { toRaw } from 'vue';
 
-import objectUtils from '../objects/object-utils';
-import CompositionProvider from './CompositionProvider';
+import objectUtils from '../objects/object-utils.js';
+import CompositionProvider from './CompositionProvider.js';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject

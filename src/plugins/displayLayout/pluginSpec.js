@@ -23,7 +23,7 @@
 import { createOpenMct, renderWhenVisible, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import DisplayLayoutPlugin from './plugin';
+import DisplayLayoutPlugin from './plugin.js';
 
 describe('the plugin', function () {
   let element;

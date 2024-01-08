@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-const { devices } = require('@playwright/test');
+import { devices } from '@playwright/test';
 const MAX_FAILURES = 5;
 const NUM_WORKERS = 2;
 
@@ -17,7 +16,7 @@ const config = {
     command: 'npm run start:coverage',
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
-    reuseExistingServer: false
+    reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
   workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
@@ -81,4 +80,4 @@ const config = {
   ]
 };
 
-module.exports = config;
+export default config;

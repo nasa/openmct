@@ -20,39 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-Collection of Visual Tests set to run with browser clock manipulate made possible with the
-clockOptions plugin fixture.
-*/
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
-const { VISUAL_URL, MISSION_TIME } = require('../../constants');
-const { test, expect } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-
-test.describe('Visual - Controlled Clock', () => {
+test.describe('a11y - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
-  test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: false //Don't advance the clock
-    }
-  });
-
-  test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-    await page.locator('a').filter({ hasText: 'Overlay Plot with 5s Delay' }).click();
-    //Ensure that we're on the Unnamed Overlay Plot object
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
-      'Overlay Plot with 5s Delay'
-    );
-
-    //Wait for canvas to be rendered and stop animating, but plot should not be loaded. Cannot use waitForPlotsToRender
-    await page.locator('canvas >> nth=1').hover({ trial: true });
-
-    //Take snapshot of Sine Wave Generator within Overlay Plot
-    await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);
+  test('main view @a11y', async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

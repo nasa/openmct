@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CompositionCollection from './CompositionCollection';
-import DefaultCompositionProvider from './DefaultCompositionProvider';
+import CompositionCollection from './CompositionCollection.js';
+import DefaultCompositionProvider from './DefaultCompositionProvider.js';
 
 /**
  * @typedef {import('./CompositionProvider').default} CompositionProvider

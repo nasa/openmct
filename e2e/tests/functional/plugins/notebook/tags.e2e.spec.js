@@ -24,13 +24,13 @@
 This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const {
-  enterTextEntry,
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import {
   createNotebookAndEntry,
-  createNotebookEntryAndTags
-} = require('../../../../helper/notebookUtils');
+  createNotebookEntryAndTags,
+  enterTextEntry
+} from '../../../../helper/notebookUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Tagging in Notebooks @addInit', () => {
   test.beforeEach(async ({ page }) => {
@@ -167,7 +167,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can delete objects with tags and neither return in search', async ({ page }) => {
     await createNotebookEntryAndTags(page);
     // Delete Notebook
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     await page.locator('li[title="Remove this object from its containing object."]').click();
     await page.locator('button:has-text("OK")').click();
     await page.goto('./', { waitUntil: 'domcontentloaded' });

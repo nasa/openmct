@@ -1,4 +1,4 @@
-import { getDefaultNotebook, getNotebookSectionAndPage } from './notebook-storage';
+import { getDefaultNotebook, getNotebookSectionAndPage } from './notebook-storage.js';
 
 export async function getMenuItems(openmct, menuItemOptions) {
   const notebookTypes = [];

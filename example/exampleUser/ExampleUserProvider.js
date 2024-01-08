@@ -23,7 +23,7 @@
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 
-import createExampleUser from './exampleUserCreator';
+import createExampleUser from './exampleUserCreator.js';
 
 const STATUSES = [
   {

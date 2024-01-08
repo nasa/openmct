@@ -24,12 +24,13 @@
  * This test is dedicated to test notification banner functionality and its accessibility attributes.
  */
 
-const { test, expect } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
 
-test.describe("Visual - Check Notification Info Banner of 'Save successful'", () => {
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+
+test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11y", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -58,5 +59,8 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful'", ()
     // Verify there is no div with role="dialog"
     expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
     await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

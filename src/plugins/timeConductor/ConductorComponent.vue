@@ -80,7 +80,7 @@ import {
   MODES,
   REALTIME_MODE_KEY,
   TIME_CONTEXT_EVENTS
-} from '../../api/time/constants';
+} from '../../api/time/constants.js';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
@@ -88,7 +88,7 @@ import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorMode from './ConductorMode.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
-import conductorPopUpManager from './conductorPopUpManager';
+import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';

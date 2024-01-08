@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PreviewAction from './PreviewAction';
+import PreviewAction from './PreviewAction.js';
 
 export default class ViewHistoricalDataAction extends PreviewAction {
   constructor(openmct) {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryTableView from './TelemetryTableView';
+import TelemetryTableView from './TelemetryTableView.js';
 
 export default function TelemetryTableViewProvider(openmct) {
   function hasTelemetry(domainObject) {

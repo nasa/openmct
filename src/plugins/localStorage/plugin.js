@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LocalStorageObjectProvider from './LocalStorageObjectProvider';
+import LocalStorageObjectProvider from './LocalStorageObjectProvider.js';
 
 export default function (namespace = '', storageSpace = 'mct') {
   return function (openmct) {

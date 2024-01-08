@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Dialog from './Dialog';
-import Overlay from './Overlay';
-import ProgressDialog from './ProgressDialog';
-import Selection from './Selection';
+import Dialog from './Dialog.js';
+import Overlay from './Overlay.js';
+import ProgressDialog from './ProgressDialog.js';
+import Selection from './Selection.js';
 
 /**
  * The OverlayAPI is responsible for pre-pending templates to

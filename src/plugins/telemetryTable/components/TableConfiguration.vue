@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import TelemetryTableColumn from '../TelemetryTableColumn';
-import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn';
+import TelemetryTableColumn from '../TelemetryTableColumn.js';
+import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn.js';
 
 export default {
   inject: ['tableConfiguration', 'openmct'],

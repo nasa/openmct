@@ -34,7 +34,7 @@ import mount from 'utils/mount';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import PreviewAction from '@/ui/preview/PreviewAction';
 
-import imageryData from '../../imagery/mixins/imageryData';
+import imageryData from '../../imagery/mixins/imageryData.js';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;

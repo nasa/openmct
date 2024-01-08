@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleUserProvider from './ExampleUserProvider';
+import ExampleUserProvider from './ExampleUserProvider.js';
 const AUTO_LOGIN_USER = 'mct-user';
 const STATUS_ROLES = ['flight', 'driver'];
 

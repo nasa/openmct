@@ -26,7 +26,7 @@ relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions ma
 (`npm start` and ./e2e/webpack-dev-middleware.js)
 */
 
-const { test } = require('../../baseFixtures.js');
+import { test } from '../../baseFixtures.js';
 
 test.describe('baseFixtures tests', () => {
   //Skip this test for now https://github.com/nasa/openmct/issues/6785

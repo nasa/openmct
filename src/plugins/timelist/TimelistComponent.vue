@@ -35,11 +35,11 @@
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ListView from '../../ui/components/List/ListView.vue';
-import { getPreciseDuration } from '../../utils/duration';
-import { getValidatedData, getValidatedGroups } from '../plan/util';
-import { SORT_ORDER_OPTIONS } from './constants';
+import { getPreciseDuration } from '../../utils/duration.js';
+import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import { SORT_ORDER_OPTIONS } from './constants.js';
 
 const SCROLL_TIMEOUT = 10000;
 

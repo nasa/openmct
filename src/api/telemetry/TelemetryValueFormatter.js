@@ -20,39 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['lodash', 'printj'], function (_, printj) {
-  // TODO: needs reference to formatService;
-  function TelemetryValueFormatter(valueMetadata, formatMap) {
+import _ from 'lodash';
+import { sprintf } from 'printj';
+
+// TODO: needs reference to formatService;
+export default class TelemetryValueFormatter {
+  constructor(valueMetadata, formatMap) {
+    this.valueMetadata = valueMetadata;
+    this.formatMap = formatMap;
+    this.valueMetadataFormat = this.getNonArrayValue(valueMetadata.format);
+
     const numberFormatter = {
-      parse: function (x) {
-        return Number(x);
-      },
-      format: function (x) {
-        return x;
-      },
-      validate: function (x) {
-        return true;
-      }
+      parse: (x) => Number(x),
+      format: (x) => x,
+      validate: (x) => true
     };
 
-    this.valueMetadata = valueMetadata;
-
-    function getNonArrayValue(value) {
-      //metadata format could have array formats ex. string[]/number[]
-      const arrayRegex = /\[\]$/g;
-      if (value && value.match(arrayRegex)) {
-        return value.replace(arrayRegex, '');
-      }
-
-      return value;
-    }
-
-    let valueMetadataFormat = getNonArrayValue(valueMetadata.format);
-
-    //Is there an existing formatter for the format specified? If not, default to number format
-    this.formatter = formatMap.get(valueMetadataFormat) || numberFormatter;
-
-    if (valueMetadataFormat === 'enum') {
+    // Is there an existing formatter for the format specified? If not, default to number format
+    this.formatter = formatMap.get(this.valueMetadataFormat) || numberFormatter;
+    if (this.valueMetadataFormat === 'enum') {
       this.formatter = {};
       this.enumerations = valueMetadata.enumerations.reduce(
         function (vm, e) {
@@ -66,14 +52,14 @@ define(['lodash', 'printj'], function (_, printj) {
           byString: {}
         }
       );
-      this.formatter.format = function (value) {
+      this.formatter.format = (value) => {
         if (Object.prototype.hasOwnProperty.call(this.enumerations.byValue, value)) {
           return this.enumerations.byValue[value];
         }
 
         return value;
-      }.bind(this);
-      this.formatter.parse = function (string) {
+      };
+      this.formatter.parse = (string) => {
         if (typeof string === 'string') {
           if (Object.prototype.hasOwnProperty.call(this.enumerations.byString, string)) {
             return this.enumerations.byString[string];
@@ -81,19 +67,19 @@ define(['lodash', 'printj'], function (_, printj) {
         }
 
         return Number(string);
-      }.bind(this);
+      };
     }
 
     // Check for formatString support once instead of per format call.
     if (valueMetadata.formatString) {
       const baseFormat = this.formatter.format;
-      const formatString = getNonArrayValue(valueMetadata.formatString);
+      const formatString = this.getNonArrayValue(valueMetadata.formatString);
       this.formatter.format = function (value) {
-        return printj.sprintf(formatString, baseFormat.call(this, value));
+        return sprintf(formatString, baseFormat.call(this, value));
       };
     }
 
-    if (valueMetadataFormat === 'string') {
+    if (this.valueMetadataFormat === 'string') {
       this.formatter.parse = function (value) {
         if (value === undefined) {
           return '';
@@ -116,7 +102,17 @@ define(['lodash', 'printj'], function (_, printj) {
     }
   }
 
-  TelemetryValueFormatter.prototype.parse = function (datum) {
+  getNonArrayValue(value) {
+    //metadata format could have array formats ex. string[]/number[]
+    const arrayRegex = /\[\]$/g;
+    if (value && value.match(arrayRegex)) {
+      return value.replace(arrayRegex, '');
+    }
+
+    return value;
+  }
+
+  parse(datum) {
     const isDatumArray = Array.isArray(datum);
     if (_.isObject(datum)) {
       const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
@@ -130,9 +126,9 @@ define(['lodash', 'printj'], function (_, printj) {
     }
 
     return this.formatter.parse(datum);
-  };
+  }
 
-  TelemetryValueFormatter.prototype.format = function (datum) {
+  format(datum) {
     const isDatumArray = Array.isArray(datum);
     if (_.isObject(datum)) {
       const objectDatum = isDatumArray ? datum : datum[this.valueMetadata.source];
@@ -146,7 +142,5 @@ define(['lodash', 'printj'], function (_, printj) {
     }
 
     return this.formatter.format(datum);
-  };
-
-  return TelemetryValueFormatter;
-});
+  }
+}

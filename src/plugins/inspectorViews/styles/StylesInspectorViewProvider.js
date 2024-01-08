@@ -23,7 +23,7 @@
 import mount from 'utils/mount';
 
 import StylesInspectorView from './StylesInspectorView.vue';
-import stylesManager from './StylesManager';
+import stylesManager from './StylesManager.js';
 
 const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
 
@@ -46,14 +46,17 @@ export default function StylesInspectorViewProvider(openmct) {
     glyph: 'icon-paint-bucket',
     canView: function (selection) {
       const objectSelection = selection?.[0];
-      const layoutItem = objectSelection?.[0]?.context?.layoutItem;
-      const domainObject = objectSelection?.[0]?.context?.item;
+      const objectContext = objectSelection?.[0]?.context;
+      const layoutItem = objectContext?.layoutItem;
+      const domainObject = objectContext?.item;
+      const isFlexibleLayoutContainer =
+        domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
 
       if (layoutItem) {
         return true;
       }
 
-      if (!domainObject) {
+      if (!domainObject || isFlexibleLayoutContainer) {
         return false;
       }
 

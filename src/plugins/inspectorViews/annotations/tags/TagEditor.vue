@@ -49,7 +49,7 @@
 <script>
 import { toRaw } from 'vue';
 
-import TagEditorClassNames from './TagEditorClassNames';
+import TagEditorClassNames from './TagEditorClassNames.js';
 import TagSelection from './TagSelection.vue';
 
 export default {

@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
 
 const AXIS_PADDING = 20;

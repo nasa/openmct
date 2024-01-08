@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import InterceptorPlugin from './plugin';
+import InterceptorPlugin from './plugin.js';
 
 describe('the plugin', function () {
   let element;

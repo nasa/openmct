@@ -22,7 +22,7 @@
 import mount from 'utils/mount';
 
 import TableComponent from './components/TableComponent.vue';
-import TelemetryTable from './TelemetryTable';
+import TelemetryTable from './TelemetryTable.js';
 
 export default class TelemetryTableView {
   constructor(openmct, domainObject, objectPath) {

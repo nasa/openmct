@@ -26,7 +26,7 @@
 </template>
 
 <script>
-const sanitizeUrl = require('@braintree/sanitize-url').sanitizeUrl;
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export default {
   inject: ['openmct', 'domainObject'],

@@ -23,7 +23,7 @@
 import momentTimezone from 'moment-timezone';
 import mount from 'utils/mount';
 
-import ClockViewProvider from './ClockViewProvider';
+import ClockViewProvider from './ClockViewProvider.js';
 import ClockIndicator from './components/ClockIndicator.vue';
 
 export default function ClockPlugin(options) {

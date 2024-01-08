@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import LADTableConfiguration from '../LADTableConfiguration';
+import LADTableConfiguration from '../LADTableConfiguration.js';
 
 export default {
   inject: ['openmct'],

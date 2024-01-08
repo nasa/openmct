@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
-import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
+import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator.js';
+import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator.js';
 
 /**
  * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration

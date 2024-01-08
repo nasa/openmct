@@ -62,7 +62,7 @@
 <script>
 import _ from 'lodash';
 
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 
 const START_HANDLE_QUADRANTS = {
   1: 'c-frame-edit__handle--sw',

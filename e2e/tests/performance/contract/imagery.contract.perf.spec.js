@@ -32,7 +32,7 @@ TODO:
 
 */
 
-const { test, expect } = require('@playwright/test');
+import { expect, test } from '@playwright/test';
 
 const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
 

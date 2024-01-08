@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import ColorPalette from './ColorPalette';
+import ColorPalette from './ColorPalette.js';
 
 export default {
   inject: ['openmct', 'domainObject'],

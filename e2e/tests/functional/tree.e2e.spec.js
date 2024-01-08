@@ -20,11 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../pluginFixtures.js');
-const {
-  createDomainObjectWithDefaults,
-  renameObjectFromContextMenu
-} = require('../../appActions.js');
+import { createDomainObjectWithDefaults, renameObjectFromContextMenu } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Main Tree', () => {
   test.beforeEach(async ({ page }) => {

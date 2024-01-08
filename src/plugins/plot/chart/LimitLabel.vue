@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { getLimitClass } from './limitUtil';
+import { getLimitClass } from './limitUtil.js';
 
 export default {
   props: {

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer';
+import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer.js';
 export default {
   inject: ['openmct'],
   data() {
