@@ -65,11 +65,19 @@ export default {
       const UserAPI = this.openmct.user;
       const activeRole = UserAPI.getActiveRole();
       this.role = activeRole;
-      if (!activeRole) {
+      this.availableRoles = await this.openmct.user.getPossibleRoles();
+
+      // clear role if it's not available
+      if (!this.availableRoles.includes(this.role)) {
+        this.role = null;
+        UserAPI.setActiveRole(null);
+      }
+
+      // see if we need to prompt for role selection
+      if (!this.role) {
         this.promptForRoleSelection();
       } else {
         // only notify the user if they have more than one role available
-        this.availableRoles = await this.openmct.user.getPossibleRoles();
         if (this.availableRoles.length > 1) {
           this.openmct.notifications.info(`You're logged in as role ${activeRole}`);
         }
