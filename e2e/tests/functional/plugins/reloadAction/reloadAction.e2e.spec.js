@@ -19,11 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-  createDomainObjectWithDefaults,
-  expandEntireTree,
-  setRealTimeMode
-} from '../../../../appActions.js';
+import { createDomainObjectWithDefaults, expandEntireTree } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Reload action', () => {
