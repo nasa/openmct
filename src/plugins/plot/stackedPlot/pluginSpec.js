@@ -490,7 +490,7 @@ describe('the plugin', function () {
         max: 10
       });
       expect(
-        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs.mctPlot.xScale.domain()
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.xScale.domain()
       ).toEqual({
         min: 0,
         max: 10
@@ -507,8 +507,7 @@ describe('the plugin', function () {
       });
 
       const yAxesScales =
-        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs
-          .mctPlot.yScale;
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.yScale;
       yAxesScales.forEach((yAxisScale) => {
         expect(yAxisScale.scale.domain()).toEqual({
           min: 10,
@@ -523,7 +522,7 @@ describe('the plugin', function () {
       );
       let hasStyles = 0;
       conditionalStylesContainer.forEach((el) => {
-        if (el.style.backgroundColor !== '') {
+        if (el.style.backgroundColor) {
           hasStyles++;
         }
       });

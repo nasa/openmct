@@ -338,7 +338,7 @@ export class MCT extends EventEmitter {
       component.$nextTick(() => {
         this.layout = component;
         this.app = appLayout;
-        Browse(this);
+        this.browseRoutes = new Browse(this);
         window.addEventListener('beforeunload', this.destroy);
         this.router.start();
         this.emit('start');
