@@ -33,6 +33,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import objectUtils from '../../api/objects/object-utils.js';
 import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
@@ -220,12 +221,7 @@ export default {
       this.updateView(true);
     },
     reload(domainObjectToReload) {
-      console.debug(`Reloading object view for `, domainObjectToReload);
-      console.debug(`My object path is `, this.domainObject);
-
-      // should maybe check object path here instead?
-      if (domainObjectToReload === this.domainObject) {
-        console.debug(`🍎 Reloading object view for `, domainObjectToReload);
+      if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
         this.clear();
         this.updateView(true);
       }
