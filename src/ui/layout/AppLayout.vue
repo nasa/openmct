@@ -153,6 +153,9 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
+import { useIsEditing } from '../../ui/composables/editing.js';
 import ObjectView from '../components/ObjectView.vue';
 import Inspector from '../inspector/InspectorPanel.vue';
 import Toolbar from '../toolbar/ToolbarContainer.vue';
@@ -184,7 +187,14 @@ export default {
     RecentObjectsList
   },
   inject: ['openmct'],
-  data: function () {
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return {
+      isEditing
+    };
+  },
+  data() {
     let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
     let headExpanded = true;
     if (storedHeadProps) {
@@ -194,7 +204,6 @@ export default {
     return {
       fullScreen: false,
       conductorComponent: undefined,
-      isEditing: false,
       hasToolbar: false,
       actionCollection: undefined,
       triggerSync: false,
@@ -213,10 +222,6 @@ export default {
     }
   },
   mounted() {
-    this.openmct.editor.on('isEditing', (isEditing) => {
-      this.isEditing = isEditing;
-    });
-
     this.openmct.selection.on('change', this.toggleHasToolbar);
   },
   methods: {
