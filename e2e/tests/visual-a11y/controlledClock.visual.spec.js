@@ -45,7 +45,7 @@ test.describe('Visual - Controlled Clock', () => {
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await page
-      .getByRole('gridcell', { hasText: 'Overlay Plot with 5s Delay Overlay Plot ' })
+      .getByRole('gridcell', { hasText: 'Overlay Plot with 5s Delay Overlay Plot' })
       .click();
     //Ensure that we're on the Unnamed Overlay Plot object
     await expect(page.getByRole('main')).toContainText('Overlay Plot with 5s Delay');
