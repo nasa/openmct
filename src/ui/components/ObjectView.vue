@@ -219,9 +219,16 @@ export default {
       this.clear();
       this.updateView(true);
     },
-    reload() {
-      this.clear();
-      this.updateView(true);
+    reload(domainObjectToReload) {
+      console.debug(`Reloading object view for `, domainObjectToReload);
+      console.debug(`My object path is `, this.domainObject);
+
+      // should maybe check object path here instead?
+      if (domainObjectToReload === this.domainObject) {
+        console.debug(`🍎 Reloading object view for `, domainObjectToReload);
+        this.clear();
+        this.updateView(true);
+      }
     },
     triggerStalenessSubscribe(object) {
       if (this.openmct.telemetry.isTelemetryObject(object)) {

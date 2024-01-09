@@ -31,7 +31,7 @@ export default class ReloadAction {
     this.openmct = openmct;
   }
   invoke(objectPath, view) {
-    console.debug('🎨 Reloading');
-    this.openmct.objectViews.emit('reload');
+    const domainObject = objectPath[0];
+    this.openmct.objectViews.emit('reload', domainObject);
   }
 }
