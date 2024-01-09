@@ -251,6 +251,7 @@ export class MCT extends EventEmitter {
     this.install(this.plugins.FlexibleLayout());
     this.install(this.plugins.GoToOriginalAction());
     this.install(this.plugins.OpenInNewTabAction());
+    this.install(this.plugins.ReloadAction());
     this.install(this.plugins.WebPage());
     this.install(this.plugins.Condition());
     this.install(this.plugins.ConditionWidget());

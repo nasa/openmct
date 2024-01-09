@@ -184,6 +184,7 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      this.openmct.objectViews.off('reload', this.reload);
       if (this.contextActionEvent) {
         this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
       }
@@ -215,6 +216,10 @@ export default {
       this.currentView.onEditModeChange(edit);
     },
     toggleEditView(editMode) {
+      this.clear();
+      this.updateView(true);
+    },
+    reload() {
       this.clear();
       this.updateView(true);
     },
@@ -316,6 +321,7 @@ export default {
         this.domainObject.identifier
       )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on('reload', this.reload);
       this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
