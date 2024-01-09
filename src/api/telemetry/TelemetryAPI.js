@@ -55,6 +55,23 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  */
 
 /**
+ * Describes and bounds requests for telemetry data.
+ *
+ * @typedef TelemetrySubscriptionOptions
+ * @property {String} [strategy] symbolic identifier directing providers on how
+ * to handle telemetry subscriptions. The default behavior is 'latest' which will
+ * always return a single telemetry value with each callback, and in the event
+ * of throttling will always prioritize the latest data, meaning intermediate
+ * data will be skipped. Alternatively, the `batch` strategy can be used, which
+ * will return all telemetry values since the last callback. This strategy is
+ * useful for cases where intermediate data is important, such as when
+ * rendering a telemetry plot or table. If `batch` is specified, the subscription
+ * callback will be invoked with an Array.
+ *
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+/**
  * Utilities for telemetry
  * @interface TelemetryAPI
  * @memberof module:openmct
@@ -378,7 +395,7 @@ export default class TelemetryAPI {
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    * @param {module:openmct.DomainObject} domainObject the object
    *        which has associated telemetry
-   * @param {TelemetryRequestOptions} options configuration items for subscription
+   * @param {TelemetrySubscriptionOptions} options configuration items for subscription
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
    * @returns {Function} a function which may be called to terminate
@@ -389,7 +406,10 @@ export default class TelemetryAPI {
       return () => {};
     }
 
-    const provider = this.findSubscriptionProvider(domainObject);
+    // Default behavior is to use the latest strategy, as opposed to the new "batch" strategy
+    options.strategy = options.strategy || 'latest';
+
+    const provider = this.findSubscriptionProvider(domainObject, options);
 
     if (!this.subscribeCache) {
       this.subscribeCache = {};
@@ -405,11 +425,9 @@ export default class TelemetryAPI {
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          function (value) {
-            subscriber.callbacks.forEach(function (cb) {
-              cb(value);
-            });
-          },
+          options.strategy === 'batch'
+            ? subscriptionCallbackForArray
+            : subscriptionCallbackForSingleValue,
           options
         );
       } else {
@@ -417,6 +435,26 @@ export default class TelemetryAPI {
       }
     } else {
       subscriber.callbacks.push(callback);
+    }
+
+    function subscriptionCallbackForArray(value) {
+      if (!Array.isArray(value)) {
+        value = [value];
+      }
+
+      subscriber.callbacks.forEach(function (cb) {
+        cb(value);
+      });
+    }
+
+    function subscriptionCallbackForSingleValue(value) {
+      if (Array.isArray(value)) {
+        value = value[value.length - 1];
+      }
+
+      subscriber.callbacks.forEach(function (cb) {
+        cb(value);
+      });
     }
 
     return function unsubscribe() {
