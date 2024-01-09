@@ -31,6 +31,9 @@
 </template>
 
 <script>
+import { computed, inject } from 'vue';
+
+import { useIsEditing } from '../../../../ui/composables/editing';
 import PlotOptionsBrowse from './PlotOptionsBrowse.vue';
 import PlotOptionsEdit from './PlotOptionsEdit.vue';
 export default {
@@ -38,27 +41,17 @@ export default {
     PlotOptionsBrowse,
     PlotOptionsEdit
   },
-  inject: ['openmct', 'domainObject'],
-  data() {
+  setup() {
+    const openmct = inject('openmct');
+    const domainObject = inject('domainObject');
+    const { isEditing } = useIsEditing(openmct);
+    const canEdit = computed(() => {
+      return isEditing.value && !domainObject.locked;
+    });
     return {
-      isEditing: this.openmct.editor.isEditing()
+      isEditing,
+      canEdit
     };
-  },
-  computed: {
-    canEdit() {
-      return this.isEditing && !this.domainObject.locked;
-    }
-  },
-  mounted() {
-    this.openmct.editor.on('isEditing', this.setEditState);
-  },
-  beforeUnmount() {
-    this.openmct.editor.off('isEditing', this.setEditState);
-  },
-  methods: {
-    setEditState(isEditing) {
-      this.isEditing = isEditing;
-    }
   }
 };
 </script>
