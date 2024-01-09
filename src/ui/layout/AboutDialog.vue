@@ -22,7 +22,7 @@
 <template>
   <!-- eslint-disable vue/no-v-html -->
   <div class="c-about c-about--splash">
-    <div class="c-about__image c-splash-image"></div>
+    <div class="c-about__image c-splash-image" role="img" alt="Open MCT Splash Logo"></div>
     <div class="c-about__text s-text">
       <div
         v-if="branding.aboutHtml"
@@ -40,7 +40,10 @@
             Open MCT is licensed under the Apache License, Version 2.0 (the "License"); you may not
             use this file except in compliance with the License. You may obtain a copy of the
             License at
-            <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0"
+            <a
+              target="_blank"
+              href="http://www.apache.org/licenses/LICENSE-2.0"
+              rel="noopener noreferrer"
               >http://www.apache.org/licenses/LICENSE-2.0</a
             >.
           </p>
@@ -57,7 +60,7 @@
           </p>
         </div>
         <h2>Version Information</h2>
-        <ul class="t-info l-info s-info">
+        <ul data-testid="versionInfo" class="t-info l-info s-info">
           <li>Version: {{ buildInfo.version || 'Unknown' }}</li>
           <li>Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
           <li>Revision: {{ buildInfo.revision || 'Unknown' }}</li>

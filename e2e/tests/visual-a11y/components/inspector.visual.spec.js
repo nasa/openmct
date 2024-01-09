@@ -28,7 +28,7 @@ import { test } from '../../../pluginFixtures.js';
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
 
-test.describe('Visual - Controlled Clock', () => {
+test.describe('Visual - Inspector @ally', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
