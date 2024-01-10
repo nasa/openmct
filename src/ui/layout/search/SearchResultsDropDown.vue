@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,14 +21,15 @@
 -->
 
 <template>
-  <div class="c-gsearch__dropdown">
+  <div role="dialog" aria-label="Search Results Dropdown" class="c-gsearch__dropdown">
     <div v-show="resultsShown" class="c-gsearch__results-wrapper">
       <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
         <div
-          v-if="objectResults && objectResults.length"
+          v-if="objectResults?.length"
           ref="objectResults"
           class="c-gsearch__results-section"
-          role="listbox"
+          role="list"
+          aria-label="Object Results"
         >
           <div class="c-gsearch__results-section-title">Object Results</div>
           <object-search-result
@@ -39,7 +40,12 @@
             @click="selectedResult"
           />
         </div>
-        <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
+        <div
+          v-if="annotationResults?.length"
+          ref="annotationResults"
+          role="list"
+          aria-label="Annotation Results"
+        >
           <div class="c-gsearch__results-section-title">Annotation Results</div>
           <annotation-search-result
             v-for="annotationResult in annotationResults"
