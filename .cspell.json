@@ -493,7 +493,9 @@
     "gcov",
     "WCAG",
     "stackedplot",
-    "Andale"
+    "Andale",
+    "composables",
+    "composable"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
