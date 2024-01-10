@@ -67,7 +67,6 @@ const config = {
     alias: {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
-      saveAs: 'file-saver/src/FileSaver.js',
       csv: 'comma-separated-values',
       EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',
