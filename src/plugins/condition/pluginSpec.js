@@ -257,7 +257,6 @@ describe('the plugin', function () {
 
       return nextTick().then(() => {
         styleViewComponentObject = component.$refs.root;
-        styleViewComponentObject.setEditState(true);
       });
     });
 
@@ -396,7 +395,7 @@ describe('the plugin', function () {
       }
     };
 
-    beforeEach(() => {
+    beforeEach(async () => {
       displayLayoutItem = {
         composition: [],
         configuration: {
@@ -564,6 +563,7 @@ describe('the plugin', function () {
         ]
       ];
       let viewContainer = document.createElement('div');
+      openmct.editor.isEditing = jasmine.createSpy().and.returnValue(true);
       child.append(viewContainer);
       const { vNode, destroy } = mount({
         components: {
@@ -580,10 +580,8 @@ describe('the plugin', function () {
       component = vNode.componentInstance;
       _destroy = destroy;
 
-      return nextTick().then(() => {
-        styleViewComponentObject = component.$refs.root;
-        styleViewComponentObject.setEditState(true);
-      });
+      await nextTick();
+      styleViewComponentObject = component.$refs.root;
     });
 
     afterEach(() => {
