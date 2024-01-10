@@ -42,6 +42,7 @@
           :key="item.key"
           :item="item"
           :item-properties="itemProperties"
+          @click="itemSelected(item, $event)"
         />
       </tbody>
     </table>
@@ -85,6 +86,7 @@ export default {
       }
     }
   },
+  emits: ['itemSelectionChanged'],
   data() {
     let sortBy = this.defaultSort.property;
     let ascending = this.defaultSort.defaultDirection;
@@ -155,6 +157,10 @@ export default {
           })
         );
       }
+    },
+    itemSelected(item, event) {
+      event.stopPropagation();
+      this.$emit('itemSelectionChanged', item, event.currentTarget);
     }
   }
 };
