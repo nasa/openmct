@@ -497,7 +497,8 @@ export default {
             rectStart: rectX1,
             rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
             rectWidth: rectWidth,
-            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow)
+            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow),
+            id: rawActivity.id
           };
           activitiesByRow[currentRow].push(activity);
         });
