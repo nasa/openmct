@@ -39,7 +39,7 @@ test.describe('Visual - Default @a11y', () => {
 
   test('Visual - Default Dashboard', async ({ page, theme }) => {
     // Verify that Create button is actionable
-    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
 
     // Take a snapshot of the Dashboard
     await percySnapshot(page, `Default Dashboard (theme: '${theme}')`);
@@ -66,27 +66,22 @@ test.describe('Visual - Default @a11y', () => {
   });
 
   test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
-    // Click text=Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
+    await page.getByRole('menuItem', { name: 'Sine Wave Generator' }).click();
 
     await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
 
-    await page.locator('.field.control.l-input-sm input').first().click();
-    await page.locator('.field.control.l-input-sm input').first().fill('');
+    await page.getByLabel('Period').click();
+    await page.getByLabel('Period').fill('');
 
-    // Validate red x mark
     await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
   });
 
   test('Visual - Display Layout Icon is correct in Create Menu', async ({ page, theme }) => {
-    // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
-    // Hover on Display Layout option.
-    await page.locator('text=Display Layout').hover();
+    await page.getByRole('menuItem', { name: 'Display Layout' }).hover({ trial: true });
     await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
   });
 

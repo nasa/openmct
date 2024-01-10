@@ -70,7 +70,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     });
 
     await page.goto(parent.url);
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByLabel(`${child2.name} Layout Grid`).hover();
     await page.getByLabel('Move Sub-object Frame').nth(1).click();
     await page.getByLabel('X:').fill('30');

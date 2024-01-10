@@ -47,7 +47,7 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Display Layout Display Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test.use({
     storageState: LOCALSTORAGE_PATH

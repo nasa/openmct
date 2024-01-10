@@ -276,7 +276,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Flexible Layout Flexible Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test('Add/Remove Container', async ({ page }) => {
     test.info().annotations.push({

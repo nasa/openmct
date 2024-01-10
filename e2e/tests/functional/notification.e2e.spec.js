@@ -107,7 +107,7 @@ test.describe('Notification Overlay', () => {
     await page.getByRole('button', { name: 'Close' }).click();
 
     // On the Display Layout object, click on the "Edit" button
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     // Click on the "Save" button
     await page.getByRole('button', { name: 'Save' }).click();
