@@ -135,6 +135,8 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import ConditionDescription from '@/plugins/condition/components/ConditionDescription.vue';
 import ConditionError from '@/plugins/condition/components/ConditionError.vue';
 import {
@@ -144,6 +146,7 @@ import {
 } from '@/plugins/condition/utils/styleUtils';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
 
+import { useIsEditing } from '../../../../ui/composables/editing';
 import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
 import StyleEditor from './StyleEditor.vue';
 
@@ -160,10 +163,16 @@ export default {
     ConditionDescription
   },
   inject: ['openmct', 'selection', 'stylesManager'],
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return {
+      isEditing
+    };
+  },
   data() {
     return {
       staticStyle: undefined,
-      isEditing: this.openmct.editor.isEditing(),
       mixedStyles: [],
       isStaticAndConditionalStyles: false,
       conditionalStyles: [],
@@ -229,6 +238,20 @@ export default {
     },
     canStyleFont() {
       return this.styleableFontItems.length && this.allowEditing;
+    }
+  },
+  watch: {
+    isEditing(isEditing) {
+      if (isEditing) {
+        if (this.stopProvidingTelemetry) {
+          this.stopProvidingTelemetry();
+          delete this.stopProvidingTelemetry;
+        }
+      } else {
+        //reset the selectedConditionID so that the condition set computation can drive it.
+        this.applySelectedConditionStyle('');
+        this.subscribeToConditionSet();
+      }
     }
   },
   unmounted() {
@@ -297,19 +320,6 @@ export default {
 
       return objectStyles;
     },
-    setEditState(isEditing) {
-      this.isEditing = isEditing;
-      if (this.isEditing) {
-        if (this.stopProvidingTelemetry) {
-          this.stopProvidingTelemetry();
-          delete this.stopProvidingTelemetry;
-        }
-      } else {
-        //reset the selectedConditionID so that the condition set computation can drive it.
-        this.applySelectedConditionStyle('');
-        this.subscribeToConditionSet();
-      }
-    },
     enableConditionSetNav() {
       this.openmct.objects
         .getOriginalPath(this.conditionSetDomainObject.identifier)
@@ -320,7 +330,7 @@ export default {
     },
     navigateOrPreview(event) {
       // If editing, display condition set in Preview overlay; otherwise nav to it while browsing
-      if (this.openmct.editor.isEditing()) {
+      if (this.isEditing) {
         event.preventDefault();
         this.previewAction.invoke(this.objectPath);
       } else {
