@@ -138,13 +138,14 @@
 </template>
 
 <script>
-import { toRaw } from 'vue';
+import { inject, toRaw } from 'vue';
 
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import { SupportedViewTypes } from '../../utils/constants.js';
+import { useIsEditing } from '../composables/editing.js';
 import ViewSwitcher from './ViewSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
@@ -165,14 +166,20 @@ export default {
       }
     }
   },
-  data: function () {
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return {
+      isEditing
+    };
+  },
+  data() {
     return {
       notebookTypes: [],
       showViewMenu: false,
       showSaveMenu: false,
       domainObject: PLACEHOLDER_OBJECT,
       viewKey: undefined,
-      isEditing: this.openmct.editor.isEditing(),
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
       status: ''
@@ -270,14 +277,10 @@ export default {
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
   },
-  mounted: function () {
+  mounted() {
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
-
-    this.openmct.editor.on('isEditing', (isEditing) => {
-      this.isEditing = isEditing;
-    });
   },
   beforeUnmount: function () {
     if (this.mutationObserver) {
@@ -349,7 +352,7 @@ export default {
       });
     },
     promptUserbeforeNavigatingAway(event) {
-      if (this.openmct.editor.isEditing()) {
+      if (this.isEditing) {
         event.preventDefault();
         event.returnValue = '';
       }
