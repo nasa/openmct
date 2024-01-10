@@ -29,7 +29,7 @@
             :key="action.name"
             role="menuitem"
             :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
-            :aria-label="action.description"
+            :aria-label="action.name"
             :title="action.description"
             @click="action.onItemClicked"
           >
@@ -52,7 +52,7 @@
         :key="action.name"
         role="menuitem"
         :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
-        :aria-label="action.description"
+        :aria-label="action.name"
         :title="action.description"
         @click="action.onItemClicked"
       >

@@ -22,8 +22,8 @@
 
 import percySnapshot from '@percy/playwright';
 
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { MISSION_TIME, VISUAL_URL } from '../../../constants.js';
-import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
@@ -54,4 +54,7 @@ test.describe('Visual - Inspector @ally', () => {
       scope: inspectorPane
     });
   });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
 });

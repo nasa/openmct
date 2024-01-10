@@ -42,7 +42,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 

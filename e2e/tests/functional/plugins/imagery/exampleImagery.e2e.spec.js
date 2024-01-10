@@ -468,7 +468,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -512,7 +512,7 @@ test.describe('Example Imagery in Tabs View', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -959,7 +959,7 @@ async function resetImageryPanAndZoom(page) {
  */
 async function createImageryView(page) {
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click text=Example Imagery
   await page.click('li[role="menuitem"]:has-text("Example Imagery")');

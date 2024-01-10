@@ -109,7 +109,7 @@ test.describe('Gauge', () => {
       description: 'https://github.com/nasa/openmct/issues/5356'
     });
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Gauge")`);
