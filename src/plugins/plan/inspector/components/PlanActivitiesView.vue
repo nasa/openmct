@@ -76,13 +76,14 @@ export default {
     return {
       name: '',
       activities: [],
+      selectedActivities: [],
       persistedActivityStates: {},
       heading: ''
     };
   },
   computed: {
     canPersistState() {
-      return this.activities.length === 1 && this.activities[0].id;
+      return this.selectedActivities.length === 1 && this.activities[0].id;
     }
   },
   mounted() {
@@ -129,6 +130,7 @@ export default {
         if (selectionItem[0].context.type === 'activity') {
           const activity = selectionItem[0].context.activity;
           if (activity) {
+            activity.key = activity.id ?? activity.name;
             this.selectedActivities.push(activity);
           }
         }
@@ -148,7 +150,7 @@ export default {
       this.selectedActivities.forEach((selectedActivity, index) => {
         const activity = {
           id: selectedActivity.id,
-          key: selectedActivity.id ?? selectedActivity.name,
+          key: selectedActivity.key,
           timeProperties: {
             start: {
               label: propertyLabels.start,
