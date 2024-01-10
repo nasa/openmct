@@ -37,15 +37,12 @@ test.describe('Branding tests', () => {
     await expect(page.getByAltText('Open MCT Splash Logo')).toBeVisible();
 
     // Modify the Build information in 'about' Modal
-    await expect(page.getByTestId('versionInfo')).toBeEnabled();
-    await expect.soft(page.getByTestId('versionInfo')).toContainText(/Version: \d/);
+    await expect.soft(page.getByLabel('Version Number')).toContainText(/Version: \d/);
     await expect
-      .soft(page.getByTestId('versionInfo'))
+      .soft(page.getByLabel('Build Date'))
       .toContainText(/Build Date: ((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun))/);
-    await expect
-      .soft(page.getByTestId('versionInfo'))
-      .toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
-    await expect.soft(page.getByTestId('versionInfo')).toContainText(/Branch: ./);
+    await expect.soft(page.getByLabel('Revision')).toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
+    await expect.soft(page.getByLabel('Branch')).toContainText(/Branch: ./);
   });
   test('Verify Links in About Modal @2p', async ({ page }) => {
     // Click About button

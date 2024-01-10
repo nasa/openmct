@@ -60,7 +60,7 @@
           </p>
         </div>
         <h2>Version Information</h2>
-        <ul class="t-info l-info s-info">
+        <ul id="versionInformation" class="t-info l-info s-info">
           <li aria-label="Version Number">Version: {{ buildInfo.version || 'Unknown' }}</li>
           <li aria-label="Build Date">Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
           <li aria-label="Revision">Revision: {{ buildInfo.revision || 'Unknown' }}</li>

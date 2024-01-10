@@ -40,9 +40,9 @@ test.describe('Visual - Branding @a11y', () => {
     await page.getByLabel('About Modal').click();
 
     // Modify the Build information in 'about' to be consistent run-over-run
-    await expect(page.getByTestId('versionInfo')).toBeEnabled();
+    await expect(page.locator('id=versionInformation')).toBeEnabled();
     await page
-      .getByTestId('versionInfo')
+      .locator('id=versionInformation')
       .evaluate(
         (node) =>
           (node.innerHTML =
