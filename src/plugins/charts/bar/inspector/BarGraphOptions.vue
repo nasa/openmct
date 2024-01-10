@@ -130,8 +130,11 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import ColorPalette from '@/ui/color/ColorPalette';
 
+import { useIsEditing } from '../../../../ui/composables/editing';
 import SeriesOptions from './SeriesOptions.vue';
 
 export default {
@@ -139,6 +142,14 @@ export default {
     SeriesOptions
   },
   inject: ['openmct', 'domainObject'],
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+
+    return {
+      isEditing
+    };
+  },
   data() {
     return {
       xKey: this.domainObject.configuration.axes.xKey,
@@ -148,34 +159,23 @@ export default {
       plotSeries: [],
       yKeyOptions: [],
       xKeyOptions: [],
-      isEditing: this.openmct.editor.isEditing(),
       colorPalette: this.colorPalette,
       useInterpolation: this.domainObject.configuration.useInterpolation,
       useBar: this.domainObject.configuration.useBar
     };
   },
-  computed: {
-    canEdit() {
-      return this.isEditing && !this.domainObject.locked;
-    }
-  },
   beforeMount() {
     this.colorPalette = new ColorPalette();
   },
   mounted() {
-    this.openmct.editor.on('isEditing', this.setEditState);
     this.composition = this.openmct.composition.get(this.domainObject);
     this.registerListeners();
     this.composition.load();
   },
   beforeUnmount() {
-    this.openmct.editor.off('isEditing', this.setEditState);
     this.stopListening();
   },
   methods: {
-    setEditState(isEditing) {
-      this.isEditing = isEditing;
-    },
     registerListeners() {
       this.composition.on('add', this.addSeries);
       this.composition.on('remove', this.removeSeries);
