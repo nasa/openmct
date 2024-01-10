@@ -41,7 +41,7 @@ test.describe('Gauge', () => {
   test('Can add and remove telemetry sources @unstable', async ({ page }) => {
     // Create the gauge with defaults
     const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    const editButtonLocator = page.locator('button[title="Edit"]');
+    const editButtonLocator = page.getByLabel('Edit Object');
     const saveButtonLocator = page.locator('button[title="Save"]');
 
     // Create a sine wave generator within the gauge

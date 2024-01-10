@@ -52,7 +52,7 @@ test.describe('Testing LAD table configuration', () => {
   });
   test('in edit mode, LAD Tables provide ability to hide columns', async ({ page }) => {
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure headers are visible initially
@@ -113,7 +113,7 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // show timestamp column
@@ -141,7 +141,7 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // show units, type, and WATCH columns
@@ -258,7 +258,7 @@ test.describe('Testing LAD table @unstable', () => {
       name: 'Test LAD Table'
     });
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -286,7 +286,7 @@ test.describe('Testing LAD table @unstable', () => {
       name: 'Test LAD Table'
     });
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();

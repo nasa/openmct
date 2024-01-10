@@ -41,7 +41,7 @@ test.describe('Scatter Plot', () => {
   });
 
   test('Can add and remove telemetry sources', async ({ page }) => {
-    const editButton = page.locator('button[title="Edit"]');
+    const editButton = page.getByLabel('Edit Object');
     const saveButton = page.locator('button[title="Save"]');
 
     // Create a sine wave generator within the scatter plot

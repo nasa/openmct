@@ -234,7 +234,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Click Add Condition button
     await page.locator('#addCondition').click();
@@ -262,7 +262,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     page.click('button[title="Show selected item in tree"]');
@@ -299,7 +299,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Create two conditions
     await page.locator('#addCondition').click();

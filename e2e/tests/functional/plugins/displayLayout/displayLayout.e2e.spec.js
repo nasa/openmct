@@ -133,7 +133,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -171,7 +171,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -213,7 +213,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -255,7 +255,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -301,7 +301,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -357,7 +357,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();

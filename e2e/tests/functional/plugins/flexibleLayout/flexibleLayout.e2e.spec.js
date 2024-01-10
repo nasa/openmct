@@ -73,7 +73,7 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
@@ -166,7 +166,7 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
@@ -197,7 +197,7 @@ test.describe('Flexible Layout', () => {
     });
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -234,7 +234,7 @@ test.describe('Flexible Layout', () => {
 
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
