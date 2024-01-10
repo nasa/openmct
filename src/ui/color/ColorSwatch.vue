@@ -59,10 +59,13 @@
 </template>
 
 <script>
+import { computed, inject } from 'vue';
+
+import { useIsEditing } from '../../ui/composables/editing.js';
 import ColorPalette from './ColorPalette.js';
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['domainObject'],
   props: {
     currentColor: {
       type: String,
@@ -90,25 +93,27 @@ export default {
     }
   },
   emits: ['color-set'],
+  setup() {
+    const openmct = inject('openmct');
+    const domainObject = inject('domainObject');
+    const isEditing = useIsEditing(openmct);
+    const canEdit = computed(() => {
+      return isEditing.value && !domainObject.locked;
+    });
+    return {
+      isEditing,
+      canEdit
+    };
+  },
   data() {
     return {
       swatchActive: false,
-      colorPaletteGroups: [],
-      isEditing: this.openmct.editor.isEditing()
+      colorPaletteGroups: []
     };
-  },
-  computed: {
-    canEdit() {
-      return this.isEditing && !this.domainObject.locked;
-    }
   },
   mounted() {
     this.colorPalette = new ColorPalette();
-    this.openmct.editor.on('isEditing', this.setEditState);
     this.initialize();
-  },
-  beforeUnmount() {
-    this.openmct.editor.off('isEditing', this.setEditState);
   },
   methods: {
     initialize() {
@@ -123,9 +128,6 @@ export default {
         group.id = groupId.join('-');
       });
       this.colorPaletteGroups = colorPaletteGroups;
-    },
-    setEditState(isEditing) {
-      this.isEditing = isEditing;
     },
     setColor(chosenColor) {
       this.$emit('color-set', chosenColor);
