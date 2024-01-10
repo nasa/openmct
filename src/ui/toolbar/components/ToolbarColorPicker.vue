@@ -32,7 +32,7 @@
         class="c-swatch"
         :style="{ background: options.value }"
         role="img"
-        :aria-label="None"
+        aria-label="None"
       ></div>
     </button>
     <div v-if="open" class="c-menu c-palette c-palette--color">
