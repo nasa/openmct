@@ -487,7 +487,6 @@ test.describe('Example Imagery in Flexible layout', () => {
     await page.getByLabel('Close').click();
   });
 
-  // let flexibleLayout;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
