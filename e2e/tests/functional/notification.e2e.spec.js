@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@
 This test suite is dedicated to tests which verify Open MCT's Notification functionality
 */
 
-const { createDomainObjectWithDefaults, createNotification } = require('../../appActions');
-const { test, expect } = require('../../pluginFixtures');
+import { createDomainObjectWithDefaults, createNotification } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Notifications List', () => {
   test.fixme('Notifications can be dismissed individually', async ({ page }) => {
@@ -91,27 +91,30 @@ test.describe('Notification Overlay', () => {
     // Create a new Display Layout object
     await createDomainObjectWithDefaults(page, { type: 'Display Layout' });
 
+    // Dismiss notification banner
+    await page.getByRole('button', { name: 'Dismiss' }).click();
+
     // Click on the button "Review 1 Notification"
-    await page.click('button[aria-label="Review 1 Notification"]');
+    await page.getByRole('button', { name: 'Review 1 Notification' }).click();
 
     // Verify that Notification List is open
-    expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeVisible();
 
     // Wait until there is no Notification Banner
-    await page.waitForSelector('div[role="alert"]', { state: 'detached' });
+    await expect(page.getByRole('alert')).not.toBeAttached();
 
     // Click on the "Close" button of the Notification List
-    await page.click('button[aria-label="Close"]');
+    await page.getByRole('button', { name: 'Close' }).click();
 
     // On the Display Layout object, click on the "Edit" button
-    await page.click('button[title="Edit"]');
+    await page.getByRole('button', { name: 'Edit' }).click();
 
     // Click on the "Save" button
-    await page.click('button[title="Save"]');
+    await page.getByRole('button', { name: 'Save' }).click();
 
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Verify that Notification List is NOT open
-    expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeHidden();
   });
 });

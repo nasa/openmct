@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Clock.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('Clock Generator CRUD Operations', () => {
   test('Timezone dropdown will collapse when clicked outside or on dropdown icon again', async ({

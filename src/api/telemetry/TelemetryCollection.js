@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,8 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../time/constants';
-import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants.js';
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants.js';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-import CouchSearchProvider from './CouchSearchProvider';
-import CouchStatusIndicator from './CouchStatusIndicator';
+import CouchObjectProvider from './CouchObjectProvider.js';
+import CouchSearchProvider from './CouchSearchProvider.js';
+import CouchStatusIndicator from './CouchStatusIndicator.js';
 
 const NAMESPACE = '';
 const LEGACY_SPACE = 'mct';

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,7 +36,7 @@ import Flatbush from 'flatbush';
 import isEqual from 'lodash/isEqual';
 import { toRaw } from 'vue';
 
-import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames';
+import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames.js';
 
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
 const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';

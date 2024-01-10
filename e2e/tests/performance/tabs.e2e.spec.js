@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../appActions');
-const { test, expect } = require('../../pluginFixtures');
+import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Tabs View', () => {
   test('Renders tabbed elements nicely', async ({ page }) => {

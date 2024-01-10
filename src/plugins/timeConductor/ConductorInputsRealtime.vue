@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -57,7 +57,7 @@
 <script>
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';

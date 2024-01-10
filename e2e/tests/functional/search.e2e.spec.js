@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,17 +23,21 @@
  * This test suite is dedicated to tests which verify search functionalities.
  */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { v4: uuid } = require('uuid');
+import { v4 as uuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Grand Search', () => {
-  const searchResultSelector = '.c-gsearch-result__title';
-  const searchResultDropDownSelector = '.c-gsearch__results';
+  let grandSearchInput;
 
   test.beforeEach(async ({ page }) => {
+    grandSearchInput = page
+      .getByLabel('OpenMCT Search')
+      .getByRole('searchbox', { name: 'Search Input' });
+
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
   test('Can search for objects, and subsequent search dropdown behaves properly', async ({
@@ -44,103 +48,124 @@ test.describe('Grand Search', () => {
 
     const createdObjects = await createObjectsForSearch(page);
 
-    // Click [aria-label="OpenMCT Search"] input[type="search"]
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    // Fill [aria-label="OpenMCT Search"] input[type="search"]
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cl');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(
+    // Go back into edit mode for the display layout
+    await page.getByRole('button', { name: 'Edit' }).click();
+
+    await grandSearchInput.click();
+    await grandSearchInput.fill('Cl');
+
+    await expect(page.getByLabel('Object Search Result').first()).toContainText(
       `Clock A ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(1)).toContainText(
       `Clock B ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(2)).toContainText(
       `Clock C ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(3)).toContainText(
       `Clock D ${myItemsFolderName} Red Folder Blue Folder`
     );
     // Click the Elements pool to dismiss the search menu
     await page.getByRole('tab', { name: 'Elements' }).click();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+    await expect(page.getByLabel('Object Search Result').first()).toBeHidden();
 
-    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
-    await page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click();
-    await expect(page.locator('.js-preview-window')).toBeVisible();
+    await grandSearchInput.click();
+    await page.getByLabel('OpenMCT Search').getByText('Clock A').click();
+    await expect(page.getByRole('dialog', { name: 'Preview Container' })).toBeVisible();
 
-    // Click [aria-label="Close"]
-    await page.locator('[aria-label="Close"]').click();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeVisible();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(
+    // Close the Preview window
+    await page.getByRole('button', { name: 'Close' }).click();
+    await expect(page.getByLabel('Object Search Result').first()).toBeVisible();
+    await expect(page.getByLabel('Object Search Result').first()).toContainText(
       `Clock A ${myItemsFolderName} Red Folder Blue Folder`
     );
 
-    // Click [aria-label="OpenMCT Search"] a >> nth=0
-    await page.locator('[aria-label="Search Result"] >> nth=0').click();
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+    await page.getByLabel('Object Search Result').first().click();
+    await expect(page.getByLabel('Object Search Result').first()).toBeHidden();
 
-    // Fill [aria-label="OpenMCT Search"] input[type="search"]
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('foo');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toBeHidden();
+    await grandSearchInput.fill('foo');
+    await expect(page.getByLabel('Object Search Result').first()).toBeHidden();
 
     // Click text=Snapshot Save and Finish Editing Save and Continue Editing >> button >> nth=1
-    await page
-      .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
-      .nth(1)
-      .click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Click [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').click();
+    await grandSearchInput.click();
     // Fill [aria-label="OpenMCT Search"] [aria-label="Search Input"]
-    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Cl');
+    await grandSearchInput.fill('Cl');
     await Promise.all([
       page.waitForNavigation(),
-      page.locator('[aria-label="Clock A clock result"] >> text=Clock A').click()
+      page.getByLabel('OpenMCT Search').getByText('Clock A').click()
     ]);
-    await expect(page.locator('.is-object-type-clock')).toBeVisible();
+    await expect(page.getByRole('status', { name: 'Clock' })).toBeVisible();
 
-    await page.locator('[aria-label="OpenMCT Search"] [aria-label="Search Input"]').fill('Disp');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(
+    await grandSearchInput.fill('Disp');
+    await expect(page.getByLabel('Object Search Result').first()).toContainText(
       createdObjects.displayLayout.name
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).not.toContainText('Folder');
+    await expect(page.getByLabel('Object Search Result').first()).not.toContainText('Folder');
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Clock C');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(
+    await grandSearchInput.fill('Clock C');
+    await expect(page.getByLabel('Object Search Result').first()).toContainText(
       `Clock C ${myItemsFolderName} Red Folder Blue Folder`
     );
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Cloc');
-    await expect(page.locator('[aria-label="Search Result"] >> nth=0')).toContainText(
+    await grandSearchInput.fill('Cloc');
+    await expect(page.getByLabel('Object Search Result').first()).toContainText(
       `Clock A ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=1')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(1)).toContainText(
       `Clock B ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=2')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(2)).toContainText(
       `Clock C ${myItemsFolderName} Red Folder Blue Folder`
     );
-    await expect(page.locator('[aria-label="Search Result"] >> nth=3')).toContainText(
+    await expect(page.getByLabel('Object Search Result').nth(3)).toContainText(
       `Clock D ${myItemsFolderName} Red Folder Blue Folder`
     );
+
+    await grandSearchInput.click();
+    await grandSearchInput.fill('Sine');
+  });
+
+  test('Clicking on a search result changes the URL even if the same type is already selected', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7303'
+    });
+
+    const { sineWaveGeneratorAlpha, sineWaveGeneratorBeta } = await createObjectsForSearch(page);
+    await grandSearchInput.click();
+    await grandSearchInput.fill('Sine');
+    await waitForSearchCompletion(page);
+    await page.getByLabel('OpenMCT Search').getByText('Sine Wave Generator Alpha').click();
+    const alphaPattern = new RegExp(sineWaveGeneratorAlpha.url.substring(1));
+    await expect(page).toHaveURL(alphaPattern);
+    await grandSearchInput.click();
+    await page.getByLabel('OpenMCT Search').getByText('Sine Wave Generator Beta').click();
+    const betaPattern = new RegExp(sineWaveGeneratorBeta.url.substring(1));
+    await expect(page).toHaveURL(betaPattern);
   });
 
   test('Validate empty search result', async ({ page }) => {
     // Invalid search for objects
-    await page.type('input[type=search]', 'not found');
+    await grandSearchInput.fill('not found');
 
     // Wait for search to complete
     await waitForSearchCompletion(page);
 
     // Get the search results
-    const searchResults = page.locator(searchResultSelector);
+    const searchResults = page.getByRole('listitem', { name: 'Object Search Result' });
 
     // Verify that no results are found
     expect(await searchResults.count()).toBe(0);
 
     // Verify proper message appears
-    await expect(page.locator('text=No results found')).toBeVisible();
+    await expect(page.getByText('No results found')).toBeVisible();
   });
 
   test('Validate single object in search result @couchdb', async ({ page }) => {
@@ -152,18 +177,18 @@ test.describe('Grand Search', () => {
     });
 
     // Full search for object
-    await page.type('input[type=search]', folderName);
+    await grandSearchInput.fill(folderName);
 
     // Wait for search to complete
     await waitForSearchCompletion(page);
 
     // Get the search results
-    const searchResults = page.locator(searchResultSelector);
+    const searchResults = page.getByLabel('Object Search Result');
 
     // Verify that one result is found
     await expect(searchResults).toBeVisible();
     expect(await searchResults.count()).toBe(1);
-    await expect(searchResults).toHaveText(folderName);
+    await expect(searchResults).toContainText(folderName);
   });
 
   test('Search results are debounced @couchdb', async ({ page }) => {
@@ -184,7 +209,7 @@ test.describe('Grand Search', () => {
     });
 
     // Full search for object
-    await page.type('input[type=search]', 'Clock', { delay: 100 });
+    await grandSearchInput.pressSequentially('Clock', { delay: 100 });
 
     // Wait for search to finish
     await waitForSearchCompletion(page);
@@ -193,9 +218,7 @@ test.describe('Grand Search', () => {
     // 1.  batched request for latest telemetry using the bulk API
     expect(networkRequests.length).toBe(1);
 
-    const searchResultDropDown = await page.locator(searchResultDropDownSelector);
-
-    await expect(searchResultDropDown).toContainText('Clock A');
+    await expect(page.getByRole('list', { name: 'Object Results' })).toContainText('Clock A');
   });
 
   test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
@@ -245,27 +268,40 @@ test.describe('Grand Search', () => {
     });
 
     // Partial search for objects
-    await page.type('input[type=search]', 'e928a26e');
+    await grandSearchInput.fill('e928a26e');
 
     // Wait for search to finish
     await waitForSearchCompletion(page);
 
-    const searchResultDropDown = page.locator(searchResultDropDownSelector);
+    const searchResultDropDown = page.getByRole('dialog', { name: 'Search Results' });
 
     // Verify that the search result/s correctly match the search query
     await expect(searchResultDropDown).toContainText(folderName1);
     await expect(searchResultDropDown).toContainText(folderName2);
 
     // Get the search results
-    const searchResults = page.locator(searchResultSelector);
+    const objectSearchResults = page.getByLabel('Object Search Result');
     // Verify that two results are found
-    expect(await searchResults.count()).toBe(2);
+    expect(await objectSearchResults.count()).toBe(2);
   });
 });
 
+/**
+ * Wait for search to complete
+ *
+ * @param {import('@playwright/test').Page} page
+ */
 async function waitForSearchCompletion(page) {
   // Wait loading spinner to disappear
-  await page.waitForSelector('.search-finished');
+  await expect(
+    page
+      .getByRole('list', { name: 'Object Results' })
+      .or(
+        page
+          .getByRole('list', { name: 'Annotation Results' })
+          .or(page.getByText('No results found'))
+      )
+  ).toBeVisible();
 }
 
 /**
@@ -305,12 +341,19 @@ async function createObjectsForSearch(page) {
     parent: blueFolder.uuid
   });
 
+  const sineWaveGeneratorAlpha = await createDomainObjectWithDefaults(page, {
+    type: 'Sine Wave Generator',
+    name: 'Sine Wave Generator Alpha'
+  });
+
+  const sineWaveGeneratorBeta = await createDomainObjectWithDefaults(page, {
+    type: 'Sine Wave Generator',
+    name: 'Sine Wave Generator Beta'
+  });
+
   const displayLayout = await createDomainObjectWithDefaults(page, {
     type: 'Display Layout'
   });
-
-  // Go back into edit mode for the display layout
-  await page.locator('button[title="Edit"]').click();
 
   return {
     redFolder,
@@ -319,6 +362,8 @@ async function createObjectsForSearch(page) {
     clockB,
     clockC,
     clockD,
-    displayLayout
+    displayLayout,
+    sineWaveGeneratorAlpha,
+    sineWaveGeneratorBeta
   };
 }

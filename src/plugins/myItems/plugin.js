@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMyItemsIdentifier } from './createMyItemsIdentifier';
-import myItemsInterceptor from './myItemsInterceptor';
+import { createMyItemsIdentifier } from './createMyItemsIdentifier.js';
+import myItemsInterceptor from './myItemsInterceptor.js';
 
 const MY_ITEMS_DEFAULT_NAME = 'My Items';
 

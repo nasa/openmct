@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
-  openObjectTreeContextMenu,
-  createDomainObjectWithDefaults
-} = require('../../../../appActions');
-import { MISSION_TIME } from '../../../../constants';
+import {
+  createDomainObjectWithDefaults,
+  openObjectTreeContextMenu
+} from '../../../../appActions.js';
+import { MISSION_TIME } from '../../../../constants.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Timer', () => {
   let timer;
@@ -85,7 +85,7 @@ test.describe('Timer with target date', () => {
 
   test('Can count down to a target date', async ({ page }) => {
     // Set the target date to 2024-11-24 03:30:00
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
     await page.getByPlaceholder('YYYY-MM-DD').fill('2024-11-24');
     await page.locator('input[name="hour"]').fill('3');
@@ -108,7 +108,7 @@ test.describe('Timer with target date', () => {
 
   test('Can count up from a target date', async ({ page }) => {
     // Set the target date to 2020-11-23 03:30:00
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
     await page.getByPlaceholder('YYYY-MM-DD').fill('2020-11-23');
     await page.locator('input[name="hour"]').fill('3');
@@ -159,7 +159,7 @@ async function triggerTimerContextMenuAction(page, timerUrl, action) {
  */
 async function triggerTimer3dotMenuAction(page, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
-  const threeDotMenuButton = 'button[title="More options"]';
+  const threeDotMenuButton = 'button[title="More actions"]';
   let isActionAvailable = false;
   let iterations = 0;
   // Dismiss/open the 3dot menu until the action is available

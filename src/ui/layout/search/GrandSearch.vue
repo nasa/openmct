@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,11 +21,10 @@
 -->
 
 <template>
-  <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="searchbox">
+  <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="search">
     <search
       ref="shell-search"
       class="c-gsearch__input"
-      tabindex="0"
       :value="searchValue"
       @input="searchEverything"
       @clear="searchEverything"

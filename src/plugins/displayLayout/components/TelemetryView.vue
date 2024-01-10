@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -73,8 +73,8 @@ import {
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -120,7 +120,7 @@
           </pane>
         </multipane>
       </pane>
-      <pane class="l-shell__pane-main">
+      <pane class="l-shell__pane-main" role="main">
         <browse-bar
           ref="browseBar"
           class="l-shell__main-view-browse-bar"

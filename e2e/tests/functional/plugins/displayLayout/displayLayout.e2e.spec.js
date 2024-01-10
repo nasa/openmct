@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,20 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
-const { test, expect } = require('../../../../pluginFixtures');
-const path = require('path');
-const {
-  createDomainObjectWithDefaults,
-  setStartOffset,
-  setFixedTimeMode,
-  setRealTimeMode,
-  setIndependentTimeConductorBounds
-} = require('../../../../appActions');
+import { fileURLToPath } from 'url';
 
-const LOCALSTORAGE_PATH = path.resolve(
-  __dirname,
-  '../../../../test-data/display_layout_with_child_layouts.json'
+import {
+  createDomainObjectWithDefaults,
+  setFixedTimeMode,
+  setIndependentTimeConductorBounds,
+  setRealTimeMode,
+  setStartOffset
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
+
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/display_layout_with_child_layouts.json', import.meta.url)
 );
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
@@ -51,7 +50,7 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
     await page.getByLabel('Edit').click();
   });
   test.use({
-    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+    storageState: LOCALSTORAGE_PATH
   });
 
   test('can add/remove Text element to a single layout', async ({ page }) => {

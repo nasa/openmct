@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
-const {
-  expandTreePaneItemByName,
-  createDomainObjectWithDefaults
-} = require('../../../appActions.js');
-const VISUAL_URL = require('../../../constants.js').VISUAL_URL;
-const percySnapshot = require('@percy/playwright');
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../../appActions.js';
+import { VISUAL_URL } from '../../../constants.js';
+import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
 const treePane = "[role=tree][aria-label='Main Tree']";

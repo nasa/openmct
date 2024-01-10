@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,8 @@
 import mount from 'utils/mount';
 
 import GaugeFormController from './components/GaugeFormController.vue';
-import GaugeCompositionPolicy from './GaugeCompositionPolicy';
-import GaugeViewProvider from './GaugeViewProvider';
+import GaugeCompositionPolicy from './GaugeCompositionPolicy.js';
+import GaugeViewProvider from './GaugeViewProvider.js';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],

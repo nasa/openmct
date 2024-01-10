@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-menu" :class="[options.menuClass, 'c-super-menu']" :style="styleObject">
+  <div
+    :aria-label="optionsLabel"
+    class="c-menu"
+    :class="[options.menuClass, 'c-super-menu']"
+    :style="styleObject"
+  >
     <ul
       v-if="options.actions.length && options.actions[0].length"
       role="menu"
@@ -79,7 +84,7 @@
   </div>
 </template>
 <script>
-import popupMenuMixin from '../mixins/popupMenuMixin';
+import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
   inject: ['options'],
@@ -87,6 +92,12 @@ export default {
     return {
       hoveredItem: {}
     };
+  },
+  computed: {
+    optionsLabel() {
+      const label = this.options.label ? `${this.options.label} Super Menu` : 'Super Menu';
+      return label;
+    }
   },
   methods: {
     toggleItemDescription(action = {}) {

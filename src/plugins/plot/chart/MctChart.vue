@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -45,17 +45,17 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import { DrawLoader } from '../draw/DrawLoader';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
+import { DrawLoader } from '../draw/DrawLoader.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import LimitLabel from './LimitLabel.vue';
 import LimitLine from './LimitLine.vue';
-import MCTChartAlarmLineSet from './MCTChartAlarmLineSet';
-import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
-import MCTChartLineLinear from './MCTChartLineLinear';
-import MCTChartLineStepAfter from './MCTChartLineStepAfter';
-import MCTChartPointSet from './MCTChartPointSet';
+import MCTChartAlarmLineSet from './MCTChartAlarmLineSet.js';
+import MCTChartAlarmPointSet from './MCTChartAlarmPointSet.js';
+import MCTChartLineLinear from './MCTChartLineLinear.js';
+import MCTChartLineStepAfter from './MCTChartLineStepAfter.js';
+import MCTChartPointSet from './MCTChartPointSet.js';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;

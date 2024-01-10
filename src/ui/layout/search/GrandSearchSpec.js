@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@ import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ExampleTagsPlugin from '../../../../example/exampleTags/plugin';
-import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin';
+import ExampleTagsPlugin from '../../../../example/exampleTags/plugin.js';
+import DisplayLayoutPlugin from '../../../plugins/displayLayout/plugin.js';
 import GrandSearch from './GrandSearch.vue';
 
 describe('GrandSearch', () => {
@@ -272,15 +272,15 @@ describe('GrandSearch', () => {
   it('should render an annotation search result', async () => {
     await grandSearchComponent.$refs.root.searchEverything('S');
     await nextTick();
-    const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
-    expect(annotationResults.length).toBe(2);
-    expect(annotationResults[1].innerText).toContain('Driving');
+    const annotationResults = document.querySelectorAll('[aria-label="Annotation Search Result"]');
+    expect(annotationResults.length).toBe(1);
+    expect(annotationResults[0].innerText).toContain('Driving');
   });
 
   it('should render no annotation search results if no match', async () => {
     await grandSearchComponent.$refs.root.searchEverything('Qbert');
     await nextTick();
-    const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+    const annotationResults = document.querySelectorAll('[aria-label="Annotation Search Result"]');
     expect(annotationResults.length).toBe(0);
   });
 
@@ -288,10 +288,9 @@ describe('GrandSearch', () => {
     await grandSearchComponent.$refs.root.searchEverything('Folder');
     grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
     await nextTick();
-    const searchResults = document.querySelectorAll('[name="Test Folder"]');
-    expect(searchResults.length).toBe(1);
-    expect(searchResults[0].innerText).toContain('Folder');
-    searchResults[0].click();
+    const folderResult = document.querySelector('[name="Test Folder"]');
+    expect(folderResult).not.toBeNull();
+    folderResult.click();
     const previewWindow = document.querySelector('.js-preview-window');
     expect(previewWindow.innerText).toContain('Snapshot');
   });
@@ -300,7 +299,7 @@ describe('GrandSearch', () => {
     await grandSearchComponent.$refs.root.searchEverything('Dri');
     grandSearchComponent.$refs.root.openmct.router.path = [mockDisplayLayout];
     await nextTick();
-    const annotationResults = document.querySelectorAll('[aria-label="Search Result"]');
+    const annotationResults = document.querySelectorAll('[aria-label="Annotation Search Result"]');
     expect(annotationResults.length).toBe(1);
     expect(annotationResults[0].innerText).toContain('Driving');
     annotationResults[0].click();

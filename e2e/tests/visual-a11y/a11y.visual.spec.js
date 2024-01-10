@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,37 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
-const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
-const percySnapshot = require('@percy/playwright');
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
-//Declare the scope of the visual test
-const inspectorPane = '.l-shell__pane-inspector';
-
-test.describe('Visual - Controlled Clock', () => {
+test.describe('a11y - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
-  test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
-  });
-
-  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
-    //Expand the Inspector Pane
-    await page.getByRole('button', { name: 'Inspect' }).click();
-
-    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
-      scope: inspectorPane
-    });
-    //Open Annotations Tab
-    await page.getByRole('tab', { name: 'Annotations' }).click();
-
-    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
-      scope: inspectorPane
-    });
+  test('main view @a11y', async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

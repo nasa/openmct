@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,9 +22,9 @@
 
 import mount from 'utils/mount';
 
-import { notebookImageMigration } from '../notebook/utils/notebook-migration';
-import CopyToNotebookAction from './actions/CopyToNotebookAction';
-import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction';
+import { notebookImageMigration } from '../notebook/utils/notebook-migration.js';
+import CopyToNotebookAction from './actions/CopyToNotebookAction.js';
+import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction.js';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 import {
@@ -33,10 +33,10 @@ import {
   NOTEBOOK_VIEW_TYPE,
   RESTRICTED_NOTEBOOK_TYPE,
   RESTRICTED_NOTEBOOK_VIEW_TYPE
-} from './notebook-constants';
-import NotebookType from './NotebookType';
-import NotebookViewProvider from './NotebookViewProvider';
-import SnapshotContainer from './snapshot-container';
+} from './notebook-constants.js';
+import NotebookType from './NotebookType.js';
+import NotebookViewProvider from './NotebookViewProvider.js';
+import SnapshotContainer from './snapshot-container.js';
 
 let notebookSnapshotContainer;
 function getSnapshotContainer(openmct) {

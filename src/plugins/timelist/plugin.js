@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,9 +22,9 @@
 
 import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
 
-import { TIMELIST_TYPE } from './constants';
-import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider';
-import TimelistViewProvider from './TimelistViewProvider';
+import { TIMELIST_TYPE } from './constants.js';
+import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider.js';
+import TimelistViewProvider from './TimelistViewProvider.js';
 
 export default function () {
   return function install(openmct) {

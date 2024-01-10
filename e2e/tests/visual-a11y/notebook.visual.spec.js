@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,18 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { expandTreePaneItemByName, createDomainObjectWithDefaults } = require('../../appActions');
-const {
-  startAndAddRestrictedNotebookObject,
-  enterTextEntry
-} = require('../../helper/notebookUtils');
-const { VISUAL_URL } = require('../../constants');
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
 test.describe('Visual - Restricted Notebook', () => {
   test.beforeEach(async ({ page }) => {
-    await startAndAddRestrictedNotebookObject(page);
+    const restrictedNotebook = await startAndAddRestrictedNotebookObject(page);
+    await page.goto(restrictedNotebook.url + '?hideTree=true&hideInspector=true');
   });
 
   test('Restricted Notebook is visually correct @addInit', async ({ page, theme }) => {
@@ -58,7 +57,7 @@ test.describe('Visual - Notebook', () => {
       name: 'Dropped Overlay Plot'
     });
 
-    //Open Tree
+    //Open Tree to perform drag
     await page.getByRole('button', { name: 'Browse' }).click();
 
     await expandTreePaneItemByName(page, myItemsFolderName);
@@ -125,5 +124,8 @@ test.describe('Visual - Notebook', () => {
 
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

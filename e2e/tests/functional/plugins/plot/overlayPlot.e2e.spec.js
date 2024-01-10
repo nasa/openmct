@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,12 +25,12 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
   waitForPlotsToRender
-} = require('../../../../appActions');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Overlay Plot', () => {
   test.beforeEach(async ({ page }) => {

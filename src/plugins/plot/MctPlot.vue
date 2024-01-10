@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -180,14 +180,14 @@ import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
 import { toRaw } from 'vue';
 
-import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames';
+import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
 import MctChart from './chart/MctChart.vue';
-import configStore from './configuration/ConfigStore';
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import eventHelpers from './lib/eventHelpers';
-import LinearScale from './LinearScale';
+import configStore from './configuration/ConfigStore.js';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel.js';
+import eventHelpers from './lib/eventHelpers.js';
+import LinearScale from './LinearScale.js';
 import MctTicks from './MctTicks.vue';
 
 const OFFSET_THRESHOLD = 10;

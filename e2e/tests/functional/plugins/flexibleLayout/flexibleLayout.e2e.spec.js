@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,18 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
-const LOCALSTORAGE_PATH = path.resolve(
-  __dirname,
-  '../../../../test-data/flexible_layout_with_child_layouts.json'
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/flexible_layout_with_child_layouts.json', import.meta.url)
 );
 
 test.describe('Flexible Layout', () => {
@@ -267,7 +266,7 @@ test.describe('Flexible Layout', () => {
 
 test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
   test.use({
-    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+    storageState: LOCALSTORAGE_PATH
   });
 
   test.beforeEach(async ({ page }) => {
@@ -284,33 +283,36 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7234'
     });
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
-    await page.getByRole('group', { name: 'Container' }).nth(1).click();
+
+    const containerHandles = page.getByRole('columnheader', { name: 'Handle' });
+    expect(await containerHandles.count()).toEqual(2);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
     await page.getByTitle('Add Container').click();
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(3);
+    expect(await containerHandles.count()).toEqual(3);
     await page.getByTitle('Remove Container').click();
-    await expect(page.getByRole('dialog')).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK' }).click();
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
+    expect(await containerHandles.count()).toEqual(2);
   });
   test('Remove Frame', async ({ page }) => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
     await page.getByRole('group', { name: 'Child Layout 1' }).click();
     await page.getByTitle('Remove Frame').click();
-    await expect(page.getByRole('dialog')).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK' }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
-    await page.getByRole('group', { name: 'Container' }).nth(1).click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    const flexRows = page.getByLabel('Flexible Layout Row');
+    expect(await flexRows.count()).toEqual(0);
     await page.getByTitle('Columns layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(1);
+    expect(await flexRows.count()).toEqual(1);
     await page.getByTitle('Rows layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    expect(await flexRows.count()).toEqual(0);
   });
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,12 +26,12 @@ import { nextTick } from 'vue';
 
 import ConditionManager from '@/plugins/condition/ConditionManager';
 
-import stylesManager from '../inspectorViews/styles/StylesManager';
+import stylesManager from '../inspectorViews/styles/StylesManager.js';
 import StylesView from './components/inspector/StylesView.vue';
-import ConditionPlugin from './plugin';
-import StyleRuleManager from './StyleRuleManager';
-import { IS_OLD_KEY } from './utils/constants';
-import { getApplicableStylesForItem } from './utils/styleUtils';
+import ConditionPlugin from './plugin.js';
+import StyleRuleManager from './StyleRuleManager.js';
+import { IS_OLD_KEY } from './utils/constants.js';
+import { getApplicableStylesForItem } from './utils/styleUtils.js';
 
 describe('the plugin', function () {
   let conditionSetDefinition;

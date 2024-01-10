@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,12 +24,13 @@
  * This test suite is dedicated to testing the Gauge component.
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { v4 as uuid } from 'uuid';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
-const uuid = require('uuid').v4;
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Gauge', () => {
   test.beforeEach(async ({ page }) => {
@@ -127,7 +128,7 @@ test.describe('Gauge', () => {
 
     // Create the gauge with defaults
     await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    await page.click('button[title="More options"]');
+    await page.click('button[title="More actions"]');
     await page.click('li[role="menuitem"]:has-text("Edit Properties")');
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
@@ -147,7 +148,7 @@ test.describe('Gauge', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, gauge.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
 
     //Edit Example Telemetry Object to include 5s loading Delay

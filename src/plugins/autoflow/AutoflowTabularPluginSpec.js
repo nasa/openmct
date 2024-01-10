@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,9 +22,9 @@
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import AutoflowTabularConstants from './AutoflowTabularConstants';
-import AutoflowTabularPlugin from './AutoflowTabularPlugin';
-import DOMObserver from './dom-observer';
+import AutoflowTabularConstants from './AutoflowTabularConstants.js';
+import AutoflowTabularPlugin from './AutoflowTabularPlugin.js';
+import DOMObserver from './dom-observer.js';
 
 // TODO lots of its without expects
 xdescribe('AutoflowTabularPlugin', () => {

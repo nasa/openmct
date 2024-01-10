@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -58,8 +58,8 @@ import { scaleLinear, scaleUtc } from 'd3-scale';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
-import PlanViewConfiguration from '../PlanViewConfiguration';
-import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util';
+import PlanViewConfiguration from '../PlanViewConfiguration.js';
+import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util.js';
 import ActivityTimeline from './ActivityTimeline.vue';
 
 const PADDING = 1;

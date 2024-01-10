@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,9 +25,10 @@ Collection of Visual Tests set to run with browser clock manipulate made possibl
 clockOptions plugin fixture.
 */
 
-const { VISUAL_URL, MISSION_TIME } = require('../../constants');
-const { test, expect } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
+import percySnapshot from '@percy/playwright';
+
+import { MISSION_TIME, VISUAL_URL } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Controlled Clock', () => {
   test.beforeEach(async ({ page }) => {

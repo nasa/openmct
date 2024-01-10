@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-const { test, expect } = require('@playwright/test');
-const path = require('path');
+import { expect, test } from '@playwright/test';
+import { fileURLToPath } from 'url';
 
-const memoryLeakFilePath = path.resolve(
-  __dirname,
-  '../../../../e2e/test-data/memory-leak-detection.json'
+const memoryLeakFilePath = fileURLToPath(
+  new URL('../../../../e2e/test-data/memory-leak-detection.json', import.meta.url)
 );
 /**
  * Executes tests to verify that views are not leaking memory on navigation away. This sort of

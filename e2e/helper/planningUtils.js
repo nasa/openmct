@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { expect } from '../pluginFixtures';
+import { expect } from '../pluginFixtures.js';
 
 /**
  * Asserts that the number of activities in the plan view matches the number of
@@ -113,15 +113,33 @@ export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
  * @param {string} planObjectUrl
  */
 export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl) {
-  const activities = Object.values(planJson).flat();
   // Get the earliest start value
-  const start = Math.min(...activities.map((activity) => activity.start));
+  const start = getEarliestStartTime(planJson);
   // Get the latest end value
-  const end = Math.max(...activities.map((activity) => activity.end));
+  const end = getLatestEndTime(planJson);
   // Set the start and end bounds to the earliest start and latest end
   await page.goto(
     `${planObjectUrl}?tc.mode=fixed&tc.startBound=${start}&tc.endBound=${end}&tc.timeSystem=utc&view=plan.view`
   );
+}
+
+/**
+ * @param {object} planJson
+ * @returns {number}
+ */
+export function getEarliestStartTime(planJson) {
+  const activities = Object.values(planJson).flat();
+  return Math.min(...activities.map((activity) => activity.start));
+}
+
+/**
+ *
+ * @param {object} planJson
+ * @returns {number}
+ */
+export function getLatestEndTime(planJson) {
+  const activities = Object.values(planJson).flat();
+  return Math.max(...activities.map((activity) => activity.end));
 }
 
 /**

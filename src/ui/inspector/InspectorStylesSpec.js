@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,14 +27,14 @@ import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
-import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
+import stylesManager from '../../plugins/inspectorViews/styles/StylesManager.js';
 import {
   mockMultiSelectionMixedStyles,
   mockMultiSelectionNonSpecificStyles,
   mockMultiSelectionSameStyles,
   mockStyle,
   mockTelemetryTableSelection
-} from './InspectorStylesSpecMocks';
+} from './InspectorStylesSpecMocks.js';
 
 describe('the inspector', () => {
   let openmct;

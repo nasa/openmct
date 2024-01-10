@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -43,9 +43,9 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
-import ContextMenuGesture from '../mixins/context-menu-gesture';
-import ObjectLink from '../mixins/object-link';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
+import ContextMenuGesture from '../mixins/context-menu-gesture.js';
+import ObjectLink from '../mixins/object-link.js';
 import PreviewAction from '../preview/PreviewAction.js';
 
 export default {

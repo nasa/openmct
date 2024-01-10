@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-menu" :class="options.menuClass" :style="styleObject">
+  <div :aria-label="optionsLabel" class="c-menu" :class="options.menuClass" :style="styleObject">
     <ul v-if="options.actions.length && options.actions[0].length" role="menu">
       <template v-for="(actionGroups, index) in options.actions" :key="index">
         <div role="group">
@@ -62,9 +62,15 @@
 </template>
 
 <script>
-import popupMenuMixin from '../mixins/popupMenuMixin';
+import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
-  inject: ['options']
+  inject: ['options'],
+  computed: {
+    optionsLabel() {
+      const label = this.options.label ? `${this.options.label} Menu` : 'Menu';
+      return label;
+    }
+  }
 };
 </script>

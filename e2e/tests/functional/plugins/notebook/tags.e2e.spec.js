@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,13 +24,13 @@
 This test suite is dedicated to tests which verify notebook tag functionality.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const {
-  enterTextEntry,
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import {
   createNotebookAndEntry,
-  createNotebookEntryAndTags
-} = require('../../../../helper/notebookUtils');
+  createNotebookEntryAndTags,
+  enterTextEntry
+} from '../../../../helper/notebookUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Tagging in Notebooks @addInit', () => {
   test.beforeEach(async ({ page }) => {
@@ -88,43 +88,53 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
     await page.locator('[placeholder="Type to select tag"]').click();
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    await page.getByRole('search').getByLabel('Search Input').click();
 
     await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
 
     // Test canceling adding a tag after we just click "Add Tag"
     await page.locator('button:has-text("Add Tag")').click();
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
+    await page.getByRole('search').getByLabel('Search Input').click();
 
     await expect(page.locator('button:has-text("Add Tag")')).toBeVisible();
   });
   test('Can search for tags and preview works properly', async ({ page }) => {
     await createNotebookEntryAndTags(page);
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-    await expect(page.locator('[aria-label="Search Result"]')).toContainText('Science');
-    await expect(page.locator('[aria-label="Search Result"]')).not.toContainText('Driving');
+    await page.getByRole('search').getByLabel('Search Input').click();
+    await page.getByRole('search').getByLabel('Search Input').fill('sc');
+    await expect(page.getByRole('listitem', { name: 'Annotation Search Result' })).toContainText(
+      'Science'
+    );
+    await expect(
+      page.getByRole('listitem', { name: 'Annotation Search Result' })
+    ).not.toContainText('Driving');
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
-    await expect(page.locator('[aria-label="Search Result"]')).toContainText('Science');
-    await expect(page.locator('[aria-label="Search Result"]')).not.toContainText('Driving');
+    await page.getByRole('search').getByLabel('Search Input').click();
+    await page.getByRole('search').getByLabel('Search Input').fill('Sc');
+    await expect(page.getByRole('listitem', { name: 'Annotation Search Result' })).toContainText(
+      'Science'
+    );
+    await expect(
+      page.getByRole('listitem', { name: 'Annotation Search Result' })
+    ).not.toContainText('Driving');
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-    await expect(page.locator('text=No results found')).toBeVisible();
+    await page.getByRole('search').getByLabel('Search Input').click();
+    await page.getByRole('search').getByLabel('Search Input').fill('Xq');
+    await expect(page.getByText('No results found')).toBeVisible();
 
     await createDomainObjectWithDefaults(page, {
       type: 'Display Layout'
     });
 
     // Go back into edit mode for the display layout
-    await page.locator('button[title="Edit"]').click();
+    await page.getByRole('button', { name: 'Edit' }).click();
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
-    await expect(page.locator('[aria-label="Search Result"]')).toContainText('Science');
+    await page.getByRole('search').getByLabel('Search Input').click();
+    await page.getByRole('search').getByLabel('Search Input').fill('Sc');
+    await expect(page.getByRole('listitem', { name: 'Annotation Search Result' })).toContainText(
+      'Science'
+    );
     await page.getByText('Entry 0').click();
     await expect(page.locator('.js-preview-window')).toBeVisible();
   });
@@ -138,8 +148,10 @@ test.describe('Tagging in Notebooks @addInit', () => {
     await expect(page.locator('[aria-label="Tags Inspector"]')).toContainText('Science');
     await expect(page.locator('[aria-label="Tags Inspector"]')).not.toContainText('Driving');
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sc');
-    await expect(page.locator('[aria-label="Search Result"]')).not.toContainText('Driving');
+    await page.getByRole('search').getByLabel('Search Input').fill('sc');
+    await expect(
+      page.getByRole('listitem', { name: 'Annotation Search Result' })
+    ).not.toContainText('Driving');
   });
 
   test('Can delete entries without tags', async ({ page }) => {
@@ -167,17 +179,17 @@ test.describe('Tagging in Notebooks @addInit', () => {
   test('Can delete objects with tags and neither return in search', async ({ page }) => {
     await createNotebookEntryAndTags(page);
     // Delete Notebook
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     await page.locator('li[title="Remove this object from its containing object."]').click();
     await page.locator('button:has-text("OK")').click();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Unnamed');
-    await expect(page.locator('text=No results found')).toBeVisible();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('sci');
-    await expect(page.locator('text=No results found')).toBeVisible();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('dri');
-    await expect(page.locator('text=No results found')).toBeVisible();
+    await page.getByRole('search').getByLabel('Search Input').fill('Unnamed');
+    await expect(page.getByText('No results found')).toBeVisible();
+    await page.getByRole('search').getByLabel('Search Input').fill('sci');
+    await expect(page.getByText('No results found')).toBeVisible();
+    await page.getByRole('search').getByLabel('Search Input').fill('dri');
+    await expect(page.getByText('No results found')).toBeVisible();
   });
   test('Tags persist across reload', async ({ page }) => {
     //Go to baseURL

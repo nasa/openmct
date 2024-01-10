@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../pluginFixtures.js');
-const {
+import {
   createDomainObjectWithDefaults,
   createNotification,
   expandEntireTree
-} = require('../../appActions.js');
+} from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('AppActions', () => {
   test('createDomainObjectsWithDefaults', async ({ page }) => {

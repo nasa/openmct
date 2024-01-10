@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -54,9 +54,9 @@
 <script>
 import moment from 'moment';
 
-import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
-import objectLink from '../../../ui/mixins/object-link';
-import statusListener from './status-listener';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture.js';
+import objectLink from '../../../ui/mixins/object-link.js';
+import statusListener from './status-listener.js';
 
 export default {
   mixins: [contextMenuGesture, objectLink, statusListener],

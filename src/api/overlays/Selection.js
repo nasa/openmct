@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import mount from 'utils/mount';
 
 import SelectionComponent from './components/SelectionComponent.vue';
-import Overlay from './Overlay';
+import Overlay from './Overlay.js';
 
 class Selection extends Overlay {
   constructor({

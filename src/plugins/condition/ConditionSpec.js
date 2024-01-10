@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Condition from './Condition';
-import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER } from './utils/constants';
+import Condition from './Condition.js';
+import TelemetryCriterion from './criterion/TelemetryCriterion.js';
+import { TRIGGER } from './utils/constants.js';
 
 let openmct = {};
 let testConditionDefinition;

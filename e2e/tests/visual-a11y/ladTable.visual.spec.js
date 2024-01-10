@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { expect, test } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { VISUAL_URL } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - LAD Table', () => {
   /** @type {import('@playwright/test').Locator} */
@@ -45,7 +46,7 @@ test.describe('Visual - LAD Table', () => {
     });
 
     //Modify SWG to create a really stable SWG
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
 
     await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
 

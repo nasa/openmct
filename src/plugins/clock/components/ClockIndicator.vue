@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,7 +21,10 @@
 -->
 
 <template>
-  <div class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable">
+  <div
+    class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable"
+    role="complementary"
+  >
     <span class="label c-indicator__label">
       {{ timeTextValue }}
     </span>
