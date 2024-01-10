@@ -71,6 +71,7 @@
           v-for="(item, index) in statusBarItems"
           :key="index"
           class="c-button"
+          :aria-label="item.name"
           :title="item.name"
           :class="item.cssClass"
           @click="item.onItemClicked"

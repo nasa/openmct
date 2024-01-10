@@ -22,22 +22,20 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas :style="canvasStyle" class="js-overlay-canvas" role="img" alt="2dContext"></canvas>
-    <canvas :style="canvasStyle" class="js-main-canvas" role="img" alt="webglContext"></canvas>
+    <canvas id="2dContext" :style="canvasStyle" class="js-overlay-canvas" role="img"></canvas>
+    <canvas id="webglContext" :style="canvasStyle" class="js-main-canvas" role="img"></canvas>
     <div ref="limitArea" class="js-limit-area" aria-hidden="true">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
         :key="index"
         :point="limitLabel.point"
         :limit="limitLabel.limit"
-        role="text"
       ></limit-label>
       <limit-line
         v-for="(limitLine, index) in visibleLimitLines"
         :key="index"
         :point="limitLine.point"
         :limit="limitLine.limit"
-        role="text"
       ></limit-line>
     </div>
   </div>

@@ -60,11 +60,11 @@
           </p>
         </div>
         <h2>Version Information</h2>
-        <ul data-testid="versionInfo" class="t-info l-info s-info">
-          <li>Version: {{ buildInfo.version || 'Unknown' }}</li>
-          <li>Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
-          <li>Revision: {{ buildInfo.revision || 'Unknown' }}</li>
-          <li>Branch: {{ buildInfo.branch || 'Unknown' }}</li>
+        <ul class="t-info l-info s-info">
+          <li aria-label="Version Number">Version: {{ buildInfo.version || 'Unknown' }}</li>
+          <li aria-label="Build Date">Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
+          <li aria-label="Revision">Revision: {{ buildInfo.revision || 'Unknown' }}</li>
+          <li aria-label="Branch">Branch: {{ buildInfo.branch || 'Unknown' }}</li>
         </ul>
       </div>
     </div>
