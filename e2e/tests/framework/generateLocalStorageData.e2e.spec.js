@@ -134,7 +134,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     await page.locator('button[title="More actions"]').click();
 
     // Select 'Create Link' from dropdown
-    await page.getByRole('menuitem', { name: ' Create Link' }).click();
+    await page.getByRole('menuitem', { name: 'Create Link' }).click();
 
     // Search and Select for overlay Plot within Create Modal
     await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
