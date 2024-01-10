@@ -278,7 +278,6 @@ export default {
 
     this.setConsolidatedFontStyle();
 
-    this.openmct.editor.on('isEditing', this.setEditState);
     this.stylesManager.on('styleSelected', this.applyStyleToSelection);
   },
   methods: {
