@@ -24,6 +24,7 @@
     ref="gaugeWrapper"
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="gaugeClasses"
+    :aria-label="gaugeTitle"
     :title="gaugeTitle"
   >
     <template v-if="typeDial">

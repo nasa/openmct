@@ -25,6 +25,7 @@
       v-if="filterNames.length > 0"
       class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
       :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+      :aria-label="title"
       :title="title"
     >
       <span class="c-filter-indication__mixed">{{ label }}</span>
@@ -35,6 +36,7 @@
 
     <div class="c-table-indicator__counts">
       <span
+        :aria-label="totalRows + ' rows visible after any filtering'"
         :title="totalRows + ' rows visible after any filtering'"
         class="c-table-indicator__elem c-table-indicator__row-count"
       >
@@ -44,6 +46,7 @@
       <span
         v-if="markedRows"
         class="c-table-indicator__elem c-table-indicator__marked-count"
+        :aria-label="markedRows + ' rows selected'"
         :title="markedRows + ' rows selected'"
       >
         {{ markedRows }} Marked

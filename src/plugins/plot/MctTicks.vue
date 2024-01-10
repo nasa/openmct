@@ -30,6 +30,7 @@
         :style="{
           left: (100 * (tick.value - min)) / interval + '%'
         }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
       >
         {{ tick.text }}
@@ -41,6 +42,7 @@
         :key="'tick-top' + i"
         class="gl-plot-tick gl-plot-y-tick-label"
         :style="{ top: (100 * (max - tick.value)) / interval + '%' }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
         style="margin-top: -0.5em; direction: ltr"
       >

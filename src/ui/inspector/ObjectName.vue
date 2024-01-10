@@ -24,7 +24,11 @@
   <div class="c-inspector__header">
     <div v-if="!multiSelect" class="c-inspector__selected c-object-label" :class="[statusClass]">
       <div class="c-object-label__type-icon" :class="typeCssClass">
-        <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+        <span
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></span>
       </div>
       <span v-if="!singleSelectNonObject" class="c-inspector__selected c-object-label__name">{{
         item.name

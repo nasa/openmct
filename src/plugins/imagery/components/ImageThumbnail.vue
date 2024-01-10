@@ -28,6 +28,7 @@
       selected: selected,
       'real-time': realTime
     }"
+    :aria-label="image.formattedTime"
     :title="image.formattedTime"
     @click="handleClick"
   >

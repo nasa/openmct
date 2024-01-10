@@ -26,6 +26,7 @@
       :key="itemValue.key"
       class="c-list-item__value js-list-item__value"
       :class="['--' + itemValue.key]"
+      :aria-label="itemValue.text"
       :title="itemValue.text"
     >
       {{ itemValue.text }}

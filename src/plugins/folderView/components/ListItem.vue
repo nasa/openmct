@@ -34,7 +34,11 @@
           class="c-object-label__type-icon c-list-item__name__type-icon"
           :class="item.type.cssClass"
         >
-          <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+          <span
+            class="is-status__indicator"
+            :aria-label="`This item is ${status}`"
+            :title="`This item is ${status}`"
+          ></span>
         </div>
         <div class="c-object-label__name c-list-item__name__name">{{ item.model.name }}</div>
       </a>

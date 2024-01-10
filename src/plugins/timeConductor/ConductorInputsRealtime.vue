@@ -31,6 +31,7 @@
     <div
       v-if="!compact"
       class="c-compact-tc__setting-value icon-minus u-fade-truncate--lg --no-sep"
+      :aria-label="`Start offset: ${offsets.start}`"
       :title="`Start offset: ${offsets.start}`"
     >
       {{ offsets.start }}
@@ -40,12 +41,14 @@
       v-if="!compact"
       class="c-compact-tc__setting-value icon-plus u-fade-truncate--lg"
       :class="{ '--no-sep': compact }"
+      :aria-label="`End offset: ${offsets.end}`"
       :title="`End offset: ${offsets.end}`"
     >
       {{ offsets.end }}
     </div>
     <div
       class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate--lg --no-sep"
+      aria-label="Last update"
       title="Last update"
     >
       {{ formattedCurrentValue }}

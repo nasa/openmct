@@ -29,6 +29,7 @@
             :key="headerItem.property"
             :direction="sortBy === headerItem.property ? ascending : headerItem.defaultDirection"
             :is-sortable="headerItem.isSortable"
+            :aria-label="headerItem.name"
             :title="headerItem.name"
             :property="headerItem.property"
             :current-sort="sortBy"
