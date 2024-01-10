@@ -3,7 +3,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 0, //Retries unnecessary with debugging locally
+  retries: 0, //Retries are not needed with watch mode
   testDir: 'tests',
   timeout: 60 * 1000,
   webServer: {
