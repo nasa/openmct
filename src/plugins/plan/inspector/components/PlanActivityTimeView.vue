@@ -21,17 +21,19 @@
 -->
 
 <template>
-  <div v-if="timeProperties.length" class="u-contents">
-    <div class="c-inspect-properties__header">
-      {{ heading }}
+  <div>
+    <div v-if="timeProperties.length" class="u-contents">
+      <div class="c-inspect-properties__header">
+        {{ heading }}
+      </div>
+      <ul
+        v-for="timeProperty in timeProperties"
+        :key="timeProperty.id"
+        class="c-inspect-properties__section"
+      >
+        <activity-property :label="timeProperty.label" :value="timeProperty.value" />
+      </ul>
     </div>
-    <ul
-      v-for="timeProperty in timeProperties"
-      :key="timeProperty.id"
-      class="c-inspect-properties__section"
-    >
-      <activity-property :label="timeProperty.label" :value="timeProperty.value" />
-    </ul>
   </div>
 </template>
 
@@ -64,10 +66,10 @@ export default {
   },
   methods: {
     setProperties() {
-      Object.keys(this.activity).forEach((key) => {
-        if (this.activity[key].label) {
-          const label = this.activity[key].label;
-          const value = String(this.activity[key].value);
+      Object.keys(this.activity.timeProperties).forEach((key) => {
+        if (this.activity.timeProperties[key].label) {
+          const label = this.activity.timeProperties[key].label;
+          const value = String(this.activity.timeProperties[key].value);
 
           this.timeProperties[this.timeProperties.length] = {
             id: uuid(),

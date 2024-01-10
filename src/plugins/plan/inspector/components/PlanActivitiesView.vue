@@ -20,21 +20,39 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-inspector__properties c-inspect-properties">
-    <plan-activity-view
+  <div>
+    <plan-activity-time-view
       v-for="activity in activities"
-      :key="activity.id"
+      :key="activity.uuid"
+      class="c-inspector__properties c-inspect-properties"
       :activity="activity"
       :heading="heading"
+    />
+    <plan-activity-properties-view
+      v-for="activity in activities"
+      :key="activity.uuid"
+      :heading="'Properties'"
+      class="c-inspector__properties c-inspect-properties"
+      :activity="activity"
+    ></plan-activity-properties-view>
+    <plan-activity-status-view
+      v-if="activities.length === 1"
+      :key="activities[0].uuid"
+      class="c-inspector__properties c-inspect-properties"
+      :activity="activities[0]"
+      :execution-state="persistedActivityStates[activities[0].uuid]"
+      :heading="'Activity Status'"
+      @updateActivityState="persistedActivityState"
     />
   </div>
 </template>
 
 <script>
 import { getPreciseDuration } from 'utils/duration';
-import { v4 as uuid } from 'uuid';
 
-import PlanActivityView from './PlanActivityView.vue';
+import PlanActivityPropertiesView from './PlanActivityPropertiesView.vue';
+import PlanActivityStatusView from './PlanActivityStatusView.vue';
+import PlanActivityTimeView from './PlanActivityTimeView.vue';
 
 const propertyLabels = {
   start: 'Start DateTime',
@@ -44,23 +62,28 @@ const propertyLabels = {
   latestEnd: 'Latest End',
   gap: 'Gap',
   overlap: 'Overlap',
-  totalTime: 'Total Time'
+  totalTime: 'Total Time',
+  description: 'Description'
 };
 export default {
   components: {
-    PlanActivityView
+    PlanActivityTimeView,
+    PlanActivityPropertiesView,
+    PlanActivityStatusView
   },
   inject: ['openmct', 'selection'],
   data() {
     return {
       name: '',
       activities: [],
+      persistedActivityStates: {},
       heading: ''
     };
   },
   mounted() {
     this.setFormatters();
     this.getPlanData(this.selection);
+    this.getActivityStates();
     this.getActivities();
     this.openmct.selection.on('change', this.updateSelection);
     this.openmct.time.on('timeSystem', this.setFormatters);
@@ -68,8 +91,23 @@ export default {
   beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     this.openmct.time.off('timeSystem', this.setFormatters);
+    if (this.stopObservingActivityStatesObject) {
+      this.stopObservingActivityStatesObject();
+    }
   },
   methods: {
+    async getActivityStates() {
+      this.activityStatesObject = await this.openmct.objects.get('activity-states');
+      this.setActivityStates();
+      this.stopObservingActivityStatesObject = this.openmct.objects.observe(
+        this.activityStatesObject,
+        '*',
+        this.setActivityStates
+      );
+    },
+    setActivityStates() {
+      this.persistedActivityStates = { ...this.activityStatesObject.activities };
+    },
     setFormatters() {
       let timeSystem = this.openmct.time.timeSystem();
       this.timeFormatter = this.openmct.telemetry.getValueFormatter({
@@ -104,20 +142,30 @@ export default {
       this.activities.splice(0);
       this.selectedActivities.forEach((selectedActivity, index) => {
         const activity = {
-          id: uuid(),
-          start: {
-            label: propertyLabels.start,
-            value: this.formatTime(selectedActivity.start)
-          },
-          end: {
-            label: propertyLabels.end,
-            value: this.formatTime(selectedActivity.end)
-          },
-          duration: {
-            label: propertyLabels.duration,
-            value: this.formatDuration(selectedActivity.end - selectedActivity.start)
+          uuid: selectedActivity.uuid ?? selectedActivity.name,
+          timeProperties: {
+            start: {
+              label: propertyLabels.start,
+              value: this.formatTime(selectedActivity.start)
+            },
+            end: {
+              label: propertyLabels.end,
+              value: this.formatTime(selectedActivity.end)
+            },
+            duration: {
+              label: propertyLabels.duration,
+              value: this.formatDuration(selectedActivity.end - selectedActivity.start)
+            }
           }
         };
+        if (selectedActivity.description) {
+          activity.metadata = {
+            description: {
+              label: propertyLabels.description,
+              value: selectedActivity.description
+            }
+          };
+        }
         this.activities[index] = activity;
       });
     },
@@ -166,30 +214,31 @@ export default {
       let totalTime = latestEnd - earliestStart;
 
       const activity = {
-        id: uuid(),
-        earliestStart: {
-          label: propertyLabels.earliestStart,
-          value: this.formatTime(earliestStart)
-        },
-        latestEnd: {
-          label: propertyLabels.latestEnd,
-          value: this.formatTime(latestEnd)
+        timeProperties: {
+          earliestStart: {
+            label: propertyLabels.earliestStart,
+            value: this.formatTime(earliestStart)
+          },
+          latestEnd: {
+            label: propertyLabels.latestEnd,
+            value: this.formatTime(latestEnd)
+          }
         }
       };
 
       if (gap) {
-        activity.gap = {
+        activity.timeProperties.gap = {
           label: propertyLabels.gap,
           value: this.formatDuration(gap)
         };
       } else if (overlap) {
-        activity.overlap = {
+        activity.timeProperties.overlap = {
           label: propertyLabels.overlap,
           value: this.formatDuration(overlap)
         };
       }
 
-      activity.totalTime = {
+      activity.timeProperties.totalTime = {
         label: propertyLabels.totalTime,
         value: this.formatDuration(totalTime)
       };
@@ -201,6 +250,11 @@ export default {
     },
     formatTime(time) {
       return this.timeFormatter.format(time);
+    },
+    persistedActivityState(data) {
+      const { key, executionState } = data;
+      const activitiesPath = `activities.${key}`;
+      this.openmct.objects.mutate(this.activityStatesObject, activitiesPath, executionState);
     }
   }
 };

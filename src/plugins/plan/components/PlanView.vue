@@ -488,6 +488,7 @@ export default {
             },
             start: rawActivity.start,
             end: rawActivity.end,
+            description: rawActivity.description,
             row: currentRow,
             textLines: textLines,
             textStart: textStart,
