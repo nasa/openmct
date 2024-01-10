@@ -36,9 +36,9 @@
 
     <imagery-view-menu-switcher
       v-if="layers.length"
-      :icon-class="'icon-layers'"
-      :aria-label="'Layers'"
-      :title="'Layers'"
+      icon-class="'icon-layers'"
+      aria-label="'Layers'"
+      title="'Layers'"
     >
       <layer-settings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
     </imagery-view-menu-switcher>
