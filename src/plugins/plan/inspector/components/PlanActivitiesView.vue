@@ -23,26 +23,26 @@
   <div>
     <plan-activity-time-view
       v-for="activity in activities"
-      :key="activity.uuid"
+      :key="activity.key"
       class="c-inspector__properties c-inspect-properties"
       :activity="activity"
       :heading="heading"
     />
     <plan-activity-properties-view
       v-for="activity in activities"
-      :key="activity.uuid"
+      :key="activity.key"
       :heading="'Properties'"
       class="c-inspector__properties c-inspect-properties"
       :activity="activity"
     ></plan-activity-properties-view>
     <plan-activity-status-view
-      v-if="activities.length === 1"
-      :key="activities[0].uuid"
+      v-if="canPersistState"
+      :key="activities[0].key"
       class="c-inspector__properties c-inspect-properties"
       :activity="activities[0]"
-      :execution-state="persistedActivityStates[activities[0].uuid]"
+      :execution-state="persistedActivityStates[activities[0].id]"
       :heading="'Activity Status'"
-      @updateActivityState="persistedActivityState"
+      @update-activity-state="persistedActivityState"
     />
   </div>
 </template>
@@ -79,6 +79,11 @@ export default {
       persistedActivityStates: {},
       heading: ''
     };
+  },
+  computed: {
+    canPersistState() {
+      return this.activities.length === 1 && this.activities[0].id;
+    }
   },
   mounted() {
     this.setFormatters();
@@ -142,7 +147,8 @@ export default {
       this.activities.splice(0);
       this.selectedActivities.forEach((selectedActivity, index) => {
         const activity = {
-          uuid: selectedActivity.uuid ?? selectedActivity.name,
+          id: selectedActivity.id,
+          key: selectedActivity.id ?? selectedActivity.name,
           timeProperties: {
             start: {
               label: propertyLabels.start,
@@ -189,6 +195,8 @@ export default {
       let latestEnd;
       let gap;
       let overlap;
+      let id;
+      let key;
 
       //Sort by start time
       let selectedActivities = this.selectedActivities.sort(this.sortFn);
@@ -207,6 +215,8 @@ export default {
           earliestStart = Math.min(earliestStart, selectedActivity.start);
           latestEnd = Math.max(latestEnd, selectedActivity.end);
         } else {
+          id = selectedActivity.id;
+          key = selectedActivity.id ?? selectedActivity.name;
           earliestStart = selectedActivity.start;
           latestEnd = selectedActivity.end;
         }
@@ -214,6 +224,8 @@ export default {
       let totalTime = latestEnd - earliestStart;
 
       const activity = {
+        id,
+        key,
         timeProperties: {
           earliestStart: {
             label: propertyLabels.earliestStart,

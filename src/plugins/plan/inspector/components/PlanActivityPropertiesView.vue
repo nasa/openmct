@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
-
 import ActivityProperty from './ActivityProperty.vue';
 
 export default {
@@ -68,9 +66,10 @@ export default {
         if (this.activity.metadata[key].label) {
           const label = this.activity.metadata[key].label;
           const value = String(this.activity.metadata[key].value);
+          const id = this.activity.id;
 
           this.properties[this.properties.length] = {
-            id: uuid(),
+            id,
             label,
             value
           };

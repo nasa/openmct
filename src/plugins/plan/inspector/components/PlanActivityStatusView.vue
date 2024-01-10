@@ -105,7 +105,7 @@ export default {
       }
       this.activity.executionState = this.currentStatusKey;
       this.$emit('updateActivityState', {
-        key: this.activity.uuid,
+        key: this.activity.id,
         executionState: this.currentStatusKey
       });
     }

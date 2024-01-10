@@ -45,6 +45,10 @@ export function getValidatedData(domainObject) {
           groupActivity.end = activity[sourceMap.end];
         }
 
+        if (sourceMap.id) {
+          groupActivity.id = activity[sourceMap.id];
+        }
+
         if (!mappedJson[groupIdKey]) {
           mappedJson[groupIdKey] = [];
         }
