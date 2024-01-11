@@ -89,6 +89,9 @@ test.describe('Visual - Tree Pane', () => {
     await expandTreePaneItemByName(page, bar.name);
     await expandTreePaneItemByName(page, baz.name);
 
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1 * 1000); //https://github.com/nasa/openmct/issues/7059
+
     await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
       scope: treePane
     });

@@ -41,8 +41,6 @@ test.describe('Gauge', () => {
   test('Can add and remove telemetry sources @unstable', async ({ page }) => {
     // Create the gauge with defaults
     const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    const editButtonLocator = page.locator('button[title="Edit"]');
-    const saveButtonLocator = page.locator('button[title="Save"]');
 
     // Create a sine wave generator within the gauge
     const swg1 = await createDomainObjectWithDefaults(page, {
@@ -54,9 +52,9 @@ test.describe('Gauge', () => {
     // Navigate to the gauge and verify that
     // the SWG appears in the elements pool
     await page.goto(gauge.url);
-    await editButtonLocator.click();
+    await page.getByLabel('Edit Object').click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-    await saveButtonLocator.click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the gauge
@@ -79,10 +77,10 @@ test.describe('Gauge', () => {
     // Navigate to the gauge and verify that the new SWG
     // appears in the elements pool and the old one is gone
     await page.goto(gauge.url);
-    await editButtonLocator.click();
+    await page.getByLabel('Edit Object').click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-    await saveButtonLocator.click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
     await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
@@ -109,7 +107,7 @@ test.describe('Gauge', () => {
       description: 'https://github.com/nasa/openmct/issues/5356'
     });
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Gauge")`);

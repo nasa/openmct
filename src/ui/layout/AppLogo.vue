@@ -20,7 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="aboutLogo" class="l-shell__app-logo" @click="launchAbout"></div>
+  <div
+    ref="aboutLogo"
+    class="l-shell__app-logo"
+    role="button"
+    aria-label="About Modal"
+    @click="launchAbout"
+  ></div>
 </template>
 
 <script>

@@ -37,6 +37,7 @@
           <div
             v-for="entry in statusCountViewModel"
             :key="entry.status.key"
+            :aria-label="entry.status.label"
             :title="entry.status.label"
             class="c-status-poll-report__count"
             :style="[

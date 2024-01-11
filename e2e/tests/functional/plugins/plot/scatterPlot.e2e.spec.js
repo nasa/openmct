@@ -41,9 +41,6 @@ test.describe('Scatter Plot', () => {
   });
 
   test('Can add and remove telemetry sources', async ({ page }) => {
-    const editButton = page.locator('button[title="Edit"]');
-    const saveButton = page.locator('button[title="Save"]');
-
     // Create a sine wave generator within the scatter plot
     const swg1 = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
@@ -54,10 +51,10 @@ test.describe('Scatter Plot', () => {
     // Navigate to the scatter plot and verify that
     // the SWG appears in the elements pool
     await page.goto(scatterPlot.url);
-    await editButton.click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-    await saveButton.click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the scatter plot
@@ -80,13 +77,13 @@ test.describe('Scatter Plot', () => {
     // Navigate to the scatter plot and verify that the new SWG
     // appears in the elements pool and the old one is gone
     await page.goto(scatterPlot.url);
-    await editButton.click();
+    await page.getByLabel('Edit Object').click();
 
     // Click the "Elements" tab
     await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-    await saveButton.click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
     await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({

@@ -155,7 +155,7 @@ test.describe('AppActions', () => {
 
     await page.goto('./#/browse/mine');
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Clock")`);

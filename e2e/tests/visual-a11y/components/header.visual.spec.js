@@ -26,31 +26,29 @@ Tests the branding associated with the default deployment. At least the about mo
 
 import percySnapshot from '@percy/playwright';
 
-import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_URL } from '../../../constants.js';
 
-test.describe('Visual - Branding @a11y', () => {
+//Declare the scope of the visual test
+const header = '.l-shell__head';
+
+test.describe('Visual - Header @a11y', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
-  test('Visual - About Modal', async ({ page, theme }) => {
+  test('header sizing', async ({ page, theme }) => {
     // Click About button
-    await page.getByLabel('About Modal').click();
+    await percySnapshot(page, `Header default (theme: '${theme}')`, {
+      scope: header
+    });
 
-    // Modify the Build information in 'about' to be consistent run-over-run
-    await expect(page.locator('id=versionInformation')).toBeEnabled();
-    await page
-      .locator('id=versionInformation')
-      .evaluate(
-        (node) =>
-          (node.innerHTML =
-            '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
-      );
+    await page.getByLabel('Click to collapse items').click();
 
-    // Take a snapshot of the About modal
-    await percySnapshot(page, `About (theme: '${theme}')`);
+    await percySnapshot(page, `Header Collapsed (theme: '${theme}')`, {
+      scope: header
+    });
   });
 });
 test.afterEach(async ({ page }, testInfo) => {

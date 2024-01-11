@@ -89,9 +89,14 @@ test.describe('Snapshot Container tests', () => {
     //     name: "Dropped Overlay Plot"
     // });
 
-    await page.getByRole('button', { name: ' Snapshot ' }).click();
-    await page.getByRole('menuitem', { name: ' Save to Notebook Snapshots' }).click();
+    await page.getByLabel('Take a Notebook Snapshot').click();
+    await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
     await page.getByRole('button', { name: 'Show' }).click();
+  });
+  test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
+    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
+    await page.getByRole('menuitem', { name: 'Quick View' }).click();
+    await expect(page.locator('.c-overlay__outer')).toBeVisible();
   });
   test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
   test.fixme(
@@ -117,11 +122,7 @@ test.describe('Snapshot Container tests', () => {
       //await expect(await page.locator)
     }
   );
-  test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
-    await page.getByRole('menuitem', { name: 'Quick View' }).click();
-    await expect(page.locator('.c-overlay__outer')).toBeVisible();
-  });
+
   test.fixme(
     'A snapshot can be Navigated To from Container with 3 dot action menu',
     async ({ page }) => {}

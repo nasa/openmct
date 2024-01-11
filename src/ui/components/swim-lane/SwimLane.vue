@@ -35,7 +35,12 @@
       :style="gridRowSpan"
     >
       <div v-if="iconClass" class="c-object-label__type-icon" :class="iconClass">
-        <span v-if="status" class="is-status__indicator" :title="`This item is ${status}`"></span>
+        <span
+          v-if="status"
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></span>
       </div>
 
       <div class="c-object-label__name">

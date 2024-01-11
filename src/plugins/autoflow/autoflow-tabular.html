@@ -37,12 +37,13 @@
     <ul v-for="column in columns" class="l-autoflow-col" :style="{ width: width + 'px' }">
       <li v-for="row in column" class="l-autoflow-row">
         <span
+          :aria-label="row.value"
           :title="row.value"
           :data-value="row.value"
           :class="'l-autoflow-item r l-obj-val-format ' + row.classes"
           >{{row.value}}</span
         >
-        <span :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
+        <span :aria-label="row.name" :title="row.name" class="l-autoflow-item l">{{row.name}}</span>
       </li>
     </ul>
   </div>

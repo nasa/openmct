@@ -61,7 +61,7 @@ test.describe('Example Imagery Object', () => {
     await expect(page.locator('.c-hud')).toBeHidden();
   });
 
-  test('Can right click on image and open it in a new tab', async ({ page, context }) => {
+  test('Can right click on image and open it in a new tab @2p', async ({ page, context }) => {
     // try to right click on image
     const backgroundImage = await page.locator(backgroundImageSelector);
     await backgroundImage.click({
@@ -397,7 +397,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -416,7 +416,7 @@ test.describe('Example Imagery in Display Layout', () => {
   test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
     const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -493,7 +493,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -537,7 +537,7 @@ test.describe('Example Imagery in Tabs View', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -984,7 +984,7 @@ async function resetImageryPanAndZoom(page) {
  */
 async function createImageryView(page) {
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click text=Example Imagery
   await page.click('li[role="menuitem"]:has-text("Example Imagery")');
