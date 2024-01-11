@@ -3,7 +3,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
+  retries: 0, //Only for debugging purposes for trace: 'on-first-retry'
   testDir: 'tests/performance/',
   testMatch: '*.contract.perf.spec.js', //Run everything except contract tests which require marks in dev mode
   timeout: 60 * 1000,
@@ -28,7 +28,18 @@ const config = {
       name: 'chrome',
       testIgnore: '*.memory.perf.spec.js', //Do not run memory tests without proper flags. Shouldn't get here
       use: {
-        browserName: 'chromium'
+        browserName: 'chromium',
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-notifications',
+            '--use-fake-ui-for-media-stream',
+            '--use-fake-device-for-media-stream',
+            '--js-flags=--no-move-object-start',
+            '--enable-precise-memory-info',
+            '--display=:100'
+          ]
+        }
       }
     }
   ],

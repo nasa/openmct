@@ -1,0 +1,6 @@
+snapshot meta data invalid or missing
+Use `memlab help` or `memlab <COMMAND> -h` to get helper text
+snapshot meta data invalid or missing
+Use `memlab help` or `memlab <COMMAND> -h` to get helper text
+snapshot meta data invalid or missing
+Use `memlab help` or `memlab <COMMAND> -h` to get helper text

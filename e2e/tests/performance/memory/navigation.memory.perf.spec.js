@@ -20,12 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { fileURLToPath } from 'node:url';
+
 import { expect, test } from '@playwright/test';
-import { fileURLToPath } from 'url';
+
+import { navigateToObjectAndDetectMemoryLeak } from '../../../avpFixtures.js';
 
 const memoryLeakFilePath = fileURLToPath(
   new URL('../../../../e2e/test-data/memory-leak-detection.json', import.meta.url)
 );
+
 /**
  * Executes tests to verify that views are not leaking memory on navigation away. This sort of
  * memory leak is generally caused by a failure to clean up registered listeners.
@@ -279,57 +283,4 @@ test.describe('Navigation memory leak is not detected in', () => {
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
-
-  /**
-   *
-   * @param {import('@playwright/test').Page} page
-   * @param {*} objectName
-   * @returns
-   */
-  async function navigateToObjectAndDetectMemoryLeak(page, objectName) {
-    await page.getByRole('searchbox', { name: 'Search Input' }).click();
-    // Fill Search input
-    await page.getByRole('searchbox', { name: 'Search Input' }).fill(objectName);
-
-    //Search Result Appears and is clicked
-    await page.getByText(objectName, { exact: true }).click();
-
-    // Register a finalization listener on the root node for the view. This tends to be the last thing to be
-    // garbage collected since it has either direct or indirect references to all resources used by the view. Therefore it's a pretty good proxy
-    // for detecting memory leaks.
-    await page.evaluate(() => {
-      window.gcPromise = new Promise((resolve) => {
-        // eslint-disable-next-line no-undef
-        window.fr = new FinalizationRegistry(resolve);
-        window.fr.register(
-          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild,
-          'navigatedObject',
-          window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild
-        );
-      });
-    });
-
-    // Nav back to folder
-    await page.goto('./#/browse/mine');
-
-    // This next code block blocks until the finalization listener is called and the gcPromise resolved. This means that the root node for the view has been garbage collected.
-    // In the event that the root node is not garbage collected, the gcPromise will never resolve and the test will time out.
-    await page.evaluate(() => {
-      const gcPromise = window.gcPromise;
-      window.gcPromise = null;
-
-      // Manually invoke the garbage collector once all references are removed.
-      window.gc();
-
-      return gcPromise;
-    });
-
-    // Clean up the finalization registry since we don't need it any more.
-    await page.evaluate(() => {
-      window.fr = null;
-    });
-
-    // If we get here without timing out, it means the garbage collection promise resolved and the test passed.
-    return true;
-  }
 });
