@@ -51,7 +51,7 @@ test.describe('Gauge', () => {
 
     // Navigate to the gauge and verify that
     // the SWG appears in the elements pool
-    await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
+    await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
