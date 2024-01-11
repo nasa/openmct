@@ -69,7 +69,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -101,7 +101,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -187,7 +187,7 @@ test.describe('Stacked Plot', () => {
     ).toContainText(swgC.name);
 
     // Go into edit mode
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
@@ -231,8 +231,10 @@ test.describe('Stacked Plot', () => {
   test('the legend toggles between aggregate and per child', async ({ page }) => {
     await page.goto(stackedPlot.url);
 
+    await page.waitForPlotsToRender();
+
     // Go into edit mode
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
@@ -245,9 +247,13 @@ test.describe('Stacked Plot', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    await page.waitForPlotsToRender();
+
     await assertAggregateLegendIsVisible(page);
 
     await page.reload();
+
+    await page.waitForPlotsToRender();
 
     await assertAggregateLegendIsVisible(page);
   });

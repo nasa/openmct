@@ -372,7 +372,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // Edit mode
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -391,7 +391,7 @@ test.describe('Example Imagery in Display Layout', () => {
   test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
     const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
     // Edit mode
-    await page.getByLabel('Edit Object');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
