@@ -61,7 +61,7 @@ test.describe('Example Imagery Object', () => {
     await expect(page.locator('.c-hud')).toBeHidden();
   });
 
-  test('Can right click on image and open it in a new tab', async ({ page, context }) => {
+  test('Can right click on image and open it in a new tab @2p', async ({ page, context }) => {
     // try to right click on image
     const backgroundImage = await page.locator(backgroundImageSelector);
     await backgroundImage.click({
