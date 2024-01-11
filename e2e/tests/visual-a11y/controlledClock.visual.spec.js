@@ -52,7 +52,7 @@ test.describe('Visual - Controlled Clock', () => {
 
     //Wait for canvas to be rendered and stop animating, but plot should not be loaded.
     //Cannot use waitForPlotsToRender due to clockOptions.
-    await page.getByAltText('webglContext').hover({ trial: true });
+    await page.locator('#webglContext').hover({ trial: true });
 
     //Take snapshot of Sine Wave Generator within Overlay Plot
     await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);

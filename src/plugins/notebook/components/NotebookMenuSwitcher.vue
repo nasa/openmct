@@ -23,6 +23,7 @@
   <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
       class="c-icon-button c-button--menu icon-camera"
+      aria-label="Take a Notebook Snapshot"
       title="Take a Notebook Snapshot"
       @click.stop.prevent="showMenu"
     >

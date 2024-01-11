@@ -231,7 +231,7 @@ test.describe('Stacked Plot', () => {
   test('the legend toggles between aggregate and per child', async ({ page }) => {
     await page.goto(stackedPlot.url);
 
-    await page.waitForPlotsToRender();
+    await waitForPlotsToRender();
 
     // Go into edit mode
     await page.getByLabel('Edit Object').click();
@@ -247,13 +247,13 @@ test.describe('Stacked Plot', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await page.waitForPlotsToRender();
+    await waitForPlotsToRender();
 
     await assertAggregateLegendIsVisible(page);
 
     await page.reload();
 
-    await page.waitForPlotsToRender();
+    await waitForPlotsToRender();
 
     await assertAggregateLegendIsVisible(page);
   });
