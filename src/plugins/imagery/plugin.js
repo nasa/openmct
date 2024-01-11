@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CopyImageAction from './actions/CopyImageAction.js';
 import OpenImageInNewTabAction from './actions/OpenImageInNewTabAction.js';
 import SaveImageAsAction from './actions/SaveImageAsAction.js';
 import ImageryTimestripViewProvider from './ImageryTimestripViewProvider.js';
@@ -32,6 +31,5 @@ export default function (options) {
     openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
     openmct.actions.register(new OpenImageInNewTabAction(openmct));
     openmct.actions.register(new SaveImageAsAction(openmct));
-    openmct.actions.register(new CopyImageAction(openmct));
   };
 }

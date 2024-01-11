@@ -44,7 +44,7 @@ const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
 const SELECTED_ANNOTATION_FILL_STYLE = 'rgba(199, 87, 231, 0.2)';
 
-const CONTEXT_MENU_ACTIONS = ['openImageInNewTab', 'copyImage', 'saveImageAs'];
+const CONTEXT_MENU_ACTIONS = ['openImageInNewTab', 'saveImageAs'];
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
