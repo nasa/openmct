@@ -32,14 +32,36 @@ export default class SaveImageAction {
     this.priority = 1;
   }
 
-  invoke(objectPath, view) {
+  async invoke(objectPath, view) {
     console.debug(`🎨 saving the image as`);
+    const viewContext = (view.getViewContext && view.getViewContext()) || {};
+    try {
+      const filename =
+        viewContext.imageUrl.split('/').pop().split('#')[0].split('?')[0] || 'downloaded-image.png';
+      const response = await fetch(viewContext.imageUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Create a temporary anchor element and trigger the download
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename; // Set the filename for the download
+
+      // Append anchor to body, trigger click, then remove it from the DOM
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Revoke the blob URL after the download
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Could not download the image.', error);
+    }
   }
 
   appliesTo(objectPath, view = {}) {
-    let viewContext = (view.getViewContext && view.getViewContext()) || {};
-    const image = viewContext.image;
-    if (!image) {
+    const viewContext = (view.getViewContext && view.getViewContext()) || {};
+    if (!viewContext.imageUrl) {
       return false;
     }
   }

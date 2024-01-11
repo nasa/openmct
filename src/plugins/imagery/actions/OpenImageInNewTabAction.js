@@ -34,12 +34,13 @@ export default class OpenImageInNewTabAction {
 
   invoke(objectPath, view) {
     console.debug(`🎨 open image in new tab`);
+    const viewContext = (view.getViewContext && view.getViewContext()) || {};
+    window.open(viewContext.imageUrl, '_blank').focus();
   }
 
   appliesTo(objectPath, view = {}) {
-    let viewContext = (view.getViewContext && view.getViewContext()) || {};
-    const image = viewContext.image;
-    if (!image) {
+    const viewContext = (view.getViewContext && view.getViewContext()) || {};
+    if (!viewContext.imageUrl) {
       return false;
     }
   }

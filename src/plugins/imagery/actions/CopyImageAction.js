@@ -32,14 +32,22 @@ export default class CopyImageAction {
     this.priority = 1;
   }
 
-  invoke(objectPath, view) {
-    console.debug(`🎨 copy image`);
+  async invoke(objectPath, view) {
+    const imageUrl = view.getViewContext().imageUrl;
+
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const clipboardItem = new ClipboardItem({ [blob.type]: blob });
+      await navigator.clipboard.write([clipboardItem]);
+    } catch (err) {
+      console.error('Failed to copy image to clipboard: ', err);
+    }
   }
 
   appliesTo(objectPath, view = {}) {
-    let viewContext = (view.getViewContext && view.getViewContext()) || {};
-    const image = viewContext.image;
-    if (!image) {
+    const viewContext = (view.getViewContext && view.getViewContext()) || {};
+    if (!viewContext.imageUrl) {
       return false;
     }
   }
