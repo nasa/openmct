@@ -23,6 +23,7 @@
 import objectUtils from 'objectUtils';
 
 import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
+import BatchingWebSocketProvider from './BatchingWebSocketProvider.js';
 import DefaultMetadataProvider from './DefaultMetadataProvider.js';
 import TelemetryCollection from './TelemetryCollection.js';
 import TelemetryMetadataManager from './TelemetryMetadataManager.js';
@@ -95,6 +96,7 @@ export default class TelemetryAPI {
     this.valueFormatterCache = new WeakMap();
     this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     this.#isGreedyLAD = true;
+    this.BatchingWebSocketProvider = BatchingWebSocketProvider;
   }
 
   abortAllRequests() {
