@@ -34,7 +34,6 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
-let getConditionSetIdentifierFromUrl;
 
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
   test.beforeAll(async ({ browser }) => {
@@ -58,7 +57,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     //Set object identifier from url
     conditionSetUrl = page.url();
 
-    getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
     await page.close();
   });
 
