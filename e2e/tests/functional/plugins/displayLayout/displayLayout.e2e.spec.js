@@ -449,7 +449,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK' }).click();
+  await page.getByRole('button', { name: 'OK', exact: true }).click();
 }
 
 /**

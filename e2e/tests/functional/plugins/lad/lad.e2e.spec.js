@@ -198,10 +198,10 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Remove Sin Wave Generator
+    // Remove Sine Wave Generator
     openObjectTreeContextMenu(page, sineWaveObject.url);
     await page.getByRole('menuitem', { name: /Remove/ }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Ensure Units & Limit columns are gone
     // as Event Generator don't have them

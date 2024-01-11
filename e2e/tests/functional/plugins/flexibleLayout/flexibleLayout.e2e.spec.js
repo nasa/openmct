@@ -293,7 +293,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     expect(await containerHandles.count()).toEqual(2);
   });
   test('Remove Frame', async ({ page }) => {
@@ -303,7 +303,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
