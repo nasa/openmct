@@ -52,13 +52,9 @@
         v-for="action in options.actions"
         :key="action.name"
         role="menuitem"
-<<<<<<< HEAD
         :aria-disabled="action.isDisabled"
         :class="action.cssClass"
-=======
-        :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
         :aria-label="action.name"
->>>>>>> 6ce340cebd423b19e35595258c7981a644a80278
         :title="action.description"
         @click="action.onItemClicked"
       >
