@@ -61,6 +61,31 @@ test.describe('Example Imagery Object', () => {
     await expect(page.locator('.c-hud')).toBeHidden();
   });
 
+  test('Can right click on image and open it in a new tab', async ({ page, context }) => {
+    // try to right click on image
+    const backgroundImage = await page.locator(backgroundImageSelector);
+    await backgroundImage.click({
+      button: 'right',
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    // expect context menu to appear
+    await expect(page.getByText('Save Image As')).toBeVisible();
+    await expect(page.getByText('Open Image in New Tab')).toBeVisible();
+
+    // click on open image in new tab
+    const pagePromise = context.waitForEvent('page');
+    await page.getByText('Open Image in New Tab').click();
+    // expect new tab to be in browser
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();
+    // expect new tab url to have jpg in it
+    await expect(newPage.url()).toContain('.jpg');
+  });
+
+  // this requires CORS to be enabled in some fashion
+  test.fixme('Can right click on image and save it as a file', async ({ page }) => {});
+
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
     browserName
