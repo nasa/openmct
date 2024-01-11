@@ -33,7 +33,6 @@ export default class SaveImageAction {
   }
 
   async invoke(objectPath, view) {
-    console.debug(`🎨 saving the image as`);
     const viewContext = (view.getViewContext && view.getViewContext()) || {};
     try {
       const filename =
