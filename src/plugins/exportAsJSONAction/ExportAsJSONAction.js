@@ -35,6 +35,8 @@ export default class ExportAsJSONAction {
     // Bind public methods
     this.invoke = this.invoke.bind(this);
     this.appliesTo = this.appliesTo.bind(this);
+    // FIXME: This should be private but is used in tests
+    this.saveAs = this.saveAs.bind(this);
 
     this.name = 'Export as JSON';
     this.key = 'export.JSON';
@@ -327,7 +329,7 @@ export default class ExportAsJSONAction {
    * @private
    * @param {object} completedTree
    */
-  #saveAs(completedTree) {
+  saveAs(completedTree) {
     this.JSONExportService.export(completedTree, { filename: this.root.name + '.json' });
   }
   /**
@@ -345,7 +347,7 @@ export default class ExportAsJSONAction {
     this.calls--;
     if (this.calls === 0) {
       this.#rewriteReferences();
-      this.#saveAs(this.#wrapTree());
+      this.saveAs(this.#wrapTree());
     }
   }
 
