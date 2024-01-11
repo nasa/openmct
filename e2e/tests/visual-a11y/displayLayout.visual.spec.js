@@ -79,7 +79,7 @@ test.describe('Visual - Display Layout', () => {
     await page.getByLabel('Child Right Layout Layout', { exact: true }).click();
     await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`);
 
-    //Only the sub-object in the Right Layout should be marqued
+    //Only the sub-object in the Right Layout should be highlighted with a marquee
     await page
       .getByLabel('Child Right Layout Layout', { exact: true })
       .getByLabel('Move Sub-object Frame')

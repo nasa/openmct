@@ -52,35 +52,34 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Generate display layout with 2 child display layouts', async ({ page, context }) => {
-    // Create Display Layout
-    const parent = await createDomainObjectWithDefaults(page, {
+  test.only('Generate display layout with 2 child display layouts', async ({ page, context }) => {
+    const parentLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
-      name: 'Parent Display Layout'
+      name: 'Parent Layout'
     });
-    const child1 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
-      name: 'Child Layout 1',
-      parent: parent.uuid
+      name: 'Child Left Layout',
+      parent: parentLayout.uuid
     });
-    const child2 = await createDomainObjectWithDefaults(page, {
+    //Create this layout second so that it is on top for the position change
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
-      name: 'Child Layout 2',
-      parent: parent.uuid
+      name: 'Child Right Layout',
+      parent: parentLayout.uuid
     });
 
-    await page.goto(parent.url);
-    await page.getByLabel('Edit Object').click();
-    await page.getByLabel(`${child2.name} Layout Grid`).hover();
-    await page.getByLabel('Move Sub-object Frame').nth(1).click();
-    await page.getByLabel('X:').fill('30');
+    await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
-    await page.getByLabel(`${child1.name} Layout Grid`).hover();
-    await page.getByLabel('Move Sub-object Frame').first().click();
-    await page.getByLabel('Y:').fill('30');
-
-    await page.getByLabel('Save').click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    //Move the Child Right Layout to the Right. It should be on top of the Left Layout at this point.
+    await page
+      .getByLabel('Child Right Layout Layout', { exact: true })
+      .getByLabel('Move Sub-object Frame')
+      .click();
+    await page.getByLabel('Move Sub-object Frame').nth(3).click(); //I'm not sure why this step is necessary
+    await page.getByLabel('X:').click();
+    await page.getByLabel('X:').fill('35');
 
     //Save localStorage for future test execution
     await context.storageState({
@@ -206,8 +205,8 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More actions').click();
-    await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
 
     //Edit Example Telemetry Object to include 5s loading Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
@@ -226,7 +225,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
       path: fileURLToPath(
