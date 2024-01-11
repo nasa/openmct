@@ -80,7 +80,7 @@ test.describe('Form File Input Behavior', () => {
   test('Can select a JSON file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', jsonFilePath);

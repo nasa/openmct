@@ -69,7 +69,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object');
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -101,7 +101,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object');
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -187,7 +187,7 @@ test.describe('Stacked Plot', () => {
     ).toContainText(swgC.name);
 
     // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object');
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
@@ -232,7 +232,7 @@ test.describe('Stacked Plot', () => {
     await page.goto(stackedPlot.url);
 
     // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object');
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
