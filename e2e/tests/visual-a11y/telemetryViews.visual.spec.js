@@ -69,7 +69,7 @@ test.describe('Visual - Telemetry Views', () => {
 
     await page.getByLabel('More actions').click();
 
-    await percySnapshot(page, `Telemetry View Actions columns expanded (theme: ${theme})`);
+    await percySnapshot(page, `Telemetry View Actions Menu expanded (theme: ${theme})`);
 
     await page.getByRole('menuitem', { name: 'Pause' }).click();
 
