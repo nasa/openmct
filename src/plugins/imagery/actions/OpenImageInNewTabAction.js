@@ -20,18 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CopyImageAction from './actions/CopyImageAction.js';
-import OpenImageInNewTabAction from './actions/OpenImageInNewTabAction.js';
-import SaveImageAsAction from './actions/SaveImageAsAction.js';
-import ImageryTimestripViewProvider from './ImageryTimestripViewProvider.js';
-import ImageryViewProvider from './ImageryViewProvider.js';
+export default class OpenImageInNewTabAction {
+  constructor(openmct) {
+    this.openmct = openmct;
 
-export default function (options) {
-  return function install(openmct) {
-    openmct.objectViews.addProvider(new ImageryViewProvider(openmct, options));
-    openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
-    openmct.actions.register(new OpenImageInNewTabAction(openmct));
-    openmct.actions.register(new SaveImageAsAction(openmct));
-    openmct.actions.register(new CopyImageAction(openmct));
-  };
+    this.cssClass = 'icon-new-window';
+    this.description = 'Open the image in a new tab';
+    this.group = 'action';
+    this.key = 'openImageInNewTab';
+    this.name = 'Open Image in New Tab';
+    this.priority = 1;
+  }
+
+  invoke(objectPath, view) {
+    console.debug(`🎨 open image in new tab`);
+  }
+
+  appliesTo(objectPath, view = {}) {
+    let viewContext = (view.getViewContext && view.getViewContext()) || {};
+    const image = viewContext.image;
+    if (!image) {
+      return false;
+    }
+  }
 }
