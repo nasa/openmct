@@ -223,6 +223,7 @@ export default {
     reload(domainObjectToReload) {
       if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
         this.clear();
+        this.initObjectStyles();
         this.updateView(true);
       }
     },
