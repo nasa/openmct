@@ -77,40 +77,28 @@ test.describe('Reload action', () => {
 
   test('can reload display layout and its children', async ({ page }) => {
     const beforeReloadAlphaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
+      .getByLabel('Alpha Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('tr')
-      .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
     const beforeReloadBetaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
-      .last()
-      .locator('tr')
+      .getByLabel('Beta Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
     // reload alpha
     await page.getByTitle('View menu items').first().click();
     await page.getByRole('menuitem', { name: /Reload/ }).click();
 
     const afterReloadAlphaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
+      .getByLabel('Alpha Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('tr')
-      .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
     const afterReloadBetaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
-      .last()
-      .locator('tr')
+      .getByLabel('Beta Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
 
     expect(beforeReloadAlphaTelemetryValue).not.toEqual(afterReloadAlphaTelemetryValue);
@@ -121,20 +109,14 @@ test.describe('Reload action', () => {
     await page.getByRole('menuitem', { name: /Reload/ }).click();
 
     const fullReloadAlphaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
+      .getByLabel('Alpha Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('tr')
-      .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
     const fullReloadBetaTelemetryValue = await page
-      .locator('table.c-telemetry-table__body > tbody')
-      .last()
-      .locator('tr')
+      .getByLabel('Beta Table table content')
+      .getByLabel('wavelengths table cell')
       .first()
-      .locator('td')
-      .nth(3)
       .getAttribute('title');
 
     expect(fullReloadAlphaTelemetryValue).not.toEqual(afterReloadAlphaTelemetryValue);

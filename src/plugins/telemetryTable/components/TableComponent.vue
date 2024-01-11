@@ -214,6 +214,7 @@
           ref="contentTable"
           class="c-table__body c-telemetry-table__body js-telemetry-table__content"
           :style="{ height: totalHeight + 'px' }"
+          :aria-label="`${table.domainObject.name} table content`"
         >
           <tbody>
             <telemetry-table-row
