@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -73,7 +73,7 @@ test.describe('Plot Rendering', () => {
 async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
   await page.goto(sineWaveGeneratorObject.url);
   // Edit SWG properties to include infinity values
-  await page.locator('[title="More options"]').click();
+  await page.locator('[title="More actions"]').click();
   await page.locator('[title="Edit properties of this object."]').click();
   await page
     .getByRole('switch', {

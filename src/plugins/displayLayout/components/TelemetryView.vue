@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -41,7 +41,11 @@
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
-        <div class="is-status__indicator" :title="`This item is ${status}`"></div>
+        <div
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></div>
         <div v-if="showLabel" class="c-telemetry-view__label">
           <div class="c-telemetry-view__label-text">
             {{ domainObject.name }}
@@ -50,6 +54,7 @@
 
         <div
           v-if="showValue"
+          :aria-label="fieldName"
           :title="fieldName"
           class="c-telemetry-view__value"
           :class="[telemetryClass]"

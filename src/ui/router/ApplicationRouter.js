@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -306,10 +306,11 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {string} newPath new path of url
    * @param {string} oldPath old path of url
+   * @returns {boolean} true if path changed, false otherwise
    */
   doPathChange(newPath, oldPath) {
     if (newPath === oldPath) {
-      return;
+      return false;
     }
 
     let route = this.routes.filter((r) => r.matcher.test(newPath))[0];
@@ -320,6 +321,8 @@ class ApplicationRouter extends EventEmitter {
     this.openmct.telemetry.abortAllRequests();
 
     this.emit('change:path', newPath, oldPath);
+
+    return true;
   }
 
   /**
@@ -328,10 +331,11 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {object} newParams new params of url
    * @param {object} oldParams old params of url
+   * @returns {boolean} true if params changed, false otherwise
    */
   doParamsChange(newParams, oldParams) {
     if (_.isEqual(newParams, oldParams)) {
-      return;
+      return false;
     }
 
     let changedParams = {};
@@ -347,6 +351,7 @@ class ApplicationRouter extends EventEmitter {
     });
 
     this.emit('change:params', newParams, oldParams, changedParams);
+    return true;
   }
 
   /**
@@ -368,9 +373,13 @@ class ApplicationRouter extends EventEmitter {
       return;
     }
 
-    this.doPathChange(newLocation.path, oldLocation.path);
+    const pathChanged = this.doPathChange(newLocation.path, oldLocation.path);
 
-    this.doParamsChange(newLocation.params, oldLocation.params);
+    const paramsChanged = this.doParamsChange(newLocation.params, oldLocation.params, pathChanged);
+    if (pathChanged || paramsChanged) {
+      // If either path or parameters have changed, we update the URL in the address bar.
+      this.set(newLocation.path, newLocation.getQueryString());
+    }
   }
 
   /**

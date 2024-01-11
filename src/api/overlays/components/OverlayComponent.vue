@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -34,6 +34,7 @@
         class="c-overlay__contents js-notebook-snapshot-item-wrapper"
         tabindex="0"
         aria-modal="true"
+        aria-label="Overlay"
         role="dialog"
       ></div>
       <div v-if="buttons" class="c-overlay__button-bar">

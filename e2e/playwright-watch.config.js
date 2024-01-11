@@ -1,14 +1,9 @@
 // playwright.config.js
 // @ts-check
 
-// eslint-disable-next-line no-unused-vars
-import { devices } from '@playwright/test';
-const MAX_FAILURES = 5;
-const NUM_WORKERS = 2;
-
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 0, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
+  retries: 0, //Retries are not needed with watch mode
   testDir: 'tests',
   timeout: 60 * 1000,
   webServer: {
@@ -17,8 +12,7 @@ const config = {
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
-  maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
-  workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
+  workers: '75%', //Limit to 75% of the CPU to support running with dev server
   use: {
     baseURL: 'http://localhost:8080/',
     headless: true,
@@ -45,8 +39,7 @@ const config = {
         outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
       }
     ],
-    ['junit', { outputFile: '../test-results/results.xml' }],
-    ['@deploysentinel/playwright']
+    ['junit', { outputFile: '../test-results/results.xml' }]
   ]
 };
 

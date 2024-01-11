@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,7 +34,6 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
-let getConditionSetIdentifierFromUrl;
 
 test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
   test.beforeAll(async ({ browser }) => {
@@ -42,7 +41,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
@@ -58,8 +57,6 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
     //Set object identifier from url
     conditionSetUrl = page.url();
 
-    getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
-    console.debug(`getConditionSetIdentifierFromUrl: ${getConditionSetIdentifierFromUrl}`);
     await page.close();
   });
 
@@ -196,7 +193,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .first()
       .click();
     // Click hamburger button
-    await page.locator('[title="More options"]').click();
+    await page.locator('[title="More actions"]').click();
 
     // Click 'Remove' and press OK
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
@@ -234,7 +231,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Click Add Condition button
     await page.locator('#addCondition').click();
@@ -262,7 +259,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     page.click('button[title="Show selected item in tree"]');
@@ -299,7 +296,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Create two conditions
     await page.locator('#addCondition').click();
@@ -366,7 +363,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Edit SWG to add 8 second loading delay to simulate the case
     // where telemetry is not available.
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
     await page.getByLabel('Save').click();

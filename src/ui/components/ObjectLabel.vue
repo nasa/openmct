@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,7 +29,11 @@
     @click="navigateOrPreview"
   >
     <div class="c-tree__item__type-icon c-object-label__type-icon" :class="typeClass">
-      <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+      <span
+        class="is-status__indicator"
+        :aria-label="`This item is ${status}`"
+        :title="`This item is ${status}`"
+      ></span>
     </div>
     <div
       ref="objectLabel"
