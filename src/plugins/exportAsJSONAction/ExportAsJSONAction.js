@@ -48,6 +48,10 @@ export default class ExportAsJSONAction {
     this.tree = null;
     this.calls = null;
     this.idMap = null;
+    this.dialog = null;
+    this.progressPerc = 0;
+    this.exportedCount = 0;
+    this.totalToExport = 0;
 
     this.JSONExportService = new JSONExporter();
   }
@@ -78,7 +82,27 @@ export default class ExportAsJSONAction {
     const rootId = this.#getKeystring(this.root);
     this.tree[rootId] = this.root;
 
-    return this.#write(this.root);
+    this.dialog = this.#openmct.overlays.progressDialog({
+      message:
+        'Do not navigate away from this page or close this browser tab while this message is displayed.',
+      iconClass: 'info',
+      title: 'Exporting'
+    });
+    this.dialog.show();
+    this.#write(this.root)
+      .then(() => {
+        this.exportedCount++;
+        this.#updateProgress();
+      })
+      .catch((error) => {
+        this.dialog.dismiss();
+        this.dialog = null;
+        this.#resetCounts();
+        this.#openmct.notifications.error({
+          title: 'Export as JSON failed',
+          message: error.message
+        });
+      });
   }
 
   /**
@@ -86,6 +110,7 @@ export default class ExportAsJSONAction {
    * @param {import('../../api/objects/ObjectAPI').DomainObject} parent
    */
   async #write(parent) {
+    this.totalToExport++;
     this.calls++;
 
     //conditional object styles are not saved on the composition, so we need to check for them
@@ -136,6 +161,14 @@ export default class ExportAsJSONAction {
     }
   }
 
+  #updateProgress() {
+    this.progressPerc = Math.ceil((100 * this.exportedCount) / this.totalToExport);
+    this.dialog?.updateProgress(
+      this.progressPerc,
+      `Exporting ${this.exportedCount} / ${this.totalToExport} objects.`
+    );
+  }
+
   #exportObject(child, parent) {
     const originalKeyString = this.#getKeystring(child);
     const createable = this.#isCreatableAndPersistable(child);
@@ -149,7 +182,10 @@ export default class ExportAsJSONAction {
         this.tree[originalKeyString] = child;
       }
 
-      this.#write(child);
+      this.#write(child).then(() => {
+        this.exportedCount++;
+        this.#updateProgress();
+      });
     }
   }
 
@@ -299,6 +335,11 @@ export default class ExportAsJSONAction {
     return Array.from(identifiers);
   }
 
+  #resetCounts() {
+    this.totalToExport = 0;
+    this.exportedCount = 0;
+  }
+
   /**
    * @private
    */
@@ -353,9 +394,15 @@ export default class ExportAsJSONAction {
 
   #decrementCallsAndSave() {
     this.calls--;
+    this.#updateProgress();
     if (this.calls === 0) {
       this.#rewriteReferences();
+      this.dialog.dismiss();
+
+      this.#resetCounts();
       this.saveAs(this.#wrapTree());
+
+      this.dialog = null;
     }
   }
 
