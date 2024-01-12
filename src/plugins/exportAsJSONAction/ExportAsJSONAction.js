@@ -78,7 +78,7 @@ export default class ExportAsJSONAction {
     const rootId = this.#getKeystring(this.root);
     this.tree[rootId] = this.root;
 
-    this.#write(this.root);
+    return this.#write(this.root);
   }
 
   /**
@@ -95,33 +95,41 @@ export default class ExportAsJSONAction {
 
     if (composition) {
       const children = await composition.load();
+      const exportPromises = children.map((child) => this.#exportObject(child, parent));
 
-      children.forEach((child) => {
-        this.#exportObject(child, parent);
-      });
+      await Promise.all(exportPromises);
     }
 
     if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
       this.#decrementCallsAndSave();
     } else {
-      const conditionSetObjects = [];
+      let conditionSetObjects = [];
 
       // conditionSetIdentifiers directly in objectStyles object
       if (conditionSetIdentifier) {
-        conditionSetObjects.push(await this.#openmct.objects.get(conditionSetIdentifier));
+        const conditionSetObject = this.#openmct.objects.get(conditionSetIdentifier);
+        conditionSetObjects.push(conditionSetObject);
       }
 
       // conditionSetIdentifiers stored on item ids in the objectStyles object
       if (hasItemConditionSetIdentifiers) {
         const itemConditionSetIdentifiers = this.#getItemConditionSetIdentifiers(parent);
+        const itemConditionSetObjects = itemConditionSetIdentifiers.map((id) =>
+          this.#openmct.objects.get(id)
+        );
+        conditionSetObjects = conditionSetObjects.concat(itemConditionSetObjects);
 
         for (const itemConditionSetIdentifier of itemConditionSetIdentifiers) {
-          conditionSetObjects.push(await this.#openmct.objects.get(itemConditionSetIdentifier));
+          conditionSetObjects.push(this.#openmct.objects.get(itemConditionSetIdentifier));
         }
       }
 
-      for (const conditionSetObject of conditionSetObjects) {
-        this.#exportObject(conditionSetObject, parent);
+      if (conditionSetObjects.length > 0) {
+        const resolvedConditionSetObjects = await Promise.all(conditionSetObjects);
+        const exportConditionSetPromises = resolvedConditionSetObjects.map((obj) =>
+          this.#exportObject(obj, parent)
+        );
+        await Promise.all(exportConditionSetPromises);
       }
 
       this.#decrementCallsAndSave();
