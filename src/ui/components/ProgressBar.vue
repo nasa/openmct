@@ -26,8 +26,8 @@
       :class="{ '--indeterminate': !progressPerc }"
       :style="styleBarWidth"
     ></div>
-    <div v-if="progressText !== undefined" class="c-progress-bar__text">
-      <span v-if="progressPerc && progressPerc > 0">{{ progressPerc }}% complete.</span>
+    <div v-if="progressText !== ''" class="c-progress-bar__text">
+      <span v-if="progressPerc > 0">{{ progressPerc }}% complete.</span>
       {{ progressText }}
     </div>
   </div>
