@@ -85,7 +85,8 @@
         <template #controls>
           <button
             class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
-            title="Collapse all tree items"
+            aria-label="Expand or Collapse all tree items"
+            title="Expand or Collapse all tree items"
             @click="handleTreeReset"
           ></button>
           <button

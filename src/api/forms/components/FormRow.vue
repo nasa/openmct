@@ -22,7 +22,12 @@
 
 <template>
   <div class="form-row c-form__row" :class="[{ first: first }, cssClass]" @on-change="onChange">
-    <label class="c-form-row__label" :title="row.description" :for="`form-${row.key}`">
+    <label
+      class="c-form-row__label"
+      :aria-label="row.description"
+      :title="row.description"
+      :for="`form-${row.key}`"
+    >
       {{ row.name }}
     </label>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
