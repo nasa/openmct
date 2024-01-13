@@ -45,12 +45,26 @@ class BatchingWebSocketProvider extends EventTarget {
     });
   }
 
+  setRate(rate) {
+    this.#worker.postMessage({
+      type: 'setRate',
+      rate
+    });
+  }
+
+  setMaxBatchSize(maxBatchLength) {
+    this.#worker.postMessage({
+      type: 'setMaxBatchSize',
+      maxBatchLength
+    });
+  }
+
   routeMessageToHandler(message) {
     // Batch message would need to be handle differently here
     if (message.data.type === 'batch') {
-      this.dispatchEvent(new MessageEvent('batch', { data: message.data }));
+      this.dispatchEvent(new CustomEvent('batch', { detail: message.data.batch }));
     } else if (message.data.type === 'message') {
-      this.dispatchEvent(new MessageEvent('message', { data: message.data }));
+      this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else {
       throw new Error(`Unknown message type: ${message.data.type}`);
     }
