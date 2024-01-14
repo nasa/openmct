@@ -21,11 +21,12 @@
 -->
 <template>
   <div ref="root" class="c-table-wrapper" :class="tableClasses">
-    <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar">
+    <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar" role="menubar">
       <button
         v-if="allowExport"
         v-show="!markedRows.length"
         class="c-button icon-download labeled"
+        aria-label="Export this view's data"
         title="Export this view's data"
         @click="exportAllDataAsCSV()"
       >
@@ -35,6 +36,7 @@
         v-if="allowExport"
         v-show="markedRows.length"
         class="c-button icon-download labeled"
+        aria-label="Export marked rows as CSV"
         title="Export marked rows as CSV"
         @click="exportMarkedDataAsCSV()"
       >
@@ -43,6 +45,7 @@
       <button
         v-show="markedRows.length"
         class="c-button icon-x labeled"
+        aria-label="Unmark all rows"
         title="Unmark all rows"
         @click="unmarkAllRows()"
       >
@@ -51,6 +54,7 @@
       <div v-if="marking.enable" class="c-separator"></div>
       <button
         v-if="marking.enable"
+        :aria-label="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
         class="c-button icon-pause pause-play labeled"
         :class="paused ? 'icon-play is-paused' : 'icon-pause'"
         :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
@@ -62,10 +66,11 @@
       </button>
 
       <template v-if="!isEditing">
-        <div class="c-separator"></div>
+        <div class="c-separator" role="separator"></div>
         <button
           v-if="isAutosizeEnabled"
           class="c-button icon-arrows-right-left labeled"
+          aria-label="Increase column widths to fit currently available data."
           title="Increase column widths to fit currently available data."
           @click="recalculateColumnWidths"
         >
@@ -73,6 +78,7 @@
         </button>
         <button
           v-else
+          aria-label="Automatically size columns to fit the table into the available space."
           class="c-button icon-expand labeled"
           title="Automatically size columns to fit the table into the available space."
           @click="autosizeColumns"
@@ -104,6 +110,7 @@
       <button
         :class="{ 'hide-nice': !markedRows.length }"
         class="c-icon-button icon-x labeled"
+        aria-label="Deselect All"
         title="Deselect All"
         @click="unmarkAllRows()"
       >
@@ -191,6 +198,7 @@
                   <button
                     class="c-search__use-regex"
                     :class="{ 'is-active': enableRegexSearch[key] }"
+                    aria-label="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
                     title="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
                     @click="toggleRegex(key)"
                   >

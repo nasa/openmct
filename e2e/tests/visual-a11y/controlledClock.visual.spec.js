@@ -44,14 +44,15 @@ test.describe('Visual - Controlled Clock', () => {
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-    await page.locator('a').filter({ hasText: 'Overlay Plot with 5s Delay' }).click();
+    await page
+      .getByRole('gridcell', { hasText: 'Overlay Plot with 5s Delay Overlay Plot' })
+      .click();
     //Ensure that we're on the Unnamed Overlay Plot object
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
-      'Overlay Plot with 5s Delay'
-    );
+    await expect(page.getByRole('main')).toContainText('Overlay Plot with 5s Delay');
 
-    //Wait for canvas to be rendered and stop animating, but plot should not be loaded. Cannot use waitForPlotsToRender
-    await page.locator('canvas >> nth=1').hover({ trial: true });
+    //Wait for canvas to be rendered and stop animating, but plot should not be loaded.
+    //Cannot use waitForPlotsToRender due to clockOptions.
+    await page.locator('#webglContext').hover({ trial: true });
 
     //Take snapshot of Sine Wave Generator within Overlay Plot
     await percySnapshot(page, `SineWaveInOverlayPlot (theme: '${theme}')`);

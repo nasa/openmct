@@ -74,7 +74,7 @@ test.describe('Stacked Plot styling', () => {
     // Directly navigate to the stacked plot
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Styles' }).click();
 
@@ -165,7 +165,7 @@ test.describe('Stacked Plot styling', () => {
     });
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Styles' }).click();
 

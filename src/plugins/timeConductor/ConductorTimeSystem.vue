@@ -37,6 +37,7 @@
   <div
     v-else
     class="c-compact-tc__setting-value__elem"
+    :aria-label="`Time system: ${selectedTimeSystem.name}`"
     :title="`Time system: ${selectedTimeSystem.name}`"
   >
     {{ selectedTimeSystem.name }}

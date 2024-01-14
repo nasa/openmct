@@ -28,6 +28,7 @@
     @mousedown="clearSelectedAnnotations"
     @mousemove="trackAnnotationDrag"
     @click="selectOrCreateAnnotation"
+    @contextmenu="showContextMenu"
   ></canvas>
 </template>
 
@@ -43,8 +44,10 @@ const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
 const SELECTED_ANNOTATION_FILL_STYLE = 'rgba(199, 87, 231, 0.2)';
 
+const CONTEXT_MENU_ACTIONS = ['openImageInNewTab', 'saveImageAs'];
+
 export default {
-  inject: ['openmct', 'domainObject', 'objectPath'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
   props: {
     image: {
       type: Object,
@@ -481,6 +484,21 @@ export default {
           drawnRectangles.push(annotationRectangle);
         }
       });
+    },
+    showContextMenu: function (event) {
+      event.preventDefault();
+
+      let objectPath = this.objectPath;
+
+      const actions = CONTEXT_MENU_ACTIONS.map((key) => this.openmct.actions.getAction(key));
+      const menuItems = this.openmct.menus.actionsToMenuItems(
+        actions,
+        objectPath,
+        this.currentView
+      );
+      if (menuItems.length) {
+        this.openmct.menus.showMenu(event.x, event.y, menuItems);
+      }
     }
   }
 };

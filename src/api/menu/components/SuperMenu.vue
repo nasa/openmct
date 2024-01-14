@@ -62,6 +62,7 @@
         :key="action.name"
         role="menuitem"
         :class="action.cssClass"
+        :aria-label="action.name"
         :title="action.description"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"

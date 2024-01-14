@@ -73,7 +73,7 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
@@ -166,7 +166,7 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
@@ -197,7 +197,7 @@ test.describe('Flexible Layout', () => {
     });
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -234,7 +234,7 @@ test.describe('Flexible Layout', () => {
 
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -276,7 +276,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Flexible Layout Flexible Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test('Add/Remove Container', async ({ page }) => {
     test.info().annotations.push({
@@ -293,7 +293,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     expect(await containerHandles.count()).toEqual(2);
   });
   test('Remove Frame', async ({ page }) => {
@@ -303,7 +303,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {

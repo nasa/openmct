@@ -61,6 +61,31 @@ test.describe('Example Imagery Object', () => {
     await expect(page.locator('.c-hud')).toBeHidden();
   });
 
+  test('Can right click on image and open it in a new tab @2p', async ({ page, context }) => {
+    // try to right click on image
+    const backgroundImage = await page.locator(backgroundImageSelector);
+    await backgroundImage.click({
+      button: 'right',
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    // expect context menu to appear
+    await expect(page.getByText('Save Image As')).toBeVisible();
+    await expect(page.getByText('Open Image in New Tab')).toBeVisible();
+
+    // click on open image in new tab
+    const pagePromise = context.waitForEvent('page');
+    await page.getByText('Open Image in New Tab').click();
+    // expect new tab to be in browser
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();
+    // expect new tab url to have jpg in it
+    await expect(newPage.url()).toContain('.jpg');
+  });
+
+  // this requires CORS to be enabled in some fashion
+  test.fixme('Can right click on image and save it as a file', async ({ page }) => {});
+
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
     browserName
@@ -372,7 +397,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -391,7 +416,7 @@ test.describe('Example Imagery in Display Layout', () => {
   test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
     const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -495,7 +520,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -539,7 +564,7 @@ test.describe('Example Imagery in Tabs View', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -987,7 +1012,7 @@ async function resetImageryPanAndZoom(page) {
  */
 async function createImageryView(page) {
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click text=Example Imagery
   await page.click('li[role="menuitem"]:has-text("Example Imagery")');
