@@ -80,7 +80,7 @@
     "typescript": "5.3.3",
     "uuid": "9.0.1",
     "vue": "3.3.8",
-    "vue-eslint-parser": "9.3.2",
+    "vue-eslint-parser": "9.4.0",
     "vue-loader": "16.8.3",
     "webpack": "5.89.0",
     "webpack-cli": "5.1.1",
