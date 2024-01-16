@@ -61,7 +61,7 @@ test.describe('Reload action', () => {
     // Expand all folders
     await expandEntireTree(page);
 
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object', { exact: true }).click();
 
     await page.dragAndDrop(`text='Alpha Table'`, '.l-layout__grid-holder', {
       targetPosition: { x: 0, y: 0 }
