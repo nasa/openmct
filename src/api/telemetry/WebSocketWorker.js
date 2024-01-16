@@ -159,7 +159,7 @@ export default function installWorker() {
           this.setRate(message);
           break;
         case 'setMaxBatchSize':
-          this.#messageBatcher.setMaxBatchSize(message);
+          this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -239,15 +239,15 @@ export default function installWorker() {
     }
     addMessageToBatch(message) {
       const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
-
-      if (this.#batch[batchId] === undefined) {
-        this.#batch[batchId] = [message];
+      let batch = this.#batch[batchId];
+      if (batch === undefined) {
+        batch = this.#batch[batchId] = [message];
       } else {
-        this.#batch[batchId].push(message);
+        batch.push(message);
       }
-      if (this.#batch[batchId].length > this.#maxBatchSize) {
-        this.#batch[batchId].shift();
-        console.warn('Dropping message from batch. Batch size exceeded.');
+      if (batch.length > this.#maxBatchSize) {
+        batch.shift();
+        this.#batch.dropped = this.#batch.dropped || true;
       }
       if (!this.#hasBatch) {
         this.#hasBatch = true;
