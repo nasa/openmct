@@ -49,7 +49,7 @@ test.describe('Style Inspector Options', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // The overall Flex Layout or Stacked Plot itself MUST be style-able.
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();

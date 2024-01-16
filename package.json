@@ -8,7 +8,6 @@
     "@axe-core/playwright": "4.8.2",
     "@babel/eslint-parser": "7.23.3",
     "@braintree/sanitize-url": "6.0.4",
-    "@deploysentinel/playwright": "0.3.4",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.39.0",

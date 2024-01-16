@@ -20,16 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import OpenImageInNewTabAction from './actions/OpenImageInNewTabAction.js';
-import SaveImageAsAction from './actions/SaveImageAsAction.js';
-import ImageryTimestripViewProvider from './ImageryTimestripViewProvider.js';
-import ImageryViewProvider from './ImageryViewProvider.js';
+/*
+Tests the branding associated with the default deployment. At least the about modal for now
+*/
 
-export default function (options) {
-  return function install(openmct) {
-    openmct.objectViews.addProvider(new ImageryViewProvider(openmct, options));
-    openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
-    openmct.actions.register(new OpenImageInNewTabAction(openmct));
-    openmct.actions.register(new SaveImageAsAction(openmct));
-  };
-}
+import percySnapshot from '@percy/playwright';
+
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { VISUAL_URL } from '../../../constants.js';
+
+//Declare the scope of the visual test
+const header = '.l-shell__head';
+
+test.describe('Visual - Header @a11y', () => {
+  test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
+
+  test('header sizing', async ({ page, theme }) => {
+    // Click About button
+    await percySnapshot(page, `Header default (theme: '${theme}')`, {
+      scope: header
+    });
+
+    await page.getByLabel('Click to collapse items').click();
+
+    await percySnapshot(page, `Header Collapsed (theme: '${theme}')`, {
+      scope: header
+    });
+  });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

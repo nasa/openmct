@@ -26,43 +26,54 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { createNotification } from '../../appActions.js';
 import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 
-test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11y", () => {
+test.describe('Visual - Notifications @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
-  test("Create a clock, click on 'Save successful' banner and dismiss it", async ({
-    page,
-    theme
-  }) => {
-    // Create a clock domain object
-    await createDomainObjectWithDefaults(page, {
-      type: 'Clock',
-      name: 'Default Clock'
+  test('Alert Levels and Notification List Modal', async ({ page, theme }) => {
+    await createNotification(page, {
+      message: 'Test info notification',
+      severity: 'info'
     });
-    // Click on the div with role="alert" that has "Save successful" text
-    await page.getByRole('alert').filter({ hasText: 'Save successful' }).click();
-    // Verify there is a div with role="dialog"
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeVisible();
-    // Verify the div with role="dialog" contains text "Save successful"
-    expect(await page.getByRole('dialog', { name: 'Overlay' }).innerText()).toContain(
-      'Save successful'
-    );
-    await percySnapshot(page, `Notification banner shows Save successful (theme: '${theme}')`);
-    // Verify there is a button with text "Dismiss"
-    await expect(page.getByText('Dismiss', { exact: true })).toBeVisible();
-    await percySnapshot(page, `Notification banner shows Dismiss (theme: '${theme}')`);
-    // Click on button with text "Dismiss"
-    await page.getByText('Dismiss', { exact: true }).click();
-    // Verify there is no div with role="dialog"
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeHidden();
-    await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
+    await expect(page.getByText('Test info notification')).toBeVisible();
+    await percySnapshot(page, `Info Notification banner shown (theme: '${theme}')`);
+    await page.getByLabel('Dismiss').click();
+    await page.getByRole('alert').waitFor({ state: 'detached' });
+    await createNotification(page, {
+      message: 'Test alert notification',
+      severity: 'alert'
+    });
+    await expect(page.getByText('Test alert notification')).toBeVisible();
+    await percySnapshot(page, `Alert Notification banner shown (theme: '${theme}')`);
+    await page.getByLabel('Dismiss').click();
+    await page.getByRole('alert').waitFor({ state: 'detached' });
+    await createNotification(page, {
+      message: 'Test error notification',
+      severity: 'error'
+    });
+    await expect(page.getByText('Test error notification')).toBeVisible();
+    await percySnapshot(page, `Error Notification banner shown (theme: '${theme}')`);
+    await page.getByLabel('Dismiss').click();
+    await page.getByRole('alert').waitFor({ state: 'detached' });
+
+    await page.getByLabel('Review 2 Notifications').click();
+    await page.getByText('Test alert notification').waitFor();
+    await percySnapshot(page, `Notification List Modal with alert and error (theme: '${theme}')`);
+
+    // Skipping due to https://github.com/nasa/openmct/issues/6820
+    // await page.getByLabel('Dismiss notification of Test alert notification').click();
+    // await page.getByText('Test alert notification').waitFor({ state: 'detached' });
+    // await percySnapshot(page, `Notification Modal with error only (theme: '${theme}')`);
+
+    await page.getByRole('button', { name: 'Clear All Notifications', exact: true }).click();
+    await percySnapshot(page, `Notification Modal after Clear All (theme: '${theme}')`);
   });
-  test.afterEach(async ({ page }, testInfo) => {
-    await scanForA11yViolations(page, testInfo.title);
-  });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
 });

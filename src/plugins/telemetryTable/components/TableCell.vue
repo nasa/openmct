@@ -22,6 +22,7 @@
 <template>
   <td
     ref="tableCell"
+    :aria-label="formattedValue"
     :title="formattedValue"
     :aria-label="`${columnKey} table cell`"
     @click="selectCell($event.currentTarget, columnKey)"

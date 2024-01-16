@@ -23,7 +23,12 @@
 <template>
   <div>
     <div class="c-style c-style--saved has-local-controls c-toolbar">
-      <div class="c-style__controls" :title="description" @click="selectStyle()">
+      <div
+        class="c-style__controls"
+        :aria-label="description"
+        :title="description"
+        @click="selectStyle()"
+      >
         <div class="c-style-thumb" :style="thumbStyle">
           <span
             class="c-style-thumb__text u-style-receiver js-style-receiver"

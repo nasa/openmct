@@ -64,7 +64,7 @@ test.describe('Grand Search @a11y', () => {
     await percySnapshot(page, `Searching for Object (theme: '${theme}')`);
 
     // Enter Edit mode on the Display Layout
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     // Navigate to the object while in edit mode on the display layout
     await page.getByRole('searchbox', { name: 'Search Input' }).click();
