@@ -48,10 +48,13 @@ export default {
     await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
-    await this.fetchOrPromptForRole();
+    // need to wait for openmct to be loaded before using openmct.overlays.selection
+    // as document.body could be null
+    this.openmct.on('start', this.fetchOrPromptForRole);
   },
   beforeUnmount() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
+    this.openmct.off('start', this.fetchOrPromptForRole);
   },
   methods: {
     async getUserInfo() {
@@ -75,7 +78,7 @@ export default {
 
       // see if we need to prompt for role selection
       if (!this.role) {
-        this.promptForRoleSelection(this.availableRoles);
+        this.promptForRoleSelection();
       } else {
         // only notify the user if they have more than one role available
         if (this.availableRoles.length > 1) {
@@ -83,10 +86,7 @@ export default {
         }
       }
     },
-    async promptForRoleSelection(passedAvailableRoles) {
-      if (!passedAvailableRoles) {
-        this.availableRoles = await this.openmct.user.getPossibleRoles();
-      }
+    promptForRoleSelection() {
       const selectionOptions = this.availableRoles.map((role) => ({
         key: role,
         name: role
