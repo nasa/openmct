@@ -45,12 +45,13 @@ export default {
   },
 
   async mounted() {
-    await this.getUserInfo();
-    this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
-    this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
     // need to wait for openmct to be loaded before using openmct.overlays.selection
     // as document.body could be null
     this.openmct.on('start', this.fetchOrPromptForRole);
+
+    await this.getUserInfo();
+    this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
+    this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
   },
   beforeUnmount() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
@@ -61,7 +62,6 @@ export default {
       const user = await this.openmct.user.getCurrentUser();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
-      this.availableRoles = await this.openmct.user.getPossibleRoles();
       this.loggedIn = this.openmct.user.isLoggedIn();
     },
     async fetchOrPromptForRole() {
