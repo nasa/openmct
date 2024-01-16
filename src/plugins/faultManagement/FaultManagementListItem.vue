@@ -28,6 +28,7 @@
     <div class="c-fault-mgmt-item">
       <div
         class="c-fault-mgmt__list-severity"
+        :aria-label="fault.severity"
         :title="fault.severity"
         :class="['is-severity-' + severity]"
       ></div>

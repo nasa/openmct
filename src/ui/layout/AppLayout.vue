@@ -45,6 +45,7 @@
             ? 'l-shell__head__collapse-button--collapse'
             : 'l-shell__head__collapse-button--expand'
         "
+        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
       ></button>
@@ -61,6 +62,7 @@
             'c-icon-button c-icon-button--major',
             fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand'
           ]"
+          :aria-label="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           @click="fullScreenToggle"
         ></button>

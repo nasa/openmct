@@ -47,9 +47,8 @@ jobs:
           bash src/plugins/persistence/couch/setup-couchdb.sh
           bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
 
-      - name: Run CouchDB Tests and publish to deploysentinel
+      - name: Run CouchDB Tests
         env:
-          DEPLOYSENTINEL_API_KEY: ${{ secrets.DEPLOYSENTINEL_API_KEY }}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
 

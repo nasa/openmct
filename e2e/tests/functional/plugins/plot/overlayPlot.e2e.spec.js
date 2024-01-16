@@ -87,7 +87,7 @@ test.describe('Overlay Plot', () => {
     expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
     // Enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -114,7 +114,7 @@ test.describe('Overlay Plot', () => {
     await assertLimitLinesExistAndAreVisible(page);
 
     // Enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -165,7 +165,7 @@ test.describe('Overlay Plot', () => {
     });
 
     await page.goto(overlayPlot.url);
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -239,7 +239,7 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
     // Wait for plot series data to load and be drawn
     await waitForPlotsToRender(page);
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 

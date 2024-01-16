@@ -58,7 +58,7 @@ test.describe('Autoscale', () => {
     await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
     // enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
     await turnOffAutoscale(page);

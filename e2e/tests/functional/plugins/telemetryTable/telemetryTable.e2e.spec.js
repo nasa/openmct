@@ -128,7 +128,10 @@ test.describe('Telemetry Table', () => {
     // focus the Telemetry Table
     page.goto(table.url);
     await page.getByRole('searchbox', { name: 'message filter input' }).hover();
-    await page.getByLabel('Message filter header').getByRole('button', { name: '/R/' }).click();
+    await page
+      .getByLabel('Message filter header')
+      .getByLabel('Click to enable regex: enter a string with slashes, like this: /regex_exp/')
+      .click();
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
 

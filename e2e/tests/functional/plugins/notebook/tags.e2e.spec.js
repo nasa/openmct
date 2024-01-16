@@ -128,7 +128,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
     });
 
     // Go back into edit mode for the display layout
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     await page.getByRole('search').getByLabel('Search Input').click();
     await page.getByRole('search').getByLabel('Search Input').fill('Sc');

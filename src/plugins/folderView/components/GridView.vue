@@ -20,12 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-grid-view">
+  <div class="l-grid-view" role="grid">
     <grid-item
       v-for="(item, index) in items"
       :key="index"
       :item="item"
       :object-path="item.objectPath"
+      role="gridcell"
     />
   </div>
 </template>

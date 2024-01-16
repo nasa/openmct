@@ -26,22 +26,16 @@ import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { VISUAL_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('Visual - LAD Table', () => {
-  let ladTable;
+test.describe('Visual - Telemetry Views', () => {
+  let telemetry;
 
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
-    // Create LAD Table
-    ladTable = await createDomainObjectWithDefaults(page, {
-      type: 'LAD Table',
-      name: 'LAD Table Test'
-    });
     // Create SWG inside of LAD Table
-    await createDomainObjectWithDefaults(page, {
+    telemetry = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      name: 'SWG4LAD Table Test',
-      parent: ladTable.uuid
+      name: 'SWG4'
     });
 
     //Modify SWG to create a really stable SWG
@@ -55,23 +49,30 @@ test.describe('Visual - LAD Table', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
   });
-  test('Toggled column widths behave accordingly', async ({ page, theme }) => {
-    await page.goto(ladTable.url, { waitUntil: 'domcontentloaded' });
+  test('Telemetry Table toggled column widths behave accordingly', async ({ page, theme }) => {
+    await page.goto(telemetry.url, { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByLabel('Expand Columns')).toBeVisible();
+    //Click this button to see telemetry display options
+    await page.getByRole('button', { name: 'Plot' }).click();
+    await page.getByLabel('Telemetry Table').click();
 
-    await percySnapshot(
-      page,
-      `LAD Table w/ Sine Wave Generator columns autosized (theme: ${theme})`
-    );
+    //Get Table View in place
+    expect(await page.getByLabel('Expand Columns')).toBeInViewport();
+
+    await percySnapshot(page, `Default Telemetry Table View (theme: ${theme})`);
 
     await page.getByLabel('Expand Columns').click();
 
     await expect(page.getByRole('button', { name: 'Autosize Columns' })).toBeVisible();
 
-    await percySnapshot(
-      page,
-      `LAD Table w/ Sine Wave Generator columns expanded (theme: ${theme})`
-    );
+    await percySnapshot(page, `Default Telemetry Table columns expanded (theme: ${theme})`);
+
+    await page.getByLabel('More actions').click();
+
+    await percySnapshot(page, `Telemetry View Actions Menu expanded (theme: ${theme})`);
+
+    await page.getByRole('menuitem', { name: 'Pause' }).click();
+
+    await percySnapshot(page, `Telemetry View Paused (theme: ${theme})`);
   });
 });
