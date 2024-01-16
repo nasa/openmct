@@ -46,6 +46,9 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       configuration.columnOrder = configuration.columnOrder || [];
       configuration.cellFormat = configuration.cellFormat || {};
       configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
+      // anything that doesn't have a defaultMode existed before the change and should stay as it was for consistency
+      configuration.defaultMode = configuration.defaultMode ?? 'unlimited';
+      configuration.persistModeChange = configuration.persistModeChange ?? true;
 
       return configuration;
     }
@@ -133,6 +136,30 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
 
           return headers;
         }, {});
+    }
+
+    getTelemetryMode() {
+      let configuration = this.getConfiguration();
+
+      return configuration.telemetryMode;
+    }
+
+    setTelemetryMode(mode) {
+      let configuration = this.getConfiguration();
+      configuration.telemetryMode = mode;
+      this.updateConfiguration(configuration);
+    }
+
+    getPersistModeChange() {
+      let configuration = this.getConfiguration();
+
+      return configuration.persistModeChange;
+    }
+
+    setPersistModeChange(value) {
+      let configuration = this.getConfiguration();
+      configuration.persistModeChange = value;
+      this.updateConfiguration(configuration);
     }
 
     getColumnWidths() {

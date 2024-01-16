@@ -20,15 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import TableConfigurationViewProvider from './TableConfigurationViewProvider';
-import TelemetryTableType from './TelemetryTableType';
+import getTelemetryTableType from './TelemetryTableType';
 import TelemetryTableViewProvider from './TelemetryTableViewProvider';
 import TelemetryTableViewActions from './ViewActions';
 
-export default function plugin() {
+export default function plugin(options) {
   return function install(openmct) {
-    openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
+    openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
     openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-    openmct.types.addType('table', TelemetryTableType);
+    openmct.types.addType('table', getTelemetryTableType());
     openmct.composition.addPolicy((parent, child) => {
       if (parent.type === 'table') {
         return Object.prototype.hasOwnProperty.call(child, 'telemetry');

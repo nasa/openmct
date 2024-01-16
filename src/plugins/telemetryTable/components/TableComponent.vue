@@ -268,10 +268,8 @@
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"
-        :current-page="currentPage"
-        :items-per-page="itemsPerPage"
-        @prev-page="prevPage"
-        @next-page="nextPage"
+        :telemetry-mode="telemetryMode"
+        @telemetry-mode-change="updateTelemetryMode"
       />
     </div>
   </div>
@@ -283,12 +281,12 @@ import _ from 'lodash';
 import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import throttle from '../../../utils/throttle';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -382,8 +380,8 @@ export default {
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
       rowContext: {},
-      currentPage: 0,
-      itemsPerPage: 50
+      telemetryMode: configuration.telemetryMode,
+      persistModeChanges: configuration.persistModeChanges
     };
   },
   computed: {
@@ -436,6 +434,12 @@ export default {
   watch: {
     loading: {
       handler(isLoading) {
+        if (isLoading) {
+          this.setLoadingPromise();
+        } else {
+          this.loadFinishResolve();
+        }
+
         if (this.viewActionsCollection) {
           let action = isLoading ? 'disable' : 'enable';
           this.viewActionsCollection[action](['export-csv-all']);
@@ -556,14 +560,11 @@ export default {
     this.table.destroy();
   },
   methods: {
-    prevPage() {
-      if (this.currentPage !== 0) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      this.currentPage++;
-      this.table.nextPage();
+    setLoadingPromise() {
+      this.loadFinishResolve = null;
+      this.isFinishedLoading = new Promise((resolve, reject) => {
+        this.loadFinishResolve = resolve;
+      });
     },
     updateVisibleRows() {
       if (!this.updatingView) {
@@ -756,12 +757,46 @@ export default {
         headers: headerKeys
       });
     },
-    exportAllDataAsCSV() {
+    getTableRowData() {
       const justTheData = this.table.tableRows
         .getRows()
         .map((row) => row.getFormattedDatum(this.headers));
 
-      this.exportAsCSV(justTheData);
+      return justTheData;
+    },
+    exportAllDataAsCSV() {
+      if (this.telemetryMode === 'performance') {
+        const dialog = this.openmct.overlays.dialog({
+          iconClass: 'alert',
+          message:
+            'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?',
+          buttons: [
+            {
+              label: 'Switch to Unlimited Telemetry and Export',
+              emphasis: true,
+              callback: async () => {
+                const data = this.getTableRowData();
+
+                this.updateTelemetryMode();
+                await this.isFinishedLoading;
+                this.exportAsCSV(data);
+
+                dialog.dismiss();
+              }
+            },
+            {
+              label: 'Cancel',
+              callback: () => {
+                dialog.dismiss();
+              }
+            }
+          ]
+        });
+      } else {
+        const data = this.getTableRowData();
+
+        this.exportAsCSV(data);
+      }
     },
     exportMarkedDataAsCSV() {
       const data = this.table.tableRows
@@ -1111,6 +1146,15 @@ export default {
         this.viewActionsCollection.show(['autosize-columns']);
         this.viewActionsCollection.hide(['expand-columns']);
       }
+    },
+    updateTelemetryMode() {
+      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+
+      if (this.persistModeChanges) {
+        this.table.configuration.setTelemetryMode(this.telemetryMode);
+      }
+
+      this.table.updateTelemetryMode(this.telemetryMode);
     },
     setRowHeight(height) {
       this.rowHeight = height;

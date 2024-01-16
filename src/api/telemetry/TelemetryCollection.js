@@ -73,15 +73,6 @@ export default class TelemetryCollection extends EventEmitter {
     this.isStrategyLatest = this.options.strategy === 'latest';
     this.dataOutsideTimeBounds = false;
     this.modeChanged = false;
-
-    // paged telemetry configuration
-    this.isPaged = options.paging;
-    this.pageSize = options.paging?.size ?? 50;
-    this.currentPage = 0;
-
-    if (this.isPaged) {
-      this.options.size = this.pageSize;
-    }
   }
 
   /**

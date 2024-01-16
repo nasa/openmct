@@ -127,6 +127,10 @@
       request.start = request.end - FIFTEEN_MINUTES;
     }
 
+    if (request.size === undefined) {
+      request.size = 5000;
+    }
+
     var now = Date.now();
     var start = request.start;
     var end = request.end > now ? now : request.end;
@@ -139,13 +143,14 @@
     var loadDelay = Math.max(request.loadDelay, 0);
     var infinityValues = request.infinityValues;
     var exceedFloat32 = request.exceedFloat32;
+    var size = request.size;
 
     var step = 1000 / dataRateInHz;
     var nextStep = start - (start % step) + step;
 
     var data = [];
 
-    for (; nextStep < end && data.length < 5000; nextStep += step) {
+    for (; nextStep < end && data.length < size; nextStep += step) {
       data.push({
         utc: nextStep,
         yesterday: nextStep - 60 * 60 * 24 * 1000,

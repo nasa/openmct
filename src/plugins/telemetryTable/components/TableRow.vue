@@ -26,6 +26,9 @@
     :class="[rowClass, { 'is-selected': marked }]"
     v-on="listeners"
   >
+    {{
+      rowIndex + 1
+    }}
     <component
       :is="componentList[key]"
       v-for="(title, key) in headers"

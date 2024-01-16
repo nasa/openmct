@@ -91,6 +91,7 @@ define(['./WorkerInterface'], function (WorkerInterface) {
     var workerRequest = this.makeWorkerRequest(domainObject, request);
     workerRequest.start = request.start;
     workerRequest.end = request.end;
+    workerRequest.size = request.size;
 
     return this.workerInterface.request(workerRequest);
   };

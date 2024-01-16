@@ -20,19 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
+export default function getTelemetryTableType(
+  telemetryMode = 'performance',
+  persistModeChanges = true
+) {
   return {
     name: 'Telemetry Table',
     description:
       'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
     creatable: true,
     cssClass: 'icon-tabular-scrolling',
+    form: [
+      {
+        key: 'telemetryMode',
+        name: 'Telemetry Mode',
+        control: 'select',
+        options: [
+          {
+            value: 'performance',
+            name: 'Performance Mode'
+          },
+          {
+            value: 'unlimited',
+            name: 'Unlimited Mode'
+          }
+        ],
+        cssClass: 'l-inline',
+        property: ['configuration', 'telemetryMode']
+      },
+      {
+        name: 'Persist Telemetry Mode Changes',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'persistModeChanges',
+        property: ['configuration', 'persistModeChanges']
+      }
+    ],
     initialize(domainObject) {
       domainObject.composition = [];
       domainObject.configuration = {
         columnWidths: {},
-        hiddenColumns: {}
+        hiddenColumns: {},
+        telemetryMode,
+        persistModeChanges
       };
     }
   };
-});
+}

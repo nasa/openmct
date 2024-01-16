@@ -51,6 +51,7 @@ define([
       this.tableComposition = undefined;
       this.datumCache = [];
       this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+      this.telemetryMode = this.configuration.getTelemetryMode();
       this.paused = false;
       this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -111,6 +112,15 @@ define([
       }
     }
 
+    updateTelemetryMode(mode) {
+      if (this.telemetryMode === mode) {
+        return;
+      }
+
+      this.telemetryMode = mode;
+      this.clearAndResubscribe();
+    }
+
     createTableRowCollections() {
       this.tableRows = new TableRowCollection();
 
@@ -153,6 +163,10 @@ define([
       const telemetryRemover = this.getTelemetryRemover();
 
       this.removeTelemetryCollection(keyString);
+
+      if (this.telemetryMode === 'performance') {
+        requestOptions.size = 50;
+      }
 
       this.telemetryCollections[keyString] = this.openmct.telemetry.requestCollection(
         telemetryObject,
