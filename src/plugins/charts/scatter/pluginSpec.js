@@ -24,8 +24,8 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ScatterPlotPlugin from './plugin';
-import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants';
+import ScatterPlotPlugin from './plugin.js';
+import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants.js';
 
 describe('the plugin', function () {
   let element;

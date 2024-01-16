@@ -100,7 +100,7 @@
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import { SupportedViewTypes } from '../../utils/constants.js';
 import ObjectView from './ObjectView.vue';
 

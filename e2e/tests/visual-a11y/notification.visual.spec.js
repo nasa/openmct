@@ -24,10 +24,11 @@
  * This test is dedicated to test notification banner functionality and its accessibility attributes.
  */
 
-const { test, expect, scanForA11yViolations } = require('../../avpFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const VISUAL_URL = require('../../constants').VISUAL_URL;
+import percySnapshot from '@percy/playwright';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
 test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11y", () => {
   test.beforeEach(async ({ page }) => {
@@ -44,19 +45,21 @@ test.describe("Visual - Check Notification Info Banner of 'Save successful' @a11
       name: 'Default Clock'
     });
     // Click on the div with role="alert" that has "Save successful" text
-    await page.locator('div[role="alert"]:has-text("Save successful")').click();
+    await page.getByRole('alert').filter({ hasText: 'Save successful' }).click();
     // Verify there is a div with role="dialog"
-    expect(await page.locator('div[role="dialog"]').isVisible()).toBe(true);
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeVisible();
     // Verify the div with role="dialog" contains text "Save successful"
-    expect(await page.locator('div[role="dialog"]').innerText()).toContain('Save successful');
+    expect(await page.getByRole('dialog', { name: 'Overlay' }).innerText()).toContain(
+      'Save successful'
+    );
     await percySnapshot(page, `Notification banner shows Save successful (theme: '${theme}')`);
     // Verify there is a button with text "Dismiss"
-    expect(await page.locator('button:has-text("Dismiss")').isVisible()).toBe(true);
+    await expect(page.getByText('Dismiss', { exact: true })).toBeVisible();
     await percySnapshot(page, `Notification banner shows Dismiss (theme: '${theme}')`);
     // Click on button with text "Dismiss"
-    await page.locator('button:has-text("Dismiss")').click();
+    await page.getByText('Dismiss', { exact: true }).click();
     // Verify there is no div with role="dialog"
-    expect(await page.locator('div[role="dialog"]').isVisible()).toBe(false);
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toBeHidden();
     await percySnapshot(page, `Notification banner dismissed (theme: '${theme}')`);
   });
   test.afterEach(async ({ page }, testInfo) => {

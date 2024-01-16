@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
   setIndependentTimeConductorBounds
-} = require('../../../appActions');
+} from '../../../appActions.js';
+import { expect, test } from '../../../pluginFixtures.js';
 
 const testPlan = {
   TEST_GROUP: [

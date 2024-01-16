@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
 import {
   FAULT_MANAGEMENT_INSPECTOR,
   FAULT_MANAGEMENT_NAMESPACE,
   FAULT_MANAGEMENT_TYPE,
   FAULT_MANAGEMENT_VIEW
-} from './constants';
+} from './constants.js';
 
 describe('The Fault Management Plugin', () => {
   let openmct;

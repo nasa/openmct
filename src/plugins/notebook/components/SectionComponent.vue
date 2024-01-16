@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
-import RemoveDialog from '../utils/removeDialog';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import PopupMenu from './PopupMenu.vue';
 
 export default {

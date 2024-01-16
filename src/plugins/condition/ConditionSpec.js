@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Condition from './Condition';
-import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER } from './utils/constants';
+import Condition from './Condition.js';
+import TelemetryCriterion from './criterion/TelemetryCriterion.js';
+import { TRIGGER } from './utils/constants.js';
 
 let openmct = {};
 let testConditionDefinition;

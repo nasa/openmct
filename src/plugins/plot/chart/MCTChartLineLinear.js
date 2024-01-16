@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MCTChartSeriesElement from './MCTChartSeriesElement';
+import MCTChartSeriesElement from './MCTChartSeriesElement.js';
 
 export default class MCTChartLineLinear extends MCTChartSeriesElement {
   addPoint(point, start) {

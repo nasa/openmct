@@ -24,8 +24,8 @@ import _ from 'lodash';
 import Color from '@/ui/color/Color';
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import Collection from './Collection';
-import PlotSeries from './PlotSeries';
+import Collection from './Collection.js';
+import PlotSeries from './PlotSeries.js';
 
 /**
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}

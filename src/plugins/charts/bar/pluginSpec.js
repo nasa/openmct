@@ -25,8 +25,8 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
-import BarGraphPlugin from './plugin';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants.js';
+import BarGraphPlugin from './plugin.js';
 
 describe('the plugin', function () {
   let element;

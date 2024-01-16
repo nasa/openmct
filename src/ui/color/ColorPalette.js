@@ -26,8 +26,8 @@
  *
  * @constructor
  */
-import Color from './Color';
-import { COLOR_PALETTE, isDefaultColor } from './ColorHelper';
+import Color from './Color.js';
+import { COLOR_PALETTE, isDefaultColor } from './ColorHelper.js';
 
 /**
  * A color palette stores a set of colors and allows for different

@@ -114,9 +114,9 @@
 <script>
 import _ from 'lodash';
 
-import configStore from '../../configuration/ConfigStore';
-import eventHelpers from '../../lib/eventHelpers';
-import { objectPath } from './formUtil';
+import configStore from '../../configuration/ConfigStore.js';
+import eventHelpers from '../../lib/eventHelpers.js';
+import { objectPath } from './formUtil.js';
 
 export default {
   inject: ['openmct', 'domainObject'],

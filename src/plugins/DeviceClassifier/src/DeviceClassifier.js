@@ -38,7 +38,7 @@
  * @param document the HTML DOM document object
  * @constructor
  */
-import DeviceMatchers from './DeviceMatchers';
+import DeviceMatchers from './DeviceMatchers.js';
 
 export default (agent, document) => {
   const body = document.body;

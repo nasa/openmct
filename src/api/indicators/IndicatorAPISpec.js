@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import SimpleIndicator from './SimpleIndicator';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import SimpleIndicator from './SimpleIndicator.js';
 
 describe('The Indicator API', () => {
   let openmct;

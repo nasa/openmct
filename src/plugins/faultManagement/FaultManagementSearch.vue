@@ -42,7 +42,7 @@
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
 import Search from '@/ui/components/SearchComponent.vue';
 
-import { FILTER_ITEMS } from './constants';
+import { FILTER_ITEMS } from './constants.js';
 
 export default {
   components: {

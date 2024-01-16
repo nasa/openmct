@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { FAULT_MANAGEMENT_ALARMS, FAULT_MANAGEMENT_GLOBAL_ALARMS } from './constants';
+import { FAULT_MANAGEMENT_ALARMS, FAULT_MANAGEMENT_GLOBAL_ALARMS } from './constants.js';
 import FaultManagementListView from './FaultManagementListView.vue';
 
 export default {

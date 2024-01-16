@@ -63,9 +63,9 @@
 import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],

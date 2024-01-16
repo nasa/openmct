@@ -21,7 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import AbstractStatusIndicator from '../AbstractStatusIndicator';
+import AbstractStatusIndicator from '../AbstractStatusIndicator.js';
 import PollQuestionComponent from './PollQuestion.vue';
 
 export default class PollQuestionIndicator extends AbstractStatusIndicator {

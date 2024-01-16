@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Model from './Model';
+import Model from './Model.js';
 /**
  * TODO: doc strings.
  */

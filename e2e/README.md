@@ -480,7 +480,7 @@ The following contains a list of tips and tricks which don't exactly fit into a 
 It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior (i.e. Tree not rendering), only use this sparingly. To do this, use the `overrideClock` fixture as such:
 
 ```js
-const { test, expect } = require('../../pluginFixtures.js');
+import { test, expect } from '../../pluginFixtures.js';
 
 test.describe('foo test suite', () => {
   
@@ -573,6 +573,15 @@ A single e2e test in Open MCT is extended to run:
 - When should I write a functional vs visual test?
 - How is Open MCT extending default Playwright functionality?
 - What about Component Testing?
+
+### Writing Tests
+
+Playwright provides 3 supported methods of debugging and authoring tests:
+- A 'watch mode' for running tests locally and debugging on the fly
+- A 'debug mode' for debugging tests and writing assertions against tests
+- A 'VSCode plugin' for debugging tests within the VSCode IDE.
+
+Generally, we encourage folks to use the watch mode and provide a script `npm run test:e2e:watch` which launches the launch mode ui and enables hot reloading on the dev server.
 
 ### e2e Troubleshooting
 

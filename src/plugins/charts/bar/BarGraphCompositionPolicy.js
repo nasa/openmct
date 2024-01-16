@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import { BAR_GRAPH_KEY } from './BarGraphConstants.js';
 
 export default function BarGraphCompositionPolicy(openmct) {
   function hasRange(metadata) {

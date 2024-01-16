@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { SORT_ORDER_OPTIONS } from '../constants';
+import { SORT_ORDER_OPTIONS } from '../constants.js';
 import EventProperties from './EventProperties.vue';
 import Filtering from './FilteringComponent.vue';
 

@@ -21,13 +21,14 @@
 -->
 
 <template>
-  <div v-show="resultsShown" class="c-gsearch__dropdown">
+  <div v-show="resultsShown" role="dialog" aria-label="Search Results Dropdown" class="c-gsearch__dropdown">
     <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
       <div
-        v-if="objectResults && objectResults.length"
+        v-if="objectResults?.length"
         ref="objectResults"
         class="c-gsearch__results-section"
-        role="listbox"
+        role="list"
+        aria-label="Object Results"
       >
         <div class="c-gsearch__results-section-title">Object Results</div>
         <object-search-result
@@ -38,7 +39,12 @@
           @click="selectedResult"
         />
       </div>
-      <div v-if="annotationResults && annotationResults.length" ref="annotationResults">
+      <div
+        v-if="annotationResults?.length"
+        ref="annotationResults"
+        role="list"
+        aria-label="Annotation Results"
+      >
         <div class="c-gsearch__results-section-title">Annotation Results</div>
         <annotation-search-result
           v-for="annotationResult in annotationResults"
@@ -53,10 +59,10 @@
       </div>
       <div
         v-if="
-          !searchLoading &&
-          (!annotationResults || !annotationResults.length) &&
-          (!objectResults || !objectResults.length)
-        "
+            !searchLoading &&
+            (!annotationResults || !annotationResults.length) &&
+            (!objectResults || !objectResults.length)
+          "
         class="c-gsearch__result-pane-msg"
       >
         <div class="hint">No results found</div>

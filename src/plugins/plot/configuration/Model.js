@@ -23,7 +23,7 @@
 import EventEmitter from 'eventemitter3';
 import _ from 'lodash';
 
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 
 /**
  * @template {object} T

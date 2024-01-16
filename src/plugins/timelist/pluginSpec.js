@@ -24,9 +24,9 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import { TIMELIST_TYPE } from './constants';
-import TimelistPlugin from './plugin';
+import { FIXED_MODE_KEY } from '../../api/time/constants.js';
+import { TIMELIST_TYPE } from './constants.js';
+import TimelistPlugin from './plugin.js';
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 

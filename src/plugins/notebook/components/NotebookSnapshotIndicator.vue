@@ -47,8 +47,8 @@
 <script>
 import mount from 'utils/mount';
 
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
-import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants.js';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container.js';
 import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 
 export default {

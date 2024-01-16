@@ -24,11 +24,8 @@
 This test suite is dedicated to tests for renaming objects, and their global application effects.
 */
 
-const { test, expect } = require('../../baseFixtures.js');
-const {
-  createDomainObjectWithDefaults,
-  renameObjectFromContextMenu
-} = require('../../appActions.js');
+import { createDomainObjectWithDefaults, renameObjectFromContextMenu } from '../../appActions.js';
+import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Renaming objects', () => {
   test.beforeEach(async ({ page }) => {

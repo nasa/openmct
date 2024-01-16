@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MCT from 'MCT';
+import { MCT } from 'MCT';
 import { markRaw } from 'vue';
 
 let nativeFunctions = [];

@@ -1,7 +1,7 @@
 import mount from 'utils/mount';
 
 import ProgressDialogComponent from './components/ProgressDialogComponent.vue';
-import Overlay from './Overlay';
+import Overlay from './Overlay.js';
 
 let component;
 class ProgressDialog extends Overlay {

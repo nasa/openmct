@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
+import RootObjectProvider from '../RootObjectProvider.js';
 
 describe('RootObjectProvider', function () {
   const ROOT_NAME = 'Open MCT';

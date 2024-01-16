@@ -23,7 +23,7 @@
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { NotebookPlugin } from './plugin';
+import { NotebookPlugin } from './plugin.js';
 
 describe('Notebook plugin:', () => {
   let openmct;

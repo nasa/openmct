@@ -22,7 +22,7 @@
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('Remote Clock', () => {
   // eslint-disable-next-line require-await

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 export default {

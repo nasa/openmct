@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('Sine Wave Generator', () => {
   test('Create new Sine Wave Generator Object and validate create Form Logic', async ({

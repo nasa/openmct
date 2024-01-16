@@ -20,20 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  function SummaryWidgetsCompositionPolicy(openmct) {
-    this.openmct = openmct;
+export default function SummaryWidgetsCompositionPolicy(openmct) {
+  this.openmct = openmct;
+}
+
+SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
+  const parentType = parent.type;
+
+  if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
+    return false;
   }
 
-  SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-    const parentType = parent.type;
-
-    if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  return SummaryWidgetsCompositionPolicy;
-});
+  return true;
+};

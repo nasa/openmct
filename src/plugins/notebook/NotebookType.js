@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration';
+import { IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration.js';
 
 export default class NotebookType {
   constructor(name, description, icon) {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './object-utils';
+import utils from './object-utils.js';
 
 export default class RootRegistry {
   constructor(openmct) {

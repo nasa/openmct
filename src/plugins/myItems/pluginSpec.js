@@ -22,7 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import { createMyItemsIdentifier, MY_ITEMS_KEY } from './createMyItemsIdentifier';
+import { createMyItemsIdentifier, MY_ITEMS_KEY } from './createMyItemsIdentifier.js';
 
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
 const DEFAULT_NAME = 'My Items';

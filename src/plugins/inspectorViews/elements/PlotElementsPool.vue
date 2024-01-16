@@ -72,7 +72,7 @@
 import _ from 'lodash';
 
 import Search from '../../../ui/components/SearchComponent.vue';
-import configStore from '../../plot/configuration/ConfigStore';
+import configStore from '../../plot/configuration/ConfigStore.js';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
 

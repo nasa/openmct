@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants';
+import { FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS, FILTER_ITEMS, SORT_ITEMS } from './constants.js';
 import FaultManagementListHeader from './FaultManagementListHeader.vue';
 import FaultManagementListItem from './FaultManagementListItem.vue';
 import FaultManagementSearch from './FaultManagementSearch.vue';

@@ -24,7 +24,7 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import FlexibleLayout from './plugin';
+import FlexibleLayout from './plugin.js';
 
 describe('the plugin', function () {
   let element;

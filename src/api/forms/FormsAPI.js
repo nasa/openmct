@@ -24,7 +24,7 @@ import _ from 'lodash';
 import mount from 'utils/mount';
 
 import FormProperties from './components/FormProperties.vue';
-import FormController from './FormController';
+import FormController from './FormController.js';
 
 export default class FormsAPI {
   constructor(openmct) {

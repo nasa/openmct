@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import * as d3Axis from 'd3-axis';
+import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
-import * as d3Selection from 'd3-selection';
+import { select } from 'd3-selection';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
@@ -89,7 +89,7 @@ export default {
       this.useSVG = true;
     }
 
-    this.container = d3Selection.select(this.$refs.axisHolder);
+    this.container = select(this.$refs.axisHolder);
     this.svgElement = this.container.append('svg:svg');
     // draw x axis with labels. CSS is used to position them.
     this.axisElement = this.svgElement
@@ -165,7 +165,7 @@ export default {
       this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
     },
     setAxis() {
-      this.xAxis = d3Axis.axisTop(this.xScale);
+      this.xAxis = axisTop(this.xScale);
       this.xAxis.tickFormat(utcMultiTimeFormat);
 
       if (this.width > 1800) {

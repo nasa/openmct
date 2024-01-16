@@ -42,7 +42,7 @@ const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from 'utils/duration';
 
-import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
 
 export default {

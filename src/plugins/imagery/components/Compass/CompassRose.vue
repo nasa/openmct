@@ -185,7 +185,7 @@
 <script>
 import { throttle } from 'lodash';
 
-import { rotate } from './utils';
+import { rotate } from './utils.js';
 
 export default {
   props: {

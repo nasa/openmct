@@ -1,4 +1,4 @@
-import { antisymlog, symlog } from './mathUtils';
+import { antisymlog, symlog } from './mathUtils.js';
 
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);

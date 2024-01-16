@@ -54,9 +54,9 @@
 <script>
 import moment from 'moment';
 
-import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
-import objectLink from '../../../ui/mixins/object-link';
-import statusListener from './status-listener';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture.js';
+import objectLink from '../../../ui/mixins/object-link.js';
+import statusListener from './status-listener.js';
 
 export default {
   mixins: [contextMenuGesture, objectLink, statusListener],

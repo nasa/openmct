@@ -62,9 +62,9 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import ObjectPath from '../components/ObjectPath.vue';
-import PreviewAction from '../preview/PreviewAction';
+import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
   name: 'RecentObjectsListItem',

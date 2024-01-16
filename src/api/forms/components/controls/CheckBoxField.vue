@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import toggleMixin from '../../toggle-check-box-mixin';
+import toggleMixin from '../../toggle-check-box-mixin.js';
 
 export default {
   mixins: [toggleMixin],

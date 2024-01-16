@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import NotificationAPI from './NotificationAPI';
+import NotificationAPI from './NotificationAPI.js';
 
 describe('The Notification API', () => {
   let notificationAPIInstance;

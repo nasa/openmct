@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './utils';
+import utils from './utils.js';
 
 export default function (staticFaults = false) {
   return function install(openmct) {

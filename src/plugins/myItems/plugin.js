@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMyItemsIdentifier } from './createMyItemsIdentifier';
-import myItemsInterceptor from './myItemsInterceptor';
+import { createMyItemsIdentifier } from './createMyItemsIdentifier.js';
+import myItemsInterceptor from './myItemsInterceptor.js';
 
 const MY_ITEMS_DEFAULT_NAME = 'My Items';
 

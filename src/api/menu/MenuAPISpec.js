@@ -22,9 +22,9 @@
 
 import { nextTick } from 'vue';
 
-import { createMouseEvent, createOpenMct, resetApplicationState } from '../../utils/testing';
-import Menu from './menu';
-import MenuAPI from './MenuAPI';
+import { createMouseEvent, createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import Menu from './menu.js';
+import MenuAPI from './MenuAPI.js';
 
 describe('The Menu API', () => {
   let openmct;

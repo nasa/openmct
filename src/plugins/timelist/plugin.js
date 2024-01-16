@@ -22,9 +22,9 @@
 
 import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
 
-import { TIMELIST_TYPE } from './constants';
-import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider';
-import TimelistViewProvider from './TimelistViewProvider';
+import { TIMELIST_TYPE } from './constants.js';
+import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider.js';
+import TimelistViewProvider from './TimelistViewProvider.js';
 
 export default function () {
   return function install(openmct) {

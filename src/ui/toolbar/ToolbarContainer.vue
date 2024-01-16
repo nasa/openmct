@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-toolbar">
+  <div role="menubar" class="c-toolbar">
     <div class="c-toolbar__element-controls">
       <component
         :is="item.control"

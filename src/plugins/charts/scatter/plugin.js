@@ -21,11 +21,11 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
-import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
+import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider.js';
+import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy.js';
 import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotForm from './ScatterPlotForm.vue';
-import ScatterPlotViewProvider from './ScatterPlotViewProvider';
+import ScatterPlotViewProvider from './ScatterPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {

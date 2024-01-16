@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 
 export default class MCTChartAlarmPointSet {
   constructor(series, chart, offset) {

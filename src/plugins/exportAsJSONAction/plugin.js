@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ExportAsJSONAction from './ExportAsJSONAction';
+import ExportAsJSONAction from './ExportAsJSONAction.js';
 
 export default function () {
   return function (openmct) {

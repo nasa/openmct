@@ -70,7 +70,7 @@
 <script>
 import { markRaw } from 'vue';
 
-import PlanViewConfiguration from '../../PlanViewConfiguration';
+import PlanViewConfiguration from '../../PlanViewConfiguration.js';
 
 export default {
   components: {},

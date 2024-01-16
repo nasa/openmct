@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { antisymlog, symlog } from '../mathUtils';
-import Model from './Model';
+import { antisymlog, symlog } from '../mathUtils.js';
+import Model from './Model.js';
 
 /**
  * YAxis model

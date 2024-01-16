@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import { TIMELIST_TYPE } from './constants';
+import { TIMELIST_TYPE } from './constants.js';
 import Timelist from './TimelistComponent.vue';
 
 export default function TimelistViewProvider(openmct) {

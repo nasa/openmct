@@ -22,8 +22,8 @@
 
 import EventEmitter from 'EventEmitter';
 
-import eventHelpers from '../lib/eventHelpers';
-import { MARKER_SHAPES } from './MarkerShapes';
+import eventHelpers from '../lib/eventHelpers.js';
+import { MARKER_SHAPES } from './MarkerShapes.js';
 /**
  * Create a new draw API utilizing the Canvas's 2D API for rendering.
  *

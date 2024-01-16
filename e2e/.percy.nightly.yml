@@ -26,3 +26,7 @@ snapshot:
     .c-compact-tc__setting-value{
       opacity: 0 !important;
     }
+    /* Chart Area for Plots */
+    .gl-plot-chart-area{
+      opacity: 0 !important;
+    }

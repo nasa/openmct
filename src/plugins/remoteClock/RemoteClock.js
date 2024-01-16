@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DefaultClock from '../../utils/clock/DefaultClock';
-import remoteClockRequestInterceptor from './requestInterceptor';
+import DefaultClock from '../../utils/clock/DefaultClock.js';
+import remoteClockRequestInterceptor from './requestInterceptor.js';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the

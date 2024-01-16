@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
-import toggleMixin from '../../../ui/mixins/toggle-mixin';
-import clockMixin from '../clock-mixin';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
+import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
+import clockMixin from '../clock-mixin.js';
 
 export default {
   mixins: [toggleMixin, clockMixin],

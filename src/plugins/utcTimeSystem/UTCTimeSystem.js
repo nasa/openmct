@@ -20,17 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+/**
+ * This time system supports UTC dates.
+ * @implements TimeSystem
+ * @constructor
+ */
+class UTCTimeSystem {
   /**
-   * This time system supports UTC dates.
-   * @implements TimeSystem
-   * @constructor
+   * Metadata used to identify the time system in
+   * the UI
    */
-  function UTCTimeSystem() {
-    /**
-     * Metadata used to identify the time system in
-     * the UI
-     */
+  constructor() {
     this.key = 'utc';
     this.name = 'UTC';
     this.cssClass = 'icon-clock';
@@ -38,6 +38,6 @@ define([], function () {
     this.durationFormat = 'duration';
     this.isUTCBased = true;
   }
+}
 
-  return UTCTimeSystem;
-});
+export default UTCTimeSystem;

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { expect } from '../pluginFixtures';
+import { expect } from '../pluginFixtures.js';
 
 /**
  * Asserts that the number of activities in the plan view matches the number of
