@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -37,6 +37,7 @@
           <div
             v-for="entry in statusCountViewModel"
             :key="entry.status.key"
+            :aria-label="entry.status.label"
             :title="entry.status.label"
             class="c-status-poll-report__count"
             :style="[

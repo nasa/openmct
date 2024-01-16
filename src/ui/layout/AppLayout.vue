@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -45,6 +45,7 @@
             ? 'l-shell__head__collapse-button--collapse'
             : 'l-shell__head__collapse-button--expand'
         "
+        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
       ></button>
@@ -61,6 +62,7 @@
             'c-icon-button c-icon-button--major',
             fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand'
           ]"
+          :aria-label="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           @click="fullScreenToggle"
         ></button>

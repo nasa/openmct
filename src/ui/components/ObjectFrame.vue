@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,7 +36,11 @@
     <div class="c-so-view__header">
       <div class="c-object-label" :class="[statusClass]">
         <div class="c-object-label__type-icon" :class="cssClass">
-          <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+          <span
+            class="is-status__indicator"
+            :aria-label="`This item is ${status}`"
+            :title="`This item is ${status}`"
+          ></span>
         </div>
         <div
           ref="objectName"
@@ -78,6 +82,7 @@
         </div>
         <button
           class="c-icon-button icon-3-dots c-so-view__frame-controls__more"
+          aria-label="View menu items"
           title="View menu items"
           @click.prevent.stop="showMenuItems($event)"
         ></button>

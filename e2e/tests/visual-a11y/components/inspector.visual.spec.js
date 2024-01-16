@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,13 +22,13 @@
 
 import percySnapshot from '@percy/playwright';
 
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { MISSION_TIME, VISUAL_URL } from '../../../constants.js';
-import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
 
-test.describe('Visual - Controlled Clock', () => {
+test.describe('Visual - Inspector @ally', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -54,4 +54,7 @@ test.describe('Visual - Controlled Clock', () => {
       scope: inspectorPane
     });
   });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
 });

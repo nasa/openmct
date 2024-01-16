@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,6 @@ import { VISUAL_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - LAD Table', () => {
-  /** @type {import('@playwright/test').Locator} */
   let ladTable;
 
   test.beforeEach(async ({ page }) => {
@@ -46,9 +45,9 @@ test.describe('Visual - LAD Table', () => {
     });
 
     //Modify SWG to create a really stable SWG
-    await page.locator('button[title="More actions"]').click();
+    await page.getByRole('button', { name: 'More actions' }).click();
 
-    await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
 
     //Forgive me, padre
     await page.getByRole('spinbutton', { name: 'Data Rate (hz)' }).fill('0');
@@ -57,18 +56,18 @@ test.describe('Visual - LAD Table', () => {
     await page.getByRole('button', { name: 'Save' }).click();
   });
   test('Toggled column widths behave accordingly', async ({ page, theme }) => {
-    await page.goto(ladTable.url);
+    await page.goto(ladTable.url, { waitUntil: 'domcontentloaded' });
 
-    await expect(page.locator('button[title="Expand Columns"]')).toBeVisible();
+    await expect(page.getByLabel('Expand Columns')).toBeVisible();
 
     await percySnapshot(
       page,
       `LAD Table w/ Sine Wave Generator columns autosized (theme: ${theme})`
     );
 
-    await page.locator('button[title="Expand Columns"]').click();
+    await page.getByLabel('Expand Columns').click();
 
-    await expect(page.locator('button[title="Autosize Columns"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Autosize Columns' })).toBeVisible();
 
     await percySnapshot(
       page,

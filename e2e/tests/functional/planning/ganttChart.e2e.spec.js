@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -69,7 +69,7 @@ test.describe('Gantt Chart', () => {
       .getByRole('dialog')
       .filter({ hasText: 'This action will replace the current Plan. Do you want to continue?' });
     await expect(replaceModal).toBeVisible();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await assertPlanActivities(page, testPlan2, ganttChart.url);
   });
