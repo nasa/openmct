@@ -403,13 +403,15 @@ export default class TelemetryAPI {
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribe(domainObject, callback, options) {
+  subscribe(domainObject, callback, options = { strategy: 'latest' }) {
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
     // Default behavior is to use the latest strategy, as opposed to the new "batch" strategy
-    options.strategy = options.strategy || 'latest';
+    if (options.strategy === undefined) {
+      options.strategy = 'latest';
+    }
 
     const provider = this.findSubscriptionProvider(domainObject, options);
 
