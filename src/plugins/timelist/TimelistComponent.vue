@@ -21,8 +21,15 @@
 -->
 
 <template>
-  <div ref="timelistHolder" class="c-timelist">
+  <div ref="timelistHolder" :class="listTypeClass">
+    <compact-view
+      v-if="isCompact"
+      :items="planActivities"
+      :header-items="headerItems"
+      :default-sort="defaultSort"
+    ></compact-view>
     <list-view
+      v-else
       :items="planActivities"
       :header-items="headerItems"
       :default-sort="defaultSort"
@@ -39,6 +46,7 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import CompactView from './CompactView.vue';
 import { SORT_ORDER_OPTIONS } from './constants.js';
 
 const SCROLL_TIMEOUT = 10000;
@@ -72,22 +80,35 @@ const headerItems = [
   },
   {
     defaultDirection: false,
-    property: 'duration',
+    property: 'countdown',
     name: 'Time To/From',
-    format: function (value) {
+    format: function (value, object, key, openmct, options = {}) {
       let result;
       if (value < 0) {
-        result = `+${getPreciseDuration(Math.abs(value), {
+        const prefix = options.skipPrefix ? '' : '+';
+        result = `${prefix}${getPreciseDuration(Math.abs(value), {
           excludeMilliSeconds: true,
           useDayFormat: true
         })}`;
       } else if (value > 0) {
-        result = `-${getPreciseDuration(value, { excludeMilliSeconds: true, useDayFormat: true })}`;
+        const prefix = options.skipPrefix ? '' : '+';
+        result = `${prefix}${getPreciseDuration(value, {
+          excludeMilliSeconds: true,
+          useDayFormat: true
+        })}`;
       } else {
         result = 'Now';
       }
 
       return result;
+    }
+  },
+  {
+    defaultDirection: false,
+    property: 'duration',
+    name: 'Duration',
+    format: function (value, object, key, openmct) {
+      return `${getPreciseDuration(value, { excludeMilliSeconds: true, useDayFormat: true })}`;
     }
   },
   {
@@ -104,6 +125,7 @@ const defaultSort = {
 
 export default {
   components: {
+    CompactView,
     ListView
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
@@ -114,12 +136,21 @@ export default {
       height: 0,
       planActivities: [],
       headerItems: headerItems,
-      defaultSort: defaultSort
+      defaultSort: defaultSort,
+      isCompact: false
     };
+  },
+  computed: {
+    listTypeClass() {
+      if (this.isCompact) {
+        return 'c-timelist c-timelist--large';
+      }
+      return 'c-timelist';
+    }
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.updateTimestamp = _.throttle(this.updateTimestamp, 15000);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
@@ -379,11 +410,13 @@ export default {
         activity.key = uuid();
       }
 
+      activity.duration = activity.end - activity.start;
+
       if (activity.start < this.timestamp) {
         //if the activity start time has passed, display the time to the end of the activity
-        activity.duration = activity.end - this.timestamp;
+        activity.countdown = activity.end - this.timestamp;
       } else {
-        activity.duration = activity.start - this.timestamp;
+        activity.countdown = activity.start - this.timestamp;
       }
 
       return activity;
@@ -426,7 +459,7 @@ export default {
     },
     setScrollTop() {
       //The view isn't ready yet
-      if (!this.$el.parentElement) {
+      if (!this.$el.parentElement || this.isCompact) {
         return;
       }
 

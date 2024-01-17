@@ -19,6 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+$c: #ccc;
+$cr: 3px;
+$interiorMargin: 5px;
 
 .c-timelist {
   & .nowMarker.hasCurrent {
@@ -55,5 +58,99 @@
         width: 5%;
       }
     }
+  }
+}
+
+.c-timelist--large {
+  $textSm: 0.8em;
+  $textLg: 1.3em;
+
+  .c-tli {
+    background: #444;
+    border-radius: $cr;
+    display: grid;
+    padding: $interiorMargin;
+    grid-template-columns: min-content 2fr 40px 1fr;
+    grid-column-gap: $interiorMargin;
+
+    &__activity-color {
+      align-items: start;
+      display: flex;
+      padding-top: 3px;
+    }
+
+    &__activity-color-swatch {
+      $d: 16px;
+      border-radius: 50%;
+      width: $d;
+      height: $d;
+    }
+
+    &__bounds {
+      font-size: $textSm;
+    }
+
+    &__title {
+      font-size: $textLg;
+    }
+
+
+
+    &__time-hero {
+      //background: rgba(deeppink, 0.2);
+      flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      justify-content: end;
+
+      > * + * {
+        margin-left: $interiorMargin;
+      }
+    }
+
+    &__time-hero-context {
+      font-size: $textSm;
+      text-transform: uppercase;
+    }
+
+    &__time-hero-time {
+      font-size: $textLg;
+
+      &:before {
+        display: inline-block;
+        margin-right: 3px;
+      }
+
+      &.--is-countdown {
+        &:before {
+          content: '-'; // TODO: replace with symbolsfont dash
+        }
+      }
+
+      &.--is-countup {
+        &:before {
+          content: '+'; // TODO: replace with symbolsfont dash
+        }
+      }
+    }
+
+
+
+  }
+}
+
+.c-svg-progress {
+  &__bg {
+    fill: rgba(black, 0.2);
+  }
+
+  &__ticks {
+    fill: none;
+    stroke: #666;
+    stroke-width: 6;
+  }
+
+  &__progress {
+    fill: $c;
   }
 }
