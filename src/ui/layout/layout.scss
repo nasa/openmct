@@ -171,7 +171,7 @@
     }
   }
 
-  &__head,
+  //&__head,
   &__pane-inspector {
     body.mobile & {
       display: none;
@@ -188,6 +188,14 @@
   &__main-view-browse-bar {
     flex: 0 0 auto;
     margin-bottom: $interiorMargin; // Needs some additional visual separation
+  }
+
+  &__head{ 
+    body.mobile & {
+      .c-create-button, .c-create-menu, .c-indicator, .c-icon-button { // Making status area visible, but hiding some widgets for mobile.
+        display: none;
+      }
+    }
   }
 
   body.mobile & .l-shell__main-view-browse-bar {
