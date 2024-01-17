@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -107,7 +107,7 @@ test.describe('Notification Overlay', () => {
     await page.getByRole('button', { name: 'Close' }).click();
 
     // On the Display Layout object, click on the "Edit" button
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     // Click on the "Save" button
     await page.getByRole('button', { name: 'Save' }).click();

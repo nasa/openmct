@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -68,7 +68,7 @@ test.describe('Flexible Layout styling @a11y', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -146,7 +146,7 @@ test.describe('Stacked Plot styling @a11y', () => {
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();

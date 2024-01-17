@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -155,7 +155,7 @@ test.describe('AppActions', () => {
 
     await page.goto('./#/browse/mine');
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Clock")`);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -123,7 +123,11 @@ class UserAPI extends EventEmitter {
    * @returns {undefined}
    */
   setActiveRole(role) {
-    StoragePersistance.setActiveRole(role);
+    if (!role) {
+      StoragePersistance.clearActiveRole();
+    } else {
+      StoragePersistance.setActiveRole(role);
+    }
     this.emit('roleChanged', role);
   }
 

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -62,6 +62,7 @@
         :key="action.name"
         role="menuitem"
         :class="action.cssClass"
+        :aria-label="action.name"
         :title="action.description"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"
