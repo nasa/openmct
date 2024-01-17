@@ -667,7 +667,7 @@ export default {
       this.updateVisibleRows();
       this.synchronizeScrollX();
 
-      if (this.shouldSnapToBottom()) {
+      if (this.shouldAutoScroll()) {
         this.autoScroll = true;
       } else {
         // If user scrolls away from bottom, disable auto-scroll.
@@ -675,14 +675,20 @@ export default {
         this.autoScroll = false;
       }
     },
-    shouldSnapToBottom() {
+    shouldAutoScroll() {
+      if (this.sortOptions.direction === 'asc') {
+        return this.scrollable.scrollTop <= AUTO_SCROLL_TRIGGER_HEIGHT;
+      }
+
       return (
         this.scrollable.scrollTop >=
         this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT
       );
     },
-    scrollToBottom() {
-      this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
+    initiateAutoScroll() {
+      console.log(this.sortOptions.direction);
+      this.scrollable.scrollTop =
+        this.sortOptions.direction === 'asc' ? 0 : Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
       if (this.$refs.headersHolderEl && this.scrollable) {
@@ -730,7 +736,7 @@ export default {
       }
 
       if (this.autoScroll) {
-        this.scrollToBottom();
+        this.initiateAutoScroll();
       }
 
       this.updateVisibleRows();
@@ -890,7 +896,7 @@ export default {
             // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
             // Need to preserve scroll position in this case.
             if (this.autoScroll) {
-              this.scrollToBottom();
+              this.initiateAutoScroll();
             } else {
               this.scrollable.scrollTop = scrollTop;
             }

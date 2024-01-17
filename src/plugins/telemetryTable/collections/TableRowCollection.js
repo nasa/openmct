@@ -58,10 +58,32 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
 
       this.sortAndMergeRows(rowsToAdd);
 
-      // we emit filter no matter what to trigger
-      // an update of visible rows
-      if (rowsToAdd.length > 0) {
-        this.emit('add', rowsToAdd);
+      this.maintainLimit();
+
+      this.emit('add', rowsToAdd);
+    }
+
+    maintainLimit() {
+      if (!this.rowLimit) {
+        return;
+      }
+
+      let removed;
+      const existingRowCount = this.rows.length;
+
+      // Removal check
+      if (existingRowCount > this.rowLimit) {
+        const rowRemovalCount = existingRowCount - this.rowLimit;
+        console.log('removing', rowRemovalCount, 'from', existingRowCount);
+        if (this.sortOptions.direction === 'asc') {
+          removed = this.rows.slice(0, rowRemovalCount);
+          this.rows = this.rows.slice(rowRemovalCount);
+        } else {
+          removed = this.rows.slice(-rowRemovalCount);
+          this.rows = this.rows.slice(0, existingRowCount - rowRemovalCount);
+        }
+
+        this.emit('remove', removed);
       }
     }
 
@@ -128,6 +150,15 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       this.rows[index] = foundRow;
     }
 
+    setLimit(rowLimit) {
+      this.rowLimit = rowLimit;
+    }
+
+    removeLimit() {
+      this.rowLimit = null;
+      delete this.rowLimit;
+    }
+
     sortCollection(rows) {
       const sortedRows = _.orderBy(
         rows,
@@ -146,11 +177,23 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
         } else {
           if (addToBeginning) {
             this.rows.unshift(row);
+
+            if (this.overRowLimit()) {
+              this.rows.pop();
+            }
           } else {
             this.rows.push(row);
+
+            if (this.overRowLimit()) {
+              this.rows.shift();
+            }
           }
         }
       });
+    }
+
+    overRowLimit() {
+      return this.rowLimit && this.rows.length > this.rowLimit;
     }
 
     mergeSortedRows(incomingRows) {
@@ -362,6 +405,8 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
     }
 
     getRows() {
+      console.log('get rows', this.rows.length);
+
       return this.rows;
     }
 
