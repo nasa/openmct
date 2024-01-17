@@ -40,6 +40,10 @@
     min-width: 500px;
     max-height: 500px;
     z-index: 60;
+    body.mobile & {
+      min-width: 90vw;
+      max-height: 90vh;
+    }
   }
 
   &__results,
@@ -71,6 +75,10 @@
     > * + * {
       margin-top: $interiorMargin;
     }
+  }
+
+  body.mobile & {
+    width: auto;
   }
 }
 
@@ -141,4 +149,5 @@
   .c-tag {
     font-size: 0.9em;
   }
+
 }
