@@ -116,14 +116,9 @@ async function makeOverlayPlot(page, myItemsFolderName) {
 
   // set amplitude to 6, offset 4, period 2
 
-  await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').fill('6');
-
-  await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').fill('4');
-
-  await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').fill('2');
+  await page.getByLabel('Period').fill('2');
+  await page.getByLabel('Amplitude').fill('6');
+  await page.getByLabel('Offset').fill('4');
 
   // Click OK to make generator
 
