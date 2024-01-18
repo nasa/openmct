@@ -77,7 +77,7 @@ export default class RemoteClock extends DefaultClock {
         this._subscribe();
       })
       .catch((error) => {
-        throw new Error(error);
+        throw error;
       });
   }
 
