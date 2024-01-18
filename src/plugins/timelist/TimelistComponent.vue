@@ -38,7 +38,12 @@ import { v4 as uuid } from 'uuid';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
-import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import {
+  getFilteredValues,
+  getFilterMetadataProperties,
+  getValidatedData,
+  getValidatedGroups
+} from '../plan/util.js';
 import { SORT_ORDER_OPTIONS } from './constants.js';
 
 const SCROLL_TIMEOUT = 10000;
@@ -208,22 +213,22 @@ export default {
       this.setViewFromConfig(mutatedObject.configuration);
     },
     setViewFromConfig(configuration) {
+      this.filterValue = configuration.filter || '';
+      this.filterMetadataValue = configuration.filterMetadata || '';
       if (this.isEditing) {
-        this.filterValue = configuration.filter;
         this.hideAll = false;
-        this.listActivities();
       } else {
-        this.filterValue = configuration.filter;
         this.setSort();
-        this.listActivities();
       }
+      this.listActivities();
     },
     updateTimestamp(timestamp) {
       //The clock never stops ticking
       this.updateTimeStampAndListActivities(timestamp);
     },
     setFixedTime() {
-      this.filterValue = this.domainObject.configuration.filter;
+      this.filterValue = this.domainObject.configuration.filter || '';
+      this.filterMetadataValue = this.domainObject.configuration.filterMetadata || '';
       this.isFixedTime = !this.timeContext.isRealTime();
       if (this.isFixedTime) {
         this.hideAll = false;
@@ -326,7 +331,21 @@ export default {
         return true;
       }
 
-      const hasFilterMatch = this.filterByName(activity.name);
+      let hasNameMatch = false;
+      let hasMetadataMatch = false;
+      if (this.filterValue || this.filterMetadataValue) {
+        if (this.filterValue) {
+          hasNameMatch = this.filterByName(activity.name);
+        }
+        if (this.filterMetadataValue) {
+          hasMetadataMatch = this.filterByMetadata(activity);
+        }
+      } else {
+        hasNameMatch = true;
+        hasMetadataMatch = true;
+      }
+
+      const hasFilterMatch = hasNameMatch || hasMetadataMatch;
       if (hasFilterMatch === false || this.hideAll === true) {
         return false;
       }
@@ -352,6 +371,17 @@ export default {
         const regex = new RegExp(normalized);
 
         return regex.test(name.toLowerCase());
+      });
+    },
+    filterByMetadata(activity) {
+      const filters = this.filterMetadataValue.split(',');
+
+      return filters.some((search) => {
+        const normalized = search.trim().toLowerCase();
+        const regex = new RegExp(normalized);
+        const activityValues = getFilteredValues(activity);
+
+        return regex.test(activityValues.join().toLowerCase());
       });
     },
     // Add activity classes, increase activity counts by type,
