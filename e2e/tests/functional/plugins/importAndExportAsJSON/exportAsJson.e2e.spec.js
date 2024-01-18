@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
 */
 
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import {
   createDomainObjectWithDefaults,
@@ -33,24 +33,21 @@ import {
 import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('ExportAsJSON', () => {
-  test('Create a basic object and verify that it can be exported as JSON from Tree', async ({
-    page,
-    browser
-  }) => {
-    // // Set up a download path
-    // const context = await browser.newContext({
-    //   acceptDownloads: true
-    // });
-    // const page = await context.newPage();
-
-    // Navigate to the page
-    await page.goto('./');
-
+  let folder;
+  test.beforeEach(async ({ page }) => {
+    // Go to baseURL
+    await page.goto('./', { waitUntil: 'networkidle' });
     // Perform actions to create the domain object
-    const folder = await createDomainObjectWithDefaults(page, {
+    folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'e2e folder'
     });
+  });
+  test('Create a basic object and verify that it can be exported as JSON from Tree', async ({
+    page
+  }) => {
+    // Navigate to the page
+    await page.goto(folder.url);
 
     // Open context menu and initiate download
     await openObjectTreeContextMenu(page, folder.url);
@@ -62,29 +59,81 @@ test.describe('ExportAsJSON', () => {
     // Wait for the download process to complete
     const path = await download.path();
 
+    // Read the contents of the downloaded file using readFile from fs/promises
+    const fileContents = await fs.readFile(path, 'utf8');
+    const jsonData = JSON.parse(fileContents);
+
+    // Use the function to retrieve the key
+    const key = getFirstKeyFromOpenMctJson(jsonData);
+
+    // Verify the contents of the JSON file
+    expect(jsonData.openmct[key]).toHaveProperty('name', 'e2e folder');
+    expect(jsonData.openmct[key]).toHaveProperty('type', 'folder');
+  });
+  test('Create a basic object and verify that it can be exported as JSON from 3 dot menu', async ({
+    page
+  }) => {
+    // Navigate to the page
+    await page.goto(folder.url);
+    //3 dot menu
+    await page.getByLabel('More actions').click();
+    // Open context menu and initiate download
+    const [download] = await Promise.all([
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as JSON').click() // Triggers the download
+    ]);
+
+    // Read the contents of the downloaded file using readFile from fs/promises
+    const fileContents = await fs.readFile(await download.path(), 'utf8');
+    const jsonData = JSON.parse(fileContents);
+
+    // Use the function to retrieve the key
+    const key = getFirstKeyFromOpenMctJson(jsonData);
+
+    // Verify the contents of the JSON file
+    expect(jsonData.openmct[key]).toHaveProperty('name', 'e2e folder');
+    expect(jsonData.openmct[key]).toHaveProperty('type', 'folder');
+  });
+  test('Verify that a nested Object can be exported as JSON', async ({ page }) => {
+    const timer = await createDomainObjectWithDefaults(page, {
+      type: 'Timer',
+      name: 'timer',
+      parent: folder.uuid
+    });
+    // Navigate to the page
+    await page.goto(timer.url);
+
+    //do this against parent folder.url, NOT timer.url child
+    await openObjectTreeContextMenu(page, folder.url);
+    // Open context menu and initiate download
+    const [download] = await Promise.all([
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as JSON').click() // Triggers the download
+    ]);
+
     // Read the contents of the downloaded file
-    const fileContents = await fs.promises.readFile(path, 'utf8');
+    const fileContents = await fs.readFile(await download.path(), 'utf8');
+    const jsonData = JSON.parse(fileContents);
 
-    // Verify the contents of the file (this is just an example, adjust as needed)
-    expect(fileContents).toContain('"name": "e2e folder"');
-    expect(fileContents).toContain('"type": "Folder"');
+    // Retrieve the keys for folder and timer
+    const folderKey = getFirstKeyFromOpenMctJson(jsonData);
+    const timerKey = jsonData.openmct[folderKey].composition[0].key;
 
-    // Clean up: Close the page and context
-    await page.close();
+    // Verify the folder properties
+    expect(jsonData.openmct[folderKey]).toHaveProperty('name', 'e2e folder');
+    expect(jsonData.openmct[folderKey]).toHaveProperty('type', 'folder');
+
+    // Verify the timer properties
+    expect(jsonData.openmct[timerKey]).toHaveProperty('name', 'timer');
+    expect(jsonData.openmct[timerKey]).toHaveProperty('type', 'timer');
+
+    // Verify the composition of the folder includes the timer
+    expect(jsonData.openmct[folderKey].composition).toEqual(
+      expect.arrayContaining([expect.objectContaining({ key: timerKey })])
+    );
   });
-  test.fixme(
-    'Create a basic object and verify that it can be exported as JSON from 3 dot menu',
-    async ({ page }) => {
-      //Create domain object
-      //Save Domain Object
-      //Verify that the newly created domain object can be exported as JSON from the 3 dot menu
-    }
-  );
-  test.fixme('Verify that a nested Object can be exported as JSON', async ({ page }) => {
-    // Create 2 objects with hierarchy
-    // Export as JSON
-    // Verify Hierarchy
-  });
+});
+test.describe('ExportAsJSON Disabled Actions', () => {
   test.fixme(
     'Verify that the ExportAsJSON dropdown does not appear for the item X',
     async ({ page }) => {
@@ -92,3 +141,23 @@ test.describe('ExportAsJSON', () => {
     }
   );
 });
+
+/**
+ * Retrieves the first key from the 'openmct' property of the provided JSON object.
+ *
+ * @param {Object} jsonData - The JSON object containing the 'openmct' property.
+ * @returns {string} The first key found in the 'openmct' object.
+ * @throws {Error} If no keys are found in the 'openmct' object.
+ */
+function getFirstKeyFromOpenMctJson(jsonData) {
+  if (!jsonData.openmct) {
+    throw new Error("The provided JSON object does not have an 'openmct' property.");
+  }
+
+  const keys = Object.keys(jsonData.openmct);
+  if (keys.length === 0) {
+    throw new Error('No keys found in the openmct object');
+  }
+
+  return keys[0];
+}
