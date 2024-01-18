@@ -82,14 +82,17 @@ class OverlayAPI {
   }
 
   /**
-   * A description of option properties that can be passed into the overlay
-   * @typedef options
-   * @property {object} element DOMElement that is to be inserted/shown on the overlay
-   * @property {string} size preferred size of the overlay (large, small, fit)
-   * @property {array} buttons optional button objects with label and callback properties
-   * @property {function} onDestroy callback to be called when overlay is destroyed
-   * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
-   * from overlay. Unless set to false, all overlays will be dismissable by default.
+   * Creates and displays an overlay with the specified options.
+   *
+   * @typedef {Object} OverlayOptions
+   * @property {HTMLElement} element The DOM Element to be inserted or shown in the overlay.
+   * @property {'large'|'small'|'fit'} size The preferred size of the overlay.
+   * @property {Array<{label: string, callback: Function}>} [buttons] Optional array of button objects, each with 'label' and 'callback' properties.
+   * @property {Function} onDestroy Callback to be called when the overlay is destroyed.
+   * @property {boolean} [dismissable=true] Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
+   *
+   * @param {OverlayOptions} options - The configuration options for the overlay.
+   * @returns {Overlay} An instance of the Overlay class.
    */
   overlay(options) {
     let overlay = new Overlay(options);
