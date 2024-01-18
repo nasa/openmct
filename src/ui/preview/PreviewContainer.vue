@@ -108,6 +108,9 @@ export default {
       this.addExistingViewBackToParent();
     }
   },
+  updated() {
+    this.getActionsCollection(this.view);
+  },
   methods: {
     clear() {
       if (this.view) {
