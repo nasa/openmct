@@ -93,13 +93,11 @@ export default {
       this.showMenu = !this.showMenu;
     },
     async getTelemetryPath() {
-      let sourceTelem;
-      if (this.telemetryObject.type === 'yamcs.telemetry') {
-        sourceTelem = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-      } else if (this.telemetryObject.type === 'yamcs.image') {
-        sourceTelem = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-      }
-      const telemetryPath = await this.openmct.objects.getOriginalPath(sourceTelem);
+      const telemetryObjectKeyString = this.openmct.objects.makeKeyString(
+        this.telemetryObject.identifier
+      );
+
+      const telemetryPath = await this.openmct.objects.getOriginalPath(telemetryObjectKeyString);
       return telemetryPath;
     },
     async openInNewTab() {
