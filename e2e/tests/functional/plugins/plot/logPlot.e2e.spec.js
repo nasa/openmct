@@ -114,11 +114,11 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   await page.locator('button.c-create-button').click();
   await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
-  // set amplitude to 6, offset 4, period 2
+  // set amplitude to 6, offset 4, data rate 2 hz
 
-  await page.getByLabel('Period').fill('2');
   await page.getByLabel('Amplitude').fill('6');
   await page.getByLabel('Offset').fill('4');
+  await page.getByLabel('Data Rate (hz)').fill('2');
 
   // Click OK to make generator
 
