@@ -51,7 +51,7 @@ test.describe('LAD Table Sets', () => {
       parent: secondLadTable.uuid
     });
 
-    await page.goto(ladTableSet.url, { waitUntil: 'domcontentloaded' });
+    await page.goto(ladTableSet.url);
 
     const valueFromFirstSineWave = await page.getByLabel('lad value').first().innerText();
     const firstSineWaveNumber = parseFloat(valueFromFirstSineWave);
