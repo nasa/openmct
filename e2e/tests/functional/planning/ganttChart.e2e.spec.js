@@ -69,7 +69,7 @@ test.describe('Gantt Chart', () => {
       .getByRole('dialog')
       .filter({ hasText: 'This action will replace the current Plan. Do you want to continue?' });
     await expect(replaceModal).toBeVisible();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await assertPlanActivities(page, testPlan2, ganttChart.url);
   });

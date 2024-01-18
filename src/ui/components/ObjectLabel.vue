@@ -29,7 +29,11 @@
     @click="navigateOrPreview"
   >
     <div class="c-tree__item__type-icon c-object-label__type-icon" :class="typeClass">
-      <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+      <span
+        class="is-status__indicator"
+        :aria-label="`This item is ${status}`"
+        :title="`This item is ${status}`"
+      ></span>
     </div>
     <div
       ref="objectLabel"

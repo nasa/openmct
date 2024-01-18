@@ -72,7 +72,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -133,7 +133,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -210,7 +210,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
     // Edit stackedPlot
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Styles' }).click();
 
@@ -231,7 +231,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -296,7 +296,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -345,7 +345,7 @@ test.describe('Flexible Layout styling', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -375,7 +375,7 @@ test.describe('Flexible Layout styling', () => {
     await page.reload({ waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();

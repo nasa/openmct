@@ -41,8 +41,8 @@ test.describe('Form Validation Behavior', () => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
-    await page.getByRole('menuitem', { name: ' Folder' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
+    await page.getByRole('menuitem', { name: 'Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
     await page.click('text=Properties Title Notes >> input[type="text"]');
@@ -80,7 +80,7 @@ test.describe('Form File Input Behavior', () => {
   test('Can select a JSON file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', jsonFilePath);
@@ -94,7 +94,7 @@ test.describe('Form File Input Behavior', () => {
   test('Can select an image file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', imageFilePath);
@@ -121,7 +121,7 @@ test.describe('Persistence operations @addInit', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.click('text=Condition Set');
 

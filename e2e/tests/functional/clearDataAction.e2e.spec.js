@@ -46,11 +46,16 @@ test.describe('Clear Data Action', () => {
     await expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
     // Click the "Clear Data" menu action
     await page.getByTitle('More actions').click();
-    const clearDataMenuItem = page.getByRole('menuitem', {
-      name: 'Clear Data'
-    });
-    await expect(clearDataMenuItem).toBeEnabled();
-    await clearDataMenuItem.click();
+    await expect(
+      page.getByRole('menuitem', {
+        name: 'Clear Data for Object'
+      })
+    ).toBeEnabled();
+    await page
+      .getByRole('menuitem', {
+        name: 'Clear Data for Object'
+      })
+      .click();
 
     // Verify that the background image is no longer visible
     await expect(page.locator(backgroundImageSelector)).toBeHidden();

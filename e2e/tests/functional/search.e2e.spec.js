@@ -49,7 +49,7 @@ test.describe('Grand Search', () => {
     const createdObjects = await createObjectsForSearch(page);
 
     // Go back into edit mode for the display layout
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     await grandSearchInput.click();
     await grandSearchInput.fill('Cl');

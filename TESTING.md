@@ -85,9 +85,8 @@ There are a few reasons that your GitHub PR could be failing beyond simple faile
 * Not all required checks are run per commit. You may need to manually trigger addition GitHub checks with a `pr:<label>` label added to your PR.
 
 ### Flaky tests
-There are two ways to know if a test on your branch is historically flaky: 
-1. `deploysentinel`'s PR comment bot to give an accurate and historical view of e2e flakiness. Check your PR for a view of the test failures and flakes (with link to the failing test). Note: only a 7 day window of flake is available.
-2. (CircleCI's test insights feature)[https://circleci.com/blog/introducing-test-insights-with-flaky-test-detection/] collects historical data about the individual test results for both unit and e2e tests. Note: only a 14 day window of flake is available.
+
+(CircleCI's test insights feature)[https://circleci.com/blog/introducing-test-insights-with-flaky-test-detection/] collects historical data about the individual test results for both unit and e2e tests. Note: only a 14 day window of flake is available.
 
 ### Local=Pass and CI=Fail
 Although rare, it is possible that your test can pass locally but fail in CI.

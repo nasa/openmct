@@ -26,11 +26,20 @@
     role="toolbar"
     aria-label="Image controls"
   >
-    <imagery-view-menu-switcher :icon-class="'icon-brightness'" :title="'Brightness and contrast'">
+    <imagery-view-menu-switcher
+      :icon-class="'icon-brightness'"
+      :aria-label="'Brightness and contrast'"
+      :title="'Brightness and contrast'"
+    >
       <filter-settings @filter-changed="updateFilterValues" />
     </imagery-view-menu-switcher>
 
-    <imagery-view-menu-switcher v-if="layers.length" :icon-class="'icon-layers'" :title="'Layers'">
+    <imagery-view-menu-switcher
+      v-if="layers.length"
+      icon-class="icon-layers"
+      aria-label="Layers"
+      title="Layers"
+    >
       <layer-settings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
     </imagery-view-menu-switcher>
 
@@ -47,6 +56,7 @@
     <imagery-view-menu-switcher
       class="--show-if-less-than-220"
       :icon-class="'icon-magnify'"
+      :aria-label="'Zoom settings'"
       :title="'Zoom settings'"
     >
       <zoom-settings
