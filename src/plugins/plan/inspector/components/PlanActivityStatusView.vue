@@ -26,7 +26,7 @@
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <form name="activityStatus">
         <select v-model="currentStatusKey" name="setActivityStatus" @change="changeActivityStatus">
-          <option v-for="status in activityStates" :key="status.key" :value="status.label">
+          <option v-for="status in activityStates" :key="status.key" :value="status.key">
             {{ status.label }}
           </option>
         </select>
@@ -39,7 +39,7 @@
 const activityStates = [
   {
     key: '',
-    label: '- Select Activity Status -'
+    label: '- Set Status -'
   },
   {
     key: 'active',
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     setActivityStatus() {
-      this.currentStatusKey = this.executionState;
+      this.currentStatusKey = this.executionState ?? this.activityStates[0].key;
     },
     changeActivityStatus() {
       if (this.currentStatusKey === '') {
