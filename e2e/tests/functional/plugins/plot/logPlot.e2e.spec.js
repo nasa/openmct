@@ -95,18 +95,15 @@ async function makeOverlayPlot(page, myItemsFolderName) {
 
   await page.locator('button.c-create-button').click();
   await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
+  // Click OK button and wait for Navigate event
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
+    page.waitForLoadState(),
+    await page.getByRole('button', { name: 'Save' }).click(),
+    // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
   // save the overlay plot
-
   await saveOverlayPlot(page);
 
   // create a sinewave generator
@@ -120,23 +117,18 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   await page.getByLabel('Offset').fill('4');
   await page.getByLabel('Data Rate (hz)').fill('2');
 
-  // Click OK to make generator
-
+  // Click OK button and wait for Navigate event
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
+    page.waitForLoadState(),
+    await page.getByRole('button', { name: 'Save' }).click(),
+    // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
   // click on overlay plot
-
   await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
   await Promise.all([
-    page.waitForNavigation(),
+    page.waitForLoadState(),
     page.locator('text=Unnamed Overlay Plot').first().click()
   ]);
 }
