@@ -24,19 +24,54 @@
 This test suite is dedicated to tests which verify the basic operations surrounding exportAsJSON.
 */
 
-// FIXME: Remove this eslint exception once tests are implemented
-// eslint-disable-next-line no-unused-vars
+import fs from 'fs';
+
+import {
+  createDomainObjectWithDefaults,
+  openObjectTreeContextMenu
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('ExportAsJSON', () => {
-  test.fixme(
-    'Create a basic object and verify that it can be exported as JSON from Tree',
-    async ({ page }) => {
-      //Create domain object
-      //Save Domain Object
-      //Verify that the newly created domain object can be exported as JSON from the Tree
-    }
-  );
+  test('Create a basic object and verify that it can be exported as JSON from Tree', async ({
+    page,
+    browser
+  }) => {
+    // // Set up a download path
+    // const context = await browser.newContext({
+    //   acceptDownloads: true
+    // });
+    // const page = await context.newPage();
+
+    // Navigate to the page
+    await page.goto('./');
+
+    // Perform actions to create the domain object
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: 'e2e folder'
+    });
+
+    // Open context menu and initiate download
+    await openObjectTreeContextMenu(page, folder.url);
+    const [download] = await Promise.all([
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as JSON').click() // Triggers the download
+    ]);
+
+    // Wait for the download process to complete
+    const path = await download.path();
+
+    // Read the contents of the downloaded file
+    const fileContents = await fs.promises.readFile(path, 'utf8');
+
+    // Verify the contents of the file (this is just an example, adjust as needed)
+    expect(fileContents).toContain('"name": "e2e folder"');
+    expect(fileContents).toContain('"type": "Folder"');
+
+    // Clean up: Close the page and context
+    await page.close();
+  });
   test.fixme(
     'Create a basic object and verify that it can be exported as JSON from 3 dot menu',
     async ({ page }) => {
