@@ -150,7 +150,7 @@ export default {
   },
   mounted() {
     this.isEditing = this.openmct.editor.isEditing();
-    this.updateTimestamp = _.throttle(this.updateTimestamp, 15000);
+    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
@@ -239,15 +239,14 @@ export default {
       this.setViewFromConfig(mutatedObject.configuration);
     },
     setViewFromConfig(configuration) {
+      this.filterValue = configuration.filter;
       if (this.isEditing) {
-        this.filterValue = configuration.filter;
         this.hideAll = false;
-        this.listActivities();
       } else {
-        this.filterValue = configuration.filter;
         this.setSort();
-        this.listActivities();
+        this.isCompact = configuration.isCompact;
       }
+      this.listActivities();
     },
     updateTimestamp(timestamp) {
       //The clock never stops ticking

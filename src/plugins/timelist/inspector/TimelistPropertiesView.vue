@@ -30,6 +30,15 @@
             These settings don't affect the view while editing, but will be applied after editing is
             finished.
           </div>
+          <div class="c-inspect-properties__label" title="Compact view.">Compact View</div>
+          <div v-if="canEdit" class="c-inspect-properties__value">
+            <input v-model="isCompact" type="checkbox" @change="updateCompactView()" />
+          </div>
+          <div v-else class="c-inspect-properties__value">
+            {{ isCompact ? 'Enabled' : 'Disabled' }}
+          </div>
+        </li>
+        <li class="c-inspect-properties__row">
           <div class="c-inspect-properties__label" title="Sort order of the timelist.">
             Sort Order
           </div>
@@ -89,7 +98,8 @@ export default {
       sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
       sortOrderOptions: SORT_ORDER_OPTIONS,
       eventTypes: EVENT_TYPES,
-      isEditing: this.openmct.editor.isEditing()
+      isEditing: this.openmct.editor.isEditing(),
+      isCompact: this.domainObject.configuration.isCompact
     };
   },
   computed: {
@@ -117,6 +127,9 @@ export default {
       const key = data.property;
       const value = data.value;
       this.updateProperty(key, value);
+    },
+    updateCompactView() {
+      this.updateProperty('isCompact', this.isCompact);
     }
   }
 };
