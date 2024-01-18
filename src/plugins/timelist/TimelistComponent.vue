@@ -34,6 +34,7 @@
       :header-items="headerItems"
       :default-sort="defaultSort"
       class="sticky"
+      @item-selection-changed="setSelectionForActivity"
     />
   </div>
 </template>
@@ -548,6 +549,29 @@ export default {
     setEditState(isEditing) {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
+    },
+    setSelectionForActivity(activity, element) {
+      const multiSelect = false;
+
+      this.openmct.selection.select(
+        [
+          {
+            element: element,
+            context: {
+              type: 'activity',
+              activity: activity
+            }
+          },
+          {
+            element: this.openmct.layout.$refs.browseObject.$el,
+            context: {
+              item: this.domainObject,
+              supportsMultiSelect: false
+            }
+          }
+        ],
+        multiSelect
+      );
     }
   }
 };
