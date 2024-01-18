@@ -374,7 +374,9 @@ export default {
           activity.cssClass = PAST_CSS_SUFFIX;
         }
 
-        if (!activity.key) {
+        if (activity.id) {
+          activity.key = activity.id;
+        } else if (!activity.key) {
           activity.key = uuid();
         }
 
