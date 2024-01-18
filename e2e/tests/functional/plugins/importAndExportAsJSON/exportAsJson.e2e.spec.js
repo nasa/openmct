@@ -31,6 +31,7 @@ import {
   openObjectTreeContextMenu
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../baseFixtures.js';
+import { navigateToFaultManagementWithExample } from '../../../../helper/faultUtils.js';
 
 test.describe('ExportAsJSON', () => {
   let folder;
@@ -134,12 +135,19 @@ test.describe('ExportAsJSON', () => {
   });
 });
 test.describe('ExportAsJSON Disabled Actions', () => {
-  test.fixme(
-    'Verify that the ExportAsJSON dropdown does not appear for the item X',
-    async ({ page }) => {
-      // Other than non-persistable objects
-    }
-  );
+  test.beforeEach(async ({ page }) => {
+    await navigateToFaultManagementWithExample(page);
+  });
+  test('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
+    //do this against parent folder.url, NOT timer.url child
+    await page.getByLabel('More actions').click();
+    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+
+    await page.getByRole('treeitem', { name: 'Fault Management' }).click({
+      button: 'right'
+    });
+    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+  });
 });
 
 /**
