@@ -53,12 +53,14 @@
 </template>
 
 <script>
-import _ from 'lodash';
+const CURRENT_CSS_SUFFIX = '--is-current';
+const PAST_CSS_SUFFIX = '--is-past';
+const FUTURE_CSS_SUFFIX = '--is-future';
 
-const TIME_RELATIONS = {
-  current: 'current',
-  past: 'past',
-  future: 'future'
+const ITEM_COLORS = {
+  [CURRENT_CSS_SUFFIX]: '#ffcc00',
+  [PAST_CSS_SUFFIX]: '#0088ff',
+  [FUTURE_CSS_SUFFIX]: '#7300ff'
 };
 
 const ITEM_STATES = {
@@ -86,16 +88,15 @@ export default {
   },
   data() {
     return {
-      timeRelation: TIME_RELATIONS.current,
       itemState: ITEM_STATES.notStarted
     };
   },
   computed: {
     styleClass() {
-      return { backgroundColor: '#ffcc00' };
+      return { backgroundColor: ITEM_COLORS[this.item.cssClass] };
     },
     listItemClass() {
-      const timeRelationClass = `--is-${this.timeRelation}`;
+      const timeRelationClass = this.item.cssClass;
       const itemStateClass = `--is-${this.itemState}`;
       return `c-tli ${timeRelationClass} ${itemStateClass}`;
     },
@@ -104,8 +105,7 @@ export default {
         title: this.item.name
       };
       this.itemProperties.forEach((itemProperty) => {
-        // eslint-disable-next-line you-dont-need-lodash-underscore/get
-        let value = _.get(this.item, itemProperty.property);
+        let value = this.item[itemProperty.property];
         let formattedValue;
         if (itemProperty.format) {
           formattedValue = itemProperty.format(
