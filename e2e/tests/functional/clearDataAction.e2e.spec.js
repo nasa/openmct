@@ -43,7 +43,7 @@ test.describe('Clear Data Action', () => {
     await expect(page.locator(backgroundImageSelector)).toBeVisible();
   });
   test('works as expected with Example Imagery', async ({ page }) => {
-    await expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
+    expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
     // Click the "Clear Data" menu action
     await page.getByTitle('More actions').click();
     await expect(
@@ -59,6 +59,6 @@ test.describe('Clear Data Action', () => {
 
     // Verify that the background image is no longer visible
     await expect(page.locator(backgroundImageSelector)).toBeHidden();
-    await expect(await page.locator('.c-thumb__image').count()).toBe(0);
+    expect(await page.locator('.c-thumb__image').count()).toBe(0);
   });
 });
