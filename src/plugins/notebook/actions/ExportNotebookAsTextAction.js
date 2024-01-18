@@ -1,5 +1,5 @@
+import { saveAs } from 'file-saver';
 import Moment from 'moment';
-import { saveAs } from 'saveAs';
 
 import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants.js';
 const UNKNOWN_USER = 'Unknown';
