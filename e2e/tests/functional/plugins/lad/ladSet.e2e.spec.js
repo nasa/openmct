@@ -24,7 +24,7 @@ import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('LAD Table Sets', () => {
-  test.beforeEach(async ({ page }) => {
+  test('Ensure we have numbers in cells', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     const ladTableSet = await createDomainObjectWithDefaults(page, {
@@ -51,16 +51,14 @@ test.describe('LAD Table Sets', () => {
       parent: secondLadTable.uuid
     });
 
-    await page.goto(ladTableSet.url);
-  });
+    await page.goto(ladTableSet.url, { waitUntil: 'domcontentloaded' });
 
-  test('Ensure we have numbers in cells', async ({ page }) => {
-    const valueFromFirstSineWave = await page.locator('.js-third-data').first().innerText();
+    const valueFromFirstSineWave = await page.getByLabel('lad value').first().innerText();
     const firstSineWaveNumber = parseFloat(valueFromFirstSineWave);
     // ensure we have a float value in the cell and it's finite
     expect(Number.isFinite(firstSineWaveNumber)).toBeTruthy();
 
-    const valueFromSecondSineWave = await page.locator('.js-third-data').last().innerText();
+    const valueFromSecondSineWave = await page.getByLabel('lad value').last().innerText();
     const secondSineWaveNumber = parseFloat(valueFromSecondSineWave);
     // ensure we have a float value in the cell and it's finite
     expect(Number.isFinite(secondSineWaveNumber)).toBeTruthy();
