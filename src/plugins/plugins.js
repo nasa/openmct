@@ -27,7 +27,6 @@ import ExampleUser from '../../example/exampleUser/plugin.js';
 import ExampleFaultSource from '../../example/faultManagement/exampleFaultSource.js';
 import GeneratorPlugin from '../../example/generator/plugin.js';
 import ExampleImagery from '../../example/imagery/plugin.js';
-import ActivityStatesPlugin from './activityStates/plugin.js';
 import AutoflowPlugin from './autoflow/AutoflowTabularPlugin.js';
 import BarChartPlugin from './charts/bar/plugin.js';
 import ScatterPlotPlugin from './charts/scatter/plugin.js';
@@ -102,7 +101,6 @@ plugins.LocalTimeSystem = LocalTimeSystem;
 plugins.RemoteClock = RemoteClock;
 
 plugins.MyItems = MyItems;
-plugins.ActivityStates = ActivityStatesPlugin;
 
 plugins.StaticRootPlugin = StaticRootPlugin;
 
