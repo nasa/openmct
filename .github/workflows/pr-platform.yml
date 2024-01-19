@@ -38,7 +38,7 @@ jobs:
           architecture: ${{ matrix.architecture }}
 
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-${{ matrix.node_version }}-${{ hashFiles('**/package.json') }}
