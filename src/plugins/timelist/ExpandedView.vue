@@ -20,22 +20,22 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <compact-view-item
+  <expanded-view-item
     v-for="item in sortedItems"
     :key="item.key"
     :item="item"
     :item-properties="itemProperties"
   >
-  </compact-view-item>
+  </expanded-view-item>
 </template>
 
 <script>
 import _ from 'lodash';
 
-import CompactViewItem from './CompactViewItem.vue';
+import ExpandedViewItem from './ExpandedViewItem.vue';
 
 export default {
-  components: { CompactViewItem },
+  components: { ExpandedViewItem },
   inject: ['domainObject', 'openmct'],
   props: {
     headerItems: {
