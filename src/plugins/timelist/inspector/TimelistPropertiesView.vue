@@ -31,8 +31,8 @@
             finished.
           </div>
           <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
-          <div v-if="canEdit" class="c-inspect-properties__value">
-            <select v-model="isExpanded" @change="updateExpandedView()">
+          <div class="c-inspect-properties__value">
+            <select v-if="canEdit" v-model="isExpanded" @change="updateExpandedView()">
               <option
                 v-for="(displayStyleOption, index) in displayStyleOptions"
                 :key="index"
@@ -41,17 +41,15 @@
                 {{ displayStyleOption.label }}
               </option>
             </select>
-          </div>
-          <div v-else class="c-inspect-properties__value">
-            {{ isExpanded ? displayStyleOptions[1].label : displayStyleOptions[0].label }}
+            <span v-else>{{ displayOptionsLabel }}</span>
           </div>
         </li>
         <li class="c-inspect-properties__row">
           <div class="c-inspect-properties__label" title="Sort order of the timelist.">
             Sort Order
           </div>
-          <div v-if="canEdit" class="c-inspect-properties__value">
-            <select v-model="sortOrderIndex" @change="updateSortOrder()">
+          <div class="c-inspect-properties__value">
+            <select v-if="canEdit" v-model="sortOrderIndex" @change="updateSortOrder()">
               <option
                 v-for="(sortOrderOption, index) in sortOrderOptions"
                 :key="index"
@@ -60,9 +58,7 @@
                 {{ sortOrderOption.label }}
               </option>
             </select>
-          </div>
-          <div v-else class="c-inspect-properties__value">
-            {{ sortOrderOptions[sortOrderIndex].label }}
+            <span v-else>{{ sortOrderOptions[sortOrderIndex].label }}</span>
           </div>
         </li>
         <event-properties
@@ -123,6 +119,9 @@ export default {
     };
   },
   computed: {
+    displayOptionsLabel() {
+      return this.isExpanded ? DISPLAY_STYLES[1].label : DISPLAY_STYLES[0].label;
+    },
     canEdit() {
       return this.isEditing && !this.domainObject.locked;
     }
