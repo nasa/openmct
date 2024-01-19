@@ -24,7 +24,9 @@
     <div v-if="canEdit" class="c-inspect-properties__hint span-all">
       Filter this view by comma-separated keywords.
     </div>
-    <div class="c-inspect-properties__label" title="Filter by keyword.">Activity Names</div>
+    <div class="c-inspect-properties__label" aria-label="Activity Names" title="Filter by keyword.">
+      Activity Names
+    </div>
     <div
       v-if="canEdit"
       class="c-inspect-properties__value"
@@ -43,7 +45,9 @@
     </div>
   </li>
   <li class="c-inspect-properties__row">
-    <div class="c-inspect-properties__label" title="Filter by keyword.">Meta-data Tags</div>
+    <div class="c-inspect-properties__label" aria-label="Meta-data Tags" title="Filter by keyword.">
+      Meta-data Tags
+    </div>
     <div
       v-if="canEdit"
       class="c-inspect-properties__value"
