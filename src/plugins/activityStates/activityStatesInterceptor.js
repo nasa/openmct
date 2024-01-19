@@ -20,22 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVITYSTATES_KEY, ACTIVITYSTATES_TYPE } from './createActivityStatesIdentifier.js';
+import { ACTIVITY_STATES_KEY, ACTIVITY_STATES_TYPE } from './createActivityStatesIdentifier.js';
+/**
+ * @typedef {object} ActivityStatesInterceptorOptions
+ * @property {object} identifier the {namespace, key} to use for the activity states object.
+ * @property {string} name The name of the activity states model.
+ * @property {string} priority the priority of the interceptor. By default, it is low.
+ */
 
-function activityStatesInterceptor(openmct, identifierObject, name) {
+/**
+ * Creates an activity states object in the persistence store. This is used to save plan activity states.
+ * This will only get invoked when an attempt is made to save the state for an activity and no activity states object exists in the store.
+ * @param openmct
+ * @param {ActivityStatesInterceptorOptions} options
+ * @returns {{appliesTo: (function(*): boolean), invoke: ((function(*, *): ({identifier, activities: {}, name, location: null, type: string}))|*), priority: (*|number|string)}}
+ */
+function activityStatesInterceptor(openmct, options) {
+  const { identifier, name, priority = openmct.priority.LOW } = options;
   const activityStatesModel = {
-    identifier: identifierObject,
+    identifier,
     name,
-    type: ACTIVITYSTATES_TYPE,
+    type: ACTIVITY_STATES_TYPE,
     activities: {},
     location: null
   };
 
   return {
-    appliesTo: (identifier) => {
-      return identifier.key === ACTIVITYSTATES_KEY;
+    appliesTo: (identifierObject) => {
+      return identifierObject.key === ACTIVITY_STATES_KEY;
     },
-    invoke: (identifier, object) => {
+    invoke: (identifierObject, object) => {
       if (!object || openmct.objects.isMissing(object)) {
         openmct.objects.save(activityStatesModel);
 
@@ -44,7 +58,7 @@ function activityStatesInterceptor(openmct, identifierObject, name) {
 
       return object;
     },
-    priority: openmct.priority.HIGH
+    priority
   };
 }
 
