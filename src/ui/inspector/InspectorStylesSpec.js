@@ -23,6 +23,7 @@
 import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
+import { nextTick } from 'vue';
 
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
@@ -67,7 +68,7 @@ describe('the inspector', () => {
     expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
   });
 
-  it('should display all saved styles', () => {
+  it('should display all saved styles', async () => {
     selection = mockTelemetryTableSelection;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
@@ -75,9 +76,8 @@ describe('the inspector', () => {
     expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(0);
     stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
-    });
+    await nextTick();
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
   });
 
   xit('should allow a saved style to be applied', () => {
@@ -139,55 +139,52 @@ describe('the inspector', () => {
     expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(20);
   });
 
-  it('should allow styles from multi-selections to be saved', () => {
+  it('should allow styles from multi-selections to be saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionSameStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
-      const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      expect(saveStyleButton).not.toBe(undefined);
+    expect(saveStyleButton).not.toBe(undefined);
 
-      saveStyleButton.$refs.button.click();
+    saveStyleButton.$refs.button.click();
 
-      expect(savedStylesViewComponent.$refs.root.$data.savedStyles.length).toBe(1);
-    });
+    expect(savedStylesViewComponent.$refs.root.$data.savedStyles.length).toBe(1);
   });
 
-  it('should prevent mixed styles from being saved', () => {
+  it('should prevent mixed styles from being saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionMixedStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
-      const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      // Saving should not be enabled, thus the button ref should be undefined
-      expect(saveStyleButton).toBe(undefined);
-    });
+    // Saving should not be enabled, thus the button ref should be undefined
+    expect(saveStyleButton).toBe(undefined);
   });
 
-  it('should prevent non-specific styles from being saved', () => {
+  it('should prevent non-specific styles from being saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionNonSpecificStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
-      const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      // Saving should not be enabled, thus the button ref should be undefined
-      expect(saveStyleButton).toBe(undefined);
-    });
+    // Saving should not be enabled, thus the button ref should be undefined
+    expect(saveStyleButton).toBe(undefined);
   });
 
   function createViewComponent(component) {

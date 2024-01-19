@@ -78,9 +78,7 @@ class MenuAPI {
       if (isActionGroup) {
         action = this.actionsToMenuItems(action, objectPath, view);
       } else {
-        action.onItemClicked = () => {
-          action.invoke(objectPath, view);
-        };
+        action.onItemClicked = () => action.invoke(objectPath, view);
       }
 
       return action;

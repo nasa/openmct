@@ -10,7 +10,7 @@ export function mockLocalStorage() {
     store = {};
 
     function getItem(key) {
-      return store[key];
+      return store[key] || null;
     }
 
     function setItem(key, value) {
