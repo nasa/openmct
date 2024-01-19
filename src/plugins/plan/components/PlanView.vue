@@ -47,6 +47,7 @@
         :width="group.width"
         :is-nested="options.isChildObject"
         :status="status"
+        @activity-selected="selectActivity"
       />
     </div>
   </div>
@@ -134,7 +135,7 @@ export default {
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
     if (this.domainObject.type === 'plan') {
-      this.planData = getValidatedData(this.domainObject);
+      this.getPlanData(this.domainObject);
     }
 
     const canvas = document.createElement('canvas');
@@ -177,6 +178,9 @@ export default {
     this.planViewConfiguration.destroy();
   },
   methods: {
+    getPlanData(object) {
+      this.planData = getValidatedData(object);
+    },
     activityNameFitsRect(activityName, rectWidth) {
       return this.getTextWidth(activityName) + TEXT_LEFT_PADDING < rectWidth;
     },
@@ -215,9 +219,7 @@ export default {
             callback: () => {
               this.removeFromComposition(this.planObject);
               this.planObject = domainObject;
-              this.planData = getValidatedData(domainObject);
-              this.setStatus(this.openmct.status.get(domainObject.identifier));
-              this.setScaleAndGenerateActivities();
+              this.handleSelectFileChange();
               dialog.dismiss();
             }
           },
@@ -237,9 +239,7 @@ export default {
       } else {
         this.planObject = domainObject;
         this.swimlaneVisibility = this.configuration.swimlaneVisibility;
-        this.planData = getValidatedData(domainObject);
-        this.setStatus(this.openmct.status.get(domainObject.identifier));
-        this.setScaleAndGenerateActivities();
+        this.handleSelectFileChange(domainObject);
       }
     },
     handleConfigurationChange(newConfiguration) {
@@ -259,8 +259,10 @@ export default {
 
       this.setScaleAndGenerateActivities();
     },
-    handleSelectFileChange() {
-      this.planData = getValidatedData(this.domainObject);
+    handleSelectFileChange(domainObject) {
+      const object = domainObject || this.domainObject;
+      this.getPlanData(object);
+      this.setStatus(this.openmct.status.get(object.identifier));
       this.setScaleAndGenerateActivities();
     },
     removeFromComposition(domainObject) {
@@ -434,7 +436,7 @@ export default {
           return;
         }
 
-        rawActivities.forEach((rawActivity) => {
+        rawActivities.forEach((rawActivity, index) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
           }
@@ -481,14 +483,10 @@ export default {
           const activity = {
             color: color,
             textColor: textColor,
-            name: rawActivity.name,
             exceeds: {
               start: this.xScale(this.viewBounds.start) > this.xScale(rawActivity.start),
               end: this.xScale(this.viewBounds.end) < this.xScale(rawActivity.end)
             },
-            start: rawActivity.start,
-            end: rawActivity.end,
-            description: rawActivity.description,
             row: currentRow,
             textLines: textLines,
             textStart: textStart,
@@ -498,7 +496,10 @@ export default {
             rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
             rectWidth: rectWidth,
             clipPathId: this.getClipPathId(groupName, rawActivity, currentRow),
-            id: rawActivity.id
+            selection: {
+              groupName,
+              index
+            }
           };
           activitiesByRow[currentRow].push(activity);
         });
@@ -575,6 +576,31 @@ export default {
       const activityName = activity.name.toLowerCase().replace(/ /g, '-');
 
       return `${groupName}-${activityName}-${activity.start}-${activity.end}-${row}`;
+    },
+    selectActivity({ event, selection }) {
+      const element = event.currentTarget;
+      const multiSelect = event.metaKey;
+      const { groupName, index } = selection;
+      const rawActivity = this.planData[groupName][index];
+      this.openmct.selection.select(
+        [
+          {
+            element: element,
+            context: {
+              type: 'activity',
+              activity: rawActivity
+            }
+          },
+          {
+            element: this.openmct.layout.$refs.browseObject.$el,
+            context: {
+              item: this.domainObject,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        multiSelect
+      );
     }
   }
 };

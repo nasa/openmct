@@ -50,6 +50,7 @@
 <script>
 import { getPreciseDuration } from 'utils/duration';
 
+import { getDisplayProperties } from '../../util.js';
 import PlanActivityPropertiesView from './PlanActivityPropertiesView.vue';
 import PlanActivityStatusView from './PlanActivityStatusView.vue';
 import PlanActivityTimeView from './PlanActivityTimeView.vue';
@@ -166,14 +167,20 @@ export default {
             }
           }
         };
+        activity.metadata = {};
         if (selectedActivity.description) {
-          activity.metadata = {
-            description: {
-              label: propertyLabels.description,
-              value: selectedActivity.description
-            }
+          activity.metadata.description = {
+            label: propertyLabels.description,
+            value: selectedActivity.description
           };
         }
+
+        const displayProperties = getDisplayProperties(selectedActivity);
+        activity.metadata = {
+          ...activity.metadata,
+          ...displayProperties
+        };
+
         this.activities[index] = activity;
       });
     },
