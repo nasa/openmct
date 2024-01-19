@@ -34,7 +34,7 @@ export default class LadTableSetView {
     this.component = null;
   }
 
-  show(element) {
+  show(element, isEditing, { renderWhenVisible }) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
     const { vNode, destroy } = mount(
@@ -47,7 +47,8 @@ export default class LadTableSetView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           currentView: this,
-          ladTableConfiguration
+          ladTableConfiguration,
+          renderWhenVisible
         },
         data: () => {
           return {

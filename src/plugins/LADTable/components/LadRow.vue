@@ -35,13 +35,20 @@
     >
       {{ domainObject.name }}
     </td>
-    <td v-if="showTimestamp" class="js-second-data">{{ formattedTimestamp }}</td>
-    <td class="js-third-data" :class="valueClasses">{{ value }}</td>
+    <td v-if="showTimestamp" aria-label="lad timestamp" class="js-second-data">
+      {{ formattedTimestamp }}
+    </td>
+    <td aria-label="lad value" class="js-third-data" :class="valueClasses">{{ value }}</td>
     <td v-if="hasUnits" class="js-units">
       {{ unit }}
     </td>
-    <td v-if="showType" class="js-type-data">{{ typeLabel }}</td>
-    <td v-for="limit in formattedLimitValues" :key="limit.key" class="js-limit-data">
+    <td v-if="showType" aria-label="lad type" class="js-type-data">{{ typeLabel }}</td>
+    <td
+      v-for="limit in formattedLimitValues"
+      :key="limit.key"
+      aria-label="lad limit value"
+      class="js-limit-data"
+    >
       {{ limit.value }}
     </td>
   </tr>
