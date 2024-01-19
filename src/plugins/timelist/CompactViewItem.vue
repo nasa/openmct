@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="c-tli__progress-pie">
-      <svg viewBox="0 0 100 100" class="c-tli__progress-pie-svg">
+      <svg v-if="showProgressPie" viewBox="0 0 100 100" class="c-tli__progress-pie-svg">
         <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
         <path id="svg-progress-path" class="c-svg-progress__progress"></path>
         <circle
@@ -50,7 +50,9 @@
     <div class="c-tli__time-hero">
       <div class="c-tli__time-hero-context-and-time">
         <div class="c-tli__time-hero-context">{{ formattedItemValue.label }}</div>
-        <div class="c-tli__time-hero-time --is-countdown">{{ formattedItemValue.countdown }}</div>
+        <div v-if="showTimeHero" class="c-tli__time-hero-time --is-countdown">
+          {{ formattedItemValue.countdown }}
+        </div>
       </div>
     </div>
   </div>
@@ -105,6 +107,16 @@ export default {
       return `c-tli ${timeRelationClass} ${itemStateClass}`;
     },
     formattedItemValue() {
+      /* TODO: add ability to return these strings for the following cases:
+      - 'In Progress' : itemState.inProgress
+      - 'Running Long' : itemState.inProgress && now > end datetime
+      - 'Overdue' : itemState.notStarted && now > start datetime
+      - 'Incomplete' : itemState.notStarted && now > end datetime
+      - 'Starts' : for Activities with now > start datetime
+      - 'Occurs' : for Events with now > start datetime
+      - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
+      - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
+       */
       let itemValue = {
         title: this.item.name
       };
@@ -132,6 +144,18 @@ export default {
       });
 
       return itemValue;
+    },
+    showProgressPie() {
+      return (
+        this.itemState === ITEM_STATES.inProgress || this.itemState === ITEM_STATES.runningLong
+      );
+    },
+    showTimeHero() {
+      return !(
+        this.itemState === ITEM_STATES.completed ||
+        this.itemState === ITEM_STATES.aborted ||
+        this.itemState === ITEM_STATES.skipped
+      );
     }
   }
 };

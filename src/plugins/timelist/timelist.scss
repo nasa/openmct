@@ -102,11 +102,8 @@ $interiorMargin: 5px;
             align-items: center;
 
             > * {
+                margin-right: $interiorMargin;
                 white-space: nowrap;
-            }
-
-            > * + * {
-                margin-left: $interiorMargin;
             }
 
             &.--has-duration {
