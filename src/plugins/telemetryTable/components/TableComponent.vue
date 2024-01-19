@@ -295,7 +295,7 @@ import TelemetryTableRow from './TableRow.vue';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
-const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
+const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
 
 export default {
   components: {
@@ -676,7 +676,7 @@ export default {
       }
     },
     shouldAutoScroll() {
-      if (this.sortOptions.direction === 'asc') {
+      if (this.sortOptions.direction === 'desc') {
         return this.scrollable.scrollTop <= AUTO_SCROLL_TRIGGER_HEIGHT;
       }
 
@@ -686,9 +686,8 @@ export default {
       );
     },
     initiateAutoScroll() {
-      console.log(this.sortOptions.direction);
       this.scrollable.scrollTop =
-        this.sortOptions.direction === 'asc' ? 0 : Number.MAX_SAFE_INTEGER;
+        this.sortOptions.direction === 'desc' ? 0 : Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
       if (this.$refs.headersHolderEl && this.scrollable) {
