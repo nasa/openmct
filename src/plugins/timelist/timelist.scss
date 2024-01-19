@@ -65,18 +65,22 @@ $interiorMargin: 5px;
   $textSm: 0.8em;
   $textLg: 1.3em;
 
+  > * + * {
+    margin-top: $interiorMarginSm;
+  }
+
   .c-tli {
     background: #444;
     border-radius: $cr;
     display: grid;
     padding: $interiorMargin;
-    grid-template-columns: min-content 2fr 40px 1fr;
+    grid-template-columns: min-content 3fr 40px 1fr;
     grid-column-gap: $interiorMargin;
 
     &__activity-color {
       align-items: start;
       display: flex;
-      padding-top: 3px;
+      padding-top: 1px;
     }
 
     &__activity-color-swatch {
@@ -86,22 +90,63 @@ $interiorMargin: 5px;
       height: $d;
     }
 
+    &__title-and-bounds {
+      > * + * {
+        margin-top: $interiorMargin;
+      }
+    }
+
     &__bounds {
-      font-size: $textSm;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      > * {
+        white-space: nowrap;
+      }
+
+      > * + * {
+        margin-left: $interiorMargin;
+      }
+    }
+
+    &__duration {
+      color: $colorBodyFgEm;
+    }
+
+    &__start-time {
+      // Add a arrow glyph before this element
+      display: flex;
+      align-items: start;
+
+      &:after {
+        content: $glyph-icon-play;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+        display: block;
+        margin-left: $interiorMargin;
+        margin-top: 2px;
+      }
     }
 
     &__title {
+      color: $colorBodyFgEm;
       font-size: $textLg;
     }
 
-
-
     &__time-hero {
       //background: rgba(deeppink, 0.2);
-      flex-wrap: wrap;
       display: flex;
       align-items: center;
       justify-content: end;
+    }
+
+    &__time-hero-context-and-time {
+      align-items: center;
+      flex-wrap: wrap;
+      display: flex;
+      justify-content: end;
+      text-align: right;
 
       > * + * {
         margin-left: $interiorMargin;
@@ -114,7 +159,9 @@ $interiorMargin: 5px;
     }
 
     &__time-hero-time {
+      color: $colorBodyFgEm;
       font-size: $textLg;
+      white-space: nowrap;
 
       &:before {
         display: inline-block;
@@ -132,6 +179,11 @@ $interiorMargin: 5px;
           content: '+'; // TODO: replace with symbolsfont dash
         }
       }
+    }
+
+    &__progress-pie {
+      display: flex;
+      align-items: center;
     }
 
 
