@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import _ from 'lodash';
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
@@ -47,6 +48,16 @@ export function getValidatedData(domainObject) {
 
         if (sourceMap.id) {
           groupActivity.id = activity[sourceMap.id];
+        }
+
+        if (Array.isArray(sourceMap.filterMetadata)) {
+          groupActivity.filterMetadataValues = [];
+          sourceMap.filterMetadata.forEach((property) => {
+            const value = _.get(activity, property);
+            groupActivity.filterMetadataValues.push({
+              value
+            });
+          });
         }
 
         if (!mappedJson[groupIdKey]) {
@@ -96,12 +107,22 @@ export function getValidatedGroups(domainObject, planData) {
       orderedGroupNames = groups;
     }
   }
-
   if (orderedGroupNames === undefined) {
     orderedGroupNames = Object.keys(planData);
   }
 
   return orderedGroupNames;
+}
+
+export function getFilteredValues(activity) {
+  let values = [];
+  if (Array.isArray(activity.filterMetadataValues)) {
+    values = activity.filterMetadataValues;
+  } else if (activity?.properties) {
+    values = Object.values(activity.properties);
+  }
+
+  return values;
 }
 
 export function getContrastingColor(hexColor) {

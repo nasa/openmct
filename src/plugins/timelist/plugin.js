@@ -38,16 +38,10 @@ export default function () {
       initialize: function (domainObject) {
         domainObject.configuration = {
           sortOrderIndex: 0,
-          futureEventsIndex: 1,
-          futureEventsDurationIndex: 0,
-          futureEventsDuration: 20,
           currentEventsIndex: 1,
-          currentEventsDurationIndex: 0,
-          currentEventsDuration: 20,
-          pastEventsIndex: 1,
-          pastEventsDurationIndex: 0,
-          pastEventsDuration: 20,
-          filter: ''
+          filter: '',
+          filterMetadata: '',
+          isCompact: false
         };
         domainObject.composition = [];
       }
