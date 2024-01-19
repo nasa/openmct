@@ -60,6 +60,10 @@ export function getValidatedData(domainObject) {
           });
         }
 
+        if (sourceMap.displayProperties) {
+          groupActivity.displayProperties = sourceMap.displayProperties;
+        }
+
         if (!mappedJson[groupIdKey]) {
           mappedJson[groupIdKey] = [];
         }
@@ -123,6 +127,41 @@ export function getFilteredValues(activity) {
   }
 
   return values;
+}
+
+export function getDisplayProperties(activity) {
+  let displayProperties = {};
+  if (activity?.displayProperties) {
+    const keys = Object.keys(activity.displayProperties);
+    if (keys.length) {
+      keys.forEach((key) => {
+        const displayPropertyLabel = activity.displayProperties[key];
+        const value = _.get(activity, key);
+        if (value) {
+          displayProperties[key] = {
+            label: displayPropertyLabel,
+            value
+          };
+        }
+      });
+    }
+  } else if (activity?.properties) {
+    const keys = Object.keys(activity?.properties);
+    if (keys.length) {
+      keys.forEach((key) => {
+        const displayPropertyLabel = key;
+        const value = activity.properties[key];
+        if (value) {
+          displayProperties[key] = {
+            label: displayPropertyLabel,
+            value
+          };
+        }
+      });
+    }
+  }
+
+  return displayProperties;
 }
 
 export function getContrastingColor(hexColor) {

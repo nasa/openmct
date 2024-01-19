@@ -438,9 +438,11 @@ export default {
         this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
-      if (!activity.key) {
-        activity.key = uuid();
-      }
+        if (activity.id) {
+          activity.key = activity.id;
+        } else if (!activity.key) {
+          activity.key = uuid();
+        }
 
       activity.duration = activity.end - activity.start;
 
