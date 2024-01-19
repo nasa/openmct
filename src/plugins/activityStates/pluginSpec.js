@@ -23,11 +23,11 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 import {
-  ACTIVITYSTATES_KEY,
+  ACTIVITY_STATES_KEY,
   createActivityStatesIdentifier
 } from './createActivityStatesIdentifier.js';
 
-const MISSING_NAME = `Missing: ${ACTIVITYSTATES_KEY}`;
+const MISSING_NAME = `Missing: ${ACTIVITY_STATES_KEY}`;
 const DEFAULT_NAME = 'Activity States';
 const activityStatesIdentifier = createActivityStatesIdentifier();
 
@@ -42,7 +42,7 @@ describe('the plugin', () => {
   describe('with no arguments passed in', () => {
     beforeEach((done) => {
       openmct = createOpenMct();
-      openmct.install(openmct.plugins.ActivityStates());
+      openmct.install(openmct.plugins.PlanLayout());
 
       openmct.on('start', done);
       openmct.startHeadless();
