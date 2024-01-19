@@ -47,6 +47,10 @@
     display: none;
     order: 99;
     padding: 1px 0;
+    body.mobile & {
+      display: block;
+    }
+
   }
 
   &.is-active {
