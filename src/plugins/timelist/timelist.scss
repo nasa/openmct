@@ -24,185 +24,185 @@ $cr: 3px;
 $interiorMargin: 5px;
 
 .c-timelist {
-  & .nowMarker.hasCurrent {
-    height: 2px;
-    position: absolute;
-    z-index: 10;
-    background: cyan;
-    width: 100%;
-  }
-
-  .c-list-item {
-    /* Time Lists */
-
-    td {
-      $p: $interiorMarginSm;
-      padding-top: $p;
-      padding-bottom: $p;
+    & .nowMarker.hasCurrent {
+        height: 2px;
+        position: absolute;
+        z-index: 10;
+        background: cyan;
+        width: 100%;
     }
 
-    &.--is-current {
-      background-color: $colorCurrentBg;
-      border-top: 1px solid $colorCurrentBorder !important;
-      color: $colorCurrentFg;
-    }
+    .c-list-item {
+        /* Time Lists */
 
-    &.--is-future {
-      background-color: $colorFutureBg;
-      border-top-color: $colorFutureBorder !important;
-      color: $colorFutureFg;
-    }
+        td {
+            $p: $interiorMarginSm;
+            padding-top: $p;
+            padding-bottom: $p;
+        }
 
-    &__value {
-      &.--duration {
-        width: 5%;
-      }
+        &.--is-current {
+            background-color: $colorCurrentBg;
+            border-top: 1px solid $colorCurrentBorder !important;
+            color: $colorCurrentFg;
+        }
+
+        &.--is-future {
+            background-color: $colorFutureBg;
+            border-top-color: $colorFutureBorder !important;
+            color: $colorFutureFg;
+        }
+
+        &__value {
+            &.--duration {
+                width: 5%;
+            }
+        }
     }
-  }
 }
 
 .c-timelist--large {
-  $textSm: 0.8em;
-  $textLg: 1.3em;
+    $textSm: 0.8em;
+    $textLg: 1.3em;
 
-  > * + * {
-    margin-top: $interiorMarginSm;
-  }
-
-  .c-tli {
-    background: #444;
-    border-radius: $cr;
-    display: grid;
-    padding: $interiorMargin;
-    grid-template-columns: min-content 3fr 40px 1fr;
-    grid-column-gap: $interiorMargin;
-
-    &__activity-color {
-      align-items: start;
-      display: flex;
-      padding-top: 1px;
+    > * + * {
+        margin-top: $interiorMarginSm;
     }
 
-    &__activity-color-swatch {
-      $d: 16px;
-      border-radius: 50%;
-      width: $d;
-      height: $d;
-    }
+    .c-tli {
+        background: #444;
+        border-radius: $cr;
+        display: grid;
+        padding: $interiorMargin;
+        grid-template-columns: min-content 3fr 40px 1fr;
+        grid-column-gap: $interiorMargin;
 
-    &__title-and-bounds {
-      > * + * {
-        margin-top: $interiorMargin;
-      }
-    }
-
-    &__bounds {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-
-      > * {
-        white-space: nowrap;
-      }
-
-      > * + * {
-        margin-left: $interiorMargin;
-      }
-    }
-
-    &__duration {
-      color: $colorBodyFgEm;
-    }
-
-    &__start-time {
-      // Add a arrow glyph before this element
-      display: flex;
-      align-items: start;
-
-      &:after {
-        content: $glyph-icon-play;
-        font-family: symbolsfont;
-        font-size: 0.7em;
-        display: block;
-        margin-left: $interiorMargin;
-        margin-top: 2px;
-      }
-    }
-
-    &__title {
-      color: $colorBodyFgEm;
-      font-size: $textLg;
-    }
-
-    &__time-hero {
-      //background: rgba(deeppink, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: end;
-    }
-
-    &__time-hero-context-and-time {
-      align-items: center;
-      flex-wrap: wrap;
-      display: flex;
-      justify-content: end;
-      text-align: right;
-
-      > * + * {
-        margin-left: $interiorMargin;
-      }
-    }
-
-    &__time-hero-context {
-      font-size: $textSm;
-      text-transform: uppercase;
-    }
-
-    &__time-hero-time {
-      color: $colorBodyFgEm;
-      font-size: $textLg;
-      white-space: nowrap;
-
-      &:before {
-        display: inline-block;
-        margin-right: 3px;
-      }
-
-      &.--is-countdown {
-        &:before {
-          content: '-'; // TODO: replace with symbolsfont dash
+        &__activity-color {
+            align-items: start;
+            display: flex;
+            padding-top: 1px;
         }
-      }
 
-      &.--is-countup {
-        &:before {
-          content: '+'; // TODO: replace with symbolsfont dash
+        &__activity-color-swatch {
+            $d: 16px;
+            border-radius: 50%;
+            width: $d;
+            height: $d;
         }
-      }
+
+        &__title-and-bounds {
+            > * + * {
+                margin-top: $interiorMargin;
+            }
+        }
+
+        &__bounds {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            > * {
+                white-space: nowrap;
+            }
+
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+
+            &.--has-duration {
+                .c-tli__start-time {
+                    display: flex;
+                    align-items: start;
+
+                    &:after {
+                        content: $glyph-icon-play;
+                        font-family: symbolsfont;
+                        font-size: 0.7em;
+                        display: block;
+                        margin-left: $interiorMargin;
+                        margin-top: 2px;
+                    }
+                }
+            }
+        }
+
+        &__duration {
+            color: $colorBodyFgEm;
+        }
+
+        &__title {
+            color: $colorBodyFgEm;
+            font-size: $textLg;
+        }
+
+        &__time-hero {
+            //background: rgba(deeppink, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: end;
+        }
+
+        &__time-hero-context-and-time {
+            align-items: center;
+            flex-wrap: wrap;
+            display: flex;
+            justify-content: end;
+            text-align: right;
+
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        &__time-hero-context {
+            font-size: $textSm;
+            text-transform: uppercase;
+        }
+
+        &__time-hero-time {
+            color: $colorBodyFgEm;
+            font-size: $textLg;
+            white-space: nowrap;
+
+            &:before {
+                display: inline-block;
+                margin-right: 3px;
+            }
+
+            &.--is-countdown {
+                &:before {
+                    content: '-'; // TODO: replace with symbolsfont dash
+                }
+            }
+
+            &.--is-countup {
+                &:before {
+                    content: '+'; // TODO: replace with symbolsfont dash
+                }
+            }
+        }
+
+        &__progress-pie {
+            display: flex;
+            align-items: center;
+        }
+
+
     }
-
-    &__progress-pie {
-      display: flex;
-      align-items: center;
-    }
-
-
-
-  }
 }
 
 .c-svg-progress {
-  &__bg {
-    fill: rgba(black, 0.2);
-  }
+    &__bg {
+        fill: rgba(black, 0.2);
+    }
 
-  &__ticks {
-    fill: none;
-    stroke: #666;
-    stroke-width: 6;
-  }
+    &__ticks {
+        fill: none;
+        stroke: #666;
+        stroke-width: 6;
+    }
 
-  &__progress {
-    fill: $c;
-  }
+    &__progress {
+        fill: $c;
+    }
 }

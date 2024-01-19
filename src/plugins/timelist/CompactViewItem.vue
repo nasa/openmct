@@ -26,9 +26,11 @@
     </div>
     <div class="c-tli__title-and-bounds">
       <div class="c-tli__title">{{ formattedItemValue.title }}</div>
-      <div class="c-tli__bounds">
+      <div class="c-tli__bounds" :class="{ '--has-duration': formattedItemValue.end }">
         <div class="c-tli__duration">{{ formattedItemValue.duration }}</div>
-        <div class="c-tli__start-time">{{ formattedItemValue.start }}</div>
+        <div class="c-tli__start-time">
+          {{ formattedItemValue.start }}
+        </div>
         <div class="c-tli__end-time">{{ formattedItemValue.end }}</div>
       </div>
     </div>
