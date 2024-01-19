@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,11 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ladTableCompositionPolicy from './LADTableCompositionPolicy';
-import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider';
-import LADTableSetViewProvider from './LADTableSetViewProvider';
-import LADTableViewProvider from './LADTableViewProvider';
-import LADTableViewActions from './ViewActions';
+import ladTableCompositionPolicy from './LADTableCompositionPolicy.js';
+import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider.js';
+import LADTableSetViewProvider from './LADTableSetViewProvider.js';
+import LADTableViewProvider from './LADTableViewProvider.js';
+import LADTableViewActions from './ViewActions.js';
 
 export default function plugin() {
   return function install(openmct) {

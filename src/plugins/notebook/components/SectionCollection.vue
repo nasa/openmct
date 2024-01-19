@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { deleteNotebookEntries } from '../utils/notebook-entries.js';
+import { getDefaultNotebook } from '../utils/notebook-storage.js';
 import SectionComponent from './SectionComponent.vue';
 
 export default {

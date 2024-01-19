@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,8 +22,8 @@
 
 import EventEmitter from 'EventEmitter';
 
-import eventHelpers from '../lib/eventHelpers';
-import { MARKER_SHAPES } from './MarkerShapes';
+import eventHelpers from '../lib/eventHelpers.js';
+import { MARKER_SHAPES } from './MarkerShapes.js';
 
 // WebGL shader sources (for drawing plain colors)
 const FRAGMENT_SHADER = `

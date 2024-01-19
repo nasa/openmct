@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -154,11 +154,11 @@ import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries';
+import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries.js';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
-} from '../utils/notebook-image';
+} from '../utils/notebook-image.js';
 import NotebookEmbed from './NotebookEmbed.vue';
 
 const SANITIZATION_SCHEMA = {

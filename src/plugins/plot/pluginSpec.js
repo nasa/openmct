@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,10 +31,10 @@ import {
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import configStore from './configuration/ConfigStore';
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import configStore from './configuration/ConfigStore.js';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel.js';
 import PlotOptions from './inspector/PlotOptions.vue';
-import PlotVuePlugin from './plugin';
+import PlotVuePlugin from './plugin.js';
 
 const TEST_KEY_ID = 'some-other-key';
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const {
-  createDomainObjectWithDefaults,
-  setTimeConductorBounds
-} = require('../../../../appActions');
-const { test, expect } = require('../../../../pluginFixtures');
+import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Telemetry Table', () => {
   test('unpauses and filters data when paused by button and user changes bounds', async ({
@@ -131,7 +128,10 @@ test.describe('Telemetry Table', () => {
     // focus the Telemetry Table
     page.goto(table.url);
     await page.getByRole('searchbox', { name: 'message filter input' }).hover();
-    await page.getByLabel('Message filter header').getByRole('button', { name: '/R/' }).click();
+    await page
+      .getByLabel('Message filter header')
+      .getByLabel('Click to enable regex: enter a string with slashes, like this: /regex_exp/')
+      .click();
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
 

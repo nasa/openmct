@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ConductorClock from './ConductorClock.vue';
 import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';

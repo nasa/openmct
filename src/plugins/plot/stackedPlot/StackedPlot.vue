@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,8 +23,9 @@
 <template>
   <div
     v-if="loaded"
-    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar u-style-receiver js-style-receiver"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    aria-label="Stacked Plot Style Target"
   >
     <plot-legend
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
@@ -64,11 +65,11 @@
 <script>
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import ImageExporter from '../../../exporters/ImageExporter';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import ImageExporter from '../../../exporters/ImageExporter.js';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {

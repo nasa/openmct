@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,23 +21,26 @@
 -->
 <template>
   <div class="c-ctrl-wrapper">
-    <div
+    <button
       class="c-icon-button c-icon-button--swatched"
       :class="[options.icon, { 'c-icon-button--mixed': nonSpecific }]"
       :title="options.title"
+      :aria-label="options.title"
       @click="handleClick"
     >
       <div
         class="c-swatch"
-        :style="{
-          background: options.value
-        }"
+        :style="{ background: options.value }"
+        role="img"
+        :aria-label="None"
       ></div>
-    </div>
+    </button>
     <div v-if="open" class="c-menu c-palette c-palette--color">
       <div
         v-if="!options.preventNone"
         class="c-palette__item-none"
+        role="grid"
+        aria-label="No Style"
         @click="select({ value: 'transparent' })"
       >
         <div class="c-palette__item"></div>
@@ -47,8 +50,11 @@
         <div
           v-for="(color, index) in colorPalette"
           :key="index"
+          role="gridcell"
           class="c-palette__item"
           :style="{ background: color.value }"
+          :title="color.value"
+          :aria-label="color.value"
           @click="select(color)"
         ></div>
       </div>
@@ -57,7 +63,7 @@
 </template>
 
 <script>
-import toggleMixin from '../../mixins/toggle-mixin';
+import toggleMixin from '../../mixins/toggle-mixin.js';
 
 export default {
   mixins: [toggleMixin],

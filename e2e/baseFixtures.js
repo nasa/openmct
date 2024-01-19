@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,12 +28,12 @@
  * GitHub issues.
  */
 
-const base = require('@playwright/test');
-const { expect, request } = base;
-const fs = require('fs');
-const path = require('path');
-const { v4: uuid } = require('uuid');
-const sinon = require('sinon');
+import { expect, request, test } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import sinon from 'sinon';
+import { fileURLToPath } from 'url';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Takes a `ConsoleMessage` and returns a formatted string. Used to enable console log error detection.
@@ -68,7 +68,7 @@ function waitForAnimations(locator) {
  */
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
-exports.test = base.test.extend({
+const extendedTest = test.extend({
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
    * the Time Indicator Clock to be in a specific state.
@@ -97,7 +97,7 @@ exports.test = base.test.extend({
     async ({ context, clockOptions }, use) => {
       if (clockOptions !== undefined) {
         await context.addInitScript({
-          path: path.join(__dirname, '../', './node_modules/sinon/pkg/sinon.js')
+          path: fileURLToPath(new URL('../node_modules/sinon/pkg/sinon.js', import.meta.url))
         });
         await context.addInitScript((options) => {
           window.__clock = sinon.useFakeTimers(options);
@@ -201,6 +201,4 @@ exports.test = base.test.extend({
   }
 });
 
-exports.expect = expect;
-exports.request = request;
-exports.waitForAnimations = waitForAnimations;
+export { expect, request, extendedTest as test, waitForAnimations };

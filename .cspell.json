@@ -43,7 +43,6 @@
     "sharded",
     "perfromance",
     "MMOC",
-    "deploysentinel",
     "codegen",
     "Unfortuantely",
     "viewports",
@@ -490,7 +489,10 @@
     "Blockquotes",
     "oger",
     "lcovonly",
-    "gcov"
+    "gcov",
+    "WCAG",
+    "stackedplot",
+    "Andale"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [

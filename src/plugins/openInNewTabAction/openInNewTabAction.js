@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import objectPathToUrl from '/src/tools/url';
+import objectPathToUrl from '/src/tools/url.js';
 export default class OpenInNewTab {
   constructor(openmct) {
     this.name = 'Open In New Tab';

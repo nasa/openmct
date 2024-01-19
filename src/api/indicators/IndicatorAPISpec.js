@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import SimpleIndicator from './SimpleIndicator';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import SimpleIndicator from './SimpleIndicator.js';
 
 describe('The Indicator API', () => {
   let openmct;

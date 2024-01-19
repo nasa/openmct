@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2023, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DefaultClock from '../../utils/clock/DefaultClock';
-import remoteClockRequestInterceptor from './requestInterceptor';
+import DefaultClock from '../../utils/clock/DefaultClock.js';
+import remoteClockRequestInterceptor from './requestInterceptor.js';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the

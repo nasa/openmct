@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -34,7 +34,11 @@
           class="c-object-label__type-icon c-list-item__name__type-icon"
           :class="item.type.cssClass"
         >
-          <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+          <span
+            class="is-status__indicator"
+            :aria-label="`This item is ${status}`"
+            :title="`This item is ${status}`"
+          ></span>
         </div>
         <div class="c-object-label__name c-list-item__name__name">{{ item.model.name }}</div>
       </a>
@@ -54,9 +58,9 @@
 <script>
 import moment from 'moment';
 
-import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
-import objectLink from '../../../ui/mixins/object-link';
-import statusListener from './status-listener';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture.js';
+import objectLink from '../../../ui/mixins/object-link.js';
+import statusListener from './status-listener.js';
 
 export default {
   mixins: [contextMenuGesture, objectLink, statusListener],

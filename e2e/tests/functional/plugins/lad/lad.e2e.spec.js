@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
-  setStartOffset,
+  openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
-  openObjectTreeContextMenu
-} = require('../../../../appActions');
+  setStartOffset
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Testing LAD table configuration', () => {
   let ladTable;
@@ -52,13 +52,13 @@ test.describe('Testing LAD table configuration', () => {
   });
   test('in edit mode, LAD Tables provide ability to hide columns', async ({ page }) => {
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure headers are visible initially
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -66,10 +66,10 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // hide timestamp column
-    await page.getByLabel('Timestamp').uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+    await page.getByLabel('Timestamp', { exact: true }).uncheck();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -78,10 +78,10 @@ test.describe('Testing LAD table configuration', () => {
 
     // hide units & type column
     await page.getByLabel('Units').uncheck();
-    await page.getByLabel('Type').uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+    await page.getByLabel('Type', { exact: true }).uncheck();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -90,9 +90,9 @@ test.describe('Testing LAD table configuration', () => {
 
     // hide WATCH column
     await page.getByLabel('WATCH').uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -103,9 +103,9 @@ test.describe('Testing LAD table configuration', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -113,14 +113,14 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // show timestamp column
-    await page.getByLabel('Timestamp').check();
+    await page.getByLabel('Timestamp', { exact: true }).check();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -132,8 +132,8 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -141,16 +141,16 @@ test.describe('Testing LAD table configuration', () => {
     await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
 
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // show units, type, and WATCH columns
     await page.getByLabel('Units').check();
-    await page.getByLabel('Type').check();
+    await page.getByLabel('Type', { exact: true }).check();
     await page.getByLabel('WATCH').check();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -161,9 +161,9 @@ test.describe('Testing LAD table configuration', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -181,13 +181,13 @@ test.describe('Testing LAD table configuration', () => {
     await page.goto(ladTable.url);
 
     // Edit LAD table
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
@@ -198,16 +198,16 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // Remove Sin Wave Generator
+    // Remove Sine Wave Generator
     openObjectTreeContextMenu(page, sineWaveObject.url);
     await page.getByRole('menuitem', { name: /Remove/ }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Ensure Units & Limit columns are gone
     // as Event Generator don't have them
     await page.goto(ladTable.url);
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
     await expect(page.getByRole('cell', { name: 'WARNING' })).toBeHidden();
@@ -258,7 +258,7 @@ test.describe('Testing LAD table @unstable', () => {
       name: 'Test LAD Table'
     });
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -286,7 +286,7 @@ test.describe('Testing LAD table @unstable', () => {
       name: 'Test LAD Table'
     });
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();

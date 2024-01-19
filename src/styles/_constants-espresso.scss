@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -300,6 +300,7 @@ $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
 $colorInputBg: rgba(black, 0.2);
+$colorInputBgHov: rgba(black, 0.1);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);

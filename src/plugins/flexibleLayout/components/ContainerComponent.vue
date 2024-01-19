@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,13 +25,14 @@
     class="c-fl-container"
     :style="[{ 'flex-basis': sizeString }]"
     :class="{ 'is-empty': !frames.length }"
-    role="group"
-    :aria-label="`Container ${container.id}`"
+    role="grid"
   >
     <div
       v-show="isEditing"
       class="c-fl-container__header"
       draggable="true"
+      role="columnheader"
+      :aria-label="`Container Handle ${index + 1}`"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
@@ -44,12 +45,14 @@
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div class="c-fl-container__frames-holder">
+    <div role="row" class="c-fl-container__frames-holder">
       <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
+          role="gridcell"
+          :aria-label="`Container Frame ${index}`"
           :container-index="index"
           :is-editing="isEditing"
           :object-path="objectPath"

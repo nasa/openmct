@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import configStore from '../configuration/ConfigStore';
-import { MARKER_SHAPES } from '../draw/MarkerShapes';
-import { symlog } from '../mathUtils';
-import Model from './Model';
+import configStore from '../configuration/ConfigStore.js';
+import { MARKER_SHAPES } from '../draw/MarkerShapes.js';
+import { symlog } from '../mathUtils.js';
+import Model from './Model.js';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry

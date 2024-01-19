@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,10 +29,11 @@
     </div>
 
     <div
-      class="c-fl__container-holder"
+      class="c-fl__container-holder u-style-receiver js-style-receiver"
       :class="{
         'c-fl--rows': rowsLayout === true
       }"
+      :aria-label="`Flexible Layout ${rowsLayout ? 'Row' : 'Column'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
         <drop-hint
@@ -79,8 +80,8 @@
 </template>
 
 <script>
-import Container from '../utils/container';
-import Frame from '../utils/frame';
+import Container from '../utils/container.js';
+import Frame from '../utils/frame.js';
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
 import ResizeHandle from './ResizeHandle.vue';

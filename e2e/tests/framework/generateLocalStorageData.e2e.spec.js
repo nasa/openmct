@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 /**
  * This test suite is dedicated to generating LocalStorage via Session Storage to be used
  * in some visual test suites like controlledClock.visual.spec.js. This suite should run to completion
@@ -32,13 +31,11 @@
  * and is additionally verified in the validation test suites below.
  */
 
-const { test, expect } = require('../../pluginFixtures.js');
-const {
-  createDomainObjectWithDefaults,
-  createExampleTelemetryObject
-} = require('../../appActions.js');
-const { MISSION_TIME } = require('../../constants.js');
-const path = require('path');
+import { fileURLToPath } from 'url';
+
+import { createDomainObjectWithDefaults, createExampleTelemetryObject } from '../../appActions.js';
+import { MISSION_TIME } from '../../constants.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
@@ -56,29 +53,28 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
   });
 
   test('Generate display layout with 2 child display layouts', async ({ page, context }) => {
-    // Create Display Layout
     const parent = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Parent Display Layout'
     });
-    const child1 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Child Layout 1',
       parent: parent.uuid
     });
-    const child2 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Child Layout 2',
       parent: parent.uuid
     });
 
-    await page.goto(parent.url);
-    await page.getByLabel('Edit').click();
-    await page.getByLabel(`${child2.name} Layout Grid`).hover();
+    await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Child Layout 2 Layout', { exact: true }).hover();
     await page.getByLabel('Move Sub-object Frame').nth(1).click();
     await page.getByLabel('X:').fill('30');
 
-    await page.getByLabel(`${child1.name} Layout Grid`).hover();
+    await page.getByLabel('Child Layout 1 Layout', { exact: true }).hover();
     await page.getByLabel('Move Sub-object Frame').first().click();
     await page.getByLabel('Y:').fill('30');
 
@@ -87,7 +83,9 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.join(__dirname, '../../../e2e/test-data/display_layout_with_child_layouts.json')
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/display_layout_with_child_layouts.json', import.meta.url)
+      )
     });
   });
 
@@ -108,11 +106,13 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
       parent: parent.uuid
     });
 
-    await page.goto(parent.url);
+    await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.join(__dirname, '../../../e2e/test-data/flexible_layout_with_child_layouts.json')
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/flexible_layout_with_child_layouts.json', import.meta.url)
+      )
     });
   });
 
@@ -130,10 +130,10 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
     // Make Link from Telemetry Object to Overlay Plot
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
 
     // Select 'Create Link' from dropdown
-    await page.getByRole('menuitem', { name: ' Create Link' }).click();
+    await page.getByRole('menuitem', { name: 'Create Link' }).click();
 
     // Search and Select for overlay Plot within Create Modal
     await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
@@ -189,7 +189,9 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     // Save localStorage for future test execution
     await context.storageState({
-      path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json')
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/overlay_plot_storage.json', import.meta.url)
+      )
     });
   });
   // TODO: Merge this with previous test. Edit object created in previous test.
@@ -203,8 +205,8 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More options').click();
-    await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
 
     //Edit Example Telemetry Object to include 5s loading Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
@@ -223,17 +225,21 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.join(__dirname, '../../../e2e/test-data/overlay_plot_with_delay_storage.json')
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
+      )
     });
   });
 });
 
 test.describe('Validate Overlay Plot with Telemetry Object @localStorage @generatedata', () => {
   test.use({
-    storageState: path.join(__dirname, '../../../e2e/test-data/overlay_plot_storage.json')
+    storageState: fileURLToPath(
+      new URL('../../../e2e/test-data/overlay_plot_storage.json', import.meta.url)
+    )
   });
   test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -275,9 +281,8 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
 
 test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorage @generatedata', () => {
   test.use({
-    storageState: path.join(
-      __dirname,
-      '../../../e2e/test-data/overlay_plot_with_delay_storage.json'
+    storageState: fileURLToPath(
+      new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
     )
   });
   test('Validate Overlay Plot with Telemetry Object', async ({ page }) => {

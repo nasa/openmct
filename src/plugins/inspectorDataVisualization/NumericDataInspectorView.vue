@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -35,7 +35,7 @@
 <script>
 import mount from 'utils/mount';
 
-import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
 

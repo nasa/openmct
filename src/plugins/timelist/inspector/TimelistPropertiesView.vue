@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { SORT_ORDER_OPTIONS } from '../constants';
+import { SORT_ORDER_OPTIONS } from '../constants.js';
 import EventProperties from './EventProperties.vue';
 import Filtering from './FilteringComponent.vue';
 

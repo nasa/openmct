@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,34 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*
-Tests the branding associated with the default deployment. At least the about modal for now
-*/
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
 
-const { test, expect } = require('../../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const VISUAL_URL = require('../../../constants').VISUAL_URL;
-
-test.describe('Visual - Branding', () => {
+test.describe('a11y - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
-
-  test('Visual - About Modal', async ({ page, theme }) => {
-    // Click About button
-    await page.click('.l-shell__app-logo');
-
-    // Modify the Build information in 'about' to be consistent run-over-run
-    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-    await expect(versionInformationLocator).toBeEnabled();
-    await versionInformationLocator.evaluate(
-      (node) =>
-        (node.innerHTML =
-          '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
-    );
-
-    // Take a snapshot of the About modal
-    await percySnapshot(page, `About (theme: '${theme}')`);
+  test('main view @a11y', async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

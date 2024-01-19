@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,37 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test } = require('../../../pluginFixtures.js');
-const { VISUAL_URL, MISSION_TIME } = require('../../../constants.js');
-const percySnapshot = require('@percy/playwright');
+/*
+Tests the branding associated with the default deployment. At least the about modal for now
+*/
 
-//Declare the scope of the visual test
-const inspectorPane = '.l-shell__pane-inspector';
+import percySnapshot from '@percy/playwright';
 
-test.describe('Visual - Controlled Clock', () => {
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { VISUAL_URL } from '../../../constants.js';
+
+test.describe('Visual - Branding @a11y', () => {
   test.beforeEach(async ({ page }) => {
+    //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
-  test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
+
+  test('Visual - About Modal', async ({ page, theme }) => {
+    // Click About button
+    await page.getByLabel('About Modal').click();
+
+    // Modify the Build information in 'about' to be consistent run-over-run
+    await expect(page.locator('id=versionInformation')).toBeEnabled();
+    await page
+      .locator('id=versionInformation')
+      .evaluate(
+        (node) =>
+          (node.innerHTML =
+            '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>')
+      );
+
+    // Take a snapshot of the About modal
+    await percySnapshot(page, `About (theme: '${theme}')`);
   });
-
-  test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
-    //Expand the Inspector Pane
-    await page.getByRole('button', { name: 'Inspect' }).click();
-
-    await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
-      scope: inspectorPane
-    });
-    //Open Annotations Tab
-    await page.getByRole('tab', { name: 'Annotations' }).click();
-
-    await percySnapshot(page, `Inspector view of Annotations Tab (theme: ${theme})`, {
-      scope: inspectorPane
-    });
-  });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
 });

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,9 +22,9 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas :style="canvasStyle" class="js-overlay-canvas"></canvas>
-    <canvas :style="canvasStyle" class="js-main-canvas"></canvas>
-    <div ref="limitArea" class="js-limit-area">
+    <canvas id="2dContext" :style="canvasStyle" class="js-overlay-canvas" role="img"></canvas>
+    <canvas id="webglContext" :style="canvasStyle" class="js-main-canvas" role="img"></canvas>
+    <div ref="limitArea" class="js-limit-area" aria-hidden="true">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
         :key="index"
@@ -45,17 +45,17 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import { DrawLoader } from '../draw/DrawLoader';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
+import { DrawLoader } from '../draw/DrawLoader.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import LimitLabel from './LimitLabel.vue';
 import LimitLine from './LimitLine.vue';
-import MCTChartAlarmLineSet from './MCTChartAlarmLineSet';
-import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
-import MCTChartLineLinear from './MCTChartLineLinear';
-import MCTChartLineStepAfter from './MCTChartLineStepAfter';
-import MCTChartPointSet from './MCTChartPointSet';
+import MCTChartAlarmLineSet from './MCTChartAlarmLineSet.js';
+import MCTChartAlarmPointSet from './MCTChartAlarmPointSet.js';
+import MCTChartLineLinear from './MCTChartLineLinear.js';
+import MCTChartLineStepAfter from './MCTChartLineStepAfter.js';
+import MCTChartPointSet from './MCTChartPointSet.js';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -199,8 +199,8 @@ export default {
   mounted() {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
+    this.drawnOnce = false;
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
-    this.visibilityObserver.observe(this.chartContainer);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -687,6 +687,10 @@ export default {
       if (!this.drawScheduled) {
         const called = this.renderWhenVisible(this.draw);
         this.drawScheduled = called;
+        if (!this.drawnOnce && called) {
+          this.drawnOnce = true;
+          this.visibilityObserver.observe(this.chartContainer);
+        }
       }
     },
     draw() {
