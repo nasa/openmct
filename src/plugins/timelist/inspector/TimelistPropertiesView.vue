@@ -30,12 +30,20 @@
             These settings don't affect the view while editing, but will be applied after editing is
             finished.
           </div>
-          <div class="c-inspect-properties__label" title="Compact view.">Compact View</div>
+          <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
           <div v-if="canEdit" class="c-inspect-properties__value">
-            <input v-model="isCompact" type="checkbox" @change="updateCompactView()" />
+            <select v-model="isExpanded" @change="updateExpandedView()">
+              <option
+                v-for="(displayStyleOption, index) in displayStyleOptions"
+                :key="index"
+                :value="displayStyleOption.key"
+              >
+                {{ displayStyleOption.label }}
+              </option>
+            </select>
           </div>
           <div v-else class="c-inspect-properties__value">
-            {{ isCompact ? 'Enabled' : 'Disabled' }}
+            {{ isExpanded ? displayStyleOptions[1].label : displayStyleOptions[0].label }}
           </div>
         </li>
         <li class="c-inspect-properties__row">
@@ -87,6 +95,17 @@ const EVENT_TYPES = [
   }
 ];
 
+const DISPLAY_STYLES = [
+  {
+    key: false,
+    label: 'Compact'
+  },
+  {
+    key: true,
+    label: 'Expanded'
+  }
+];
+
 export default {
   components: {
     Filtering,
@@ -97,9 +116,10 @@ export default {
     return {
       sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
       sortOrderOptions: SORT_ORDER_OPTIONS,
+      displayStyleOptions: DISPLAY_STYLES,
       eventTypes: EVENT_TYPES,
       isEditing: this.openmct.editor.isEditing(),
-      isCompact: this.domainObject.configuration.isCompact
+      isExpanded: this.domainObject.configuration.isExpanded || false
     };
   },
   computed: {
@@ -128,8 +148,8 @@ export default {
       const value = data.value;
       this.updateProperty(key, value);
     },
-    updateCompactView() {
-      this.updateProperty('isCompact', this.isCompact);
+    updateExpandedView() {
+      this.updateProperty('isExpanded', this.isExpanded);
     }
   }
 };
