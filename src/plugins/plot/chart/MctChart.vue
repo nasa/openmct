@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,9 +22,9 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas :style="canvasStyle" class="js-overlay-canvas"></canvas>
-    <canvas :style="canvasStyle" class="js-main-canvas"></canvas>
-    <div ref="limitArea" class="js-limit-area">
+    <canvas id="2dContext" :style="canvasStyle" class="js-overlay-canvas" role="img"></canvas>
+    <canvas id="webglContext" :style="canvasStyle" class="js-main-canvas" role="img"></canvas>
+    <div ref="limitArea" class="js-limit-area" aria-hidden="true">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
         :key="index"
