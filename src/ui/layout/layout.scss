@@ -250,6 +250,9 @@
     align-items: start;
     $p: $interiorMarginSm;
     padding-left: $p; padding-right: $p;
+    body.mobile & { // Fixes weird gap in mobile status area
+      margin-right: 0px;
+    }
   }
 
   &__indicators {
