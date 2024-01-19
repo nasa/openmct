@@ -70,6 +70,7 @@ $interiorMargin: 5px;
     }
 
     .c-tli {
+        // TODO: add styles for various activity statuses
         background: #444;
         border-radius: $cr;
         display: grid;
@@ -184,6 +185,22 @@ $interiorMargin: 5px;
             align-items: center;
         }
 
+        // TODO: add styles for .c-tli__icon-svg
+        &__icon-svg {
+            fill: $colorBodyFg;
+
+            &--check {
+                // Overrides?
+            }
+
+            &--alert-triangle {
+                // Overrides?
+            }
+
+            &--circle-slash {
+                // Overrides?
+            }
+        }
 
     }
 }

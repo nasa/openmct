@@ -46,6 +46,24 @@
           stroke-dasharray="3 7.472"
         ></circle>
       </svg>
+
+      <svg v-if="showStatusIcon" viewBox="0 0 100 100" class="c-tli__icon-svg">
+        <path class="c-tli__icon-svg--check" d="M80 20L42.5 57.5L20 35V57.5L42.5 80L80 42.5V20Z" />
+        <path
+          class="c-tli__icon-svg--alert-triangle"
+          d="M79.4533 70.3034L54.004 25.7641C51.8962 22.0786 48.4636 22.0786 46.3559 25.7641L20.8946 70.3034C18.7868 73.989 20.5332 77 24.7728 77H75.563C79.8146 77 81.561 73.989 79.4533 70.3034ZM54.028 73.1459H46.3198V65.4376H54.028V73.1459ZM55.3409 50.0211L53.0645 61.5835H47.2833L45.007 50.0211V34.6045H55.3529V50.0211H55.3409Z"
+        />
+        <g class="c-tli__icon-svg--circle-slash">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M50 82C67.6731 82 82 67.6731 82 50C82 32.3269 67.6731 18 50 18C32.3269 18 18 32.3269 18 50C18 67.6731 32.3269 82 50 82ZM50 72C62.1503 72 72 62.1503 72 50C72 37.8497 62.1503 28 50 28C37.8497 28 28 37.8497 28 50C28 62.1503 37.8497 72 50 72Z"
+          />
+          <path
+            d="M63.7886 29.6404L70.8596 36.7114L36.2114 71.3596L29.1404 64.2886L63.7886 29.6404Z"
+          />
+        </g>
+      </svg>
     </div>
     <div class="c-tli__time-hero">
       <div class="c-tli__time-hero-context-and-time">
@@ -148,6 +166,15 @@ export default {
     showProgressPie() {
       return (
         this.itemState === ITEM_STATES.inProgress || this.itemState === ITEM_STATES.runningLong
+      );
+    },
+    showStatusIcon() {
+      return (
+        //this.itemState === ITEM_STATES.notStarted ||
+        this.itemState === ITEM_STATES.completed ||
+        this.itemState === ITEM_STATES.aborted ||
+        this.itemState === ITEM_STATES.skipped ||
+        this.itemState === ITEM_STATES.overdue
       );
     },
     showTimeHero() {
