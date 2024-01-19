@@ -22,12 +22,12 @@
 
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
-    <compact-view
-      v-if="isCompact"
+    <expanded-view
+      v-if="isExpanded"
       :items="planActivities"
       :header-items="headerItems"
       :default-sort="defaultSort"
-    ></compact-view>
+    ></expanded-view>
     <list-view
       v-else
       :items="planActivities"
@@ -46,8 +46,8 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
-import CompactView from './CompactView.vue';
 import { SORT_ORDER_OPTIONS } from './constants.js';
+import ExpandedView from './ExpandedView.vue';
 
 const SCROLL_TIMEOUT = 10000;
 
@@ -125,7 +125,7 @@ const defaultSort = {
 
 export default {
   components: {
-    CompactView,
+    ExpandedView,
     ListView
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
@@ -137,12 +137,12 @@ export default {
       planActivities: [],
       headerItems: headerItems,
       defaultSort: defaultSort,
-      isCompact: false
+      isExpanded: false
     };
   },
   computed: {
     listTypeClass() {
-      if (this.isCompact) {
+      if (this.isExpanded) {
         return 'c-timelist c-timelist--large';
       }
       return 'c-timelist';
@@ -244,7 +244,7 @@ export default {
         this.hideAll = false;
       } else {
         this.setSort();
-        this.isCompact = configuration.isCompact;
+        this.isExpanded = configuration.isExpanded;
       }
       this.listActivities();
     },
@@ -458,7 +458,7 @@ export default {
     },
     setScrollTop() {
       //The view isn't ready yet
-      if (!this.$el.parentElement || this.isCompact) {
+      if (!this.$el.parentElement || this.isExpanded) {
         return;
       }
 
