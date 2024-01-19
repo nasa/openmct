@@ -24,7 +24,11 @@
   <div>
     <div class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
-      <form name="activityStatus">
+      <div class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Status">Status</div>
+        <div class="c-inspect-properties__value">{{ statusLabel }}</div>
+      </div>
+      <form name="activityStatus" class="span-all">
         <select v-model="currentStatusKey" name="setActivityStatus" @change="changeActivityStatus">
           <option v-for="status in activityStates" :key="status.key" :value="status.key">
             {{ status.label }}
@@ -86,6 +90,15 @@ export default {
       activityStates: activityStates,
       currentStatusKey: activityStates[0].key
     };
+  },
+  computed: {
+    statusLabel() {
+      let defaultStatus = activityStates.find((state) => state.key === 'notStarted');
+      let currentStatus = activityStates.find(
+        (state) => this.currentStatusKey !== '' && state.key === this.currentStatusKey
+      );
+      return currentStatus?.label || defaultStatus.label;
+    }
   },
   watch: {
     executionState() {
