@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import installWorker from './WebSocketWorker.js';
 
-class BatchingWebSocketProvider extends EventTarget {
+class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
@@ -108,4 +107,4 @@ class BatchingWebSocketProvider extends EventTarget {
   }
 }
 
-export default BatchingWebSocketProvider;
+export default BatchingWebSocket;
