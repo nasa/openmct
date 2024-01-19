@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -88,6 +88,9 @@ test.describe('Visual - Tree Pane', () => {
     await expandTreePaneItemByName(page, foo.name);
     await expandTreePaneItemByName(page, bar.name);
     await expandTreePaneItemByName(page, baz.name);
+
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1 * 1000); //https://github.com/nasa/openmct/issues/7059
 
     await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
       scope: treePane

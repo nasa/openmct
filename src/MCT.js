@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -338,7 +338,7 @@ export class MCT extends EventEmitter {
       component.$nextTick(() => {
         this.layout = component;
         this.app = appLayout;
-        Browse(this);
+        this.browseRoutes = new Browse(this);
         window.addEventListener('beforeunload', this.destroy);
         this.router.start();
         this.emit('start');

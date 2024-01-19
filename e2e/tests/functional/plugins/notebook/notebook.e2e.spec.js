@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -247,7 +247,7 @@ test.describe('Notebook export tests', () => {
   test('can export notebook as text', async ({ page }) => {
     await nbUtils.enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     const downloadPromise = page.waitForEvent('download');
 
     await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();

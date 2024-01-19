@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -164,7 +164,7 @@ async function renameTimerFrom3DotMenu(page, timerUrl, newNameForTimer) {
   await page.goto(timerUrl);
 
   // Click on 3 Dot Menu
-  await page.locator('button[title="More options"]').click();
+  await page.locator('button[title="More actions"]').click();
 
   // Click text=Edit Properties...
   await page.locator('text=Edit Properties...').click();

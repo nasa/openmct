@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -236,7 +236,11 @@ export default {
         if (elemToStyle) {
           if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
             if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
+              if (key === 'background-color') {
+                elemToStyle.style[key] = 'transparent';
+              } else {
+                elemToStyle.style[key] = '';
+              }
             }
           } else {
             if (
