@@ -86,7 +86,7 @@ export default {
       }
     }
   },
-  emits: ['itemSelectionChanged'],
+  emits: ['item-selection-changed'],
   data() {
     let sortBy = this.defaultSort.property;
     let ascending = this.defaultSort.defaultDirection;
@@ -160,7 +160,7 @@ export default {
     },
     itemSelected(item, event) {
       event.stopPropagation();
-      this.$emit('itemSelectionChanged', item, event.currentTarget);
+      this.$emit('item-selection-changed', item, event.currentTarget);
     }
   }
 };

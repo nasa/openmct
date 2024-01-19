@@ -75,7 +75,6 @@ export default {
           };
         }
       });
-      console.log(this.activity.metadata, this.properties);
     }
   }
 };
