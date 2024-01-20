@@ -40,7 +40,7 @@ export default {
   props: {
     indicatorFormat: {
       type: String,
-      required: true
+      default: 'YYYY/MM/DD HH:mm:ss'
     }
   },
   data() {

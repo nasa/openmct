@@ -20,12 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
+import { defineAsyncComponent } from 'vue';
 
 import { notebookImageMigration } from '../notebook/utils/notebook-migration.js';
 import CopyToNotebookAction from './actions/CopyToNotebookAction.js';
 import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction.js';
-import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 import {
   NOTEBOOK_BASE_INSTALLED,
@@ -39,7 +38,7 @@ import NotebookViewProvider from './NotebookViewProvider.js';
 import SnapshotContainer from './snapshot-container.js';
 
 let notebookSnapshotContainer;
-function getSnapshotContainer(openmct) {
+export function getSnapshotContainer(openmct) {
   if (!notebookSnapshotContainer) {
     notebookSnapshotContainer = new SnapshotContainer(openmct);
   }
@@ -66,7 +65,6 @@ function installBaseNotebookFunctionality(openmct) {
     return;
   }
 
-  const snapshotContainer = getSnapshotContainer(openmct);
   const notebookSnapshotImageType = {
     name: 'Notebook Snapshot Image Storage',
     description: 'Notebook Snapshot Image Storage object',
@@ -82,27 +80,12 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode, destroy } = mount(
-    {
-      components: {
-        NotebookSnapshotIndicator
-      },
-      provide: {
-        openmct,
-        snapshotContainer
-      },
-      template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-    },
-    {
-      app: openmct.app
-    }
-  );
-
   const indicator = {
-    element: vNode.el,
+    component: defineAsyncComponent(() =>
+      import('@/plugins/notebook/components/NotebookSnapshotIndicator.vue')
+    ),
     key: 'notebook-snapshot-indicator',
-    priority: openmct.priority.DEFAULT,
-    destroy: destroy
+    priority: openmct.priority.DEFAULT
   };
 
   openmct.indicators.add(indicator);
