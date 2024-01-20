@@ -45,22 +45,27 @@ export default {
   },
   data() {
     return {
-      timeTextValue: this.openmct.time.getClock() ? this.openmct.time.now() : undefined
+      timestamp: this.openmct.time.getClock() ? this.openmct.time.now() : undefined
     };
+  },
+  computed: {
+    timeTextValue() {
+      return `${moment.utc(this.timestamp).format(this.indicatorFormat)} ${
+        this.openmct.time.getTimeSystem().name
+      }`;
+    }
   },
   mounted() {
     this.tick = raf(this.tick);
     this.openmct.time.on('tick', this.tick);
-    this.tick(this.timeTextValue);
+    this.tick(this.timestamp);
   },
   beforeUnmount() {
     this.openmct.time.off('tick', this.tick);
   },
   methods: {
     tick(timestamp) {
-      this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} ${
-        this.openmct.time.getTimeSystem().name
-      }`;
+      this.timestamp = timestamp;
     }
   }
 };
