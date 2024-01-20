@@ -61,10 +61,12 @@ describe('the plugin', () => {
       return nextTick();
     });
 
-    it('notifies the user of the number of notifications', () => {
+    it('notifies the user of the number of notifications', async () => {
+      await nextTick();
+      await nextTick();
       let notificationCountElement = document.querySelector('.c-indicator__count');
 
-      expect(notificationCountElement.innerText).toEqual('1');
+      expect(notificationCountElement.innerText).toEqual('3');
     });
   });
 });

@@ -201,18 +201,23 @@ describe('The Clear Data Plugin:', () => {
       openmct.install(clearDataPlugin);
       appHolder = document.createElement('div');
       document.body.appendChild(appHolder);
-      openmct.on('start', done);
+      openmct.on('start', async () => {
+        await nextTick();
+        await nextTick();
+        done();
+      });
       openmct.start(appHolder);
     });
 
     it('installs', () => {
       const globalClearIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'global-clear-indicator'
-      ).element;
+      ).component;
       expect(globalClearIndicator).toBeDefined();
     });
 
     it('renders its major elements', async () => {
+      await nextTick();
       await nextTick();
       const indicatorClass = appHolder.querySelector('.c-indicator');
       const iconClass = appHolder.querySelector('.icon-clear-data');
@@ -225,14 +230,18 @@ describe('The Clear Data Plugin:', () => {
     });
 
     it('clicking the button fires the global clear', (done) => {
-      const indicatorLabel = appHolder.querySelector('.c-indicator__label');
-      const buttonElement = indicatorLabel.querySelector('button');
-      const clickEvent = createMouseEvent('click');
-      openmct.objectViews.on('clearData', () => {
-        // when we click the button, this event should fire
-        done();
+      nextTick().then(() => {
+        nextTick().then(() => {
+          const indicatorLabel = appHolder.querySelector('.c-indicator__label');
+          const buttonElement = indicatorLabel.querySelector('button');
+          const clickEvent = createMouseEvent('click');
+          openmct.objectViews.on('clearData', () => {
+            // when we click the button, this event should fire
+            done();
+          });
+          buttonElement.dispatchEvent(clickEvent);
+        });
       });
-      buttonElement.dispatchEvent(clickEvent);
     });
   });
 });
