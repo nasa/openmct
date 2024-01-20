@@ -37,7 +37,7 @@
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators class="l-shell__head-section l-shell__indicators" />
+      <StatusIndicators />
       <button
         class="l-shell__head__collapse-button c-icon-button"
         :class="

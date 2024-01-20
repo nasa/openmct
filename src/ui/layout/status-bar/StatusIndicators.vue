@@ -17,13 +17,24 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div></div>
+  <div class="l-shell__head-section l-shell__indicators">
+    <component
+      :is="indicator.value.component"
+      v-for="indicator in indicators"
+      :key="indicator.value.key"
+    />
+  </div>
 </template>
 
 <script>
+import { shallowRef } from 'vue';
 export default {
   inject: ['openmct'],
-
+  data() {
+    return {
+      indicators: []
+    };
+  },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
   },
@@ -34,7 +45,7 @@ export default {
   },
   methods: {
     addIndicator(indicator) {
-      this.$el.appendChild(indicator.element);
+      this.indicators.push(shallowRef(indicator));
     }
   }
 };

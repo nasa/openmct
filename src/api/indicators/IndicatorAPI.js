@@ -22,9 +22,12 @@
 
 import EventEmitter from 'EventEmitter';
 
+import wrapHtmlElement from '../../utils/wrapHtmlElement.js';
 import SimpleIndicator from './SimpleIndicator.js';
 
 class IndicatorAPI extends EventEmitter {
+  /** @type {import('../../../openmct.js').OpenMCT} */
+  openmct;
   constructor(openmct) {
     super();
 
@@ -43,6 +46,20 @@ class IndicatorAPI extends EventEmitter {
   }
 
   /**
+   * @typedef {import('vue').Component} VueComponent
+   */
+
+  /**
+   * @typedef {Object} Indicator
+   * @property {HTMLElement} [element]
+   * @property {VueComponent|Promise<VueComponent>} [component]
+   * @property {string} key
+   * @property {number} priority
+   */
+
+  /**
+   * TODO: Update this documentation
+   *
    * Accepts an indicator object, which is a simple object
    * with a two attributes: 'element' which has an HTMLElement
    * as its value, and 'priority' with an integer that specifies its order in the layout.
@@ -62,10 +79,14 @@ class IndicatorAPI extends EventEmitter {
    * myIndicator.text("Hello World!");
    * myIndicator.iconClass("icon-info");
    *
+   * @param {Indicator} indicator
    */
   add(indicator) {
     if (!indicator.priority) {
       indicator.priority = this.openmct.priority.DEFAULT;
+    }
+    if (!indicator.component) {
+      indicator.component = wrapHtmlElement(indicator.element);
     }
 
     this.indicatorObjects.push(indicator);
