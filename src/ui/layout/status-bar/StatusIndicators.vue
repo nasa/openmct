@@ -22,6 +22,7 @@
       :is="indicator.value.vueComponent"
       v-for="indicator in indicators"
       :key="indicator.value.key"
+      role="status"
     />
   </div>
 </template>

@@ -36,6 +36,8 @@ test.describe('Visual - Header @a11y', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    // Wait for status bar to load
+    await expect(page.getByRole('status')).toBeInViewport();
   });
 
   test('header sizing', async ({ page, theme }) => {
