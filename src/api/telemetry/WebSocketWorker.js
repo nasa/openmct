@@ -153,12 +153,10 @@ export default function installWorker() {
   class WorkerToWebSocketMessageBroker {
     #websocket;
     #messageBatcher;
-    #throttledTelemetryEmitter;
 
-    constructor(websocket, messageBatcher, throttledTelemetryEmitter) {
+    constructor(websocket, messageBatcher) {
       this.#websocket = websocket;
       this.#messageBatcher = messageBatcher;
-      this.#throttledTelemetryEmitter = throttledTelemetryEmitter;
     }
 
     routeMessageToHandler(message) {
@@ -176,8 +174,8 @@ export default function installWorker() {
         case 'setBatchingStrategy':
           this.setBatchingStrategy(message);
           break;
-        case 'setRate':
-          this.setRate(message);
+        case 'readyForNextBatch':
+          this.#messageBatcher.readyForNextBatch();
           break;
         case 'setMaxBatchSize':
           this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
@@ -193,10 +191,6 @@ export default function installWorker() {
     disconnect() {
       this.#websocket.disconnect();
     }
-    message(message) {
-      const { subscribeMessage } = message.data;
-      this.#websocket.enqueueMessage(subscribeMessage);
-    }
     setBatchingStrategy(message) {
       const { serializedStrategy } = message.data;
       const batchingStrategy = {
@@ -207,10 +201,6 @@ export default function installWorker() {
         // Will also include maximum batch length here
       };
       this.#messageBatcher.setBatchingStrategy(batchingStrategy);
-    }
-    setRate(message) {
-      const { rate } = message.data;
-      this.#throttledTelemetryEmitter.setRate(rate);
     }
   }
 
@@ -240,12 +230,17 @@ export default function installWorker() {
     #batch;
     #batchingStrategy;
     #hasBatch = false;
-    #maxBatchSize = 10;
+    #maxBatchSize;
+    #readyForNextBatch;
+    #worker;
 
-    constructor() {
-      this.resetBatch();
+    constructor(worker) {
+      this.#maxBatchSize = 10;
+      this.#readyForNextBatch = false;
+      this.#worker = worker;
+      this.#resetBatch();
     }
-    resetBatch() {
+    #resetBatch() {
       this.#batch = {};
       this.#hasBatch = false;
     }
@@ -270,73 +265,37 @@ export default function installWorker() {
         batch.shift();
         this.#batch.dropped = this.#batch.dropped || true;
       }
-      if (!this.#hasBatch) {
+      if (this.#readyForNextBatch) {
+        this.#sendNextBatch();
+      } else {
         this.#hasBatch = true;
       }
     }
     setMaxBatchSize(maxBatchSize) {
       this.#maxBatchSize = maxBatchSize;
     }
-    nextBatch() {
+    readyForNextBatch() {
+      if (this.#hasBatch) {
+        this.#sendNextBatch();
+      } else {
+        this.#readyForNextBatch = true;
+      }
+    }
+    #sendNextBatch() {
       const batch = this.#batch;
-      this.resetBatch();
-
-      return batch;
-    }
-    hasBatch() {
-      return this.#hasBatch;
-    }
-  }
-
-  class ThrottledTelemetryEmitter {
-    #rate;
-    #messageBatcher;
-    #worker;
-    #intervalHandle;
-
-    constructor(messageBatcher, worker) {
-      this.#messageBatcher = messageBatcher;
-      this.#worker = worker;
-    }
-
-    setRate(rate) {
-      this.#rate = rate;
-      this.#stop();
-      this.#start();
-    }
-
-    #start() {
-      if (this.#intervalHandle) {
-        return;
-      }
-
-      this.#intervalHandle = setInterval(() => {
-        if (this.#messageBatcher.hasBatch()) {
-          const batch = this.#messageBatcher.nextBatch();
-          this.#worker.postMessage({
-            type: 'batch',
-            batch
-          });
-        }
-      }, this.#rate);
-    }
-
-    #stop() {
-      if (this.#intervalHandle) {
-        clearInterval(this.#intervalHandle);
-        this.#intervalHandle = undefined;
-      }
+      this.#resetBatch();
+      this.#worker.postMessage({
+        type: 'batch',
+        batch
+      });
+      this.#readyForNextBatch = false;
+      this.#hasBatch = false;
     }
   }
 
   const websocket = new ResilientWebSocket();
   const messageBatcher = new MessageBatcher();
-  const throttledTelemetryEmitter = new ThrottledTelemetryEmitter(messageBatcher, self);
-  const workerBroker = new WorkerToWebSocketMessageBroker(
-    websocket,
-    messageBatcher,
-    throttledTelemetryEmitter
-  );
+  const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
   const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
 
   self.addEventListener('message', (message) => {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
-
+const DEFAULT_RATE_MS = 1000;
 /**
  * Describes the strategy to be used when batching WebSocket messages
  *
@@ -37,7 +37,6 @@ import installWorker from './WebSocketWorker.js';
  * function. The function should return a unique value on which to batch the
  * messages. For example a telemetry, channel, or parameter identifier.
  */
-
 /**
  * Provides a reliable and convenient WebSocket abstraction layer that handles
  * a lot of boilerplate common to managing WebSocket connections such as:
@@ -56,6 +55,7 @@ class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
+  #rate;
 
   constructor(openmct) {
     super();
@@ -66,6 +66,7 @@ class BatchingWebSocket extends EventTarget {
     this.#worker = new Worker(workerUrl);
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
+    this.#rate = DEFAULT_RATE_MS;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
@@ -79,6 +80,14 @@ class BatchingWebSocket extends EventTarget {
     this.#worker.postMessage({
       type: 'connect',
       url
+    });
+
+    this.#readyForNextBatch();
+  }
+
+  #readyForNextBatch() {
+    this.#worker.postMessage({
+      type: 'readyForNextBatch'
     });
   }
 
@@ -117,10 +126,7 @@ class BatchingWebSocket extends EventTarget {
    * @param {Number} rate the amount of time to wait, in ms, between batches.
    */
   setRate(rate) {
-    this.#worker.postMessage({
-      type: 'setRate',
-      rate
-    });
+    this.#rate = rate;
   }
 
   /**
@@ -158,6 +164,9 @@ class BatchingWebSocket extends EventTarget {
         return;
       }
       this.dispatchEvent(new CustomEvent('batch', { detail: message.data.batch }));
+      setTimeout(() => {
+        this.#readyForNextBatch();
+      }, this.#rate);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else {
