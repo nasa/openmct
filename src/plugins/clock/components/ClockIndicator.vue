@@ -22,6 +22,7 @@
 
 <template>
   <div
+    aria-label="Clock Indicator"
     class="c-indicator t-indicator-clock icon-clock no-minify c-indicator--not-clickable"
     role="complementary"
   >

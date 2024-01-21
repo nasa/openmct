@@ -33,7 +33,21 @@ test.describe('Fault Management Visual Tests', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Wait for status bar to load
-    await expect(page.getByRole('status')).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Clock Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Global Clear Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Snapshot Indicator'
+      })
+    ).toBeInViewport();
 
     await percySnapshot(page, `Fault Management icon appears in tree (theme: '${theme}')`);
   });

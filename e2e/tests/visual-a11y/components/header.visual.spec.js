@@ -26,7 +26,7 @@ Tests the branding associated with the default deployment. At least the about mo
 
 import percySnapshot from '@percy/playwright';
 
-import { scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
@@ -37,7 +37,21 @@ test.describe('Visual - Header @a11y', () => {
     //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     // Wait for status bar to load
-    await expect(page.getByRole('status')).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Clock Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Global Clear Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Snapshot Indicator'
+      })
+    ).toBeInViewport();
   });
 
   test('header sizing', async ({ page, theme }) => {
