@@ -58,8 +58,6 @@ class IndicatorAPI extends EventEmitter {
    */
 
   /**
-   * TODO: Update this documentation
-   *
    * Accepts an indicator object, which is a simple object
    * with a two attributes: 'element' which has an HTMLElement
    * as its value, and 'priority' with an integer that specifies its order in the layout.
@@ -78,6 +76,11 @@ class IndicatorAPI extends EventEmitter {
    *
    * myIndicator.text("Hello World!");
    * myIndicator.iconClass("icon-info");
+   *
+   * If you would like to use a Vue component, you can pass it in
+   * directly as the 'vueComponent' attribute of the indicator object.
+   * This accepts a Vue component or a promise that resolves to a Vue component (for asynchronous
+   * rendering).
    *
    * @param {Indicator} indicator
    */
