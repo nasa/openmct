@@ -294,7 +294,7 @@ export default function installWorker() {
   }
 
   const websocket = new ResilientWebSocket();
-  const messageBatcher = new MessageBatcher();
+  const messageBatcher = new MessageBatcher(self);
   const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
   const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
 

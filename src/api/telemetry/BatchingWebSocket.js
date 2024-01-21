@@ -161,7 +161,6 @@ class BatchingWebSocket extends EventTarget {
         notification.once('minimized', () => {
           this.#showingRateLimitNotification = false;
         });
-        return;
       }
       this.dispatchEvent(new CustomEvent('batch', { detail: message.data.batch }));
       setTimeout(() => {

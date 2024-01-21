@@ -23,7 +23,7 @@
 import objectUtils from 'objectUtils';
 
 import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
-import BatchingWebSocket from './BatchingWebSocketProvider.js';
+import BatchingWebSocket from './BatchingWebSocket.js';
 import DefaultMetadataProvider from './DefaultMetadataProvider.js';
 import TelemetryCollection from './TelemetryCollection.js';
 import TelemetryMetadataManager from './TelemetryMetadataManager.js';
