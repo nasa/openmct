@@ -50,7 +50,7 @@ describe('The Indicator API', () => {
 
   function generateVueIndicator(priority) {
     return {
-      component: defineComponent({
+      vueComponent: defineComponent({
         template: '<div class="test-indicator">This is a test indicator</div>'
       }),
       priority

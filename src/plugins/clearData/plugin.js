@@ -31,7 +31,7 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
   return function install(openmct) {
     if (installIndicator) {
       let indicator = {
-        component: defineAsyncComponent(() =>
+        vueComponent: defineAsyncComponent(() =>
           import('@/plugins/clearData/components/GlobalClearIndicator.vue')
         ),
         key: 'global-clear-indicator',

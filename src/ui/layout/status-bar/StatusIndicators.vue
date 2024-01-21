@@ -19,7 +19,7 @@
 <template>
   <div class="l-shell__head-section l-shell__indicators">
     <component
-      :is="indicator.value.component"
+      :is="indicator.value.vueComponent"
       v-for="indicator in indicators"
       :key="indicator.value.key"
     />

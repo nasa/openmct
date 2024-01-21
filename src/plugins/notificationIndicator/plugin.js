@@ -25,7 +25,7 @@ export default function plugin() {
   return function install(openmct) {
     let indicator = {
       key: 'notifications-indicator',
-      component: defineAsyncComponent(() =>
+      vueComponent: defineAsyncComponent(() =>
         import('@/plugins/notificationIndicator/components/NotificationIndicator.vue')
       ),
       priority: openmct.priority.DEFAULT

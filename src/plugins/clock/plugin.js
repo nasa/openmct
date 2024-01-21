@@ -92,7 +92,7 @@ export default function ClockPlugin(options) {
 
     if (options?.enableClockIndicator === true) {
       const indicator = {
-        component: defineAsyncComponent(() =>
+        vueComponent: defineAsyncComponent(() =>
           import('@/plugins/clock/components/ClockIndicator.vue')
         ),
         key: 'clock-indicator',

@@ -81,7 +81,7 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
   const indicator = {
-    component: defineAsyncComponent(() =>
+    vueComponent: defineAsyncComponent(() =>
       import('@/plugins/notebook/components/NotebookSnapshotIndicator.vue')
     ),
     key: 'notebook-snapshot-indicator',

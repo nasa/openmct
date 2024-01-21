@@ -22,7 +22,7 @@
 
 import EventEmitter from 'EventEmitter';
 
-import wrapHtmlElement from '../../utils/wrapHtmlElement.js';
+import vueWrapHtmlElement from '../../utils/vueWrapHtmlElement.js';
 import SimpleIndicator from './SimpleIndicator.js';
 
 class IndicatorAPI extends EventEmitter {
@@ -52,7 +52,7 @@ class IndicatorAPI extends EventEmitter {
   /**
    * @typedef {Object} Indicator
    * @property {HTMLElement} [element]
-   * @property {VueComponent|Promise<VueComponent>} [component]
+   * @property {VueComponent|Promise<VueComponent>} [vueComponent]
    * @property {string} key
    * @property {number} priority
    */
@@ -85,8 +85,8 @@ class IndicatorAPI extends EventEmitter {
     if (!indicator.priority) {
       indicator.priority = this.openmct.priority.DEFAULT;
     }
-    if (!indicator.component) {
-      indicator.component = wrapHtmlElement(indicator.element);
+    if (!indicator.vueComponent) {
+      indicator.vueComponent = vueWrapHtmlElement(indicator.element);
     }
 
     this.indicatorObjects.push(indicator);

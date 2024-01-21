@@ -349,7 +349,7 @@ describe('Notebook plugin:', () => {
     beforeEach(async () => {
       snapshotIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'notebook-snapshot-indicator'
-      ).component;
+      ).vueComponent;
 
       await nextTick();
       drawerElement = document.querySelector('.l-shell__drawer');

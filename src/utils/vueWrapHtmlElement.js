@@ -6,7 +6,7 @@ import { defineComponent, h, onMounted, ref } from 'vue';
  * @param {HTMLElement} element
  * @returns {import('vue').Component}
  */
-export default function wrapHtmlElement(element) {
+export default function vueWrapHtmlElement(element) {
   return defineComponent({
     setup() {
       const wrapper = ref(null);

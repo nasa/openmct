@@ -212,7 +212,7 @@ describe('The Clear Data Plugin:', () => {
     it('installs', () => {
       const globalClearIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'global-clear-indicator'
-      ).component;
+      ).vueComponent;
       expect(globalClearIndicator).toBeDefined();
     });
 

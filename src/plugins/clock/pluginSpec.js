@@ -220,7 +220,7 @@ describe('Clock plugin:', () => {
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
-      ).component;
+      ).vueComponent;
 
       const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
@@ -234,7 +234,7 @@ describe('Clock plugin:', () => {
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
-      ).component;
+      ).vueComponent;
       const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
       const clockIndicatorText = appHolder
