@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import { nextTick } from 'vue';
 
 import ClearDataPlugin from './plugin.js';
 
@@ -227,10 +226,7 @@ describe('The Clear Data Plugin:', () => {
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');
       const buttonElement = indicatorLabel.querySelector('button');
       const clickEvent = createMouseEvent('click');
-      openmct.objectViews.on('clearData', () => {
-        // when we click the button, this event should fire
-        done();
-      });
+      openmct.objectViews.on('clearData', done);
       buttonElement.dispatchEvent(clickEvent);
     });
   });

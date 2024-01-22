@@ -178,7 +178,7 @@ describe('Notebook plugin:', () => {
       testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
       testObjectProvider.create.and.returnValue(Promise.resolve(notebookViewObject));
       openmct.objects.addProvider('test-namespace', testObjectProvider);
-      testObjectProvider.observe.and.returnValue(() => { });
+      testObjectProvider.observe.and.returnValue(() => {});
       testObjectProvider.create.and.returnValue(Promise.resolve(true));
       testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
