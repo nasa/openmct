@@ -157,10 +157,10 @@ $colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
 $colorTimeFixedBtnBgMajor: #a09375;
 $colorTimeFixedBtnFgMajor: #fff;
 
-$colorTimeRealtime: #445890;
+$colorTimeRealtime: #6179d7;
 $colorTimeRealtimeBg: $colorTimeRealtime;
-$colorTimeRealtimeFg: #eee;
-$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeFg: #fff;
+$colorTimeRealtimeFgSubtle: #eee;
 $colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
 $colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
 $colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
@@ -421,6 +421,7 @@ $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+
 // Time Strip and Lists
 /*
 $colorCurrentBg: #5872bd;
@@ -432,10 +433,10 @@ $colorFutureBorder: $colorCurrentBorder;
  */
 
 // PASTED FROM ESPRESSO, MAY NEED TWEAKING
-$colorPastBg: #444;
+$colorPastBg: #aaa;
 $colorPastFg: pushBack($colorBodyFg, 10%);
 $colorPastFgEm: $colorBodyFg;
-$colorCurrentBg: #666;
+$colorCurrentBg: #ccc;
 $colorCurrentFg: $colorBodyFgEm;
 $colorCurrentFgEm: $colorBodyFgEm;
 $colorCurrentBorder: $colorBodyBg;

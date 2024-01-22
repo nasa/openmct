@@ -38,11 +38,7 @@
       <svg viewBox="0 0 100 100">
         <g class="c-tli__graphic__pie">
           <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
-          <path
-            id="svg-progress-path"
-            class="c-svg-progress__progress"
-            d="M 50 0 A 50 50 0 1 1 48.3 100 L 50 50 L 50 0 Z"
-          ></path>
+          <path id="svg-progress-path" class="c-svg-progress__progress"></path>
           <circle
             class="c-svg-progress__ticks"
             r="40"
