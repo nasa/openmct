@@ -34,26 +34,29 @@
         <div class="c-tli__end-time">{{ formattedItemValue.end }}</div>
       </div>
     </div>
-    <div class="c-tli__progress-pie">
-      <svg v-if="showProgressPie" viewBox="0 0 100 100" class="c-tli__progress-pie-svg">
-        <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
-        <path id="svg-progress-path" class="c-svg-progress__progress"></path>
-        <circle
-          class="c-svg-progress__ticks"
-          r="40"
-          cx="50"
-          cy="50"
-          stroke-dasharray="3 7.472"
-        ></circle>
-      </svg>
-
-      <svg v-if="showStatusIcon" viewBox="0 0 100 100" class="c-tli__icon-svg">
-        <path class="c-tli__icon-svg--check" d="M80 20L42.5 57.5L20 35V57.5L42.5 80L80 42.5V20Z" />
+    <div class="c-tli__graphic">
+      <svg viewBox="0 0 100 100">
+        <g class="c-tli__graphic__pie">
+          <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
+          <path
+            id="svg-progress-path"
+            class="c-svg-progress__progress"
+            d="M 50 0 A 50 50 0 1 1 48.3 100 L 50 50 L 50 0 Z"
+          ></path>
+          <circle
+            class="c-svg-progress__ticks"
+            r="40"
+            cx="50"
+            cy="50"
+            stroke-dasharray="3 7.472"
+          ></circle>
+        </g>
+        <path class="c-tli__graphic__check" d="M80 20L42.5 57.5L20 35V57.5L42.5 80L80 42.5V20Z" />
         <path
-          class="c-tli__icon-svg--alert-triangle"
+          class="c-tli__graphic__alert-triangle"
           d="M79.4533 70.3034L54.004 25.7641C51.8962 22.0786 48.4636 22.0786 46.3559 25.7641L20.8946 70.3034C18.7868 73.989 20.5332 77 24.7728 77H75.563C79.8146 77 81.561 73.989 79.4533 70.3034ZM54.028 73.1459H46.3198V65.4376H54.028V73.1459ZM55.3409 50.0211L53.0645 61.5835H47.2833L45.007 50.0211V34.6045H55.3529V50.0211H55.3409Z"
         />
-        <g class="c-tli__icon-svg--circle-slash">
+        <g class="c-tli__graphic__circle-slash">
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"
@@ -162,20 +165,6 @@ export default {
       });
 
       return itemValue;
-    },
-    showProgressPie() {
-      return (
-        this.itemState === ITEM_STATES.inProgress || this.itemState === ITEM_STATES.runningLong
-      );
-    },
-    showStatusIcon() {
-      return (
-        //this.itemState === ITEM_STATES.notStarted ||
-        this.itemState === ITEM_STATES.completed ||
-        this.itemState === ITEM_STATES.aborted ||
-        this.itemState === ITEM_STATES.skipped ||
-        this.itemState === ITEM_STATES.overdue
-      );
     },
     showTimeHero() {
       return !(
