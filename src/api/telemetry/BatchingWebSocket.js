@@ -70,6 +70,13 @@ class BatchingWebSocket extends EventTarget {
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
+    openmct.on(
+      'destroy',
+      () => {
+        this.disconnect();
+      },
+      { once: true }
+    );
   }
 
   /**
@@ -106,7 +113,7 @@ class BatchingWebSocket extends EventTarget {
   /**
    * Set the strategy used to both decide which raw messages to batch, and how to group
    * them.
-   * @param {BatchingStrategy} strategy The batching strategy to use when evaluating 
+   * @param {BatchingStrategy} strategy The batching strategy to use when evaluating
    * raw messages from the WebSocket.
    */
   setBatchingStrategy(strategy) {
@@ -146,6 +153,16 @@ class BatchingWebSocket extends EventTarget {
     this.#worker.postMessage({
       type: 'setMaxBatchSize',
       maxBatchSize
+    });
+  }
+
+  /**
+   * Disconnect the associated WebSocket. Generally speaking there is no need to call
+   * this manually.
+   */
+  disconnect() {
+    this.#worker.postMessage({
+      type: 'disconnect'
     });
   }
 

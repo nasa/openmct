@@ -23,6 +23,18 @@
 export default function installWorker() {
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
 
+  /**
+   * @typedef {import('./BatchingWebSocket').BatchingStrategy} BatchingStrategy
+   */
+
+  /**
+   * Provides a WebSocket connection that is resilient to errors and dropouts.
+   * On an error or dropout, will automatically reconnect.
+   *
+   * Additionally, messages will be queued and sent only when WebSocket is
+   * connected meaning that client code does not need to check the state of 
+   * the socket before sending.
+   */
   class ResilientWebSocket extends EventTarget {
     #webSocket;
     #isConnected = false;
@@ -33,6 +45,10 @@ export default function installWorker() {
     #messageCallbacks = [];
     #wsUrl;
 
+    /**
+     * Establish a new WebSocket connection to the given URL
+     * @param {String} url
+     */
     connect(url) {
       this.#wsUrl = url;
       if (this.#isConnected) {
@@ -70,7 +86,13 @@ export default function installWorker() {
       );
     }
 
-    //Do not use Event dispatching for this. Unnecessary overhead.
+    /**
+     * Register a callback to be invoked when a message is received on the WebSocket.
+     * This paradigm is used instead of the standard EventTarget or EventEmitter approach
+     * for performance reasons.
+     * @param {Function} callback The function to be invoked when a message is received
+     * @returns an unregister function
+     */
     registerMessageCallback(callback) {
       this.#messageCallbacks.push(callback);
 
@@ -99,6 +121,7 @@ export default function installWorker() {
     #message(event) {
       this.#messageCallbacks.forEach((callback) => callback(event.data));
     }
+
     disconnect() {
       this.#isConnected = false;
       this.#isConnecting = false;
@@ -150,6 +173,10 @@ export default function installWorker() {
     }
   }
 
+  /**
+   * Handles messages over the worker interface, and
+   * sends corresponding WebSocket messages.
+   */
   class WorkerToWebSocketMessageBroker {
     #websocket;
     #messageBatcher;
@@ -204,6 +231,10 @@ export default function installWorker() {
     }
   }
 
+  /**
+   * Received messages from the WebSocket, and passes them along to the
+   * Worker interface and back to the main thread.
+   */
   class WebSocketToWorkerMessageBroker {
     #worker;
     #messageBatcher;
@@ -226,6 +257,9 @@ export default function installWorker() {
     }
   }
 
+  /**
+   * Responsible for batching messages according to the defined batching strategy.
+   */
   class MessageBatcher {
     #batch;
     #batchingStrategy;
@@ -244,15 +278,34 @@ export default function installWorker() {
       this.#batch = {};
       this.#hasBatch = false;
     }
+    /**
+     * @param {BatchingStrategy} strategy
+     */
     setBatchingStrategy(strategy) {
       this.#batchingStrategy = strategy;
     }
+    /**
+     * Applies the `shouldBatchMessage` function from the supplied batching strategy
+     * to each message to determine if it should be added to a batch. If not batched,
+     * the message is immediately sent over the worker to the main thread.
+     * @param {any} message the message received from the WebSocket. See the WebSocket
+     * documentation for more details -
+     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
+     * @returns
+     */
     shouldBatchMessage(message) {
       return (
         this.#batchingStrategy.shouldBatchMessage &&
         this.#batchingStrategy.shouldBatchMessage(message)
       );
     }
+    /**
+     * Adds the given message to a batch. The batch group that the message is added
+     * to will be determined by the value returned by `getBatchIdFromMessage`.
+     * @param {any} message the message received from the WebSocket. See the WebSocket
+     * documentation for more details -
+     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
+     */
     addMessageToBatch(message) {
       const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
       let batch = this.#batch[batchId];
@@ -274,6 +327,12 @@ export default function installWorker() {
     setMaxBatchSize(maxBatchSize) {
       this.#maxBatchSize = maxBatchSize;
     }
+    /**
+     * Indicates that client code is ready to receive the next batch of
+     * messages. If a batch is available, it will be immediately sent.
+     * Otherwise a flag will be set to send the next batch as soon as
+     * any new data is available.
+     */
     readyForNextBatch() {
       if (this.#hasBatch) {
         this.#sendNextBatch();
