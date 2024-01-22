@@ -19,9 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { defineAsyncComponent } from 'vue';
-
 import ClearDataAction from './ClearDataAction.js';
+import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {
   let installIndicator = options.indicator;
@@ -31,9 +30,7 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
   return function install(openmct) {
     if (installIndicator) {
       let indicator = {
-        vueComponent: defineAsyncComponent(() =>
-          import('@/plugins/clearData/components/GlobalClearIndicator.vue')
-        ),
+        vueComponent: GlobalClearIndicator,
         key: 'global-clear-indicator',
         priority: openmct.priority.DEFAULT
       };

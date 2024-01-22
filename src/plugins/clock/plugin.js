@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import momentTimezone from 'moment-timezone';
-import { defineAsyncComponent } from 'vue';
 
 import ClockViewProvider from './ClockViewProvider.js';
+import ClockIndicator from './components/ClockIndicator.vue';
 
 export default function ClockPlugin(options) {
   return function install(openmct) {
@@ -92,9 +92,7 @@ export default function ClockPlugin(options) {
 
     if (options?.enableClockIndicator === true) {
       const indicator = {
-        vueComponent: defineAsyncComponent(() =>
-          import('@/plugins/clock/components/ClockIndicator.vue')
-        ),
+        vueComponent: ClockIndicator,
         key: 'clock-indicator',
         priority: openmct.priority.LOW
       };

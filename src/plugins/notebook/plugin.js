@@ -20,11 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { defineAsyncComponent } from 'vue';
-
 import { notebookImageMigration } from '../notebook/utils/notebook-migration.js';
 import CopyToNotebookAction from './actions/CopyToNotebookAction.js';
 import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction.js';
+import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 import {
   NOTEBOOK_BASE_INSTALLED,
@@ -81,9 +80,7 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
   const indicator = {
-    vueComponent: defineAsyncComponent(() =>
-      import('@/plugins/notebook/components/NotebookSnapshotIndicator.vue')
-    ),
+    vueComponent: NotebookSnapshotIndicator,
     key: 'notebook-snapshot-indicator',
     priority: openmct.priority.DEFAULT
   };

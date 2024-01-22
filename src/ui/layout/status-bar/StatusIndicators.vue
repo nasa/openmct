@@ -19,9 +19,9 @@
 <template>
   <div class="l-shell__head-section l-shell__indicators">
     <component
-      :is="indicator.vueComponent"
+      :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
-      :key="indicator.key"
+      :key="indicator.value.key"
       role="status"
     />
   </div>
@@ -33,7 +33,7 @@ export default {
   inject: ['openmct'],
   data() {
     return {
-      indicators: this.openmct.indicators.getIndicatorObjectsByPriority()
+      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
     };
   },
   computed: {
@@ -42,7 +42,7 @@ export default {
         return [];
       }
 
-      return [...this.indicators].sort((a, b) => b.priority - a.priority);
+      return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
   beforeUnmount() {
