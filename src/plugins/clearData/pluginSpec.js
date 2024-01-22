@@ -201,11 +201,7 @@ describe('The Clear Data Plugin:', () => {
       openmct.install(clearDataPlugin);
       appHolder = document.createElement('div');
       document.body.appendChild(appHolder);
-      openmct.on('start', async () => {
-        await nextTick();
-        await nextTick();
-        done();
-      });
+      openmct.on('start', done);
       openmct.start(appHolder);
     });
 
@@ -216,9 +212,7 @@ describe('The Clear Data Plugin:', () => {
       expect(globalClearIndicator).toBeDefined();
     });
 
-    it('renders its major elements', async () => {
-      await nextTick();
-      await nextTick();
+    it('renders its major elements', () => {
       const indicatorClass = appHolder.querySelector('.c-indicator');
       const iconClass = appHolder.querySelector('.icon-clear-data');
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');
