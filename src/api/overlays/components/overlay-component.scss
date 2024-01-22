@@ -28,6 +28,12 @@
     display: flex;
     flex-direction: column;
     padding: $overlayInnerMargin;
+    body.mobile & { // Centers the overlay dialog for mobile
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      justify-content: center;
+    }
   }
 
   &__close-button {
@@ -45,6 +51,9 @@
     flex-direction: column;
     outline: none;
     overflow: auto;
+    body.mobile & {
+      flex: none;
+    }
   }
 
   &__top-bar {
@@ -78,6 +87,9 @@
     display: flex;
     justify-content: flex-end;
     margin-top: $interiorMargin;
+    body.mobile & {
+      justify-content: center;
+    }
 
     > * + * {
       margin-left: $interiorMargin;
