@@ -178,7 +178,7 @@ describe('Notebook plugin:', () => {
       testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
       testObjectProvider.create.and.returnValue(Promise.resolve(notebookViewObject));
       openmct.objects.addProvider('test-namespace', testObjectProvider);
-      testObjectProvider.observe.and.returnValue(() => {});
+      testObjectProvider.observe.and.returnValue(() => { });
       testObjectProvider.create.and.returnValue(Promise.resolve(true));
       testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
@@ -374,8 +374,6 @@ describe('Notebook plugin:', () => {
     });
 
     it('snapshots container has class isExpanded', async () => {
-      await nextTick();
-      await nextTick();
       let classes = drawerElement.classList;
       const isExpandedBefore = classes.contains('is-expanded');
 
@@ -388,8 +386,6 @@ describe('Notebook plugin:', () => {
     });
 
     it('snapshots container does not have class isExpanded', async () => {
-      await nextTick();
-      await nextTick();
       let classes = drawerElement.classList;
       const isExpandedBefore = classes.contains('is-expanded');
 
@@ -407,8 +403,6 @@ describe('Notebook plugin:', () => {
     });
 
     it('show notebook snapshots container text', async () => {
-      await nextTick();
-      await nextTick();
       await clickSnapshotIndicator();
 
       const notebookSnapshots = drawerElement.querySelector('.l-browse-bar__object-name');

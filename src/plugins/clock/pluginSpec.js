@@ -216,7 +216,6 @@ describe('Clock plugin:', () => {
 
     it('exists', async () => {
       await setupClock(true);
-      // await nextTick();
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
@@ -229,8 +228,6 @@ describe('Clock plugin:', () => {
     it('contains text', async () => {
       await setupClock(true);
       await new Promise((resolve) => requestAnimationFrame(resolve));
-      await nextTick();
-      await nextTick();
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'

@@ -230,18 +230,14 @@ describe('The Clear Data Plugin:', () => {
     });
 
     it('clicking the button fires the global clear', (done) => {
-      nextTick().then(() => {
-        nextTick().then(() => {
-          const indicatorLabel = appHolder.querySelector('.c-indicator__label');
-          const buttonElement = indicatorLabel.querySelector('button');
-          const clickEvent = createMouseEvent('click');
-          openmct.objectViews.on('clearData', () => {
-            // when we click the button, this event should fire
-            done();
-          });
-          buttonElement.dispatchEvent(clickEvent);
-        });
+      const indicatorLabel = appHolder.querySelector('.c-indicator__label');
+      const buttonElement = indicatorLabel.querySelector('button');
+      const clickEvent = createMouseEvent('click');
+      openmct.objectViews.on('clearData', () => {
+        // when we click the button, this event should fire
+        done();
       });
+      buttonElement.dispatchEvent(clickEvent);
     });
   });
 });
