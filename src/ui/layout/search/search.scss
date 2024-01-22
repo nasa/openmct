@@ -28,6 +28,16 @@
       background: rgba($colorHeadFg, 0.2);
       box-shadow: none;
       flex: 1 1 auto;
+      // body.mobile & {
+      //   @include phonePortrait() { // This logic of expanding the search input upon click only happens in mobile portrait mode
+      //     background: $colorHeadBg;
+      //     width: 15%;
+      //     &:hover {
+      //       background-color: rgba($colorHeadFg, 0.2);
+      //       width: 100%;
+      //     }
+      //   }
+      // }
     }
   }
 
@@ -42,7 +52,7 @@
     z-index: 60;
     body.mobile & {
       min-width: 95vw;
-      max-height: 95vh;
+      min-height: 95vh;
     }
   }
 
@@ -59,6 +69,10 @@
     > * + * {
       margin-top: $interiorMarginLg;
     }
+    body.mobile & {
+      // Add a margin to results so we have room for the close button
+      width: 93%;
+    }
   }
 
   &__results-section {
@@ -69,6 +83,7 @@
 
   &__results-section-title {
     @include propertiesHeader();
+    width: 95%;
   }
 
   &__result-pane-msg {
@@ -77,8 +92,20 @@
     }
   }
 
+  &__results-close {
+    // Close button that appears for mobile only
+    display: none;
+    body.mobile & {
+      display: block;
+    }
+  }
+
   body.mobile & {
-    width: auto;
+    width: 50%;
+    @include phonePortrait() {
+      // This logic only appears for a mobile portrait mode
+      width: 100%;
+    }
   }
 }
 
@@ -150,5 +177,4 @@
   .c-tag {
     font-size: 0.9em;
   }
-
 }
