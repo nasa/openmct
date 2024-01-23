@@ -56,8 +56,8 @@
           {{ formatImageAltText }}
         </div>
         <div
-          role="button"
           ref="focusedImageWrapper"
+          role="button"
           class="image-wrapper"
           aria-label="Image Wrapper"
           :style="{
@@ -74,8 +74,8 @@
             :style="getVisibleLayerStyles(layer)"
           ></div>
           <img
-            aria-label="Focused Image"
             ref="focusedImage"
+            aria-label="Focused Image"
             class="c-imagery__main-image__image js-imageryView-image"
             :src="imageUrl"
             :draggable="!isSelectable"
