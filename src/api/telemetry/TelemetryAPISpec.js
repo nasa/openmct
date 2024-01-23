@@ -90,7 +90,9 @@ describe('Telemetry API', () => {
 
       const callback = jasmine.createSpy('callback');
       const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
-      expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(domainObject);
+      expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(domainObject, {
+        strategy: 'latest'
+      });
       expect(telemetryProvider.subscribe).not.toHaveBeenCalled();
       expect(unsubscribe).toEqual(jasmine.any(Function));
 
@@ -111,12 +113,16 @@ describe('Telemetry API', () => {
       const callback = jasmine.createSpy('callback');
       const unsubscribe = telemetryAPI.subscribe(domainObject, callback);
       expect(telemetryProvider.supportsSubscribe.calls.count()).toBe(1);
-      expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(domainObject);
+      expect(telemetryProvider.supportsSubscribe).toHaveBeenCalledWith(domainObject, {
+        strategy: 'latest'
+      });
       expect(telemetryProvider.subscribe.calls.count()).toBe(1);
       expect(telemetryProvider.subscribe).toHaveBeenCalledWith(
         domainObject,
         jasmine.any(Function),
-        undefined
+        {
+          strategy: 'latest'
+        }
       );
 
       const notify = telemetryProvider.subscribe.calls.mostRecent().args[1];
