@@ -283,7 +283,7 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
  * @param {string} url the url to the object
  */
 async function openObjectTreeContextMenu(page, url) {
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.goto(url);
   await page.getByLabel('Show selected item in tree').click();
   await page.locator('.is-navigated-object').click({
     button: 'right'
