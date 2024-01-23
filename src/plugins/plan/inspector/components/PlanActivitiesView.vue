@@ -113,7 +113,7 @@ export default {
       );
     },
     setActivityStates() {
-      this.persistedActivityStates = { ...this.activityStatesObject.activities };
+      this.persistedActivityStates = this.activityStatesObject.activities;
     },
     setFormatters() {
       let timeSystem = this.openmct.time.timeSystem();
