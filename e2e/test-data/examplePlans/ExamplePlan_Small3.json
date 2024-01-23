@@ -6,7 +6,8 @@
       "end": 1660343797000,
       "type": "Group 1",
       "color": "orange",
-      "textColor": "white"
+      "textColor": "white",
+      "id": 1
     },
     {
       "name": "Time until supper",
@@ -14,7 +15,8 @@
       "end": 1650420410000,
       "type": "Group 2",
       "color": "blue",
-      "textColor": "white"
+      "textColor": "white",
+      "id": 2
     }
   ],
   "Group 2": [
@@ -24,7 +26,8 @@
       "end": 1650320102001,
       "type": "Group 2",
       "color": "green",
-      "textColor": "white"
+      "textColor": "white",
+      "id": 3
     },
     {
       "name": "Time since last accident",
@@ -32,7 +35,8 @@
       "end": 1650320102002,
       "type": "Group 1",
       "color": "yellow",
-      "textColor": "white"
+      "textColor": "white",
+      "id": 4
     }
   ]
 }

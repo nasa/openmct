@@ -26,11 +26,23 @@
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <div class="c-inspect-properties__row">
         <div class="c-inspect-properties__label" title="Status">Status</div>
-        <div class="c-inspect-properties__value">{{ statusLabel }}</div>
+        <div class="c-inspect-properties__value" aria-label="Activity Status Label">
+          {{ statusLabel }}
+        </div>
       </div>
       <form name="activityStatus" class="span-all">
-        <select v-model="currentStatusKey" name="setActivityStatus" @change="changeActivityStatus">
-          <option v-for="status in activityStates" :key="status.key" :value="status.key">
+        <select
+          v-model="currentStatusKey"
+          name="setActivityStatus"
+          aria-label="Activity Status"
+          @change="changeActivityStatus"
+        >
+          <option
+            v-for="status in activityStates"
+            :key="status.key"
+            :value="status.key"
+            :aria-selected="currentStatusKey === status.key"
+          >
             {{ status.label }}
           </option>
         </select>
