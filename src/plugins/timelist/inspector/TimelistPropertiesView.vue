@@ -33,15 +33,10 @@
           <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
           <div class="c-inspect-properties__value">
             <select v-if="canEdit" v-model="isExpanded" @change="updateExpandedView()">
-              <option
-                v-for="(displayStyleOption, index) in displayStyleOptions"
-                :key="index"
-                :value="displayStyleOption.key"
-              >
-                {{ displayStyleOption.label }}
-              </option>
+              <option :key="'expanded-view-option-enabled'" :value="true">Expanded</option>
+              <option :key="'expanded-view-option-disabled'" :value="false">Compact</option>
             </select>
-            <span v-else>{{ displayOptionsLabel }}</span>
+            <span v-else>{{ isExpanded ? 'Expanded' : 'Compact' }}</span>
           </div>
         </li>
         <li class="c-inspect-properties__row">
@@ -91,17 +86,6 @@ const EVENT_TYPES = [
   }
 ];
 
-const DISPLAY_STYLES = [
-  {
-    key: false,
-    label: 'Compact'
-  },
-  {
-    key: true,
-    label: 'Expanded'
-  }
-];
-
 export default {
   components: {
     Filtering,
@@ -112,16 +96,12 @@ export default {
     return {
       sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
       sortOrderOptions: SORT_ORDER_OPTIONS,
-      displayStyleOptions: DISPLAY_STYLES,
       eventTypes: EVENT_TYPES,
       isEditing: this.openmct.editor.isEditing(),
       isExpanded: this.domainObject.configuration.isExpanded || false
     };
   },
   computed: {
-    displayOptionsLabel() {
-      return this.isExpanded ? DISPLAY_STYLES[1].label : DISPLAY_STYLES[0].label;
-    },
     canEdit() {
       return this.isEditing && !this.domainObject.locked;
     }

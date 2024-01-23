@@ -597,11 +597,11 @@ export default {
       const property = data.property;
       const direction = data.direction;
 
-      if (this.sortBy === property) {
-        this.ascending = !this.ascending;
+      if (this.defaultSort.property === property) {
+        this.defaultSort.defaultDirection = !this.defaultSort.defaultDirection;
       } else {
-        this.sortBy = property;
-        this.ascending = direction;
+        this.defaultSort.property = property;
+        this.defaultSort.defaultDirection = direction;
       }
     }
   }
