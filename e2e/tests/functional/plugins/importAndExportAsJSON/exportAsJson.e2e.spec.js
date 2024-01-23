@@ -37,7 +37,7 @@ test.describe('ExportAsJSON', () => {
   let folder;
   test.beforeEach(async ({ page }) => {
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./');
     // Perform actions to create the domain object
     folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
