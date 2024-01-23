@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Dialog from './Dialog';
-import Overlay from './Overlay';
-import ProgressDialog from './ProgressDialog';
-import Selection from './Selection';
+import Dialog from './Dialog.js';
+import Overlay from './Overlay.js';
+import ProgressDialog from './ProgressDialog.js';
+import Selection from './Selection.js';
 
 /**
  * The OverlayAPI is responsible for pre-pending templates to
@@ -82,14 +82,17 @@ class OverlayAPI {
   }
 
   /**
-   * A description of option properties that can be passed into the overlay
-   * @typedef options
-   * @property {object} element DOMElement that is to be inserted/shown on the overlay
-   * @property {string} size preferred size of the overlay (large, small, fit)
-   * @property {array} buttons optional button objects with label and callback properties
-   * @property {function} onDestroy callback to be called when overlay is destroyed
-   * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
-   * from overlay. Unless set to false, all overlays will be dismissable by default.
+   * Creates and displays an overlay with the specified options.
+   *
+   * @typedef {Object} OverlayOptions
+   * @property {HTMLElement} element The DOM Element to be inserted or shown in the overlay.
+   * @property {'large'|'small'|'fit'} size The preferred size of the overlay.
+   * @property {Array<{label: string, callback: Function}>} [buttons] Optional array of button objects, each with 'label' and 'callback' properties.
+   * @property {Function} onDestroy Callback to be called when the overlay is destroyed.
+   * @property {boolean} [dismissable=true] Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
+   *
+   * @param {OverlayOptions} options - The configuration options for the overlay.
+   * @returns {Overlay} An instance of the Overlay class.
    */
   overlay(options) {
     let overlay = new Overlay(options);

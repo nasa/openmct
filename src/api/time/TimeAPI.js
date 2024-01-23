@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '@/api/time/constants';
 import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 
-import GlobalTimeContext from './GlobalTimeContext';
+import GlobalTimeContext from './GlobalTimeContext.js';
 
 /**
  * The public API for setting and querying the temporal state of the

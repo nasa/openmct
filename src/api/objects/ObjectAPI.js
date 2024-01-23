@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,13 +23,13 @@
 import EventEmitter from 'EventEmitter';
 import utils from 'objectUtils';
 
-import ConflictError from './ConflictError';
-import InMemorySearchProvider from './InMemorySearchProvider';
-import InterceptorRegistry from './InterceptorRegistry';
-import MutableDomainObject from './MutableDomainObject';
-import RootObjectProvider from './RootObjectProvider';
-import RootRegistry from './RootRegistry';
-import Transaction from './Transaction';
+import ConflictError from './ConflictError.js';
+import InMemorySearchProvider from './InMemorySearchProvider.js';
+import InterceptorRegistry from './InterceptorRegistry.js';
+import MutableDomainObject from './MutableDomainObject.js';
+import RootObjectProvider from './RootObjectProvider.js';
+import RootRegistry from './RootRegistry.js';
+import Transaction from './Transaction.js';
 
 /**
  * Uniquely identifies a domain object.

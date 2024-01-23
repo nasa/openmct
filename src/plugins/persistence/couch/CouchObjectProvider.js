@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,9 @@
 import _ from 'lodash';
 
 import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
-import CouchDocument from './CouchDocument';
-import CouchObjectQueue from './CouchObjectQueue';
-import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import CouchDocument from './CouchDocument.js';
+import CouchObjectQueue from './CouchObjectQueue.js';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator.js';
 
 const REV = '_rev';
 const ID = '_id';

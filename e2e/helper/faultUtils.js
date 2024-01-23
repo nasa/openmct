@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,14 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
-const path = require('path');
+import { fileURLToPath } from 'url';
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithExample(page) {
-  await page.addInitScript({ path: path.join(__dirname, './', 'addInitExampleFaultProvider.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitExampleFaultProvider.js', import.meta.url))
+  });
 
   await navigateToFaultItemInTree(page);
 }
@@ -36,7 +37,7 @@ async function navigateToFaultManagementWithExample(page) {
  */
 async function navigateToFaultManagementWithStaticExample(page) {
   await page.addInitScript({
-    path: path.join(__dirname, './', 'addInitExampleFaultProviderStatic.js')
+    path: fileURLToPath(new URL('./addInitExampleFaultProviderStatic.js', import.meta.url))
   });
 
   await navigateToFaultItemInTree(page);
@@ -46,7 +47,9 @@ async function navigateToFaultManagementWithStaticExample(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function navigateToFaultManagementWithoutExample(page) {
-  await page.addInitScript({ path: path.join(__dirname, './', 'addInitFaultManagementPlugin.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitFaultManagementPlugin.js', import.meta.url))
+  });
 
   await navigateToFaultItemInTree(page);
 }
@@ -265,29 +268,28 @@ async function openFaultRowMenu(page, rowNumber) {
     .click();
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
-  navigateToFaultManagementWithExample,
-  navigateToFaultManagementWithStaticExample,
-  navigateToFaultManagementWithoutExample,
-  navigateToFaultItemInTree,
+export {
   acknowledgeFault,
-  shelveMultipleFaults,
   acknowledgeMultipleFaults,
-  shelveFault,
   changeViewTo,
-  sortFaultsBy,
-  enterSearchTerm,
   clearSearch,
-  selectFaultItem,
-  getHighestSeverity,
-  getLowestSeverity,
-  getFaultResultCount,
+  enterSearchTerm,
   getFault,
   getFaultByName,
   getFaultName,
-  getFaultSeverity,
   getFaultNamespace,
+  getFaultResultCount,
+  getFaultSeverity,
   getFaultTriggerTime,
-  openFaultRowMenu
+  getHighestSeverity,
+  getLowestSeverity,
+  navigateToFaultItemInTree,
+  navigateToFaultManagementWithExample,
+  navigateToFaultManagementWithoutExample,
+  navigateToFaultManagementWithStaticExample,
+  openFaultRowMenu,
+  selectFaultItem,
+  shelveFault,
+  shelveMultipleFaults,
+  sortFaultsBy
 };

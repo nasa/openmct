@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -46,18 +46,26 @@
         @start-pan="startPan"
         @toggle-layer-visibility="toggleLayerVisibility"
       />
-      <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
+      <div
+        ref="imageBG"
+        class="c-imagery__main-image__bg"
+        aria-label="Background Image"
+        role="button"
+      >
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
           {{ formatImageAltText }}
         </div>
         <div
+          role="button"
           ref="focusedImageWrapper"
           class="image-wrapper"
+          aria-label="Image Wrapper"
           :style="{
             width: `${sizedImageWidth}px`,
             height: `${sizedImageHeight}px`
           }"
           @mousedown="handlePanZoomClick"
+          @dblclick="expand"
         >
           <div
             v-for="(layer, index) in visibleLayers"
@@ -66,6 +74,7 @@
             :style="getVisibleLayerStyles(layer)"
           ></div>
           <img
+            aria-label="Focused Image"
             ref="focusedImage"
             class="c-imagery__main-image__image js-imageryView-image"
             :src="imageUrl"
@@ -204,14 +213,14 @@ import _ from 'lodash';
 import moment from 'moment';
 import { nextTick } from 'vue';
 
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
-import imageryData from '../../imagery/mixins/imageryData';
-import eventHelpers from '../lib/eventHelpers';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
+import imageryData from '../../imagery/mixins/imageryData.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
 import Compass from './Compass/CompassComponent.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
-import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry.js';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;

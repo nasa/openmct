@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -166,8 +166,8 @@ import { debounce } from 'lodash';
 import Search from '@/ui/components/SearchComponent.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
-import objectLink from '../../../ui/mixins/object-link';
-import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+import objectLink from '../../../ui/mixins/object-link.js';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants.js';
 import {
   addNotebookEntry,
   createNewEmbed,
@@ -176,18 +176,18 @@ import {
   getNotebookEntries,
   mutateObject,
   selectEntry
-} from '../utils/notebook-entries';
+} from '../utils/notebook-entries.js';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
-} from '../utils/notebook-image';
+} from '../utils/notebook-image.js';
 import {
   clearDefaultNotebook,
   getDefaultNotebook,
   setDefaultNotebook,
   setDefaultNotebookPageId,
   setDefaultNotebookSectionId
-} from '../utils/notebook-storage';
+} from '../utils/notebook-storage.js';
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './SidebarComponent.vue';

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants';
+import { FAULT_MANAGEMENT_INSPECTOR, FAULT_MANAGEMENT_TYPE } from './constants.js';
 import FaultManagementInspector from './FaultManagementInspector.vue';
 
 export default function FaultManagementInspectorViewProvider(openmct) {

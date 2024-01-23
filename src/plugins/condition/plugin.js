@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,9 @@
  *****************************************************************************/
 import { v4 as uuid } from 'uuid';
 
-import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
-import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
-import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
+import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy.js';
+import ConditionSetMetadataProvider from './ConditionSetMetadataProvider.js';
+import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider.js';
 import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 
 export default function ConditionPlugin() {

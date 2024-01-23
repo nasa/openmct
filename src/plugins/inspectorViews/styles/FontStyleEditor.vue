@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,13 +24,18 @@
     <div ref="fontSizeMenu" class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-icon-button c-button--menu icon-font-size"
+        aria-label="Set Font Size"
         @click.prevent.stop="showFontSizeMenu"
       >
         <span class="c-button__label">{{ fontSizeLabel }}</span>
       </button>
     </div>
     <div ref="fontMenu" class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-      <button class="c-icon-button c-button--menu icon-font" @click.prevent.stop="showFontMenu">
+      <button
+        class="c-icon-button c-button--menu icon-font"
+        aria-label="Set Font Type"
+        @click.prevent.stop="showFontMenu"
+      >
         <span class="c-button__label">{{ fontTypeLabel }}</span>
       </button>
     </div>
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import { FONT_SIZES, FONTS } from './constants';
+import { FONT_SIZES, FONTS } from './constants.js';
 
 export default {
   inject: ['openmct'],

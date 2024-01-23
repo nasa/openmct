@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -54,7 +54,11 @@
           :class="[tab.status ? `is-status--${tab.status}` : '']"
         >
           <div class="c-object-label__type-icon" :class="tab.type.definition.cssClass">
-            <span class="is-status__indicator" :title="`This item is ${tab.status}`"></span>
+            <span
+              class="is-status__indicator"
+              :aria-label="`This item is ${tab.status}`"
+              :title="`This item is ${tab.status}`"
+            ></span>
           </div>
           <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
         </div>
@@ -85,7 +89,7 @@
 <script>
 import _ from 'lodash';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
 

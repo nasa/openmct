@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@
  *
  */
 
-const { test, expect } = require('../../pluginFixtures');
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
   test.use({ failOnConsoleError: false });

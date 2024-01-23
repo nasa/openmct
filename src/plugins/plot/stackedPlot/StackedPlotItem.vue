@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,21 +20,46 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div :aria-label="`Stacked Plot Item ${childObject.name}`"></div>
+  <div :aria-label="`Stacked Plot Item ${childObject.name}`">
+    <Plot
+      ref="plotComponent"
+      :hide-legend="hideLegend"
+      :limit-line-labels="showLimitLineLabels"
+      :grid-lines="gridLines"
+      :cursor-guide="cursorGuide"
+      :parent-y-tick-width="parentYTickWidth"
+      :options="options"
+      :color-palette="colorPalette"
+      :class="isStale && 'is-stale'"
+      @config-loaded="onConfigLoaded"
+      @lock-highlight-point="onLockHighlightPointUpdated"
+      @highlights="onHighlightsUpdated"
+      @plot-y-tick-width="onYTickWidthChange"
+      @cursor-guide="onCursorGuideChange"
+      @grid-lines="onGridLinesChange"
+    />
+  </div>
 </template>
 <script>
-import mount from 'utils/mount';
-
 import configStore from '@/plugins/plot/configuration/ConfigStore';
 import PlotConfigurationModel from '@/plugins/plot/configuration/PlotConfigurationModel';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
 import Plot from '../PlotView.vue';
-import conditionalStylesMixin from './mixins/objectStyles-mixin';
+import conditionalStylesMixin from './mixins/objectStyles-mixin.js';
 
 export default {
+  components: {
+    Plot
+  },
   mixins: [conditionalStylesMixin, stalenessMixin],
   inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  provide() {
+    return {
+      openmct: this.openmct,
+      domainObject: this.childObject
+    };
+  },
   props: {
     childObject: {
       type: Object,
@@ -97,37 +122,6 @@ export default {
     'grid-lines',
     'plot-y-tick-width'
   ],
-  data() {
-    return {
-      staleObjects: []
-    };
-  },
-  watch: {
-    gridLines(newGridLines) {
-      this.updateComponentProp('gridLines', newGridLines);
-    },
-    cursorGuide(newCursorGuide) {
-      this.updateComponentProp('cursorGuide', newCursorGuide);
-    },
-    parentYTickWidth(width) {
-      this.updateComponentProp('parentYTickWidth', width);
-    },
-    showLimitLineLabels: {
-      handler(data) {
-        this.updateComponentProp('limitLineLabels', data);
-      },
-      deep: true
-    },
-    hideLegend(newHideLegend) {
-      this.updateComponentProp('hideLegend', newHideLegend);
-    },
-    staleObjects: {
-      handler() {
-        this.updateComponentProp('isStale', this.isStale);
-      },
-      deep: true
-    }
-  },
   mounted() {
     this.updateView();
     this.isEditing = this.openmct.editor.isEditing();
@@ -167,39 +161,12 @@ export default {
         }
       }
     },
-
-    updateComponentProp(prop, value) {
-      if (this.component) {
-        this.component[prop] = value;
-      }
-    },
     updateView() {
-      if (this._destroy) {
-        this._destroy();
-        this.component = null;
-        this.$el.innerHTML = '';
-      }
-
-      const onYTickWidthChange = this.onYTickWidthChange;
-      const onLockHighlightPointUpdated = this.onLockHighlightPointUpdated;
-      const onHighlightsUpdated = this.onHighlightsUpdated;
-      const onConfigLoaded = this.onConfigLoaded;
-      const onCursorGuideChange = this.onCursorGuideChange;
-      const onGridLinesChange = this.onGridLinesChange;
-
-      const openmct = this.openmct;
-      const path = this.path;
-
       //If this object is not persistable, then package it with it's parent
       const object = this.getPlotObject();
 
-      const getProps = this.getProps;
-      const isMissing = openmct.objects.isMissing(object);
-
       if (this.openmct.telemetry.isTelemetryObject(object)) {
-        this.subscribeToStaleness(object, (stalenessResponse) => {
-          this.updateComponentProp('isStale', stalenessResponse.isStale);
-        });
+        this.subscribeToStaleness(object);
       } else {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(object);
@@ -208,61 +175,6 @@ export default {
         this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
         this.composition.load();
       }
-
-      const { vNode, destroy } = mount(
-        {
-          components: {
-            Plot
-          },
-          provide: {
-            openmct,
-            domainObject: object,
-            path,
-            renderWhenVisible: this.renderWhenVisible
-          },
-          data() {
-            return {
-              ...getProps(),
-              onYTickWidthChange,
-              onLockHighlightPointUpdated,
-              onHighlightsUpdated,
-              onConfigLoaded,
-              onCursorGuideChange,
-              onGridLinesChange,
-              isMissing,
-              loading: false
-            };
-          },
-          methods: {
-            loadingUpdated(loaded) {
-              this.loading = loaded;
-            }
-          },
-          template: `
-                  <Plot ref="plotComponent" v-if="!isMissing"
-                      :class="{'is-stale': isStale}"
-                      :grid-lines="gridLines"
-                      :hide-legend="hideLegend"
-                      :cursor-guide="cursorGuide"
-                      :parent-limit-line-labels="limitLineLabels"
-                      :options="options"
-                      :parent-y-tick-width="parentYTickWidth"
-                      :color-palette="colorPalette"
-                      @loading-updated="loadingUpdated"
-                      @config-loaded="onConfigLoaded"
-                      @lock-highlight-point="onLockHighlightPointUpdated"
-                      @highlights="onHighlightsUpdated"
-                      @plot-y-tick-width="onYTickWidthChange"
-                      @cursor-guide="onCursorGuideChange"
-                      @grid-lines="onGridLinesChange"/>`
-        },
-        {
-          app: this.openmct.app,
-          element: this.$el
-        }
-      );
-      this.component = vNode.componentInstance;
-      this._destroy = destroy;
 
       if (this.isEditing) {
         this.setSelection();
@@ -296,20 +208,8 @@ export default {
 
       this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
     },
-    getProps() {
-      return {
-        hideLegend: this.hideLegend,
-        limitLineLabels: this.showLimitLineLabels,
-        gridLines: this.gridLines,
-        cursorGuide: this.cursorGuide,
-        parentYTickWidth: this.parentYTickWidth,
-        options: this.options,
-        colorPalette: this.colorPalette,
-        isStale: this.isStale
-      };
-    },
     getPlotObject() {
-      if (this.childObject.configuration && this.childObject.configuration.series) {
+      if (this.childObject.configuration?.series) {
         //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
         return this.childObject;
       } else {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceClassifier from './DeviceClassifier';
-import DeviceMatchers from './DeviceMatchers';
+import DeviceClassifier from './DeviceClassifier.js';
+import DeviceMatchers from './DeviceMatchers.js';
 
 const AGENT_METHODS = ['isMobile', 'isPhone', 'isTablet', 'isPortrait', 'isLandscape', 'isTouch'];
 const TEST_PERMUTATIONS = [

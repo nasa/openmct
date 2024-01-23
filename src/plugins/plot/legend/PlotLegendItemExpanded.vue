@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -79,8 +79,8 @@ import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
 import eventHelpers from '@/plugins/plot/lib/eventHelpers';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import configStore from '../configuration/ConfigStore';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import configStore from '../configuration/ConfigStore.js';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],

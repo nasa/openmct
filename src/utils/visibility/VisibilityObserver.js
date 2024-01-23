@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,9 +40,9 @@ export default class VisibilityObserver {
     }
     this.#element = element;
     this.isIntersecting = true;
+    this.calledOnce = false;
 
     this.#observer = new IntersectionObserver(this.#observerCallback);
-    this.#observer.observe(this.#element);
     this.lastUnfiredFunc = null;
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
@@ -66,7 +66,12 @@ export default class VisibilityObserver {
    * @returns {boolean} True if the function was executed immediately, false otherwise.
    */
   renderWhenVisible(func) {
-    if (this.isIntersecting) {
+    if (!this.calledOnce) {
+      this.calledOnce = true;
+      this.#observer.observe(this.#element);
+      window.requestAnimationFrame(func);
+      return true;
+    } else if (this.isIntersecting) {
       window.requestAnimationFrame(func);
       return true;
     } else {

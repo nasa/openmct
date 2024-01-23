@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -55,7 +55,7 @@
 
 <script>
 import AutoCompleteField from '../../../../api/forms/components/controls/AutoCompleteField.vue';
-import TagEditorClassNames from './TagEditorClassNames';
+import TagEditorClassNames from './TagEditorClassNames.js';
 
 export default {
   components: {

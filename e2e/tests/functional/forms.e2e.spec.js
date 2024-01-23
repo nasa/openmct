@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,15 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const genUuid = require('uuid').v4;
-const path = require('path');
+import { fileURLToPath } from 'url';
+import { v4 as genUuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const TEST_FOLDER = 'test folder';
 const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
@@ -40,8 +41,8 @@ test.describe('Form Validation Behavior', () => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
-    await page.getByRole('menuitem', { name: ' Folder' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
+    await page.getByRole('menuitem', { name: 'Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
     await page.click('text=Properties Title Notes >> input[type="text"]');
@@ -72,14 +73,14 @@ test.describe('Form Validation Behavior', () => {
 test.describe('Form File Input Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js')
+      path: fileURLToPath(new URL('../../helper/addInitFileInputObject.js', import.meta.url))
     });
   });
 
   test('Can select a JSON file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', jsonFilePath);
@@ -93,7 +94,7 @@ test.describe('Form File Input Behavior', () => {
   test('Can select an image file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', imageFilePath);
@@ -109,7 +110,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addNoneditableObject.js')
+      path: fileURLToPath(new URL('../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 
@@ -120,7 +121,7 @@ test.describe('Persistence operations @addInit', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.click('text=Condition Set');
 
@@ -157,7 +158,7 @@ test.describe('Persistence operations @couchdb', () => {
     });
 
     // Open the edit form for the clock object
-    await page.click('button[title="More options"]');
+    await page.click('button[title="More actions"]');
     await page.click('li[title="Edit properties of this object."]');
 
     // Modify the display format from default 12hr -> 24hr and click 'Save'

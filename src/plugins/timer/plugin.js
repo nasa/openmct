@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PauseTimerAction from './actions/PauseTimerAction';
-import RestartTimerAction from './actions/RestartTimerAction';
-import StartTimerAction from './actions/StartTimerAction';
-import StopTimerAction from './actions/StopTimerAction';
-import TimerViewProvider from './TimerViewProvider';
+import PauseTimerAction from './actions/PauseTimerAction.js';
+import RestartTimerAction from './actions/RestartTimerAction.js';
+import StartTimerAction from './actions/StartTimerAction.js';
+import StopTimerAction from './actions/StopTimerAction.js';
+import TimerViewProvider from './TimerViewProvider.js';
 
 export default function TimerPlugin() {
   return function install(openmct) {

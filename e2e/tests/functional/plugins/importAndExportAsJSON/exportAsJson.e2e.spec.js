@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 // FIXME: Remove this eslint exception once tests are implemented
 // eslint-disable-next-line no-unused-vars
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('ExportAsJSON', () => {
   test.fixme(

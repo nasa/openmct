@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,7 +24,7 @@
     <input
       class="c-search__input"
       aria-label="Search Input"
-      tabindex="10000"
+      tabindex="0"
       type="search"
       :value="value"
       v-bind="$attrs"

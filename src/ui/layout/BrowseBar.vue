@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -71,6 +71,7 @@
           v-for="(item, index) in statusBarItems"
           :key="index"
           class="c-button"
+          :aria-label="item.name"
           :title="item.name"
           :class="item.cssClass"
           @click="item.onItemClicked"
@@ -78,6 +79,7 @@
 
         <button
           v-if="isViewEditable & !isEditing"
+          :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
             'c-button icon-lock': domainObject.locked,
@@ -89,8 +91,8 @@
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
           class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
-          title="Edit"
-          aria-label="Edit"
+          title="Edit Object"
+          aria-label="Edit Object"
           @click="edit()"
         ></button>
 
@@ -123,12 +125,14 @@
         <button
           v-if="isEditing"
           class="l-browse-bar__actions c-button icon-x"
+          aria-label="Cancel Editing"
           title="Cancel Editing"
           @click="promptUserandCancelEditing()"
         ></button>
         <button
           class="l-browse-bar__actions c-icon-button icon-3-dots"
-          title="More options"
+          title="More actions"
+          aria-label="More actions"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
       </div>
@@ -142,7 +146,7 @@ import { toRaw } from 'vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import { SupportedViewTypes } from '../../utils/constants.js';
 import ViewSwitcher from './ViewSwitcher.vue';
 
@@ -361,6 +365,10 @@ export default {
         iconClass: 'info',
         title: 'Saving'
       });
+
+      const currentSelection = this.openmct.selection.selected[0];
+      const parentObject = currentSelection[currentSelection.length - 1];
+      this.openmct.selection.select(parentObject);
 
       return this.openmct.editor
         .save()

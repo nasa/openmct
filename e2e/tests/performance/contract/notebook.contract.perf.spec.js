@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@ TODO:
 
 */
 
-const { test, expect } = require('@playwright/test');
+import { expect, test } from '@playwright/test';
 
 const notebookFilePath = 'e2e/test-data/PerformanceNotebook.json';
 

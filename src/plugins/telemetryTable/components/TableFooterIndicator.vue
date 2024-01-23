@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,6 +25,7 @@
       v-if="filterNames.length > 0"
       class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
       :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+      :aria-label="title"
       :title="title"
     >
       <span class="c-filter-indication__mixed">{{ label }}</span>
@@ -34,13 +35,18 @@
     </div>
 
     <div class="c-table-indicator__counts">
-      <span :title="rowCountTitle" class="c-table-indicator__elem c-table-indicator__row-count">
+      <span
+        :aria-label="rowCountTitle"
+        :title="rowCountTitle"
+        class="c-table-indicator__elem c-table-indicator__row-count"
+       >
         {{ rowCount }} Rows
       </span>
 
       <span
         v-if="markedRows"
         class="c-table-indicator__elem c-table-indicator__marked-count"
+        :aria-label="markedRows + ' rows selected'"
         :title="markedRows + ' rows selected'"
       >
         {{ markedRows }} Marked

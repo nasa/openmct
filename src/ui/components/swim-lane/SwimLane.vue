@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -35,7 +35,12 @@
       :style="gridRowSpan"
     >
       <div v-if="iconClass" class="c-object-label__type-icon" :class="iconClass">
-        <span v-if="status" class="is-status__indicator" :title="`This item is ${status}`"></span>
+        <span
+          v-if="status"
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></span>
       </div>
 
       <div class="c-object-label__name">
@@ -53,7 +58,7 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 
 export default {
   mixins: [tooltipHelpers],

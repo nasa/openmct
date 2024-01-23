@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,19 +26,20 @@ are only meant to run against openmct's app.js started by `npm run start` within
 `./e2e/playwright-visual.config.js` file.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const percySnapshot = require('@percy/playwright');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const { VISUAL_URL } = require('../../constants');
+import percySnapshot from '@percy/playwright';
 
-test.describe('Visual - Default', () => {
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_URL } from '../../constants.js';
+
+test.describe('Visual - Default @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Visual - Default Dashboard', async ({ page, theme }) => {
     // Verify that Create button is actionable
-    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
 
     // Take a snapshot of the Dashboard
     await percySnapshot(page, `Default Dashboard (theme: '${theme}')`);
@@ -65,27 +66,22 @@ test.describe('Visual - Default', () => {
   });
 
   test('Visual - Sine Wave Generator Form', async ({ page, theme }) => {
-    //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
-    // Click text=Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
+    await page.getByRole('menuItem', { name: 'Sine Wave Generator' }).click();
 
     await percySnapshot(page, `Default Sine Wave Generator Form (theme: '${theme}')`);
 
-    await page.locator('.field.control.l-input-sm input').first().click();
-    await page.locator('.field.control.l-input-sm input').first().fill('');
+    await page.getByLabel('Period').click();
+    await page.getByLabel('Period').fill('');
 
-    // Validate red x mark
     await percySnapshot(page, `removed amplitude property value (theme: '${theme}')`);
   });
 
   test('Visual - Display Layout Icon is correct in Create Menu', async ({ page, theme }) => {
-    // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
-    // Hover on Display Layout option.
-    await page.locator('text=Display Layout').hover();
+    await page.getByRole('menuItem', { name: 'Display Layout' }).hover({ trial: true });
     await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
   });
 
@@ -97,5 +93,9 @@ test.describe('Visual - Default', () => {
 
     // Take a snapshot of the newly created Gauge object
     await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });

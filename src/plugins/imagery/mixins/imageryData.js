@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 const IMAGE_HINT_KEY = 'image';
 const IMAGE_THUMBNAIL_HINT_KEY = 'thumbnail';
 const IMAGE_DOWNLOAD_NAME_HINT_KEY = 'imageDownloadName';
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],

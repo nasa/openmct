@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,12 +22,12 @@
 
 import objectUtils from 'objectUtils';
 
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
-import TelemetryCollection from './TelemetryCollection';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
-import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
-import TelemetryValueFormatter from './TelemetryValueFormatter';
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
+import DefaultMetadataProvider from './DefaultMetadataProvider.js';
+import TelemetryCollection from './TelemetryCollection.js';
+import TelemetryMetadataManager from './TelemetryMetadataManager.js';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor.js';
+import TelemetryValueFormatter from './TelemetryValueFormatter.js';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext
