@@ -267,9 +267,12 @@
             @include showTliGraphic('check');
         }
 
-        &.--is-aborted,
-        &.--is-skipped {
+        &.--is-aborted {
             @include showTliGraphic('circle-slash');
+        }
+
+        &.--is-skipped {
+            @include showTliGraphic('skipped');
         }
 
         &__check {
