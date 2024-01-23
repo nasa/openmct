@@ -136,10 +136,10 @@ test.describe('ExportAsJSON', () => {
 });
 test.describe('ExportAsJSON Disabled Actions', () => {
   test.beforeEach(async ({ page }) => {
+    //Use a Fault Management Object which is not composible
     await navigateToFaultManagementWithExample(page);
   });
   test('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
-    //do this against parent folder.url, NOT timer.url child
     await page.getByLabel('More actions').click();
     await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
 
@@ -147,6 +147,40 @@ test.describe('ExportAsJSON Disabled Actions', () => {
       button: 'right'
     });
     await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+  });
+});
+test.describe('ExportAsJSON ProgressBar @couchdb', () => {
+  let folder;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'networkidle' });
+    // Perform actions to create the domain object
+    folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Timer',
+      parent: folder.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Timer',
+      parent: folder.uuid
+    });
+  });
+  test('Verify that the ExportAsJSON action creates a progressbar', async ({ page }) => {
+    // Navigate to the page
+    await page.goto(folder.url);
+
+    //Export My Items to create a large export
+    await page.getByRole('treeitem', { name: 'My Items' }).click({ button: 'right' });
+    // Open context menu and initiate download
+    await Promise.all([
+      page.getByRole('progressbar'), // This is just a check for the progress bar
+      page.getByText(
+        'Do not navigate away from this page or close this browser tab while this message'
+      ), // This is the text associated with the download
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as JSON').click() // Triggers the download
+    ]);
   });
 });
 
