@@ -53,6 +53,9 @@ test.describe('LAD Table Sets', () => {
 
     await page.goto(ladTableSet.url);
 
+    // Wait for the initial value to show after mount
+    await expect(page.getByLabel('lad value').first()).not.toContainText('---');
+
     const valueFromFirstSineWave = await page.getByLabel('lad value').first().innerText();
     const firstSineWaveNumber = parseFloat(valueFromFirstSineWave);
     // ensure we have a float value in the cell and it's finite
