@@ -36,7 +36,7 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Can click on telemetry and see data in inspector', async ({ page, context }) => {
+  test('Can click on telemetry and see data in inspector @2p', async ({ page, context }) => {
     const exampleDataVisualizationSource = await createDomainObjectWithDefaults(page, {
       type: 'Example Data Visualization Source'
     });
