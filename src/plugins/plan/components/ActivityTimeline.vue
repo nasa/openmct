@@ -135,7 +135,7 @@ export default {
       default: 22
     }
   },
-  emits: ['activitySelected'],
+  emits: ['activity-selected'],
   data() {
     return {
       lineHeight: 10
@@ -144,7 +144,7 @@ export default {
   methods: {
     setSelectionForActivity(activity, event) {
       event.stopPropagation();
-      this.$emit('activitySelected', {
+      this.$emit('activity-selected', {
         event,
         selection: activity.selection
       });

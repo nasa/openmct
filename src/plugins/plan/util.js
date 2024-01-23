@@ -122,36 +122,21 @@ export function getValidatedGroups(domainObject, planData) {
 
 export function getDisplayProperties(activity) {
   let displayProperties = {};
-  if (activity?.displayProperties) {
-    const keys = Object.keys(activity.displayProperties);
-    if (keys.length) {
-      keys.forEach((key) => {
-        const displayPropertyLabel = activity.displayProperties[key];
-        const value = _.get(activity, key);
-        if (value) {
-          displayProperties[key] = {
-            label: displayPropertyLabel,
-            value
-          };
-        }
-      });
-    }
-  } else if (activity?.properties) {
-    const keys = Object.keys(activity?.properties);
-    if (keys.length) {
-      keys.forEach((key) => {
-        const displayPropertyLabel = key;
-        const value = activity.properties[key];
-        if (value) {
-          displayProperties[key] = {
-            label: displayPropertyLabel,
-            value
-          };
-        }
-      });
-    }
+  function extractProperties(properties, useKeyAsLabel = false) {
+    Object.keys(properties).forEach((key) => {
+      const label = useKeyAsLabel ? key : properties[key];
+      const value = _.get(activity, key);
+      if (value) {
+        displayProperties[key] = { label, value };
+      }
+    });
   }
 
+  if (activity?.displayProperties) {
+    extractProperties(activity.displayProperties);
+  } else if (activity?.properties) {
+    extractProperties(activity.properties, true);
+  }
   return displayProperties;
 }
 

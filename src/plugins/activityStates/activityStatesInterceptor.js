@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,21 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVITY_STATES_KEY, ACTIVITY_STATES_TYPE } from './createActivityStatesIdentifier.js';
+import { ACTIVITY_STATES_KEY } from './createActivityStatesIdentifier.js';
+
 /**
  * @typedef {object} ActivityStatesInterceptorOptions
- * @property {object} identifier the {namespace, key} to use for the activity states object.
+ * @property {import('../../api/objects/ObjectAPI').Identifier} identifier the {namespace, key} to use for the activity states object.
  * @property {string} name The name of the activity states model.
- * @property {string} priority the priority of the interceptor. By default, it is low.
+ * @property {Number} priority the priority of the interceptor. By default, it is low.
  */
 
 /**
  * Creates an activity states object in the persistence store. This is used to save plan activity states.
  * This will only get invoked when an attempt is made to save the state for an activity and no activity states object exists in the store.
- * @param openmct
+ * @param {import('../../../openmct').OpenMCT} openmct
  * @param {ActivityStatesInterceptorOptions} options
- * @returns {{appliesTo: (function(*): boolean), invoke: ((function(*, *): ({identifier, activities: {}, name, location: null, type: string}))|*), priority: (*|number|string)}}
+ * @returns {object}
  */
+const ACTIVITY_STATES_TYPE = 'activity-states';
+
 function activityStatesInterceptor(openmct, options) {
   const { identifier, name, priority = openmct.priority.LOW } = options;
   const activityStatesModel = {

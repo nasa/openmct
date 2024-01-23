@@ -135,7 +135,7 @@ export default {
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
     if (this.domainObject.type === 'plan') {
-      this.getPlanData(this.domainObject);
+      this.setPlanData(this.domainObject);
     }
 
     const canvas = document.createElement('canvas');
@@ -178,8 +178,8 @@ export default {
     this.planViewConfiguration.destroy();
   },
   methods: {
-    getPlanData(object) {
-      this.planData = getValidatedData(object);
+    setPlanData(domainObject) {
+      this.planData = getValidatedData(domainObject);
     },
     activityNameFitsRect(activityName, rectWidth) {
       return this.getTextWidth(activityName) + TEXT_LEFT_PADDING < rectWidth;
@@ -260,9 +260,9 @@ export default {
       this.setScaleAndGenerateActivities();
     },
     handleSelectFileChange(domainObject) {
-      const object = domainObject || this.domainObject;
-      this.getPlanData(object);
-      this.setStatus(this.openmct.status.get(object.identifier));
+      const planDomainObject = domainObject || this.domainObject;
+      this.setPlanData(planDomainObject);
+      this.setStatus(this.openmct.status.get(planDomainObject.identifier));
       this.setScaleAndGenerateActivities();
     },
     removeFromComposition(domainObject) {

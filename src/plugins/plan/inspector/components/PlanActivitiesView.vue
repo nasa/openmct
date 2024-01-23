@@ -34,7 +34,7 @@
       :heading="'Properties'"
       class="c-inspector__properties c-inspect-properties"
       :activity="activity"
-    ></plan-activity-properties-view>
+    />
     <plan-activity-status-view
       v-if="canPersistState"
       :key="activities[0].key"
@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     canPersistState() {
-      return this.selectedActivities.length === 1 && this.activities[0].id;
+      return this.selectedActivities.length === 1 && this.activities?.[0]?.id;
     }
   },
   mounted() {

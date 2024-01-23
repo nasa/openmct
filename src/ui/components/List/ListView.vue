@@ -43,7 +43,7 @@
           :key="item.key"
           :item="item"
           :item-properties="itemProperties"
-          @click="itemSelected(item, $event)"
+          @click.stop="itemSelected(item, $event)"
         />
       </tbody>
     </table>
@@ -160,7 +160,6 @@ export default {
       }
     },
     itemSelected(item, event) {
-      event.stopPropagation();
       this.$emit('item-selection-changed', item, event.currentTarget);
     }
   }

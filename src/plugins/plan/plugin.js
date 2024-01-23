@@ -34,13 +34,13 @@ const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
  * @property {boolean} creatable true/false to allow creation of a plan via the Create menu.
  * @property {string} name The name of the activity states model.
  * @property {string} namespace the namespace to use for the activity states object.
- * @property {string} priority the priority of the interceptor. By default, it is low.
+ * @property {Number} priority the priority of the interceptor. By default, it is low.
  */
 
 /**
  *
  * @param {PlanOptions} options
- * @returns {(function(*): void)|*}
+ * @returns {*} (any)
  */
 export default function (options = {}) {
   return function install(openmct) {
