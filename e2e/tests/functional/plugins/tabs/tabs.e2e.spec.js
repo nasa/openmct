@@ -55,7 +55,7 @@ test.describe('Tabs View', () => {
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
     // no canvas (i.e., sine wave generator) in the document should be visible
-    await expect(page.locator('canvas')).toBeHidden();
+    await expect(page.locator('canvas[id=webglContext]')).toBeHidden();
 
     // select second tab
     await page.getByLabel(`${notebook.name} tab`).click();
@@ -64,7 +64,7 @@ test.describe('Tabs View', () => {
     await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
 
     // no canvas (i.e., sine wave generator) in the document should be visible
-    await expect(page.locator('canvas')).toBeHidden();
+    await expect(page.locator('canvas[id=webglContext]')).toBeHidden();
 
     // select third tab
     await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
@@ -83,6 +83,6 @@ test.describe('Tabs View', () => {
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
     // no canvas (i.e., sine wave generator) in the document should be visible
-    await expect(page.locator('canvas')).toBeHidden();
+    await expect(page.locator('canvas[id=webglContext]')).toBeHidden();
   });
 });

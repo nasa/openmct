@@ -19,32 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-
 import NotificationIndicator from './components/NotificationIndicator.vue';
 
 export default function plugin() {
   return function install(openmct) {
-    const { vNode, destroy } = mount(
-      {
-        components: {
-          NotificationIndicator
-        },
-        provide: {
-          openmct
-        },
-        template: '<NotificationIndicator></NotificationIndicator>'
-      },
-      {
-        app: openmct.app
-      }
-    );
-
     let indicator = {
       key: 'notifications-indicator',
-      element: vNode.el,
-      priority: openmct.priority.DEFAULT,
-      destroy: destroy
+      vueComponent: NotificationIndicator,
+      priority: openmct.priority.DEFAULT
     };
     openmct.indicators.add(indicator);
   };
