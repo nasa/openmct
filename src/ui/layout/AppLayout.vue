@@ -85,11 +85,13 @@
         <template #controls>
           <button
             class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+            aria-label="Collapse all tree items"
             title="Collapse all tree items"
             @click="handleTreeReset"
           ></button>
           <button
             class="c-icon-button l-shell__sync-tree-button icon-target"
+            aria-label="Show selected item in tree"
             title="Show selected item in tree"
             @click="handleSyncTreeNavigation"
           ></button>
