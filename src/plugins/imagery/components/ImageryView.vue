@@ -46,18 +46,26 @@
         @start-pan="startPan"
         @toggle-layer-visibility="toggleLayerVisibility"
       />
-      <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
+      <div
+        ref="imageBG"
+        class="c-imagery__main-image__bg"
+        aria-label="Background Image"
+        role="button"
+      >
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
           {{ formatImageAltText }}
         </div>
         <div
           ref="focusedImageWrapper"
+          role="button"
           class="image-wrapper"
+          aria-label="Image Wrapper"
           :style="{
             width: `${sizedImageWidth}px`,
             height: `${sizedImageHeight}px`
           }"
           @mousedown="handlePanZoomClick"
+          @dblclick="expand"
         >
           <div
             v-for="(layer, index) in visibleLayers"
@@ -67,6 +75,7 @@
           ></div>
           <img
             ref="focusedImage"
+            aria-label="Focused Image"
             class="c-imagery__main-image__image js-imageryView-image"
             :src="imageUrl"
             :draggable="!isSelectable"

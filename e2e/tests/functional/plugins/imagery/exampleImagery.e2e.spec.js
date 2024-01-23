@@ -489,6 +489,33 @@ test.describe('Example Imagery in Flexible layout', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
+
+    // Create Example Imagery inside the Flexible Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery',
+      parent: flexibleLayout.uuid
+    });
+
+    // Navigate back to Flexible Layout
+    await page.goto(flexibleLayout.url);
+  });
+
+  test('Can double-click on the image to view large image', async ({ page }) => {
+    // Double-click on the image to open large view
+    const imageElement = await page.getByRole('button', { name: 'Image Wrapper' });
+    await imageElement.dblclick();
+
+    // Check if the large view is visible
+    await page.getByRole('button', { name: 'Background Image', state: 'visible' });
+
+    // Close the large view
+    await page.getByLabel('Close').click();
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
     await page.goto(flexibleLayout.url);
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
@@ -580,6 +607,7 @@ test.describe('Example Imagery in Time Strip', () => {
     // Navigate to timestrip
     await page.goto(timeStripObject.url);
   });
+
   test('Clicking a thumbnail loads the image in large view', async ({ page, browserName }) => {
     test.info().annotations.push({
       type: 'issue',
