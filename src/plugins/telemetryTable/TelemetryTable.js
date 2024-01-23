@@ -47,12 +47,11 @@ define([
 
       this.domainObject = domainObject;
       this.openmct = openmct;
-      this.rowCount = 100;
       this.tableComposition = undefined;
       this.datumCache = [];
       this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
       this.telemetryMode = this.configuration.getTelemetryMode();
-      this.MAX_ROWS = 50;
+      this.rowLimit = this.configuration.getRowLimit();
       this.paused = false;
       this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -127,7 +126,7 @@ define([
 
     updateRowLimit() {
       if (this.telemetryMode === 'performance') {
-        this.tableRows.setLimit(this.MAX_ROWS);
+        this.tableRows.setLimit(this.rowLimit);
       } else {
         this.tableRows.removeLimit();
       }
@@ -139,7 +138,7 @@ define([
       //Fetch any persisted default sort
       let sortOptions = this.configuration.getConfiguration().sortOptions;
 
-      //If no persisted sort order, default to sorting by time system, ascending.
+      //If no persisted sort order, default to sorting by time system, descending.
       sortOptions = sortOptions || {
         key: this.openmct.time.timeSystem().key,
         direction: 'desc'
@@ -179,7 +178,7 @@ define([
       this.removeTelemetryCollection(keyString);
 
       if (this.telemetryMode === 'performance') {
-        requestOptions.size = this.MAX_ROWS;
+        requestOptions.size = this.rowLimit;
       }
 
       this.telemetryCollections[keyString] = this.openmct.telemetry.requestCollection(

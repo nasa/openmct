@@ -29,6 +29,7 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       super();
 
       this.rows = [];
+      this.overflowRows = {};
       this.columnFilters = {};
       this.addRows = this.addRows.bind(this);
       this.removeRowsByObject = this.removeRowsByObject.bind(this);
@@ -50,6 +51,13 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
         }
       });
 
+      if (this.rowLimit && this.overflowRows[keyString]) {
+        this.overflowRows[keyString] = null;
+        delete this.overflowRows[keyString];
+
+        this.rowAccuracyCheck();
+      }
+
       this.emit('remove', removed);
     }
 
@@ -58,9 +66,19 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
 
       this.sortAndMergeRows(rowsToAdd);
 
-      this.maintainLimit();
-
       this.emit('add', rowsToAdd);
+    }
+
+    rowAccuracyCheck() {
+      const keyStrings = Object.keys(this.overflowRows);
+      let rowsToCheck = [];
+
+      keyStrings.forEach((keyString) => {
+        rowsToCheck = [...rowsToCheck, ...this.overflowRows[keyString]];
+        this.overflowRows[keyString] = [];
+      });
+
+      this.addRows(rowsToCheck);
     }
 
     maintainLimit() {
@@ -74,7 +92,7 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       // Removal check
       if (existingRowCount > this.rowLimit) {
         const rowRemovalCount = existingRowCount - this.rowLimit;
-        console.log('removing', rowRemovalCount, 'from', existingRowCount);
+
         if (this.sortOptions.direction === 'asc') {
           removed = this.rows.slice(0, rowRemovalCount);
           this.rows = this.rows.slice(rowRemovalCount);
@@ -82,6 +100,10 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
           removed = this.rows.slice(-rowRemovalCount);
           this.rows = this.rows.slice(0, existingRowCount - rowRemovalCount);
         }
+
+        removed.forEach((row) => {
+          this.handleOverflowRow(row);
+        });
 
         this.emit('remove', removed);
       }
@@ -179,17 +201,33 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
             this.rows.unshift(row);
 
             if (this.overRowLimit()) {
-              this.rows.pop();
+              this.handleOverflowRow(this.rows.pop());
             }
           } else {
             this.rows.push(row);
 
             if (this.overRowLimit()) {
-              this.rows.shift();
+              this.handleOverflowRow(this.rows.shift());
             }
           }
         }
       });
+    }
+
+    handleOverflowRow(row) {
+      const keyString = row.objectKeyString;
+
+      if (!this.overflowRows[keyString]) {
+        this.overflowRows[keyString] = [];
+      }
+
+      this.overflowRows[keyString].push(row);
+
+      // keep the newest rowLimit amount on hand to repopulate if an item is removed
+      // technically at most in memory would be rowLimit * 2
+      if (this.overflowRows[keyString].length > this.rowLimit) {
+        this.overflowRows[keyString].shift();
+      }
     }
 
     overRowLimit() {
@@ -235,6 +273,8 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
       }
 
       this.rows = mergedRows;
+
+      this.maintainLimit();
     }
 
     firstRowInSortOrder(row1, row2) {
@@ -405,8 +445,6 @@ define(['lodash', 'EventEmitter'], function (_, EventEmitter) {
     }
 
     getRows() {
-      console.log('get rows', this.rows.length);
-
       return this.rows;
     }
 

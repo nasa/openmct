@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function getTelemetryTableType(
-  telemetryMode = 'performance',
-  persistModeChanges = true
-) {
+export default function getTelemetryTableType(options = {}) {
+  const { telemetryMode = 'performance', persistModeChanges = true, rowLimit = 50 } = options;
+
   return {
     name: 'Telemetry Table',
     description:
@@ -54,6 +53,13 @@ export default function getTelemetryTableType(
         cssClass: 'l-input',
         key: 'persistModeChanges',
         property: ['configuration', 'persistModeChanges']
+      },
+      {
+        name: 'Performance Mode Row Limit',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'rowLimit',
+        property: ['configuration', 'rowLimit']
       }
     ],
     initialize(domainObject) {
@@ -62,7 +68,8 @@ export default function getTelemetryTableType(
         columnWidths: {},
         hiddenColumns: {},
         telemetryMode,
-        persistModeChanges
+        persistModeChanges,
+        rowLimit
       };
     }
   };
