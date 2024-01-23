@@ -26,7 +26,7 @@ Tests the branding associated with the default deployment. At least the about mo
 
 import percySnapshot from '@percy/playwright';
 
-import { scanForA11yViolations, test, expect } from '../../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
@@ -59,7 +59,7 @@ test.describe('Visual - Header @a11y', () => {
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
-    expect(await page.getByLabel('Show Snapshots')).toBeVisible();
+    await expect(await page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 test.afterEach(async ({ page }, testInfo) => {

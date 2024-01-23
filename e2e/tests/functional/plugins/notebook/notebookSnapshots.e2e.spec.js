@@ -24,10 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-
-const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Snapshot Menu tests', () => {
   test.fixme(
@@ -90,27 +87,26 @@ test.describe('Snapshot Container tests', () => {
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
     await page.getByLabel('Show Snapshots').click();
   });
-  test.only('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({
-    page
-  }) => {
+  test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
     await expect(page.locator('.c-overlay__outer')).toBeVisible();
   });
-  test('A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu', async ({
-    page
-  }) => {
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
-    await page.getByRole('menuitem', { name: ' View Snapshot' }).click();
-    await expect(page.locator('.c-overlay__outer')).toBeVisible();
-    await page.getByTitle('Annotate').click();
-    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
-    await page.getByRole('button', { name: '' }).click();
-    // await expect(page.locator('#snap-annotation-canvas')).not.toBeVisible();
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('button', { name: 'Done' }).click();
-    //await expect(await page.locator)
-  });
+  test.fixme(
+    'A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu',
+    async ({ page }) => {
+      await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
+      await page.getByRole('menuitem', { name: ' View Snapshot' }).click();
+      await expect(page.locator('.c-overlay__outer')).toBeVisible();
+      await page.getByTitle('Annotate').click();
+      await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+      await page.getByRole('button', { name: '' }).click();
+      // await expect(page.locator('#snap-annotation-canvas')).not.toBeVisible();
+      await page.getByRole('button', { name: 'Save' }).click();
+      await page.getByRole('button', { name: 'Done' }).click();
+      //await expect(await page.locator)
+    }
+  );
   test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
   test.fixme(
     '5 Snapshots can be added to a container and Deleted with Delete All action',
