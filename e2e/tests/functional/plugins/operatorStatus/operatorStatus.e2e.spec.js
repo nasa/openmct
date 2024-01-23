@@ -51,7 +51,7 @@ test.describe('Operator Status', () => {
     // Description should be empty https://github.com/nasa/openmct/issues/6978
     await expect(page.locator('.c-message__action-text')).toBeHidden();
     // set role
-    await page.getByRole('button', { name: 'Select' }).click();
+    await page.getByRole('button', { name: 'Select', exact: true }).click();
     // dismiss role confirmation popup
     await page.getByRole('button', { name: 'Dismiss' }).click();
   });

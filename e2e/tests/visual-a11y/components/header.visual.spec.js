@@ -66,6 +66,17 @@ test.describe('Visual - Header @a11y', () => {
       scope: header
     });
   });
+
+  test('show snapshot button', async ({ page, theme }) => {
+    await page.getByLabel('Take a Notebook Snapshot').click();
+
+    await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
+
+    await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
+      scope: header
+    });
+    await expect(await page.getByLabel('Show Snapshots')).toBeVisible();
+  });
 });
 test.afterEach(async ({ page }, testInfo) => {
   await scanForA11yViolations(page, testInfo.title);
