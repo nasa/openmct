@@ -25,6 +25,10 @@
       class="c-progress-bar__bar"
       :class="{ '--indeterminate': !progressPerc }"
       :style="styleBarWidth"
+      role="progressbar"
+      :aria-valuenow="progressPerc"
+      aria-valuemin="0"
+      aria-valuemax="100"
     ></div>
     <div v-if="progressText !== ''" class="c-progress-bar__text">
       <span v-if="progressPerc > 0">{{ progressPerc }}% complete.</span>

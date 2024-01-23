@@ -143,6 +143,9 @@ export default {
       ladTable.domainObject = domainObject;
       ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
+      if (!this.ladTelemetryObjects) {
+        this.ladTelemetryObjects = {};
+      }
       this.ladTelemetryObjects[ladTable.key] = [];
       this.ladTableObjects.push(ladTable);
 
