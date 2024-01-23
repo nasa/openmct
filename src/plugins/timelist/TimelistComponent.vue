@@ -22,19 +22,46 @@
 
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
-    <expanded-view
-      v-if="isExpanded"
-      :items="planActivities"
-      :header-items="headerItems"
-      :default-sort="defaultSort"
-    ></expanded-view>
-    <list-view
-      v-else
-      :items="planActivities"
-      :header-items="headerItems"
-      :default-sort="defaultSort"
-      class="sticky"
-    />
+    <div v-if="isExpanded">
+      <expanded-view-item
+        v-for="item in sortedItems"
+        :key="item.key"
+        :item="item"
+        :item-properties="itemProperties"
+      >
+      </expanded-view-item>
+    </div>
+    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+      <table class="c-table__body js-table__body">
+        <thead class="c-table__header">
+          <tr>
+            <list-header
+              v-for="headerItem in headerItems"
+              :key="headerItem.property"
+              :direction="
+                defaultSort.property === headerItem.property
+                  ? defaultSort.defaultDirection
+                  : headerItem.defaultDirection
+              "
+              :is-sortable="headerItem.isSortable"
+              :aria-label="headerItem.name"
+              :title="headerItem.name"
+              :property="headerItem.property"
+              :current-sort="defaultSort.property"
+              @sort="sort"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <list-item
+            v-for="item in sortedItems"
+            :key="item.key"
+            :item="item"
+            :item-properties="itemProperties"
+          />
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -43,11 +70,12 @@ import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import ListView from '../../ui/components/List/ListView.vue';
+import ListHeader from '../../ui/components/List/ListHeader.vue';
+import ListItem from '../../ui/components/List/ListItem.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import { SORT_ORDER_OPTIONS } from './constants.js';
-import ExpandedView from './ExpandedView.vue';
+import ExpandedViewItem from './ExpandedViewItem.vue';
 
 const SCROLL_TIMEOUT = 10000;
 
@@ -125,8 +153,9 @@ const defaultSort = {
 
 export default {
   components: {
-    ExpandedView,
-    ListView
+    ExpandedViewItem,
+    ListHeader,
+    ListItem
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
@@ -146,6 +175,21 @@ export default {
         return 'c-timelist c-timelist--large';
       }
       return 'c-timelist';
+    },
+    sortedItems() {
+      let sortedItems = _.sortBy(this.planActivities, this.defaultSort.property);
+      if (!this.defaultSort.defaultDirection) {
+        sortedItems = sortedItems.reverse();
+      }
+      return sortedItems;
+    },
+    itemProperties() {
+      return this.headerItems.map((headerItem) => {
+        return {
+          key: headerItem.property,
+          format: headerItem.format
+        };
+      });
     }
   },
   mounted() {
@@ -548,6 +592,17 @@ export default {
     setEditState(isEditing) {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
+    },
+    sort(data) {
+      const property = data.property;
+      const direction = data.direction;
+
+      if (this.sortBy === property) {
+        this.ascending = !this.ascending;
+      } else {
+        this.sortBy = property;
+        this.ascending = direction;
+      }
     }
   }
 };

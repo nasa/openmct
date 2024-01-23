@@ -138,23 +138,17 @@ export default {
         title: this.item.name
       };
       this.itemProperties.forEach((itemProperty) => {
-        let value = this.item[itemProperty.property];
+        let value = this.item[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
-          formattedValue = itemProperty.format(
-            value,
-            this.item,
-            itemProperty.property,
-            this.openmct,
-            {
-              skipPrefix: true
-            }
-          );
+          formattedValue = itemProperty.format(value, this.item, itemProperty.key, this.openmct, {
+            skipPrefix: true
+          });
         }
-        itemValue[itemProperty.property] = formattedValue;
+        itemValue[itemProperty.key] = formattedValue;
 
         let label;
-        if (itemProperty.property === 'countdown') {
+        if (itemProperty.key === 'countdown') {
           label = value > 0 ? 'Starts' : 'Ended';
         }
         itemValue.label = itemValue.label ?? label;
