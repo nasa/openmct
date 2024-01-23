@@ -136,7 +136,7 @@ test.describe('ExportAsJSON', () => {
 });
 test.describe('ExportAsJSON Disabled Actions', () => {
   test.beforeEach(async ({ page }) => {
-    //Use a Fault Management Object which is not composible
+    //Use a Fault Management Object which is not composable
     await navigateToFaultManagementWithExample(page);
   });
   test('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
