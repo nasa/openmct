@@ -22,7 +22,7 @@
 
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
-    <div v-if="isExpanded">
+    <template v-if="isExpanded">
       <expanded-view-item
         v-for="item in sortedItems"
         :key="item.key"
@@ -30,7 +30,7 @@
         :item-properties="itemProperties"
       >
       </expanded-view-item>
-    </div>
+    </template>
     <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
       <table class="c-table__body js-table__body">
         <thead class="c-table__header">
