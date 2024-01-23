@@ -32,7 +32,7 @@ class Overlay extends EventEmitter {
     const { destroy } = mount(
       {
         components: {
-          OverlayComponent: OverlayComponent
+          OverlayComponent
         },
         provide: {
           dismiss: this.notifyAndDismiss.bind(this),
@@ -60,7 +60,6 @@ class Overlay extends EventEmitter {
 
   dismiss() {
     this.emit('destroy');
-    document.body.removeChild(this.container);
     this.destroy();
   }
 
