@@ -169,10 +169,9 @@
   }
 
   &__footer {
-    $pt: 2px;
     border-top: 1px solid $colorInteriorBorder;
     margin-top: $interiorMargin;
-    padding: $pt 0;
+    padding-top: 4px;
     overflow: hidden;
     transition: all 250ms;
 

@@ -39,7 +39,7 @@
         :aria-label="rowCountTitle"
         :title="rowCountTitle"
         class="c-table-indicator__elem c-table-indicator__row-count"
-       >
+      >
         {{ rowCount }} Rows
       </span>
 
@@ -52,7 +52,9 @@
         {{ markedRows }} Marked
       </span>
 
-      <button @click="toggleTelemetryMode">{{ telemetryModeButtonLabel }}</button>
+      <button :title="telemetryModeButtonTitle" class="c-button" @click="toggleTelemetryMode">
+        {{ telemetryModeButtonLabel }}
+      </button>
     </div>
   </div>
 </template>
@@ -119,7 +121,12 @@ export default {
         : 'performance mode limited to 50 rows';
     },
     telemetryModeButtonLabel() {
-      return this.isUnlimitedMode ? 'Performance Mode' : 'Show All';
+      return this.isUnlimitedMode ? 'Show Latest 50' : 'Show All';
+    },
+    telemetryModeButtonTitle() {
+      return this.isUnlimitedMode
+        ? 'Change to Performance mode (latest 50 values)'
+        : 'Change to show all values';
     },
     title() {
       if (this.hasMixedFilters) {
