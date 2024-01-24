@@ -33,9 +33,9 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = '_all_docs?include_docs=true';
 
 class CouchObjectProvider {
-  constructor({ openmct, databaseConfiguration, indicator }) {
+  constructor({ openmct, databaseConfiguration, couchStatusIndicator }) {
     this.openmct = openmct;
-    this.indicator = indicator;
+    this.indicator = couchStatusIndicator;
     this.url = databaseConfiguration.url;
     this.readOnly = databaseConfiguration.readOnly;
     this.useDesignDocuments = databaseConfiguration.useDesignDocuments;
