@@ -21,18 +21,37 @@
 -->
 
 <template>
-  <div class="c-indicator icon-person c-indicator--clickable">
+  <div
+    ref="userIndicator"
+    class="c-indicator c-indicator--user icon-person c-indicator--clickable"
+    v-bind="$attrs"
+    @click.stop="togglePopup"
+  >
     <span class="label c-indicator__label" aria-label="User Role">
       {{ role ? `${userName}: ${role}` : userName }}
-      <button v-if="availableRoles?.length > 1" @click="promptForRoleSelection">Change Role</button>
+      <button v-if="availableRoles?.length > 1" @click.stop="promptForRoleSelection">
+        Change Role
+      </button>
     </span>
   </div>
+  <Teleport to="body">
+    <div v-if="isPopupVisible" class="c-user-control-panel">
+      <MissionStatusPopup />
+    </div>
+  </Teleport>
 </template>
 
 <script>
 import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer.js';
+import MissionStatusPopup from './MissionStatusPopup.vue';
+
 export default {
+  name: 'UserIndicator',
+  components: {
+    MissionStatusPopup
+  },
   inject: ['openmct'],
+  inheritAttrs: false,
   data() {
     return {
       userName: undefined,
@@ -40,16 +59,44 @@ export default {
       availableRoles: [],
       loggedIn: false,
       inputRoleSelection: undefined,
-      roleSelectionDialog: undefined
+      roleSelectionDialog: undefined,
+      isPopupVisible: false
     };
   },
+  computed: {
+    position() {
+      const indicator = this.$refs.userIndicator;
+      if (!indicator) {
+        return {
+          top: 0,
+          left: 0
+        };
+      }
+      const indicatorRect = indicator.getBoundingClientRect();
+      const popup = this.$refs.popup;
+      let top = indicatorRect.bottom;
+      let left = indicatorRect.left;
+      if (popup) {
+        const popupRect = popup.getBoundingClientRect();
+        top += popupRect.height;
+        left += indicatorRect.width + popupRect.width;
+      }
 
-  async mounted() {
+      return {
+        top,
+        left
+      };
+    }
+  },
+
+  async created() {
+    await this.getUserInfo();
+  },
+
+  mounted() {
     // need to wait for openmct to be loaded before using openmct.overlays.selection
     // as document.body could be null
     this.openmct.on('start', this.fetchOrPromptForRole);
-
-    await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
   },
@@ -138,6 +185,9 @@ export default {
       this.openmct.user.setActiveRole(role);
       // update other tabs through broadcast channel
       this.roleChannel.broadcastNewRole(role);
+    },
+    togglePopup() {
+      this.isPopupVisible = !this.isPopupVisible;
     }
   }
 };
