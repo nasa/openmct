@@ -99,7 +99,27 @@
       const TWO_HOURS = ONE_HOUR * 2;
       const ONE_DAY = ONE_HOUR * 24;
 
-      openmct.install(openmct.plugins.LocalStorage());
+      //openmct.install(openmct.plugins.LocalStorage());
+      openmct.install(
+        openmct.plugins.CouchDB({
+          databases: [
+            {
+              url: 'http://localhost:5984/openmct-sandbox',
+              namespace: 'openmct-sandbox',
+              readOnly: false,
+              useDesignDocuments: false,
+              indicator: false
+            },
+            {
+              url: 'http://localhost:5984/openmct-cm',
+              namespace: 'openmct-cm',
+              readOnly: true,
+              useDesignDocuments: false,
+              indicator: false
+            }
+          ]
+        })
+      );
 
       openmct.install(openmct.plugins.example.Generator());
       openmct.install(openmct.plugins.example.EventGeneratorPlugin());
@@ -107,7 +127,7 @@
       openmct.install(openmct.plugins.example.ExampleTags());
 
       openmct.install(openmct.plugins.Espresso());
-      openmct.install(openmct.plugins.MyItems());
+      //openmct.install(openmct.plugins.MyItems({ namespace: 'openmct-sandbox' }));
       openmct.install(
         openmct.plugins.PlanLayout({
           creatable: true
