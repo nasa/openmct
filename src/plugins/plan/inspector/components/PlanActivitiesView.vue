@@ -40,9 +40,9 @@
       :key="activities[0].key"
       class="c-inspector__properties c-inspect-properties"
       :activity="activities[0]"
-      :execution-state="persistedActivityStates[activities[0].id]"
+      :execution-state="activityExecutionState"
       :heading="'Activity Status'"
-      @update-activity-state="persistedActivityState"
+      @update-activity-state="persistActivityState"
     />
   </div>
 </template>
@@ -78,7 +78,7 @@ export default {
       name: '',
       activities: [],
       selectedActivities: [],
-      persistedActivityStates: {},
+      activityExecutionState: undefined,
       heading: ''
     };
   },
@@ -113,7 +113,12 @@ export default {
       );
     },
     setActivityStates() {
-      this.persistedActivityStates = this.activityStatesObject.activities;
+      if (this.activities.length) {
+        const id = this.activities[0].id;
+        this.activityExecutionState = this.activityStatesObject.activities[id];
+      } else {
+        this.activityExecutionState = undefined;
+      }
     },
     setFormatters() {
       let timeSystem = this.openmct.time.timeSystem();
@@ -272,7 +277,7 @@ export default {
     formatTime(time) {
       return this.timeFormatter.format(time);
     },
-    persistedActivityState(data) {
+    persistActivityState(data) {
       const { key, executionState } = data;
       const activitiesPath = `activities.${key}`;
       this.openmct.objects.mutate(this.activityStatesObject, activitiesPath, executionState);
