@@ -1,0 +1,111 @@
+.c-indicator {
+    &:before {
+      // Indicator icon
+      color: $colorKey;
+    }
+  
+    &--clickable {
+      cursor: pointer;
+      max-width: 250px;
+  
+      @include hover() {
+        background: $colorIndicatorBgHov;
+      }
+    }
+  }
+
+  $statusCountWidth: 30px;
+
+.c-user-control-panel {
+  @include menuOuter();
+  display: flex;
+  flex-direction: column;
+  padding: $interiorMarginLg;
+  min-width: 350px;
+  max-width: 35%;
+
+  > * + * {
+    margin-top: $interiorMarginLg;
+  }
+
+  *:before {
+    font-size: 0.8em;
+    margin-right: $interiorMarginSm;
+  }
+
+  &__section {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+    > * + * {
+      margin-left: $interiorMarginLg;
+    }
+  }
+
+  &__top {
+    text-transform: uppercase;
+  }
+
+  &__user-role,
+  &__updated {
+    opacity: 50%;
+  }
+
+  &__updated {
+    flex: 1 1 auto;
+    text-align: right;
+  }
+
+  &__poll-question {
+    background: $colorBodyFg;
+    color: $colorBodyBg;
+    border-radius: $controlCr;
+    font-weight: bold;
+    padding: $interiorMarginSm $interiorMargin;
+
+    .c-user-control-panel--admin & {
+      background: rgba($colorBodyFg, 0.1);
+      color: $colorBodyFg;
+    }
+  }
+
+  /****** Admin interface */
+  &__content {
+    $m: $interiorMargin;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-column-gap: $m;
+    grid-row-gap: $m;
+
+    [class*='__label'] {
+      padding: 3px 0;
+    }
+
+    [class*='__label'] {
+      padding: 3px 0;
+    }
+
+    [class*='__poll-table'] {
+      grid-column: span 2;
+    }
+
+    [class*='new-question'] {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      > * + * {
+        margin-left: $interiorMargin;
+      }
+
+      input {
+        flex: 1 1 auto;
+        height: $btnStdH;
+      }
+
+      button {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}
