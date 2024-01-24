@@ -339,9 +339,35 @@ class CouchObjectProvider {
     }
   }
 
+  // eslint-disable-next-line require-await
+  async getOrCreateRoot(identifier, abortSignal) {
+    // check if we've already built the root object
+    let requestedRootObject = null;
+    try {
+      const rawCouchObject = await this.request(identifier.key, 'GET', undefined, abortSignal);
+      requestedRootObject = this.#getModel(rawCouchObject);
+    } catch (error) {
+      if (!this.isReadOnly()) {
+        console.error(
+          `Error fetching root object for ${this.namespace}: ${error.message}, attempting to create it`
+        );
+      } else {
+        console.error(`Error fetching root object for ${this.namespace}: ${error.message}`);
+      }
+    }
+    if (!requestedRootObject) {
+      if (!this.isReadOnly()) {
+        this.openmct.objects.save(this.rootObject);
+      }
+      return this.rootObject;
+    } else {
+      return requestedRootObject;
+    }
+  }
+
   get(identifier, abortSignal) {
     if (identifier.key === this.rootObject.identifier.key) {
-      return Promise.resolve(this.rootObject);
+      return this.getOrCreateRoot(identifier, abortSignal);
     }
     this.batchIds.push(identifier.key);
 
