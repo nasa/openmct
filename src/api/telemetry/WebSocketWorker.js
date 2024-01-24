@@ -68,8 +68,6 @@ export default function installWorker() {
 
       const boundCleanUpAndReconnect = this.#cleanUpAndReconnect.bind(this);
       this.#webSocket.addEventListener('error', boundCleanUpAndReconnect);
-
-      const boundDisconnect = this.disconnect.bind(this);
       this.#webSocket.addEventListener('close', boundCleanUpAndReconnect);
 
       const boundMessage = this.#message.bind(this);
@@ -80,7 +78,7 @@ export default function installWorker() {
         () => {
           this.#webSocket.removeEventListener('open', boundConnected);
           this.#webSocket.removeEventListener('error', boundCleanUpAndReconnect);
-          this.#webSocket.removeEventListener('close', boundDisconnect);
+          this.#webSocket.removeEventListener('close', boundCleanUpAndReconnect);
         },
         { once: true }
       );
@@ -126,7 +124,11 @@ export default function installWorker() {
       this.#isConnected = false;
       this.#isConnecting = false;
 
-      this.#webSocket.close();
+      // On WebSocket error, both error callback and close callback are invoked, resulting in
+      // this function being called twice, and websocket being destroyed and deallocated.
+      if (this.#webSocket !== undefined && this.#webSocket !== null) {
+        this.#webSocket.close();
+      }
 
       this.dispatchEvent(new Event('disconnected'));
       this.#webSocket = undefined;
