@@ -99,7 +99,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError
@@ -232,7 +238,7 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
-        if (!domainObject && abortSignal.aborted) {
+        if (!domainObject && abortSignal?.aborted) {
           // we've aborted the request
           return;
         }

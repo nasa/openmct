@@ -86,9 +86,10 @@
 </template>
 
 <script>
-const CURRENT_CSS_SUFFIX = '--is-current';
-const PAST_CSS_SUFFIX = '--is-past';
-const FUTURE_CSS_SUFFIX = '--is-future';
+import _ from 'lodash';
+
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import { CURRENT_CSS_SUFFIX, FUTURE_CSS_SUFFIX, PAST_CSS_SUFFIX } from './constants.js';
 
 const ITEM_COLORS = {
   [CURRENT_CSS_SUFFIX]: '#ffcc00',
@@ -96,19 +97,26 @@ const ITEM_COLORS = {
   [FUTURE_CSS_SUFFIX]: '#7300ff'
 };
 
-const ITEM_STATES = {
-  notStarted: 'not-started',
-  inProgress: 'in-progress',
-  completed: 'completed',
-  aborted: 'aborted',
-  skipped: 'skipped',
-  incomplete: 'incomplete',
-  overdue: 'overdue',
-  runningLong: 'running-long'
+const EXECUTION_STATES = {
+  notStarted: 'Not started',
+  active: 'In progress',
+  completed: 'Completed',
+  aborted: 'Aborted',
+  skipped: 'Skipped',
+  cancelled: 'Cancelled'
+};
+
+const INFERRED_EXECUTION_STATES = {
+  incomplete: 'Incomplete',
+  overdue: 'Overdue',
+  runningLong: 'Running Long',
+  starts: 'Starts',
+  occurs: 'Occurs',
+  ends: 'Ends'
 };
 
 export default {
-  inject: ['openmct'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     item: {
       type: Object,
@@ -117,11 +125,17 @@ export default {
     itemProperties: {
       type: Array,
       required: true
+    },
+    executionState: {
+      type: String,
+      default() {
+        return '';
+      }
     }
   },
   data() {
     return {
-      itemState: ITEM_STATES.notStarted
+      timestamp: this.openmct.time.now()
     };
   },
   computed: {
@@ -130,20 +144,35 @@ export default {
     },
     listItemClass() {
       const timeRelationClass = this.item.cssClass;
-      const itemStateClass = `--is-${this.itemState}`;
-      return `c-tli ${timeRelationClass} ${itemStateClass}`;
+      const executionStateClass = `--is-${this.executionState}`;
+      return `c-tli ${timeRelationClass} ${executionStateClass}`;
     },
     formattedItemValue() {
-      /* TODO: add ability to return these strings for the following cases:
-      - 'In Progress' : itemState.inProgress
-      - 'Running Long' : itemState.inProgress && now > end datetime
-      - 'Overdue' : itemState.notStarted && now > start datetime
-      - 'Incomplete' : itemState.notStarted && now > end datetime
-      - 'Starts' : for Activities with now > start datetime
-      - 'Occurs' : for Events with now > start datetime
-      - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
-      - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
-       */
+      let executionStateLabel;
+      const executionStateKeys = Object.keys(EXECUTION_STATES);
+      const executionStateIndex = executionStateKeys.findIndex(
+        (key) => key === this.executionState
+      );
+      if (executionStateIndex > -1) {
+        executionStateLabel = EXECUTION_STATES[executionStateIndex];
+
+        // - 'Incomplete' : executionState.notStarted && now > end datetime
+        if (executionStateIndex === 0 && this.item.cssClass === PAST_CSS_SUFFIX) {
+          executionStateLabel = INFERRED_EXECUTION_STATES.incomplete;
+        }
+        // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
+        // - 'Running Long' : executionState.inProgress && now > end datetime
+        // - 'Overdue' : executionState.notStarted && start < now datetime
+        if (executionStateIndex === 1) {
+          if (this.item.cssClass === CURRENT_CSS_SUFFIX) {
+            executionStateLabel = INFERRED_EXECUTION_STATES.ends;
+          } else if (this.timestamp > this.item.end) {
+            executionStateLabel = INFERRED_EXECUTION_STATES.runningLong;
+          } else if (this.item.start < this.timestamp) {
+            executionStateLabel = INFERRED_EXECUTION_STATES.overdue;
+          }
+        }
+      }
       let itemValue = {
         title: this.item.name
       };
@@ -157,9 +186,19 @@ export default {
         }
         itemValue[itemProperty.key] = formattedValue;
 
+        // - 'Starts' : for Activities with now > start datetime
+        // - 'Occurs' : for Events with now > start datetime and 0 duration
         let label;
         if (itemProperty.key === 'countdown') {
-          label = value > 0 ? 'Starts' : 'Ended';
+          if (this.item.start < this.timestamp) {
+            if (this.item.start === this.item.end) {
+              label = INFERRED_EXECUTION_STATES.occurs;
+            } else {
+              label = INFERRED_EXECUTION_STATES.starts;
+            }
+          } else {
+            label = executionStateLabel;
+          }
         }
         itemValue.label = itemValue.label ?? label;
       });
@@ -168,10 +207,33 @@ export default {
     },
     showTimeHero() {
       return !(
-        this.itemState === ITEM_STATES.completed ||
-        this.itemState === ITEM_STATES.aborted ||
-        this.itemState === ITEM_STATES.skipped
+        this.executionState === EXECUTION_STATES.completed ||
+        this.executionState === EXECUTION_STATES.aborted ||
+        this.executionState === EXECUTION_STATES.skipped
       );
+    }
+  },
+  mounted() {
+    this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.setTimeContext();
+    this.timestamp = this.timeContext.now();
+  },
+  methods: {
+    setTimeContext() {
+      this.stopFollowingTimeContext();
+      this.timeContext = this.openmct.time.getContextForView(this.path);
+      this.followTimeContext();
+    },
+    followTimeContext() {
+      this.timeContext.on(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+    },
+    stopFollowingTimeContext() {
+      if (this.timeContext) {
+        this.timeContext.off(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+      }
+    },
+    updateTimestamp(time) {
+      this.timestamp = time;
     }
   }
 };

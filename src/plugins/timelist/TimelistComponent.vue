@@ -28,6 +28,7 @@
         :key="item.key"
         :item="item"
         :item-properties="itemProperties"
+        :execution-state="persistedActivityStates[item.id]"
       >
       </expanded-view-item>
     </template>
@@ -58,6 +59,7 @@
             :key="item.key"
             :item="item"
             :item-properties="itemProperties"
+            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
           />
         </tbody>
       </table>
@@ -74,15 +76,18 @@ import ListHeader from '../../ui/components/List/ListHeader.vue';
 import ListItem from '../../ui/components/List/ListItem.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
-import { SORT_ORDER_OPTIONS } from './constants.js';
+import {
+  CURRENT_CSS_SUFFIX,
+  FUTURE_CSS_SUFFIX,
+  PAST_CSS_SUFFIX,
+  SORT_ORDER_OPTIONS
+} from './constants.js';
 import ExpandedViewItem from './ExpandedViewItem.vue';
 
 const SCROLL_TIMEOUT = 10000;
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-const CURRENT_CSS_SUFFIX = '--is-current';
-const PAST_CSS_SUFFIX = '--is-past';
-const FUTURE_CSS_SUFFIX = '--is-future';
+
 const headerItems = [
   {
     defaultDirection: true,
@@ -166,7 +171,8 @@ export default {
       planActivities: [],
       headerItems: headerItems,
       defaultSort: defaultSort,
-      isExpanded: false
+      isExpanded: false,
+      persistedActivityStates: {}
     };
   },
   computed: {
@@ -200,6 +206,7 @@ export default {
     this.timestamp = this.timeContext.now();
 
     this.getPlanDataAndSetConfig(this.domainObject);
+    this.getActivityStates();
 
     this.unlisten = this.openmct.objects.observe(
       this.domainObject,
@@ -237,6 +244,14 @@ export default {
 
     if (this.unlistenConfig) {
       this.unlistenConfig();
+    }
+
+    if (this.stopObservingPlan) {
+      this.stopObservingPlan();
+    }
+
+    if (this.stopObservingActivityStatesObject) {
+      this.stopObservingActivityStatesObject();
     }
 
     if (this.removeStatusListener) {
@@ -278,6 +293,18 @@ export default {
         sourceMap: this.domainObject.sourceMap
       });
     },
+    async getActivityStates() {
+      this.activityStatesObject = await this.openmct.objects.get('activity-states');
+      this.setActivityStates();
+      this.stopObservingActivityStatesObject = this.openmct.objects.observe(
+        this.activityStatesObject,
+        '*',
+        this.setActivityStates
+      );
+    },
+    setActivityStates() {
+      this.persistedActivityStates = this.activityStatesObject.activities;
+    },
     getPlanDataAndSetConfig(mutatedObject) {
       this.getPlanData(mutatedObject);
       this.setViewFromConfig(mutatedObject.configuration);
@@ -304,8 +331,8 @@ export default {
       }
     },
     addItem(domainObject) {
-      this.planObjects = [domainObject];
       this.resetPlanData();
+      this.planObjects = [domainObject];
       if (domainObject.type === 'plan') {
         this.getPlanDataAndSetConfig({
           ...this.domainObject,
@@ -313,15 +340,27 @@ export default {
           sourceMap: domainObject.sourceMap
         });
       }
+      //listen for changes to the plan
+      if (this.stopObservingPlan) {
+        this.stopObservingPlan();
+      }
+      this.stopObservingPlan = this.openmct.objects.observe(
+        this.planObjects[0],
+        '*',
+        this.handlePlanChange
+      );
     },
-    addToComposition(telemetryObject) {
+    handlePlanChange(planObject) {
+      this.getPlanData(planObject);
+    },
+    addToComposition(planObject) {
       if (this.planObjects.length > 0) {
-        this.confirmReplacePlan(telemetryObject);
+        this.confirmReplacePlan(planObject);
       } else {
-        this.addItem(telemetryObject);
+        this.addItem(planObject);
       }
     },
-    confirmReplacePlan(telemetryObject) {
+    confirmReplacePlan(planObject) {
       const dialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
         message: 'This action will replace the current plan. Do you want to continue?',
@@ -332,22 +371,22 @@ export default {
             callback: () => {
               const oldTelemetryObject = this.planObjects[0];
               this.removeFromComposition(oldTelemetryObject);
-              this.addItem(telemetryObject);
+              this.addItem(planObject);
               dialog.dismiss();
             }
           },
           {
             label: 'Cancel',
             callback: () => {
-              this.removeFromComposition(telemetryObject);
+              this.removeFromComposition(planObject);
               dialog.dismiss();
             }
           }
         ]
       });
     },
-    removeFromComposition(telemetryObject) {
-      this.composition.remove(telemetryObject);
+    removeFromComposition(planObject) {
+      this.composition.remove(planObject);
     },
     removeItem() {
       this.planObjects = [];
@@ -449,7 +488,9 @@ export default {
         this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
-      if (!activity.key) {
+      if (activity.id) {
+        activity.key = activity.id;
+      } else if (!activity.key) {
         activity.key = uuid();
       }
 
@@ -603,6 +644,29 @@ export default {
         this.defaultSort.property = property;
         this.defaultSort.defaultDirection = direction;
       }
+    },
+    setSelectionForActivity(activity, element) {
+      const multiSelect = false;
+
+      this.openmct.selection.select(
+        [
+          {
+            element: element,
+            context: {
+              type: 'activity',
+              activity: activity
+            }
+          },
+          {
+            element: this.openmct.layout.$refs.browseObject.$el,
+            context: {
+              item: this.domainObject,
+              supportsMultiSelect: false
+            }
+          }
+        ],
+        multiSelect
+      );
     }
   }
 };
