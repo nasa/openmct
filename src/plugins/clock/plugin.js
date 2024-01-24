@@ -21,14 +21,12 @@
  *****************************************************************************/
 
 import momentTimezone from 'moment-timezone';
-import mount from 'utils/mount';
 
 import ClockViewProvider from './ClockViewProvider.js';
 import ClockIndicator from './components/ClockIndicator.vue';
 
 export default function ClockPlugin(options) {
   return function install(openmct) {
-    const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
     openmct.types.addType('clock', {
       name: 'Clock',
       description:
@@ -92,31 +90,9 @@ export default function ClockPlugin(options) {
     });
     openmct.objectViews.addProvider(new ClockViewProvider(openmct));
 
-    if (options && options.enableClockIndicator === true) {
-      const element = document.createElement('div');
-
-      const { vNode } = mount(
-        {
-          components: {
-            ClockIndicator
-          },
-          provide: {
-            openmct
-          },
-          data() {
-            return {
-              indicatorFormat: CLOCK_INDICATOR_FORMAT
-            };
-          },
-          template: '<ClockIndicator :indicator-format="indicatorFormat" />'
-        },
-        {
-          app: openmct.app,
-          element
-        }
-      );
+    if (options?.enableClockIndicator === true) {
       const indicator = {
-        element: vNode.el,
+        vueComponent: ClockIndicator,
         key: 'clock-indicator',
         priority: openmct.priority.LOW
       };

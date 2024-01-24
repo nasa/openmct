@@ -260,9 +260,9 @@ async function assertLimitLinesExistAndAreVisible(page) {
   await waitForPlotsToRender(page);
   // Wait for limit lines to be created
   await page.waitForSelector('.js-limit-area', { state: 'attached' });
-  const limitLineCount = await page.locator('.c-plot-limit-line').count();
   // There should be 10 limit lines created by default
-  expect(await page.locator('.c-plot-limit-line').count()).toBe(10);
+  await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
+  const limitLineCount = await page.locator('.c-plot-limit-line').count();
   for (let i = 0; i < limitLineCount; i++) {
     await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
   }

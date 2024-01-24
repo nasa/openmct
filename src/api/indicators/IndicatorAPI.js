@@ -22,9 +22,12 @@
 
 import EventEmitter from 'EventEmitter';
 
+import vueWrapHtmlElement from '../../utils/vueWrapHtmlElement.js';
 import SimpleIndicator from './SimpleIndicator.js';
 
 class IndicatorAPI extends EventEmitter {
+  /** @type {import('../../../openmct.js').OpenMCT} */
+  openmct;
   constructor(openmct) {
     super();
 
@@ -41,6 +44,18 @@ class IndicatorAPI extends EventEmitter {
   simpleIndicator() {
     return new SimpleIndicator(this.openmct);
   }
+
+  /**
+   * @typedef {import('vue').Component} VueComponent
+   */
+
+  /**
+   * @typedef {Object} Indicator
+   * @property {HTMLElement} [element]
+   * @property {VueComponent|Promise<VueComponent>} [vueComponent]
+   * @property {string} key
+   * @property {number} priority
+   */
 
   /**
    * Accepts an indicator object, which is a simple object
@@ -62,10 +77,19 @@ class IndicatorAPI extends EventEmitter {
    * myIndicator.text("Hello World!");
    * myIndicator.iconClass("icon-info");
    *
+   * If you would like to use a Vue component, you can pass it in
+   * directly as the 'vueComponent' attribute of the indicator object.
+   * This accepts a Vue component or a promise that resolves to a Vue component (for asynchronous
+   * rendering).
+   *
+   * @param {Indicator} indicator
    */
   add(indicator) {
     if (!indicator.priority) {
       indicator.priority = this.openmct.priority.DEFAULT;
+    }
+    if (!indicator.vueComponent) {
+      indicator.vueComponent = vueWrapHtmlElement(indicator.element);
     }
 
     this.indicatorObjects.push(indicator);

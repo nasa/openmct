@@ -106,7 +106,6 @@ describe('the plugin', function () {
       flexibleView.show(child, false);
 
       await nextTick();
-      console.log(child);
       const flexTitle = child.querySelector('.c-fl');
 
       expect(flexTitle).not.toBeNull();
