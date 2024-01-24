@@ -101,6 +101,52 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
+   * Can the currently logged in user set the mission status.
+   * @returns {Promise<Boolean>} true if the currently logged in user can set the mission status, false otherwise.
+   */
+  canSetMissionStatus() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.canSetMissionStatus) {
+      return provider.canSetMissionStatus();
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Fetch the list of possible mission status options
+   * @returns {Promise<MissionStatusOption[]>} the current mission status
+   */
+  async getPossibleMissionStatusOptions() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getPossibleMissionStatusOptions) {
+      const possibleOptions = await provider.getPossibleMissionStatusOptions();
+
+      return possibleOptions;
+    } else {
+      this.#userAPI.error('User provider does not support mission status options');
+    }
+  }
+
+  /**
+   * Fetch the list of possible mission status roles
+   * @returns {Promise<MissionStatusRole[]>}
+   */
+  async getPossibleMissionStatusRoles() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getPossibleMissionStatusRoles) {
+      const possibleRoles = await provider.getPossibleMissionStatusRoles();
+
+      return possibleRoles;
+    } else {
+      this.#userAPI.error('User provider does not support mission status roles');
+    }
+  }
+
+  /**
    * @returns {Promise<Array<Status>>} the complete list of possible states that an operator can reply to a poll question with.
    */
   async getPossibleStatuses() {
@@ -163,6 +209,21 @@ export default class StatusAPI extends EventEmitter {
       return provider.setStatusForRole(activeRole, status);
     } else {
       this.#userAPI.error('User provider does not support setting role status');
+    }
+  }
+
+  /**
+   * @param {MissionStatusRole} role
+   * @param {MissionStatusOption} status
+   * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+   */
+  setStatusForMissionRole(role, status) {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.setStatusForMissionRole) {
+      return provider.setStatusForMissionRole(role, status);
+    } else {
+      this.#userAPI.error('User provider does not support setting mission role status');
     }
   }
 
@@ -274,6 +335,19 @@ export default class StatusAPI extends EventEmitter {
  * @typedef {Object} PollQuestion
  * @property {String} question - The question to be presented to users
  * @property {Number} timestamp - The time that the poll question was set.
+ */
+
+/**
+ * The MissionStatus type
+ * @typedef {Object} MissionStatusOption
+ * @extends {Status}
+ * @property {String} color A color to be used when displaying the mission status
+ */
+
+/**
+ * @typedef {Object} MissionStatusRole
+ * @property {String} key A unique identifier for this role
+ * @property {String} label A human readable label for this role
  */
 
 /**
