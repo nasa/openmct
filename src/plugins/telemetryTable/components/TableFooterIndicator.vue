@@ -121,7 +121,7 @@ export default {
         : 'performance mode limited to 50 rows';
     },
     telemetryModeButtonLabel() {
-      return this.isUnlimitedMode ? 'Show Latest 50' : 'Show All';
+      return this.isUnlimitedMode ? 'SHOW LATEST 50' : 'SHOW ALL';
     },
     telemetryModeButtonTitle() {
       return this.isUnlimitedMode
