@@ -218,7 +218,7 @@ export default class PlotSeries extends Model {
         },
         {
           filters: this.filters,
-          strategy: 'batch'
+          strategy: this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH
         }
       );
     }

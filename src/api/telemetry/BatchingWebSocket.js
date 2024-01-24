@@ -74,6 +74,7 @@ class BatchingWebSocket extends EventTarget {
       'destroy',
       () => {
         this.disconnect();
+        URL.revokeObjectURL(workerUrl);
       },
       { once: true }
     );
@@ -167,7 +168,6 @@ class BatchingWebSocket extends EventTarget {
   }
 
   #routeMessageToHandler(message) {
-    // Batch message would need to be handle differently here
     if (message.data.type === 'batch') {
       if (message.data.batch.dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(

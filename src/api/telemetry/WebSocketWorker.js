@@ -126,9 +126,7 @@ export default function installWorker() {
       this.#isConnected = false;
       this.#isConnecting = false;
 
-      if (this.#webSocket.readyState === WebSocket.OPEN) {
-        this.#webSocket.close();
-      }
+      this.#webSocket.close();
 
       this.dispatchEvent(new Event('disconnected'));
       this.#webSocket = undefined;

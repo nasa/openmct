@@ -182,7 +182,7 @@ export default class TelemetryCollection extends EventEmitter {
     }
     const options = { ...this.options };
     //We always want to receive all available values in telemetry tables.
-    options.strategy = 'batch';
+    options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
 
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,

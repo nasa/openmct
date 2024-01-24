@@ -72,6 +72,11 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  * @memberof module:openmct.TelemetryAPI~
  */
 
+const SUBSCRIBE_STRATEGY = {
+  LATEST: 'latest',
+  BATCH: 'batch'
+};
+
 /**
  * Utilities for telemetry
  * @interface TelemetryAPI
@@ -79,6 +84,10 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
+
+  get SUBSCRIBE_STRATEGY() {
+    return SUBSCRIBE_STRATEGY;
+  }
 
   constructor(openmct) {
     this.openmct = openmct;
@@ -403,14 +412,14 @@ export default class TelemetryAPI {
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribe(domainObject, callback, options = { strategy: 'latest' }) {
+  subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
     // Default behavior is to use the latest strategy, as opposed to the new "batch" strategy
-    if (options.strategy === undefined) {
-      options.strategy = 'latest';
+    if (options.strategy === undefined || options.strategy === null) {
+      options.strategy = SUBSCRIBE_STRATEGY.LATEST;
     }
 
     const provider = this.findSubscriptionProvider(domainObject, options);
@@ -429,7 +438,7 @@ export default class TelemetryAPI {
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          options.strategy === 'batch'
+          options.strategy === SUBSCRIBE_STRATEGY.BATCH
             ? subscriptionCallbackForArray
             : subscriptionCallbackForSingleValue,
           options
@@ -442,6 +451,12 @@ export default class TelemetryAPI {
     }
 
     function subscriptionCallbackForArray(value) {
+      if (value === undefined || value === null || value.length === 0) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
       if (!Array.isArray(value)) {
         value = [value];
       }
@@ -454,6 +469,12 @@ export default class TelemetryAPI {
     function subscriptionCallbackForSingleValue(value) {
       if (Array.isArray(value)) {
         value = value[value.length - 1];
+      }
+
+      if (value === undefined || value === null) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
       }
 
       subscriber.callbacks.forEach(function (cb) {
