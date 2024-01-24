@@ -344,8 +344,7 @@ class CouchObjectProvider {
     // check if we've already built the root object
     let requestedRootObject = null;
     try {
-      const rawCouchObject = await this.request(identifier.key, 'GET', undefined, abortSignal);
-      requestedRootObject = this.#getModel(rawCouchObject);
+      requestedRootObject = await this.readyGetForBatch(identifier, abortSignal);
     } catch (error) {
       if (!this.isReadOnly()) {
         console.error(
@@ -365,10 +364,7 @@ class CouchObjectProvider {
     }
   }
 
-  get(identifier, abortSignal) {
-    if (identifier.key === this.rootObject.identifier.key) {
-      return this.getOrCreateRoot(identifier, abortSignal);
-    }
+  readyGetForBatch(identifier, abortSignal) {
     this.batchIds.push(identifier.key);
 
     if (this.bulkPromise === undefined) {
@@ -378,6 +374,14 @@ class CouchObjectProvider {
     return this.bulkPromise.then((domainObjectMap) => {
       return domainObjectMap[identifier.key];
     });
+  }
+
+  get(identifier, abortSignal) {
+    if (identifier.key === this.rootObject.identifier.key) {
+      return this.getOrCreateRoot(identifier, abortSignal);
+    }
+
+    return this.readyGetForBatch(identifier, abortSignal);
   }
 
   /**
