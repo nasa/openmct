@@ -84,19 +84,23 @@ export default function CouchPlugin(options) {
         openmct.indicators.add(simpleIndicator);
         couchStatusIndicator = new CouchStatusIndicator(simpleIndicator);
       }
-      const couchProvider = new CouchObjectProvider({
+      // the provider is added to the install function to expose couchProvider to unit tests
+      install.couchProvider = new CouchObjectProvider({
         openmct,
         databaseConfiguration,
         couchStatusIndicator
       });
-      openmct.objects.addProvider(databaseConfiguration.namespace, couchProvider);
+      openmct.objects.addProvider(databaseConfiguration.namespace, install.couchProvider);
       databaseConfiguration.additionalNamespaces?.forEach((additionalNamespace) => {
-        openmct.objects.addProvider(additionalNamespace, couchProvider);
+        openmct.objects.addProvider(additionalNamespace, install.couchProvider);
       });
 
       // need one search provider for whole couch database
       const searchOnlyNamespace = `COUCH_SEARCH_${databaseConfiguration.namespace}${Date.now()}`;
-      openmct.objects.addProvider(searchOnlyNamespace, new CouchSearchProvider(couchProvider));
+      openmct.objects.addProvider(
+        searchOnlyNamespace,
+        new CouchSearchProvider(install.couchProvider)
+      );
     });
   };
 }
