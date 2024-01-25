@@ -23,9 +23,7 @@
  * This test suite is dedicated to testing the preview plugin.
  */
 
-import { fileURLToPath } from 'url';
-
-import { expect, test } from '../../../../pluginFixtures.js';
+import { test } from '../../../../pluginFixtures.js';
 
 test.describe('Preview mode', () => {
   test.fixme('all context menu items are available for a telemetry table', async ({ page }) => {
