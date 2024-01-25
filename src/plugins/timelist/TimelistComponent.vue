@@ -490,9 +490,7 @@ export default {
         this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
-      if (activity.id) {
-        activity.key = activity.id;
-      } else if (!activity.key) {
+      if (!activity.key) {
         activity.key = uuid();
       }
 

@@ -110,9 +110,7 @@ export default {
   },
   methods: {
     setActivityStatus() {
-      let statusKeyIndex = Object.keys(activityStates).findIndex(
-        (key) => key === this.executionState
-      );
+      let statusKeyIndex = activityStates.findIndex((state) => state.key === this.executionState);
       if (statusKeyIndex < 0) {
         statusKeyIndex = 0;
       }
