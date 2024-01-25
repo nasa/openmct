@@ -108,7 +108,8 @@
               namespace: 'openmct-sandbox',
               readOnly: false,
               useDesignDocuments: false,
-              indicator: true
+              indicator: true,
+              omitRoot: true
             },
             {
               url: 'http://localhost:5984/openmct-cm',
@@ -127,7 +128,7 @@
       openmct.install(openmct.plugins.example.ExampleTags());
 
       openmct.install(openmct.plugins.Espresso());
-      //openmct.install(openmct.plugins.MyItems({ namespace: 'openmct-sandbox' }));
+      openmct.install(openmct.plugins.MyItems('My Items', 'openmct-sandbox'));
       openmct.install(
         openmct.plugins.PlanLayout({
           creatable: true

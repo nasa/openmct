@@ -48,19 +48,22 @@ class CouchObjectProvider {
     this.flushPersistenceQueue = _.debounce(this.flushPersistenceQueue.bind(this));
     this.persistenceQueue = [];
     this.rootObject = null;
+    this.omitRoot = databaseConfiguration.omitRoot;
     this.defaultProvider = databaseConfiguration.default;
 
-    this.rootObject = {
-      identifier: {
-        key: `ROOT_KEY_${this.namespace}`,
-        namespace: this.namespace
-      },
-      name: this.namespace,
-      type: 'folder',
-      location: 'ROOT',
-      composition: []
-    };
-    this.openmct.objects.addRoot(this.rootObject.identifier, openmct.priority.LOW);
+    if (!this.omitRoot) {
+      this.rootObject = {
+        identifier: {
+          key: `ROOT_KEY_${this.namespace}`,
+          namespace: this.namespace
+        },
+        name: this.namespace,
+        type: 'folder',
+        location: 'ROOT',
+        composition: []
+      };
+      this.openmct.objects.addRoot(this.rootObject.identifier, openmct.priority.LOW);
+    }
   }
 
   /**
@@ -377,7 +380,7 @@ class CouchObjectProvider {
   }
 
   get(identifier, abortSignal) {
-    if (identifier.key === this.rootObject.identifier.key) {
+    if (!this.omitRoot && identifier.key === this.rootObject.identifier.key) {
       return this.getOrCreateRoot(identifier, abortSignal);
     }
 
