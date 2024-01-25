@@ -297,6 +297,15 @@
         padding-top: 0;
         padding-bottom: 0;
       }
+
+      .l-pane__expand-button__label {
+        // Add a plus icon before the label
+        &:before {
+          font-family: symbolsfont;
+          content: $glyph-icon-plus;
+          display: inline-block;
+        }
+      }
     }
 
     &__pane-tree,

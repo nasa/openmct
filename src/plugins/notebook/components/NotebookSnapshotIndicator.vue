@@ -48,11 +48,12 @@
 import mount from 'utils/mount';
 
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants.js';
+import { getSnapshotContainer } from '../plugin.js';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container.js';
 import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 
 export default {
-  inject: ['openmct', 'snapshotContainer'],
+  inject: ['openmct'],
   data() {
     return {
       expanded: false,
@@ -61,6 +62,9 @@ export default {
       snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT,
       flashIndicator: false
     };
+  },
+  created() {
+    this.snapshotContainer = getSnapshotContainer(this.openmct);
   },
   mounted() {
     this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
