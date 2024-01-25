@@ -112,10 +112,10 @@ export default {
         this.setActivityStates
       );
     },
-    setActivityStates() {
+    setActivityStates(newActivitiesStateObject) {
       if (this.activities.length) {
         const id = this.activities[0].id;
-        this.activityExecutionState = this.activityStatesObject.activities[id];
+        this.activityExecutionState = newActivitiesStateObject.activities[id];
       } else {
         this.activityExecutionState = undefined;
       }
