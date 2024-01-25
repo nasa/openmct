@@ -104,6 +104,12 @@
         grid-template-columns: min-content 3fr 40px 1fr;
         grid-column-gap: $interiorMargin;
 
+        &[s-selected] {
+            background: $colorSelectedBg !important;
+            box-shadow: inset rgba($colorSelectedFg, 0.1) 0 0 0 1px;
+            color: $colorSelectedFg !important;
+        }
+
         @include styleTliEm($baseFgEm);
 
         &__activity-color {
