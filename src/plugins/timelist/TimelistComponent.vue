@@ -352,6 +352,7 @@ export default {
     },
     handlePlanChange(planObject) {
       this.getPlanData(planObject);
+      this.listActivities();
     },
     addToComposition(planObject) {
       if (this.planObjects.length > 0) {
