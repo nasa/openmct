@@ -24,12 +24,6 @@
   <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
-      <!--      <div class="c-inspect-properties__row">
-        <div class="c-inspect-properties__label" title="Status">Current Status</div>
-        <div class="c-inspect-properties__value" aria-label="Activity Status Label">
-          {{ statusLabel }}
-        </div>
-      </div>-->
       <div class="c-inspect-properties__row">
         <div class="c-inspect-properties__label" title="Set Status">Set Status</div>
         <div class="c-inspect-properties__value" aria-label="Activity Status Label">
@@ -57,7 +51,11 @@
 <script>
 const activityStates = [
   {
-    key: 'active',
+    key: 'notStarted',
+    label: 'Not started'
+  },
+  {
+    key: 'in-progress',
     label: 'In progress'
   },
   {
@@ -71,10 +69,6 @@ const activityStates = [
   {
     key: 'cancelled',
     label: 'Cancelled'
-  },
-  {
-    key: 'notStarted',
-    label: 'Not started'
   }
 ];
 
@@ -102,15 +96,6 @@ export default {
       currentStatusKey: activityStates[0].key
     };
   },
-  computed: {
-    statusLabel() {
-      let defaultStatus = activityStates.find((state) => state.key === 'notStarted');
-      let currentStatus = activityStates.find(
-        (state) => this.currentStatusKey !== '' && state.key === this.currentStatusKey
-      );
-      return currentStatus?.label || defaultStatus.label;
-    }
-  },
   watch: {
     executionState() {
       this.setActivityStatus();
@@ -121,7 +106,13 @@ export default {
   },
   methods: {
     setActivityStatus() {
-      this.currentStatusKey = this.executionState ?? this.activityStates[0].key;
+      let statusKeyIndex = Object.keys(activityStates).findIndex(
+        (key) => key === this.executionState
+      );
+      if (statusKeyIndex < 0) {
+        statusKeyIndex = 0;
+      }
+      this.currentStatusKey = this.activityStates[statusKeyIndex].key;
     },
     changeActivityStatus() {
       if (this.currentStatusKey === '') {
