@@ -24,24 +24,21 @@
     <plan-activity-time-view
       v-for="activity in activities"
       :key="activity.key"
-      class="c-inspector__properties c-inspect-properties"
       :activity="activity"
       :heading="heading"
     />
     <plan-activity-properties-view
       v-for="activity in activities"
       :key="activity.key"
-      :heading="'Properties'"
-      class="c-inspector__properties c-inspect-properties"
+      heading="'Properties'"
       :activity="activity"
     />
     <plan-activity-status-view
       v-if="canPersistState"
       :key="activities[0].key"
-      class="c-inspector__properties c-inspect-properties"
       :activity="activities[0]"
       :execution-state="persistedActivityStates[activities[0].id]"
-      :heading="'Activity Status'"
+      heading="'Activity Status'"
       @update-activity-state="persistedActivityState"
     />
   </div>
