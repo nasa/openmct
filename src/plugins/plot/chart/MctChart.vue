@@ -279,18 +279,22 @@ export default {
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
         this.chartVisible = entry.isIntersecting;
-        if (!this.chartVisible) {
+        const nowVisible = this.chartVisible;
+        if (wasVisible && !nowVisible) {
           // destroy the chart
+          console.debug(`📈 chart hidden, destroying canvas`);
           this.destroyCanvas();
-        } else if (!wasVisible && this.chartVisible) {
+        } else if (!wasVisible && nowVisible) {
           // rebuild the chart
+          console.debug(`📈 chart visible, rebuilding canvas`);
           this.buildCanvasElements();
           const canvasInitialized = this.readyCanvasForDrawing();
           if (canvasInitialized) {
             this.draw();
           }
           this.$emit('plot-reinitialize-canvas');
-        } else if (wasVisible && this.chartVisible) {
+        } else {
+          console.debug(`📈 ignoring wasVisible: ${wasVisible} and nowVisible ${nowVisible}`);
           // ignore, moving on
         }
       }

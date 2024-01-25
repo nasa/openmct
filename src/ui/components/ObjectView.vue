@@ -116,9 +116,6 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
-    if (this.visibilityObserver) {
-      this.visibilityObserver.destroy();
-    }
     this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
       capture: true
     });
@@ -131,7 +128,6 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
-    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -157,6 +153,11 @@ export default {
 
         if (this.$refs.objectViewWrapper) {
           this.$refs.objectViewWrapper.innerHTML = '';
+        }
+
+        if (this.visibilityObserver) {
+          this.visibilityObserver.destroy();
+          delete this.visibilityObserver;
         }
 
         if (this.releaseEditModeHandler) {
@@ -274,6 +275,8 @@ export default {
       if (!this.domainObject) {
         return;
       }
+
+      this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
 
       this.composition = this.openmct.composition.get(this.domainObject);
 

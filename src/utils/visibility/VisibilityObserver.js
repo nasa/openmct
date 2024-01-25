@@ -89,5 +89,6 @@ export default class VisibilityObserver {
     this.isIntersecting = null;
     this.#observer = null;
     this.lastUnfiredFunc = null;
+    this.calledOnce = false;
   }
 }
