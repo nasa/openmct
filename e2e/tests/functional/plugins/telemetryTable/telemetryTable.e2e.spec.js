@@ -64,10 +64,9 @@ test.describe('Telemetry Table', () => {
 
     // Get the most recent telemetry date
     const latestTelemetryDate = await page
-      .locator('table.c-telemetry-table__body > tbody > tr')
+      .getByLabel('table content')
+      .getByLabel('utc table cell')
       .last()
-      .locator('td')
-      .nth(1)
       .getAttribute('title');
 
     // Verify that it is <= our new end bound
@@ -91,7 +90,7 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('Roger');
 
-    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell').getByText(/Roger/).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -103,7 +102,10 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('Dodger');
 
-    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    cells = await page
+      .getByRole('cell')
+      .getByText(/Dodger/)
+      .all();
     // ensure we've got more than one cell
     expect(cells.length).toBe(0);
     // ensure the text content of each cell contains the search term
@@ -135,7 +137,7 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
 
-    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell').getByText(/Roger/).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -147,7 +149,10 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Dd]oger/');
 
-    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    cells = await page
+      .getByRole('cell')
+      .getByText(/Dodger/)
+      .all();
     // ensure we've got more than one cell
     expect(cells.length).toBe(0);
     // ensure the text content of each cell contains the search term
