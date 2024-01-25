@@ -73,6 +73,7 @@ test.describe('Plan', () => {
     const startBound = firstActivity.start;
     // Set the endBound to the end time of the current activity
     let endBound = lastActivity.end;
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (endBound === startBound) {
       // Prevent oddities with setting start and end bound equal
       // via URL params
