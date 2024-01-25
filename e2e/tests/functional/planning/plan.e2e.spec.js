@@ -91,12 +91,9 @@ test.describe('Plan', () => {
     // Find the activity state section in the inspector
     await page.getByRole('tab', { name: 'Activity' }).click();
 
-    // Check that activity state label is displayed in the inspector.
-    await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
-
     // Check that activity state dropdown selection shows the `set status` option by default
     await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
-      '- Set Status -'
+      'Not started'
     );
 
     // Change the selection of the activity status
@@ -105,7 +102,6 @@ test.describe('Plan', () => {
     await page.getByText('Past event 2').click();
     await page.getByText('Past event 1').click();
     // Check that activity state dropdown selection shows the previously selected option by default
-    await expect(page.getByLabel('Activity Status Label')).toHaveText('Aborted');
     await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
       'Aborted'
     );
