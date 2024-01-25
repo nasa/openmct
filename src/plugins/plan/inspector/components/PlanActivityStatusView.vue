@@ -25,28 +25,25 @@
     <div class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <div class="c-inspect-properties__row">
-        <div class="c-inspect-properties__label" title="Status">Status</div>
+        <div class="c-inspect-properties__label" title="Set Status">Set Status</div>
         <div class="c-inspect-properties__value" aria-label="Activity Status Label">
-          {{ statusLabel }}
+          <select
+            v-model="currentStatusKey"
+            name="setActivityStatus"
+            aria-label="Activity Status"
+            @change="changeActivityStatus"
+          >
+            <option
+              v-for="status in activityStates"
+              :key="status.key"
+              :value="status.key"
+              :aria-selected="currentStatusKey === status.key"
+            >
+              {{ status.label }}
+            </option>
+          </select>
         </div>
       </div>
-      <form name="activityStatus" class="span-all">
-        <select
-          v-model="currentStatusKey"
-          name="setActivityStatus"
-          aria-label="Activity Status"
-          @change="changeActivityStatus"
-        >
-          <option
-            v-for="status in activityStates"
-            :key="status.key"
-            :value="status.key"
-            :aria-selected="currentStatusKey === status.key"
-          >
-            {{ status.label }}
-          </option>
-        </select>
-      </form>
     </div>
   </div>
 </template>
@@ -54,11 +51,11 @@
 <script>
 const activityStates = [
   {
-    key: '',
-    label: '- Set Status -'
+    key: 'notStarted',
+    label: 'Not started'
   },
   {
-    key: 'active',
+    key: 'in-progress',
     label: 'In progress'
   },
   {
@@ -76,10 +73,6 @@ const activityStates = [
   {
     key: 'cancelled',
     label: 'Cancelled'
-  },
-  {
-    key: 'notStarted',
-    label: 'Not started'
   }
 ];
 
@@ -107,15 +100,6 @@ export default {
       currentStatusKey: activityStates[0].key
     };
   },
-  computed: {
-    statusLabel() {
-      let defaultStatus = activityStates.find((state) => state.key === 'notStarted');
-      let currentStatus = activityStates.find(
-        (state) => this.currentStatusKey !== '' && state.key === this.currentStatusKey
-      );
-      return currentStatus?.label || defaultStatus.label;
-    }
-  },
   watch: {
     executionState() {
       this.setActivityStatus();
@@ -126,7 +110,13 @@ export default {
   },
   methods: {
     setActivityStatus() {
-      this.currentStatusKey = this.executionState ?? this.activityStates[0].key;
+      let statusKeyIndex = Object.keys(activityStates).findIndex(
+        (key) => key === this.executionState
+      );
+      if (statusKeyIndex < 0) {
+        statusKeyIndex = 0;
+      }
+      this.currentStatusKey = this.activityStates[statusKeyIndex].key;
     },
     changeActivityStatus() {
       if (this.currentStatusKey === '') {

@@ -22,24 +22,24 @@
 <template>
   <div>
     <plan-activity-time-view
-      v-for="activity in activities"
-      :key="activity.key"
-      :activity="activity"
-      :heading="heading"
+        v-for="activity in activities"
+        :key="activity.key"
+        :activity="activity"
+        :heading="heading"
     />
     <plan-activity-properties-view
-      v-for="activity in activities"
-      :key="activity.key"
-      heading="'Properties'"
-      :activity="activity"
+        v-for="activity in activities"
+        :key="activity.key"
+        heading="Properties"
+        :activity="activity"
     />
     <plan-activity-status-view
-      v-if="canPersistState"
-      :key="activities[0].key"
-      :activity="activities[0]"
-      :execution-state="activityExecutionState"
-      :heading="'Activity Status'"
-      @update-activity-state="persistActivityState"
+        v-if="canPersistState"
+        :key="activities[0].key"
+        :activity="activities[0]"
+        :execution-state="activityExecutionState"
+        :heading="Activity Status"
+        @update-activity-state="persistActivityState"
     />
   </div>
 </template>
