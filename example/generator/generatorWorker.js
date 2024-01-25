@@ -159,7 +159,7 @@
       }
     }
 
-    if (!request.strategy === 'minmax' && size !== undefined) {
+    if (request.strategy !== 'minmax' && size) {
       data = data.slice(-size);
     }
 
