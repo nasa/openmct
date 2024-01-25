@@ -32,7 +32,12 @@
           </div>
           <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
           <div class="c-inspect-properties__value">
-            <select v-if="canEdit" v-model="isExpanded" @change="updateExpandedView()">
+            <select
+              v-if="canEdit"
+              v-model="isExpanded"
+              aria-label="Display Style"
+              @change="updateExpandedView"
+            >
               <option :key="'expanded-view-option-enabled'" :value="true">Expanded</option>
               <option :key="'expanded-view-option-disabled'" :value="false">Compact</option>
             </select>

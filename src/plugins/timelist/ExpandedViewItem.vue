@@ -38,7 +38,7 @@
       <svg viewBox="0 0 100 100">
         <g aria-label="Activity in progress" class="c-tli__graphic__pie">
           <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
-          <path id="svg-progress-path" class="c-svg-progress__progress"></path>
+          <path ref="progressElement" class="c-svg-progress__progress"></path>
           <circle
             class="c-svg-progress__ticks"
             r="40"
@@ -90,6 +90,7 @@ import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import { CURRENT_CSS_SUFFIX, FUTURE_CSS_SUFFIX, PAST_CSS_SUFFIX } from './constants.js';
+import { updateProgress } from './inspector/svg-progress.js';
 
 const ITEM_COLORS = {
   [CURRENT_CSS_SUFFIX]: '#ffcc00',
@@ -99,7 +100,7 @@ const ITEM_COLORS = {
 
 const EXECUTION_STATES = {
   notStarted: 'Not started',
-  active: 'In progress',
+  'in-progress': 'In progress',
   completed: 'Completed',
   aborted: 'Aborted',
   skipped: 'Skipped',
@@ -234,6 +235,8 @@ export default {
     },
     updateTimestamp(time) {
       this.timestamp = time;
+      const progressElement = this.$refs.progressElement;
+      updateProgress(this.item.start, this.item.end, this.timestamp, progressElement);
     }
   }
 };

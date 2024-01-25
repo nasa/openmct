@@ -107,6 +107,58 @@ test.describe('Time List', () => {
   });
 });
 
+test("View a timelist in expanded view, verify all the activities are displayed and selecting an activity shows it's properties", async ({
+  page
+}) => {
+  // Goto baseURL
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  const timelist = await test.step('Create a Time List', async () => {
+    const createdTimeList = await createDomainObjectWithDefaults(page, { type: 'Time List' });
+    const objectName = await page.locator('.l-browse-bar__object-name').innerText();
+    expect(objectName).toBe(createdTimeList.name);
+
+    return createdTimeList;
+  });
+
+  await test.step('Create a Plan and add it to the timelist', async () => {
+    await createPlanFromJSON(page, {
+      name: 'Test Plan',
+      json: examplePlanSmall1,
+      parent: timelist.uuid
+    });
+    // Change the object to edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Find the display properties section in the inspector
+    await page.getByRole('tab', { name: 'View Properties' }).click();
+    // Switch to expanded view and save the setting
+    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    // Ensure that all activities are shown in the expanded view
+    const groups = Object.keys(examplePlanSmall1);
+    const firstGroupKey = groups[0];
+    const firstGroupItems = examplePlanSmall1[firstGroupKey];
+    const firstActivity = firstGroupItems[0];
+    const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+    const startBound = firstActivity.start;
+    const endBound = lastActivity.end;
+
+    // Verify all events are displayed
+    const eventCount = await page.getByRole('row').count();
+    // subtracting one for the header
+    await expect(eventCount - 1).toEqual(firstGroupItems.length);
+  });
+
+  await test.step('Shows activity properties when a row is selected', async () => {
+    await page.getByRole('row').nth(2).click();
+
+    // Find the activity state section in the inspector
+    await page.getByRole('tab', { name: 'Activity' }).click();
+    // Check that activity state label is displayed in the inspector.
+    await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
+  });
+
 /**
  * The regular expression used to parse the countdown string.
  * Some examples of valid Countdown strings:
