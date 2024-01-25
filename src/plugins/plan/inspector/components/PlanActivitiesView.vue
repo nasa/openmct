@@ -105,7 +105,7 @@ export default {
   methods: {
     async getActivityStates() {
       this.activityStatesObject = await this.openmct.objects.get('activity-states');
-      this.setActivityStates();
+      this.setActivityStates(this.activityStatesObject);
       this.stopObservingActivityStatesObject = this.openmct.objects.observe(
         this.activityStatesObject,
         '*',
