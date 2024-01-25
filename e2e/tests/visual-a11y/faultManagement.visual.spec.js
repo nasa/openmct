@@ -23,7 +23,7 @@ import percySnapshot from '@percy/playwright';
 import { fileURLToPath } from 'url';
 
 import * as utils from '../../helper/faultUtils.js';
-import { test } from '../../pluginFixtures.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Fault Management Visual Tests', () => {
   test('icon test', async ({ page, theme }) => {
@@ -31,6 +31,23 @@ test.describe('Fault Management Visual Tests', () => {
       path: fileURLToPath(new URL('../../helper/addInitFaultManagementPlugin.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Wait for status bar to load
+    await expect(
+      page.getByRole('status', {
+        name: 'Clock Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Global Clear Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Snapshot Indicator'
+      })
+    ).toBeInViewport();
 
     await percySnapshot(page, `Fault Management icon appears in tree (theme: '${theme}')`);
   });

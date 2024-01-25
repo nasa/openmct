@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { defineComponent } from 'vue';
+
 import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
 import SimpleIndicator from './SimpleIndicator.js';
 
@@ -33,7 +35,7 @@ describe('The Indicator API', () => {
     return resetApplicationState(openmct);
   });
 
-  function generateIndicator(className, label, priority) {
+  function generateHTMLIndicator(className, label, priority) {
     const element = document.createElement('div');
     element.classList.add(className);
     const textNode = document.createTextNode(label);
@@ -46,8 +48,25 @@ describe('The Indicator API', () => {
     return testIndicator;
   }
 
-  it('can register an indicator', () => {
-    const testIndicator = generateIndicator('test-indicator', 'This is a test indicator', 2);
+  function generateVueIndicator(priority) {
+    return {
+      vueComponent: defineComponent({
+        template: '<div class="test-indicator">This is a test indicator</div>'
+      }),
+      priority
+    };
+  }
+
+  it('can register an HTML indicator', () => {
+    const testIndicator = generateHTMLIndicator('test-indicator', 'This is a test indicator', 2);
+    openmct.indicators.add(testIndicator);
+    expect(openmct.indicators.indicatorObjects).toBeDefined();
+    // notifier indicator is installed by default
+    expect(openmct.indicators.indicatorObjects.length).toBe(2);
+  });
+
+  it('can register a Vue indicator', () => {
+    const testIndicator = generateVueIndicator(2);
     openmct.indicators.add(testIndicator);
     expect(openmct.indicators.indicatorObjects).toBeDefined();
     // notifier indicator is installed by default
@@ -55,37 +74,40 @@ describe('The Indicator API', () => {
   });
 
   it('can order indicators based on priority', () => {
-    const testIndicator1 = generateIndicator(
+    const testIndicator1 = generateHTMLIndicator(
       'test-indicator-1',
       'This is a test indicator',
       openmct.priority.LOW
     );
     openmct.indicators.add(testIndicator1);
 
-    const testIndicator2 = generateIndicator(
+    const testIndicator2 = generateHTMLIndicator(
       'test-indicator-2',
       'This is another test indicator',
       openmct.priority.DEFAULT
     );
     openmct.indicators.add(testIndicator2);
 
-    const testIndicator3 = generateIndicator(
+    const testIndicator3 = generateHTMLIndicator(
       'test-indicator-3',
       'This is yet another test indicator',
       openmct.priority.LOW
     );
     openmct.indicators.add(testIndicator3);
 
-    const testIndicator4 = generateIndicator(
+    const testIndicator4 = generateHTMLIndicator(
       'test-indicator-4',
       'This is yet another test indicator',
       openmct.priority.HIGH
     );
     openmct.indicators.add(testIndicator4);
 
-    expect(openmct.indicators.indicatorObjects.length).toBe(5);
+    const testIndicator5 = generateVueIndicator(openmct.priority.DEFAULT);
+    openmct.indicators.add(testIndicator5);
+
+    expect(openmct.indicators.indicatorObjects.length).toBe(6);
     const indicatorObjectsByPriority = openmct.indicators.getIndicatorObjectsByPriority();
-    expect(indicatorObjectsByPriority.length).toBe(5);
+    expect(indicatorObjectsByPriority.length).toBe(6);
     expect(indicatorObjectsByPriority[2].priority).toBe(openmct.priority.DEFAULT);
   });
 
