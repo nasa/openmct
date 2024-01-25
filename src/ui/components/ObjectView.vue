@@ -33,6 +33,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import objectUtils from '../../api/objects/object-utils.js';
 import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
@@ -184,6 +185,7 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      this.openmct.objectViews.off('reload', this.reload);
       if (this.contextActionEvent) {
         this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
       }
@@ -217,6 +219,13 @@ export default {
     toggleEditView(editMode) {
       this.clear();
       this.updateView(true);
+    },
+    reload(domainObjectToReload) {
+      if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
+        this.updateView(true);
+        this.initObjectStyles();
+        this.triggerStalenessSubscribe(this.domainObject);
+      }
     },
     triggerStalenessSubscribe(object) {
       if (this.openmct.telemetry.isTelemetryObject(object)) {
@@ -316,6 +325,7 @@ export default {
         this.domainObject.identifier
       )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on('reload', this.reload);
       this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
