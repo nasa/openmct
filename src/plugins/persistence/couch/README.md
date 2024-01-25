@@ -195,6 +195,14 @@ When installing the CouchDB plugin for OpenMCT, you can specify a list of databa
 - `omitRoot`: A boolean determining whether a root object should be created if it doesn't exist. If using the `My Items` plugin, this should be set to `true` as `My Items` will create the root object. If set to `false`, a root object with the label of `namespace` will be created.
   - Example: `true`
 
+Note: If using the `exampleTags` plugin with non-blank namespaces, you'll need to configure it point to a writable database. For example:
+
+```js
+openmct.install(
+        openmct.plugins.example.ExampleTags({ namespaceToSaveAnnotations: 'openmct-sandbox' })
+      );
+```
+
 # Validating a successful Installation
 
 1. Start Open MCT by running `npm start` in the `openmct` path.
