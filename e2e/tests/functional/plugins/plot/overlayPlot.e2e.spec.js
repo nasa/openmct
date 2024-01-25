@@ -63,80 +63,78 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
-  //skipping due to https://github.com/nasa/openmct/issues/7405
-  test.fixme(
-    'Limit lines persist when series is moved to another Y Axis and on refresh',
-    async ({ page }) => {
-      test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/6338'
-      });
-      // Create an Overlay Plot with a default SWG
-      const overlayPlot = await createDomainObjectWithDefaults(page, {
-        type: 'Overlay Plot'
-      });
+  test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6338'
+    });
+    // Create an Overlay Plot with a default SWG
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
 
-      const swgA = await createDomainObjectWithDefaults(page, {
-        type: 'Sine Wave Generator',
-        parent: overlayPlot.uuid
-      });
+    const swgA = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
 
-      await page.goto(overlayPlot.url);
+    await page.goto(overlayPlot.url);
 
-      // Assert that no limit lines are shown by default
-      await page.waitForSelector('.js-limit-area', { state: 'attached' });
-      expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+    // Assert that no limit lines are shown by default
+    await page.waitForSelector('.js-limit-area', { state: 'attached' });
+    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
-      // Enter edit mode
-      await page.getByLabel('Edit Object').click();
+    // Enter edit mode
+    await page.getByLabel('Edit Object').click();
 
-      // Expand the "Sine Wave Generator" plot series options and enable limit lines
-      await page.getByRole('tab', { name: 'Config' }).click();
-      await page
-        .getByRole('list', { name: 'Plot Series Properties' })
-        .locator('span')
-        .first()
-        .click();
-      await page
-        .getByRole('list', { name: 'Plot Series Properties' })
-        .locator('[title="Display limit lines"]~div input')
-        .check();
+    // Expand the "Sine Wave Generator" plot series options and enable limit lines
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('span')
+      .first()
+      .click();
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('[title="Display limit lines"]~div input')
+      .check();
 
-      await assertLimitLinesExistAndAreVisible(page);
+    await assertLimitLinesExistAndAreVisible(page);
 
-      // Save (exit edit mode)
-      await page.locator('button[title="Save"]').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    // Save (exit edit mode)
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-      await assertLimitLinesExistAndAreVisible(page);
+    await assertLimitLinesExistAndAreVisible(page);
 
-      await page.reload();
+    await page.reload();
 
-      await assertLimitLinesExistAndAreVisible(page);
+    await assertLimitLinesExistAndAreVisible(page);
 
-      // Enter edit mode
-      await page.getByLabel('Edit Object').click();
+    // Enter edit mode
+    await page.getByLabel('Edit Object').click();
 
-      await page.getByRole('tab', { name: 'Elements' }).click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
-      // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
-      await page
-        .locator(`#inspector-elements-tree >> text=${swgA.name}`)
-        .dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+    // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
+    await page
+      .locator(`#inspector-elements-tree >> text=${swgA.name}`)
+      .dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
-      await assertLimitLinesExistAndAreVisible(page);
+    await assertLimitLinesExistAndAreVisible(page);
 
-      // Save (exit edit mode)
-      await page.locator('button[title="Save"]').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    // Save (exit edit mode)
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-      await assertLimitLinesExistAndAreVisible(page);
+    await assertLimitLinesExistAndAreVisible(page);
 
-      await page.reload();
+    await page.reload();
 
-      await assertLimitLinesExistAndAreVisible(page);
-    }
-  );
+    await assertLimitLinesExistAndAreVisible(page);
+  });
 
   test('The elements pool supports dragging series into multiple y-axis buckets', async ({
     page
