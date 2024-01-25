@@ -49,7 +49,6 @@ class CouchObjectProvider {
     this.persistenceQueue = [];
     this.rootObject = null;
     this.omitRoot = databaseConfiguration.omitRoot;
-    this.defaultProvider = databaseConfiguration.default;
 
     if (!this.omitRoot) {
       this.rootObject = {
@@ -350,8 +349,8 @@ class CouchObjectProvider {
       requestedRootObject = await this.readyGetForBatch(identifier, abortSignal);
     } catch (error) {
       if (!this.isReadOnly()) {
-        console.error(
-          `Error fetching root object for ${this.namespace}: ${error.message}, attempting to create it`
+        console.warn(
+          `Wasn't able to fetch root object for ${this.namespace}: ${error.message}, attempting to create it.`
         );
       } else {
         console.error(`Error fetching root object for ${this.namespace}: ${error.message}`);
