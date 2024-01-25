@@ -29,7 +29,6 @@ jobs:
             ${{ runner.os }}-node-
 
       - run: npx playwright@1.39.0 install
-      - run: npx playwright install chrome-beta
       - run: npm install --cache ~/.npm --no-audit --progress=false
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
