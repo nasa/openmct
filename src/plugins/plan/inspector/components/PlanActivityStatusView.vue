@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div>
+  <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <div class="c-inspect-properties__row">

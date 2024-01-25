@@ -26,7 +26,7 @@ import { ACTIVITY_STATES_KEY } from './createActivityStatesIdentifier.js';
  * @typedef {object} ActivityStatesInterceptorOptions
  * @property {import('../../api/objects/ObjectAPI').Identifier} identifier the {namespace, key} to use for the activity states object.
  * @property {string} name The name of the activity states model.
- * @property {Number} priority the priority of the interceptor. By default, it is low.
+ * @property {number} priority the priority of the interceptor. By default, it is low.
  */
 
 /**
