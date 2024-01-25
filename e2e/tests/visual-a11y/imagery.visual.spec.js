@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import percySnapshot from '@percy/playwright';
+
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
 import { VISUAL_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
-import percySnapshot from '@percy/playwright';
 
 test.describe('Visual - Example Imagery', () => {
   let exampleImagery;
