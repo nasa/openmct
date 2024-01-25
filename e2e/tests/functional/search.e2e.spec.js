@@ -99,7 +99,7 @@ test.describe('Grand Search', () => {
       page.waitForNavigation(),
       page.getByLabel('OpenMCT Search').getByText('Clock A').click()
     ]);
-    await expect(page.getByRole('status', { name: 'Clock' })).toBeVisible();
+    await expect(page.getByRole('status', { name: 'Clock', exact: true })).toBeVisible();
 
     await grandSearchInput.fill('Disp');
     await expect(page.getByLabel('Object Search Result').first()).toContainText(

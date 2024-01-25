@@ -145,7 +145,7 @@
             v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
             class="c-imagery__age icon-check c-imagery--new no-animation"
           >
-            POS
+            ROV
           </div>
 
           <!-- camera position fresh -->
