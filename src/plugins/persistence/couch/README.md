@@ -153,13 +153,48 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
   Add a line to install the CouchDB plugin for Open MCT:
 
   ```js
-  openmct.install(openmct.plugins.CouchDB({url: "http://localhost:5984/openmct", useDesignDocuments: false}));
+  openmct.install(
+        openmct.plugins.CouchDB({
+          databases: [
+            {
+              url: 'http://localhost:5984/openmct',
+              namespace: '',
+              readOnly: false,
+              useDesignDocuments: false,
+              indicator: true,
+              omitRoot: false
+            }
+          ]
+        })
+      );
   ```
+
+### Configuration Options for OpenMCT
+
+When installing the CouchDB plugin for OpenMCT, you can specify a list of databases with configuration options for each. Here's a breakdown of the available options for each database:
+
+- `url`: The URL to the CouchDB instance, specifying the protocol, hostname, and port as needed.
+  - Example: `'http://localhost:5984/openmct'`
+
+- `namespace`: The namespace associated with this database.
+  - Example: `'openmct-sandbox'`
+
+- `readOnly`: A boolean indicating whether the database should be treated as read-only. If set to `true`, OpenMCT will not attempt to write to this database.
+  - Example: `false`
+
+- `useDesignDocuments`: Indicates whether design documents should be used to speed up annotation search.
+  - Example: `false`
+
+- `indicator`: A boolean to specify whether an indicator should show the status of this CouchDB connection in the OpenMCT interface.
+  - Example: `true`
+
+- `omitRoot`: A boolean determining whether a root object should be created if it doesn't exist. If using the `My Items` plugin, this should be set to `true` as `My Items` will create the root object. If set to `false`, a root object with the label of `namespace` will be created.
+  - Example: `true`
 
 # Validating a successful Installation
 
 1. Start Open MCT by running `npm start` in the `openmct` path.
-2. Navigate to <http://localhost:8080/> and create a random object in Open MCT (e.g., a 'Clock') and save. You may get an error saying that the object failed to persist - this is a known error that you can ignore, and will only happen the first time you save - just try again.
+2. Navigate to <http://localhost:8080/> and create a random object in Open MCT (e.g., a 'Clock') and save.
 3. Navigate to: <http://127.0.0.1:5984/_utils/#database/openmct/_all_docs>
 4. Look at the 'JSON' tab and ensure you can see the specific object you created above.
 5. All done! 🏆

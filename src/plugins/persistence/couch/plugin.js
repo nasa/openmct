@@ -38,7 +38,8 @@ export default function CouchPlugin(options) {
           additionalNamespaces: [LEGACY_SPACE],
           readOnly: false,
           useDesignDocuments: false,
-          indicator: true
+          indicator: true,
+          omitRoot: true
         }
       ];
     } else if (!unormalizedOptions.databases) {
@@ -49,14 +50,27 @@ export default function CouchPlugin(options) {
           additionalNamespaces: [LEGACY_SPACE],
           readOnly: false,
           useDesignDocuments: unormalizedOptions.useDesignDocuments,
-          indicator: true
+          indicator: true,
+          omitRoot: true
         }
       ];
     } else {
       normalizedOptions.databases = unormalizedOptions.databases;
     }
 
-    // TODO: ensure we have one default database
+    // final sanity check, ensure we have all options
+    normalizedOptions.databases.forEach((databaseConfiguration) => {
+      if (!databaseConfiguration.url) {
+        throw new Error(
+          `🛑 CouchDB plugin requires a url option. Please check the configuration for namespace ${databaseConfiguration.namespace}`
+        );
+      } else if (databaseConfiguration.namespace === undefined) {
+        // note we can't check for just !databaseConfiguration.namespace because it could be an empty string
+        throw new Error(
+          `🛑 CouchDB plugin requires a namespace option. Please check the configuration for url ${databaseConfiguration.url}`
+        );
+      }
+    });
 
     return normalizedOptions;
   }
