@@ -29,7 +29,7 @@
   <plan-activity-properties-view
     v-for="activity in activities"
     :key="activity.key"
-    heading="'Properties'"
+    heading="Properties"
     :activity="activity"
   />
   <plan-activity-status-view
