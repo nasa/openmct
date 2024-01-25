@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div>
+  <div class="c-inspector__properties c-inspect-properties">
     <div v-if="timeProperties.length" class="u-contents">
       <div class="c-inspect-properties__header">
         {{ heading }}

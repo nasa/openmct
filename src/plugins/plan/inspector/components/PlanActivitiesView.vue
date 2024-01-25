@@ -24,25 +24,22 @@
     <plan-activity-time-view
       v-for="activity in activities"
       :key="activity.key"
-      class="c-inspector__properties c-inspect-properties"
       :activity="activity"
       :heading="heading"
     />
     <plan-activity-properties-view
       v-for="activity in activities"
       :key="activity.key"
-      :heading="'Properties'"
-      class="c-inspector__properties c-inspect-properties"
+      heading="'Properties'"
       :activity="activity"
     />
     <plan-activity-status-view
       v-if="canPersistState"
       :key="activities[0].key"
-      class="c-inspector__properties c-inspect-properties"
       :activity="activities[0]"
-      :execution-state="persistedActivityStates[activities[0].id]"
+      :execution-state="activityExecutionState"
       :heading="'Activity Status'"
-      @update-activity-state="persistedActivityState"
+      @update-activity-state="persistActivityState"
     />
   </div>
 </template>
@@ -78,7 +75,7 @@ export default {
       name: '',
       activities: [],
       selectedActivities: [],
-      persistedActivityStates: {},
+      activityExecutionState: undefined,
       heading: ''
     };
   },
@@ -105,15 +102,20 @@ export default {
   methods: {
     async getActivityStates() {
       this.activityStatesObject = await this.openmct.objects.get('activity-states');
-      this.setActivityStates();
+      this.setActivityStates(this.activityStatesObject);
       this.stopObservingActivityStatesObject = this.openmct.objects.observe(
         this.activityStatesObject,
         '*',
         this.setActivityStates
       );
     },
-    setActivityStates() {
-      this.persistedActivityStates = this.activityStatesObject.activities;
+    setActivityStates(newActivitiesStateObject) {
+      if (this.activities.length) {
+        const id = this.activities[0].id;
+        this.activityExecutionState = newActivitiesStateObject.activities[id];
+      } else {
+        this.activityExecutionState = undefined;
+      }
     },
     setFormatters() {
       let timeSystem = this.openmct.time.timeSystem();
@@ -272,7 +274,7 @@ export default {
     formatTime(time) {
       return this.timeFormatter.format(time);
     },
-    persistedActivityState(data) {
+    persistActivityState(data) {
       const { key, executionState } = data;
       const activitiesPath = `activities.${key}`;
       this.openmct.objects.mutate(this.activityStatesObject, activitiesPath, executionState);

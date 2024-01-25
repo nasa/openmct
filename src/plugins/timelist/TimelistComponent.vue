@@ -29,6 +29,7 @@
         :item="item"
         :item-properties="itemProperties"
         :execution-state="persistedActivityStates[item.id]"
+        @click.stop="setSelectionForActivity(item, $event.currentTarget)"
       >
       </expanded-view-item>
     </template>
@@ -295,15 +296,15 @@ export default {
     },
     async getActivityStates() {
       this.activityStatesObject = await this.openmct.objects.get('activity-states');
-      this.setActivityStates();
+      this.setActivityStates(this.activityStatesObject);
       this.stopObservingActivityStatesObject = this.openmct.objects.observe(
         this.activityStatesObject,
         '*',
         this.setActivityStates
       );
     },
-    setActivityStates() {
-      this.persistedActivityStates = this.activityStatesObject.activities;
+    setActivityStates(activityStatesObject) {
+      this.persistedActivityStates = activityStatesObject.activities;
     },
     getPlanDataAndSetConfig(mutatedObject) {
       this.getPlanData(mutatedObject);
@@ -352,6 +353,7 @@ export default {
     },
     handlePlanChange(planObject) {
       this.getPlanData(planObject);
+      this.listActivities();
     },
     addToComposition(planObject) {
       if (this.planObjects.length > 0) {

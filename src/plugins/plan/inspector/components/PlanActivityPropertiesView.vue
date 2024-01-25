@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div>
+  <div class="c-inspector__properties c-inspect-properties">
     <div v-if="properties.length" class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <ul v-for="property in properties" :key="property.id" class="c-inspect-properties__section">
