@@ -24,39 +24,38 @@
   <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
-      <div class="c-inspect-properties__row">
-        <div class="c-inspect-properties__label" title="Status">Status</div>
+      <!--      <div class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Status">Current Status</div>
         <div class="c-inspect-properties__value" aria-label="Activity Status Label">
           {{ statusLabel }}
         </div>
-      </div>
-      <form name="activityStatus" class="span-all">
-        <select
-          v-model="currentStatusKey"
-          name="setActivityStatus"
-          aria-label="Activity Status"
-          @change="changeActivityStatus"
-        >
-          <option
-            v-for="status in activityStates"
-            :key="status.key"
-            :value="status.key"
-            :aria-selected="currentStatusKey === status.key"
+      </div>-->
+      <div class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Set Status">Set Status</div>
+        <div class="c-inspect-properties__value" aria-label="Activity Status Label">
+          <select
+            v-model="currentStatusKey"
+            name="setActivityStatus"
+            aria-label="Activity Status"
+            @change="changeActivityStatus"
           >
-            {{ status.label }}
-          </option>
-        </select>
-      </form>
+            <option
+              v-for="status in activityStates"
+              :key="status.key"
+              :value="status.key"
+              :aria-selected="currentStatusKey === status.key"
+            >
+              {{ status.label }}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 const activityStates = [
-  {
-    key: '',
-    label: '- Set Status -'
-  },
   {
     key: 'active',
     label: 'In progress'
