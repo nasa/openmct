@@ -4,14 +4,21 @@
       <span>CONTROL PANEL</span>
       <button class="close-btn">X</button>
     </div>
-    <div class="status-item">
+    <div v-for="status in missionStatuses" :key="status" class="status-item">
+      <label :for="status">{{ status }}</label>
+      <button class="status-btn go">GO</button>
+      <select :id="status.label">
+        <option v-for="option in missionStatusOptions" :key="option.key">
+          {{ option.label }}
+        </option>
+      </select>
+      <!-- <div class="status-item">
       <label for="commandingStatus">Commanding Status</label>
       <button class="status-btn go">GO</button>
       <select id="commandingStatus">
         <option>- Set Status -</option>
         <option value="status1">Status 1</option>
         <option value="status2">Status 2</option>
-        <!-- Add more status options here -->
       </select>
     </div>
     <div class="status-item">
@@ -21,22 +28,25 @@
         <option>- Set Status -</option>
         <option value="status1">Status 1</option>
         <option value="status2">Status 2</option>
-        <!-- Add more status options here -->
       </select>
+    </div> -->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ControlPanel',
+  inject: ['openmct'],
   data() {
     return {
-      // Define your data properties here
+      missionStatuses: [],
+      missionStatusOptions: []
     };
   },
-  methods: {
-    // Define your component methods here
-  }
+  async created() {
+    this.missionStatuses = await this.openmct.user.status.getPossibleMissionStatuses();
+    this.missionStatusOptions = await this.openmct.user.status.getPossibleMissionStatusOptions();
+  },
+  methods: {}
 };
 </script>

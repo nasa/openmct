@@ -23,7 +23,8 @@
 <template>
   <div
     ref="userIndicator"
-    class="c-indicator c-indicator--user icon-person c-indicator--clickable"
+    class="c-indicator c-indicator--user icon-person"
+    :class="canSetMissionStatus ? 'c-indicator--clickable' : ''"
     v-bind="$attrs"
     @click.stop="togglePopup"
   >
@@ -36,7 +37,7 @@
   </div>
   <Teleport to="body">
     <div v-if="isPopupVisible" class="c-user-control-panel">
-      <MissionStatusPopup />
+      <MissionStatusPopup v-if="canSetMissionStatus" />
     </div>
   </Teleport>
 </template>
@@ -60,7 +61,8 @@ export default {
       loggedIn: false,
       inputRoleSelection: undefined,
       roleSelectionDialog: undefined,
-      isPopupVisible: false
+      isPopupVisible: false,
+      canSetMissionStatus: false
     };
   },
   computed: {
@@ -107,6 +109,7 @@ export default {
   methods: {
     async getUserInfo() {
       const user = await this.openmct.user.getCurrentUser();
+      this.canSetMissionStatus = await this.openmct.user.status.canSetMissionStatus();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
       this.loggedIn = this.openmct.user.isLoggedIn();
