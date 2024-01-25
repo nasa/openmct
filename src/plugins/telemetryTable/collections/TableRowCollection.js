@@ -30,7 +30,6 @@ export default class TableRowCollection extends EventEmitter {
     super();
 
     this.rows = [];
-    this.overflowRows = {};
     this.columnFilters = {};
     this.addRows = this.addRows.bind(this);
     this.removeRowsByObject = this.removeRowsByObject.bind(this);
@@ -51,13 +50,6 @@ export default class TableRowCollection extends EventEmitter {
         return true;
       }
     });
-    
-    if (this.rowLimit && this.overflowRows[keyString]) {
-      this.overflowRows[keyString] = null;
-      delete this.overflowRows[keyString];
-
-      this.rowAccuracyCheck();
-    }
 
     this.emit('remove', removed);
   }
@@ -67,46 +59,10 @@ export default class TableRowCollection extends EventEmitter {
 
     this.sortAndMergeRows(rowsToAdd);
 
-    this.emit('add', rowsToAdd);
-  }
-
-  rowAccuracyCheck() {
-    const keyStrings = Object.keys(this.overflowRows);
-    let rowsToCheck = [];
-
-    keyStrings.forEach((keyString) => {
-      rowsToCheck = [...rowsToCheck, ...this.overflowRows[keyString]];
-      this.overflowRows[keyString] = [];
-    });
-
-    this.addRows(rowsToCheck);
-  }
-
-  maintainLimit() {
-    if (!this.rowLimit) {
-      return;
-    }
-
-    let removed;
-    const existingRowCount = this.rows.length;
-
-    // Removal check
-    if (existingRowCount > this.rowLimit) {
-      const rowRemovalCount = existingRowCount - this.rowLimit;
-
-      if (this.sortOptions.direction === 'asc') {
-        removed = this.rows.slice(0, rowRemovalCount);
-        this.rows = this.rows.slice(rowRemovalCount);
-      } else {
-        removed = this.rows.slice(-rowRemovalCount);
-        this.rows = this.rows.slice(0, existingRowCount - rowRemovalCount);
-      }
-
-      removed.forEach((row) => {
-        this.handleOverflowRow(row);
-      });
-
-      this.emit('remove', removed);
+    // we emit filter no matter what to trigger
+    // an update of visible rows
+    if (rowsToAdd.length > 0) {
+      this.emit('add', rowsToAdd);
     }
   }
 
@@ -172,7 +128,7 @@ export default class TableRowCollection extends EventEmitter {
     foundRow.updateWithDatum(row.datum);
     this.rows[index] = foundRow;
   }
-  
+
   setLimit(rowLimit) {
     this.rowLimit = rowLimit;
   }
@@ -200,39 +156,11 @@ export default class TableRowCollection extends EventEmitter {
       } else {
         if (addToBeginning) {
           this.rows.unshift(row);
-          
-          if (this.overRowLimit()) {
-            this.handleOverflowRow(this.rows.pop());
-          }
         } else {
           this.rows.push(row);
-          
-          if (this.overRowLimit()) {
-            this.handleOverflowRow(this.rows.shift());
-          }
         }
       }
     });
-  }
-  
-  handleOverflowRow(row) {
-    const keyString = row.objectKeyString;
-
-    if (!this.overflowRows[keyString]) {
-      this.overflowRows[keyString] = [];
-    }
-
-    this.overflowRows[keyString].push(row);
-
-    // keep the newest rowLimit amount on hand to repopulate if an item is removed
-    // technically at most in memory would be rowLimit * 2
-    if (this.overflowRows[keyString].length > this.rowLimit) {
-      this.overflowRows[keyString].shift();
-    }
-  }
-
-  overRowLimit() {
-    return this.rowLimit && this.rows.length > this.rowLimit;
   }
 
   mergeSortedRows(incomingRows) {
@@ -274,7 +202,6 @@ export default class TableRowCollection extends EventEmitter {
     }
 
     this.rows = mergedRows;
-    this.maintainLimit();
   }
 
   firstRowInSortOrder(row1, row2) {
@@ -445,10 +372,22 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   getRows() {
+    if (this.rowLimit && this.rows.length > this.rowLimit) {
+      if (this.sortOptions.direction === 'desc') {
+        return this.rows.slice(0, this.rowLimit);
+      } else {
+        return this.rows.slice(-this.rowLimit);
+      }
+    }
+
     return this.rows;
   }
 
   getRowsLength() {
+    if (this.rowLimit && this.rows.length > this.rowLimit) {
+      return this.rowLimit;
+    }
+
     return this.rows.length;
   }
 

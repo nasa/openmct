@@ -655,6 +655,21 @@ export default {
       return toRaw(this.visibleRows[rowIndex]);
     },
     sortBy(columnKey) {
+      let timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+        this.confirmUnlimitedMode(
+          'Switch to Unlimited Telemetry and Sort',
+          undefined,
+          () => {
+            this.initiateSort(columnKey);
+          }
+        );
+      } else {
+        this.initiateSort(columnKey);
+      }
+    },
+    initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
         if (this.sortOptions.direction === 'asc') {
@@ -665,7 +680,7 @@ export default {
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'asc'
+          direction: 'desc'
         };
       }
 
@@ -779,32 +794,15 @@ export default {
     },
     exportAllDataAsCSV() {
       if (this.telemetryMode === 'performance') {
-        const dialog = this.openmct.overlays.dialog({
-          iconClass: 'alert',
-          message:
-            'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?',
-          buttons: [
-            {
-              label: 'Switch to Unlimited Telemetry and Export',
-              emphasis: true,
-              callback: async () => {
-                const data = this.getTableRowData();
+        this.confirmUnlimitedMode(
+          'Switch to Unlimited Telemetry and Export',
+          'message',
+          () => {
+            const data = this.getTableRowData();
 
-                this.updateTelemetryMode();
-                await this.isFinishedLoading;
-                this.exportAsCSV(data);
-
-                dialog.dismiss();
-              }
-            },
-            {
-              label: 'Cancel',
-              callback: () => {
-                dialog.dismiss();
-              }
-            }
-          ]
-        });
+            this.exportAsCSV(data);
+          }
+        );
       } else {
         const data = this.getTableRowData();
 
@@ -1160,6 +1158,36 @@ export default {
         this.viewActionsCollection.hide(['expand-columns']);
       }
     },
+    confirmUnlimitedMode(
+      label,
+      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?',
+      callback
+    ) {
+      const dialog = this.openmct.overlays.dialog({
+          iconClass: 'alert',
+          message,
+          buttons: [
+            {
+              label,
+              emphasis: true,
+              callback: async () => {
+                this.updateTelemetryMode();
+                await this.isFinishedLoading;
+                
+                callback();
+
+                dialog.dismiss();
+              }
+            },
+            {
+              label: 'Cancel',
+              callback: () => {
+                dialog.dismiss();
+              }
+            }
+          ]
+        });
+    },
     updateTelemetryMode() {
       this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
 
@@ -1168,6 +1196,13 @@ export default {
       }
 
       this.table.updateTelemetryMode(this.telemetryMode);
+
+      const timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+        this.openmct.notifications.info('Switched to Performance Mode: Table now sorted by time for optimized efficiency.');
+        this.initiateSort(timeSystemKey);
+      }
     },
     setRowHeight(height) {
       this.rowHeight = height;

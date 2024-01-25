@@ -101,7 +101,7 @@ export default class TelemetryTable extends EventEmitter {
       this.addTelemetryObject(this.domainObject);
     }
   }
-  
+
   updateTelemetryMode(mode) {
     if (this.telemetryMode === mode) {
       return;
@@ -133,7 +133,7 @@ export default class TelemetryTable extends EventEmitter {
       key: this.openmct.time.timeSystem().key,
       direction: 'desc'
     };
-    
+
     this.updateRowLimit();
 
     this.tableRows.sortBy(sortOptions);
@@ -166,9 +166,10 @@ export default class TelemetryTable extends EventEmitter {
     const telemetryRemover = this.getTelemetryRemover();
 
     this.removeTelemetryCollection(keyString);
-    
+
     if (this.telemetryMode === 'performance') {
       requestOptions.size = this.rowLimit;
+      requestOptions.enforceSize = true;
     }
 
     this.telemetryCollections[keyString] = this.openmct.telemetry.requestCollection(
