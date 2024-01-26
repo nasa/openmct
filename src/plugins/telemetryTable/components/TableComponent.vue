@@ -700,7 +700,7 @@ export default {
     },
     shouldAutoScroll() {
       if (this.sortOptions.direction === 'desc') {
-        return this.scrollable.scrollTop <= AUTO_SCROLL_TRIGGER_HEIGHT;
+        return false;
       }
 
       return (
@@ -709,8 +709,7 @@ export default {
       );
     },
     initiateAutoScroll() {
-      this.scrollable.scrollTop =
-        this.sortOptions.direction === 'desc' ? 0 : Number.MAX_SAFE_INTEGER;
+      this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
       if (this.$refs.headersHolderEl && this.scrollable) {
