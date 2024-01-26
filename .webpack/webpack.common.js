@@ -6,15 +6,15 @@ This is the OpenMCT common webpack file. It is imported by the other three webpa
 There are separate npm scripts to use these configurations, though simply running `npm install`
 will use the default production configuration.
 */
-import path from 'node:path';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import webpack from 'webpack';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import fs from 'node:fs';
 import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
+import webpack from 'webpack';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -22,9 +22,7 @@ const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', 
 
 try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
-  gitBranch = execSync('git rev-parse --abbrev-ref HEAD')
-    .toString()
-    .trim();
+  gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {
   console.warn(err);
 }
@@ -67,7 +65,6 @@ const config = {
     alias: {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
-      saveAs: 'file-saver/src/FileSaver.js',
       csv: 'comma-separated-values',
       EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',

@@ -26,7 +26,7 @@ Tests the branding associated with the default deployment. At least the about mo
 
 import percySnapshot from '@percy/playwright';
 
-import { scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
@@ -36,6 +36,22 @@ test.describe('Visual - Header @a11y', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    // Wait for status bar to load
+    await expect(
+      page.getByRole('status', {
+        name: 'Clock Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Global Clear Indicator'
+      })
+    ).toBeInViewport();
+    await expect(
+      page.getByRole('status', {
+        name: 'Snapshot Indicator'
+      })
+    ).toBeInViewport();
   });
 
   test('header sizing', async ({ page, theme }) => {
@@ -49,6 +65,17 @@ test.describe('Visual - Header @a11y', () => {
     await percySnapshot(page, `Header Collapsed (theme: '${theme}')`, {
       scope: header
     });
+  });
+
+  test('show snapshot button', async ({ page, theme }) => {
+    await page.getByLabel('Take a Notebook Snapshot').click();
+
+    await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
+
+    await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
+      scope: header
+    });
+    await expect(await page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 test.afterEach(async ({ page }, testInfo) => {

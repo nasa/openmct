@@ -48,6 +48,10 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     configuration.columnOrder = configuration.columnOrder || [];
     configuration.cellFormat = configuration.cellFormat || {};
     configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
+    // anything that doesn't have a telemetryMode existed before the change and should stay as it was for consistency
+    configuration.telemetryMode = configuration.telemetryMode ?? 'unlimited';
+    configuration.persistModeChange = configuration.persistModeChange ?? true;
+    configuration.rowLimit = configuration.rowLimit ?? 50;
 
     return configuration;
   }
@@ -135,6 +139,42 @@ export default class TelemetryTableConfiguration extends EventEmitter {
 
         return headers;
       }, {});
+  }
+
+  getTelemetryMode() {
+    let configuration = this.getConfiguration();
+
+    return configuration.telemetryMode;
+  }
+
+  setTelemetryMode(mode) {
+    let configuration = this.getConfiguration();
+    configuration.telemetryMode = mode;
+    this.updateConfiguration(configuration);
+  }
+
+  getRowLimit() {
+    let configuration = this.getConfiguration();
+
+    return configuration.rowLimit;
+  }
+
+  setRowLimit(limit) {
+    let configuration = this.getConfiguration();
+    configuration.rowLimit = limit;
+    this.updateConfiguration(configuration);
+  }
+
+  getPersistModeChange() {
+    let configuration = this.getConfiguration();
+
+    return configuration.persistModeChange;
+  }
+
+  setPersistModeChange(value) {
+    let configuration = this.getConfiguration();
+    configuration.persistModeChange = value;
+    this.updateConfiguration(configuration);
   }
 
   getColumnWidths() {

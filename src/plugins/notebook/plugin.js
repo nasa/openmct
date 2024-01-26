@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import { notebookImageMigration } from '../notebook/utils/notebook-migration.js';
 import CopyToNotebookAction from './actions/CopyToNotebookAction.js';
 import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction.js';
@@ -39,7 +37,7 @@ import NotebookViewProvider from './NotebookViewProvider.js';
 import SnapshotContainer from './snapshot-container.js';
 
 let notebookSnapshotContainer;
-function getSnapshotContainer(openmct) {
+export function getSnapshotContainer(openmct) {
   if (!notebookSnapshotContainer) {
     notebookSnapshotContainer = new SnapshotContainer(openmct);
   }
@@ -66,7 +64,6 @@ function installBaseNotebookFunctionality(openmct) {
     return;
   }
 
-  const snapshotContainer = getSnapshotContainer(openmct);
   const notebookSnapshotImageType = {
     name: 'Notebook Snapshot Image Storage',
     description: 'Notebook Snapshot Image Storage object',
@@ -82,27 +79,10 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode, destroy } = mount(
-    {
-      components: {
-        NotebookSnapshotIndicator
-      },
-      provide: {
-        openmct,
-        snapshotContainer
-      },
-      template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-    },
-    {
-      app: openmct.app
-    }
-  );
-
   const indicator = {
-    element: vNode.el,
+    vueComponent: NotebookSnapshotIndicator,
     key: 'notebook-snapshot-indicator',
-    priority: openmct.priority.DEFAULT,
-    destroy: destroy
+    priority: openmct.priority.DEFAULT
   };
 
   openmct.indicators.add(indicator);

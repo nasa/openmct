@@ -36,7 +36,7 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Can click on telemetry and see data in inspector', async ({ page }) => {
+  test('Can click on telemetry and see data in inspector @2p', async ({ page, context }) => {
     const exampleDataVisualizationSource = await createDomainObjectWithDefaults(page, {
       type: 'Example Data Visualization Source'
     });
@@ -67,5 +67,16 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
       page.locator('span.plot-series-name', { hasText: 'Second Sine Wave Generator Hz' })
     ).toBeVisible();
     await expect(page.locator('.js-series-data-loaded')).toBeVisible();
+
+    // test new tab
+    await page.getByLabel('Inspector Views').getByLabel('More actions').click();
+    const pagePromise = context.waitForEvent('page');
+    await page.getByRole('menuitem', { name: /Open In New Tab/ }).click();
+
+    // ensure our new tab's title is correct
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();
+    // expect new tab title to contain 'Second Sine Wave Generator'
+    await expect(newPage).toHaveTitle('Second Sine Wave Generator');
   });
 });

@@ -123,7 +123,11 @@ class UserAPI extends EventEmitter {
    * @returns {undefined}
    */
   setActiveRole(role) {
-    StoragePersistance.setActiveRole(role);
+    if (!role) {
+      StoragePersistance.clearActiveRole();
+    } else {
+      StoragePersistance.setActiveRole(role);
+    }
     this.emit('roleChanged', role);
   }
 
