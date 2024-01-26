@@ -1,17 +1,25 @@
 <template>
-  <div class="control-panel">
-    <div class="header">
-      <span>CONTROL PANEL</span>
-      <button class="close-btn" @click.stop="onDismiss">X</button>
+  <div class="c-user-control-panel__component">
+    <div class="c-user-control-panel__header">
+      <div class="c-user-control-panel__title">Mission Status</div>
+      <button
+        aria-label="Close"
+        class="c-icon-button c-icon-button--sm t-close-btn icon-x"
+        @click.stop="onDismiss"
+      ></button>
     </div>
-    <div v-for="status in missionStatuses" :key="status" class="status-item">
-      <label :for="status">{{ status }}</label>
-      <button class="status-btn go">GO</button>
-      <select :id="status.label">
-        <option v-for="option in missionStatusOptions" :key="option.key">
-          {{ option.label }}
-        </option>
-      </select>
+    <div class="c-ucp-mission-status">
+      <template v-for="status in missionStatuses" :key="status">
+        <label class="c-ucp-mission-status__label" :for="status">{{ status }}</label>
+        <div class="c-ucp-mission-status__widget --is-no-go">NO GO</div>
+        <div class="c-ucp-mission-status__select">
+          <select :id="status.label">
+            <option v-for="option in missionStatusOptions" :key="option.key">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -27,22 +35,18 @@ export default {
     };
   },
   async created() {
-    this.missionStatuses = [
-      'Command',
-      'Drive',
-      'Camera'
-    ];
+    this.missionStatuses = ['Command', 'Drive', 'Camera'];
 
     this.missionStatusOptions = [
       {
         key: '0',
-        label: 'No Go'
+        label: 'NO GO'
       },
       {
         key: '1',
-        label: 'Go'
+        label: 'GO'
       }
-    ]
+    ];
   },
   methods: {
     onDismiss() {
