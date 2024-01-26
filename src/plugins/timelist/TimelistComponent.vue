@@ -38,12 +38,7 @@ import { v4 as uuid } from 'uuid';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
-import {
-  getFilteredValues,
-  getFilterMetadataProperties,
-  getValidatedData,
-  getValidatedGroups
-} from '../plan/util.js';
+import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan/util.js';
 import { SORT_ORDER_OPTIONS } from './constants.js';
 
 const SCROLL_TIMEOUT = 10000;
