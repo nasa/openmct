@@ -209,6 +209,8 @@ export default class TelemetryCollection extends EventEmitter {
     let added = [];
     let addedIndices = [];
     let hasDataBeforeStartBound = false;
+    let size = this.options.size;
+    let enforceSize = size !== undefined && this.options.enforceSize;
 
     // loop through, sort and dedupe
     for (let datum of data) {
@@ -271,6 +273,13 @@ export default class TelemetryCollection extends EventEmitter {
         }
       } else {
         this.emit('add', added, addedIndices);
+
+        if (enforceSize && this.boundedTelemetry.length > size) {
+          const removeCount = this.boundedTelemetry.length - size;
+          const removed = this.boundedTelemetry.splice(0, removeCount);
+
+          this.emit('remove', removed);
+        }
       }
     }
   }
