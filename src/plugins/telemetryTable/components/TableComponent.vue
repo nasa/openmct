@@ -290,6 +290,7 @@ import _ from 'lodash';
 import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import throttle from '../../../utils/throttle';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
