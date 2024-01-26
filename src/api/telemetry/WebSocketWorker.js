@@ -32,7 +32,7 @@ export default function installWorker() {
    * On an error or dropout, will automatically reconnect.
    *
    * Additionally, messages will be queued and sent only when WebSocket is
-   * connected meaning that client code does not need to check the state of 
+   * connected meaning that client code does not need to check the state of
    * the socket before sending.
    */
   class ResilientWebSocket extends EventTarget {
@@ -61,7 +61,10 @@ export default function installWorker() {
 
       this.#isConnecting = true;
 
-      this.#webSocket = new WebSocket(url);
+      //TODO: Make this configurable
+      this.#webSocket = new WebSocket(url, 'protobuf');
+      //TODO: Make this configurable
+      this.#webSocket.binaryType = 'arraybuffer';
 
       const boundConnected = this.#connected.bind(this);
       this.#webSocket.addEventListener('open', boundConnected);
@@ -249,10 +252,15 @@ export default function installWorker() {
       if (this.#messageBatcher.shouldBatchMessage(data)) {
         this.#messageBatcher.addMessageToBatch(data);
       } else {
-        this.#worker.postMessage({
-          type: 'message',
-          message: data
-        });
+        this.#worker.postMessage(
+          {
+            type: 'message',
+            message: data
+          },
+          {
+            transfer: data
+          }
+        );
       }
     }
   }
@@ -267,11 +275,13 @@ export default function installWorker() {
     #maxBatchSize;
     #readyForNextBatch;
     #worker;
+    #transferables;
 
     constructor(worker) {
       this.#maxBatchSize = 10;
       this.#readyForNextBatch = false;
       this.#worker = worker;
+      this.#transferables = [];
       this.#resetBatch();
     }
     #resetBatch() {
@@ -323,6 +333,7 @@ export default function installWorker() {
       } else {
         this.#hasBatch = true;
       }
+      this.#transferables.push(message);
     }
     setMaxBatchSize(maxBatchSize) {
       this.#maxBatchSize = maxBatchSize;
@@ -343,12 +354,18 @@ export default function installWorker() {
     #sendNextBatch() {
       const batch = this.#batch;
       this.#resetBatch();
-      this.#worker.postMessage({
-        type: 'batch',
-        batch
-      });
+      this.#worker.postMessage(
+        {
+          type: 'batch',
+          batch
+        },
+        {
+          transfer: this.#transferables
+        }
+      );
       this.#readyForNextBatch = false;
       this.#hasBatch = false;
+      this.#transferables = [];
     }
   }
 
