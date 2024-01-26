@@ -47,6 +47,7 @@
             cy="50"
             stroke-dasharray="3 7.472"
           ></circle>
+          <rect class="c-svg-progress__sweep-hand" x="48" y="18" width="4" height="27"></rect>
         </g>
         <path
           aria-label="Activity complete"

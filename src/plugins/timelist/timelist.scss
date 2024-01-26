@@ -309,4 +309,22 @@
     &__progress {
         fill: $colorInProgressFgEm;
     }
+
+    &__sweep-hand {
+        animation-name: sweep-hand;
+        animation-duration: 10s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(12);
+        fill: $colorInProgressFg;
+        transform-origin: center;
+    }
+}
+
+@keyframes sweep-hand {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
