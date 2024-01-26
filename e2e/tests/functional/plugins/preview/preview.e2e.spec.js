@@ -19,15 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import NotificationIndicator from './components/NotificationIndicator.vue';
+/*
+ * This test suite is dedicated to testing the preview plugin.
+ */
 
-export default function plugin() {
-  return function install(openmct) {
-    let indicator = {
-      key: 'notifications-indicator',
-      vueComponent: NotificationIndicator,
-      priority: openmct.priority.DEFAULT
-    };
-    openmct.indicators.add(indicator);
-  };
-}
+import { test } from '../../../../pluginFixtures.js';
+
+test.describe('Preview mode', () => {
+  test.fixme('all context menu items are available for a telemetry table', async ({ page }) => {
+    // compare the context menu options when viewing a telemetry table directly
+    // vs when it is presented in preview mode (e.g. edit mode is enabled and the table is clicked on from the tree)
+  });
+});
