@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,16 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+export default class ReloadAction {
+  constructor(openmct) {
+    this.name = 'Reload';
+    this.key = 'reload';
+    this.description = 'Reload this object and its children';
+    this.group = 'action';
+    this.priority = 10;
+    this.cssClass = 'icon-refresh';
 
-import { saveAs } from 'file-saver';
-
-class JSONExporter {
-  export(obj, options) {
-    let filename = (options && options.filename) || 'test-export.json';
-    let jsonText = JSON.stringify(obj);
-    let blob = new Blob([jsonText], { type: 'application/json' });
-    saveAs(blob, filename);
+    this.openmct = openmct;
+  }
+  invoke(objectPath, view) {
+    const domainObject = objectPath[0];
+    this.openmct.objectViews.emit('reload', domainObject);
   }
 }
-
-export default JSONExporter;

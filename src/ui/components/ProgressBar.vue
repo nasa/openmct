@@ -23,14 +23,16 @@
   <div class="c-progress-bar">
     <div
       class="c-progress-bar__bar"
-      :class="{ '--indeterminate': !model.progressPerc }"
+      :class="{ '--indeterminate': !progressPerc }"
       :style="styleBarWidth"
+      role="progressbar"
+      :aria-valuenow="progressPerc"
+      aria-valuemin="0"
+      aria-valuemax="100"
     ></div>
-    <div v-if="model.progressText !== undefined" class="c-progress-bar__text">
-      <span v-if="model.progressPerc && model.progressPerc > 0"
-        >{{ model.progressPerc }}% complete.</span
-      >
-      {{ model.progressText }}
+    <div v-if="progressText !== ''" class="c-progress-bar__text">
+      <span v-if="progressPerc > 0">{{ progressPerc }}% complete.</span>
+      {{ progressText }}
     </div>
   </div>
 </template>
@@ -38,14 +40,18 @@
 <script>
 export default {
   props: {
-    model: {
-      type: Object,
-      required: true
+    progressPerc: {
+      type: Number,
+      default: 0
+    },
+    progressText: {
+      type: String,
+      default: ''
     }
   },
   computed: {
     styleBarWidth() {
-      return this.model.progressPerc ? `width: ${this.model.progressPerc}%;` : '';
+      return this.progressPerc ? `width: ${this.progressPerc}%;` : '';
     }
   }
 };

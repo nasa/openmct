@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2023, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,16 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ReloadAction from './ReloadAction.js';
 
-import { saveAs } from 'file-saver';
-
-class JSONExporter {
-  export(obj, options) {
-    let filename = (options && options.filename) || 'test-export.json';
-    let jsonText = JSON.stringify(obj);
-    let blob = new Blob([jsonText], { type: 'application/json' });
-    saveAs(blob, filename);
-  }
+export default function plugin() {
+  return function install(openmct) {
+    openmct.actions.register(new ReloadAction(openmct));
+  };
 }
-
-export default JSONExporter;
