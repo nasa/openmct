@@ -36,14 +36,15 @@
     </span>
   </div>
   <Teleport to="body">
-    <div v-if="isPopupVisible" class="c-user-control-panel">
-      <MissionStatusPopup v-if="canSetMissionStatus" />
+    <div v-show="isPopupVisible" ref="popup" class="c-user-control-panel" :style="popupStyle">
+      <MissionStatusPopup v-show="canSetMissionStatus" />
     </div>
   </Teleport>
 </template>
 
 <script>
 import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer.js';
+import { useWindowResize } from '../../../ui/composables/resize.js';
 import MissionStatusPopup from './MissionStatusPopup.vue';
 
 export default {
@@ -53,6 +54,11 @@ export default {
   },
   inject: ['openmct'],
   inheritAttrs: false,
+  setup() {
+    const { windowSize } = useWindowResize();
+
+    return { windowSize };
+  },
   data() {
     return {
       userName: undefined,
@@ -66,35 +72,41 @@ export default {
     };
   },
   computed: {
+    popupStyle() {
+      return {
+        top: `${this.position.top}px`,
+        left: `${this.position.left}px`
+      };
+    },
     position() {
-      const indicator = this.$refs.userIndicator;
-      if (!indicator) {
-        return {
-          top: 0,
-          left: 0
-        };
+      if (!this.isPopupVisible) {
+        return { top: 0, left: 0 };
       }
+      const indicator = this.$refs.userIndicator;
       const indicatorRect = indicator.getBoundingClientRect();
-      const popup = this.$refs.popup;
       let top = indicatorRect.bottom;
       let left = indicatorRect.left;
-      if (popup) {
-        const popupRect = popup.getBoundingClientRect();
-        top += popupRect.height;
-        left += indicatorRect.width + popupRect.width;
+
+      const popupRect = this.$refs.popup.getBoundingClientRect();
+      const popupWidth = popupRect.width;
+      const popupHeight = popupRect.height;
+
+      // Check if the popup goes beyond the right edge of the window
+      if (left + popupWidth > this.windowSize.width) {
+        left = this.windowSize.width - popupWidth; // Adjust left to fit within the window
       }
 
-      return {
-        top,
-        left
-      };
+      // Check if the popup goes beyond the bottom edge of the window
+      if (top + popupHeight > this.windowSize.height) {
+        top = indicatorRect.top - popupHeight; // Place popup above the indicator
+      }
+
+      return { top, left };
     }
   },
-
   async created() {
     await this.getUserInfo();
   },
-
   mounted() {
     // need to wait for openmct to be loaded before using openmct.overlays.selection
     // as document.body could be null
