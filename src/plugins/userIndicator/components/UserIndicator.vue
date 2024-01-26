@@ -37,7 +37,7 @@
   </div>
   <Teleport to="body">
     <div v-show="isPopupVisible" ref="popupRef" class="c-user-control-panel" :style="popupStyle">
-      <MissionStatusPopup v-show="canSetMissionStatus" @dismiss="togglePopup" />
+      <MissionStatusPopup v-show="true" @dismiss="togglePopup" />
     </div>
   </Teleport>
 </template>
@@ -82,7 +82,7 @@ export default {
       loggedIn: false,
       inputRoleSelection: undefined,
       roleSelectionDialog: undefined,
-      canSetMissionStatus: false
+      canSetMissionStatus: true
     };
   },
   computed: {
@@ -124,21 +124,21 @@ export default {
   mounted() {
     // need to wait for openmct to be loaded before using openmct.overlays.selection
     // as document.body could be null
-    this.openmct.on('start', this.fetchOrPromptForRole);
-    this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
-    this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
+    // this.openmct.on('start', this.fetchOrPromptForRole);
+    // this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
+    // this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
   },
   beforeUnmount() {
-    this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
-    this.openmct.off('start', this.fetchOrPromptForRole);
+    // this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
+    // this.openmct.off('start', this.fetchOrPromptForRole);
   },
   methods: {
     async getUserInfo() {
-      const user = await this.openmct.user.getCurrentUser();
-      this.canSetMissionStatus = await this.openmct.user.status.canSetMissionStatus();
-      this.userName = user.getName();
-      this.role = this.openmct.user.getActiveRole();
-      this.loggedIn = this.openmct.user.isLoggedIn();
+      // const user = await this.openmct.user.getCurrentUser();
+      this.canSetMissionStatus = true;
+      this.userName = 'Charles';
+      this.role = 'Cool guy';
+      this.loggedIn = true;
     },
     async fetchOrPromptForRole() {
       const UserAPI = this.openmct.user;

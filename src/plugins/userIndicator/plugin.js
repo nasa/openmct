@@ -32,13 +32,13 @@ export default function UserIndicatorPlugin() {
   }
 
   return function install(openmct) {
-    if (openmct.user.hasProvider()) {
-      addIndicator(openmct);
-    } else {
-      // back up if user provider added after indicator installed
-      openmct.user.on('providerAdded', () => {
-        addIndicator(openmct);
-      });
-    }
+    // if (openmct.user.hasProvider()) {
+    addIndicator(openmct);
+    // } else {
+    // back up if user provider added after indicator installed
+    //   openmct.user.on('providerAdded', () => {
+    //     addIndicator(openmct);
+    //   });
+    // }
   };
 }

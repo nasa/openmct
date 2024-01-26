@@ -27,8 +27,22 @@ export default {
     };
   },
   async created() {
-    this.missionStatuses = await this.openmct.user.status.getPossibleMissionStatuses();
-    this.missionStatusOptions = await this.openmct.user.status.getPossibleMissionStatusOptions();
+    this.missionStatuses = [
+      'Command',
+      'Drive',
+      'Camera'
+    ];
+
+    this.missionStatusOptions = [
+      {
+        key: '0',
+        label: 'No Go'
+      },
+      {
+        key: '1',
+        label: 'Go'
+      }
+    ]
   },
   methods: {
     onDismiss() {
