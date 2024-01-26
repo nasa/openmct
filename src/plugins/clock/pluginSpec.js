@@ -195,10 +195,6 @@ describe('Clock plugin:', () => {
     let clockIndicator;
 
     afterEach(() => {
-      if (clockIndicator) {
-        clockIndicator.remove();
-      }
-
       clockIndicator = undefined;
       if (appHolder) {
         appHolder.remove();
@@ -223,7 +219,7 @@ describe('Clock plugin:', () => {
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
-      ).element;
+      ).vueComponent;
 
       const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
@@ -231,14 +227,16 @@ describe('Clock plugin:', () => {
 
     it('contains text', async () => {
       await setupClock(true);
-
-      await nextTick();
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
       clockIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'clock-indicator'
-      ).element;
-      const clockIndicatorText = clockIndicator.textContent.trim();
+      ).vueComponent;
+      const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
+      expect(hasClockIndicator).toBe(true);
+      const clockIndicatorText = appHolder
+        .querySelector('.t-indicator-clock .c-indicator__label')
+        .textContent.trim();
       const textIncludesUTC = clockIndicatorText.includes('UTC');
 
       expect(textIncludesUTC).toBe(true);
