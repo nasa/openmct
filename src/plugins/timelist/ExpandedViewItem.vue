@@ -77,7 +77,7 @@
     </div>
     <div class="c-tli__time-hero">
       <div class="c-tli__time-hero-context-and-time">
-        <div class="c-tli__time-hero-context">{{ formattedItem.label }}</div>
+        <div class="c-tli__time-hero-context">{{ formattedItemLabel }}</div>
         <div v-if="showTimeHero" :class="countdownClass">
           {{ formattedItem.countdown }}
         </div>
@@ -165,7 +165,7 @@ export default {
       const executionStateClass = `--is-${this.executionState}`;
       return `c-tli ${timeRelationClass} ${executionStateClass}`;
     },
-    formattedItem() {
+    formattedItemLabel() {
       let executionStateLabel;
       const executionStateKeys = Object.keys(EXECUTION_STATES);
       const executionStateIndex = executionStateKeys.findIndex(
@@ -173,24 +173,52 @@ export default {
       );
       if (executionStateIndex > -1) {
         executionStateLabel = EXECUTION_STATES[executionStateIndex];
-
-        // - 'Incomplete' : executionState.notStarted && now > end datetime
-        if (executionStateIndex === 0 && this.item.cssClass === PAST_CSS_SUFFIX) {
-          executionStateLabel = INFERRED_EXECUTION_STATES.incomplete;
+      }
+      let label;
+      // Start time is in the past
+      if (this.item.start < this.timestamp) {
+        if (this.item.start === this.item.end) {
+          // - 'Occurred' : for Events with start < now datetime and 0 duration
+          label = INFERRED_EXECUTION_STATES.occurred;
         }
-        // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
-        // - 'Running Long' : executionState.inProgress && now > end datetime
-        // - 'Overdue' : executionState.notStarted && start < now datetime
-        if (executionStateIndex === 1) {
-          if (this.item.cssClass === CURRENT_CSS_SUFFIX) {
-            executionStateLabel = INFERRED_EXECUTION_STATES.ends;
-          } else if (this.timestamp > this.item.end) {
-            executionStateLabel = INFERRED_EXECUTION_STATES.runningLong;
-          } else if (this.item.start < this.timestamp) {
-            executionStateLabel = INFERRED_EXECUTION_STATES.overdue;
+        // end time has not yet passed
+        else if (this.item.cssClass === CURRENT_CSS_SUFFIX) {
+          if (executionStateIndex === 0) {
+            // - 'Overdue' : executionState.notStarted && start < now datetime
+            label = INFERRED_EXECUTION_STATES.overdue;
+          } else if (executionStateIndex === 1) {
+            // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
+            label = INFERRED_EXECUTION_STATES.ends;
+          }
+        }
+        // end time is also in the past
+        else if (this.item.cssClass === PAST_CSS_SUFFIX) {
+          if (executionStateIndex === 0) {
+            // - 'Incomplete' : executionState.notStarted && now > end datetime
+            label = INFERRED_EXECUTION_STATES.incomplete;
+          } else if (executionStateIndex === 1) {
+            // - 'Running Long' : executionState.inProgress && now > end datetime
+            label = INFERRED_EXECUTION_STATES.runningLong;
+          } else if (executionStateIndex === -1) {
+            // - 'Ended' :now > start datetime && now > end datetime
+            label = INFERRED_EXECUTION_STATES.ended;
           }
         }
       }
+      // Start time is in the future
+      else {
+        if (this.item.start === this.item.end) {
+          // - 'Occurs' : for Events with start > now datetime and 0 duration
+          label = INFERRED_EXECUTION_STATES.occurs;
+        } else {
+          // - 'Starts' : for Activities with now > start datetime
+          label = INFERRED_EXECUTION_STATES.starts;
+        }
+      }
+
+      return label || executionStateLabel;
+    },
+    formattedItem() {
       let itemValue = {
         title: this.item.name
       };
@@ -206,29 +234,6 @@ export default {
           });
         }
         itemValue[itemProperty.key] = formattedValue;
-
-        // - 'Starts' : for Activities with now > start datetime
-        // - 'occurs' : for Events with start > now datetime and 0 duration
-        // - 'Occurred' : for Events with start < now datetime and 0 duration
-        let label;
-        if (itemProperty.key === 'countdown') {
-          if (this.item.start < this.timestamp) {
-            if (this.item.start === this.item.end) {
-              label = INFERRED_EXECUTION_STATES.occurred;
-            } else if (this.item.cssClass === PAST_CSS_SUFFIX) {
-              label = executionStateLabel || INFERRED_EXECUTION_STATES.ended;
-            } else {
-              label = executionStateLabel || INFERRED_EXECUTION_STATES.starts;
-            }
-          } else {
-            if (this.item.start === this.item.end) {
-              label = INFERRED_EXECUTION_STATES.occurs;
-            } else {
-              label = executionStateLabel;
-            }
-          }
-        }
-        itemValue.label = itemValue.label ?? label;
       });
 
       return itemValue;
