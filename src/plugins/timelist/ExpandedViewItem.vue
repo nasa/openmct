@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="c-tli__graphic">
-      <svg v-if="isInProgress" viewBox="0 0 100 100">
+      <svg viewBox="0 0 100 100">
         <g aria-label="Activity in progress" class="c-tli__graphic__pie">
           <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
           <path ref="progressElement" class="c-svg-progress__progress"></path>
@@ -246,7 +246,7 @@ export default {
     updateTimestamp(time) {
       this.timestamp = time;
       const progressElement = this.$refs.progressElement;
-      if (progressElement) {
+      if (this.isInProgress && progressElement) {
         updateProgress(this.item.start, this.item.end, this.timestamp, progressElement);
       }
     }
