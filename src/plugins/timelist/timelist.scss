@@ -210,12 +210,6 @@
             display: flex;
             fill: $baseFg;
             align-items: center;
-
-            svg {
-                > * {
-                    display: none;
-                }
-            }
         }
 
         &.--is-current {

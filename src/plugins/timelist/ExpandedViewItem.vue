@@ -26,16 +26,17 @@
     </div>
     <div class="c-tli__title-and-bounds">
       <div class="c-tli__title">{{ formattedItemValue.title }}</div>
-      <div class="c-tli__bounds" :class="{ '--has-duration': formattedItemValue.end }">
-        <div class="c-tli__duration">{{ formattedItemValue.duration }}</div>
+      <div class="c-tli__bounds" :class="{ '--has-duration': eventHasDuration }">
+        <div v-if="eventHasDuration" class="c-tli__duration">{{ formattedItemValue.duration }}</div>
+        <div v-else class="c-tli__start-time">Event</div>
         <div class="c-tli__start-time">
           {{ formattedItemValue.start }}
         </div>
-        <div class="c-tli__end-time">{{ formattedItemValue.end }}</div>
+        <div v-if="eventHasDuration" class="c-tli__end-time">{{ formattedItemValue.end }}</div>
       </div>
     </div>
     <div class="c-tli__graphic">
-      <svg viewBox="0 0 100 100">
+      <svg v-if="isInProgress" viewBox="0 0 100 100">
         <g aria-label="Activity in progress" class="c-tli__graphic__pie">
           <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
           <path ref="progressElement" class="c-svg-progress__progress"></path>
@@ -143,6 +144,12 @@ export default {
     styleClass() {
       return { backgroundColor: ITEM_COLORS[this.item.cssClass] };
     },
+    isInProgress() {
+      return this.executionState === 'in-progress';
+    },
+    eventHasDuration() {
+      return this.item.start !== this.item.end;
+    },
     listItemClass() {
       const timeRelationClass = this.item.cssClass;
       const executionStateClass = `--is-${this.executionState}`;
@@ -181,8 +188,11 @@ export default {
         let value = this.item[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
+          const itemStartDate = new Date(value).toDateString();
+          const timestampDate = new Date(this.timestamp).toDateString();
           formattedValue = itemProperty.format(value, this.item, itemProperty.key, this.openmct, {
-            skipPrefix: true
+            skipPrefix: true,
+            skipDateForToday: itemStartDate === timestampDate
           });
         }
         itemValue[itemProperty.key] = formattedValue;
@@ -236,7 +246,9 @@ export default {
     updateTimestamp(time) {
       this.timestamp = time;
       const progressElement = this.$refs.progressElement;
-      updateProgress(this.item.start, this.item.end, this.timestamp, progressElement);
+      if (progressElement) {
+        updateProgress(this.item.start, this.item.end, this.timestamp, progressElement);
+      }
     }
   }
 };
