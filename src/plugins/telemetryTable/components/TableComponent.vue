@@ -290,7 +290,6 @@ import _ from 'lodash';
 import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
-import throttle from '../../../utils/throttle';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
@@ -660,13 +659,9 @@ export default {
       let timeSystemKey = this.openmct.time.getTimeSystem().key;
 
       if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
-        this.confirmUnlimitedMode(
-          'Switch to Unlimited Telemetry and Sort',
-          undefined,
-          () => {
-            this.initiateSort(columnKey);
-          }
-        );
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
+          this.initiateSort(columnKey);
+        });
       } else {
         this.initiateSort(columnKey);
       }
@@ -796,15 +791,11 @@ export default {
     },
     exportAllDataAsCSV() {
       if (this.telemetryMode === 'performance') {
-        this.confirmUnlimitedMode(
-          'Switch to Unlimited Telemetry and Export',
-          'message',
-          () => {
-            const data = this.getTableRowData();
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
+          const data = this.getTableRowData();
 
-            this.exportAsCSV(data);
-          }
-        );
+          this.exportAsCSV(data);
+        });
       } else {
         const data = this.getTableRowData();
 
@@ -1162,33 +1153,33 @@ export default {
     },
     confirmUnlimitedMode(
       label,
-      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?',
-      callback
+      callback,
+      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?'
     ) {
       const dialog = this.openmct.overlays.dialog({
-          iconClass: 'alert',
-          message,
-          buttons: [
-            {
-              label,
-              emphasis: true,
-              callback: async () => {
-                this.updateTelemetryMode();
-                await this.isFinishedLoading;
-                
-                callback();
+        iconClass: 'alert',
+        message,
+        buttons: [
+          {
+            label,
+            emphasis: true,
+            callback: async () => {
+              this.updateTelemetryMode();
+              await this.isFinishedLoading;
 
-                dialog.dismiss();
-              }
-            },
-            {
-              label: 'Cancel',
-              callback: () => {
-                dialog.dismiss();
-              }
+              callback();
+
+              dialog.dismiss();
             }
-          ]
-        });
+          },
+          {
+            label: 'Cancel',
+            callback: () => {
+              dialog.dismiss();
+            }
+          }
+        ]
+      });
     },
     updateTelemetryMode() {
       this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
@@ -1202,7 +1193,9 @@ export default {
       const timeSystemKey = this.openmct.time.getTimeSystem().key;
 
       if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
-        this.openmct.notifications.info('Switched to Performance Mode: Table now sorted by time for optimized efficiency.');
+        this.openmct.notifications.info(
+          'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
+        );
         this.initiateSort(timeSystemKey);
       }
     },

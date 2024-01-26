@@ -140,8 +140,8 @@ export default class TelemetryTableConfiguration extends EventEmitter {
         return headers;
       }, {});
   }
-  
-   getTelemetryMode() {
+
+  getTelemetryMode() {
     let configuration = this.getConfiguration();
 
     return configuration.telemetryMode;
