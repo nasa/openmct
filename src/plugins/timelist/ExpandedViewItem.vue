@@ -25,14 +25,14 @@
       <div class="c-tli__activity-color-swatch" :style="styleClass"></div>
     </div>
     <div class="c-tli__title-and-bounds">
-      <div class="c-tli__title">{{ formattedItemValue.title }}</div>
+      <div class="c-tli__title">{{ formattedItem.title }}</div>
       <div class="c-tli__bounds" :class="{ '--has-duration': eventHasDuration }">
-        <div v-if="eventHasDuration" class="c-tli__duration">{{ formattedItemValue.duration }}</div>
+        <div v-if="eventHasDuration" class="c-tli__duration">{{ formattedItem.duration }}</div>
         <div v-else class="c-tli__start-time">Event</div>
         <div class="c-tli__start-time">
-          {{ formattedItemValue.start }}
+          {{ formattedItem.start }}
         </div>
-        <div v-if="eventHasDuration" class="c-tli__end-time">{{ formattedItemValue.end }}</div>
+        <div v-if="eventHasDuration" class="c-tli__end-time">{{ formattedItem.end }}</div>
       </div>
     </div>
     <div class="c-tli__graphic">
@@ -77,9 +77,9 @@
     </div>
     <div class="c-tli__time-hero">
       <div class="c-tli__time-hero-context-and-time">
-        <div class="c-tli__time-hero-context">{{ formattedItemValue.label }}</div>
-        <div v-if="showTimeHero" class="c-tli__time-hero-time --is-countdown">
-          {{ formattedItemValue.countdown }}
+        <div class="c-tli__time-hero-context">{{ formattedItem.label }}</div>
+        <div v-if="showTimeHero" :class="countdownClass">
+          {{ formattedItem.countdown }}
         </div>
       </div>
     </div>
@@ -104,8 +104,7 @@ const EXECUTION_STATES = {
   'in-progress': 'In progress',
   completed: 'Completed',
   aborted: 'Aborted',
-  skipped: 'Skipped',
-  cancelled: 'Cancelled'
+  skipped: 'Skipped'
 };
 
 const INFERRED_EXECUTION_STATES = {
@@ -114,7 +113,9 @@ const INFERRED_EXECUTION_STATES = {
   runningLong: 'Running Long',
   starts: 'Starts',
   occurs: 'Occurs',
-  ends: 'Ends'
+  occurred: 'Occurred',
+  ends: 'Ends',
+  ended: 'Ended'
 };
 
 export default {
@@ -141,6 +142,15 @@ export default {
     };
   },
   computed: {
+    countdownClass() {
+      let cssClass = '';
+      if (this.item.countdown < 0) {
+        cssClass = '--is-countup';
+      } else if (this.item.countdown > 0) {
+        cssClass = '--is-countdown';
+      }
+      return `c-tli__time-hero-time ${cssClass}`;
+    },
     styleClass() {
       return { backgroundColor: ITEM_COLORS[this.item.cssClass] };
     },
@@ -155,7 +165,7 @@ export default {
       const executionStateClass = `--is-${this.executionState}`;
       return `c-tli ${timeRelationClass} ${executionStateClass}`;
     },
-    formattedItemValue() {
+    formattedItem() {
       let executionStateLabel;
       const executionStateKeys = Object.keys(EXECUTION_STATES);
       const executionStateIndex = executionStateKeys.findIndex(
@@ -198,17 +208,24 @@ export default {
         itemValue[itemProperty.key] = formattedValue;
 
         // - 'Starts' : for Activities with now > start datetime
-        // - 'Occurs' : for Events with now > start datetime and 0 duration
+        // - 'occurs' : for Events with start > now datetime and 0 duration
+        // - 'Occurred' : for Events with start < now datetime and 0 duration
         let label;
         if (itemProperty.key === 'countdown') {
           if (this.item.start < this.timestamp) {
             if (this.item.start === this.item.end) {
-              label = INFERRED_EXECUTION_STATES.occurs;
+              label = INFERRED_EXECUTION_STATES.occurred;
+            } else if (this.item.cssClass === PAST_CSS_SUFFIX) {
+              label = executionStateLabel || INFERRED_EXECUTION_STATES.ended;
             } else {
-              label = INFERRED_EXECUTION_STATES.starts;
+              label = executionStateLabel || INFERRED_EXECUTION_STATES.starts;
             }
           } else {
-            label = executionStateLabel;
+            if (this.item.start === this.item.end) {
+              label = INFERRED_EXECUTION_STATES.occurs;
+            } else {
+              label = executionStateLabel;
+            }
           }
         }
         itemValue.label = itemValue.label ?? label;

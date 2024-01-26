@@ -47,7 +47,11 @@ export function updateProgress(start, end, timestamp, element) {
   let progressPercent = 0;
   if (timestamp > start) {
     // Now is after activity start datetime
-    progressPercent = (1 - (end - timestamp) / duration) * 100;
+    if (timestamp > end) {
+      progressPercent = 100;
+    } else {
+      progressPercent = (1 - (end - timestamp) / duration) * 100;
+    }
   }
   if (progressPercent < 100) {
     // If the remaining percent is less than update_per_cycle, round up to 100%.
