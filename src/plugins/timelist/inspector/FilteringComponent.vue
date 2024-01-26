@@ -104,9 +104,13 @@ export default {
   methods: {
     setEditState(isEditing) {
       this.isEditing = isEditing;
-      if (!this.isEditing && this.hasFilterError && this.hasMetadataFilterError) {
-        this.filterValue = this.domainObject.configuration.filter;
-        this.filterMetadataValue = this.domainObject.configuration.filterMetadata;
+      if (!this.isEditing) {
+        if (this.hasFilterError) {
+          this.filterValue = this.domainObject.configuration.filter;
+        }
+        if (this.hasMetadataFilterError) {
+          this.filterMetadataValue = this.domainObject.configuration.filterMetadata;
+        }
         this.hasFilterError = false;
         this.hasMetadataFilterError = false;
       }
@@ -120,7 +124,6 @@ export default {
 
         return;
       }
-
       this.hasFilterError = false;
 
       this.$emit('updated', {
@@ -134,7 +137,6 @@ export default {
 
         return;
       }
-
       this.hasMetadataFilterError = false;
 
       this.$emit('updated', {
