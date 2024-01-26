@@ -88,17 +88,21 @@ import ExpandedViewItem from './ExpandedViewItem.vue';
 const SCROLL_TIMEOUT = 10000;
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-
+const SAME_DAY_PRECISION_SECONDS = 'HH:mm:ss';
 const headerItems = [
   {
     defaultDirection: true,
     isSortable: true,
     property: 'start',
     name: 'Start Time',
-    format: function (value, object, key, openmct) {
+    format: function (value, object, key, openmct, options = {}) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value, TIME_FORMAT);
+      if (options.skipDateForToday) {
+        return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
+      } else {
+        return timeFormatter.format(value, TIME_FORMAT);
+      }
     }
   },
   {
@@ -106,10 +110,14 @@ const headerItems = [
     isSortable: true,
     property: 'end',
     name: 'End Time',
-    format: function (value, object, key, openmct) {
+    format: function (value, object, key, openmct, options = {}) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value, TIME_FORMAT);
+      if (options.skipDateForToday) {
+        return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
+      } else {
+        return timeFormatter.format(value, TIME_FORMAT);
+      }
     }
   },
   {
