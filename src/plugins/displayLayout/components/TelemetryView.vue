@@ -84,12 +84,7 @@ import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = [
-  'copyToClipboard',
-  'copyToNotebook',
-  'viewHistoricalData',
-  'renderWhenVisible'
-];
+const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
 
 export default {
   makeDefinition(openmct, gridSize, domainObject, position) {

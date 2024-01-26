@@ -111,6 +111,7 @@
     "test:e2e:unstable": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @unstable",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
     "test:e2e:generatedata": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @generatedata",
+    "test:e2e:checksnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --retries=0",
     "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --update-snapshots",
     "test:e2e:visual:ci": "percy exec --config ./e2e/.percy.ci.yml --partial -- npx playwright test --config=e2e/playwright-visual-a11y.config.js --project=chrome --grep-invert @unstable",
     "test:e2e:visual:full": "percy exec --config ./e2e/.percy.nightly.yml -- npx playwright test --config=e2e/playwright-visual-a11y.config.js --grep-invert @unstable",

@@ -19,35 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*
+ * This test suite is dedicated to testing the preview plugin.
+ */
 
-import TelemetryTableView from './TelemetryTableView.js';
+import { test } from '../../../../pluginFixtures.js';
 
-export default function TelemetryTableViewProvider(openmct, options) {
-  function hasTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-      return false;
-    }
-
-    let metadata = openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0;
-  }
-
-  return {
-    key: 'table',
-    name: 'Telemetry Table',
-    cssClass: 'icon-tabular-scrolling',
-    canView(domainObject) {
-      return domainObject.type === 'table' || hasTelemetry(domainObject);
-    },
-    canEdit(domainObject) {
-      return domainObject.type === 'table';
-    },
-    view(domainObject, objectPath) {
-      return new TelemetryTableView(openmct, domainObject, objectPath, options);
-    },
-    priority() {
-      return 1;
-    }
-  };
-}
+test.describe('Preview mode', () => {
+  test.fixme('all context menu items are available for a telemetry table', async ({ page }) => {
+    // compare the context menu options when viewing a telemetry table directly
+    // vs when it is presented in preview mode (e.g. edit mode is enabled and the table is clicked on from the tree)
+  });
+});
