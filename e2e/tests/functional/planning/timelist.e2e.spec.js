@@ -102,7 +102,9 @@ test.describe('Time List', () => {
       // Find the activity state section in the inspector
       await page.getByRole('tab', { name: 'Activity' }).click();
       // Check that activity state label is displayed in the inspector.
-      await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
+      await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+        'Not started'
+      );
     });
   });
 });
