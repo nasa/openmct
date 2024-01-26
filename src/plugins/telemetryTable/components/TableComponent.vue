@@ -234,7 +234,7 @@
               :object-path="objectPath"
               :row-offset="rowOffset"
               :row-height="rowHeight"
-              :row="row"
+              :row="getRow(rowIndex)"
               :marked="row.marked"
               @mark="markRow"
               @unmark="unmarkRow"
@@ -288,6 +288,7 @@ import _ from 'lodash';
 import { toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import throttle from '../../../utils/throttle';
 
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
@@ -504,6 +505,8 @@ export default {
       });
     }
 
+    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
+
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
     this.table.on('refresh', this.clearRowsAndRerender);
@@ -632,6 +635,9 @@ export default {
       this.totalWidth = totalWidth;
 
       this.calculateScrollbarWidth();
+    },
+    getRow(rowIndex) {
+      return toRaw(this.visibleRows[rowIndex]);
     },
     sortBy(columnKey) {
       // If sorting by the same column, flip the sort direction.
