@@ -22,7 +22,7 @@
 
 <template>
   <div
-    ref="userIndicator"
+    ref="userIndicatorRef"
     class="c-indicator c-indicator--user icon-person"
     :class="canSetMissionStatus ? 'c-indicator--clickable' : ''"
     v-bind="$attrs"
@@ -36,14 +36,17 @@
     </span>
   </div>
   <Teleport to="body">
-    <div v-show="isPopupVisible" ref="popup" class="c-user-control-panel" :style="popupStyle">
-      <MissionStatusPopup v-show="canSetMissionStatus" />
+    <div v-show="isPopupVisible" ref="popupRef" class="c-user-control-panel" :style="popupStyle">
+      <MissionStatusPopup v-show="canSetMissionStatus" @dismiss="togglePopup" />
     </div>
   </Teleport>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer.js';
+import { useEventListener } from '../../../ui/composables/event.js';
 import { useWindowResize } from '../../../ui/composables/resize.js';
 import MissionStatusPopup from './MissionStatusPopup.vue';
 
@@ -56,8 +59,20 @@ export default {
   inheritAttrs: false,
   setup() {
     const { windowSize } = useWindowResize();
+    const isPopupVisible = ref(false);
+    const userIndicatorRef = ref(null);
+    const popupRef = ref(null);
 
-    return { windowSize };
+    // eslint-disable-next-line func-style
+    const handleOutsideClick = (event) => {
+      if (isPopupVisible.value && popupRef.value && !popupRef.value.contains(event.target)) {
+        isPopupVisible.value = false;
+      }
+    };
+
+    useEventListener(document, 'click', handleOutsideClick);
+
+    return { windowSize, isPopupVisible, popupRef, userIndicatorRef };
   },
   data() {
     return {
@@ -67,7 +82,6 @@ export default {
       loggedIn: false,
       inputRoleSelection: undefined,
       roleSelectionDialog: undefined,
-      isPopupVisible: false,
       canSetMissionStatus: false
     };
   },
@@ -82,12 +96,12 @@ export default {
       if (!this.isPopupVisible) {
         return { top: 0, left: 0 };
       }
-      const indicator = this.$refs.userIndicator;
+      const indicator = this.userIndicatorRef;
       const indicatorRect = indicator.getBoundingClientRect();
       let top = indicatorRect.bottom;
       let left = indicatorRect.left;
 
-      const popupRect = this.$refs.popup.getBoundingClientRect();
+      const popupRect = this.popupRef.getBoundingClientRect();
       const popupWidth = popupRect.width;
       const popupHeight = popupRect.height;
 
