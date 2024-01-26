@@ -22,7 +22,7 @@
 <template>
   <li class="c-inspect-properties__row">
     <div v-if="canEdit" class="c-inspect-properties__hint span-all">
-      Filter this view by comma-separated keywords.
+      Filter this view by comma-separated keywords. Filtering uses an 'OR' method.
     </div>
     <div class="c-inspect-properties__label" aria-label="Activity Names" title="Filter by keyword.">
       Activity Names
@@ -41,12 +41,19 @@
       ></textarea>
     </div>
     <div v-else class="c-inspect-properties__value">
-      {{ filterValue }}
+      <template v-if="filterValue.length > 0">
+        {{ filterValue }}
+      </template>
+      <template v-else> No filters applied </template>
     </div>
   </li>
   <li class="c-inspect-properties__row">
-    <div class="c-inspect-properties__label" aria-label="Meta-data Tags" title="Filter by keyword.">
-      Meta-data Tags
+    <div
+      class="c-inspect-properties__label"
+      aria-label="Meta-data Properties"
+      title="Filter by keyword."
+    >
+      Meta-data Properties
     </div>
     <div
       v-if="canEdit"
@@ -62,7 +69,10 @@
       ></textarea>
     </div>
     <div v-else class="c-inspect-properties__value">
-      {{ filterMetadataValue }}
+      <template v-if="filterMetadataValue.length > 0">
+        {{ filterMetadataValue }}
+      </template>
+      <template v-else> No filters applied </template>
     </div>
   </li>
 </template>
