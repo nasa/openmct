@@ -130,48 +130,37 @@
     var now = Date.now();
     var start = request.start;
     var end = request.end > now ? now : request.end;
-    var amplitude = request.amplitude;
     var period = request.period;
-    var offset = request.offset;
     var dataRateInHz = request.dataRateInHz;
-    var phase = request.phase;
-    var randomness = request.randomness;
     var loadDelay = Math.max(request.loadDelay, 0);
-    var infinityValues = request.infinityValues;
-    var exceedFloat32 = request.exceedFloat32;
-
+    var size = request.size;
+    var duration = end - start;
     var step = 1000 / dataRateInHz;
+    var maxPoints = Math.floor(duration / step);
     var nextStep = start - (start % step) + step;
 
     var data = [];
 
-    for (; nextStep < end && data.length < 5000; nextStep += step) {
-      data.push({
-        utc: nextStep,
-        yesterday: nextStep - 60 * 60 * 24 * 1000,
-        sin: sin(
-          nextStep,
-          period,
-          amplitude,
-          offset,
-          phase,
-          randomness,
-          infinityValues,
-          exceedFloat32
-        ),
-        wavelengths: wavelengths(),
-        intensities: intensities(),
-        cos: cos(
-          nextStep,
-          period,
-          amplitude,
-          offset,
-          phase,
-          randomness,
-          infinityValues,
-          exceedFloat32
-        )
-      });
+    if (request.strategy === 'minmax' && size) {
+      // Calculate the number of cycles to include based on size (2 points per cycle)
+      var totalCycles = Math.min(Math.floor(size / 2), Math.floor(duration / period));
+
+      for (let cycle = 0; cycle < totalCycles; cycle++) {
+        // Distribute cycles evenly across the time range
+        let cycleStart = start + (duration / totalCycles) * cycle;
+        let minPointTime = cycleStart; // Assuming min at the start of the cycle
+        let maxPointTime = cycleStart + period / 2; // Assuming max at the halfway of the cycle
+
+        data.push(createDataPoint(minPointTime, request), createDataPoint(maxPointTime, request));
+      }
+    } else {
+      for (let i = 0; i < maxPoints && nextStep < end; i++, nextStep += step) {
+        data.push(createDataPoint(nextStep, request));
+      }
+    }
+
+    if (request.strategy !== 'minmax' && size) {
+      data = data.slice(-size);
     }
 
     if (loadDelay === 0) {
@@ -179,6 +168,35 @@
     } else {
       setTimeout(() => postOnRequest(message, request, data), loadDelay);
     }
+  }
+
+  function createDataPoint(time, request) {
+    return {
+      utc: time,
+      yesterday: time - 60 * 60 * 24 * 1000,
+      sin: sin(
+        time,
+        request.period,
+        request.amplitude,
+        request.offset,
+        request.phase,
+        request.randomness,
+        request.infinityValues,
+        request.exceedFloat32
+      ),
+      wavelengths: wavelengths(),
+      intensities: intensities(),
+      cos: cos(
+        time,
+        request.period,
+        request.amplitude,
+        request.offset,
+        request.phase,
+        request.randomness,
+        request.infinityValues,
+        request.exceedFloat32
+      )
+    };
   }
 
   function postOnRequest(message, request, data) {
