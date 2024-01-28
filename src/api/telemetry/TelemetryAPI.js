@@ -413,35 +413,44 @@ export default class TelemetryAPI {
    *          the subscription
    */
   subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
+    const requestedStrategy = options.strategy || SUBSCRIBE_STRATEGY.LATEST;
+
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
-    // Default behavior is to use the latest strategy, as opposed to the new "batch" strategy
-    if (options.strategy === undefined || options.strategy === null) {
-      options.strategy = SUBSCRIBE_STRATEGY.LATEST;
-    }
-
     const provider = this.findSubscriptionProvider(domainObject, options);
+    const supportsBatching =
+      Boolean(provider?.supportsBatching) && provider?.supportsBatching(domainObject, options);
 
     if (!this.subscribeCache) {
       this.subscribeCache = {};
     }
 
     const keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let subscriber = this.subscribeCache[keyString];
+    const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
+    // Override the requested strategy with the strategy supported by the provider
+    const optionsWithSupportedStrategy = {
+      ...options,
+      strategy: supportedStrategy
+    };
+    // If batching is supported, we need to cache a subscription for each strategy -
+    // latest and batched.
+    const cacheKey = `${keyString}:${supportedStrategy}`;
+    let subscriber = this.subscribeCache[cacheKey];
 
     if (!subscriber) {
-      subscriber = this.subscribeCache[keyString] = {
+      subscriber = this.subscribeCache[cacheKey] = {
         callbacks: [callback]
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          options.strategy === SUBSCRIBE_STRATEGY.BATCH
+          //Format the data based on strategy requested by view
+          requestedStrategy === SUBSCRIBE_STRATEGY.BATCH
             ? subscriptionCallbackForArray
             : subscriptionCallbackForSingleValue,
-          options
+          optionsWithSupportedStrategy
         );
       } else {
         subscriber.unsubscribe = function () {};
@@ -488,7 +497,7 @@ export default class TelemetryAPI {
       });
       if (subscriber.callbacks.length === 0) {
         subscriber.unsubscribe();
-        delete this.subscribeCache[keyString];
+        delete this.subscribeCache[cacheKey];
       }
     }.bind(this);
   }
