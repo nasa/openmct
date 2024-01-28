@@ -123,15 +123,6 @@
       .is-editing .l-layout__frame & {
         pointer-events: none;
       }
-
-      &.is-selected {
-        background-color: $colorSelectedBg !important;
-        color: $colorSelectedFg !important;
-        td {
-          background: none !important;
-          color: inherit !important;
-        }
-      }
     }
 
     td {
@@ -184,6 +175,18 @@
 // All tables
 td {
   @include isLimit();
+}
+
+.c-table tr {
+  &[s-selected],
+  &.is-selected {
+    background-color: $colorSelectedBg !important;
+    color: $colorSelectedFg !important;
+    td {
+      background: none !important;
+      color: inherit !important;
+    }
+  }
 }
 
 /******************************* SPECIFIC CASE WRAPPERS */
