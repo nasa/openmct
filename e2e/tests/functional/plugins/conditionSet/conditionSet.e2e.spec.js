@@ -35,7 +35,7 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
 
-test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
+test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () => {
   test.beforeAll(async ({ browser }) => {
     //TODO: This needs to be refactored
     const context = await browser.newContext();
@@ -68,30 +68,35 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
   });
 
   //Begin suite of tests again localStorage
-  test('Condition set object properties persist in main view and inspector @localStorage', async ({
-    page
-  }) => {
-    //Navigate to baseURL with injected localStorage
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+  test.fixme(
+    'Condition set object properties persist in main view and inspector @localStorage',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
+      //Navigate to baseURL with injected localStorage
+      await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
-    //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
 
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
 
-    //Reload Page
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+      //Reload Page
+      await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
 
-    //Re-verify after reload
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
-  });
+      //Re-verify after reload
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+    }
+  );
   test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
