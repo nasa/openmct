@@ -327,6 +327,119 @@ describe('Telemetry API', () => {
         signal
       });
     });
+    describe('telemetry batching support', () => {
+      let callbacks;
+      let unsubFunc;
+
+      beforeEach(() => {
+        callbacks = [];
+        unsubFunc = jasmine.createSpy('unsubscribe');
+        telemetryProvider.supportsBatching = jasmine.createSpy('supportsBatching');
+        telemetryProvider.supportsBatching.and.returnValue(true);
+        telemetryProvider.supportsSubscribe.and.returnValue(true);
+
+        telemetryProvider.subscribe.and.callFake(function (obj, cb, options) {
+          callbacks.push(cb);
+
+          return unsubFunc;
+        });
+
+        telemetryAPI.addProvider(telemetryProvider);
+      });
+
+      it('caches subscriptions for batched and latest telemetry subscriptions', () => {
+        const latestCallback1 = jasmine.createSpy('latestCallback1');
+        const unsubscribeFromLatest1 = telemetryAPI.subscribe(domainObject, latestCallback1, {
+          strategy: 'latest'
+        });
+        const latestCallback2 = jasmine.createSpy('latestCallback2');
+        const unsubscribeFromLatest2 = telemetryAPI.subscribe(domainObject, latestCallback2, {
+          strategy: 'latest'
+        });
+
+        //Expect a single cached subscription for latest telemetry
+        expect(telemetryProvider.subscribe.calls.count()).toBe(1);
+
+        const batchedCallback1 = jasmine.createSpy('batchedCallback1');
+        const unsubscribeFromBatched1 = telemetryAPI.subscribe(domainObject, batchedCallback1, {
+          strategy: 'batch'
+        });
+
+        const batchedCallback2 = jasmine.createSpy('batchedCallback2');
+        const unsubscribeFromBatched2 = telemetryAPI.subscribe(domainObject, batchedCallback2, {
+          strategy: 'batch'
+        });
+
+        //Expect a single cached subscription for each strategy telemetry
+        expect(telemetryProvider.subscribe.calls.count()).toBe(2);
+
+        unsubscribeFromLatest1();
+        unsubscribeFromLatest2();
+        unsubscribeFromBatched1();
+        unsubscribeFromBatched2();
+
+        expect(unsubFunc).toHaveBeenCalledTimes(2);
+      });
+      it('subscriptions with the latest strategy are always invoked with a single value', () => {
+        const latestCallback = jasmine.createSpy('latestCallback1');
+        telemetryAPI.subscribe(domainObject, latestCallback, {
+          strategy: 'latest'
+        });
+
+        const batchedValues = [1, 2, 3];
+        callbacks.forEach((cb) => {
+          cb(batchedValues);
+        });
+
+        expect(latestCallback).toHaveBeenCalledWith(3);
+
+        const singleValue = 1;
+        callbacks.forEach((cb) => {
+          cb(singleValue);
+        });
+
+        expect(latestCallback).toHaveBeenCalledWith(1);
+      });
+
+      it('subscriptions with the batch strategy are always invoked with an array', () => {
+        const batchedCallback1 = jasmine.createSpy('batchedCallback1');
+        telemetryAPI.subscribe(domainObject, batchedCallback1, {
+          strategy: 'batch'
+        });
+
+        const batchedValues = [1, 2, 3];
+        callbacks.forEach((cb) => {
+          cb(batchedValues);
+        });
+
+        // Callbacks for the 'batch' strategy are always called with an array of values
+        expect(batchedCallback1).toHaveBeenCalledWith(batchedValues);
+
+        // Callbacks for the 'batch' strategy are always called with an array of values, even if there is only one value
+        callbacks.forEach((cb) => {
+          cb(1);
+        });
+
+        expect(batchedCallback1).toHaveBeenCalledWith([1]);
+      });
+
+      it('legacy providers are left unchanged, with a single subscription', () => {
+        delete telemetryProvider.supportsBatching;
+
+        const batchCallback = jasmine.createSpy('batchCallback');
+        telemetryAPI.subscribe(domainObject, batchCallback, {
+          strategy: 'batch'
+        });
+
+        const latestCallback = jasmine.createSpy('latestCallback');
+        telemetryAPI.subscribe(domainObject, latestCallback, {
+          strategy: 'latest'
+        });
+
+        expect(telemetryProvider.subscribe).toHaveBeenCalledTimes(1);
+        expect(telemetryProvider.subscribe.calls.mostRecent().args[2].strategy).toBe('latest');
+      });
+    });
   });
 
   describe('metadata', () => {
