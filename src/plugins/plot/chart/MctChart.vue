@@ -200,7 +200,7 @@ export default {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
     this.drawnOnce = false;
-    const rootContainer = document.querySelector('.js-main-container');
+    const rootContainer = this.openmct.element;
     const options = {
       root: rootContainer,
       rootMargin: '0px',
