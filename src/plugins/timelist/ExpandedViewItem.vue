@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div :class="listItemClass">
+  <div :class="listItemClass" role="row">
     <div class="c-tli__activity-color">
       <div class="c-tli__activity-color-swatch" :style="styleClass"></div>
     </div>
