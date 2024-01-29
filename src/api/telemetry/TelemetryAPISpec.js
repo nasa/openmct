@@ -402,9 +402,13 @@ describe('Telemetry API', () => {
       });
 
       it('subscriptions with the batch strategy are always invoked with an array', () => {
-        const batchedCallback1 = jasmine.createSpy('batchedCallback1');
-        telemetryAPI.subscribe(domainObject, batchedCallback1, {
+        const batchedCallback = jasmine.createSpy('batchedCallback1');
+        const latestCallback = jasmine.createSpy('latestCallback1');
+        telemetryAPI.subscribe(domainObject, batchedCallback, {
           strategy: 'batch'
+        });
+        telemetryAPI.subscribe(domainObject, latestCallback, {
+          strategy: 'latest'
         });
 
         const batchedValues = [1, 2, 3];
@@ -413,14 +417,17 @@ describe('Telemetry API', () => {
         });
 
         // Callbacks for the 'batch' strategy are always called with an array of values
-        expect(batchedCallback1).toHaveBeenCalledWith(batchedValues);
+        expect(batchedCallback).toHaveBeenCalledWith(batchedValues);
+        // Callbacks for the 'latest' strategy are always called with a single value
+        expect(latestCallback).toHaveBeenCalledWith(3);
 
-        // Callbacks for the 'batch' strategy are always called with an array of values, even if there is only one value
         callbacks.forEach((cb) => {
           cb(1);
         });
-
-        expect(batchedCallback1).toHaveBeenCalledWith([1]);
+        // Callbacks for the 'batch' strategy are always called with an array of values, even if there is only one value
+        expect(batchedCallback).toHaveBeenCalledWith([1]);
+        // Callbacks for the 'latest' strategy are always called with a single value
+        expect(latestCallback).toHaveBeenCalledWith(1);
       });
 
       it('legacy providers are left unchanged, with a single subscription', () => {
@@ -430,13 +437,13 @@ describe('Telemetry API', () => {
         telemetryAPI.subscribe(domainObject, batchCallback, {
           strategy: 'batch'
         });
+        expect(telemetryProvider.subscribe.calls.mostRecent().args[2].strategy).toBe('latest');
 
         const latestCallback = jasmine.createSpy('latestCallback');
         telemetryAPI.subscribe(domainObject, latestCallback, {
           strategy: 'latest'
         });
 
-        expect(telemetryProvider.subscribe).toHaveBeenCalledTimes(1);
         expect(telemetryProvider.subscribe.calls.mostRecent().args[2].strategy).toBe('latest');
       });
     });

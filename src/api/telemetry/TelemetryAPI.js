@@ -84,6 +84,7 @@ const SUBSCRIBE_STRATEGY = {
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
+  #subscribeCache;
 
   get SUBSCRIBE_STRATEGY() {
     return SUBSCRIBE_STRATEGY;
@@ -106,6 +107,7 @@ export default class TelemetryAPI {
     this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     this.#isGreedyLAD = true;
     this.BatchingWebSocket = BatchingWebSocket;
+    this.#subscribeCache = {};
   }
 
   abortAllRequests() {
@@ -423,8 +425,8 @@ export default class TelemetryAPI {
     const supportsBatching =
       Boolean(provider?.supportsBatching) && provider?.supportsBatching(domainObject, options);
 
-    if (!this.subscribeCache) {
-      this.subscribeCache = {};
+    if (!this.#subscribeCache) {
+      this.#subscribeCache = {};
     }
 
     const keyString = objectUtils.makeKeyString(domainObject.identifier);
@@ -437,67 +439,81 @@ export default class TelemetryAPI {
     // If batching is supported, we need to cache a subscription for each strategy -
     // latest and batched.
     const cacheKey = `${keyString}:${supportedStrategy}`;
-    let subscriber = this.subscribeCache[cacheKey];
+    let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
-      subscriber = this.subscribeCache[cacheKey] = {
-        callbacks: [callback]
+      subscriber = this.#subscribeCache[cacheKey] = {
+        latestCallbacks: [],
+        batchCallbacks: []
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          //Format the data based on strategy requested by view
-          requestedStrategy === SUBSCRIBE_STRATEGY.BATCH
-            ? subscriptionCallbackForArray
-            : subscriptionCallbackForSingleValue,
+          invokeCallbackWithRequestedStrategy,
           optionsWithSupportedStrategy
         );
       } else {
         subscriber.unsubscribe = function () {};
       }
-    } else {
-      subscriber.callbacks.push(callback);
     }
 
-    function subscriptionCallbackForArray(value) {
-      if (value === undefined || value === null || value.length === 0) {
+    if (requestedStrategy === SUBSCRIBE_STRATEGY.BATCH) {
+      subscriber.batchCallbacks.push(callback);
+    } else {
+      subscriber.latestCallbacks.push(callback);
+    }
+
+    // Guarantees that view receive telemetry in the expected form
+    function invokeCallbackWithRequestedStrategy(data) {
+      invokeCallbacksWithArray(data, subscriber.batchCallbacks);
+      invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
+    }
+
+    function invokeCallbacksWithArray(data, batchCallbacks) {
+      //
+      if (data === undefined || data === null || data.length === 0) {
         throw new Error(
           'Attempt to invoke telemetry subscription callback with no telemetry datum'
         );
       }
 
-      if (!Array.isArray(value)) {
-        value = [value];
+      if (!Array.isArray(data)) {
+        data = [data];
       }
 
-      subscriber.callbacks.forEach(function (cb) {
-        cb(value);
+      batchCallbacks.forEach((cb) => {
+        cb(data);
       });
     }
 
-    function subscriptionCallbackForSingleValue(value) {
-      if (Array.isArray(value)) {
-        value = value[value.length - 1];
+    function invokeCallbacksWithSingleValue(data, latestCallbacks) {
+      if (Array.isArray(data)) {
+        data = data[data.length - 1];
       }
 
-      if (value === undefined || value === null) {
+      if (data === undefined || data === null) {
         throw new Error(
           'Attempt to invoke telemetry subscription callback with no telemetry datum'
         );
       }
 
-      subscriber.callbacks.forEach(function (cb) {
-        cb(value);
+      latestCallbacks.forEach((cb) => {
+        cb(data);
       });
     }
 
     return function unsubscribe() {
-      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+      console.error(subscriber);
+      subscriber.latestCallbacks = subscriber.latestCallbacks.filter(function (cb) {
         return cb !== callback;
       });
-      if (subscriber.callbacks.length === 0) {
+      subscriber.batchCallbacks = subscriber.batchCallbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+
+      if (subscriber.latestCallbacks.length === 0 && subscriber.batchCallbacks.length === 0) {
         subscriber.unsubscribe();
-        delete this.subscribeCache[cacheKey];
+        delete this.#subscribeCache[cacheKey];
       }
     }.bind(this);
   }
