@@ -32,7 +32,7 @@ export default function installWorker() {
    * On an error or dropout, will automatically reconnect.
    *
    * Additionally, messages will be queued and sent only when WebSocket is
-   * connected meaning that client code does not need to check the state of 
+   * connected meaning that client code does not need to check the state of
    * the socket before sending.
    */
   class ResilientWebSocket extends EventTarget {

@@ -145,7 +145,7 @@ class BatchingWebSocket extends EventTarget {
    * In this event it will sacrifice the oldest telemetry in the batch in favor of the
    * most recent telemetry. The user will be informed that telemetry has been dropped.
    *
-   * This should be specced appropriately for the expected data rate. eg. If telemetry
+   * This should be set appropriately for the expected data rate. eg. If telemetry
    * is received at 10Hz for each telemetry point, then a minimal combination of batch
    * size and rate is 10 and 1000 respectively. Ideally you would add some margin, so
    * 15 would probably be a better batch size.
