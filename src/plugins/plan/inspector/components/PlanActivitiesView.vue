@@ -20,21 +20,35 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-inspector__properties c-inspect-properties">
-    <plan-activity-view
-      v-for="activity in activities"
-      :key="activity.id"
-      :activity="activity"
-      :heading="heading"
-    />
-  </div>
+  <plan-activity-time-view
+    v-for="activity in activities"
+    :key="activity.key"
+    :activity="activity"
+    :heading="heading"
+  />
+  <plan-activity-properties-view
+    v-for="activity in activities"
+    :key="activity.key"
+    heading="Properties"
+    :activity="activity"
+  />
+  <plan-activity-status-view
+    v-if="canPersistState"
+    :key="activities[0].key"
+    :activity="activities[0]"
+    :execution-state="activityExecutionState"
+    heading="Activity Status"
+    @update-activity-state="persistActivityState"
+  />
 </template>
 
 <script>
 import { getPreciseDuration } from 'utils/duration';
-import { v4 as uuid } from 'uuid';
 
-import PlanActivityView from './PlanActivityView.vue';
+import { getDisplayProperties } from '../../util.js';
+import PlanActivityPropertiesView from './PlanActivityPropertiesView.vue';
+import PlanActivityStatusView from './PlanActivityStatusView.vue';
+import PlanActivityTimeView from './PlanActivityTimeView.vue';
 
 const propertyLabels = {
   start: 'Start DateTime',
@@ -44,23 +58,34 @@ const propertyLabels = {
   latestEnd: 'Latest End',
   gap: 'Gap',
   overlap: 'Overlap',
-  totalTime: 'Total Time'
+  totalTime: 'Total Time',
+  description: 'Description'
 };
 export default {
   components: {
-    PlanActivityView
+    PlanActivityTimeView,
+    PlanActivityPropertiesView,
+    PlanActivityStatusView
   },
   inject: ['openmct', 'selection'],
   data() {
     return {
       name: '',
       activities: [],
+      selectedActivities: [],
+      activityExecutionState: undefined,
       heading: ''
     };
+  },
+  computed: {
+    canPersistState() {
+      return this.selectedActivities.length === 1 && this.activities?.[0]?.id;
+    }
   },
   mounted() {
     this.setFormatters();
     this.getPlanData(this.selection);
+    this.getActivityStates();
     this.getActivities();
     this.openmct.selection.on('change', this.updateSelection);
     this.openmct.time.on('timeSystem', this.setFormatters);
@@ -68,8 +93,28 @@ export default {
   beforeUnmount() {
     this.openmct.selection.off('change', this.updateSelection);
     this.openmct.time.off('timeSystem', this.setFormatters);
+    if (this.stopObservingActivityStatesObject) {
+      this.stopObservingActivityStatesObject();
+    }
   },
   methods: {
+    async getActivityStates() {
+      this.activityStatesObject = await this.openmct.objects.get('activity-states');
+      this.setActivityStates(this.activityStatesObject);
+      this.stopObservingActivityStatesObject = this.openmct.objects.observe(
+        this.activityStatesObject,
+        '*',
+        this.setActivityStates
+      );
+    },
+    setActivityStates(newActivitiesStateObject) {
+      if (this.activities.length) {
+        const id = this.activities[0].id;
+        this.activityExecutionState = newActivitiesStateObject.activities[id];
+      } else {
+        this.activityExecutionState = undefined;
+      }
+    },
     setFormatters() {
       let timeSystem = this.openmct.time.timeSystem();
       this.timeFormatter = this.openmct.telemetry.getValueFormatter({
@@ -86,6 +131,7 @@ export default {
         if (selectionItem[0].context.type === 'activity') {
           const activity = selectionItem[0].context.activity;
           if (activity) {
+            activity.key = activity.id ?? activity.name;
             this.selectedActivities.push(activity);
           }
         }
@@ -104,20 +150,37 @@ export default {
       this.activities.splice(0);
       this.selectedActivities.forEach((selectedActivity, index) => {
         const activity = {
-          id: uuid(),
-          start: {
-            label: propertyLabels.start,
-            value: this.formatTime(selectedActivity.start)
-          },
-          end: {
-            label: propertyLabels.end,
-            value: this.formatTime(selectedActivity.end)
-          },
-          duration: {
-            label: propertyLabels.duration,
-            value: this.formatDuration(selectedActivity.end - selectedActivity.start)
+          id: selectedActivity.id,
+          key: selectedActivity.key,
+          timeProperties: {
+            start: {
+              label: propertyLabels.start,
+              value: this.formatTime(selectedActivity.start)
+            },
+            end: {
+              label: propertyLabels.end,
+              value: this.formatTime(selectedActivity.end)
+            },
+            duration: {
+              label: propertyLabels.duration,
+              value: this.formatDuration(selectedActivity.end - selectedActivity.start)
+            }
           }
         };
+        activity.metadata = {};
+        if (selectedActivity.description) {
+          activity.metadata.description = {
+            label: propertyLabels.description,
+            value: selectedActivity.description
+          };
+        }
+
+        const displayProperties = getDisplayProperties(selectedActivity);
+        activity.metadata = {
+          ...activity.metadata,
+          ...displayProperties
+        };
+
         this.activities[index] = activity;
       });
     },
@@ -141,6 +204,8 @@ export default {
       let latestEnd;
       let gap;
       let overlap;
+      let id;
+      let key;
 
       //Sort by start time
       let selectedActivities = this.selectedActivities.sort(this.sortFn);
@@ -159,6 +224,8 @@ export default {
           earliestStart = Math.min(earliestStart, selectedActivity.start);
           latestEnd = Math.max(latestEnd, selectedActivity.end);
         } else {
+          id = selectedActivity.id;
+          key = selectedActivity.id ?? selectedActivity.name;
           earliestStart = selectedActivity.start;
           latestEnd = selectedActivity.end;
         }
@@ -166,30 +233,33 @@ export default {
       let totalTime = latestEnd - earliestStart;
 
       const activity = {
-        id: uuid(),
-        earliestStart: {
-          label: propertyLabels.earliestStart,
-          value: this.formatTime(earliestStart)
-        },
-        latestEnd: {
-          label: propertyLabels.latestEnd,
-          value: this.formatTime(latestEnd)
+        id,
+        key,
+        timeProperties: {
+          earliestStart: {
+            label: propertyLabels.earliestStart,
+            value: this.formatTime(earliestStart)
+          },
+          latestEnd: {
+            label: propertyLabels.latestEnd,
+            value: this.formatTime(latestEnd)
+          }
         }
       };
 
       if (gap) {
-        activity.gap = {
+        activity.timeProperties.gap = {
           label: propertyLabels.gap,
           value: this.formatDuration(gap)
         };
       } else if (overlap) {
-        activity.overlap = {
+        activity.timeProperties.overlap = {
           label: propertyLabels.overlap,
           value: this.formatDuration(overlap)
         };
       }
 
-      activity.totalTime = {
+      activity.timeProperties.totalTime = {
         label: propertyLabels.totalTime,
         value: this.formatDuration(totalTime)
       };
@@ -201,6 +271,11 @@ export default {
     },
     formatTime(time) {
       return this.timeFormatter.format(time);
+    },
+    persistActivityState(data) {
+      const { key, executionState } = data;
+      const activitiesPath = `activities.${key}`;
+      this.openmct.objects.mutate(this.activityStatesObject, activitiesPath, executionState);
     }
   }
 };

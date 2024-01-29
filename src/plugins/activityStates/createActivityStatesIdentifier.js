@@ -20,34 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
+export const ACTIVITY_STATES_KEY = 'activity-states';
 
-import { TIMELIST_TYPE } from './constants.js';
-import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider.js';
-import TimelistViewProvider from './TimelistViewProvider.js';
-
-export default function () {
-  return function install(openmct) {
-    openmct.types.addType(TIMELIST_TYPE, {
-      name: 'Time List',
-      key: TIMELIST_TYPE,
-      description:
-        'A configurable, time-ordered list view of activities for a compatible mission plan file.',
-      creatable: true,
-      cssClass: 'icon-timelist',
-      initialize: function (domainObject) {
-        domainObject.configuration = {
-          sortOrderIndex: 0,
-          currentEventsIndex: 1,
-          filter: '',
-          filterMetadata: '',
-          isCompact: false
-        };
-        domainObject.composition = [];
-      }
-    });
-    openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
-    openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
-    openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
+export function createActivityStatesIdentifier(namespace = '') {
+  return {
+    key: ACTIVITY_STATES_KEY,
+    namespace
   };
 }

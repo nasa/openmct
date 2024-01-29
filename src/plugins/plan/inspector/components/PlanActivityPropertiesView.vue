@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2024, United States Government
+ Open MCT, Copyright (c) 2014-2023, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,23 +21,17 @@
 -->
 
 <template>
-  <div v-if="timeProperties.length" class="u-contents">
-    <div class="c-inspect-properties__header">
-      {{ heading }}
+  <div class="c-inspector__properties c-inspect-properties">
+    <div v-if="properties.length" class="u-contents">
+      <div class="c-inspect-properties__header">{{ heading }}</div>
+      <ul v-for="property in properties" :key="property.id" class="c-inspect-properties__section">
+        <activity-property :label="property.label" :value="property.value" />
+      </ul>
     </div>
-    <ul
-      v-for="timeProperty in timeProperties"
-      :key="timeProperty.id"
-      class="c-inspect-properties__section"
-    >
-      <activity-property :label="timeProperty.label" :value="timeProperty.value" />
-    </ul>
   </div>
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
-
 import ActivityProperty from './ActivityProperty.vue';
 
 export default {
@@ -56,7 +50,7 @@ export default {
   },
   data() {
     return {
-      timeProperties: []
+      properties: []
     };
   },
   mounted() {
@@ -64,13 +58,18 @@ export default {
   },
   methods: {
     setProperties() {
-      Object.keys(this.activity).forEach((key) => {
-        if (this.activity[key].label) {
-          const label = this.activity[key].label;
-          const value = String(this.activity[key].value);
+      if (!this.activity.metadata) {
+        return;
+      }
 
-          this.timeProperties[this.timeProperties.length] = {
-            id: uuid(),
+      Object.keys(this.activity.metadata).forEach((key) => {
+        if (this.activity.metadata[key].label) {
+          const label = this.activity.metadata[key].label;
+          const value = String(this.activity.metadata[key].value);
+          const id = this.activity.id;
+
+          this.properties[this.properties.length] = {
+            id,
             label,
             value
           };
