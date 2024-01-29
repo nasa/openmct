@@ -151,16 +151,16 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
-   * Fetch the list of possible mission status options
-   * @returns {Promise<MissionStatusOption[]>} the current mission status
+   * Fetch the list of possible mission roles
+   * @returns {Promise<MissionRole[]>} the list of possible mission roles
    */
-  async getPossibleMissionStatuses() {
+  async getPossibleMissionRoles() {
     const provider = this.#userAPI.getProvider();
 
-    if (provider.getPossibleMissionStatuses) {
-      const possibleStatuses = await provider.getPossibleMissionStatuses();
+    if (provider.getPossibleMissionRoles) {
+      const possibleRoles = await provider.getPossibleMissionRoles();
 
-      return possibleStatuses;
+      return possibleRoles;
     } else {
       this.#userAPI.error('User provider does not support mission statuses');
     }
