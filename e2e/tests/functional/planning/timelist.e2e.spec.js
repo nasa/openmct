@@ -43,7 +43,7 @@ const TIME_TO_FROM_COLUMN = 2;
 // eslint-disable-next-line no-unused-vars
 const ACTIVITY_COLUMN = 3;
 const HEADER_ROW = 0;
-const NUM_COLUMNS = 4;
+const NUM_COLUMNS = 5;
 
 test.describe('Time List', () => {
   test("Create a Time List, add a single Plan to it, verify all the activities are displayed with no milliseconds and selecting an activity shows it's properties", async ({
@@ -102,7 +102,9 @@ test.describe('Time List', () => {
       // Find the activity state section in the inspector
       await page.getByRole('tab', { name: 'Activity' }).click();
       // Check that activity state label is displayed in the inspector.
-      await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
+      await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+        'Not started'
+      );
     });
   });
 });
@@ -127,14 +129,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
       json: examplePlanSmall1,
       parent: timelist.uuid
     });
-    // Change the object to edit mode
-    await page.getByLabel('Edit Object').click();
 
-    // Find the display properties section in the inspector
-    await page.getByRole('tab', { name: 'View Properties' }).click();
-    // Switch to expanded view and save the setting
-    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Ensure that all activities are shown in the expanded view
     const groups = Object.keys(examplePlanSmall1);
     const firstGroupKey = groups[0];
@@ -144,10 +139,26 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     const startBound = firstActivity.start;
     const endBound = lastActivity.end;
 
+    // Switch to fixed time mode with all plan events within the bounds
+    await page.goto(
+      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+    );
+
+    // Change the object to edit mode
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+
+    // Find the display properties section in the inspector
+    await page.getByRole('tab', { name: 'View Properties' }).click();
+    // Switch to expanded view and save the setting
+    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+    // Click on the "Save" button
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
     // Verify all events are displayed
     const eventCount = await page.getByRole('row').count();
-    // subtracting one for the header
-    await expect(eventCount - 1).toEqual(firstGroupItems.length);
+    await expect(eventCount).toEqual(firstGroupItems.length);
   });
 
   await test.step('Shows activity properties when a row is selected', async () => {
@@ -156,8 +167,11 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     // Find the activity state section in the inspector
     await page.getByRole('tab', { name: 'Activity' }).click();
     // Check that activity state label is displayed in the inspector.
-    await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
+    await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+      'Not started'
+    );
   });
+});
 
 /**
  * The regular expression used to parse the countdown string.

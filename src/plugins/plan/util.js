@@ -32,6 +32,7 @@
  * @property {object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
  */
 
+import _ from 'lodash';
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
@@ -55,6 +56,16 @@ export function getValidatedData(domainObject) {
 
         if (sourceMap.end) {
           groupActivity.end = activity[sourceMap.end];
+        }
+
+        if (Array.isArray(sourceMap.filterMetadata)) {
+          groupActivity.filterMetadataValues = [];
+          sourceMap.filterMetadata.forEach((property) => {
+            const value = _.get(activity, property);
+            groupActivity.filterMetadataValues.push({
+              value
+            });
+          });
         }
 
         if (sourceMap.id) {
@@ -112,7 +123,6 @@ export function getValidatedGroups(domainObject, planData) {
       orderedGroupNames = groups;
     }
   }
-
   if (orderedGroupNames === undefined) {
     orderedGroupNames = Object.keys(planData);
   }
@@ -138,6 +148,17 @@ export function getDisplayProperties(activity) {
     extractProperties(activity.properties, true);
   }
   return displayProperties;
+}
+
+export function getFilteredValues(activity) {
+  let values = [];
+  if (Array.isArray(activity.filterMetadataValues)) {
+    values = activity.filterMetadataValues;
+  } else if (activity?.properties) {
+    values = Object.values(activity.properties);
+  }
+
+  return values;
 }
 
 export function getContrastingColor(hexColor) {

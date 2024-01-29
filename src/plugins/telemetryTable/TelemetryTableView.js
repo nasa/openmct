@@ -25,7 +25,7 @@ import TableComponent from './components/TableComponent.vue';
 import TelemetryTable from './TelemetryTable.js';
 
 export default class TelemetryTableView {
-  constructor(openmct, domainObject, objectPath) {
+  constructor(openmct, domainObject, objectPath, options) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
