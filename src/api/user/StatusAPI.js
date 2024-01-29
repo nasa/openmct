@@ -32,6 +32,7 @@ export default class StatusAPI extends EventEmitter {
 
     this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
     this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
+    this.onMissionRoleStatusChange = this.onMissionRoleStatusChange.bind(this);
     this.listenToStatusEvents = this.listenToStatusEvents.bind(this);
 
     this.#openmct.once('destroy', () => {
@@ -40,6 +41,7 @@ export default class StatusAPI extends EventEmitter {
       if (typeof provider?.off === 'function') {
         provider.off('statusChange', this.onProviderStatusChange);
         provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+        provider.off('missionRoleStatusChange', this.onMissionRoleStatusChange);
       }
     });
 
@@ -316,6 +318,7 @@ export default class StatusAPI extends EventEmitter {
     if (typeof provider.on === 'function') {
       provider.on('statusChange', this.onProviderStatusChange);
       provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+      provider.on('missionRoleStatusChange', this.onMissionRoleStatusChange);
     }
   }
 
@@ -331,6 +334,13 @@ export default class StatusAPI extends EventEmitter {
    */
   onProviderPollQuestionChange(pollQuestion) {
     this.emit('pollQuestionChange', pollQuestion);
+  }
+
+  /**
+   * @private
+   */
+  onMissionRoleStatusChange(role, newStatus) {
+    this.emit('missionRoleStatusChange', role, newStatus);
   }
 }
 
