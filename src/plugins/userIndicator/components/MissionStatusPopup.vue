@@ -36,44 +36,55 @@
 </template>
 
 <script>
+import { inject, ref } from 'vue';
+
+import { useEventEmitter } from '../../../ui/composables/event';
+
 export default {
   inject: ['openmct'],
   emits: ['dismiss'],
-  data() {
-    return {
-      missionRoles: [],
-      missionRoleStatusOptions: [],
-      missionRoleStatusMap: {}
-    };
-  },
-  async created() {
+  async setup() {
+    const openmct = inject('openmct');
+    let missionRoles = ref([]);
+    let missionRoleStatusOptions = ref([]);
+    let missionRoleStatusMap = ref({});
+
     try {
+      // Listen for missionRoleStatusChange events
+      useEventEmitter(openmct.user.status, 'missionRoleStatusChange', ({ role, status }) => {
+        missionRoleStatusMap.value[role] = status.key; // Update the reactive property
+      });
       // Fetch missionStatuses and missionRoleStatuses simultaneously
-      const [missionRoles, missionRoleStatusOptions] = await Promise.all([
-        this.openmct.user.status.getPossibleMissionRoles(),
-        this.openmct.user.status.getPossibleMissionRoleStatuses()
+      const [fetchedMissionRoles, fetchedMissionRoleStatusOptions] = await Promise.all([
+        openmct.user.status.getPossibleMissionRoles(),
+        openmct.user.status.getPossibleMissionRoleStatuses()
       ]);
 
-      this.missionRoles = missionRoles;
-      this.missionRoleStatusOptions = missionRoleStatusOptions;
+      // Assign the results to the reactive variables
+      missionRoles.value = fetchedMissionRoles;
+      missionRoleStatusOptions.value = fetchedMissionRoleStatusOptions;
 
-      const statusPromises = missionRoles.map((role) =>
-        this.openmct.user.status.getStatusForMissionRole(role)
+      const statusPromises = missionRoles.value.map((role) =>
+        openmct.user.status.getStatusForMissionRole(role)
       );
 
       // Fetch all mission role statuses simultaneously
       const statuses = await Promise.all(statusPromises);
 
       // Reduce to a map of mission role to status
-      /** @type {Record<string, T>} */
-      this.missionRoleStatusMap = missionRoles.reduce((acc, status, index) => {
-        acc[status] = statuses[index].key;
+      missionRoleStatusMap.value = missionRoles.value.reduce((acc, role, index) => {
+        acc[role] = statuses[index].key;
         return acc;
       }, {});
     } catch (error) {
       console.error('Error fetching mission statuses:', error);
-      this.openmct.notifications.error(`Error fetching mission statuses: ${error.message}`);
     }
+
+    return {
+      missionRoles,
+      missionRoleStatusOptions,
+      missionRoleStatusMap
+    };
   },
   methods: {
     onDismiss() {

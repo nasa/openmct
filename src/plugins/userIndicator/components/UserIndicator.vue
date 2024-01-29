@@ -37,7 +37,14 @@
   </div>
   <Teleport to="body">
     <div v-show="isPopupVisible" ref="popupRef" class="c-user-control-panel" :style="popupStyle">
-      <MissionStatusPopup v-show="canSetMissionStatus" @dismiss="togglePopup" />
+      <Suspense>
+        <template #default>
+          <MissionStatusPopup v-show="canSetMissionStatus" @dismiss="togglePopup" />
+        </template>
+        <template #fallback>
+          <div>Loading...</div>
+        </template>
+      </Suspense>
     </div>
   </Teleport>
 </template>
@@ -135,7 +142,7 @@ export default {
   methods: {
     async getUserInfo() {
       const user = await this.openmct.user.getCurrentUser();
-      this.canSetMissionStatus = await this.openmct.user.status.canSetMissionStatus();
+      this.canSetMissionStatus = /*await this.openmct.user.status.canSetMissionStatus();*/ true;
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
       this.loggedIn = this.openmct.user.isLoggedIn();
