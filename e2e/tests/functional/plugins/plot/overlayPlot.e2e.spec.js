@@ -224,31 +224,37 @@ test.describe('Overlay Plot', () => {
     expect(yAxis3Group.getByRole('listitem').nth(0).getByText(swgB.name)).toBeTruthy();
   });
 
-  test('Clicking on an item in the elements pool brings up the plot preview with data points', async ({
-    page
-  }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
+  test.fixme(
+    'Clicking on an item in the elements pool brings up the plot preview with data points',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
 
-    const swgA = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      parent: overlayPlot.uuid
-    });
+      const overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot'
+      });
 
-    await page.goto(overlayPlot.url);
-    // Wait for plot series data to load and be drawn
-    await waitForPlotsToRender(page);
-    await page.getByLabel('Edit Object').click();
+      const swgA = await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        parent: overlayPlot.uuid
+      });
 
-    await page.getByRole('tab', { name: 'Elements' }).click();
+      await page.goto(overlayPlot.url);
+      // Wait for plot series data to load and be drawn
+      await waitForPlotsToRender(page);
+      await page.getByLabel('Edit Object').click();
 
-    await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+      await page.getByRole('tab', { name: 'Elements' }).click();
 
-    const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
-    const plotPixelSize = plotPixels.length;
-    expect(plotPixelSize).toBeGreaterThan(0);
-  });
+      await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+
+      const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+      const plotPixelSize = plotPixels.length;
+      expect(plotPixelSize).toBeGreaterThan(0);
+    }
+  );
 });
 
 /**

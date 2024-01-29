@@ -99,7 +99,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError

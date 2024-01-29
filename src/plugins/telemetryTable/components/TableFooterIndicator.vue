@@ -36,11 +36,11 @@
 
     <div class="c-table-indicator__counts">
       <span
-        :aria-label="totalRows + ' rows visible after any filtering'"
-        :title="totalRows + ' rows visible after any filtering'"
+        :aria-label="rowCountTitle"
+        :title="rowCountTitle"
         class="c-table-indicator__elem c-table-indicator__row-count"
       >
-        {{ totalRows }} Rows
+        {{ rowCount }} Rows
       </span>
 
       <span
@@ -51,6 +51,10 @@
       >
         {{ markedRows }} Marked
       </span>
+
+      <button :title="telemetryModeButtonTitle" class="c-button" @click="toggleTelemetryMode">
+        {{ telemetryModeButtonLabel }}
+      </button>
     </div>
   </div>
 </template>
@@ -74,8 +78,13 @@ export default {
     totalRows: {
       type: Number,
       default: 0
+    },
+    telemetryMode: {
+      type: String,
+      default: 'performance'
     }
   },
+  emits: ['telemetry-mode-change'],
   data() {
     return {
       filterNames: [],
@@ -93,12 +102,31 @@ export default {
         return !_.isEqual(filtersToCompare, _.omit(filters, [USE_GLOBAL]));
       });
     },
+    isUnlimitedMode() {
+      return this.telemetryMode === 'unlimited';
+    },
     label() {
       if (this.hasMixedFilters) {
         return FILTER_INDICATOR_LABEL_MIXED;
       } else {
         return FILTER_INDICATOR_LABEL;
       }
+    },
+    rowCount() {
+      return this.isUnlimitedMode ? this.totalRows : 'LATEST 50';
+    },
+    rowCountTitle() {
+      return this.isUnlimitedMode
+        ? this.totalRows + ' rows visible after any filtering'
+        : 'performance mode limited to 50 rows';
+    },
+    telemetryModeButtonLabel() {
+      return this.isUnlimitedMode ? 'SHOW LATEST 50' : 'SHOW ALL';
+    },
+    telemetryModeButtonTitle() {
+      return this.isUnlimitedMode
+        ? 'Change to Performance mode (latest 50 values)'
+        : 'Change to show all values';
     },
     title() {
       if (this.hasMixedFilters) {
@@ -117,6 +145,9 @@ export default {
     this.table.configuration.off('change', this.handleConfigurationChanges);
   },
   methods: {
+    toggleTelemetryMode() {
+      this.$emit('telemetry-mode-change');
+    },
     setFilterNames() {
       let names = [];
       let composition = this.openmct.composition.get(this.table.configuration.domainObject);

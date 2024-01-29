@@ -20,34 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryTableView from './TelemetryTableView.js';
+export const ACTIVITY_STATES_KEY = 'activity-states';
 
-export default function TelemetryTableViewProvider(openmct, options) {
-  function hasTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-      return false;
-    }
-
-    let metadata = openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0;
-  }
-
+export function createActivityStatesIdentifier(namespace = '') {
   return {
-    key: 'table',
-    name: 'Telemetry Table',
-    cssClass: 'icon-tabular-scrolling',
-    canView(domainObject) {
-      return domainObject.type === 'table' || hasTelemetry(domainObject);
-    },
-    canEdit(domainObject) {
-      return domainObject.type === 'table';
-    },
-    view(domainObject, objectPath) {
-      return new TelemetryTableView(openmct, domainObject, objectPath, options);
-    },
-    priority() {
-      return 1;
-    }
+    key: ACTIVITY_STATES_KEY,
+    namespace
   };
 }

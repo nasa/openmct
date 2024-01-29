@@ -20,12 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import activityStatesInterceptor from '../activityStates/activityStatesInterceptor.js';
+import { createActivityStatesIdentifier } from '../activityStates/createActivityStatesIdentifier.js';
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy.js';
 import ActivityInspectorViewProvider from './inspector/ActivityInspectorViewProvider.js';
 import GanttChartInspectorViewProvider from './inspector/GanttChartInspectorViewProvider.js';
 import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration.js';
 import PlanViewProvider from './PlanViewProvider.js';
 
+const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
+/**
+ * @typedef {object} PlanOptions
+ * @property {boolean} creatable true/false to allow creation of a plan via the Create menu.
+ * @property {string} name The name of the activity states model.
+ * @property {string} namespace the namespace to use for the activity states object.
+ * @property {Number} priority the priority of the interceptor. By default, it is low.
+ */
+
+/**
+ *
+ * @param {PlanOptions} options
+ * @returns {*} (any)
+ */
 export default function (options = {}) {
   return function install(openmct) {
     openmct.types.addType('plan', {
@@ -70,5 +86,13 @@ export default function (options = {}) {
     openmct.inspectorViews.addProvider(new ActivityInspectorViewProvider(openmct));
     openmct.inspectorViews.addProvider(new GanttChartInspectorViewProvider(openmct));
     openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
+
+    //add activity states get interceptor
+    const { name = ACTIVITY_STATES_DEFAULT_NAME, namespace = '', priority } = options;
+    const identifier = createActivityStatesIdentifier(namespace);
+
+    openmct.objects.addGetInterceptor(
+      activityStatesInterceptor(openmct, { identifier, name, priority })
+    );
   };
 }
