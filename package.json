@@ -59,7 +59,7 @@
     "lodash": "4.17.21",
     "marked": "11.1.0",
     "mini-css-extract-plugin": "2.7.6",
-    "moment": "2.29.4",
+    "moment": "2.30.1",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
     "npm-run-all2": "6.1.1",
