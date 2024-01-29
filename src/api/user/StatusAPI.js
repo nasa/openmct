@@ -114,23 +114,23 @@ export default class StatusAPI extends EventEmitter {
     }
   }
 
-  setMissionStatusForRole(role, status) {
+  setStatusForMissionRole(role, status) {
     const provider = this.#userAPI.getProvider();
 
-    if (provider.setMissionStatusForRole) {
-      return provider.setMissionStatusForRole(role, status);
+    if (provider.setStatusForMissionRole) {
+      return provider.setStatusForMissionRole(role, status);
     } else {
-      this.#userAPI.error('User provider does not support setting mission status');
+      this.#userAPI.error('User provider does not support setting mission role status');
     }
   }
 
-  getMissionStatusForRole(role) {
+  getStatusForMissionRole(role) {
     const provider = this.#userAPI.getProvider();
 
-    if (provider.getMissionStatusForRole) {
-      return provider.getMissionStatusForRole(role);
+    if (provider.getStatusForMissionRole) {
+      return provider.getStatusForMissionRole(role);
     } else {
-      this.#userAPI.error('User provider does not support getting mission status');
+      this.#userAPI.error('User provider does not support getting mission role status');
     }
   }
 
@@ -138,11 +138,11 @@ export default class StatusAPI extends EventEmitter {
    * Fetch the list of possible mission status options
    * @returns {Promise<MissionStatusOption[]>} the current mission status
    */
-  async getPossibleMissionStatusOptions() {
+  async getPossibleMissionRoleStatuses() {
     const provider = this.#userAPI.getProvider();
 
-    if (provider.getPossibleMissionStatusOptions) {
-      const possibleOptions = await provider.getPossibleMissionStatusOptions();
+    if (provider.getPossibleMissionRoleStatuses) {
+      const possibleOptions = await provider.getPossibleMissionRoleStatuses();
 
       return possibleOptions;
     } else {

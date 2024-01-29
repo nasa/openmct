@@ -48,17 +48,17 @@ export default {
   },
   async created() {
     try {
-      // Fetch missionStatuses and missionStatusOptions simultaneously
+      // Fetch missionStatuses and missionRoleStatuses simultaneously
       const [missionRoles, missionRoleStatusOptions] = await Promise.all([
         this.openmct.user.status.getPossibleMissionRoles(),
-        this.openmct.user.status.getPossibleMissionStatusOptions()
+        this.openmct.user.status.getPossibleMissionRoleStatuses()
       ]);
 
       this.missionRoles = missionRoles;
       this.missionRoleStatusOptions = missionRoleStatusOptions;
 
-      const statusPromises = missionRoles.map((status) =>
-        this.openmct.user.status.getMissionStatusForRole(status)
+      const statusPromises = missionRoles.map((role) =>
+        this.openmct.user.status.getStatusForMissionRole(role)
       );
 
       // Fetch all mission role statuses simultaneously
@@ -89,7 +89,7 @@ export default {
       if (this.missionRoleStatusMap !== undefined) {
         const statusObject = this.findOptionByKey(this.missionRoleStatusMap[status]);
 
-        const result = await this.openmct.user.status.setMissionStatusForRole(status, statusObject);
+        const result = await this.openmct.user.status.setStatusForMissionRole(status, statusObject);
         if (result === true) {
           this.openmct.notifications.info('Successfully set mission status');
         } else {
