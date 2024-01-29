@@ -30,6 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - run: npx playwright@1.39.0 install
       - run: npm install --cache ~/.npm --no-audit --progress=false
 
       - name: Run E2E Tests (Repeated 10 Times)
