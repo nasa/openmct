@@ -49,7 +49,46 @@
       sizes="16x16"
       type="image/x-icon"
     />
-    <style></style>
+    <style>
+      @keyframes splash-spinner {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      #splash-screen {
+        background-color: black;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10000;
+      }
+
+      #splash-screen:before {
+        animation-name: splash-spinner;
+        animation-duration: 0.5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        border-radius: 50%;
+        border-color: rgba(255, 255, 255, 0.25);
+        border-top-color: white;
+        border-style: solid;
+        border-width: 10px;
+        content: '';
+        display: block;
+        opacity: 0.25;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 100px;
+        width: 100px;
+      }
+    </style>
     <script defer>
       const THIRTY_SECONDS = 30 * 1000;
       const ONE_MINUTE = THIRTY_SECONDS * 2;
