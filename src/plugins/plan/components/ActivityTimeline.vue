@@ -135,6 +135,7 @@ export default {
       default: 22
     }
   },
+  emits: ['activity-selected'],
   data() {
     return {
       lineHeight: 10
@@ -142,30 +143,11 @@ export default {
   },
   methods: {
     setSelectionForActivity(activity, event) {
-      const element = event.currentTarget;
-      const multiSelect = event.metaKey;
-
       event.stopPropagation();
-
-      this.openmct.selection.select(
-        [
-          {
-            element: element,
-            context: {
-              type: 'activity',
-              activity: activity
-            }
-          },
-          {
-            element: this.openmct.layout.$refs.browseObject.$el,
-            context: {
-              item: this.domainObject,
-              supportsMultiSelect: true
-            }
-          }
-        ],
-        multiSelect
-      );
+      this.$emit('activity-selected', {
+        event,
+        selection: activity.selection
+      });
     }
   }
 };
