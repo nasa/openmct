@@ -33,13 +33,38 @@
       >
       </expanded-view-item>
     </template>
-    <list-view
-      :items="planActivities"
-      :header-items="headerItems"
-      :default-sort="defaultSort"
-      class="sticky"
-      @item-selection-changed="setSelectionForActivity"
-    />
+    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+      <table class="c-table__body js-table__body">
+        <thead class="c-table__header">
+          <tr>
+            <list-header
+              v-for="headerItem in headerItems"
+              :key="headerItem.property"
+              :direction="
+                defaultSort.property === headerItem.property
+                  ? defaultSort.defaultDirection
+                  : headerItem.defaultDirection
+              "
+              :is-sortable="headerItem.isSortable"
+              :aria-label="headerItem.name"
+              :title="headerItem.name"
+              :property="headerItem.property"
+              :current-sort="defaultSort.property"
+              @sort="sort"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <list-item
+            v-for="item in sortedItems"
+            :key="item.key"
+            :item="item"
+            :item-properties="itemProperties"
+            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
+          />
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -48,7 +73,8 @@ import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import ListView from '../../ui/components/List/ListView.vue';
+import ListHeader from '../../ui/components/List/ListHeader.vue';
+import ListItem from '../../ui/components/List/ListItem.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan/util.js';
 import { SORT_ORDER_OPTIONS } from './constants.js';
@@ -142,7 +168,8 @@ const defaultSort = {
 export default {
   components: {
     ExpandedViewItem,
-    ListView
+    ListHeader,
+    ListItem
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
