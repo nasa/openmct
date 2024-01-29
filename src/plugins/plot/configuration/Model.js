@@ -139,7 +139,9 @@ export default class Model extends EventEmitter {
 
 /** @typedef {any} TODO */
 
-/** @typedef {TODO} OpenMCT */
+/**
+ * @typedef {import('../../../../openmct.js').OpenMCT} OpenMCT
+ */
 
 /**
 @template {object} T
