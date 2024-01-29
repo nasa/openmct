@@ -503,7 +503,6 @@ export default class TelemetryAPI {
     }
 
     return function unsubscribe() {
-      console.error(subscriber);
       subscriber.latestCallbacks = subscriber.latestCallbacks.filter(function (cb) {
         return cb !== callback;
       });
