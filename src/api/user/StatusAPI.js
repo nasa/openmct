@@ -114,16 +114,6 @@ export default class StatusAPI extends EventEmitter {
     }
   }
 
-  setStatusForMissionRole(role, status) {
-    const provider = this.#userAPI.getProvider();
-
-    if (provider.setStatusForMissionRole) {
-      return provider.setStatusForMissionRole(role, status);
-    } else {
-      this.#userAPI.error('User provider does not support setting mission role status');
-    }
-  }
-
   getStatusForMissionRole(role) {
     const provider = this.#userAPI.getProvider();
 
