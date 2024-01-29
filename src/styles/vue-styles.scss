@@ -59,3 +59,7 @@
 @import '../plugins/faultManagement/fault-manager.scss';
 @import '../plugins/operatorStatus/operator-status';
 @import '../plugins/inspectorDataVisualization/inspector-data-visualization.scss';
+
+#splash-screen {
+  display: none;
+}

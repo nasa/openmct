@@ -421,7 +421,6 @@ export default {
     this.$nextTick(() => {
       this.setTimeContext();
       this.loaded = true;
-      console.debug('🍄 Plot loaded');
     });
   },
   beforeUnmount() {

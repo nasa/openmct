@@ -26,6 +26,8 @@
       'is-editing': isEditing
     }"
   >
+    <div id="splash-screen"></div>
+
     <div
       class="l-shell__head"
       :class="{
