@@ -216,7 +216,7 @@ export default {
       this.roleChannel.broadcastNewRole(role);
     },
     togglePopup() {
-      this.isPopupVisible = !this.isPopupVisible;
+      this.isPopupVisible = !this.isPopupVisible && this.canSetMissionStatus;
     }
   }
 };

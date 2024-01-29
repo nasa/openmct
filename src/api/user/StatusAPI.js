@@ -114,6 +114,26 @@ export default class StatusAPI extends EventEmitter {
     }
   }
 
+  setMissionStatusForRole(role, status) {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.setMissionStatusForRole) {
+      return provider.setMissionStatusForRole(role, status);
+    } else {
+      this.#userAPI.error('User provider does not support setting mission status');
+    }
+  }
+
+  getMissionStatusForRole(role) {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getMissionStatusForRole) {
+      return provider.getMissionStatusForRole(role);
+    } else {
+      this.#userAPI.error('User provider does not support getting mission status');
+    }
+  }
+
   /**
    * Fetch the list of possible mission status options
    * @returns {Promise<MissionStatusOption[]>} the current mission status
