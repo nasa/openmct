@@ -26,7 +26,6 @@
 export default class VisibilityObserver {
   #element;
   #observer;
-  #observingBegun;
   lastUnfiredFunc;
 
   /**
@@ -39,13 +38,10 @@ export default class VisibilityObserver {
     if (!element) {
       throw new Error(`VisibilityObserver must be created with an element`);
     }
-    console.debug(`🪞 VisibilityObserver: created`);
     this.#element = element;
     this.isIntersecting = true;
     this.calledOnce = false;
-    this.observingBegun = false;
     const rootContainer = document.querySelector('.js-main-container');
-    console.debug(`🪞 VisibilityObserver: root container ${rootContainer}`);
     const options = {
       root: rootContainer,
       rootMargin: '0px',
@@ -57,56 +53,14 @@ export default class VisibilityObserver {
   }
 
   #observerCallback = ([entry]) => {
-    // Log the element itself
-    console.debug('🌲 Element:', this.#element);
-    const serializedElement = `🌲 Element: ${this.#element.tagName}${
-      this.#element.id ? '#' + this.#element.id : ''
-    }${this.#element.className ? '.' + this.#element.className.split(' ').join('.') : ''}`;
-    console.debug(serializedElement);
-    let serializedChildren = '🌲Direct children:';
-    // Log each direct child
-    Array.from(this.#element.children).forEach((child, index) => {
-      serializedChildren += `\n - Child ${index}: <${child.tagName.toLowerCase()}${
-        child.id ? '#' + child.id : ''
-      }${child.className ? ' class="' + child.className + '"' : ''}>`;
-    });
-    console.debug(`🌲 ${serializedChildren}`);
     if (entry.target === this.#element) {
       this.isIntersecting = entry.isIntersecting;
-      console.debug(
-        `🪞 VisibilityObserver changed visibility to ${entry.isIntersecting} with ${entry.intersectionRatio}`
-      );
-      if (!this.isIntersecting) {
-        console.debug(`🪞 VisibilityObserver no longer intersecting`);
-        this.#element.style.backgroundColor = 'cyan'; // Example bright background color
-        this.#element.style.color = 'magenta'; // Example bright foreground color
-        // Extract the properties of interest
-        const entryInfo = {
-          time: entry.time,
-          rootBounds: entry.rootBounds ? entry.rootBounds.toJSON() : null, // Convert to plain object if available
-          boundingClientRect: entry.boundingClientRect.toJSON(),
-          intersectionRect: entry.intersectionRect.toJSON(),
-          isIntersecting: entry.isIntersecting,
-          intersectionRatio: entry.intersectionRatio
-        };
-
-        // Serialize to a JSON string
-        const entryString = JSON.stringify(entryInfo, null, 2); // Pretty-print with 2 spaces indentation
-
-        // For logging to the console or storing the serialized string
-        console.debug(`🪩 ${entryString}`);
-      }
       if (this.isIntersecting && this.lastUnfiredFunc) {
         window.requestAnimationFrame(this.lastUnfiredFunc);
         this.lastUnfiredFunc = null;
       }
     }
   };
-
-  startObserving() {
-    this.#observingBegun = true;
-    console.debug(`🪞 VisibilityObserver: asking to start observing`);
-  }
 
   /**
    * Executes a function within requestAnimationFrame if the observed element is visible.
@@ -117,18 +71,12 @@ export default class VisibilityObserver {
    * @returns {boolean} True if the function was executed immediately, false otherwise.
    */
   renderWhenVisible(func) {
-    if (!this.#observingBegun) {
-      console.debug(`🪞 VisibilityObserver: not observing yet`);
-      window.requestAnimationFrame(func);
-      return true;
-    } else if (!this.calledOnce) {
+    if (!this.calledOnce) {
       this.calledOnce = true;
       this.#observer.observe(this.#element);
-      console.debug(`🪞 VisibilityObserver: starting to observe`);
       window.requestAnimationFrame(func);
       return true;
     } else if (this.isIntersecting) {
-      console.debug(`🪞 VisibilityObserver: intersecting - firing`);
       window.requestAnimationFrame(func);
       return true;
     } else {
@@ -141,13 +89,10 @@ export default class VisibilityObserver {
    * Stops observing the element for visibility changes and cleans up resources to prevent memory leaks.
    */
   destroy() {
-    console.debug(`🪞 VisibilityObserver: being destroyed`);
-    this.#observer.disconnect();
+    this.#observer.unobserve(this.#element);
     this.#element = null;
     this.isIntersecting = null;
     this.#observer = null;
     this.lastUnfiredFunc = null;
-    this.calledOnce = false;
-    this.observingBegun = false;
   }
 }

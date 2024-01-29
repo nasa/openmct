@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="objectViewParent">
+  <div>
     <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
   </div>
 </template>
@@ -116,6 +116,9 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    if (this.visibilityObserver) {
+      this.visibilityObserver.destroy();
+    }
     this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
       capture: true
     });
@@ -128,6 +131,7 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
+    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -151,9 +155,8 @@ export default {
       if (this.currentView) {
         this.currentView.destroy();
 
-        if (this.visibilityObserver) {
-          this.visibilityObserver.destroy();
-          delete this.visibilityObserver;
+        if (this.$refs.objectViewWrapper) {
+          this.$refs.objectViewWrapper.innerHTML = '';
         }
 
         if (this.releaseEditModeHandler) {
@@ -268,7 +271,6 @@ export default {
     },
     updateView(immediatelySelect) {
       this.clear();
-      console.debug('Updating view for object', this.domainObject);
       if (!this.domainObject) {
         return;
       }
@@ -280,7 +282,6 @@ export default {
       }
 
       this.viewContainer = this.$refs.objectViewWrapper;
-      this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
       let provider = this.getViewProvider();
       if (!provider) {
         return;
@@ -332,7 +333,6 @@ export default {
         this.setFontSize(this.fontSize);
         this.setFont(this.font);
         this.getActionCollection();
-        this.visibilityObserver.startObserving(this.$refs.objectViewWrapper);
       });
     },
     getActionCollection() {

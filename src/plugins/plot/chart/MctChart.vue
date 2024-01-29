@@ -200,9 +200,7 @@ export default {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
     this.drawnOnce = false;
-
     const rootContainer = document.querySelector('.js-main-container');
-    console.debug(`🍉 MctChart: root container ${rootContainer}`);
     const options = {
       root: rootContainer,
       rootMargin: '0px',
@@ -287,22 +285,18 @@ export default {
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
         this.chartVisible = entry.isIntersecting;
-        const nowVisible = this.chartVisible;
-        if (wasVisible && !nowVisible) {
+        if (!this.chartVisible) {
           // destroy the chart
-          console.debug(`📈 chart hidden, destroying canvas`);
           this.destroyCanvas();
-        } else if (!wasVisible && nowVisible) {
+        } else if (!wasVisible && this.chartVisible) {
           // rebuild the chart
-          console.debug(`📈 chart visible, rebuilding canvas`);
           this.buildCanvasElements();
           const canvasInitialized = this.readyCanvasForDrawing();
           if (canvasInitialized) {
             this.draw();
           }
           this.$emit('plot-reinitialize-canvas');
-        } else {
-          console.debug(`📈 ignoring wasVisible: ${wasVisible} and nowVisible ${nowVisible}`);
+        } else if (wasVisible && this.chartVisible) {
           // ignore, moving on
         }
       }
