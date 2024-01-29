@@ -104,12 +104,18 @@ test.describe('Tabs View CRUD', () => {
     });
   });
 
-  test('Eager Load Tabs is the default', async ({ page }) => {
+  test('Eager Load Tabs is the default and then can be toggled off', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7198'
+    });
     await page.goto(tabsView.url);
 
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('More actions').click();
     await page.getByLabel('Edit Properties...').click();
-    await expect(await page.getByLabel('Eager Load Tabs')).toHaveValue('true');
+    await expect(await page.getByLabel('Eager Load Tabs')).not.toBeChecked();
+    await page.getByLabel('Eager Load Tabs').setChecked(true);
+    await expect(await page.getByLabel('Eager Load Tabs')).toBeChecked();
   });
 });
