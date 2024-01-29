@@ -58,7 +58,7 @@
     "location-bar": "3.0.1",
     "lodash": "4.17.21",
     "marked": "11.1.0",
-    "mini-css-extract-plugin": "2.7.6",
+    "mini-css-extract-plugin": "2.7.7",
     "moment": "2.29.4",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
