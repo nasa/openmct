@@ -138,7 +138,7 @@ describe('Export as JSON plugin', () => {
       };
     });
 
-    spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
+    spyOn(exportAsJSONAction, 'saveAs').and.callFake((completedTree) => {
       expect(Object.keys(completedTree).length).toBe(2);
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
@@ -195,7 +195,7 @@ describe('Export as JSON plugin', () => {
       };
     });
 
-    spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
+    spyOn(exportAsJSONAction, 'saveAs').and.callFake((completedTree) => {
       expect(Object.keys(completedTree).length).toBe(2);
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
@@ -257,7 +257,7 @@ describe('Export as JSON plugin', () => {
       };
     });
 
-    spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
+    spyOn(exportAsJSONAction, 'saveAs').and.callFake((completedTree) => {
       expect(Object.keys(completedTree).length).toBe(2);
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
@@ -318,7 +318,7 @@ describe('Export as JSON plugin', () => {
       };
     });
 
-    spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
+    spyOn(exportAsJSONAction, 'saveAs').and.callFake((completedTree) => {
       expect(Object.keys(completedTree).length).toBe(2);
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
@@ -373,7 +373,7 @@ describe('Export as JSON plugin', () => {
       return Promise.resolve(child);
     });
 
-    spyOn(exportAsJSONAction, '_saveAs').and.callFake((completedTree) => {
+    spyOn(exportAsJSONAction, 'saveAs').and.callFake((completedTree) => {
       expect(Object.keys(completedTree).length).toBe(2);
       const conditionSetId = Object.keys(completedTree.openmct)[1];
       expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();

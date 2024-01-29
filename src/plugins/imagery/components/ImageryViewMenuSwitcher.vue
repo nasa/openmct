@@ -25,6 +25,7 @@
       :id="id"
       class="c-button c-button--menu c-switcher-menu__button"
       :class="iconClass"
+      :aria-label="title"
       :title="title"
       @click="toggleMenu"
     />

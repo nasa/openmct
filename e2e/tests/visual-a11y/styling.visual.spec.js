@@ -68,7 +68,7 @@ test.describe('Flexible Layout styling @a11y', () => {
     await page.goto(flexibleLayout.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();
@@ -146,7 +146,7 @@ test.describe('Stacked Plot styling @a11y', () => {
     await page.goto(stackedPlot.url, { waitUntil: 'domcontentloaded' });
 
     // Edit Flexible Layout
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
 
     // Select styles tab
     await page.getByRole('tab', { name: 'Styles' }).click();

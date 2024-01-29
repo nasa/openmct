@@ -23,6 +23,7 @@
   <td
     ref="tableCell"
     :title="formattedValue"
+    :aria-label="`${columnKey} table cell ${formattedValue}`"
     @click="selectCell($event.currentTarget, columnKey)"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"

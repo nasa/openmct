@@ -71,7 +71,10 @@ describe('the plugin', function () {
             end: twoHoursFuture,
             type: 'TEST-GROUP',
             color: 'fuchsia',
-            textColor: 'black'
+            textColor: 'black',
+            properties: {
+              location: 'garden'
+            }
           },
           {
             name: 'Sed ut perspiciatis two',
@@ -79,7 +82,10 @@ describe('the plugin', function () {
             end: threeHoursFuture,
             type: 'TEST-GROUP',
             color: 'fuchsia',
-            textColor: 'black'
+            textColor: 'black',
+            properties: {
+              location: 'hallway'
+            }
           }
         ]
       })
@@ -305,7 +311,7 @@ describe('the plugin', function () {
     });
   });
 
-  describe('filters', () => {
+  describe('filters by name', () => {
     let timelistDomainObject;
     let timelistView;
 
@@ -375,6 +381,129 @@ describe('the plugin', function () {
           timeFormatter.format(threeHoursFuture, TIME_FORMAT)
         );
         expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+      });
+    });
+  });
+
+  describe('filters by metadata', () => {
+    let timelistDomainObject;
+    let timelistView;
+
+    beforeEach(() => {
+      timelistDomainObject = {
+        identifier: {
+          key: 'test-object',
+          namespace: ''
+        },
+        type: TIMELIST_TYPE,
+        id: 'test-object',
+        configuration: {
+          sortOrderIndex: 2,
+          futureEventsIndex: 1,
+          futureEventsDurationIndex: 0,
+          futureEventsDuration: 0,
+          currentEventsIndex: 1,
+          currentEventsDurationIndex: 0,
+          currentEventsDuration: 0,
+          pastEventsIndex: 1,
+          pastEventsDurationIndex: 0,
+          pastEventsDuration: 0,
+          filter: '',
+          filterMetadata: 'hallway,garden'
+        },
+        composition: [
+          {
+            identifier: {
+              key: 'test-plan-object',
+              namespace: ''
+            }
+          }
+        ]
+      };
+
+      openmct.router.path = [timelistDomainObject];
+
+      const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+      timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+      let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+      view.show(child, true);
+
+      return nextTick();
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[1].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(threeHoursFuture, TIME_FORMAT)
+        );
+        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+      });
+    });
+  });
+
+  describe('filters by name and metadata', () => {
+    let timelistDomainObject;
+    let timelistView;
+
+    beforeEach(() => {
+      timelistDomainObject = {
+        identifier: {
+          key: 'test-object',
+          namespace: ''
+        },
+        type: TIMELIST_TYPE,
+        id: 'test-object',
+        configuration: {
+          sortOrderIndex: 2,
+          currentEventsIndex: 1,
+          filter: 'two',
+          filterMetadata: 'garden'
+        },
+        composition: [
+          {
+            identifier: {
+              key: 'test-plan-object',
+              namespace: ''
+            }
+          }
+        ]
+      };
+
+      openmct.router.path = [timelistDomainObject];
+
+      const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+      timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+      let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+      view.show(child, true);
+
+      return nextTick();
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(twoHoursFuture, TIME_FORMAT)
+        );
       });
     });
   });

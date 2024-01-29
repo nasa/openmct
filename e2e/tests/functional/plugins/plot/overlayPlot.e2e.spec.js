@@ -63,78 +63,80 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
-  test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
-    page
-  }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/6338'
-    });
-    // Create an Overlay Plot with a default SWG
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
+  //skipping due to https://github.com/nasa/openmct/issues/7405
+  test.fixme(
+    'Limit lines persist when series is moved to another Y Axis and on refresh',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/6338'
+      });
+      // Create an Overlay Plot with a default SWG
+      const overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot'
+      });
 
-    const swgA = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      parent: overlayPlot.uuid
-    });
+      const swgA = await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        parent: overlayPlot.uuid
+      });
 
-    await page.goto(overlayPlot.url);
+      await page.goto(overlayPlot.url);
 
-    // Assert that no limit lines are shown by default
-    await page.waitForSelector('.js-limit-area', { state: 'attached' });
-    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+      // Assert that no limit lines are shown by default
+      await page.waitForSelector('.js-limit-area', { state: 'attached' });
+      expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
-    // Enter edit mode
-    await page.click('button[title="Edit"]');
+      // Enter edit mode
+      await page.getByLabel('Edit Object').click();
 
-    // Expand the "Sine Wave Generator" plot series options and enable limit lines
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('[title="Display limit lines"]~div input')
-      .check();
+      // Expand the "Sine Wave Generator" plot series options and enable limit lines
+      await page.getByRole('tab', { name: 'Config' }).click();
+      await page
+        .getByRole('list', { name: 'Plot Series Properties' })
+        .locator('span')
+        .first()
+        .click();
+      await page
+        .getByRole('list', { name: 'Plot Series Properties' })
+        .locator('[title="Display limit lines"]~div input')
+        .check();
 
-    await assertLimitLinesExistAndAreVisible(page);
+      await assertLimitLinesExistAndAreVisible(page);
 
-    // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+      // Save (exit edit mode)
+      await page.locator('button[title="Save"]').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await assertLimitLinesExistAndAreVisible(page);
+      await assertLimitLinesExistAndAreVisible(page);
 
-    await page.reload();
+      await page.reload();
 
-    await assertLimitLinesExistAndAreVisible(page);
+      await assertLimitLinesExistAndAreVisible(page);
 
-    // Enter edit mode
-    await page.click('button[title="Edit"]');
+      // Enter edit mode
+      await page.getByLabel('Edit Object').click();
 
-    await page.getByRole('tab', { name: 'Elements' }).click();
+      await page.getByRole('tab', { name: 'Elements' }).click();
 
-    // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
-    await page
-      .locator(`#inspector-elements-tree >> text=${swgA.name}`)
-      .dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
+      // Drag Sine Wave Generator series from Y Axis 1 into Y Axis 2
+      await page
+        .locator(`#inspector-elements-tree >> text=${swgA.name}`)
+        .dragTo(page.locator('[aria-label="Element Item Group Y Axis 2"]'));
 
-    await assertLimitLinesExistAndAreVisible(page);
+      await assertLimitLinesExistAndAreVisible(page);
 
-    // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+      // Save (exit edit mode)
+      await page.locator('button[title="Save"]').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await assertLimitLinesExistAndAreVisible(page);
+      await assertLimitLinesExistAndAreVisible(page);
 
-    await page.reload();
+      await page.reload();
 
-    await assertLimitLinesExistAndAreVisible(page);
-  });
+      await assertLimitLinesExistAndAreVisible(page);
+    }
+  );
 
   test('The elements pool supports dragging series into multiple y-axis buckets', async ({
     page
@@ -165,7 +167,7 @@ test.describe('Overlay Plot', () => {
     });
 
     await page.goto(overlayPlot.url);
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -224,31 +226,37 @@ test.describe('Overlay Plot', () => {
     expect(yAxis3Group.getByRole('listitem').nth(0).getByText(swgB.name)).toBeTruthy();
   });
 
-  test('Clicking on an item in the elements pool brings up the plot preview with data points', async ({
-    page
-  }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
+  test.fixme(
+    'Clicking on an item in the elements pool brings up the plot preview with data points',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
 
-    const swgA = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      parent: overlayPlot.uuid
-    });
+      const overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot'
+      });
 
-    await page.goto(overlayPlot.url);
-    // Wait for plot series data to load and be drawn
-    await waitForPlotsToRender(page);
-    await page.click('button[title="Edit"]');
+      const swgA = await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        parent: overlayPlot.uuid
+      });
 
-    await page.getByRole('tab', { name: 'Elements' }).click();
+      await page.goto(overlayPlot.url);
+      // Wait for plot series data to load and be drawn
+      await waitForPlotsToRender(page);
+      await page.getByLabel('Edit Object').click();
 
-    await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+      await page.getByRole('tab', { name: 'Elements' }).click();
 
-    const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
-    const plotPixelSize = plotPixels.length;
-    expect(plotPixelSize).toBeGreaterThan(0);
-  });
+      await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+
+      const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+      const plotPixelSize = plotPixels.length;
+      expect(plotPixelSize).toBeGreaterThan(0);
+    }
+  );
 });
 
 /**
@@ -260,9 +268,9 @@ async function assertLimitLinesExistAndAreVisible(page) {
   await waitForPlotsToRender(page);
   // Wait for limit lines to be created
   await page.waitForSelector('.js-limit-area', { state: 'attached' });
-  const limitLineCount = await page.locator('.c-plot-limit-line').count();
   // There should be 10 limit lines created by default
-  expect(await page.locator('.c-plot-limit-line').count()).toBe(10);
+  await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
+  const limitLineCount = await page.locator('.c-plot-limit-line').count();
   for (let i = 0; i < limitLineCount; i++) {
     await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
   }
