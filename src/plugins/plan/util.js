@@ -20,6 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * The SourceMap allows mapping specific implementations of plan domain objects to those expected by Open MCT.
+ * @typedef {object} SourceMapOption
+ * @property {string} orderedGroups the property of the plan that lists groups/swim lanes specifying what order they will be displayed in Open MCT.
+ * @property {string} activities the property of the plan that has the list of activities to be displayed.
+ * @property {string} groupId the property of the activity that maps to the group/swim lane it should be displayed in.
+ * @property {string} start The start time property of the activity
+ * @property {string} end The end time property of the activity
+ * @property {string} id The unique id of the activity. This is required to allow setting activity states
+ * @property {object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
+ */
+
+import _ from 'lodash';
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
   const json = getObjectJson(domainObject);
@@ -43,6 +56,24 @@ export function getValidatedData(domainObject) {
 
         if (sourceMap.end) {
           groupActivity.end = activity[sourceMap.end];
+        }
+
+        if (Array.isArray(sourceMap.filterMetadata)) {
+          groupActivity.filterMetadataValues = [];
+          sourceMap.filterMetadata.forEach((property) => {
+            const value = _.get(activity, property);
+            groupActivity.filterMetadataValues.push({
+              value
+            });
+          });
+        }
+
+        if (sourceMap.id) {
+          groupActivity.id = activity[sourceMap.id];
+        }
+
+        if (sourceMap.displayProperties) {
+          groupActivity.displayProperties = sourceMap.displayProperties;
         }
 
         if (!mappedJson[groupIdKey]) {
@@ -92,12 +123,42 @@ export function getValidatedGroups(domainObject, planData) {
       orderedGroupNames = groups;
     }
   }
-
   if (orderedGroupNames === undefined) {
     orderedGroupNames = Object.keys(planData);
   }
 
   return orderedGroupNames;
+}
+
+export function getDisplayProperties(activity) {
+  let displayProperties = {};
+  function extractProperties(properties, useKeyAsLabel = false) {
+    Object.keys(properties).forEach((key) => {
+      const label = useKeyAsLabel ? key : properties[key];
+      const value = _.get(activity, key);
+      if (value) {
+        displayProperties[key] = { label, value };
+      }
+    });
+  }
+
+  if (activity?.displayProperties) {
+    extractProperties(activity.displayProperties);
+  } else if (activity?.properties) {
+    extractProperties(activity.properties, true);
+  }
+  return displayProperties;
+}
+
+export function getFilteredValues(activity) {
+  let values = [];
+  if (Array.isArray(activity.filterMetadataValues)) {
+    values = activity.filterMetadataValues;
+  } else if (activity?.properties) {
+    values = Object.values(activity.properties);
+  }
+
+  return values;
 }
 
 export function getContrastingColor(hexColor) {

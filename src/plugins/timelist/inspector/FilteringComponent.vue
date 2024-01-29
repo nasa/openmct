@@ -22,20 +22,57 @@
 <template>
   <li class="c-inspect-properties__row">
     <div v-if="canEdit" class="c-inspect-properties__hint span-all">
-      Filter this view by comma-separated keywords.
+      Filter this view by comma-separated keywords. Filtering uses an 'OR' method.
     </div>
-    <div class="c-inspect-properties__label" title="Filter by keyword.">Filters</div>
-    <div v-if="canEdit" class="c-inspect-properties__value" :class="{ 'form-error': hasError }">
+    <div class="c-inspect-properties__label" aria-label="Activity Names" title="Filter by keyword.">
+      Activity Names
+    </div>
+    <div
+      v-if="canEdit"
+      class="c-inspect-properties__value"
+      :class="{ 'form-error': hasFilterError }"
+    >
       <textarea
         v-model="filterValue"
         class="c-input--flex"
         type="text"
         @keydown.enter.exact.stop="forceBlur($event)"
-        @keyup="updateForm($event, 'filter')"
+        @keyup="updateNameFilter($event, 'filter')"
       ></textarea>
     </div>
     <div v-else class="c-inspect-properties__value">
-      {{ filterValue }}
+      <template v-if="filterValue.length > 0">
+        {{ filterValue }}
+      </template>
+      <template v-else> No filters applied </template>
+    </div>
+  </li>
+  <li class="c-inspect-properties__row">
+    <div
+      class="c-inspect-properties__label"
+      aria-label="Meta-data Properties"
+      title="Filter by keyword."
+    >
+      Meta-data Properties
+    </div>
+    <div
+      v-if="canEdit"
+      class="c-inspect-properties__value"
+      :class="{ 'form-error': hasMetadataFilterError }"
+    >
+      <textarea
+        v-model="filterMetadataValue"
+        class="c-input--flex"
+        type="text"
+        @keydown.enter.exact.stop="forceBlur($event)"
+        @keyup="updateMetadataFilter($event, 'filterMetadata')"
+      ></textarea>
+    </div>
+    <div v-else class="c-inspect-properties__value">
+      <template v-if="filterMetadataValue.length > 0">
+        {{ filterMetadataValue }}
+      </template>
+      <template v-else> No filters applied </template>
     </div>
   </li>
 </template>
@@ -48,7 +85,9 @@ export default {
     return {
       isEditing: this.openmct.editor.isEditing(),
       filterValue: this.domainObject.configuration.filter,
-      hasError: false
+      filterMetadataValue: this.domainObject.configuration.filterMetadata,
+      hasFilterError: false,
+      hasMetadataFilterError: false
     };
   },
   computed: {
@@ -65,37 +104,55 @@ export default {
   methods: {
     setEditState(isEditing) {
       this.isEditing = isEditing;
-      if (!this.isEditing && this.hasError) {
-        this.filterValue = this.domainObject.configuration.filter;
-        this.hasError = false;
+      if (!this.isEditing) {
+        if (this.hasFilterError) {
+          this.filterValue = this.domainObject.configuration.filter;
+        }
+        if (this.hasMetadataFilterError) {
+          this.filterMetadataValue = this.domainObject.configuration.filterMetadata;
+        }
+        this.hasFilterError = false;
+        this.hasMetadataFilterError = false;
       }
     },
     forceBlur(event) {
       event.target.blur();
     },
-    updateForm(event, property) {
-      if (!this.isValid()) {
-        this.hasError = true;
+    updateNameFilter(event, property) {
+      if (!this.isValid(this.filterValue)) {
+        this.hasFilterError = true;
 
         return;
       }
-
-      this.hasError = false;
+      this.hasFilterError = false;
 
       this.$emit('updated', {
         property,
         value: this.filterValue.replace(/,(\s)*$/, '')
       });
     },
-    isValid() {
+    updateMetadataFilter(event, property) {
+      if (!this.isValid(this.filterMetadataValue)) {
+        this.hasMetadataFilterError = true;
+
+        return;
+      }
+      this.hasMetadataFilterError = false;
+
+      this.$emit('updated', {
+        property,
+        value: this.filterMetadataValue.replace(/,(\s)*$/, '')
+      });
+    },
+    isValid(value) {
       // Test for any word character, any whitespace character or comma
-      if (this.filterValue === '') {
+      if (value === '') {
         return true;
       }
 
       const regex = new RegExp(/^([a-zA-Z0-9_\-\s,])+$/g);
 
-      return regex.test(this.filterValue);
+      return regex.test(value);
     }
   }
 };

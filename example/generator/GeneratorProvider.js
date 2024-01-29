@@ -92,6 +92,8 @@ GeneratorProvider.prototype.request = function (domainObject, request) {
   var workerRequest = this.makeWorkerRequest(domainObject, request);
   workerRequest.start = request.start;
   workerRequest.end = request.end;
+  workerRequest.size = request.size;
+  workerRequest.strategy = request.strategy;
 
   return this.workerInterface.request(workerRequest);
 };

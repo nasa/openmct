@@ -30,6 +30,11 @@ const examplePlanSmall3 = JSON.parse(
     new URL('../../../test-data/examplePlans/ExamplePlan_Small3.json', import.meta.url)
   )
 );
+const examplePlanSmall1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
+);
 // eslint-disable-next-line no-unused-vars
 const START_TIME_COLUMN = 0;
 // eslint-disable-next-line no-unused-vars
@@ -40,53 +45,8 @@ const ACTIVITY_COLUMN = 3;
 const HEADER_ROW = 0;
 const NUM_COLUMNS = 4;
 
-const testPlan = {
-  TEST_GROUP: [
-    {
-      name: 'Past event 1',
-      start: 1660320408000,
-      end: 1660343797000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 2',
-      start: 1660406808000,
-      end: 1660429160000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 3',
-      start: 1660493208000,
-      end: 1660503981000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 4',
-      start: 1660579608000,
-      end: 1660624108000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 5',
-      start: 1660666008000,
-      end: 1660681529000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    }
-  ]
-};
-
 test.describe('Time List', () => {
-  test('Create a Time List, add a single Plan to it and verify all the activities are displayed with no milliseconds', async ({
+  test("Create a Time List, add a single Plan to it, verify all the activities are displayed with no milliseconds and selecting an activity shows it's properties", async ({
     page
   }) => {
     // Goto baseURL
@@ -103,12 +63,16 @@ test.describe('Time List', () => {
     await test.step('Create a Plan and add it to the timelist', async () => {
       await createPlanFromJSON(page, {
         name: 'Test Plan',
-        json: testPlan,
+        json: examplePlanSmall1,
         parent: timelist.uuid
       });
-
-      const startBound = testPlan.TEST_GROUP[0].start;
-      const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
+      const groups = Object.keys(examplePlanSmall1);
+      const firstGroupKey = groups[0];
+      const firstGroupItems = examplePlanSmall1[firstGroupKey];
+      const firstActivity = firstGroupItems[0];
+      const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+      const startBound = firstActivity.start;
+      const endBound = lastActivity.end;
 
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
@@ -118,7 +82,7 @@ test.describe('Time List', () => {
       // Verify all events are displayed
       const eventCount = await page.getByRole('row').count();
       // subtracting one for the header
-      await expect(eventCount - 1).toEqual(testPlan.TEST_GROUP.length);
+      await expect(eventCount - 1).toEqual(firstGroupItems.length);
     });
 
     await test.step('Does not show milliseconds in times', async () => {
@@ -130,6 +94,17 @@ test.describe('Time List', () => {
       await expect(row.locator('.--start')).not.toContainText('.');
       await expect(row.locator('.--end')).not.toContainText('.');
       await expect(row.locator('.--duration')).not.toContainText('.');
+    });
+
+    await test.step('Shows activity properties when a row is selected', async () => {
+      await page.getByRole('row').nth(2).click();
+
+      // Find the activity state section in the inspector
+      await page.getByRole('tab', { name: 'Activity' }).click();
+      // Check that activity state label is displayed in the inspector.
+      await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+        'Not started'
+      );
     });
   });
 });
