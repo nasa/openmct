@@ -102,7 +102,9 @@ test.describe('Time List', () => {
       // Find the activity state section in the inspector
       await page.getByRole('tab', { name: 'Activity' }).click();
       // Check that activity state label is displayed in the inspector.
-      await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
+      await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+        'Not started'
+      );
     });
   });
 });
@@ -144,6 +146,11 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     const startBound = firstActivity.start;
     const endBound = lastActivity.end;
 
+    // Switch to fixed time mode with all plan events within the bounds
+    await page.goto(
+      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+    );
+
     // Verify all events are displayed
     const eventCount = await page.getByRole('row').count();
     // subtracting one for the header
@@ -158,6 +165,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     // Check that activity state label is displayed in the inspector.
     await expect(page.getByLabel('Activity Status Label')).toHaveText('Not started');
   });
+});
 
 /**
  * The regular expression used to parse the countdown string.

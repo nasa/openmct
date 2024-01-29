@@ -129,6 +129,15 @@ export default class TableRowCollection extends EventEmitter {
     this.rows[index] = foundRow;
   }
 
+  setLimit(rowLimit) {
+    this.rowLimit = rowLimit;
+  }
+
+  removeLimit() {
+    this.rowLimit = null;
+    delete this.rowLimit;
+  }
+
   sortCollection(rows) {
     const sortedRows = _.orderBy(
       rows,
@@ -363,10 +372,22 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   getRows() {
+    if (this.rowLimit && this.rows.length > this.rowLimit) {
+      if (this.sortOptions.direction === 'desc') {
+        return this.rows.slice(0, this.rowLimit);
+      } else {
+        return this.rows.slice(-this.rowLimit);
+      }
+    }
+
     return this.rows;
   }
 
   getRowsLength() {
+    if (this.rowLimit && this.rows.length > this.rowLimit) {
+      return this.rowLimit;
+    }
+
     return this.rows.length;
   }
 

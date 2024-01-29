@@ -33,38 +33,13 @@
       >
       </expanded-view-item>
     </template>
-    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
-      <table class="c-table__body js-table__body">
-        <thead class="c-table__header">
-          <tr>
-            <list-header
-              v-for="headerItem in headerItems"
-              :key="headerItem.property"
-              :direction="
-                defaultSort.property === headerItem.property
-                  ? defaultSort.defaultDirection
-                  : headerItem.defaultDirection
-              "
-              :is-sortable="headerItem.isSortable"
-              :aria-label="headerItem.name"
-              :title="headerItem.name"
-              :property="headerItem.property"
-              :current-sort="defaultSort.property"
-              @sort="sort"
-            />
-          </tr>
-        </thead>
-        <tbody>
-          <list-item
-            v-for="item in sortedItems"
-            :key="item.key"
-            :item="item"
-            :item-properties="itemProperties"
-            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-          />
-        </tbody>
-      </table>
-    </div>
+    <list-view
+      :items="planActivities"
+      :header-items="headerItems"
+      :default-sort="defaultSort"
+      class="sticky"
+      @item-selection-changed="setSelectionForActivity"
+    />
   </div>
 </template>
 
@@ -73,22 +48,21 @@ import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import ListHeader from '../../ui/components/List/ListHeader.vue';
-import ListItem from '../../ui/components/List/ListItem.vue';
+import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
-import { getValidatedData, getValidatedGroups } from '../plan/util.js';
-import {
-  CURRENT_CSS_SUFFIX,
-  FUTURE_CSS_SUFFIX,
-  PAST_CSS_SUFFIX,
-  SORT_ORDER_OPTIONS
-} from './constants.js';
+import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan/util.js';
+import { SORT_ORDER_OPTIONS } from './constants.js';
 import ExpandedViewItem from './ExpandedViewItem.vue';
 
 const SCROLL_TIMEOUT = 10000;
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const SAME_DAY_PRECISION_SECONDS = 'HH:mm:ss';
+
+const CURRENT_CSS_SUFFIX = '--is-current';
+const PAST_CSS_SUFFIX = '--is-past';
+const FUTURE_CSS_SUFFIX = '--is-future';
+
 const headerItems = [
   {
     defaultDirection: true,
@@ -168,8 +142,7 @@ const defaultSort = {
 export default {
   components: {
     ExpandedViewItem,
-    ListHeader,
-    ListItem
+    ListView
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
@@ -319,7 +292,8 @@ export default {
       this.setViewFromConfig(mutatedObject.configuration);
     },
     setViewFromConfig(configuration) {
-      this.filterValue = configuration.filter;
+      this.filterValue = configuration.filter || '';
+      this.filterMetadataValue = configuration.filterMetadata || '';
       if (this.isEditing) {
         this.hideAll = false;
       } else {
@@ -333,7 +307,8 @@ export default {
       this.updateTimeStampAndListActivities(timestamp);
     },
     setFixedTime() {
-      this.filterValue = this.domainObject.configuration.filter;
+      this.filterValue = this.domainObject.configuration.filter || '';
+      this.filterMetadataValue = this.domainObject.configuration.filterMetadata || '';
       this.isFixedTime = !this.timeContext.isRealTime();
       if (this.isFixedTime) {
         this.hideAll = false;
@@ -449,7 +424,21 @@ export default {
         return true;
       }
 
-      const hasFilterMatch = this.filterByName(activity.name);
+      let hasNameMatch = false;
+      let hasMetadataMatch = false;
+      if (this.filterValue || this.filterMetadataValue) {
+        if (this.filterValue) {
+          hasNameMatch = this.filterByName(activity.name);
+        }
+        if (this.filterMetadataValue) {
+          hasMetadataMatch = this.filterByMetadata(activity);
+        }
+      } else {
+        hasNameMatch = true;
+        hasMetadataMatch = true;
+      }
+
+      const hasFilterMatch = hasNameMatch || hasMetadataMatch;
       if (hasFilterMatch === false || this.hideAll === true) {
         return false;
       }
@@ -477,6 +466,17 @@ export default {
         return regex.test(name.toLowerCase());
       });
     },
+    filterByMetadata(activity) {
+      const filters = this.filterMetadataValue.split(',');
+
+      return filters.some((search) => {
+        const normalized = search.trim().toLowerCase();
+        const regex = new RegExp(normalized);
+        const activityValues = getFilteredValues(activity);
+
+        return regex.test(activityValues.join().toLowerCase());
+      });
+    },
     // Add activity classes, increase activity counts by type,
     // set indices of the first occurrences of current and future activities - used for scrolling
     styleActivity(activity, index) {
@@ -498,9 +498,7 @@ export default {
         this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
-      if (activity.id) {
-        activity.key = activity.id;
-      } else if (!activity.key) {
+      if (!activity.key) {
         activity.key = uuid();
       }
 

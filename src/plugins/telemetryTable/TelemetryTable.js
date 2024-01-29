@@ -37,10 +37,11 @@ export default class TelemetryTable extends EventEmitter {
 
     this.domainObject = domainObject;
     this.openmct = openmct;
-    this.rowCount = 100;
     this.tableComposition = undefined;
     this.datumCache = [];
     this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+    this.telemetryMode = this.configuration.getTelemetryMode();
+    this.rowLimit = this.configuration.getRowLimit();
     this.paused = false;
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -101,17 +102,39 @@ export default class TelemetryTable extends EventEmitter {
     }
   }
 
+  updateTelemetryMode(mode) {
+    if (this.telemetryMode === mode) {
+      return;
+    }
+
+    this.telemetryMode = mode;
+
+    this.updateRowLimit();
+
+    this.clearAndResubscribe();
+  }
+
+  updateRowLimit() {
+    if (this.telemetryMode === 'performance') {
+      this.tableRows.setLimit(this.rowLimit);
+    } else {
+      this.tableRows.removeLimit();
+    }
+  }
+
   createTableRowCollections() {
     this.tableRows = new TableRowCollection();
 
     //Fetch any persisted default sort
     let sortOptions = this.configuration.getConfiguration().sortOptions;
 
-    //If no persisted sort order, default to sorting by time system, ascending.
+    //If no persisted sort order, default to sorting by time system, descending.
     sortOptions = sortOptions || {
       key: this.openmct.time.timeSystem().key,
-      direction: 'asc'
+      direction: 'desc'
     };
+
+    this.updateRowLimit();
 
     this.tableRows.sortBy(sortOptions);
     this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
@@ -143,6 +166,11 @@ export default class TelemetryTable extends EventEmitter {
     const telemetryRemover = this.getTelemetryRemover();
 
     this.removeTelemetryCollection(keyString);
+
+    if (this.telemetryMode === 'performance') {
+      requestOptions.size = this.rowLimit;
+      requestOptions.enforceSize = true;
+    }
 
     this.telemetryCollections[keyString] = this.openmct.telemetry.requestCollection(
       telemetryObject,

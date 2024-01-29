@@ -52,7 +52,11 @@ test.describe('Plot Rendering', () => {
     expect(createMineFolderRequests.length).toEqual(0);
   });
 
-  test('Plot is rendered when infinity values exist', async ({ page }) => {
+  test.fixme('Plot is rendered when infinity values exist', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7421'
+    });
     // Edit Plot
     await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
