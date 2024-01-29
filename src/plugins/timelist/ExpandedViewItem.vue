@@ -133,7 +133,7 @@ export default {
     executionState: {
       type: String,
       default() {
-        return '';
+        return 'notStarted';
       }
     }
   },
@@ -175,9 +175,10 @@ export default {
       if (executionStateIndex > -1) {
         executionStateLabel = EXECUTION_STATES[executionStateIndex];
       }
+
       let label;
-      // Start time is in the past
       if (this.item.start < this.timestamp) {
+        // Start time is in the past
         if (this.item.start === this.item.end) {
           // - 'Occurred' : for Events with start < now datetime and 0 duration
           label = INFERRED_EXECUTION_STATES.occurred;
@@ -187,7 +188,7 @@ export default {
           if (executionStateIndex === 0) {
             // - 'Overdue' : executionState.notStarted && start < now datetime
             label = INFERRED_EXECUTION_STATES.overdue;
-          } else if (executionStateIndex === 1) {
+          } else {
             // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
             label = INFERRED_EXECUTION_STATES.ends;
           }
@@ -200,7 +201,7 @@ export default {
           } else if (executionStateIndex === 1) {
             // - 'Running Long' : executionState.inProgress && now > end datetime
             label = INFERRED_EXECUTION_STATES.runningLong;
-          } else if (executionStateIndex === -1) {
+          } else {
             // - 'Ended' :now > start datetime && now > end datetime
             label = INFERRED_EXECUTION_STATES.ended;
           }
