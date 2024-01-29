@@ -21,8 +21,10 @@
  *****************************************************************************/
 import Tabs from './tabs.js';
 
-export default function plugin() {
+export default function plugin(options) {
   return function install(openmct) {
+    const eagerLoad = options?.eagerLoad ?? false;
+
     openmct.objectViews.addProvider(new Tabs(openmct));
 
     openmct.types.addType('tabs', {
@@ -32,13 +34,13 @@ export default function plugin() {
       cssClass: 'icon-tabs-view',
       initialize(domainObject) {
         domainObject.composition = [];
-        domainObject.keep_alive = true;
+        domainObject.keep_alive = eagerLoad;
       },
       form: [
         {
           key: 'keep_alive',
           name: 'Eager Load Tabs',
-          control: 'select',
+          control: 'toggleSwitch',
           options: [
             {
               name: 'True',
