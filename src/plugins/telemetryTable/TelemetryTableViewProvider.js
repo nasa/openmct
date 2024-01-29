@@ -22,7 +22,7 @@
 
 import TelemetryTableView from './TelemetryTableView.js';
 
-export default function TelemetryTableViewProvider(openmct) {
+export default function TelemetryTableViewProvider(openmct, options) {
   function hasTelemetry(domainObject) {
     if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
       return false;
@@ -44,7 +44,7 @@ export default function TelemetryTableViewProvider(openmct) {
       return domainObject.type === 'table';
     },
     view(domainObject, objectPath) {
-      return new TelemetryTableView(openmct, domainObject, objectPath);
+      return new TelemetryTableView(openmct, domainObject, objectPath, options);
     },
     priority() {
       return 1;

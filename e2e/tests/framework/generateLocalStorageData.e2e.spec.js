@@ -53,29 +53,28 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
   });
 
   test('Generate display layout with 2 child display layouts', async ({ page, context }) => {
-    // Create Display Layout
     const parent = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Parent Display Layout'
     });
-    const child1 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Child Layout 1',
       parent: parent.uuid
     });
-    const child2 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Child Layout 2',
       parent: parent.uuid
     });
 
-    await page.goto(parent.url);
-    await page.getByLabel('Edit').click();
-    await page.getByLabel(`${child2.name} Layout Grid`).hover();
+    await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Child Layout 2 Layout', { exact: true }).hover();
     await page.getByLabel('Move Sub-object Frame').nth(1).click();
     await page.getByLabel('X:').fill('30');
 
-    await page.getByLabel(`${child1.name} Layout Grid`).hover();
+    await page.getByLabel('Child Layout 1 Layout', { exact: true }).hover();
     await page.getByLabel('Move Sub-object Frame').first().click();
     await page.getByLabel('Y:').fill('30');
 
@@ -107,7 +106,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
       parent: parent.uuid
     });
 
-    await page.goto(parent.url);
+    await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
 
     //Save localStorage for future test execution
     await context.storageState({
@@ -134,7 +133,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     await page.locator('button[title="More actions"]').click();
 
     // Select 'Create Link' from dropdown
-    await page.getByRole('menuitem', { name: ' Create Link' }).click();
+    await page.getByRole('menuitem', { name: 'Create Link' }).click();
 
     // Search and Select for overlay Plot within Create Modal
     await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
@@ -206,8 +205,8 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
     const swgWith5sDelay = await createExampleTelemetryObject(page, overlayPlot.uuid);
 
     await page.goto(swgWith5sDelay.url);
-    await page.getByTitle('More actions').click();
-    await page.getByRole('menuitem', { name: ' Edit Properties...' }).click();
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
 
     //Edit Example Telemetry Object to include 5s loading Delay
     await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
@@ -226,7 +225,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
       path: fileURLToPath(

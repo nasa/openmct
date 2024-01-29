@@ -27,39 +27,33 @@ This test suite is dedicated to tests which verify branding related components.
 import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Branding tests', () => {
-  test('About Modal launches with basic branding properties', async ({ page }) => {
-    // Go to baseURL
+  test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-    // Click About button
-    await page.click('.l-shell__app-logo');
+  });
+  test('About Modal launches with basic branding properties', async ({ page }) => {
+    await page.getByLabel('About Modal').click();
 
     // Verify that the NASA Logo Appears
-    await expect(page.locator('.c-about__image')).toBeVisible();
+    await expect(page.getByAltText('Open MCT Splash Logo')).toBeVisible();
 
     // Modify the Build information in 'about' Modal
-    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info').first();
-    await expect(versionInformationLocator).toBeEnabled();
-    await expect.soft(versionInformationLocator).toContainText(/Version: \d/);
+    await expect.soft(page.getByLabel('Version Number')).toContainText(/Version: \d/);
     await expect
-      .soft(versionInformationLocator)
+      .soft(page.getByLabel('Build Date'))
       .toContainText(/Build Date: ((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun))/);
-    await expect.soft(versionInformationLocator).toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
-    await expect.soft(versionInformationLocator).toContainText(/Branch: ./);
+    await expect.soft(page.getByLabel('Revision')).toContainText(/Revision: \b[0-9a-f]{5,40}\b/);
+    await expect.soft(page.getByLabel('Branch')).toContainText(/Branch: ./);
   });
   test('Verify Links in About Modal @2p', async ({ page }) => {
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
     // Click About button
-    await page.click('.l-shell__app-logo');
+    await page.getByLabel('About Modal').click();
 
     // Verify that clicking on the third party licenses information opens up another tab on licenses url
     const [page2] = await Promise.all([
       page.waitForEvent('popup'),
-      page.locator('text=click here for third party licensing information').click()
+      page.getByText('click here for third party licensing information').click()
     ]);
-    await page2.waitForLoadState('networkidle'); //Avoids timing issues with juggler/firefox
+    await page2.waitForLoadState('domcontentloaded'); //Avoids timing issues with juggler/firefox
     expect(page2.waitForURL('**/licenses**')).toBeTruthy();
   });
 });

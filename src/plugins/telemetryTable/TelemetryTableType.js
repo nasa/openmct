@@ -20,17 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default {
-  name: 'Telemetry Table',
-  description:
-    'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
-  creatable: true,
-  cssClass: 'icon-tabular-scrolling',
-  initialize(domainObject) {
-    domainObject.composition = [];
-    domainObject.configuration = {
-      columnWidths: {},
-      hiddenColumns: {}
-    };
-  }
-};
+export default function getTelemetryTableType(options = {}) {
+  const { telemetryMode = 'performance', persistModeChanges = true, rowLimit = 50 } = options;
+
+  return {
+    name: 'Telemetry Table',
+    description:
+      'Display values for one or more telemetry end points in a scrolling table. Each row is a time-stamped value.',
+    creatable: true,
+    cssClass: 'icon-tabular-scrolling',
+    form: [
+      {
+        key: 'telemetryMode',
+        name: 'Telemetry Mode',
+        control: 'select',
+        options: [
+          {
+            value: 'performance',
+            name: 'Performance Mode'
+          },
+          {
+            value: 'unlimited',
+            name: 'Unlimited Mode'
+          }
+        ],
+        cssClass: 'l-inline',
+        property: ['configuration', 'telemetryMode']
+      },
+      {
+        name: 'Persist Telemetry Mode Changes',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'persistModeChanges',
+        property: ['configuration', 'persistModeChanges']
+      },
+      {
+        name: 'Performance Mode Row Limit',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'rowLimit',
+        property: ['configuration', 'rowLimit']
+      }
+    ],
+    initialize(domainObject) {
+      domainObject.composition = [];
+      domainObject.configuration = {
+        columnWidths: {},
+        hiddenColumns: {},
+        telemetryMode,
+        persistModeChanges,
+        rowLimit
+      };
+    }
+  };
+}

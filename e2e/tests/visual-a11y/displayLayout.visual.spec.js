@@ -20,138 +20,77 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Defines playwright locators that can be used in tests.
- * @typedef {Object} LayoutLocators
- * @property {Object<string, import('@playwright/test').Locator>} LayoutLocator
- */
-
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { VISUAL_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
-const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
 test.describe('Visual - Display Layout', () => {
-  test('Resize Marquee surrounds selection', async ({ page, theme }) => {
-    const baseline = await setupBaseline(page);
-    const { child1LayoutLocator, child1LayoutObjectLocator } = baseline;
+  test.beforeEach(async ({ page, theme }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
-    await percySnapshot(page, `Resize nested layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
+    const parentLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Parent Layout'
+    });
+    const child2Layout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Left Layout',
+      parent: parentLayout.uuid
+    });
+    //Create this layout second so that it is on top for the position change
+    const child1Layout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Child Right Layout',
+      parent: parentLayout.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'SWG 1',
+      parent: child1Layout.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'SWG 2',
+      parent: child2Layout.uuid
     });
 
-    await child1LayoutLocator.click();
-    await percySnapshot(page, `Resize new nested layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
-    });
+    await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
-    await child1LayoutObjectLocator.click();
-    await percySnapshot(page, `Resize Object in nested layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
-    });
+    //Move the Child Right Layout to the Right. It should be on top of the Left Layout at this point.
+    await page
+      .getByLabel('Child Right Layout Layout', { exact: true })
+      .getByLabel('Move Sub-object Frame')
+      .click();
+    await page.getByLabel('Move Sub-object Frame').nth(3).click(); //I'm not sure why this step is necessary
+    await page.getByLabel('X:').click();
+    await page.getByLabel('X:').fill('35');
   });
 
-  test('Parent layout of selection displays grid', async ({ page, theme }) => {
-    const baseline = await setupBaseline(page);
-    const { parentLayoutLocator, child1LayoutObjectLocator } = baseline;
+  test('Resize Marquee surrounds selection', async ({ page, theme }) => {
+    //This is where the beforeEach leaves off.
+    await percySnapshot(page, `Last modified object selected (theme: '${theme}')`);
 
-    await percySnapshot(page, `Parent nested layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
-    });
+    await page.getByLabel('Child Left Layout Layout', { exact: true }).click();
+    await percySnapshot(page, `Only Left Child Layout has Marque selection (theme: '${theme}')`);
 
-    await parentLayoutLocator.click();
-    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
-    });
+    await page.getByLabel('Child Right Layout Layout', { exact: true }).click();
+    await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`);
 
-    await child1LayoutObjectLocator.click();
-    await percySnapshot(page, `Parent Object in nested layout selected (theme: '${theme}')`, {
-      scope: snapshotScope
-    });
+    //Only the sub-object in the Right Layout should be highlighted with a marquee
+    await page
+      .getByLabel('Child Right Layout Layout', { exact: true })
+      .getByLabel('Move Sub-object Frame')
+      .click();
+
+    await percySnapshot(
+      page,
+      `Selecting a sub-object from Right Layout selected (theme: '${theme}')`
+    );
+
+    await page.getByLabel('Parent Layout Layout', { exact: true }).click();
+    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`);
   });
 });
-
-/**
- * Sets up a complex layout with nested layouts and provides the playwright locators
- * @param {import('@playwright/test').Page} page
- * @returns {LayoutLocators} locators of baseline complex display to be used in tests
- */
-async function setupBaseline(page) {
-  // Load Open MCT visual test baseline
-  await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-  // Open Tree
-  await page.getByRole('button', { name: 'Browse' }).click();
-
-  const treePane = page.getByRole('tree', {
-    name: 'Main Tree'
-  });
-
-  const objectViewLocator = page.locator('.c-object-view');
-  const parentLayoutLocator = objectViewLocator.first();
-  const child1LayoutLocator = parentLayoutLocator.locator(objectViewLocator).first();
-  const child1LayoutObjectLocator = child1LayoutLocator.locator('.l-layout__frame');
-  const parentLayout = await createDomainObjectWithDefaults(page, {
-    type: 'Display Layout',
-    name: 'Parent Layout'
-  });
-  const child1Layout = await createDomainObjectWithDefaults(page, {
-    type: 'Display Layout',
-    name: 'Child 1 Layout'
-  });
-  const child2Layout = await createDomainObjectWithDefaults(page, {
-    type: 'Display Layout',
-    name: 'Child 2 Layout'
-  });
-  const swg1 = await createDomainObjectWithDefaults(page, {
-    type: 'Sine Wave Generator',
-    name: 'SWG 1'
-  });
-  const swg2 = await createDomainObjectWithDefaults(page, {
-    type: 'Sine Wave Generator',
-    name: 'SWG 2'
-  });
-  const child1LayoutTreeItem = treePane.getByRole('treeitem', {
-    name: new RegExp(child1Layout.name)
-  });
-  const child2LayoutTreeItem = treePane.getByRole('treeitem', {
-    name: new RegExp(child2Layout.name)
-  });
-  const swg1TreeItem = treePane.getByRole('treeitem', {
-    name: new RegExp(swg1.name)
-  });
-  const swg2TreeItem = treePane.getByRole('treeitem', {
-    name: new RegExp(swg2.name)
-  });
-
-  // Expand folder containing created objects
-  await page.goto(parentLayout.url);
-  await page.getByTitle('Show selected item in tree').click();
-
-  // Add swg1 to child1Layout
-  await page.goto(child1Layout.url);
-  await page.getByRole('button', { name: 'Edit' }).click();
-  await swg1TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
-  await page.getByRole('button', { name: 'Save' }).click();
-  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-  // Add swg1 to child1Layout
-  await page.goto(child2Layout.url);
-  await page.getByRole('button', { name: 'Edit' }).click();
-  await swg2TreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
-  await page.getByRole('button', { name: 'Save' }).click();
-  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-  // Add child1Layout and child2Layout to parentLayout
-  await page.goto(parentLayout.url);
-  await page.getByRole('button', { name: 'Edit' }).click();
-  await child1LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 350, y: 0 } });
-  await child2LayoutTreeItem.dragTo(parentLayoutLocator, { targetPosition: { x: 0, y: 0 } });
-
-  return {
-    parentLayoutLocator,
-    child1LayoutLocator,
-    child1LayoutObjectLocator
-  };
-}

@@ -47,7 +47,7 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Display Layout Display Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test.use({
     storageState: LOCALSTORAGE_PATH
@@ -133,7 +133,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -161,6 +161,13 @@ test.describe('Display Layout', () => {
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+
+    // ensure we can right click on the alpha-numeric widget and view historical data
+    await page.getByLabel('Sine', { exact: true }).click({
+      button: 'right'
+    });
+    await page.getByLabel('View Historical Data').click();
+    await expect(page.getByLabel('Plot Container Style Target')).toBeVisible();
   });
   test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({
     page
@@ -171,7 +178,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -213,7 +220,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -255,7 +262,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -301,7 +308,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -357,7 +364,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -449,7 +456,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK' }).click();
+  await page.getByRole('button', { name: 'OK', exact: true }).click();
 }
 
 /**

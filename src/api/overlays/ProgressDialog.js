@@ -17,7 +17,7 @@ class ProgressDialog extends Overlay {
   }) {
     const { vNode, destroy } = mount({
       components: {
-        ProgressDialogComponent: ProgressDialogComponent
+        ProgressDialogComponent
       },
       provide: {
         iconClass,
@@ -28,16 +28,15 @@ class ProgressDialog extends Overlay {
       },
       data() {
         return {
-          model: {
-            progressPerc: progressPerc || 0,
-            progressText
-          }
+          progressPerc,
+          progressText
         };
       },
-      template: '<progress-dialog-component :model="model"></progress-dialog-component>'
+      template:
+        '<progress-dialog-component :progress-perc="progressPerc" :progress-text="progressText"></progress-dialog-component>'
     });
-    component = vNode.componentInstance;
 
+    component = vNode.componentInstance;
     super({
       element: vNode.el,
       size: 'fit',
@@ -51,8 +50,8 @@ class ProgressDialog extends Overlay {
   }
 
   updateProgress(progressPerc, progressText) {
-    component.model.progressPerc = progressPerc;
-    component.model.progressText = progressText;
+    component.$data.progressPerc = progressPerc;
+    component.$data.progressText = progressText;
   }
 }
 

@@ -104,7 +104,7 @@ test.describe('Recent Objects', () => {
         button: 'right'
       });
     await page.getByRole('menuitem', { name: /Remove/ }).click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Verify that the folder and clock are no longer in the recent objects list
     await expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeHidden();
@@ -293,7 +293,7 @@ test.describe('Recent Objects', () => {
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
 
     // Click on the "OK" button in the confirmation dialog
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Assert that the list is empty
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
@@ -311,7 +311,7 @@ test.describe('Recent Objects', () => {
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
 
     // Click on the "OK" button in the confirmation dialog
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Assert that the list is empty
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);

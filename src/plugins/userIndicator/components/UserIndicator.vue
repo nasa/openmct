@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-indicator icon-person c-indicator--clickable">
-    <span class="label c-indicator__label">
+    <span class="label c-indicator__label" aria-label="User Role">
       {{ role ? `${userName}: ${role}` : userName }}
       <button v-if="availableRoles?.length > 1" @click="promptForRoleSelection">Change Role</button>
     </span>
@@ -45,38 +45,48 @@ export default {
   },
 
   async mounted() {
+    // need to wait for openmct to be loaded before using openmct.overlays.selection
+    // as document.body could be null
+    this.openmct.on('start', this.fetchOrPromptForRole);
+
     await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
-    await this.fetchOrPromptForRole();
   },
   beforeUnmount() {
     this.roleChannel.unsubscribeFromRoleChanges(this.onRoleChange);
+    this.openmct.off('start', this.fetchOrPromptForRole);
   },
   methods: {
     async getUserInfo() {
       const user = await this.openmct.user.getCurrentUser();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
-      this.availableRoles = await this.openmct.user.getPossibleRoles();
       this.loggedIn = this.openmct.user.isLoggedIn();
     },
     async fetchOrPromptForRole() {
       const UserAPI = this.openmct.user;
       const activeRole = UserAPI.getActiveRole();
       this.role = activeRole;
-      if (!activeRole) {
+      this.availableRoles = await this.openmct.user.getPossibleRoles();
+
+      // clear role if it's not in list of available roles, e.g., removed by admin
+      if (!this.availableRoles?.includes(this.role)) {
+        this.role = null;
+        UserAPI.setActiveRole(null);
+      }
+
+      // see if we need to prompt for role selection
+      if (!this.role) {
         this.promptForRoleSelection();
       } else {
         // only notify the user if they have more than one role available
-        this.availableRoles = await this.openmct.user.getPossibleRoles();
         if (this.availableRoles.length > 1) {
           this.openmct.notifications.info(`You're logged in as role ${activeRole}`);
         }
       }
     },
-    async promptForRoleSelection() {
-      this.availableRoles = await this.openmct.user.getPossibleRoles();
+    promptForRoleSelection() {
       const selectionOptions = this.availableRoles.map((role) => ({
         key: role,
         name: role

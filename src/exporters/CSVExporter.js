@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import CSV from 'comma-separated-values';
-import { saveAs } from 'saveAs';
+import { saveAs } from 'file-saver';
 
 class CSVExporter {
   export(rows, options) {

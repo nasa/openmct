@@ -15,6 +15,9 @@
 *.idea
 *.iml
 
+# VSCode
+.vscode/settings.json
+
 # Build output
 target
 dist

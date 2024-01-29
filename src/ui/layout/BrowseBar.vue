@@ -71,6 +71,7 @@
           v-for="(item, index) in statusBarItems"
           :key="index"
           class="c-button"
+          :aria-label="item.name"
           :title="item.name"
           :class="item.cssClass"
           @click="item.onItemClicked"
@@ -78,6 +79,7 @@
 
         <button
           v-if="isViewEditable & !isEditing"
+          :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
             'c-button icon-lock': domainObject.locked,
@@ -89,8 +91,8 @@
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
           class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
-          title="Edit"
-          aria-label="Edit"
+          title="Edit Object"
+          aria-label="Edit Object"
           @click="edit()"
         ></button>
 
@@ -123,6 +125,7 @@
         <button
           v-if="isEditing"
           class="l-browse-bar__actions c-button icon-x"
+          aria-label="Cancel Editing"
           title="Cancel Editing"
           @click="promptUserandCancelEditing()"
         ></button>

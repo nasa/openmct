@@ -49,7 +49,7 @@ test.describe('Grand Search', () => {
     const createdObjects = await createObjectsForSearch(page);
 
     // Go back into edit mode for the display layout
-    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     await grandSearchInput.click();
     await grandSearchInput.fill('Cl');
@@ -99,7 +99,7 @@ test.describe('Grand Search', () => {
       page.waitForNavigation(),
       page.getByLabel('OpenMCT Search').getByText('Clock A').click()
     ]);
-    await expect(page.getByRole('status', { name: 'Clock' })).toBeVisible();
+    await expect(page.getByRole('status', { name: 'Clock', exact: true })).toBeVisible();
 
     await grandSearchInput.fill('Disp');
     await expect(page.getByLabel('Object Search Result').first()).toContainText(

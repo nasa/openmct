@@ -23,7 +23,8 @@
 import {
   createDomainObjectWithDefaults,
   createNotification,
-  expandEntireTree
+  expandEntireTree,
+  openObjectTreeContextMenu
 } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
@@ -155,7 +156,7 @@ test.describe('AppActions', () => {
 
     await page.goto('./#/browse/mine');
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Clock")`);
@@ -165,5 +166,14 @@ test.describe('AppActions', () => {
     });
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
     expect(await locatorTreeCollapsedItems.count()).toBe(0);
+  });
+  test('openObjectTreeContextMenu', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
+    });
+    await openObjectTreeContextMenu(page, folder.url);
+    await expect(page.getByLabel('Menu')).toBeVisible();
   });
 });
