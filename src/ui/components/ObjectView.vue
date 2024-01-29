@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div>
+  <div ref="objectViewParent">
     <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
   </div>
 </template>
@@ -151,10 +151,6 @@ export default {
       if (this.currentView) {
         this.currentView.destroy();
 
-        if (this.$refs.objectViewWrapper) {
-          this.$refs.objectViewWrapper.innerHTML = '';
-        }
-
         if (this.visibilityObserver) {
           this.visibilityObserver.destroy();
           delete this.visibilityObserver;
@@ -272,11 +268,10 @@ export default {
     },
     updateView(immediatelySelect) {
       this.clear();
+      console.debug('Updating view for object', this.domainObject);
       if (!this.domainObject) {
         return;
       }
-
-      this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
 
       this.composition = this.openmct.composition.get(this.domainObject);
 
@@ -285,6 +280,7 @@ export default {
       }
 
       this.viewContainer = this.$refs.objectViewWrapper;
+      this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
       let provider = this.getViewProvider();
       if (!provider) {
         return;
@@ -336,6 +332,7 @@ export default {
         this.setFontSize(this.fontSize);
         this.setFont(this.font);
         this.getActionCollection();
+        this.visibilityObserver.startObserving(this.$refs.objectViewWrapper);
       });
     },
     getActionCollection() {

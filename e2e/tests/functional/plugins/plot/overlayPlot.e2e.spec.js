@@ -63,9 +63,12 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
-  test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
+  test.only('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
     page
   }) => {
+    page.on('console', (msg) => {
+      console.log(msg);
+    });
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6338'
@@ -267,6 +270,10 @@ async function assertLimitLinesExistAndAreVisible(page) {
   // Wait for limit lines to be created
   await page.waitForSelector('.js-limit-area', { state: 'attached' });
   // There should be 10 limit lines created by default
+  const count = await page.locator('.c-plot-limit-line').count();
+  if (count !== 10) {
+    await page.pause();
+  }
   await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
   const limitLineCount = await page.locator('.c-plot-limit-line').count();
   for (let i = 0; i < limitLineCount; i++) {

@@ -75,6 +75,7 @@ export default function OverlayPlotViewProvider(openmct) {
               element
             }
           );
+          console.debug(`📈 Plot view: mounted on ${element}`);
           _destroy = destroy;
           component = vNode.componentInstance;
         },

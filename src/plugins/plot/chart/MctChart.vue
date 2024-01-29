@@ -200,7 +200,15 @@ export default {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
     this.drawnOnce = false;
-    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
+
+    const rootContainer = document.querySelector('.js-main-container');
+    console.debug(`🍉 MctChart: root container ${rootContainer}`);
+    const options = {
+      root: rootContainer,
+      rootMargin: '0px',
+      threshold: 1.0
+    };
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged, options);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
