@@ -63,7 +63,7 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
-  test.only('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
+  test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
     page
   }) => {
     test.info().annotations.push({

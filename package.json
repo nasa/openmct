@@ -109,7 +109,7 @@
     "test:e2e:couchdb": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @couchdb --workers=1",
     "test:e2e:stable": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep-invert \"@unstable|@couchdb|@generatedata\"",
     "test:e2e:unstable": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @unstable",
-    "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome --repeat-each=20",
+    "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js --project=chrome",
     "test:e2e:generatedata": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @generatedata",
     "test:e2e:checksnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --retries=0",
     "test:e2e:updatesnapshots": "npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot --update-snapshots",
