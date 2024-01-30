@@ -41,7 +41,7 @@
       ></textarea>
     </div>
     <div v-else class="c-inspect-properties__value">
-      <template v-if="filterValue.length > 0">
+      <template v-if="filterValue && filterValue.length > 0">
         {{ filterValue }}
       </template>
       <template v-else> No filters applied </template>
@@ -69,7 +69,7 @@
       ></textarea>
     </div>
     <div v-else class="c-inspect-properties__value">
-      <template v-if="filterMetadataValue.length > 0">
+      <template v-if="filterMetadataValue && filterMetadataValue.length > 0">
         {{ filterMetadataValue }}
       </template>
       <template v-else> No filters applied </template>
