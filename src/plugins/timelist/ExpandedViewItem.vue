@@ -155,6 +155,11 @@ export default {
       default: 'notStarted'
     }
   },
+  data() {
+    return {
+      formattedItemLabel: ''
+    };
+  },
   computed: {
     countdownClass() {
       let cssClass = '';
@@ -178,60 +183,6 @@ export default {
       const timeRelationClass = this.cssClass;
       const executionStateClass = `--is-${this.executionState}`;
       return `c-tli ${timeRelationClass} ${executionStateClass}`;
-    },
-    formattedItemLabel() {
-      let executionStateLabel;
-      const executionStateKeys = Object.keys(EXECUTION_STATES);
-      const executionStateIndex = executionStateKeys.findIndex(
-        (key) => key === this.executionState
-      );
-      if (executionStateIndex > -1) {
-        executionStateLabel = EXECUTION_STATES[executionStateIndex];
-      }
-
-      let label;
-      if (this.start < this.timestamp) {
-        // Start time is in the past
-        if (this.start === this.end) {
-          // - 'Occurred' : for Events with start < now datetime and 0 duration
-          label = INFERRED_EXECUTION_STATES.occurred;
-        }
-        // end time has not yet passed
-        else if (this.cssClass === CURRENT_CSS_SUFFIX) {
-          if (executionStateIndex === 0) {
-            // - 'Overdue' : executionState.notStarted && start < now datetime
-            label = INFERRED_EXECUTION_STATES.overdue;
-          } else {
-            // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
-            label = INFERRED_EXECUTION_STATES.ends;
-          }
-        }
-        // end time is also in the past
-        else if (this.cssClass === PAST_CSS_SUFFIX) {
-          if (executionStateIndex === 0) {
-            // - 'Incomplete' : executionState.notStarted && now > end datetime
-            label = INFERRED_EXECUTION_STATES.incomplete;
-          } else if (executionStateIndex === 1) {
-            // - 'Running Long' : executionState.inProgress && now > end datetime
-            label = INFERRED_EXECUTION_STATES.runningLong;
-          } else {
-            // - 'Ended' :now > start datetime && now > end datetime
-            label = INFERRED_EXECUTION_STATES.ended;
-          }
-        }
-      }
-      // Start time is in the future
-      else {
-        if (this.start === this.end) {
-          // - 'Occurs' : for Events with start > now datetime and 0 duration
-          label = INFERRED_EXECUTION_STATES.occurs;
-        } else {
-          // - 'Starts' : for Activities with now > start datetime
-          label = INFERRED_EXECUTION_STATES.starts;
-        }
-      }
-
-      return label || executionStateLabel;
     },
     formattedItem() {
       let itemValue = {
@@ -286,6 +237,61 @@ export default {
       if (this.isInProgress && progressElement) {
         updateProgress(this.start, this.end, this.timestamp, progressElement);
       }
+      this.formatItemLabel();
+    },
+    formatItemLabel() {
+      let executionStateLabel;
+      const executionStateKeys = Object.keys(EXECUTION_STATES);
+      const executionStateIndex = executionStateKeys.findIndex(
+        (key) => key === this.executionState
+      );
+      if (executionStateIndex > -1) {
+        executionStateLabel = EXECUTION_STATES[executionStateIndex];
+      }
+
+      let label;
+      if (this.start < this.timestamp) {
+        // Start time is in the past
+        if (this.start === this.end) {
+          // - 'Occurred' : for Events with start < now datetime and 0 duration
+          label = INFERRED_EXECUTION_STATES.occurred;
+        }
+        // end time has not yet passed
+        else if (this.cssClass === CURRENT_CSS_SUFFIX) {
+          if (executionStateIndex === 0) {
+            // - 'Overdue' : executionState.notStarted && start < now datetime
+            label = INFERRED_EXECUTION_STATES.overdue;
+          } else {
+            // - 'Ends' : executionState.inProgress && now > start datetime && now < end datetime
+            label = INFERRED_EXECUTION_STATES.ends;
+          }
+        }
+        // end time is also in the past
+        else if (this.cssClass === PAST_CSS_SUFFIX) {
+          if (executionStateIndex === 0) {
+            // - 'Incomplete' : executionState.notStarted && now > end datetime
+            label = INFERRED_EXECUTION_STATES.incomplete;
+          } else if (executionStateIndex === 1) {
+            // - 'Running Long' : executionState.inProgress && now > end datetime
+            label = INFERRED_EXECUTION_STATES.runningLong;
+          } else {
+            // - 'Ended' :now > start datetime && now > end datetime
+            label = INFERRED_EXECUTION_STATES.ended;
+          }
+        }
+      }
+      // Start time is in the future
+      else {
+        if (this.start === this.end) {
+          // - 'Occurs' : for Events with start > now datetime and 0 duration
+          label = INFERRED_EXECUTION_STATES.occurs;
+        } else {
+          // - 'Starts' : for Activities with now > start datetime
+          label = INFERRED_EXECUTION_STATES.starts;
+        }
+      }
+
+      this.formattedItemLabel = label || executionStateLabel;
     }
   }
 };
