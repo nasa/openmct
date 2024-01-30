@@ -339,7 +339,7 @@ export default class StatusAPI extends EventEmitter {
   /**
    * @private
    */
-  onMissionRoleStatusChange(role, newStatus) {
+  onMissionRoleStatusChange({ role, newStatus }) {
     this.emit('missionRoleStatusChange', role, newStatus);
   }
 }
