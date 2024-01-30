@@ -26,7 +26,12 @@
       <expanded-view-item
         v-for="item in sortedItems"
         :key="item.key"
-        :item="item"
+        :name="item.name"
+        :start="item.start"
+        :end="item.end"
+        :duration="item.duration"
+        :countdown="item.countdown"
+        :css-class="item.cssClass"
         :item-properties="itemProperties"
         :execution-state="persistedActivityStates[item.id]"
         @click.stop="setSelectionForActivity(item, $event.currentTarget)"

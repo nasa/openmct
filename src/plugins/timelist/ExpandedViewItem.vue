@@ -122,9 +122,29 @@ const INFERRED_EXECUTION_STATES = {
 export default {
   inject: ['openmct', 'domainObject', 'path'],
   props: {
-    item: {
-      type: Object,
-      required: true
+    name: {
+      type: String,
+      default: ''
+    },
+    start: {
+      type: Number,
+      default: 0
+    },
+    end: {
+      type: Number,
+      default: 0
+    },
+    duration: {
+      type: Number,
+      default: 0
+    },
+    countdown: {
+      type: Number,
+      default: 0
+    },
+    cssClass: {
+      type: String,
+      default: ''
     },
     itemProperties: {
       type: Array,
@@ -132,32 +152,30 @@ export default {
     },
     executionState: {
       type: String,
-      default() {
-        return 'notStarted';
-      }
+      default: 'notStarted'
     }
   },
   computed: {
     countdownClass() {
       let cssClass = '';
-      if (this.item.countdown < 0) {
+      if (this.countdown < 0) {
         cssClass = '--is-countup';
-      } else if (this.item.countdown > 0) {
+      } else if (this.countdown > 0) {
         cssClass = '--is-countdown';
       }
       return `c-tli__time-hero-time ${cssClass}`;
     },
     styleClass() {
-      return { backgroundColor: ITEM_COLORS[this.item.cssClass] };
+      return { backgroundColor: ITEM_COLORS[this.cssClass] };
     },
     isInProgress() {
       return this.executionState === 'in-progress';
     },
     eventHasDuration() {
-      return this.item.start !== this.item.end;
+      return this.start !== this.end;
     },
     listItemClass() {
-      const timeRelationClass = this.item.cssClass;
+      const timeRelationClass = this.cssClass;
       const executionStateClass = `--is-${this.executionState}`;
       return `c-tli ${timeRelationClass} ${executionStateClass}`;
     },
@@ -172,14 +190,14 @@ export default {
       }
 
       let label;
-      if (this.item.start < this.timestamp) {
+      if (this.start < this.timestamp) {
         // Start time is in the past
-        if (this.item.start === this.item.end) {
+        if (this.start === this.end) {
           // - 'Occurred' : for Events with start < now datetime and 0 duration
           label = INFERRED_EXECUTION_STATES.occurred;
         }
         // end time has not yet passed
-        else if (this.item.cssClass === CURRENT_CSS_SUFFIX) {
+        else if (this.cssClass === CURRENT_CSS_SUFFIX) {
           if (executionStateIndex === 0) {
             // - 'Overdue' : executionState.notStarted && start < now datetime
             label = INFERRED_EXECUTION_STATES.overdue;
@@ -189,7 +207,7 @@ export default {
           }
         }
         // end time is also in the past
-        else if (this.item.cssClass === PAST_CSS_SUFFIX) {
+        else if (this.cssClass === PAST_CSS_SUFFIX) {
           if (executionStateIndex === 0) {
             // - 'Incomplete' : executionState.notStarted && now > end datetime
             label = INFERRED_EXECUTION_STATES.incomplete;
@@ -204,7 +222,7 @@ export default {
       }
       // Start time is in the future
       else {
-        if (this.item.start === this.item.end) {
+        if (this.start === this.end) {
           // - 'Occurs' : for Events with start > now datetime and 0 duration
           label = INFERRED_EXECUTION_STATES.occurs;
         } else {
@@ -217,15 +235,15 @@ export default {
     },
     formattedItem() {
       let itemValue = {
-        title: this.item.name
+        title: this.name
       };
       this.itemProperties.forEach((itemProperty) => {
-        let value = this.item[itemProperty.key];
+        let value = this[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
           const itemStartDate = new Date(value).toDateString();
           const timestampDate = new Date(this.timestamp).toDateString();
-          formattedValue = itemProperty.format(value, this.item, itemProperty.key, this.openmct, {
+          formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct, {
             skipPrefix: true,
             skipDateForToday: itemStartDate === timestampDate
           });
@@ -266,7 +284,7 @@ export default {
       this.timestamp = time;
       const progressElement = this.$refs.progressElement;
       if (this.isInProgress && progressElement) {
-        updateProgress(this.item.start, this.item.end, this.timestamp, progressElement);
+        updateProgress(this.start, this.end, this.timestamp, progressElement);
       }
     }
   }
