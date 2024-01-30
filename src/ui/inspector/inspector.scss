@@ -36,7 +36,7 @@
 
   &__tabs {
     flex: 0 0 auto;
-    font-size: 0.8em;
+    font-size: 11px;
     text-transform: uppercase;
 
     &.c-tabs {
@@ -147,7 +147,7 @@
   [class*='header'] {
     @include propertiesHeader();
     flex: 0 0 auto;
-    font-size: 0.85em;
+    //font-size: 0.85em;
   }
 }
 
@@ -156,7 +156,7 @@
   [class*='header'] {
     @include propertiesHeader();
     flex: 0 0 auto;
-    font-size: 0.85em;
+    font-size: 11px;
     text-transform: uppercase;
 
     &:not(:first-child) {
@@ -192,7 +192,7 @@
     [class*='__label'],
     [class*='__value'] {
       // Row borders, effected via border-top on child elements of the row
-      border-top: 1px solid $colorInspectorSectionHeaderBg;
+      border-top: 1px solid $colorInteriorBorder;
     }
   }
 

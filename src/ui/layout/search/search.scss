@@ -24,21 +24,21 @@
 .c-gsearch {
   .l-shell__head & {
     // Search input in the shell head
-    width: 20%;
-
     .c-search {
       background: rgba($colorHeadFg, 0.2);
       box-shadow: none;
+      flex: 1 1 auto;
     }
   }
 
-  &__results-wrapper {
+  &__dropdown {
     @include menuOuter();
     display: flex;
     flex-direction: column;
     padding: $interiorMarginLg;
     min-width: 500px;
     max-height: 500px;
+    top: $formInputH;
     z-index: 60;
   }
 
@@ -76,10 +76,10 @@
 
 .c-gsearch-result {
   display: flex;
-  padding: $interiorMargin $interiorMarginSm;
+  padding: $interiorMarginSm 0;
 
   > * + * {
-    margin-left: $interiorMarginLg;
+    margin-left: $interiorMargin;
   }
 
   + .c-gsearch-result {
@@ -93,7 +93,7 @@
 
   &__type-icon {
     color: $colorItemTreeIcon;
-    font-size: 2.2em;
+    font-size: 1.5em;
 
     // TEMP: uses object-label component, hide label part
     .c-object-label__name {
@@ -113,8 +113,9 @@
     }
 
     .c-location {
-      font-size: 0.9em;
-      opacity: 0.8;
+      //color: $colorBodyFg;
+      //font-size: 0.9em;
+      //opacity: 0.8;
     }
   }
 
