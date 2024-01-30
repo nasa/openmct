@@ -200,7 +200,13 @@ export default {
     this.chartVisible = true;
     this.chartContainer = this.$refs.chart;
     this.drawnOnce = false;
-    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged);
+    const rootContainer = this.openmct.element;
+    const options = {
+      root: rootContainer,
+      rootMargin: '0px',
+      threshold: 1.0
+    };
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged, options);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -276,6 +282,8 @@ export default {
       return config;
     },
     visibilityChanged([entry]) {
+      // Per https://github.com/nasa/openmct/issues/7405, we only want to draw when the chart is visible.
+      // and we need to use the Open MCT root element as the root of the intersection observer.
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
         this.chartVisible = entry.isIntersecting;

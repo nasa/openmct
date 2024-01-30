@@ -112,7 +112,7 @@ export default {
     },
     renderPlot(plotObject) {
       const wrapper = document.createElement('div');
-      const visibilityObserver = new VisibilityObserver(wrapper);
+      const visibilityObserver = new VisibilityObserver(wrapper, this.openmct.element);
 
       const { destroy } = mount(
         {
