@@ -178,10 +178,12 @@ export default {
       viewBounds: undefined,
       height: 0,
       planActivities: [],
+      groups: [],
       headerItems: headerItems,
       defaultSort: defaultSort,
       isExpanded: false,
-      persistedActivityStates: {}
+      persistedActivityStates: {},
+      sortedItems: []
     };
   },
   computed: {
@@ -190,13 +192,6 @@ export default {
         return 'c-timelist c-timelist--large';
       }
       return 'c-timelist';
-    },
-    sortedItems() {
-      let sortedItems = _.sortBy(this.planActivities, this.defaultSort.property);
-      if (!this.defaultSort.defaultDirection) {
-        sortedItems = sortedItems.reverse();
-      }
-      return sortedItems;
     },
     itemProperties() {
       return this.headerItems.map((headerItem) => {
@@ -342,7 +337,6 @@ export default {
       }
     },
     addItem(domainObject) {
-      this.resetPlanData();
       this.planObjects = [domainObject];
       if (domainObject.type === 'plan') {
         this.getPlanDataAndSetConfig({
@@ -406,25 +400,30 @@ export default {
     },
     resetPlanData() {
       this.planData = {};
+      this.groups = [];
+      this.planActivities = [];
+      this.sortedItems = [];
     },
     getPlanData(domainObject) {
+      this.resetPlanData();
       this.planData = getValidatedData(domainObject);
-    },
-    listActivities() {
-      let groups = getValidatedGroups(this.domainObject, this.planData);
-      let activities = [];
-
-      groups.forEach((key) => {
+      this.groups = getValidatedGroups(this.domainObject, this.planData);
+      this.groups.forEach((key) => {
         if (this.planData[key] === undefined) {
           return;
         }
         // Create new objects so Vue 3 can detect any changes
-        activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
+        this.planActivities = this.planActivities.concat(
+          JSON.parse(JSON.stringify(this.planData[key]))
+        );
       });
-      // filter activities first, then sort by start time
-      activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
-      activities = this.applyStyles(activities);
-      this.planActivities = [...activities];
+    },
+
+    listActivities() {
+      // filter activities first, then sort
+      const filteredItems = this.planActivities.filter(this.filterActivities);
+      const sortedItems = this.sortItems(filteredItems);
+      this.sortedItems = this.applyStyles(sortedItems);
       //We need to wait for the next tick since we need the height of the row from the DOM
       this.$nextTick(this.setScrollTop);
     },
@@ -656,11 +655,12 @@ export default {
         defaultDirection: direction
       };
     },
-    sortByStartTime(a, b) {
-      const numA = parseInt(a.start, 10);
-      const numB = parseInt(b.start, 10);
-
-      return numA - numB;
+    sortItems(activities) {
+      let sortedItems = _.sortBy(activities, this.defaultSort.property);
+      if (!this.defaultSort.defaultDirection) {
+        sortedItems = sortedItems.reverse();
+      }
+      return sortedItems;
     },
     setStatus(status) {
       this.status = status;
