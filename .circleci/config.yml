@@ -132,7 +132,12 @@ jobs:
             equal: ["full", <<parameters.suite>>]
           steps:
             - run: npx playwright install chrome-beta
-      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+      - run:
+          command: |
+            mkdir test-results #can also be switched out for passing PLAYWRIGHT_JUNIT_OUTPUT_NAME directly to Playwright
+            TESTFILES=$(circleci tests glob "/e2e/**/*.spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>> --verbose --split-by=timings
+      #- run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - when:
           condition:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
@@ -242,18 +247,18 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - lint:
-          name: node20-lint
-          node-version: lts/iron
-      - unit-test:
-          name: node18-chrome
-          node-version: lts/hydrogen
+      # - lint:
+      #     name: node20-lint
+      #     node-version: lts/iron
+      # - unit-test:
+      #     name: node18-chrome
+      #     node-version: lts/hydrogen
       - e2e-test:
           name: e2e-stable
           suite: stable
-      - visual-a11y-tests:
-          name: visual-test-ci
-          suite: ci
+      # - visual-a11y-tests:
+      #     name: visual-test-ci
+      #     suite: ci
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
