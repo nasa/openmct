@@ -105,7 +105,11 @@ jobs:
           node-version: <<parameters.node-version>>
       - browser-tools/install-chrome:
           replace-existing: false
-      - run: npm run test
+      - run:
+          command: |
+            mkdir -p dist/reports/tests/
+            TESTFILES=$(circleci tests glob "src/**/*Spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
       - run: npm run cov:unit:publish
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
@@ -123,7 +127,7 @@ jobs:
       suite: #stable or full
         type: string
     executor: pw-focal-development
-    parallelism: 6
+    parallelism: 7
     steps:
       - build_and_install:
           node-version: lts/hydrogen
@@ -132,7 +136,11 @@ jobs:
             equal: ["full", <<parameters.suite>>]
           steps:
             - run: npx playwright install chrome-beta
-      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+      - run:
+          command: |
+            mkdir test-results
+            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>>" --verbose --split-by=timings
       - when:
           condition:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
@@ -239,6 +247,7 @@ jobs:
             equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
+
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
