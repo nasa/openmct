@@ -123,7 +123,7 @@ jobs:
       suite: #stable or full
         type: string
     executor: pw-focal-development
-    parallelism: 6
+    parallelism: 2
     steps:
       - build_and_install:
           node-version: lts/hydrogen
@@ -138,7 +138,7 @@ jobs:
             pwd
             ls
             TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
-            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>> --verbose --split-by=timings
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>> --verbose --split-by=timings"
       #- run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - when:
           condition:
