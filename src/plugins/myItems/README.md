@@ -15,5 +15,12 @@ When installing, the plugin can take several options:
 - `namespace`: The namespace to create the root object in. Defaults to the empty string `''`
   - Example: `'apple-namespace'`
 
-- `namespace`: The priority to install this plugin. Defaults to `openmct.priority.LOW`
+- `priority`: The optional priority to install this plugin. Defaults to `openmct.priority.LOW`
   - Example: `'openmct.priority.LOW'`
+
+E.g., to install with a custom name and namespace, you could use:
+
+
+```js
+openmct.install(openmct.plugins.MyItems('Apple Items', 'apple-namespace'));
+```
