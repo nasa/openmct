@@ -117,7 +117,8 @@ export default {
     getMissionRoleStatusClass(status) {
       const statusValue = this.missionRoleStatusOptions[this.missionRoleStatusMap[status]]?.label;
       return {
-        '--is-no-go': statusValue === 'NO GO'
+        '--is-no-go': statusValue === 'NO GO',
+        '--is-go': statusValue === 'GO'
       };
     }
   }
