@@ -180,7 +180,7 @@ When installing the CouchDB plugin for OpenMCT, you can specify a list of databa
 - `namespace`: The namespace associated with this database.
   - Example: `'openmct-sandbox'`
 
-- 'additionalNamespaces': Other namespaces that this plugin should respond to requests for.
+- `additionalNamespaces`: Other namespaces that this plugin should respond to requests for.
   - Example: `['apple-namespace', 'pear-namespace']`
 
 - `readOnly`: A boolean indicating whether the database should be treated as read-only. If set to `true`, OpenMCT will not attempt to write to this database.
