@@ -107,7 +107,7 @@ jobs:
           replace-existing: false
       - run:
           command: |
-            mkdir dist/reports/tests/
+            mkdir -p dist/reports/tests/
             TESTFILES=$(circleci tests glob "src/**/*Spec.js")
             echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
       - run: npm run cov:unit:publish
