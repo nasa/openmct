@@ -23,11 +23,11 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
-import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
-test.describe('Visual - Restricted Notebook', () => {
+test.describe('Visual - Restricted Notebook @a11y', () => {
   test.beforeEach(async ({ page }) => {
     const restrictedNotebook = await startAndAddRestrictedNotebookObject(page);
     await page.goto(restrictedNotebook.url + '?hideTree=true&hideInspector=true');
@@ -39,7 +39,7 @@ test.describe('Visual - Restricted Notebook', () => {
   });
 });
 
-test.describe('Visual - Notebook', () => {
+test.describe('Visual - Notebook @a11y', () => {
   let notebook;
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
@@ -125,7 +125,8 @@ test.describe('Visual - Notebook', () => {
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
   });
-  test.afterEach(async ({ page }, testInfo) => {
-    await scanForA11yViolations(page, testInfo.title);
-  });
+  // Skipping for https://github.com/nasa/openmct/issues/7421
+  // test.afterEach(async ({ page }, testInfo) => {
+  //   await scanForA11yViolations(page, testInfo.title);
+  // });
 });

@@ -23,6 +23,7 @@
 import objectUtils from 'objectUtils';
 
 import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
+import BatchingWebSocket from './BatchingWebSocket.js';
 import DefaultMetadataProvider from './DefaultMetadataProvider.js';
 import TelemetryCollection from './TelemetryCollection.js';
 import TelemetryMetadataManager from './TelemetryMetadataManager.js';
@@ -55,12 +56,39 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  */
 
 /**
+ * Describes and bounds requests for telemetry data.
+ *
+ * @typedef TelemetrySubscriptionOptions
+ * @property {String} [strategy] symbolic identifier directing providers on how
+ * to handle telemetry subscriptions. The default behavior is 'latest' which will
+ * always return a single telemetry value with each callback, and in the event
+ * of throttling will always prioritize the latest data, meaning intermediate
+ * data will be skipped. Alternatively, the `batch` strategy can be used, which
+ * will return all telemetry values since the last callback. This strategy is
+ * useful for cases where intermediate data is important, such as when
+ * rendering a telemetry plot or table. If `batch` is specified, the subscription
+ * callback will be invoked with an Array.
+ *
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+const SUBSCRIBE_STRATEGY = {
+  LATEST: 'latest',
+  BATCH: 'batch'
+};
+
+/**
  * Utilities for telemetry
  * @interface TelemetryAPI
  * @memberof module:openmct
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
+  #subscribeCache;
+
+  get SUBSCRIBE_STRATEGY() {
+    return SUBSCRIBE_STRATEGY;
+  }
 
   constructor(openmct) {
     this.openmct = openmct;
@@ -78,6 +106,8 @@ export default class TelemetryAPI {
     this.valueFormatterCache = new WeakMap();
     this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     this.#isGreedyLAD = true;
+    this.BatchingWebSocket = BatchingWebSocket;
+    this.#subscribeCache = {};
   }
 
   abortAllRequests() {
@@ -378,54 +408,111 @@ export default class TelemetryAPI {
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    * @param {module:openmct.DomainObject} domainObject the object
    *        which has associated telemetry
-   * @param {TelemetryRequestOptions} options configuration items for subscription
+   * @param {TelemetrySubscriptionOptions} options configuration items for subscription
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribe(domainObject, callback, options) {
+  subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
+    const requestedStrategy = options.strategy || SUBSCRIBE_STRATEGY.LATEST;
+
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
-    const provider = this.findSubscriptionProvider(domainObject);
+    const provider = this.findSubscriptionProvider(domainObject, options);
+    const supportsBatching =
+      Boolean(provider?.supportsBatching) && provider?.supportsBatching(domainObject, options);
 
-    if (!this.subscribeCache) {
-      this.subscribeCache = {};
+    if (!this.#subscribeCache) {
+      this.#subscribeCache = {};
     }
 
     const keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let subscriber = this.subscribeCache[keyString];
+    const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
+    // Override the requested strategy with the strategy supported by the provider
+    const optionsWithSupportedStrategy = {
+      ...options,
+      strategy: supportedStrategy
+    };
+    // If batching is supported, we need to cache a subscription for each strategy -
+    // latest and batched.
+    const cacheKey = `${keyString}:${supportedStrategy}`;
+    let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
-      subscriber = this.subscribeCache[keyString] = {
-        callbacks: [callback]
+      subscriber = this.#subscribeCache[cacheKey] = {
+        latestCallbacks: [],
+        batchCallbacks: []
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          function (value) {
-            subscriber.callbacks.forEach(function (cb) {
-              cb(value);
-            });
-          },
-          options
+          invokeCallbackWithRequestedStrategy,
+          optionsWithSupportedStrategy
         );
       } else {
         subscriber.unsubscribe = function () {};
       }
+    }
+
+    if (requestedStrategy === SUBSCRIBE_STRATEGY.BATCH) {
+      subscriber.batchCallbacks.push(callback);
     } else {
-      subscriber.callbacks.push(callback);
+      subscriber.latestCallbacks.push(callback);
+    }
+
+    // Guarantees that view receive telemetry in the expected form
+    function invokeCallbackWithRequestedStrategy(data) {
+      invokeCallbacksWithArray(data, subscriber.batchCallbacks);
+      invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
+    }
+
+    function invokeCallbacksWithArray(data, batchCallbacks) {
+      //
+      if (data === undefined || data === null || data.length === 0) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      if (!Array.isArray(data)) {
+        data = [data];
+      }
+
+      batchCallbacks.forEach((cb) => {
+        cb(data);
+      });
+    }
+
+    function invokeCallbacksWithSingleValue(data, latestCallbacks) {
+      if (Array.isArray(data)) {
+        data = data[data.length - 1];
+      }
+
+      if (data === undefined || data === null) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      latestCallbacks.forEach((cb) => {
+        cb(data);
+      });
     }
 
     return function unsubscribe() {
-      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+      subscriber.latestCallbacks = subscriber.latestCallbacks.filter(function (cb) {
         return cb !== callback;
       });
-      if (subscriber.callbacks.length === 0) {
+      subscriber.batchCallbacks = subscriber.batchCallbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+
+      if (subscriber.latestCallbacks.length === 0 && subscriber.batchCallbacks.length === 0) {
         subscriber.unsubscribe();
-        delete this.subscribeCache[keyString];
+        delete this.#subscribeCache[cacheKey];
       }
     }.bind(this);
   }

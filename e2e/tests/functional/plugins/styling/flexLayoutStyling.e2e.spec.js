@@ -32,9 +32,9 @@ const setBorderColor = '#ff00ff';
 const setBackgroundColor = '#5b0f00';
 const setTextColor = '#e6b8af';
 const defaultFrameBorderColor = '#e6b8af'; //default border color
-const defaultBorderTargetColor = '#aaaaaa';
-const defaultTextColor = '#aaaaaa'; // default text color
-const inheritedColor = '#aaaaaa'; // inherited from the body style
+const defaultBorderTargetColor = '#acacac';
+const defaultTextColor = '#acacac'; // default text color
+const inheritedColor = '#acacac'; // inherited from the body style
 const pukeGreen = '#6aa84f'; //Ugliest green known to man
 const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 
@@ -397,8 +397,8 @@ test.describe('Flexible Layout styling', () => {
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
     );
     // Save Flexible Layout
-    await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Reload page and verify that styles persist
     await page.reload({ waitUntil: 'domcontentloaded' });

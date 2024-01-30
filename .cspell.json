@@ -493,7 +493,8 @@
     "WCAG",
     "stackedplot",
     "Andale",
-    "checksnapshots"
+    "checksnapshots",
+    "specced"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
