@@ -19,42 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Tabs from './tabs.js';
+/*
+ * This test suite is dedicated to testing the preview plugin.
+ */
 
-export default function plugin(options) {
-  return function install(openmct) {
-    const eagerLoad = options?.eagerLoad ?? false;
+import { test } from '../../../../pluginFixtures.js';
 
-    openmct.objectViews.addProvider(new Tabs(openmct));
-
-    openmct.types.addType('tabs', {
-      name: 'Tabs View',
-      description: 'Quickly navigate between multiple objects of any type using tabs.',
-      creatable: true,
-      cssClass: 'icon-tabs-view',
-      initialize(domainObject) {
-        domainObject.composition = [];
-        domainObject.keep_alive = eagerLoad;
-      },
-      form: [
-        {
-          key: 'keep_alive',
-          name: 'Eager Load Tabs',
-          control: 'toggleSwitch',
-          options: [
-            {
-              name: 'True',
-              value: true
-            },
-            {
-              name: 'False',
-              value: false
-            }
-          ],
-          required: true,
-          cssClass: 'l-input'
-        }
-      ]
-    });
-  };
-}
+test.describe('Preview mode', () => {
+  test.fixme('all context menu items are available for a telemetry table', async ({ page }) => {
+    // compare the context menu options when viewing a telemetry table directly
+    // vs when it is presented in preview mode (e.g. edit mode is enabled and the table is clicked on from the tree)
+  });
+});

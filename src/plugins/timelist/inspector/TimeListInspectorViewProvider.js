@@ -28,7 +28,7 @@ import TimelistPropertiesView from './TimelistPropertiesView.vue';
 export default function TimeListInspectorViewProvider(openmct) {
   return {
     key: 'timelist-inspector',
-    name: 'Timelist Inspector View',
+    name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
         return false;

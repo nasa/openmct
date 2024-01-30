@@ -136,7 +136,11 @@ test.describe('Gauge', () => {
     // TODO: Verify changes in the UI
   });
 
-  test('Gauge does not display NaN when data not available', async ({ page }) => {
+  test.fixme('Gauge does not display NaN when data not available', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7421'
+    });
     // Create a Gauge
     const gauge = await createDomainObjectWithDefaults(page, {
       type: 'Gauge'

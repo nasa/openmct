@@ -108,6 +108,11 @@ export default {
       this.addExistingViewBackToParent();
     }
   },
+  updated() {
+    // FIXME: fixes a problem where the some context menu items are not available when in Preview Mode
+    // see https://github.com/nasa/openmct/issues/7158
+    this.getActionsCollection(this.view);
+  },
   methods: {
     clear() {
       if (this.view) {

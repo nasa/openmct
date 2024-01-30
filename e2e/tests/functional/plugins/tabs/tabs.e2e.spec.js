@@ -24,13 +24,18 @@ import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Tabs View', () => {
-  test('Renders tabbed elements', async ({ page }) => {
+  let tabsView;
+  let table;
+  let notebook;
+  let sineWaveGenerator;
+
+  test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const tabsView = await createDomainObjectWithDefaults(page, {
+    tabsView = await createDomainObjectWithDefaults(page, {
       type: 'Tabs View'
     });
-    const table = await createDomainObjectWithDefaults(page, {
+    table = await createDomainObjectWithDefaults(page, {
       type: 'Telemetry Table',
       parent: tabsView.uuid
     });
@@ -38,16 +43,18 @@ test.describe('Tabs View', () => {
       type: 'Event Message Generator',
       parent: table.uuid
     });
-    const notebook = await createDomainObjectWithDefaults(page, {
+    notebook = await createDomainObjectWithDefaults(page, {
       type: 'Notebook',
       parent: tabsView.uuid
     });
-    const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
+    sineWaveGenerator = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: tabsView.uuid
     });
+  });
 
-    page.goto(tabsView.url);
+  test('Renders tabbed elements', async ({ page }) => {
+    await page.goto(tabsView.url);
 
     // select first tab
     await page.getByLabel(`${table.name} tab`, { exact: true }).click();
@@ -84,5 +91,31 @@ test.describe('Tabs View', () => {
 
     // no canvas (i.e., sine wave generator) in the document should be visible
     await expect(page.locator('canvas[id=webglContext]')).toBeHidden();
+  });
+});
+
+test.describe('Tabs View CRUD', () => {
+  let tabsView;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    tabsView = await createDomainObjectWithDefaults(page, {
+      type: 'Tabs View'
+    });
+  });
+
+  test('Eager Load Tabs is the default and then can be toggled off', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7198'
+    });
+    await page.goto(tabsView.url);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+    await expect(await page.getByLabel('Eager Load Tabs')).not.toBeChecked();
+    await page.getByLabel('Eager Load Tabs').setChecked(true);
+    await expect(await page.getByLabel('Eager Load Tabs')).toBeChecked();
   });
 });
