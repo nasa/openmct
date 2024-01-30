@@ -90,17 +90,17 @@ export default {
     onDismiss() {
       this.$emit('dismiss');
     },
-    async onChangeStatus(status) {
+    async onChangeStatus(role) {
       if (!this.openmct.user.status.canSetMissionStatus()) {
-        this.openmct.notifications.error('Selected role is ineligible to set mission status');
+        this.openmct.notifications.error('Selected user role is ineligible to set mission status');
 
         return;
       }
 
       if (this.missionRoleStatusMap !== undefined) {
-        const statusObject = this.findOptionByKey(this.missionRoleStatusMap[status]);
+        const statusObject = this.findOptionByKey(this.missionRoleStatusMap[role]);
 
-        const result = await this.openmct.user.status.setStatusForMissionRole(status, statusObject);
+        const result = await this.openmct.user.status.setStatusForMissionRole(role, statusObject);
         if (result === true) {
           this.openmct.notifications.info('Successfully set mission status');
         } else {
