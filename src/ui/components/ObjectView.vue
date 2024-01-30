@@ -131,7 +131,10 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
-    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
+    this.visibilityObserver = new VisibilityObserver(
+      this.$refs.objectViewWrapper,
+      this.openmct.element
+    );
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
