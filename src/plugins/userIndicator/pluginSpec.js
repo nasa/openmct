@@ -75,7 +75,7 @@ describe('The User Indicator plugin', () => {
     it('exists', () => {
       userIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'user-indicator'
-      ).component;
+      ).vueComponent;
 
       const hasClockIndicator = userIndicator !== null && userIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
@@ -89,7 +89,7 @@ describe('The User Indicator plugin', () => {
 
           userIndicator = openmct.indicators.indicatorObjects.find(
             (indicator) => indicator.key === 'user-indicator'
-          ).component;
+          ).vueComponent;
 
           expect(userIndicator).toBeDefined();
           expect(userIndicator).not.toBeNull();
