@@ -67,8 +67,8 @@ const activityStates = [
     label: 'Aborted'
   },
   {
-    key: 'cancelled',
-    label: 'Cancelled'
+    key: 'skipped',
+    label: 'Skipped'
   }
 ];
 
