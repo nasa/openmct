@@ -21,22 +21,24 @@
  *****************************************************************************/
 
 .c-indicator {
-    &:before {
-      // Indicator icon
-      color: $colorKey;
-    }
+  &:before {
+    // Indicator icon
+    color: $colorKey;
+  }
 
-    &--clickable {
+  &--user {
+    max-width: max-content;
+    &.clickable {
       cursor: pointer;
-      max-width: 250px;
 
       @include hover() {
         background: $colorIndicatorBgHov;
       }
     }
   }
+}
 
-  $statusCountWidth: 30px;
+$statusCountWidth: 30px;
 
 .c-user-control-panel {
   @include menuOuter();
@@ -71,7 +73,9 @@
     column-gap: $interiorMargin;
     text-transform: uppercase;
 
-    > * { flex: 0 0 auto; }
+    > * {
+      flex: 0 0 auto;
+    }
 
     [class*='title'] {
       flex: 1 1 auto;
@@ -175,13 +179,13 @@
     text-align: center;
 
     &.--is-go {
-      $c: #2C7527;
+      $c: #2c7527;
       background: $c;
       color: white;
     }
 
     &.--is-no-go {
-      $c: #FBC147;
+      $c: #fbc147;
       background: $bg;
       border: 1px solid $c;
       color: $c;

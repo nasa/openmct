@@ -24,7 +24,7 @@
   <div
     ref="userIndicatorRef"
     class="c-indicator c-indicator--user icon-person"
-    :class="canSetMissionStatus ? 'c-indicator--clickable' : ''"
+    :class="canSetMissionStatus ? 'clickable' : ''"
     v-bind="$attrs"
     @click.stop="togglePopup"
   >
@@ -33,13 +33,14 @@
       <button v-if="availableRoles?.length > 1" @click.stop="promptForRoleSelection">
         Change Role
       </button>
+      <button v-if="canSetMissionStatus" @click.stop="togglePopup">Mission Status</button>
     </span>
   </div>
   <Teleport to="body">
     <div v-show="isPopupVisible" ref="popupRef" class="c-user-control-panel" :style="popupStyle">
       <Suspense>
         <template #default>
-          <MissionStatusPopup v-show="canSetMissionStatus" @dismiss="togglePopup" />
+          <MissionStatusPopup v-if="canSetMissionStatus" @dismiss="togglePopup" />
         </template>
         <template #fallback>
           <div>Loading...</div>
