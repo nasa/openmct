@@ -202,12 +202,15 @@ export default {
       });
     }
   },
-  mounted() {
-    this.isEditing = this.openmct.editor.isEditing();
+  created() {
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
+  },
+  mounted() {
+    this.isEditing = this.openmct.editor.isEditing();
 
     this.getPlanDataAndSetConfig(this.domainObject);
     this.getActivityStates();
@@ -230,7 +233,6 @@ export default {
 
     this.openmct.editor.on('isEditing', this.setEditState);
 
-    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
     this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
 
     if (this.composition) {

@@ -137,11 +137,6 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      timestamp: this.openmct.time.now()
-    };
-  },
   computed: {
     countdownClass() {
       let cssClass = '';
@@ -248,7 +243,7 @@ export default {
       );
     }
   },
-  mounted() {
+  created() {
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
