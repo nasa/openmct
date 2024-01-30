@@ -305,10 +305,10 @@ export default {
       });
     },
     async getActivityStates() {
-      this.activityStatesObject = await this.openmct.objects.get('activity-states');
-      this.setActivityStates(this.activityStatesObject);
+      const activityStatesObject = await this.openmct.objects.get('activity-states');
+      this.setActivityStates(activityStatesObject);
       this.stopObservingActivityStatesObject = this.openmct.objects.observe(
-        this.activityStatesObject,
+        activityStatesObject,
         '*',
         this.setActivityStates
       );
@@ -420,9 +420,7 @@ export default {
           return;
         }
         // Create new objects so Vue 3 can detect any changes
-        this.planActivities = this.planActivities.concat(
-          JSON.parse(JSON.stringify(this.planData[key]))
-        );
+        this.planActivities.push(...this.planData[key]);
       });
     },
 
