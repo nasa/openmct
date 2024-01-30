@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
