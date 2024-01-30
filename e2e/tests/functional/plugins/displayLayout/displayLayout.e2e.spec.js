@@ -161,6 +161,13 @@ test.describe('Display Layout', () => {
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+
+    // ensure we can right click on the alpha-numeric widget and view historical data
+    await page.getByLabel('Sine', { exact: true }).click({
+      button: 'right'
+    });
+    await page.getByLabel('View Historical Data').click();
+    await expect(page.getByLabel('Plot Container Style Target')).toBeVisible();
   });
   test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({
     page

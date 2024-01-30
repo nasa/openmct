@@ -493,6 +493,8 @@
     "WCAG",
     "stackedplot",
     "Andale",
+    "checksnapshots",
+    "specced",
     "composables"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],

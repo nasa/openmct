@@ -24,7 +24,7 @@ import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../appA
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Tabs View', () => {
-  test('Renders tabbed elements nicely', async ({ page }) => {
+  test('Renders tabbed elements only when visible', async ({ page }) => {
     // Code to hook into the requestAnimationFrame function and log each call
     let animationCalls = [];
     await page.exposeFunction('logCall', (callCount) => {
@@ -64,24 +64,24 @@ test.describe('Tabs View', () => {
     page.goto(tabsView.url);
 
     // select first tab
-    await page.getByLabel(`${table.name} tab`).click();
+    await page.getByLabel(`${table.name} tab`, { exact: true }).click();
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
     // select second tab
-    await page.getByLabel(`${notebook.name} tab`).click();
+    await page.getByLabel(`${notebook.name} tab`, { exact: true }).click();
 
     // expect notebook visible
     await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
 
     // select third tab
-    await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
+    await page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true }).click();
 
     // ensure sine wave generator visible
     expect(await page.locator('.c-plot').isVisible()).toBe(true);
 
     // now select notebook and clear animation calls
-    await page.getByLabel(`${notebook.name} tab`).click();
+    await page.getByLabel(`${notebook.name} tab`, { exact: true }).click();
     animationCalls = [];
     // expect notebook visible
     await expect(page.locator('.c-notebook__drag-area')).toBeVisible();
@@ -89,7 +89,7 @@ test.describe('Tabs View', () => {
 
     // select sine wave generator and clear animation calls
     animationCalls = [];
-    await page.getByLabel(`${sineWaveGenerator.name} tab`).click();
+    await page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true }).click();
 
     // ensure sine wave generator visible
     await waitForPlotsToRender(page);
