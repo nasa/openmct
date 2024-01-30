@@ -24,7 +24,7 @@ import percySnapshot from '@percy/playwright';
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
-import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 
@@ -34,7 +34,7 @@ const examplePlanSmall = JSON.parse(
 
 const snapshotScope = '.l-shell__pane-main .l-pane__contents';
 
-test.describe('Visual - Planning @a11y', () => {
+test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -99,7 +99,8 @@ test.describe('Visual - Planning @a11y', () => {
       scope: snapshotScope
     });
   });
-  test.afterEach(async ({ page }, testInfo) => {
-    await scanForA11yViolations(page, testInfo.title);
-  });
+  // Skipping for https://github.com/nasa/openmct/issues/7421
+  // test.afterEach(async ({ page }, testInfo) => {
+  //   await scanForA11yViolations(page, testInfo.title);
+  // });
 });

@@ -283,8 +283,8 @@
     display: flex;
     padding: $interiorMarginSm $interiorMarginSm $interiorMarginSm $interiorMargin;
 
-    &:hover {
-        background: rgba($colorBodyFg, 0.3);
+    @include hover() {
+        background: $colorDiscreteItemBgHov;
     }
 
     &.is-selected {
@@ -299,7 +299,6 @@
                         background: $colorInputBgHov;
                     }
                 }
-
             }
         }
     }
@@ -343,10 +342,6 @@
         > * + * {
             margin-top: $interiorMarginSm;
         }
-
-        [class*='created-'] {
-            color: pullForward($colorBodyFg, 20%);
-        }
     }
 
     &__time {
@@ -364,6 +359,11 @@
         > [class*='__'] + [class*='__'] {
             margin-top: $interiorMarginSm;
         }
+    }
+
+    &__text,
+    &__input {
+        color: $colorBodyFgEm !important;
     }
 
     &__text {
