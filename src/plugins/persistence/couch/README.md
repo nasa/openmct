@@ -162,8 +162,7 @@ sh ./src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.s
               additionalNamespaces: [],
               readOnly: false,
               useDesignDocuments: false,
-              indicator: true,
-              omitRoot: false
+              indicator: true
             }
           ]
         })
@@ -192,9 +191,6 @@ When installing the CouchDB plugin for OpenMCT, you can specify a list of databa
 - `indicator`: A boolean to specify whether an indicator should show the status of this CouchDB connection in the OpenMCT interface.
   - Example: `true`
 
-- `omitRoot`: A boolean determining whether a root object should be created if it doesn't exist. If using the `My Items` plugin, this should be set to `true` as `My Items` will create the root object. If set to `false`, a root object with the label of `namespace` will be created.
-  - Example: `true`
-
 Note: If using the `exampleTags` plugin with non-blank namespaces, you'll need to configure it point to a writable database. For example:
 
 ```js
@@ -202,6 +198,13 @@ openmct.install(
         openmct.plugins.example.ExampleTags({ namespaceToSaveAnnotations: 'openmct-sandbox' })
       );
 ```
+
+Note: If using the `MyItems` plugin, be sure to configure a root for each writable namespace. E.g., if you have two namespaces called `apple-namespace` and `pear-namespace`:
+```js
+      openmct.install(openmct.plugins.MyItems('Apple Items', 'apple-namespace'));
+      openmct.install(openmct.plugins.MyItems('Pear Items', 'pear-namespace'));
+```
+This will create a root object with the id of `mine` in both namespaces upon load if not already created.
 
 # Validating a successful Installation
 

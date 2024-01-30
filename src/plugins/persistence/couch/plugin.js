@@ -38,8 +38,7 @@ export default function CouchPlugin(options) {
           additionalNamespaces: [LEGACY_SPACE],
           readOnly: false,
           useDesignDocuments: false,
-          indicator: true,
-          omitRoot: true
+          indicator: true
         }
       ];
     } else if (!unnnormalizedOptions.databases) {
@@ -50,8 +49,7 @@ export default function CouchPlugin(options) {
           additionalNamespaces: [LEGACY_SPACE],
           readOnly: false,
           useDesignDocuments: unnnormalizedOptions.useDesignDocuments,
-          indicator: true,
-          omitRoot: true
+          indicator: true
         }
       ];
     } else {
