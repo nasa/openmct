@@ -142,7 +142,7 @@ export default {
   methods: {
     async getUserInfo() {
       const user = await this.openmct.user.getCurrentUser();
-      this.canSetMissionStatus = /*await this.openmct.user.status.canSetMissionStatus();*/ true;
+      this.canSetMissionStatus = await this.openmct.user.status.canSetMissionStatus();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
       this.loggedIn = this.openmct.user.isLoggedIn();
