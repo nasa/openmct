@@ -61,6 +61,9 @@ export default function ActivityInspectorViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        showTab() {
+          return true;
+        },
         priority: function () {
           return openmct.priority.HIGH + 1;
         },
