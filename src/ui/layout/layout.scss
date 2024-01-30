@@ -178,7 +178,6 @@
     }
   }
 
-  &__head,
   &__status {
     flex: 0 0 auto;
     display: flex;
@@ -200,12 +199,11 @@
   &__head {
     align-items: center;
     background: $colorHeadBg;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: min-content 1fr 3fr repeat(3, min-content);
+    grid-column-gap: $interiorMargin;
+    min-height: 34px;
     padding: $interiorMargin $interiorMargin + 2;
-
-    > [class*='__'] + [class*='__'] {
-      margin-left: $interiorMargin;
-    }
 
     .l-shell__head__collapse-button {
       color: $colorBtnMajorBg;
@@ -228,8 +226,6 @@
     &-section {
       // Subdivides elements across the head
       display: flex;
-      flex: 0 1 auto;
-      padding: 0 $interiorMargin;
     }
 
     &--expanded {
@@ -244,25 +240,21 @@
     border-right: $brdr;
     border-left: $brdr;
     align-items: start;
-  }
-
-  &__create-button,
-  &__app-logo {
-    flex: 0 0 auto;
-  }
-
-  &__create-button {
-    margin-right: $interiorMarginLg;
+    $p: $interiorMarginSm;
+    padding-left: $p; padding-right: $p;
   }
 
   &__indicators {
-    flex: 1 1 auto;
     flex-wrap: wrap;
+    font-size: 11px;
     justify-content: flex-end;
 
-    .c-indicator .label {
-      font-size: 0.9em;
+    .l-shell__head--expanded & {
+      // Force elements to wrap down when width constrained
+      height: 24px;
+      overflow: hidden;
     }
+
   }
 
   /******************************* MAIN AREA */
@@ -304,6 +296,15 @@
       > .l-pane {
         padding-top: 0;
         padding-bottom: 0;
+      }
+
+      .l-pane__expand-button__label {
+        // Add a plus icon before the label
+        &:before {
+          font-family: symbolsfont;
+          content: $glyph-icon-plus;
+          display: inline-block;
+        }
       }
     }
 
@@ -371,11 +372,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  //[class*="__"] {
-  //    // Removes extraneous horizontal white space
-  //    display: inline-flex;
-  //}
 
   > * + * {
     margin-left: $interiorMarginSm;

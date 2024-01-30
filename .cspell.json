@@ -493,8 +493,9 @@
     "WCAG",
     "stackedplot",
     "Andale",
-    "unnnormalized"
-    "checksnapshots"
+    "unnnormalized",
+    "checksnapshots",
+    "specced"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [
