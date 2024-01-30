@@ -31,13 +31,13 @@ export default function MyItemsPlugin(
   priority = undefined
 ) {
   return function install(openmct) {
-    const identifier = createMyItemsIdentifier(namespace);
+    const identifierObject = createMyItemsIdentifier(namespace);
 
     if (priority === undefined) {
       priority = openmct.priority.LOW;
     }
 
-    openmct.objects.addGetInterceptor(myItemsInterceptor(openmct, identifier, name));
-    openmct.objects.addRoot(identifier, priority);
+    openmct.objects.addGetInterceptor(myItemsInterceptor({ openmct, identifierObject, name }));
+    openmct.objects.addRoot(identifierObject, priority);
   };
 }

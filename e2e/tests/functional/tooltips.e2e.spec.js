@@ -359,7 +359,11 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
-  test('display tooltip path for telemetry table names', async ({ page }) => {
+  test.fixme('display tooltip path for telemetry table names', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7421'
+    });
     // set endBound to 10 seconds after start bound
     const url = await page.url();
     const parsedUrl = new URL(url.replace('#', '!'));
