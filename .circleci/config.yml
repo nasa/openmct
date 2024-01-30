@@ -105,7 +105,11 @@ jobs:
           node-version: <<parameters.node-version>>
       - browser-tools/install-chrome:
           replace-existing: false
-      - run: npm run test
+      - run:
+          command: |
+            mkdir dist/reports/tests/
+            TESTFILES=$(circleci tests glob "src/**/*Spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
       - run: npm run cov:unit:publish
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
