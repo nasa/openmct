@@ -61,7 +61,6 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
   // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
-  builder.disableRules(['color-contrast']);
   const accessibilityScanResults = await builder.analyze();
 
   // Assert that no violations should be present

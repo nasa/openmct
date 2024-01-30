@@ -237,18 +237,23 @@ tr {
 
 .is-event {
   &--purple {
+    background-color: $colorEventPurpleBg !important;
     color: $colorEventPurpleFg !important;
   }
   &--red {
+    background-color: $colorEventRedBg !important;
     color: $colorEventRedFg !important;
   }
   &--orange {
+    background-color: $colorEventOrangeBg !important;
     color: $colorEventOrangeFg !important;
   }
   &--yellow {
+    background-color: $colorEventYellowBg !important;
     color: $colorEventYellowFg !important;
   }
   &--no-style {
-    color: inherit;
+    background-color: $colorBodyBg !important;
+    color: $colorBodyFg !important;
   }
 }
