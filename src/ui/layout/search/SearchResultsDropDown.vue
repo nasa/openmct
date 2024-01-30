@@ -21,7 +21,12 @@
 -->
 
 <template>
-  <div v-show="resultsShown" role="dialog" aria-label="Search Results Dropdown" class="c-gsearch__dropdown">
+  <div
+    v-show="resultsShown"
+    role="dialog"
+    aria-label="Search Results Dropdown"
+    class="c-gsearch__dropdown"
+  >
     <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
       <div
         v-if="objectResults?.length"
@@ -59,10 +64,10 @@
       </div>
       <div
         v-if="
-            !searchLoading &&
-            (!annotationResults || !annotationResults.length) &&
-            (!objectResults || !objectResults.length)
-          "
+          !searchLoading &&
+          (!annotationResults || !annotationResults.length) &&
+          (!objectResults || !objectResults.length)
+        "
         class="c-gsearch__result-pane-msg"
       >
         <div class="hint">No results found</div>
