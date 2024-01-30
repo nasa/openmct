@@ -136,7 +136,7 @@ jobs:
           command: |
             mkdir test-results
             TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
-            echo "$TESTFILES" | circleci tests run --command="xargs npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep-invert \"@unstable|@couchdb|@generatedata\" --reporter=junit --verbose --split-by=timings"
+            echo "$TESTFILES" | circleci tests run --command="xargs npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep-invert \"@unstable|@couchdb|@generatedata\" --reporter=junit" --verbose --split-by=timings"
       #- run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - when:
           condition:
