@@ -29,7 +29,7 @@ import { isRef, onBeforeMount, onBeforeUnmount, onMounted, watch } from 'vue';
  * This is a Vue composition API utility function.
  * @param {EventTarget} target - The target to attach the event listener to.
  * @param {string} event - The name of the event to listen for.
- * @param {Function} callback - The callback function to execute when the event is triggered.
+ * @param {Function} handler - The callback function to execute when the event is triggered.
  */
 export function useEventListener(target, event, handler) {
   const addListener = (el) => {
