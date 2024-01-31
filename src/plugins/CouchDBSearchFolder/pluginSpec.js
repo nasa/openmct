@@ -38,7 +38,6 @@ describe('the plugin', function () {
 
     let couchPlugin = openmct.plugins.CouchDB(testPath);
     openmct.install(couchPlugin);
-
     openmct.install(
       new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
         selector: {

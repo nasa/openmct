@@ -354,6 +354,9 @@ export default class ObjectAPI {
   isPersistable(idOrKeyString) {
     let identifier = utils.parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
+    if (provider?.isReadOnly) {
+      return !provider.isReadOnly();
+    }
 
     return provider !== undefined && provider.create !== undefined && provider.update !== undefined;
   }

@@ -80,7 +80,7 @@
     keepAliveTimer = setTimeout(self.listenForChanges, keepAliveTime);
 
     if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
-      console.debug('⇿ Opening CouchDB change feed connection ⇿');
+      console.debug(`⇿ Opening CouchDB change feed connection for ${changesFeedUrl} ⇿`);
       couchEventSource = new EventSource(changesFeedUrl);
       couchEventSource.onerror = self.onerror;
       couchEventSource.onopen = self.onopen;
@@ -88,7 +88,7 @@
       // start listening for events
       couchEventSource.addEventListener('message', self.onCouchMessage);
       connected = true;
-      console.debug('⇿ Opened connection ⇿');
+      console.debug(`⇿ Opened connection to ${changesFeedUrl} ⇿`);
     }
   };
 

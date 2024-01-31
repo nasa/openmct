@@ -51,6 +51,10 @@ class CouchSearchProvider {
     return this.supportedSearchTypes.includes(searchType);
   }
 
+  isReadOnly() {
+    return true;
+  }
+
   search(query, abortSignal, searchType) {
     if (searchType === this.searchTypes.OBJECTS) {
       return this.searchForObjects(query, abortSignal);

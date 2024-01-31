@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MY_ITEMS_KEY } from './createMyItemsIdentifier.js';
-
-function myItemsInterceptor(openmct, identifierObject, name) {
+function myItemsInterceptor({ openmct, identifierObject, name }) {
   const myItemsModel = {
     identifier: identifierObject,
     name,
@@ -33,7 +31,10 @@ function myItemsInterceptor(openmct, identifierObject, name) {
 
   return {
     appliesTo: (identifier) => {
-      return identifier.key === MY_ITEMS_KEY;
+      return (
+        identifier.key === myItemsModel.identifier.key &&
+        identifier.namespace === myItemsModel.identifier.namespace
+      );
     },
     invoke: (identifier, object) => {
       if (!object || openmct.objects.isMissing(object)) {

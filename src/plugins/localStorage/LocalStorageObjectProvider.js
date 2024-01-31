@@ -74,6 +74,10 @@ export default class LocalStorageObjectProvider {
     this.localStorage.setItem(this.spaceKey, JSON.stringify(space));
   }
 
+  isReadOnly() {
+    return false;
+  }
+
   /**
    * @private
    */
