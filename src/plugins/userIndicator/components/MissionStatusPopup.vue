@@ -92,9 +92,7 @@ export default {
     },
     async onChangeStatus(action) {
       if (!this.openmct.user.status.canSetMissionStatus()) {
-        this.openmct.notifications.error(
-          'Selected user action is ineligible to set mission status'
-        );
+        this.openmct.notifications.error('Selected user role is ineligible to set mission status');
 
         return;
       }
