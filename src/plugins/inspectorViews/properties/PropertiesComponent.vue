@@ -24,16 +24,14 @@
   <div>
     <div class="c-inspector__properties c-inspect-properties">
       <div class="c-inspect-properties__header">Details</div>
-      <table v-if="hasDetails" class="c-table c-lad-table">
-        <tbody class="c-table__body">
-          <Component
-            :is="getComponent(detail)"
-            v-for="detail in details"
-            :key="detail.name"
-            :detail="detail"
-          />
-        </tbody>
-      </table>
+      <template v-if="hasDetails">
+        <Component
+          :is="getComponent(detail)"
+          v-for="detail in details"
+          :key="detail.name"
+          :detail="detail"
+        />
+      </template>
       <div v-else class="c-inspect-properties__row--span-all">
         {{ noDetailsMessage }}
       </div>
