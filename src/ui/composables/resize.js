@@ -25,6 +25,12 @@ import { onBeforeUnmount, reactive } from 'vue';
 import throttle from '../../utils/throttle.js';
 import { useEventListener } from './event.js';
 
+/**
+ * A composable which provides a function to begin observing the size of the passed-in element,
+ * and a reactive object containing the width and height of the observed element. The ResizeObserver
+ * is automatically disconnected before the component is unmounted.
+ * @returns {{size: {width: number, height: number}, startObserving: (element: HTMLElement) => void}}
+ */
 export function useResizeObserver() {
   const size = reactive({ width: 0, height: 0 });
   let observer;
@@ -54,13 +60,19 @@ export function useResizeObserver() {
   return { size, startObserving };
 }
 
-export function useWindowResize() {
+/**
+ * A composable function which can be used to listen to and handle window resize events.
+ * Throttles the resize event to prevent performance issues.
+ * @param {number} [throttleMs=100] The number of milliseconds to throttle the resize event.
+ * @returns {Ref<{ width: number, height: number }>} windowSize
+ */
+export function useWindowResize(throttleMs = 100) {
   const windowSize = reactive({ width: window.innerWidth, height: window.innerHeight });
 
   const handleResize = throttle(() => {
     windowSize.width = window.innerWidth;
     windowSize.height = window.innerHeight;
-  }, 100);
+  }, throttleMs);
 
   useEventListener(window, 'resize', handleResize);
 

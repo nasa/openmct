@@ -116,6 +116,11 @@ export default class StatusAPI extends EventEmitter {
     }
   }
 
+  /**
+   * Fetch the current status for the given mission action
+   * @param {MissionAction} action
+   * @returns {string}
+   */
   getStatusForMissionAction(action) {
     const provider = this.#userAPI.getProvider();
 
@@ -127,8 +132,8 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
-   * Fetch the list of possible mission status options
-   * @returns {Promise<MissionStatusOption[]>} the current mission status
+   * Fetch the list of possible mission status options (GO, NO-GO, etc.)
+   * @returns {Promise<MissionStatusOption[]>} the complete list of possible mission statuses
    */
   async getPossibleMissionActionStatuses() {
     const provider = this.#userAPI.getProvider();
@@ -144,7 +149,7 @@ export default class StatusAPI extends EventEmitter {
 
   /**
    * Fetch the list of possible mission actions
-   * @returns {Promise<MissionAction[]>} the list of possible mission actions
+   * @returns {Promise<string[]>} the list of possible mission actions
    */
   async getPossibleMissionActions() {
     const provider = this.#userAPI.getProvider();
@@ -347,9 +352,11 @@ export default class StatusAPI extends EventEmitter {
 /**
  * @typedef {import('./UserProvider')} UserProvider
  */
+
 /**
  * @typedef {import('./StatusUserProvider')} StatusUserProvider
  */
+
 /**
  * The PollQuestion type
  * @typedef {Object} PollQuestion
