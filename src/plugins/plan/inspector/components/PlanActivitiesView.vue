@@ -129,7 +129,7 @@ export default {
       this.selectedActivities = [];
       selection.forEach((selectionItem) => {
         if (selectionItem[0].context.type === 'activity') {
-          const activity = selectionItem[0].context.activity;
+          const activity = { ...selectionItem[0].context.activity };
           if (activity) {
             activity.key = activity.id ?? activity.name;
             this.selectedActivities.push(activity);

@@ -495,7 +495,8 @@
     "Andale",
     "unnnormalized",
     "checksnapshots",
-    "specced"
+    "specced",
+    "countup"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
   "ignorePaths": [

@@ -21,14 +21,55 @@
 -->
 
 <template>
-  <div ref="timelistHolder" class="c-timelist">
-    <list-view
-      :items="planActivities"
-      :header-items="headerItems"
-      :default-sort="defaultSort"
-      class="sticky"
-      @item-selection-changed="setSelectionForActivity"
-    />
+  <div ref="timelistHolder" :class="listTypeClass">
+    <template v-if="isExpanded">
+      <expanded-view-item
+        v-for="item in sortedItems"
+        :key="item.key"
+        :name="item.name"
+        :start="item.start"
+        :end="item.end"
+        :duration="item.duration"
+        :countdown="item.countdown"
+        :css-class="item.cssClass"
+        :item-properties="itemProperties"
+        :execution-state="persistedActivityStates[item.id]"
+        @click.stop="setSelectionForActivity(item, $event.currentTarget)"
+      >
+      </expanded-view-item>
+    </template>
+    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+      <table class="c-table__body js-table__body">
+        <thead class="c-table__header">
+          <tr>
+            <list-header
+              v-for="headerItem in headerItems"
+              :key="headerItem.property"
+              :direction="
+                defaultSort.property === headerItem.property
+                  ? defaultSort.defaultDirection
+                  : headerItem.defaultDirection
+              "
+              :is-sortable="headerItem.isSortable"
+              :aria-label="headerItem.name"
+              :title="headerItem.name"
+              :property="headerItem.property"
+              :current-sort="defaultSort.property"
+              @sort="sort"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <list-item
+            v-for="item in sortedItems"
+            :key="item.key"
+            :item="item"
+            :item-properties="itemProperties"
+            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
+          />
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -37,27 +78,36 @@ import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import ListView from '../../ui/components/List/ListView.vue';
+import ListHeader from '../../ui/components/List/ListHeader.vue';
+import ListItem from '../../ui/components/List/ListItem.vue';
 import { getPreciseDuration } from '../../utils/duration.js';
 import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan/util.js';
 import { SORT_ORDER_OPTIONS } from './constants.js';
+import ExpandedViewItem from './ExpandedViewItem.vue';
 
 const SCROLL_TIMEOUT = 10000;
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const SAME_DAY_PRECISION_SECONDS = 'HH:mm:ss';
+
 const CURRENT_CSS_SUFFIX = '--is-current';
 const PAST_CSS_SUFFIX = '--is-past';
 const FUTURE_CSS_SUFFIX = '--is-future';
+
 const headerItems = [
   {
     defaultDirection: true,
     isSortable: true,
     property: 'start',
     name: 'Start Time',
-    format: function (value, object, key, openmct) {
+    format: function (value, object, key, openmct, options = {}) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value, TIME_FORMAT);
+      if (options.skipDateForToday) {
+        return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
+      } else {
+        return timeFormatter.format(value, TIME_FORMAT);
+      }
     }
   },
   {
@@ -65,30 +115,47 @@ const headerItems = [
     isSortable: true,
     property: 'end',
     name: 'End Time',
-    format: function (value, object, key, openmct) {
+    format: function (value, object, key, openmct, options = {}) {
       const timeFormat = openmct.time.timeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
-      return timeFormatter.format(value, TIME_FORMAT);
+      if (options.skipDateForToday) {
+        return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
+      } else {
+        return timeFormatter.format(value, TIME_FORMAT);
+      }
     }
   },
   {
     defaultDirection: false,
-    property: 'duration',
+    property: 'countdown',
     name: 'Time To/From',
-    format: function (value) {
+    format: function (value, object, key, openmct, options = {}) {
       let result;
       if (value < 0) {
-        result = `+${getPreciseDuration(Math.abs(value), {
+        const prefix = options.skipPrefix ? '' : '+';
+        result = `${prefix}${getPreciseDuration(Math.abs(value), {
           excludeMilliSeconds: true,
           useDayFormat: true
         })}`;
       } else if (value > 0) {
-        result = `-${getPreciseDuration(value, { excludeMilliSeconds: true, useDayFormat: true })}`;
+        const prefix = options.skipPrefix ? '' : '+';
+        result = `${prefix}${getPreciseDuration(value, {
+          excludeMilliSeconds: true,
+          useDayFormat: true
+        })}`;
       } else {
         result = 'Now';
       }
 
       return result;
+    }
+  },
+  {
+    defaultDirection: false,
+    property: 'duration',
+    name: 'Duration',
+    format: function (value, object, key, openmct) {
+      return `${getPreciseDuration(value, { excludeMilliSeconds: true, useDayFormat: true })}`;
     }
   },
   {
@@ -105,7 +172,9 @@ const defaultSort = {
 
 export default {
   components: {
-    ListView
+    ExpandedViewItem,
+    ListHeader,
+    ListItem
   },
   inject: ['openmct', 'domainObject', 'path', 'composition'],
   data() {
@@ -114,18 +183,42 @@ export default {
       viewBounds: undefined,
       height: 0,
       planActivities: [],
+      groups: [],
       headerItems: headerItems,
-      defaultSort: defaultSort
+      defaultSort: defaultSort,
+      isExpanded: false,
+      persistedActivityStates: {},
+      sortedItems: []
     };
   },
-  mounted() {
-    this.isEditing = this.openmct.editor.isEditing();
+  computed: {
+    listTypeClass() {
+      if (this.isExpanded) {
+        return 'c-timelist c-timelist--large';
+      }
+      return 'c-timelist';
+    },
+    itemProperties() {
+      return this.headerItems.map((headerItem) => {
+        return {
+          key: headerItem.property,
+          format: headerItem.format
+        };
+      });
+    }
+  },
+  created() {
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
+    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
+  },
+  mounted() {
+    this.isEditing = this.openmct.editor.isEditing();
 
     this.getPlanDataAndSetConfig(this.domainObject);
+    this.getActivityStates();
 
     this.unlisten = this.openmct.objects.observe(
       this.domainObject,
@@ -145,7 +238,6 @@ export default {
 
     this.openmct.editor.on('isEditing', this.setEditState);
 
-    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
     this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
 
     if (this.composition) {
@@ -163,6 +255,14 @@ export default {
 
     if (this.unlistenConfig) {
       this.unlistenConfig();
+    }
+
+    if (this.stopObservingPlan) {
+      this.stopObservingPlan();
+    }
+
+    if (this.stopObservingActivityStatesObject) {
+      this.stopObservingActivityStatesObject();
     }
 
     if (this.removeStatusListener) {
@@ -204,6 +304,18 @@ export default {
         sourceMap: this.domainObject.sourceMap
       });
     },
+    async getActivityStates() {
+      const activityStatesObject = await this.openmct.objects.get('activity-states');
+      this.setActivityStates(activityStatesObject);
+      this.stopObservingActivityStatesObject = this.openmct.objects.observe(
+        activityStatesObject,
+        '*',
+        this.setActivityStates
+      );
+    },
+    setActivityStates(activityStatesObject) {
+      this.persistedActivityStates = activityStatesObject.activities;
+    },
     getPlanDataAndSetConfig(mutatedObject) {
       this.getPlanData(mutatedObject);
       this.setViewFromConfig(mutatedObject.configuration);
@@ -215,6 +327,7 @@ export default {
         this.hideAll = false;
       } else {
         this.setSort();
+        this.isExpanded = configuration.isExpanded;
       }
       this.listActivities();
     },
@@ -232,7 +345,6 @@ export default {
     },
     addItem(domainObject) {
       this.planObjects = [domainObject];
-      this.resetPlanData();
       if (domainObject.type === 'plan') {
         this.getPlanDataAndSetConfig({
           ...this.domainObject,
@@ -240,15 +352,28 @@ export default {
           sourceMap: domainObject.sourceMap
         });
       }
+      //listen for changes to the plan
+      if (this.stopObservingPlan) {
+        this.stopObservingPlan();
+      }
+      this.stopObservingPlan = this.openmct.objects.observe(
+        this.planObjects[0],
+        '*',
+        this.handlePlanChange
+      );
     },
-    addToComposition(telemetryObject) {
+    handlePlanChange(planObject) {
+      this.getPlanData(planObject);
+      this.listActivities();
+    },
+    addToComposition(planObject) {
       if (this.planObjects.length > 0) {
-        this.confirmReplacePlan(telemetryObject);
+        this.confirmReplacePlan(planObject);
       } else {
-        this.addItem(telemetryObject);
+        this.addItem(planObject);
       }
     },
-    confirmReplacePlan(telemetryObject) {
+    confirmReplacePlan(planObject) {
       const dialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
         message: 'This action will replace the current plan. Do you want to continue?',
@@ -259,22 +384,22 @@ export default {
             callback: () => {
               const oldTelemetryObject = this.planObjects[0];
               this.removeFromComposition(oldTelemetryObject);
-              this.addItem(telemetryObject);
+              this.addItem(planObject);
               dialog.dismiss();
             }
           },
           {
             label: 'Cancel',
             callback: () => {
-              this.removeFromComposition(telemetryObject);
+              this.removeFromComposition(planObject);
               dialog.dismiss();
             }
           }
         ]
       });
     },
-    removeFromComposition(telemetryObject) {
-      this.composition.remove(telemetryObject);
+    removeFromComposition(planObject) {
+      this.composition.remove(planObject);
     },
     removeItem() {
       this.planObjects = [];
@@ -282,25 +407,28 @@ export default {
     },
     resetPlanData() {
       this.planData = {};
+      this.groups = [];
+      this.planActivities = [];
+      this.sortedItems = [];
     },
     getPlanData(domainObject) {
+      this.resetPlanData();
       this.planData = getValidatedData(domainObject);
-    },
-    listActivities() {
-      let groups = getValidatedGroups(this.domainObject, this.planData);
-      let activities = [];
-
-      groups.forEach((key) => {
+      this.groups = getValidatedGroups(this.domainObject, this.planData);
+      this.groups.forEach((key) => {
         if (this.planData[key] === undefined) {
           return;
         }
         // Create new objects so Vue 3 can detect any changes
-        activities = activities.concat(JSON.parse(JSON.stringify(this.planData[key])));
+        this.planActivities.push(...this.planData[key]);
       });
-      // filter activities first, then sort by start time
-      activities = activities.filter(this.filterActivities).sort(this.sortByStartTime);
-      activities = this.applyStyles(activities);
-      this.planActivities = [...activities];
+    },
+
+    listActivities() {
+      // filter activities first, then sort
+      const filteredItems = this.planActivities.filter(this.filterActivities);
+      const sortedItems = this.sortItems(filteredItems);
+      this.sortedItems = this.applyStyles(sortedItems);
       //We need to wait for the next tick since we need the height of the row from the DOM
       this.$nextTick(this.setScrollTop);
     },
@@ -405,11 +533,13 @@ export default {
         activity.key = uuid();
       }
 
+      activity.duration = activity.end - activity.start;
+
       if (activity.start < this.timestamp) {
         //if the activity start time has passed, display the time to the end of the activity
-        activity.duration = activity.end - this.timestamp;
+        activity.countdown = activity.end - this.timestamp;
       } else {
-        activity.duration = activity.start - this.timestamp;
+        activity.countdown = activity.start - this.timestamp;
       }
 
       return activity;
@@ -452,7 +582,7 @@ export default {
     },
     setScrollTop() {
       //The view isn't ready yet
-      if (!this.$el.parentElement) {
+      if (!this.$el.parentElement || this.isExpanded) {
         return;
       }
 
@@ -530,11 +660,12 @@ export default {
         defaultDirection: direction
       };
     },
-    sortByStartTime(a, b) {
-      const numA = parseInt(a.start, 10);
-      const numB = parseInt(b.start, 10);
-
-      return numA - numB;
+    sortItems(activities) {
+      let sortedItems = _.sortBy(activities, this.defaultSort.property);
+      if (!this.defaultSort.defaultDirection) {
+        sortedItems = sortedItems.reverse();
+      }
+      return sortedItems;
     },
     setStatus(status) {
       this.status = status;
@@ -542,6 +673,17 @@ export default {
     setEditState(isEditing) {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
+    },
+    sort(data) {
+      const property = data.property;
+      const direction = data.direction;
+
+      if (this.defaultSort.property === property) {
+        this.defaultSort.defaultDirection = !this.defaultSort.defaultDirection;
+      } else {
+        this.defaultSort.property = property;
+        this.defaultSort.defaultDirection = direction;
+      }
     },
     setSelectionForActivity(activity, element) {
       const multiSelect = false;

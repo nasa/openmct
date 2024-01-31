@@ -30,11 +30,26 @@
             These settings don't affect the view while editing, but will be applied after editing is
             finished.
           </div>
+          <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
+          <div class="c-inspect-properties__value">
+            <select
+              v-if="canEdit"
+              v-model="isExpanded"
+              aria-label="Display Style"
+              @change="updateExpandedView"
+            >
+              <option :key="'expanded-view-option-enabled'" :value="true">Expanded</option>
+              <option :key="'expanded-view-option-disabled'" :value="false">Compact</option>
+            </select>
+            <span v-else>{{ isExpanded ? 'Expanded' : 'Compact' }}</span>
+          </div>
+        </li>
+        <li class="c-inspect-properties__row">
           <div class="c-inspect-properties__label" title="Sort order of the timelist.">
             Sort Order
           </div>
-          <div v-if="canEdit" class="c-inspect-properties__value">
-            <select v-model="sortOrderIndex" @change="updateSortOrder()">
+          <div class="c-inspect-properties__value">
+            <select v-if="canEdit" v-model="sortOrderIndex" @change="updateSortOrder()">
               <option
                 v-for="(sortOrderOption, index) in sortOrderOptions"
                 :key="index"
@@ -43,9 +58,7 @@
                 {{ sortOrderOption.label }}
               </option>
             </select>
-          </div>
-          <div v-else class="c-inspect-properties__value">
-            {{ sortOrderOptions[sortOrderIndex].label }}
+            <span v-else>{{ sortOrderOptions[sortOrderIndex].label }}</span>
           </div>
         </li>
         <event-properties
@@ -89,7 +102,8 @@ export default {
       sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
       sortOrderOptions: SORT_ORDER_OPTIONS,
       eventTypes: EVENT_TYPES,
-      isEditing: this.openmct.editor.isEditing()
+      isEditing: this.openmct.editor.isEditing(),
+      isExpanded: this.domainObject.configuration.isExpanded || false
     };
   },
   computed: {
@@ -117,6 +131,9 @@ export default {
       const key = data.property;
       const value = data.value;
       this.updateProperty(key, value);
+    },
+    updateExpandedView() {
+      this.updateProperty('isExpanded', this.isExpanded);
     }
   }
 };

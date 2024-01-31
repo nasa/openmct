@@ -19,41 +19,312 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 .c-timelist {
-  & .nowMarker.hasCurrent {
-    height: 2px;
-    position: absolute;
-    z-index: 10;
-    background: cyan;
-    width: 100%;
-  }
-
-  .c-list-item {
-    /* Time Lists */
-
-    td {
-      $p: $interiorMarginSm;
-      padding-top: $p;
-      padding-bottom: $p;
+    & .nowMarker.hasCurrent {
+        height: 2px;
+        position: absolute;
+        z-index: 10;
+        background: cyan;
+        width: 100%;
     }
 
-    &.--is-current {
-      background-color: $colorCurrentBg;
-      border-top: 1px solid $colorCurrentBorder !important;
-      color: $colorCurrentFg;
+    .c-list-item {
+        /* Time Lists */
+
+        td {
+            $p: $interiorMarginSm;
+            padding-top: $p;
+            padding-bottom: $p;
+        }
+
+        &.--is-current {
+            background-color: $colorCurrentBg;
+            border-top: 1px solid $colorCurrentBorder !important;
+            color: $colorCurrentFgEm;
+        }
+
+        &.--is-future {
+            background-color: $colorFutureBg;
+            border-top-color: $colorFutureBorder !important;
+            color: $colorFutureFgEm;
+        }
+
+        &.--is-in-progress {
+            background-color: $colorInProgressBg;
+        }
+
+        &__value {
+            &.--duration {
+                width: 5%;
+            }
+        }
+    }
+}
+
+/**************************************************** LARGE TIME LIST */
+@mixin styleTliEm($colorEm) {
+    // Styles emphasized elements within c-tli.
+    .c-tli {
+        &__duration,
+        &__title,
+        &__time-hero-time {
+            color: $colorEm;
+        }
+    }
+}
+@mixin showTliGraphic($wGraphic) {
+    .c-tli__graphic {
+        &__#{$wGraphic} {
+            display: block;
+        }
+    }
+}
+
+.c-timelist--large {
+    $textSm: 0.8em;
+    $textLg: 1.3em;
+
+    margin-right: $interiorMargin; // fend off from scrollbar
+
+    > * + * {
+        margin-top: $interiorMarginSm;
     }
 
-    &.--is-future {
-      background-color: $colorFutureBg;
-      border-top-color: $colorFutureBorder !important;
-      color: $colorFutureFg;
+    .c-tli {
+        // TODO: add styles for various activity statuses
+        $baseBg: $colorPastBg;
+        $baseFg: $colorPastFg;
+        $baseFgEm: $colorPastFgEm;
+
+        background: $baseBg;
+        color: $baseFg;
+        border-radius: $basicCr;
+        display: grid;
+        padding: $interiorMargin;
+        grid-template-columns: min-content 3fr 40px 1fr;
+        grid-column-gap: $interiorMargin;
+
+        &[s-selected] {
+            background: $colorSelectedBg !important;
+            box-shadow: inset rgba($colorSelectedFg, 0.1) 0 0 0 1px;
+            color: $colorSelectedFg !important;
+        }
+
+        @include styleTliEm($baseFgEm);
+
+        &__activity-color {
+            align-items: start;
+            display: flex;
+            padding-top: 1px;
+        }
+
+        &__activity-color-swatch {
+            $d: 16px;
+            border-radius: 50%;
+            box-shadow: rgba(black, 0.3) 0 0 2px 1px;
+            width: $d;
+            height: $d;
+        }
+
+        &__title-and-bounds {
+            > * + * {
+                margin-top: $interiorMargin;
+            }
+        }
+
+        &__bounds {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            > * {
+                margin-right: $interiorMargin;
+                white-space: nowrap;
+            }
+
+            &.--has-duration {
+                .c-tli__start-time {
+                    display: flex;
+                    align-items: start;
+
+                    &:after {
+                        content: $glyph-icon-play;
+                        font-family: symbolsfont;
+                        font-size: 0.7em;
+                        display: block;
+                        margin-left: $interiorMargin;
+                        margin-top: 2px;
+                    }
+                }
+            }
+        }
+
+        &__title {
+            font-size: $textLg;
+        }
+
+        &__time-hero {
+            display: flex;
+            align-items: center;
+            justify-content: end;
+        }
+
+        &__time-hero-context-and-time {
+            align-items: center;
+            flex-wrap: wrap;
+            display: flex;
+            justify-content: end;
+            text-align: right;
+
+            > * + * {
+                margin-left: $interiorMargin;
+            }
+        }
+
+        &__time-hero-context {
+            font-size: $textSm;
+            text-transform: uppercase;
+        }
+
+        &__time-hero-time {
+            display: flex;
+            align-items: center;
+            font-size: $textLg;
+            white-space: nowrap;
+
+            &:before {
+                display: block;
+                font-family: symbolsfont;
+                font-size: 0.7em;
+                margin-right: 3px;
+            }
+
+            &.--is-countdown {
+                &:before {
+                    content: $glyph-icon-minus;
+                }
+            }
+
+            &.--is-countup {
+                &:before {
+                    content: $glyph-icon-plus;
+                }
+            }
+        }
+
+        &__graphic {
+            display: flex;
+            fill: $baseFg;
+            align-items: center;
+
+            svg {
+                > * {
+                    display: none;
+                }
+            }
+        }
+
+        &.--is-current {
+            background-color: $colorCurrentBg;
+            color: $colorCurrentFg;
+            @include styleTliEm($colorCurrentFgEm);
+        }
+
+        &.--is-future {
+            background-color: $colorFutureBg;
+            color: $colorFutureFg;
+            @include styleTliEm($colorFutureFgEm);
+        }
+
+        /************************************ ACTIVITY STATE STYLES */
+        /*
+        - 'In Progress' : itemState.inProgress
+        - 'Running Long' : itemState.inProgress && now > end datetime
+        - 'Overdue' : itemState.notStarted && now > start datetime
+        - 'Incomplete' : itemState.notStarted && now > end datetime
+        - 'Starts' : for Activities with now > start datetime
+        - 'Occurs' : for Events with now > start datetime
+        - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
+        - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
+        */
+        &.--is-not-started {
+
+        }
+
+        &.--is-in-progress {
+            @include showTliGraphic('pie');
+            background-color: $colorInProgressBg;
+            color: $colorInProgressFg;
+        }
+
+        &.--is-running-long {
+            @include showTliGraphic('alert-triangle');
+            background-color: $colorInProgressBg;
+            color: $colorInProgressFg;
+        }
+
+        &.--is-overdue,
+        &.--is-incomplete {
+            @include showTliGraphic('alert-triangle');
+
+        }
+
+        &.--is-completed {
+            @include showTliGraphic('check');
+        }
+
+        &.--is-aborted {
+            @include showTliGraphic('circle-slash');
+        }
+
+        &.--is-skipped {
+            @include showTliGraphic('skipped');
+        }
+
+        &__check {
+            // Overrides?
+        }
+
+        &__alert-triangle {
+            // Overrides?
+        }
+
+        &__circle-slash {
+            // Overrides?
+        }
+    }
+}
+
+.c-svg-progress {
+    &__bg {
+        fill: rgba(black, 0.2);
     }
 
-    &__value {
-      &.--duration {
-        width: 5%;
-      }
+    &__ticks {
+        fill: none;
+        stroke: $colorInProgressFg;
+        stroke-width: 6;
     }
-  }
+
+    &__progress {
+        fill: $colorInProgressFgEm;
+    }
+
+    &__sweep-hand {
+        animation-name: sweep-hand;
+        animation-duration: 10s;
+        animation-iteration-count: infinite;
+        animation-timing-function: steps(12);
+        fill: $colorInProgressFg;
+        transform-origin: center;
+    }
+}
+
+@keyframes sweep-hand {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

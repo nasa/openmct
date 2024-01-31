@@ -437,13 +437,22 @@ $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.4);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+
 // Time Strip and Lists
-$colorCurrentBg: $colorTimeRealtimeBg;
-$colorCurrentFg: $colorTimeRealtimeFg;
+$colorPastBg: #444;
+$colorPastFg: pushBack($colorBodyFg, 10%);
+$colorPastFgEm: $colorBodyFg;
+$colorCurrentBg: #666;
+$colorCurrentFg: $colorBodyFg;
+$colorCurrentFgEm: $colorBodyFgEm;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: #1b5263;
+$colorFutureBg: $colorPastBg;
 $colorFutureFg: $colorCurrentFg;
+$colorFutureFgEm: $colorCurrentFgEm;
 $colorFutureBorder: $colorCurrentBorder;
+$colorInProgressBg: $colorTimeRealtimeBg;
+$colorInProgressFg: $colorTimeRealtimeFgSubtle;
+$colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
 
 // Tree

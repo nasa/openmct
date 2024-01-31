@@ -176,8 +176,8 @@ $colorTimeFixedBtnBgMajor: #a09375;
 $colorTimeFixedBtnFgMajor: #fff;
 $colorTimeRealtime: #445890;
 $colorTimeRealtimeBg: $colorTimeRealtime;
-$colorTimeRealtimeFg: #eee;
-$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeFg: #fff;
+$colorTimeRealtimeFgSubtle: #eee;
 $colorTimeRealtimeHov: pullForward($colorTimeRealtime, 10%);
 $colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
 $colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
@@ -437,13 +437,22 @@ $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+
 // Time Strip and Lists
-$colorCurrentBg: #5872bd;
-$colorCurrentFg: #eee;
-$colorCurrentBorder: #fff;
-$colorFutureBg: #c6f0ff;
-$colorFutureFg: $colorBodyFg;
+$colorPastBg: #f0f0f0;
+$colorPastFg: #999;
+$colorPastFgEm: #666;
+$colorCurrentBg: #ddd;
+$colorCurrentFg: #666;
+$colorCurrentFgEm: #000;
+$colorCurrentBorder: $colorBodyBg;
+$colorFutureBg: #eaeaea;
+$colorFutureFg: $colorCurrentFg;
+$colorFutureFgEm: $colorCurrentFgEm;
 $colorFutureBorder: $colorCurrentBorder;
+$colorInProgressBg: #b1e8ff;
+$colorInProgressFg: $colorCurrentFg;
+$colorInProgressFgEm: $colorCurrentFgEm;
 $colorGanttSelectedBorder: #fff;
 
 // Tree
