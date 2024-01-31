@@ -33,13 +33,13 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = '_all_docs?include_docs=true';
 
 class CouchObjectProvider {
-  constructor(openmct, options, namespace, indicator) {
-    options = this.#normalize(options);
+  constructor({ openmct, databaseConfiguration, couchStatusIndicator }) {
     this.openmct = openmct;
-    this.indicator = indicator;
-    this.url = options.url;
-    this.useDesignDocuments = options.useDesignDocuments;
-    this.namespace = namespace;
+    this.indicator = couchStatusIndicator;
+    this.url = databaseConfiguration.url;
+    this.readOnly = databaseConfiguration.readOnly;
+    this.useDesignDocuments = databaseConfiguration.useDesignDocuments;
+    this.namespace = databaseConfiguration.namespace;
     this.objectQueue = {};
     this.observers = {};
     this.batchIds = [];
@@ -47,6 +47,7 @@ class CouchObjectProvider {
     this.onEventError = this.onEventError.bind(this);
     this.flushPersistenceQueue = _.debounce(this.flushPersistenceQueue.bind(this));
     this.persistenceQueue = [];
+    this.rootObject = null;
   }
 
   /**
@@ -59,7 +60,10 @@ class CouchObjectProvider {
     // eslint-disable-next-line no-undef
     const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
 
-    sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
+    sharedWorker = new SharedWorker(
+      sharedWorkerURL,
+      `CouchDB SSE Shared Worker for ${this.namespace}`
+    );
     sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
     sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
     sharedWorker.port.start();
@@ -93,7 +97,7 @@ class CouchObjectProvider {
       this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
     } else if (event.data.type === 'state') {
       const state = this.#messageToIndicatorState(event.data.state);
-      this.indicator.setIndicatorToState(state);
+      this.indicator?.setIndicatorToState(state);
     } else {
       let objectChanges = event.data.objectChanges;
       const objectIdentifier = {
@@ -184,16 +188,8 @@ class CouchObjectProvider {
     return state;
   }
 
-  //backwards compatibility, options used to be a url. Now it's an object
-  #normalize(options) {
-    if (typeof options === 'string') {
-      return {
-        url: options,
-        useDesignDocuments: false
-      };
-    }
-
-    return options;
+  isReadOnly() {
+    return this.readOnly;
   }
 
   async request(subPath, method, body, signal) {
@@ -233,7 +229,7 @@ class CouchObjectProvider {
 
       // Network error, CouchDB unreachable.
       if (response === null) {
-        this.indicator.setIndicatorToState(DISCONNECTED);
+        this.indicator?.setIndicatorToState(DISCONNECTED);
         console.error(error.message);
 
         throw new Error(`CouchDB Error - No response"`);
@@ -256,7 +252,7 @@ class CouchObjectProvider {
    * @private
    */
   #handleResponseCode(status, json, fetchOptions) {
-    this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
+    this.indicator?.setIndicatorToState(this.#statusCodeToIndicatorState(status));
     if (status === CouchObjectProvider.HTTP_CONFLICT) {
       const objectName = JSON.parse(fetchOptions.body)?.model?.name;
       throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
@@ -684,7 +680,7 @@ class CouchObjectProvider {
     }
 
     const indicatorState = this.#messageToIndicatorState(message);
-    this.indicator.setIndicatorToState(indicatorState);
+    this.indicator?.setIndicatorToState(indicatorState);
   }
 
   /**

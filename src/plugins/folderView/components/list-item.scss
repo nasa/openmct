@@ -1,5 +1,7 @@
 /******************************* LIST ITEM */
 .c-list-item {
+  color: $colorItemFgDetails;
+
   &__name__type-icon {
     color: $colorItemTreeIcon;
   }
@@ -8,12 +10,12 @@
     @include ellipsize();
 
     a & {
+      // .c-list-item_name a element
       color: $colorItemFg;
     }
   }
 
   &:not(.c-list-item__name) {
-    color: $colorItemFgDetails;
   }
 
   &.is-alias {

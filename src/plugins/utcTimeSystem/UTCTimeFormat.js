@@ -39,7 +39,9 @@ export default class UTCTimeFormat {
       PRECISION_DEFAULT_WITH_ZULU: this.DATE_FORMAT + 'Z',
       PRECISION_SECONDS: 'YYYY-MM-DD HH:mm:ss',
       PRECISION_MINUTES: 'YYYY-MM-DD HH:mm',
-      PRECISION_DAYS: 'YYYY-MM-DD'
+      PRECISION_DAYS: 'YYYY-MM-DD',
+      PRECISION_SECONDS_TIME_ONLY: 'HH:mm:ss',
+      PRECISION_MINUTES_TIME_ONLY: 'HH:mm'
     };
   }
 

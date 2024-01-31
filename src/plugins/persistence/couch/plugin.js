@@ -24,29 +24,81 @@ import CouchObjectProvider from './CouchObjectProvider.js';
 import CouchSearchProvider from './CouchSearchProvider.js';
 import CouchStatusIndicator from './CouchStatusIndicator.js';
 
-const NAMESPACE = '';
+const DEFAULT_NAMESPACE = '';
 const LEGACY_SPACE = 'mct';
-const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
 
 export default function CouchPlugin(options) {
-  return function install(openmct) {
-    const simpleIndicator = openmct.indicators.simpleIndicator();
-    openmct.indicators.add(simpleIndicator);
-    const couchStatusIndicator = new CouchStatusIndicator(simpleIndicator);
-    install.couchProvider = new CouchObjectProvider(
-      openmct,
-      options,
-      NAMESPACE,
-      couchStatusIndicator
-    );
+  function normalizeOptions(unnnormalizedOptions) {
+    const normalizedOptions = {};
+    if (typeof unnnormalizedOptions === 'string') {
+      normalizedOptions.databases = [
+        {
+          url: options,
+          namespace: DEFAULT_NAMESPACE,
+          additionalNamespaces: [LEGACY_SPACE],
+          readOnly: false,
+          useDesignDocuments: false,
+          indicator: true
+        }
+      ];
+    } else if (!unnnormalizedOptions.databases) {
+      normalizedOptions.databases = [
+        {
+          url: unnnormalizedOptions.url,
+          namespace: DEFAULT_NAMESPACE,
+          additionalNamespaces: [LEGACY_SPACE],
+          readOnly: false,
+          useDesignDocuments: unnnormalizedOptions.useDesignDocuments,
+          indicator: true
+        }
+      ];
+    } else {
+      normalizedOptions.databases = unnnormalizedOptions.databases;
+    }
 
-    // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namespaces (alternately "mct", and "")
-    // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
-    openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
-    openmct.objects.addProvider(NAMESPACE, install.couchProvider);
-    openmct.objects.addProvider(
-      COUCH_SEARCH_ONLY_NAMESPACE,
-      new CouchSearchProvider(install.couchProvider)
-    );
+    // final sanity check, ensure we have all options
+    normalizedOptions.databases.forEach((databaseConfiguration) => {
+      if (!databaseConfiguration.url) {
+        throw new Error(
+          `🛑 CouchDB plugin requires a url option. Please check the configuration for namespace ${databaseConfiguration.namespace}`
+        );
+      } else if (databaseConfiguration.namespace === undefined) {
+        // note we can't check for just !databaseConfiguration.namespace because it could be an empty string
+        throw new Error(
+          `🛑 CouchDB plugin requires a namespace option. Please check the configuration for url ${databaseConfiguration.url}`
+        );
+      }
+    });
+
+    return normalizedOptions;
+  }
+
+  return function install(openmct) {
+    const normalizedOptions = normalizeOptions(options);
+    normalizedOptions.databases.forEach((databaseConfiguration) => {
+      let couchStatusIndicator;
+      if (databaseConfiguration.indicator) {
+        const simpleIndicator = openmct.indicators.simpleIndicator();
+        openmct.indicators.add(simpleIndicator);
+        couchStatusIndicator = new CouchStatusIndicator(simpleIndicator);
+      }
+      // the provider is added to the install function to expose couchProvider to unit tests
+      install.couchProvider = new CouchObjectProvider({
+        openmct,
+        databaseConfiguration,
+        couchStatusIndicator
+      });
+      openmct.objects.addProvider(databaseConfiguration.namespace, install.couchProvider);
+      databaseConfiguration.additionalNamespaces?.forEach((additionalNamespace) => {
+        openmct.objects.addProvider(additionalNamespace, install.couchProvider);
+      });
+
+      // need one search provider for whole couch database
+      const searchOnlyNamespace = `COUCH_SEARCH_${databaseConfiguration.namespace}${Date.now()}`;
+      openmct.objects.addProvider(
+        searchOnlyNamespace,
+        new CouchSearchProvider(install.couchProvider)
+      );
+    });
   };
 }
