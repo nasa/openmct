@@ -62,9 +62,9 @@ export function getValidatedData(domainObject) {
           groupActivity.filterMetadataValues = [];
           sourceMap.filterMetadata.forEach((property) => {
             const value = _.get(activity, property);
-            groupActivity.filterMetadataValues.push({
-              value
-            });
+            if (value !== undefined) {
+              groupActivity.filterMetadataValues.push(value);
+            }
           });
         }
 
