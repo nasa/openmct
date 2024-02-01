@@ -174,9 +174,8 @@ export default {
     if (!this.isStackedPlotObject) {
       this.initYAxesConfiguration();
       this.registerListeners();
-    } else {
-      this.initLegendConfiguration();
     }
+    this.initLegendConfiguration();
 
     this.loaded = true;
   },

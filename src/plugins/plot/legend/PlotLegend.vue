@@ -158,6 +158,7 @@ export default {
   mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
+    this.$emit('expanded', this.isLegendExpanded);
     this.updatePosition();
   },
   beforeUnmount() {
