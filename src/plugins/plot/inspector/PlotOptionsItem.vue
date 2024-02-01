@@ -132,8 +132,7 @@ export default {
   },
   data() {
     return {
-      expanded: false,
-      status: null
+      expanded: false
     };
   },
   computed: {
