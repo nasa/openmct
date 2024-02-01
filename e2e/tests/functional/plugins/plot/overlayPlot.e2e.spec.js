@@ -63,6 +63,47 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
+  test('Plot legend expands by default', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7403'
+    });
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(overlayPlot.url);
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Assert that the legend is collapsed by default
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeVisible();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
+    let expandDefaultValue = await page.getByLabel('Expand by Default').textContent();
+    expect(expandDefaultValue).toBe('No');
+
+    // Change the legend to expand by default
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand By Default').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await page.reload();
+
+    // Assert that the legend is expanded on page load
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    expandDefaultValue = await page.getByLabel('Expand by Default').textContent();
+    expect(expandDefaultValue).toBe('Yes');
+  });
+
   test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
     page
   }) => {

@@ -64,7 +64,12 @@
         Expand by default
       </div>
       <div class="grid-cell value">
-        <input v-model="expandByDefault" type="checkbox" @change="updateForm('expandByDefault')" />
+        <input
+          v-model="expandByDefault"
+          aria-label="Expand By Default"
+          type="checkbox"
+          @change="updateForm('expandByDefault')"
+        />
       </div>
     </li>
     <li class="grid-row">

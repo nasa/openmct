@@ -38,6 +38,7 @@
       <div
         v-if="!isLegendExpanded"
         class="plot-wrapper-collapsed-legend"
+        aria-label="Plot Legend Collapsed"
         :class="{ 'is-cursor-locked': cursorLocked }"
       >
         <div
@@ -57,6 +58,7 @@
       <div
         v-else
         class="plot-wrapper-expanded-legend"
+        aria-label="Plot Legend Expanded"
         :class="{ 'is-cursor-locked': cursorLocked }"
       >
         <div
