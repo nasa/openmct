@@ -215,7 +215,6 @@ export default {
     this.timestamp = this.timeContext.now();
   },
   mounted() {
-    debugger;
     this.isEditing = this.openmct.editor.isEditing();
 
     this.getPlanDataAndSetConfig(this.domainObject);
