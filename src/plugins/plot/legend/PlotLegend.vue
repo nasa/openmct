@@ -35,7 +35,11 @@
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
       <!-- COLLAPSED PLOT LEGEND -->
-      <div class="plot-wrapper-collapsed-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-if="!isLegendExpanded"
+        class="plot-wrapper-collapsed-legend"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
           title="Cursor is point locked. Click anywhere in the plot to unlock."
@@ -50,7 +54,11 @@
         />
       </div>
       <!-- EXPANDED PLOT LEGEND -->
-      <div class="plot-wrapper-expanded-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-else
+        class="plot-wrapper-expanded-legend"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock"
           title="Click anywhere in the plot to unlock."
