@@ -23,12 +23,12 @@ import UserProvider from './UserProvider.js';
 
 export default class StatusUserProvider extends UserProvider {
   /**
-   * @param {('statusChange'|'pollQuestionChange')} event the name of the event to listen to
+   * @param {('statusChange'|'pollQuestionChange'|'missionActionStatusChange')} event the name of the event to listen to
    * @param {Function} callback a function to invoke when this event occurs
    */
   on(event, callback) {}
   /**
-   * @param {('statusChange'|'pollQuestionChange')} event the name of the event to stop listen to
+   * @param {('statusChange'|'pollQuestionChange'|'missionActionStatusChange')} event the name of the event to stop listen to
    * @param {Function} callback the callback function used to register the listener
    */
   off(event, callback) {}

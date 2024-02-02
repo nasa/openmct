@@ -75,7 +75,7 @@ describe('The User Indicator plugin', () => {
     it('exists', () => {
       userIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'user-indicator'
-      ).element;
+      ).vueComponent;
 
       const hasClockIndicator = userIndicator !== null && userIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
@@ -89,9 +89,11 @@ describe('The User Indicator plugin', () => {
 
           userIndicator = openmct.indicators.indicatorObjects.find(
             (indicator) => indicator.key === 'user-indicator'
-          ).element;
+          ).vueComponent;
 
-          const userName = userIndicator.textContent.trim();
+          expect(userIndicator).toBeDefined();
+          expect(userIndicator).not.toBeNull();
+          const userName = document.querySelector('[aria-label="User Role"]').textContent.trim();
 
           expect(user.name).toEqual(USERNAME);
           expect(userName).toContain(USERNAME);

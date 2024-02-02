@@ -20,32 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
 import UserIndicator from './components/UserIndicator.vue';
 
 export default function UserIndicatorPlugin() {
   function addIndicator(openmct) {
-    const { vNode, destroy } = mount(
-      {
-        components: {
-          UserIndicator
-        },
-        provide: {
-          openmct: openmct
-        },
-        template: '<UserIndicator />'
-      },
-      {
-        app: openmct.app
-      }
-    );
-
     openmct.indicators.add({
       key: 'user-indicator',
-      element: vNode.el,
-      priority: openmct.priority.HIGH,
-      destroy: destroy
+      vueComponent: UserIndicator,
+      priority: openmct.priority.HIGH
     });
   }
 
