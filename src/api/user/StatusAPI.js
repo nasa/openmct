@@ -344,8 +344,8 @@ export default class StatusAPI extends EventEmitter {
   /**
    * @private
    */
-  onMissionActionStatusChange({ action, newStatus }) {
-    this.emit('missionActionStatusChange', { action, status: newStatus });
+  onMissionActionStatusChange({ action, status }) {
+    this.emit('missionActionStatusChange', { action, status });
   }
 }
 
