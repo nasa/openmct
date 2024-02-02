@@ -138,7 +138,7 @@ const headerItems = [
           useDayFormat: true
         })}`;
       } else if (value > 0) {
-        const prefix = options.skipPrefix ? '' : '+';
+        const prefix = options.skipPrefix ? '' : '-';
         result = `${prefix}${getPreciseDuration(value, {
           excludeMilliSeconds: true,
           useDayFormat: true
