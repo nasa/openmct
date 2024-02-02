@@ -22,6 +22,7 @@
 <template>
   <tr
     class="plot-legend-item"
+    aria-label="Plot Legend Item"
     :class="{
       'is-stale': isStale,
       'is-status--missing': isMissing

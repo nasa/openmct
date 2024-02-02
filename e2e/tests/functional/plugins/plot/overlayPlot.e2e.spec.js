@@ -77,6 +77,16 @@ test.describe('Overlay Plot', () => {
       parent: overlayPlot.uuid
     });
 
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
     await page.goto(overlayPlot.url);
 
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -86,6 +96,8 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
     let expandDefaultValue = await page.getByLabel('Expand by Default').textContent();
     expect(expandDefaultValue).toBe('No');
+
+    expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
 
     // Change the legend to expand by default
     await page.getByLabel('Edit Object').click();
@@ -102,6 +114,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
     expandDefaultValue = await page.getByLabel('Expand by Default').textContent();
     expect(expandDefaultValue).toBe('Yes');
+    expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
   });
 
   test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
