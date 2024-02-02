@@ -157,7 +157,8 @@ export default {
       limitLines: this.series.get('limitLines'),
       markerSize: this.series.get('markerSize'),
       validation: {},
-      swatchActive: false
+      swatchActive: false,
+      status: null
     };
   },
   computed: {

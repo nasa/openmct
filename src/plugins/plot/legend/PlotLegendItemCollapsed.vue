@@ -120,6 +120,7 @@ export default {
     }
   },
   mounted() {
+    console.debug('🗺️ Creating PlotLegendItemCollapsed for', this.config);
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
@@ -143,6 +144,7 @@ export default {
       return configStore.get(configId);
     },
     onSeriesAdd(series, index) {
+      console.debug('🗺️ PlotLegendItemCollapsed adding series');
       this.seriesModels[index] = series;
       if (series.keyString === this.seriesKeyString) {
         this.listenTo(

@@ -142,14 +142,27 @@ export default {
   created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
+    console.debug('🗺️ Creating PlotLegend', this.config);
     this.legend = this.config.legend;
     this.seriesModels = [];
     this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
-    this.initialize();
+
+    if (this.domainObject.type === 'telemetry.plot.stacked') {
+      this.objectComposition = this.openmct.composition.get(this.domainObject);
+      this.objectComposition.on('add', this.addTelemetryObject);
+      this.objectComposition.on('remove', this.removeTelemetryObject);
+      this.objectComposition.load();
+    } else {
+      this.registerListeners(this.config);
+    }
   },
   mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
+    if (this.isLegendExpanded) {
+      this.$emit('expanded', this.isLegendExpanded);
+    }
+    console.debug(`🗺️ Mounting PlotLegend with legend expanded set to ${this.isLegendExpanded}`);
     this.updatePosition();
   },
   beforeUnmount() {
@@ -161,16 +174,6 @@ export default {
     this.stopListening();
   },
   methods: {
-    initialize() {
-      if (this.domainObject.type === 'telemetry.plot.stacked') {
-        this.objectComposition = this.openmct.composition.get(this.domainObject);
-        this.objectComposition.on('add', this.addTelemetryObject);
-        this.objectComposition.on('remove', this.removeTelemetryObject);
-        this.objectComposition.load();
-      } else {
-        this.registerListeners(this.config);
-      }
-    },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -199,6 +202,7 @@ export default {
     },
     addSeries(series) {
       this.seriesModels[this.seriesModels.length] = series;
+      console.debug('🗺️ Adding series to PlotLegend', series);
     },
 
     removeSeries(plotSeries) {

@@ -224,13 +224,16 @@ export default {
         !this.openmct.objects.isMissing(this.childObject) &&
         !this.childObject.configuration?.series
       ) {
+        console.debug(
+          `🐻 This appears to be a stacked plot item that needs a configuration`,
+          this.childObject
+        );
         this.ensureStackedSeriesConfigInitialization();
       }
     },
     ensureStackedSeriesConfigInitialization() {
       const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
       const existingConfig = configStore.get(configId);
-      console.debug(`🐻 Existing config for ${configId} `, existingConfig);
       if (!existingConfig) {
         console.debug(
           `🐻 Config is null, initializing new stacked series configuration for `,
@@ -271,6 +274,8 @@ export default {
           }
         });
         configStore.add(configId, newConfig);
+      } else {
+        console.debug(`🐻 Existing config for ${configId} `, existingConfig);
       }
     }
   }
