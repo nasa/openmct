@@ -393,7 +393,7 @@ describe('the plugin', function () {
       expect(legend[0].innerHTML).toEqual('Test Object');
     });
 
-    fit('Renders an expanded legend for every telemetry', async () => {
+    it('Renders an expanded legend for every telemetry', async () => {
       await nextTick();
       let legendControl = element.querySelector(
         '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
