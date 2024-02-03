@@ -33,7 +33,13 @@
       <button v-if="availableRoles?.length > 1" @click.stop="promptForRoleSelection">
         Change Role
       </button>
-      <button v-if="canSetMissionStatus" @click.stop="togglePopup">Mission Status</button>
+      <button
+        v-if="canSetMissionStatus"
+        aria-label="Toggle Mission Status Panel"
+        @click.stop="togglePopup"
+      >
+        Mission Status
+      </button>
     </span>
   </div>
   <Teleport to="body">
