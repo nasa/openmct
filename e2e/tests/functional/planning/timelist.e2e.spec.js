@@ -43,7 +43,7 @@ const TIME_TO_FROM_COLUMN = 2;
 // eslint-disable-next-line no-unused-vars
 const ACTIVITY_COLUMN = 3;
 const HEADER_ROW = 0;
-const NUM_COLUMNS = 4;
+const NUM_COLUMNS = 5;
 
 test.describe('Time List', () => {
   test("Create a Time List, add a single Plan to it, verify all the activities are displayed with no milliseconds and selecting an activity shows it's properties", async ({
@@ -109,6 +109,70 @@ test.describe('Time List', () => {
   });
 });
 
+test("View a timelist in expanded view, verify all the activities are displayed and selecting an activity shows it's properties", async ({
+  page
+}) => {
+  // Goto baseURL
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  const timelist = await test.step('Create a Time List', async () => {
+    const createdTimeList = await createDomainObjectWithDefaults(page, { type: 'Time List' });
+    const objectName = await page.locator('.l-browse-bar__object-name').innerText();
+    expect(objectName).toBe(createdTimeList.name);
+
+    return createdTimeList;
+  });
+
+  await test.step('Create a Plan and add it to the timelist', async () => {
+    await createPlanFromJSON(page, {
+      name: 'Test Plan',
+      json: examplePlanSmall1,
+      parent: timelist.uuid
+    });
+
+    // Ensure that all activities are shown in the expanded view
+    const groups = Object.keys(examplePlanSmall1);
+    const firstGroupKey = groups[0];
+    const firstGroupItems = examplePlanSmall1[firstGroupKey];
+    const firstActivity = firstGroupItems[0];
+    const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+    const startBound = firstActivity.start;
+    const endBound = lastActivity.end;
+
+    // Switch to fixed time mode with all plan events within the bounds
+    await page.goto(
+      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+    );
+
+    // Change the object to edit mode
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+
+    // Find the display properties section in the inspector
+    await page.getByRole('tab', { name: 'View Properties' }).click();
+    // Switch to expanded view and save the setting
+    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+    // Click on the "Save" button
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Verify all events are displayed
+    const eventCount = await page.getByRole('row').count();
+    await expect(eventCount).toEqual(firstGroupItems.length);
+  });
+
+  await test.step('Shows activity properties when a row is selected', async () => {
+    await page.getByRole('row').nth(2).click();
+
+    // Find the activity state section in the inspector
+    await page.getByRole('tab', { name: 'Activity' }).click();
+    // Check that activity state label is displayed in the inspector.
+    await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+      'Not started'
+    );
+  });
+});
+
 /**
  * The regular expression used to parse the countdown string.
  * Some examples of valid Countdown strings:
@@ -122,8 +186,8 @@ test.describe('Time List', () => {
 const COUNTDOWN_REGEXP = /(-)?(\d+D\s)?(\d{2}):(\d{2}):(\d{2})/;
 
 /**
- * @typedef {Object} CountdownObject
- * @property {string} sign - The sign of the countdown ('-' if the countdown is negative, otherwise undefined).
+ * @typedef {Object} CountdownOrUpObject
+ * @property {string} sign - The sign of the countdown ('-' if the countdown is negative, '+' otherwise).
  * @property {string} days - The number of days in the countdown (undefined if there are no days).
  * @property {string} hours - The number of hours in the countdown.
  * @property {string} minutes - The number of minutes in the countdown.
@@ -195,11 +259,13 @@ test.describe('Time List with controlled clock', () => {
       await test.step(`Countdown cell ${i + 1} counts down`, async () => {
         const countdownCell = countdownCells[i];
         // Get the initial countdown timestamp object
-        const beforeCountdown = await getAndAssertCountdownObject(page, i + 3);
+        const beforeCountdown = await getAndAssertCountdownOrUpObject(page, i + 3);
+        // should not have a '-' sign
+        await expect(countdownCell).not.toHaveText('-');
         // Wait until it changes
         await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
         // Get the new countdown timestamp object
-        const afterCountdown = await getAndAssertCountdownObject(page, i + 3);
+        const afterCountdown = await getAndAssertCountdownOrUpObject(page, i + 3);
         // Verify that the new countdown timestamp object is less than the old one
         expect(Number(afterCountdown.seconds)).toBeLessThan(Number(beforeCountdown.seconds));
       });
@@ -208,15 +274,17 @@ test.describe('Time List with controlled clock', () => {
     // Verify that the count-up cells are counting up
     for (let i = 0; i < countUpCells.length; i++) {
       await test.step(`Count-up cell ${i + 1} counts up`, async () => {
-        const countdownCell = countUpCells[i];
+        const countUpCell = countUpCells[i];
         // Get the initial count-up timestamp object
-        const beforeCountdown = await getAndAssertCountdownObject(page, i + 1);
+        const beforeCountUp = await getAndAssertCountdownOrUpObject(page, i + 1);
+        // should not have a '+' sign
+        await expect(countUpCell).not.toHaveText('+');
         // Wait until it changes
-        await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
+        await expect(countUpCell).not.toHaveText(beforeCountUp.toString());
         // Get the new count-up timestamp object
-        const afterCountdown = await getAndAssertCountdownObject(page, i + 1);
+        const afterCountUp = await getAndAssertCountdownOrUpObject(page, i + 1);
         // Verify that the new count-up timestamp object is greater than the old one
-        expect(Number(afterCountdown.seconds)).toBeGreaterThan(Number(beforeCountdown.seconds));
+        expect(Number(afterCountUp.seconds)).toBeGreaterThan(Number(beforeCountUp.seconds));
       });
     }
   });
@@ -246,13 +314,13 @@ async function getCellTextByIndex(page, rowIndex, columnIndex) {
 }
 
 /**
- * Get the text from the countdown cell in the given row, assert that it matches the countdown
+ * Get the text from the countdown (or countup) cell in the given row, assert that it matches the countdown/countup
  * regex, and return an object representing the countdown.
  * @param {import('@playwright/test').Page} page
  * @param {number} rowIndex the row index
- * @returns {Promise<CountdownObject>} countdownObject
+ * @returns {Promise<CountdownOrUpObject>} The countdown (or countup) object
  */
-async function getAndAssertCountdownObject(page, rowIndex) {
+async function getAndAssertCountdownOrUpObject(page, rowIndex) {
   const timeToFrom = await getCellTextByIndex(page, HEADER_ROW + rowIndex, TIME_TO_FROM_COLUMN);
 
   expect(timeToFrom).toMatch(COUNTDOWN_REGEXP);

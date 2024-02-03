@@ -22,8 +22,8 @@
 <template>
   <li class="c-inspect-properties__row">
     <div class="c-inspect-properties__label" title="Options for future events.">{{ label }}</div>
-    <div v-if="canEdit" class="c-inspect-properties__value">
-      <select v-model="index" @change="updateForm('index')">
+    <div class="c-inspect-properties__value">
+      <select v-if="canEdit" v-model="index" @change="updateForm('index')">
         <option
           v-for="(activityOption, activityKey) in activitiesOptions"
           :key="activityKey"
@@ -32,9 +32,7 @@
           {{ activityOption }}
         </option>
       </select>
-    </div>
-    <div v-else class="c-inspect-properties__value">
-      {{ activitiesOptions[index] }}
+      <span v-else>{{ activitiesOptions[index] }}</span>
     </div>
   </li>
 </template>

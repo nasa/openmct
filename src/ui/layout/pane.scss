@@ -44,10 +44,6 @@
     @include desktop() {
       margin-bottom: $interiorMargin;
     }
-
-    [class*='button'] {
-      color: $colorBtnMajorBg;
-    }
   }
 
   &--reacts {
@@ -129,7 +125,7 @@
     }
 
     &__header {
-      font-size: floor(12px * 0.9);
+      font-size: 11px;
     }
 
     &__label {
@@ -146,11 +142,16 @@
       display: none; // Hidden by default
       background-color: $splitterCollapsedBtnColorBg;
       color: $splitterCollapsedBtnColorFg;
-      font-size: 0.9em;
+
+      &:before {
+        // '+' icon
+        font-size: 0.8em;
+        margin-bottom: $interiorMarginSm;
+      }
 
       &:hover {
         background-color: $splitterCollapsedBtnColorBgHov;
-        color: inherit;
+        color: $splitterCollapsedBtnColorFgHov;
         @include transition(background-color);
       }
     }
@@ -226,7 +227,8 @@
           left: 0;
           height: auto;
           width: 100%;
-          padding: $interiorMargin 2px;
+          padding: $interiorMargin 1px;
+          font-size: 11px;
 
           [class*='label'] {
             text-orientation: mixed;

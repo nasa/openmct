@@ -235,7 +235,7 @@ describe('the plugin', function () {
 
     it('displays the activity headers', () => {
       const headers = element.querySelectorAll(LIST_ITEM_BODY_CLASS);
-      expect(headers.length).toEqual(4);
+      expect(headers.length).toEqual(5);
     });
 
     it('displays activity details', (done) => {
@@ -244,8 +244,8 @@ describe('the plugin', function () {
       nextTick(() => {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
-        expect(itemValues.length).toEqual(4);
-        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis');
+        expect(itemValues.length).toEqual(5);
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis');
         expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
         expect(itemValues[1].innerHTML.trim()).toEqual(
           timeFormatter.format(twoHoursFuture, TIME_FORMAT)
@@ -380,7 +380,7 @@ describe('the plugin', function () {
         expect(itemValues[1].innerHTML.trim()).toEqual(
           timeFormatter.format(threeHoursFuture, TIME_FORMAT)
         );
-        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
       });
     });
   });
@@ -446,7 +446,7 @@ describe('the plugin', function () {
         expect(itemValues[1].innerHTML.trim()).toEqual(
           timeFormatter.format(threeHoursFuture, TIME_FORMAT)
         );
-        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
       });
     });
   });

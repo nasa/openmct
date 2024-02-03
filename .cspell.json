@@ -493,10 +493,13 @@
     "WCAG",
     "stackedplot",
     "Andale",
+    "unnnormalized",
     "checksnapshots",
-    "specced"
+    "specced",
+    "composables",
+    "countup"
   ],
-  "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US"],
+  "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [
     "package.json",
     "dist/**",
