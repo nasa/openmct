@@ -89,6 +89,9 @@ class IndicatorAPI extends EventEmitter {
       indicator.priority = this.openmct.priority.DEFAULT;
     }
     if (!indicator.vueComponent) {
+      // Ensure the element fills the Vue wrapper
+      indicator.element.style.width = '100%';
+      indicator.element.style.height = '100%';
       indicator.vueComponent = vueWrapHtmlElement(indicator.element);
     }
 
