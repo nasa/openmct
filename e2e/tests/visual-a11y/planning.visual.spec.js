@@ -75,7 +75,25 @@ test.describe('Visual - Planning', () => {
       parent: ganttChart.uuid
     });
     await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-    await percySnapshot(page, `Gantt Chart View (theme: ${theme})`, {
+    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`, {
+      scope: snapshotScope
+    });
+
+    // Expand the inspect pane and uncheck the 'Clip Activity Names' option
+    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Clip Activity Names').click();
+
+    // Close the inspect pane and save the changes
+    await page.getByRole('button', { name: 'Collapse Inspect Pane' }).click();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Dismiss the notification
+    await page.getByLabel('Dismiss').click();
+
+    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Unclipped Activity Names`, {
       scope: snapshotScope
     });
   });
@@ -98,6 +116,28 @@ test.describe('Visual - Planning', () => {
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
       scope: snapshotScope
     });
+
+    // Expand the inspect pane and uncheck the 'Clip Activity Names' option
+    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Clip Activity Names').click();
+
+    // Close the inspect pane and save the changes
+    await page.getByRole('button', { name: 'Collapse Inspect Pane' }).click();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Dismiss the notification
+    await page.getByLabel('Dismiss').click();
+
+    await percySnapshot(
+      page,
+      `Gantt Chart View w/ draft status (theme: ${theme}) - Unclipped Activity Names`,
+      {
+        scope: snapshotScope
+      }
+    );
   });
   // Skipping for https://github.com/nasa/openmct/issues/7421
   // test.afterEach(async ({ page }, testInfo) => {

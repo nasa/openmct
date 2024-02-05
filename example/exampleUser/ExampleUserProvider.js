@@ -110,6 +110,11 @@ export default class ExampleUserProvider extends EventEmitter {
   canSetPollQuestion() {
     return Promise.resolve(true);
   }
+
+  canSetMissionStatus() {
+    return Promise.resolve(false);
+  }
+
   hasRole(roleId) {
     if (!this.loggedIn) {
       Promise.resolve(undefined);
