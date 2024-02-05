@@ -428,7 +428,8 @@ test.describe('Display Layout', () => {
     expect(networkRequests.length).toBe(0);
   });
 
-  test('We can preview plot in display layouts', async ({ page }) => {
+  test('We can preview plot in display layouts', async ({ page, openmctConfig }) => {
+    const { myItemsFolderName } = openmctConfig;
     // Create a Display Layout
     await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
@@ -438,7 +439,7 @@ test.describe('Display Layout', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    await page.getByLabel(`Expand ${myItemsFolderName} folder`).click();
     // Add the Sine Wave Generator to the Display Layout and save changes
     const treePane = page.getByRole('tree', {
       name: 'Main Tree'
@@ -454,10 +455,24 @@ test.describe('Display Layout', () => {
     // right click on the plot and select view large
     await page.getByLabel('Sine', { exact: true }).click({ button: 'right' });
     await page.getByLabel('View Historical Data').click();
-    await expect(page.getByLabel('Plot Canvas')).toBeVisible();
-    await expect(page.getByLabel('Preview Container')).toBeVisible();
+    await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
     await page.getByLabel('Close').click();
     await page.getByLabel('Expand Test Display Layout layout').click();
+
+    // change to a plot and ensure embiggen works
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Move Sub-object Frame').click();
+    await page.getByText('View type').click();
+    await page.getByText('Overlay Plot').click();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(
+      page.getByLabel('Test Display Layout Layout', { exact: true }).getByLabel('Plot Canvas')
+    ).toBeVisible();
+    await expect(page.getByLabel('Preview Container')).toBeHidden();
+    await page.getByLabel('Large View').click();
+    await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
+    await page.getByLabel('Close').click();
 
     // get last sinewave tree item (in the display layout)
     await page
@@ -466,8 +481,7 @@ test.describe('Display Layout', () => {
       .last()
       .click({ button: 'right' });
     await page.getByLabel('View', { exact: true }).click();
-    await expect(page.getByLabel('Plot Canvas')).toBeVisible();
-    await expect(page.getByLabel('Preview Container')).toBeVisible();
+    await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
     await page.getByLabel('Close').click();
   });
 });
