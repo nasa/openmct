@@ -697,7 +697,10 @@ export default {
         this.drawScheduled = called;
         if (!this.drawnOnce && called) {
           this.drawnOnce = true;
-          this.visibilityObserver.observe(this.chartContainer);
+          if (!this.renderWhenVisible.preview) {
+            // if we're in preview mode, don't bother observing the chart container
+            this.visibilityObserver.observe(this.chartContainer);
+          }
         }
       }
     },

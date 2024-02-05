@@ -158,6 +158,7 @@ export default {
           window.requestAnimationFrame(func);
           return true;
         };
+        this.viewOptions.renderWhenVisible.preview = true;
         this.view.show(this.viewContainer, false, this.viewOptions);
       }
 
