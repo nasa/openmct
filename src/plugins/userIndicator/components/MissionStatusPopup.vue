@@ -24,7 +24,7 @@
             <option
               v-for="option in missionActionStatusOptions"
               :key="option.key"
-              :value="option.label"
+              :value="option.key"
             >
               {{ option.label }}
             </option>

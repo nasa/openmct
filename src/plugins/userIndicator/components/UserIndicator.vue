@@ -48,6 +48,7 @@
       ref="popupRef"
       class="c-user-control-panel"
       role="dialog"
+      aria-label="User Control Panel"
       :style="popupStyle"
     >
       <Suspense>
