@@ -427,6 +427,49 @@ test.describe('Display Layout', () => {
     // In real time mode, we don't fetch annotations at all
     expect(networkRequests.length).toBe(0);
   });
+
+  test('We can preview plot in display layouts', async ({ page }) => {
+    // Create a Display Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+    // Edit Display Layout
+    await page.getByLabel('Edit Object').click();
+
+    // Expand the 'My Items' folder in the left tree
+    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    // Add the Sine Wave Generator to the Display Layout and save changes
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: new RegExp(sineWaveObject.name)
+    });
+    const layoutGridHolder = page.getByLabel('Test Display Layout Layout Grid');
+    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // right click on the plot and select view large
+    await page.getByLabel('Sine', { exact: true }).click({ button: 'right' });
+    await page.getByLabel('View Historical Data').click();
+    await expect(page.getByLabel('Plot Canvas')).toBeVisible();
+    await expect(page.getByLabel('Preview Container')).toBeVisible();
+    await page.getByLabel('Close').click();
+    await page.getByLabel('Expand Test Display Layout layout').click();
+
+    // get last sinewave tree item (in the display layout)
+    await page
+      .getByRole('treeitem', { name: /Sine Wave Generator/ })
+      .locator('a')
+      .last()
+      .click({ button: 'right' });
+    await page.getByLabel('View', { exact: true }).click();
+    await expect(page.getByLabel('Plot Canvas')).toBeVisible();
+    await expect(page.getByLabel('Preview Container')).toBeVisible();
+    await page.getByLabel('Close').click();
+  });
 });
 
 async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
