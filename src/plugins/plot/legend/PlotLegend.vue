@@ -30,7 +30,7 @@
     <div
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
-      @click="expandLegend"
+      @click="toggleLegend"
     ></div>
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
@@ -155,6 +155,7 @@ export default {
     this.legend = this.config.legend;
     this.seriesModels = [];
     this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
+    this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
     this.initialize();
   },
   mounted() {
@@ -181,6 +182,11 @@ export default {
       } else {
         this.registerListeners(this.config);
       }
+    },
+    changeExpandDefault() {
+      this.isLegendExpanded = this.config.legend.model.expandByDefault;
+      this.legend.set('expanded', this.isLegendExpanded);
+      this.$emit('expanded', this.isLegendExpanded);
     },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -211,7 +217,6 @@ export default {
     addSeries(series) {
       this.seriesModels[this.seriesModels.length] = series;
     },
-
     removeSeries(plotSeries) {
       this.stopListening(plotSeries);
 
@@ -220,7 +225,7 @@ export default {
       );
       this.seriesModels.splice(seriesIndex, 1);
     },
-    expandLegend() {
+    toggleLegend() {
       this.isLegendExpanded = !this.isLegendExpanded;
       this.legend.set('expanded', this.isLegendExpanded);
       this.$emit('expanded', this.isLegendExpanded);

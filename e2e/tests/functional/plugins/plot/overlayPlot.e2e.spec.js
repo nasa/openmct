@@ -103,9 +103,17 @@ test.describe('Overlay Plot', () => {
     await page.getByLabel('Expand By Default').check();
     await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-    await page.reload();
+    // Assert that the legend is now open
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
     // Assert that the legend is expanded on page load
+    await page.reload();
     await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
     await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
