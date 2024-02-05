@@ -224,12 +224,13 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
   this.dimensions = dimensions;
   this.origin = origin;
   if (this.isContextLost) {
+    console.debug(`🪞 DrawWebGL: context was lost`);
     return;
   }
 
   if (dimensions && dimensions.length > 0 && origin && origin.length > 0) {
-    this.gl.uniform2fv(this.uDimensions, dimensions);
-    this.gl.uniform2fv(this.uOrigin, origin);
+    this.gl?.uniform2fv(this.uDimensions, dimensions);
+    this.gl?.uniform2fv(this.uOrigin, origin);
   }
 };
 

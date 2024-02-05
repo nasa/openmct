@@ -51,6 +51,12 @@ export default {
       default() {
         return {};
       }
+    },
+    existingView: {
+      type: Object,
+      default() {
+        return undefined;
+      }
     }
   },
   data() {
@@ -61,13 +67,18 @@ export default {
       viewKey: undefined,
       viewProviders: [],
       currentViewProvider: {},
-      actionCollection: undefined
+      actionCollection: undefined,
+      existingViewIndex: 0
     };
   },
   mounted() {
     this.viewProviders = this.openmct.objectViews.get(this.domainObject, this.objectPath);
     this.viewProviders.forEach((provider, index) => {
       provider.onItemClicked = () => {
+        if (this.existingView && provider.key === this.existingView.key) {
+          this.existingViewIndex = index;
+        }
+
         this.setView(provider);
       };
     });
@@ -89,7 +100,13 @@ export default {
     }
   },
   unmounted() {
-    this.view.destroy();
+    if (!this.existingView) {
+      this.view.destroy();
+    } else if (this.existingViewElement) {
+      // if the existing view element is populated, it's the currently viewed view
+      // in preview and we need to add it back to the parent.
+      this.addExistingViewBackToParent();
+    }
   },
   updated() {
     // FIXME: fixes a problem where the some context menu items are not available when in Preview Mode
@@ -99,7 +116,11 @@ export default {
   methods: {
     clear() {
       if (this.view) {
-        this.view.destroy();
+        if (this.view !== this.existingView) {
+          this.view.destroy();
+        } else {
+          this.addExistingViewBackToParent();
+        }
 
         this.$refs.objectView.innerHTML = '';
         delete this.view;
@@ -111,23 +132,40 @@ export default {
         return;
       }
 
+      const isExistingView = viewProvider.key === this.existingView?.key;
+
       this.clear();
 
       this.viewKey = viewProvider.key;
       this.initializeViewContainer();
-      this.currentViewProvider = viewProvider;
-      this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
+
+      if (isExistingView) {
+        this.view = this.existingView;
+        this.existingViewElement = this.existingView.parentElement.firstElementChild;
+        this.currentViewProvider = this.viewProviders[this.existingViewIndex];
+      } else {
+        this.currentViewProvider = viewProvider;
+        this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
+      }
 
       this.getActionsCollection(this.view);
-      // in preview mode, we're always visible
-      this.viewOptions.renderWhenVisible = (func) => {
-        window.requestAnimationFrame(func);
-        return true;
-      };
-      this.viewOptions.renderWhenVisible.preview = true;
-      this.view.show(this.viewContainer, false, this.viewOptions);
+
+      if (isExistingView) {
+        this.viewContainer.appendChild(this.existingViewElement);
+      } else {
+        // in preview mode, we're always visible
+        this.viewOptions.renderWhenVisible = (func) => {
+          window.requestAnimationFrame(func);
+          return true;
+        };
+        this.view.show(this.viewContainer, false, this.viewOptions);
+      }
 
       this.initObjectStyles();
+    },
+    addExistingViewBackToParent() {
+      this.existingView.parentElement.appendChild(this.existingViewElement);
+      delete this.existingViewElement;
     },
     initializeViewContainer() {
       this.viewContainer = this.$refs.objectView;

@@ -202,9 +202,7 @@ export default {
     this.drawnOnce = false;
     const rootContainer = this.openmct.element;
     const options = {
-      root: rootContainer,
-      rootMargin: '0px',
-      threshold: 1.0
+      root: rootContainer
     };
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged, options);
     eventHelpers.extend(this);
@@ -286,11 +284,23 @@ export default {
       // and we need to use the Open MCT root element as the root of the intersection observer.
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
-        this.chartVisible = entry.isIntersecting;
-        if (!this.chartVisible) {
-          // destroy the chart
+        const isNowVisible = entry.isIntersecting;
+        const chartInOverlayWindow = this.chartContainer?.closest('.js-overlay') !== null;
+        console.debug('📈 checking chart visibility');
+        console.debug(
+          `📈 wasVisible ${wasVisible}, this.chartVisible ${this.chartVisible}, chartInOverlayWindow ${chartInOverlayWindow}`
+        );
+
+        if (!isNowVisible && !chartInOverlayWindow) {
+          console.debug('📈 chart not visible, destroying canvas');
+          this.chartVisible = false;
           this.destroyCanvas();
-        } else if (!wasVisible && this.chartVisible) {
+        } else if (!isNowVisible && chartInOverlayWindow) {
+          console.debug('📈 chart in overlay window, change to visible');
+          this.chartVisible = true;
+        } else if (!wasVisible && isNowVisible) {
+          console.debug('📈 chart now visible, reinitialziing canvas');
+          this.chartVisible = true;
           // rebuild the chart
           this.buildCanvasElements();
           const canvasInitialized = this.readyCanvasForDrawing();
@@ -298,8 +308,8 @@ export default {
             this.draw();
           }
           this.$emit('plot-reinitialize-canvas');
-        } else if (wasVisible && this.chartVisible) {
-          // ignore, moving on
+        } else {
+          this.chartVisible = isNowVisible;
         }
       }
     },
@@ -697,10 +707,7 @@ export default {
         this.drawScheduled = called;
         if (!this.drawnOnce && called) {
           this.drawnOnce = true;
-          if (!this.renderWhenVisible.preview) {
-            // if we're in preview mode, don't bother observing the chart container
-            this.visibilityObserver.observe(this.chartContainer);
-          }
+          this.visibilityObserver.observe(this.chartContainer);
         }
       }
     },
