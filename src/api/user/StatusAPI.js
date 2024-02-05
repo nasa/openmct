@@ -32,6 +32,7 @@ export default class StatusAPI extends EventEmitter {
 
     this.onProviderStatusChange = this.onProviderStatusChange.bind(this);
     this.onProviderPollQuestionChange = this.onProviderPollQuestionChange.bind(this);
+    this.onMissionActionStatusChange = this.onMissionActionStatusChange.bind(this);
     this.listenToStatusEvents = this.listenToStatusEvents.bind(this);
 
     this.#openmct.once('destroy', () => {
@@ -40,6 +41,7 @@ export default class StatusAPI extends EventEmitter {
       if (typeof provider?.off === 'function') {
         provider.off('statusChange', this.onProviderStatusChange);
         provider.off('pollQuestionChange', this.onProviderPollQuestionChange);
+        provider.off('missionActionStatusChange', this.onMissionActionStatusChange);
       }
     });
 
@@ -97,6 +99,67 @@ export default class StatusAPI extends EventEmitter {
       return provider.canSetPollQuestion();
     } else {
       return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Can the currently logged in user set the mission status.
+   * @returns {Promise<Boolean>} true if the currently logged in user can set the mission status, false otherwise.
+   */
+  canSetMissionStatus() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.canSetMissionStatus) {
+      return provider.canSetMissionStatus();
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Fetch the current status for the given mission action
+   * @param {MissionAction} action
+   * @returns {string}
+   */
+  getStatusForMissionAction(action) {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getStatusForMissionAction) {
+      return provider.getStatusForMissionAction(action);
+    } else {
+      this.#userAPI.error('User provider does not support getting mission action status');
+    }
+  }
+
+  /**
+   * Fetch the list of possible mission status options (GO, NO-GO, etc.)
+   * @returns {Promise<MissionStatusOption[]>} the complete list of possible mission statuses
+   */
+  async getPossibleMissionActionStatuses() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getPossibleMissionActionStatuses) {
+      const possibleOptions = await provider.getPossibleMissionActionStatuses();
+
+      return possibleOptions;
+    } else {
+      this.#userAPI.error('User provider does not support mission status options');
+    }
+  }
+
+  /**
+   * Fetch the list of possible mission actions
+   * @returns {Promise<string[]>} the list of possible mission actions
+   */
+  async getPossibleMissionActions() {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.getPossibleMissionActions) {
+      const possibleActions = await provider.getPossibleMissionActions();
+
+      return possibleActions;
+    } else {
+      this.#userAPI.error('User provider does not support mission statuses');
     }
   }
 
@@ -163,6 +226,21 @@ export default class StatusAPI extends EventEmitter {
       return provider.setStatusForRole(activeRole, status);
     } else {
       this.#userAPI.error('User provider does not support setting role status');
+    }
+  }
+
+  /**
+   * @param {MissionAction} action
+   * @param {MissionStatusOption} status
+   * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
+   */
+  setStatusForMissionAction(action, status) {
+    const provider = this.#userAPI.getProvider();
+
+    if (provider.setStatusForMissionAction) {
+      return provider.setStatusForMissionAction(action, status);
+    } else {
+      this.#userAPI.error('User provider does not support setting mission role status');
     }
   }
 
@@ -245,6 +323,7 @@ export default class StatusAPI extends EventEmitter {
     if (typeof provider.on === 'function') {
       provider.on('statusChange', this.onProviderStatusChange);
       provider.on('pollQuestionChange', this.onProviderPollQuestionChange);
+      provider.on('missionActionStatusChange', this.onMissionActionStatusChange);
     }
   }
 
@@ -261,19 +340,41 @@ export default class StatusAPI extends EventEmitter {
   onProviderPollQuestionChange(pollQuestion) {
     this.emit('pollQuestionChange', pollQuestion);
   }
+
+  /**
+   * @private
+   */
+  onMissionActionStatusChange({ action, status }) {
+    this.emit('missionActionStatusChange', { action, status });
+  }
 }
 
 /**
  * @typedef {import('./UserProvider')} UserProvider
  */
+
 /**
  * @typedef {import('./StatusUserProvider')} StatusUserProvider
  */
+
 /**
  * The PollQuestion type
  * @typedef {Object} PollQuestion
  * @property {String} question - The question to be presented to users
  * @property {Number} timestamp - The time that the poll question was set.
+ */
+
+/**
+ * The MissionStatus type
+ * @typedef {Object} MissionStatusOption
+ * @extends {Status}
+ * @property {String} color A color to be used when displaying the mission status
+ */
+
+/**
+ * @typedef {Object} MissionAction
+ * @property {String} key A unique identifier for this action
+ * @property {String} label A human readable label for this action
  */
 
 /**

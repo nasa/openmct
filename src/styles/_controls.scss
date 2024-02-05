@@ -221,6 +221,10 @@ button {
       font-size: 1.1em;
     }
   }
+
+  &--sm {
+    padding: $interiorMarginSm $interiorMargin;
+  }
 }
 
 .c-list-button {
