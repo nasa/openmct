@@ -28,7 +28,7 @@ import { fileURLToPath } from 'url';
 
 import { expect, test } from '../../baseFixtures.js';
 
-test.describe('Persistence operations @addInit', () => {
+test.describe('Mission Status @addInit', () => {
   test.beforeEach(async ({ page }) => {
     // FIXME: determine if plugins will be added to index.html or need to be injected
     await page.addInitScript({
@@ -45,7 +45,24 @@ test.describe('Persistence operations @addInit', () => {
   });
 
   test('Mission Status is visible and expands when clicked', async ({ page }) => {
+    const imageryStatusSelect = page.getByRole('combobox', { name: 'Imagery' });
+    const commandingStatusSelect = page.getByRole('combobox', { name: 'Commanding' });
+    const drivingStatusSelect = page.getByRole('combobox', { name: 'Driving' });
+
+
     await page.getByLabel('Toggle Mission Status Panel').click();
-    await expect(page.locator('.c-status-panel__content')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
+
+    await expect(imageryStatusSelect).toHaveValue('NO GO');
+    await expect(commandingStatusSelect).toHaveValue('NO GO');
+    await expect(drivingStatusSelect).toHaveValue('NO GO');
+
+    await page.getByRole('combobox', { name: 'Imagery' }).selectOption('GO');
+    await expect(imageryStatusSelect).toHaveValue('GO');
+    await expect(commandingStatusSelect).toHaveValue('NO GO');
+    await expect(drivingStatusSelect).toHaveValue('NO GO');
+    await expect(
+      page.getByRole('alert').filter({ hasText: 'Successfully set mission status' })
+    ).toBeVisible();
   });
 });

@@ -43,7 +43,13 @@
     </span>
   </div>
   <Teleport to="body">
-    <div v-show="isPopupVisible" ref="popupRef" class="c-user-control-panel" :style="popupStyle">
+    <div
+      v-show="isPopupVisible"
+      ref="popupRef"
+      class="c-user-control-panel"
+      role="dialog"
+      :style="popupStyle"
+    >
       <Suspense>
         <template #default>
           <MissionStatusPopup v-if="canSetMissionStatus" @dismiss="togglePopup" />
