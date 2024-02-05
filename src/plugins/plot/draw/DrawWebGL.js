@@ -224,7 +224,6 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
   this.dimensions = dimensions;
   this.origin = origin;
   if (this.isContextLost) {
-    console.debug(`🪞 DrawWebGL: context was lost`);
     return;
   }
 

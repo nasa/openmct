@@ -286,20 +286,13 @@ export default {
         const wasVisible = this.chartVisible;
         const isNowVisible = entry.isIntersecting;
         const chartInOverlayWindow = this.chartContainer?.closest('.js-overlay') !== null;
-        console.debug('📈 checking chart visibility');
-        console.debug(
-          `📈 wasVisible ${wasVisible}, this.chartVisible ${this.chartVisible}, chartInOverlayWindow ${chartInOverlayWindow}`
-        );
 
         if (!isNowVisible && !chartInOverlayWindow) {
-          console.debug('📈 chart not visible, destroying canvas');
           this.chartVisible = false;
           this.destroyCanvas();
         } else if (!isNowVisible && chartInOverlayWindow) {
-          console.debug('📈 chart in overlay window, change to visible');
           this.chartVisible = true;
         } else if (!wasVisible && isNowVisible) {
-          console.debug('📈 chart now visible, reinitialziing canvas');
           this.chartVisible = true;
           // rebuild the chart
           this.buildCanvasElements();

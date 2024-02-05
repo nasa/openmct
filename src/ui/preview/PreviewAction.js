@@ -82,7 +82,6 @@ export default class PreviewAction extends EventEmitter {
         }
       ],
       onDestroy: () => {
-        console.debug(`Should be removing overlay...`);
         PreviewAction.isVisible = false;
         destroy();
         this.emit('isVisible', false);
