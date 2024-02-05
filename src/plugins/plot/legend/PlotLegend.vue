@@ -35,7 +35,12 @@
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
       <!-- COLLAPSED PLOT LEGEND -->
-      <div class="plot-wrapper-collapsed-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-if="!isLegendExpanded"
+        class="plot-wrapper-collapsed-legend"
+        aria-label="Plot Legend Collapsed"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
           title="Cursor is point locked. Click anywhere in the plot to unlock."
@@ -50,7 +55,12 @@
         />
       </div>
       <!-- EXPANDED PLOT LEGEND -->
-      <div class="plot-wrapper-expanded-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-else
+        class="plot-wrapper-expanded-legend"
+        aria-label="Plot Legend Expanded"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock"
           title="Click anywhere in the plot to unlock."
@@ -159,10 +169,7 @@ export default {
   mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
-    if (this.isLegendExpanded) {
-      this.$emit('expanded', this.isLegendExpanded);
-    }
-    console.debug(`🗺️ Mounting PlotLegend with legend expanded set to ${this.isLegendExpanded}`);
+    this.$emit('expanded', this.isLegendExpanded);
     this.updatePosition();
   },
   beforeUnmount() {

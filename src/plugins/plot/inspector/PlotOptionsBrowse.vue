@@ -98,7 +98,9 @@
           <div class="grid-cell label" title="Show the legend expanded by default">
             Expand by Default
           </div>
-          <div class="grid-cell value">{{ expandByDefault ? 'Yes' : 'No' }}</div>
+          <div aria-label="Expand by Default" class="grid-cell value">
+            {{ expandByDefault ? 'Yes' : 'No' }}
+          </div>
         </li>
         <li class="grid-row">
           <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
@@ -174,9 +176,8 @@ export default {
     if (!this.isStackedPlotObject) {
       this.initYAxesConfiguration();
       this.registerListeners();
-    } else {
-      this.initLegendConfiguration();
     }
+    this.initLegendConfiguration();
 
     this.loaded = true;
   },
