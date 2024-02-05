@@ -30,6 +30,7 @@
  * @property {string} end The end time property of the activity
  * @property {string} id The unique id of the activity. This is required to allow setting activity states
  * @property {object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
+ * @property {object} filterMetadata a list of strings that specifies which properties of the activity be included for filtering. Ex. {'description','properties.length_in_meters'}
  */
 
 import _ from 'lodash';
@@ -62,9 +63,9 @@ export function getValidatedData(domainObject) {
           groupActivity.filterMetadataValues = [];
           sourceMap.filterMetadata.forEach((property) => {
             const value = _.get(activity, property);
-            groupActivity.filterMetadataValues.push({
-              value
-            });
+            if (value !== undefined && value !== null) {
+              groupActivity.filterMetadataValues.push(value);
+            }
           });
         }
 
