@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-preview-window js-preview-window">
+  <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
       ref="previewHeader"
       :current-view="currentViewProvider"
@@ -107,6 +107,11 @@ export default {
       // in preview and we need to add it back to the parent.
       this.addExistingViewBackToParent();
     }
+  },
+  updated() {
+    // FIXME: fixes a problem where the some context menu items are not available when in Preview Mode
+    // see https://github.com/nasa/openmct/issues/7158
+    this.getActionsCollection(this.view);
   },
   methods: {
     clear() {

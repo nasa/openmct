@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -30,6 +30,7 @@
         :style="{
           left: (100 * (tick.value - min)) / interval + '%'
         }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
       >
         {{ tick.text }}
@@ -41,6 +42,7 @@
         :key="'tick-top' + i"
         class="gl-plot-tick gl-plot-y-tick-label"
         :style="{ top: (100 * (max - tick.value)) / interval + '%' }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
         style="margin-top: -0.5em; direction: ltr"
       >
@@ -71,9 +73,9 @@
 </template>
 
 <script>
-import configStore from './configuration/ConfigStore';
-import eventHelpers from './lib/eventHelpers';
-import { getFormattedTicks, getLogTicks, ticks } from './tickUtils';
+import configStore from './configuration/ConfigStore.js';
+import eventHelpers from './lib/eventHelpers.js';
+import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
 

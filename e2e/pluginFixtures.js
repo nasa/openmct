@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,9 +26,10 @@
  * and appActions. These fixtures should be generalized across all plugins.
  */
 
-const { test, expect, request } = require('./baseFixtures');
-// const { createDomainObjectWithDefaults } = require('./appActions');
-const path = require('path');
+// import { createDomainObjectWithDefaults } from './appActions.js';
+import { fileURLToPath } from 'url';
+
+import { expect, request, test } from './baseFixtures.js';
 
 /**
  * @typedef {Object} ObjectCreateOptions
@@ -117,7 +118,7 @@ const theme = 'espresso';
  */
 const myItemsFolderName = 'My Items';
 
-exports.test = test.extend({
+const extendedTest = test.extend({
   // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
   theme: [theme, { option: true }],
   // eslint-disable-next-line no-shadow
@@ -125,7 +126,9 @@ exports.test = test.extend({
     // eslint-disable-next-line playwright/no-conditional-in-test
     if (theme === 'snow') {
       //inject snow theme
-      await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
+      await page.addInitScript({
+        path: fileURLToPath(new URL('./helper/useSnowTheme.js', import.meta.url))
+      });
     }
 
     // Attach info about the currently running test and its project.
@@ -142,19 +145,18 @@ exports.test = test.extend({
   }
 });
 
-exports.expect = expect;
-exports.request = request;
+export { expect, request, extendedTest as test };
 
 /**
  * Takes a readable stream and returns a string.
  * @param {ReadableStream} readable - the readable stream
  * @return {Promise<String>} the stringified stream
  */
-exports.streamToString = async function (readable) {
+export async function streamToString(readable) {
   let result = '';
   for await (const chunk of readable) {
     result += chunk;
   }
 
   return result;
-};
+}

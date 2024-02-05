@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import TelemetryTableColumn from '../TelemetryTableColumn';
-import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn';
+import TelemetryTableColumn from '../TelemetryTableColumn.js';
+import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn.js';
 
 export default {
   inject: ['tableConfiguration', 'openmct'],

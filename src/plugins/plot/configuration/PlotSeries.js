@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import configStore from '../configuration/ConfigStore';
-import { MARKER_SHAPES } from '../draw/MarkerShapes';
-import { symlog } from '../mathUtils';
-import Model from './Model';
+import configStore from '../configuration/ConfigStore.js';
+import { MARKER_SHAPES } from '../draw/MarkerShapes.js';
+import { symlog } from '../mathUtils.js';
+import Model from './Model.js';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -211,9 +211,16 @@ export default class PlotSeries extends Model {
     );
 
     if (!this.unsubscribe) {
-      this.unsubscribe = this.openmct.telemetry.subscribe(this.domainObject, this.add.bind(this), {
-        filters: this.filters
-      });
+      this.unsubscribe = this.openmct.telemetry.subscribe(
+        this.domainObject,
+        (data) => {
+          this.addAll(data, true);
+        },
+        {
+          filters: this.filters,
+          strategy: this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH
+        }
+      );
     }
 
     try {
@@ -302,9 +309,7 @@ export default class PlotSeries extends Model {
     this.resetStats();
     this.emit('reset');
     if (newData) {
-      newData.forEach(function (point) {
-        this.add(point, true);
-      }, this);
+      this.addAll(newData, true);
     }
   }
   /**
@@ -416,14 +421,14 @@ export default class PlotSeries extends Model {
    * when adding an array of points that are already properly sorted.
    *
    * @private
-   * @param {Object} point a telemetry datum.
-   * @param {Boolean} [appendOnly] default false, if true will append
+   * @param {Object} newData a telemetry datum.
+   * @param {Boolean} [sorted] default false, if true will append
    *                  a point to the end without dupe checking.
    */
-  add(point, appendOnly) {
+  add(newData, sorted = false) {
     let data = this.getSeriesData();
     let insertIndex = data.length;
-    const currentYVal = this.getYVal(point);
+    const currentYVal = this.getYVal(newData);
     const lastYVal = this.getYVal(data[insertIndex - 1]);
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
@@ -432,22 +437,28 @@ export default class PlotSeries extends Model {
       return;
     }
 
-    if (!appendOnly) {
-      insertIndex = this.sortedIndex(point);
-      if (this.getXVal(data[insertIndex]) === this.getXVal(point)) {
+    if (!sorted) {
+      insertIndex = this.sortedIndex(newData);
+      if (this.getXVal(data[insertIndex]) === this.getXVal(newData)) {
         return;
       }
 
-      if (this.getXVal(data[insertIndex - 1]) === this.getXVal(point)) {
+      if (this.getXVal(data[insertIndex - 1]) === this.getXVal(newData)) {
         return;
       }
     }
 
-    this.updateStats(point);
-    point.mctLimitState = this.evaluate(point);
-    data.splice(insertIndex, 0, point);
+    this.updateStats(newData);
+    newData.mctLimitState = this.evaluate(newData);
+    data.splice(insertIndex, 0, newData);
     this.updateSeriesData(data);
-    this.emit('add', point, insertIndex, this);
+    this.emit('add', newData, insertIndex, this);
+  }
+
+  addAll(points, sorted = false) {
+    for (let i = 0; i < points.length; i++) {
+      this.add(points[i], sorted);
+    }
   }
 
   /**

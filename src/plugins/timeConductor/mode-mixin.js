@@ -1,4 +1,4 @@
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants';
+import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants.js';
 
 export default {
   props: {

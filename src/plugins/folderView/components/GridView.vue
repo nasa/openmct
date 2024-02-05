@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,18 +20,19 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-grid-view">
+  <div class="l-grid-view" role="grid">
     <grid-item
       v-for="(item, index) in items"
       :key="index"
       :item="item"
       :object-path="item.objectPath"
+      role="gridcell"
     />
   </div>
 </template>
 
 <script>
-import compositionLoader from './composition-loader';
+import compositionLoader from './composition-loader.js';
 import GridItem from './GridItem.vue';
 
 export default {

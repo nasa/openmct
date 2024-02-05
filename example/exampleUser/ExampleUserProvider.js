@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 
-import createExampleUser from './exampleUserCreator';
+import createExampleUser from './exampleUserCreator.js';
 
 const STATUSES = [
   {
@@ -110,6 +110,11 @@ export default class ExampleUserProvider extends EventEmitter {
   canSetPollQuestion() {
     return Promise.resolve(true);
   }
+
+  canSetMissionStatus() {
+    return Promise.resolve(false);
+  }
+
   hasRole(roleId) {
     if (!this.loggedIn) {
       Promise.resolve(undefined);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Agent from '../../utils/agent/Agent';
-import DeviceClassifier from './src/DeviceClassifier';
+import Agent from '../../utils/agent/Agent.js';
+import DeviceClassifier from './src/DeviceClassifier.js';
 
 export default () => {
   return (openmct) => {

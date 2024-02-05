@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,9 +54,9 @@
  * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
  */
 
-const Buffer = require('buffer').Buffer;
-const genUuid = require('uuid').v4;
-const { expect } = require('@playwright/test');
+import { expect } from '@playwright/test';
+import { Buffer } from 'buffer';
+import { v4 as genUuid } from 'uuid';
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -284,7 +284,7 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
  */
 async function openObjectTreeContextMenu(page, url) {
   await page.goto(url);
-  await page.click('button[title="Show selected item in tree"]');
+  await page.getByLabel('Show selected item in tree').click();
   await page.locator('.is-navigated-object').click({
     button: 'right'
   });
@@ -644,8 +644,7 @@ async function renameObjectFromContextMenu(page, url, newName) {
   await page.click('[aria-label="Save"]');
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
+export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
@@ -653,16 +652,16 @@ module.exports = {
   expandEntireTree,
   expandTreePaneItemByName,
   getCanvasPixels,
-  getHashUrlToDomainObject,
   getFocusedObjectUuid,
+  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
+  renameObjectFromContextMenu,
+  setEndOffset,
   setFixedTimeMode,
+  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
-  setEndOffset,
   setTimeConductorBounds,
-  setIndependentTimeConductorBounds,
-  waitForPlotsToRender,
-  renameObjectFromContextMenu
+  waitForPlotsToRender
 };

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,6 +23,7 @@
   <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
       class="c-icon-button c-button--menu icon-camera"
+      aria-label="Take a Notebook Snapshot"
       title="Take a Notebook Snapshot"
       @click.stop.prevent="showMenu"
     >
@@ -32,10 +33,10 @@
 </template>
 
 <script>
-import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
-import Snapshot from '../snapshot';
-import { getMenuItems } from '../utils/notebook-snapshot-menu';
-import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
+import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants.js';
+import Snapshot from '../snapshot.js';
+import { getMenuItems } from '../utils/notebook-snapshot-menu.js';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage.js';
 
 export default {
   inject: ['openmct'],

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -41,7 +41,11 @@
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
-        <div class="is-status__indicator" :title="`This item is ${status}`"></div>
+        <div
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></div>
         <div v-if="showLabel" class="c-telemetry-view__label">
           <div class="c-telemetry-view__label-text">
             {{ domainObject.name }}
@@ -50,6 +54,7 @@
 
         <div
           v-if="showValue"
+          :aria-label="fieldName"
           :title="fieldName"
           class="c-telemetry-view__value"
           :class="[telemetryClass]"
@@ -73,18 +78,13 @@ import {
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = [
-  'copyToClipboard',
-  'copyToNotebook',
-  'viewHistoricalData',
-  'renderWhenVisible'
-];
+const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
 
 export default {
   makeDefinition(openmct, gridSize, domainObject, position) {

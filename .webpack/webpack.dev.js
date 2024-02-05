@@ -1,18 +1,16 @@
-/* global __dirname module */
-
 /*
 This configuration should be used for development purposes. It contains full source map, a
 devServer (which be invoked using by `npm start`), and a non-minified Vue.js distribution.
 If OpenMCT is to be used for a production server, use webpack.prod.js instead.
 */
-const path = require('path');
-const webpack = require('webpack');
-const { merge } = require('webpack-merge');
+import path from 'path';
+import webpack from 'webpack';
+import { merge } from 'webpack-merge';
+import { fileURLToPath } from 'node:url';
 
-const common = require('./webpack.common');
-const projectRootDir = path.resolve(__dirname, '..');
+import common from './webpack.common.js';
 
-module.exports = merge(common, {
+export default merge(common, {
   mode: 'development',
   watchOptions: {
     // Since we use require.context, webpack is watching the entire directory.
@@ -42,7 +40,7 @@ module.exports = merge(common, {
     },
     watchFiles: ['**/*.css'],
     static: {
-      directory: path.join(__dirname, '..', '/dist'),
+      directory: fileURLToPath(new URL('../dist', import.meta.url)),
       publicPath: '/dist',
       watch: false
     }

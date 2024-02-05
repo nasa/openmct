@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 Tests to verify log plot functionality when objects are missing
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Handle missing object for plots', () => {
   test('Displays empty div for missing stacked plot item @unstable', async ({

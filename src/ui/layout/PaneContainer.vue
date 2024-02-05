@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,6 +29,7 @@
         v-if="isCollapsable"
         class="l-pane__collapse-button c-icon-button"
         :name="collapseTitle"
+        :aria-label="collapseTitle"
         :title="collapseTitle"
         @click="toggleCollapse"
       ></button>
@@ -36,6 +37,7 @@
     <button
       class="l-pane__expand-button"
       :name="expandTitle"
+      :aria-label="expandTitle"
       :title="expandTitle"
       @click="toggleCollapse"
     >

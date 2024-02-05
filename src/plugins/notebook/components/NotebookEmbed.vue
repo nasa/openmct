@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,7 +36,8 @@
         </a>
         <button
           class="c-ne__embed__actions c-icon-button icon-3-dots"
-          title="More options"
+          title="More actions"
+          aria-label="More actions"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
       </div>
@@ -53,12 +54,12 @@ import mount from 'utils/mount';
 
 import objectPathToUrl from '@/tools/url';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import ImageExporter from '../../../exporters/ImageExporter';
-import PreviewAction from '../../../ui/preview/PreviewAction';
-import { updateNotebookImageDomainObject } from '../utils/notebook-image';
-import PainterroInstance from '../utils/painterroInstance';
-import RemoveDialog from '../utils/removeDialog';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import ImageExporter from '../../../exporters/ImageExporter.js';
+import PreviewAction from '../../../ui/preview/PreviewAction.js';
+import { updateNotebookImageDomainObject } from '../utils/notebook-image.js';
+import PainterroInstance from '../utils/painterroInstance.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import SnapshotTemplate from './snapshot-template.html';
 
 export default {

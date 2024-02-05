@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import AnnotationsViewProvider from './annotations/AnnotationsViewProvider';
-import ElementsViewProvider from './elements/ElementsViewProvider';
-import PlotElementsViewProvider from './elements/PlotElementsViewProvider';
-import PropertiesViewProvider from './properties/PropertiesViewProvider';
-import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider';
+import AnnotationsViewProvider from './annotations/AnnotationsViewProvider.js';
+import ElementsViewProvider from './elements/ElementsViewProvider.js';
+import PlotElementsViewProvider from './elements/PlotElementsViewProvider.js';
+import PropertiesViewProvider from './properties/PropertiesViewProvider.js';
+import StylesInspectorViewProvider from './styles/StylesInspectorViewProvider.js';
 
 export default function InspectorViewsPlugin() {
   return function install(openmct) {

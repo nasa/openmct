@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -37,7 +37,7 @@
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators class="l-shell__head-section l-shell__indicators" />
+      <StatusIndicators />
       <button
         class="l-shell__head__collapse-button c-icon-button"
         :class="
@@ -45,6 +45,7 @@
             ? 'l-shell__head__collapse-button--collapse'
             : 'l-shell__head__collapse-button--expand'
         "
+        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
       ></button>
@@ -61,6 +62,7 @@
             'c-icon-button c-icon-button--major',
             fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand'
           ]"
+          :aria-label="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           @click="fullScreenToggle"
         ></button>
@@ -83,11 +85,13 @@
         <template #controls>
           <button
             class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+            aria-label="Collapse all tree items"
             title="Collapse all tree items"
             @click="handleTreeReset"
           ></button>
           <button
             class="c-icon-button l-shell__sync-tree-button icon-target"
+            aria-label="Show selected item in tree"
             title="Show selected item in tree"
             @click="handleSyncTreeNavigation"
           ></button>
@@ -120,7 +124,7 @@
           </pane>
         </multipane>
       </pane>
-      <pane class="l-shell__pane-main">
+      <pane class="l-shell__pane-main" role="main">
         <browse-bar
           ref="browseBar"
           class="l-shell__main-view-browse-bar"

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,8 +22,8 @@
 
 import EventEmitter from 'EventEmitter';
 
-import eventHelpers from '../lib/eventHelpers';
-import { MARKER_SHAPES } from './MarkerShapes';
+import eventHelpers from '../lib/eventHelpers.js';
+import { MARKER_SHAPES } from './MarkerShapes.js';
 
 // WebGL shader sources (for drawing plain colors)
 const FRAGMENT_SHADER = `
@@ -154,14 +154,14 @@ DrawWebGL.prototype.initContext = function () {
 DrawWebGL.prototype.destroy = function () {
   // Lose the context and delete all associated resources
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#lose_contexts_eagerly
-  this.gl.getExtension('WEBGL_lose_context').loseContext();
-  this.gl.deleteBuffer(this.buffer);
+  this.gl?.getExtension('WEBGL_lose_context')?.loseContext();
+  this.gl?.deleteBuffer(this.buffer);
   this.buffer = undefined;
-  this.gl.deleteProgram(this.program);
+  this.gl?.deleteProgram(this.program);
   this.program = undefined;
-  this.gl.deleteShader(this.vertexShader);
+  this.gl?.deleteShader(this.vertexShader);
   this.vertexShader = undefined;
-  this.gl.deleteShader(this.fragmentShader);
+  this.gl?.deleteShader(this.fragmentShader);
   this.fragmentShader = undefined;
   this.gl = undefined;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,15 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import PlotViewActions from './actions/ViewActions';
-import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
-import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider';
-import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
-import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
-import PlotViewProvider from './PlotViewProvider';
-import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
-import stackedPlotConfigurationInterceptor from './stackedPlot/stackedPlotConfigurationInterceptor';
-import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
+import PlotViewActions from './actions/ViewActions.js';
+import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider.js';
+import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider.js';
+import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy.js';
+import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider.js';
+import PlotViewProvider from './PlotViewProvider.js';
+import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy.js';
+import stackedPlotConfigurationInterceptor from './stackedPlot/stackedPlotConfigurationInterceptor.js';
+import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {

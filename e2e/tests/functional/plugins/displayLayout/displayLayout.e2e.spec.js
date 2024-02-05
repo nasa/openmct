@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,20 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
-const { test, expect } = require('../../../../pluginFixtures');
-const path = require('path');
-const {
-  createDomainObjectWithDefaults,
-  setStartOffset,
-  setFixedTimeMode,
-  setRealTimeMode,
-  setIndependentTimeConductorBounds
-} = require('../../../../appActions');
+import { fileURLToPath } from 'url';
 
-const LOCALSTORAGE_PATH = path.resolve(
-  __dirname,
-  '../../../../test-data/display_layout_with_child_layouts.json'
+import {
+  createDomainObjectWithDefaults,
+  setFixedTimeMode,
+  setIndependentTimeConductorBounds,
+  setRealTimeMode,
+  setStartOffset
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
+
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/display_layout_with_child_layouts.json', import.meta.url)
 );
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
@@ -48,10 +47,10 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Display Layout Display Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test.use({
-    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+    storageState: LOCALSTORAGE_PATH
   });
 
   test('can add/remove Text element to a single layout', async ({ page }) => {
@@ -134,7 +133,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -162,6 +161,13 @@ test.describe('Display Layout', () => {
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
+
+    // ensure we can right click on the alpha-numeric widget and view historical data
+    await page.getByLabel('Sine', { exact: true }).click({
+      button: 'right'
+    });
+    await page.getByLabel('View Historical Data').click();
+    await expect(page.getByLabel('Plot Container Style Target')).toBeVisible();
   });
   test('alpha-numeric widget telemetry value exactly matches latest telemetry value received in fixed time', async ({
     page
@@ -172,7 +178,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -214,7 +220,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -256,7 +262,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -302,7 +308,7 @@ test.describe('Display Layout', () => {
       type: 'Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -358,7 +364,7 @@ test.describe('Display Layout', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -450,7 +456,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK' }).click();
+  await page.getByRole('button', { name: 'OK', exact: true }).click();
 }
 
 /**

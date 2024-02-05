@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,11 +20,18 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="plotWrapper" class="c-plot holder holder-plot has-control-bar" :class="staleClass">
+  <div
+    ref="plotWrapper"
+    class="c-plot holder holder-plot has-control-bar"
+    :class="isStale && 'is-stale'"
+  >
     <div
       ref="plotContainer"
       class="l-view-section u-style-receiver js-style-receiver"
-      :class="{ 's-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced' }"
+      aria-label="Plot Container Style Target"
+      :class="{
+        's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
+      }"
     >
       <progress-bar
         v-show="!!loading"
@@ -65,10 +72,10 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import ImageExporter from '../../exporters/ImageExporter';
+import ImageExporter from '../../exporters/ImageExporter.js';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
 import PlotLegend from './legend/PlotLegend.vue';
-import eventHelpers from './lib/eventHelpers';
+import eventHelpers from './lib/eventHelpers.js';
 import MctPlot from './MctPlot.vue';
 
 export default {
@@ -78,7 +85,7 @@ export default {
     PlotLegend
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject'],
   props: {
     options: {
       type: Object,
@@ -156,9 +163,6 @@ export default {
     },
     gridLinesProp() {
       return this.gridLines ?? !this.options.compact;
-    },
-    staleClass() {
-      return this.isStale ? 'is-stale' : '';
     },
     plotLegendPositionClass() {
       return this.position ? `plot-legend-${this.position}` : '';

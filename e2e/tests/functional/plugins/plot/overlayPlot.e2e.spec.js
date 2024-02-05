@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,12 +25,12 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
   waitForPlotsToRender
-} = require('../../../../appActions');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Overlay Plot', () => {
   test.beforeEach(async ({ page }) => {
@@ -87,7 +87,7 @@ test.describe('Overlay Plot', () => {
     expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
     // Enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -114,7 +114,7 @@ test.describe('Overlay Plot', () => {
     await assertLimitLinesExistAndAreVisible(page);
 
     // Enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -216,7 +216,7 @@ test.describe('Overlay Plot', () => {
     });
 
     await page.goto(overlayPlot.url);
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -275,31 +275,37 @@ test.describe('Overlay Plot', () => {
     expect(yAxis3Group.getByRole('listitem').nth(0).getByText(swgB.name)).toBeTruthy();
   });
 
-  test('Clicking on an item in the elements pool brings up the plot preview with data points', async ({
-    page
-  }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
+  test.fixme(
+    'Clicking on an item in the elements pool brings up the plot preview with data points',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
 
-    const swgA = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      parent: overlayPlot.uuid
-    });
+      const overlayPlot = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot'
+      });
 
-    await page.goto(overlayPlot.url);
-    // Wait for plot series data to load and be drawn
-    await waitForPlotsToRender(page);
-    await page.click('button[title="Edit"]');
+      const swgA = await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        parent: overlayPlot.uuid
+      });
 
-    await page.getByRole('tab', { name: 'Elements' }).click();
+      await page.goto(overlayPlot.url);
+      // Wait for plot series data to load and be drawn
+      await waitForPlotsToRender(page);
+      await page.getByLabel('Edit Object').click();
 
-    await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+      await page.getByRole('tab', { name: 'Elements' }).click();
 
-    const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
-    const plotPixelSize = plotPixels.length;
-    expect(plotPixelSize).toBeGreaterThan(0);
-  });
+      await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+
+      const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+      const plotPixelSize = plotPixels.length;
+      expect(plotPixelSize).toBeGreaterThan(0);
+    }
+  );
 });
 
 /**
@@ -311,10 +317,9 @@ async function assertLimitLinesExistAndAreVisible(page) {
   await waitForPlotsToRender(page);
   // Wait for limit lines to be created
   await page.waitForSelector('.js-limit-area', { state: 'attached' });
-  const limitLineElements = page.locator('.c-plot-limit-line');
-  const limitLineCount = await limitLineElements.count();
   // There should be 10 limit lines created by default
-  expect(limitLineCount).toBe(10);
+  await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
+  const limitLineCount = await page.locator('.c-plot-limit-line').count();
   for (let i = 0; i < limitLineCount; i++) {
     await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
   }

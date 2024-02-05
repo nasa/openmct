@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import Color from '../../../../ui/color/Color';
-import ColorPalette from '../../../../ui/color/ColorPalette';
+import Color from '../../../../ui/color/Color.js';
+import ColorPalette from '../../../../ui/color/ColorPalette.js';
 import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 
 export default {

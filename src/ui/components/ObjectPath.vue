@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -78,6 +78,7 @@ export default {
     };
   },
   async mounted() {
+    this.abortController = new AbortController();
     this.nameChangeListeners = {};
     const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -87,7 +88,18 @@ export default {
 
       let rawPath = null;
       if (this.objectPath === null) {
-        rawPath = await this.openmct.objects.getOriginalPath(keyString);
+        try {
+          rawPath = await this.openmct.objects.getOriginalPath(
+            keyString,
+            [],
+            this.abortController.signal
+          );
+        } catch (error) {
+          // aborting the search is ok, everything else should be thrown
+          if (error.name !== 'AbortError') {
+            throw error;
+          }
+        }
       } else {
         rawPath = this.objectPath;
       }
@@ -115,6 +127,9 @@ export default {
     }
   },
   unmounted() {
+    if (this.abortController) {
+      this.abortController.abort();
+    }
     Object.values(this.nameChangeListeners).forEach((unlisten) => {
       unlisten();
     });

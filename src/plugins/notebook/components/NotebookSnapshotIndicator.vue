@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,34 +20,40 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div
-    class="c-indicator c-indicator--clickable icon-camera"
-    :class="[
-      { 's-status-off': snapshotCount === 0 },
-      { 's-status-on': snapshotCount > 0 },
-      { 's-status-caution': snapshotCount === snapshotMaxCount },
-      { 'has-new-snapshot': flashIndicator }
-    ]"
-  >
-    <span class="label c-indicator__label">
-      {{ indicatorTitle }}
-      <button @click="toggleSnapshot">
-        {{ expanded ? 'Hide' : 'Show' }}
-      </button>
-    </span>
-    <span class="c-indicator__count">{{ snapshotCount }}</span>
-  </div>
+  <aside aria-label="Snapshot Indicator">
+    <div
+      class="c-indicator c-indicator--clickable icon-camera"
+      :class="[
+        { 's-status-off': snapshotCount === 0 },
+        { 's-status-on': snapshotCount > 0 },
+        { 's-status-caution': snapshotCount === snapshotMaxCount },
+        { 'has-new-snapshot': flashIndicator }
+      ]"
+    >
+      <span class="label c-indicator__label">
+        {{ indicatorTitle }}
+        <button
+          :aria-label="expanded ? 'Hide Snapshots' : 'Show Snapshots'"
+          @click="toggleSnapshot"
+        >
+          {{ expanded ? 'Hide' : 'Show' }}
+        </button>
+      </span>
+      <span class="c-indicator__count">{{ snapshotCount }}</span>
+    </div>
+  </aside>
 </template>
 
 <script>
 import mount from 'utils/mount';
 
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
-import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants.js';
+import { getSnapshotContainer } from '../plugin.js';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container.js';
 import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 
 export default {
-  inject: ['openmct', 'snapshotContainer'],
+  inject: ['openmct'],
   data() {
     return {
       expanded: false,
@@ -56,6 +62,9 @@ export default {
       snapshotMaxCount: NOTEBOOK_SNAPSHOT_MAX_COUNT,
       flashIndicator: false
     };
+  },
+  created() {
+    this.snapshotContainer = getSnapshotContainer(this.openmct);
   },
   mounted() {
     this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);

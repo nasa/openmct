@@ -1,20 +1,20 @@
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 
-import ImageExporter from '../../exporters/ImageExporter';
-import SnapshotContainer from './snapshot-container';
-import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
+import ImageExporter from '../../exporters/ImageExporter.js';
+import SnapshotContainer from './snapshot-container.js';
+import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries.js';
 import {
   createNotebookImageDomainObject,
   DEFAULT_SIZE,
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
-} from './utils/notebook-image';
+} from './utils/notebook-image.js';
 import {
   getDefaultNotebook,
   getDefaultNotebookLink,
   getNotebookSectionAndPage,
   setDefaultNotebook
-} from './utils/notebook-storage';
+} from './utils/notebook-storage.js';
 
 export default class Snapshot {
   constructor(openmct) {

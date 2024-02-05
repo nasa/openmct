@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider.js';
 
 const USERNAME = 'Coach McGuirk';
 
@@ -75,7 +75,7 @@ describe('The User Indicator plugin', () => {
     it('exists', () => {
       userIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'user-indicator'
-      ).element;
+      ).vueComponent;
 
       const hasClockIndicator = userIndicator !== null && userIndicator !== undefined;
       expect(hasClockIndicator).toBe(true);
@@ -89,9 +89,11 @@ describe('The User Indicator plugin', () => {
 
           userIndicator = openmct.indicators.indicatorObjects.find(
             (indicator) => indicator.key === 'user-indicator'
-          ).element;
+          ).vueComponent;
 
-          const userName = userIndicator.textContent.trim();
+          expect(userIndicator).toBeDefined();
+          expect(userIndicator).not.toBeNull();
+          const userName = document.querySelector('[aria-label="User Role"]').textContent.trim();
 
           expect(user.name).toEqual(USERNAME);
           expect(userName).toContain(USERNAME);

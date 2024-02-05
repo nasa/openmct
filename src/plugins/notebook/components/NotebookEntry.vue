@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -154,11 +154,11 @@ import Moment from 'moment';
 import sanitizeHtml from 'sanitize-html';
 
 import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
-import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries';
+import { createNewEmbed, createNewImageEmbed, selectEntry } from '../utils/notebook-entries.js';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
-} from '../utils/notebook-image';
+} from '../utils/notebook-image.js';
 import NotebookEmbed from './NotebookEmbed.vue';
 
 const SANITIZATION_SCHEMA = {
@@ -274,7 +274,8 @@ export default {
     'change-section-page',
     'update-entry',
     'editing-entry',
-    'entry-selection'
+    'entry-selection',
+    'update-annotations'
   ],
   data() {
     return {
@@ -638,13 +639,16 @@ export default {
       this.entry.text = restoredQuoteBrackets;
       this.timestampAndUpdate();
     },
+    updateAnnotations(newAnnotations) {
+      this.$emit('update-annotations', newAnnotations);
+    },
     selectAndEmitEntry(event, entry) {
       selectEntry({
         element: this.$refs.entry,
         entryId: entry.id,
         domainObject: this.domainObject,
         openmct: this.openmct,
-        onAnnotationChange: this.timestampAndUpdate,
+        onAnnotationChange: this.updateAnnotations,
         notebookAnnotations: this.notebookAnnotations
       });
       event.stopPropagation();

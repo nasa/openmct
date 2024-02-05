@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,11 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider';
-import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy';
+import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider.js';
+import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy.js';
 import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
 import ScatterPlotForm from './ScatterPlotForm.vue';
-import ScatterPlotViewProvider from './ScatterPlotViewProvider';
+import ScatterPlotViewProvider from './ScatterPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {

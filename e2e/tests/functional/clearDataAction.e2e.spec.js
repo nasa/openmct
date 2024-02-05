@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@
 Verify that the "Clear Data" menu action performs as expected for various object types.
 */
 
-const { test, expect } = require('../../pluginFixtures.js');
-const { createDomainObjectWithDefaults } = require('../../appActions.js');
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 
@@ -43,17 +43,22 @@ test.describe('Clear Data Action', () => {
     await expect(page.locator(backgroundImageSelector)).toBeVisible();
   });
   test('works as expected with Example Imagery', async ({ page }) => {
-    await expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
+    expect(await page.locator('.c-thumb__image').count()).toBeGreaterThan(0);
     // Click the "Clear Data" menu action
-    await page.getByTitle('More options').click();
-    const clearDataMenuItem = page.getByRole('menuitem', {
-      name: 'Clear Data'
-    });
-    await expect(clearDataMenuItem).toBeEnabled();
-    await clearDataMenuItem.click();
+    await page.getByTitle('More actions').click();
+    await expect(
+      page.getByRole('menuitem', {
+        name: 'Clear Data for Object'
+      })
+    ).toBeEnabled();
+    await page
+      .getByRole('menuitem', {
+        name: 'Clear Data for Object'
+      })
+      .click();
 
     // Verify that the background image is no longer visible
     await expect(page.locator(backgroundImageSelector)).toBeHidden();
-    await expect(await page.locator('.c-thumb__image').count()).toBe(0);
+    expect(await page.locator('.c-thumb__image').count()).toBe(0);
   });
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,13 +24,14 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import TabsLayout from './plugin';
+import TabsLayout from './plugin.js';
 
 describe('the plugin', function () {
   let element;
   let child;
   let openmct;
-  let tabsLayoutDefinition;
+  let tabsType;
+
   const testViewObject = {
     identifier: {
       key: 'mock-tabs-object',
@@ -85,8 +86,7 @@ describe('the plugin', function () {
 
   beforeEach((done) => {
     openmct = createOpenMct();
-    openmct.install(new TabsLayout());
-    tabsLayoutDefinition = openmct.types.get('tabs');
+    tabsType = openmct.types.get('tabs');
 
     element = document.createElement('div');
     child = document.createElement('div');
@@ -100,15 +100,56 @@ describe('the plugin', function () {
   });
 
   afterEach(() => {
+    child = undefined;
+    element = undefined;
+
     return resetApplicationState(openmct);
   });
 
-  it('defines a tabs object type with the correct key', () => {
-    expect(tabsLayoutDefinition.definition.name).toEqual('Tabs View');
+  it('is installed by default and provides a tabs object', () => {
+    expect(tabsType.definition.name).toEqual('Tabs View');
   });
 
-  it('is creatable', () => {
-    expect(tabsLayoutDefinition.definition.creatable).toEqual(true);
+  it('the tabs object is creatable', () => {
+    expect(tabsType.definition.creatable).toEqual(true);
+  });
+
+  it('sets eager load to false by default', () => {
+    const tabsObject = {
+      identifier: {
+        key: 'some-tab-object',
+        namespace: ''
+      },
+      type: 'tabs'
+    };
+
+    tabsType.definition.initialize(tabsObject);
+
+    expect(tabsObject.keep_alive).toBeFalse();
+  });
+
+  it('can be installed with eager load defaulting to true', () => {
+    const options = {
+      eagerLoad: true
+    };
+    const openmct2 = createOpenMct();
+    openmct2.install(new TabsLayout(options));
+    openmct2.startHeadless();
+
+    const tabsObject = {
+      identifier: {
+        key: 'some-tab-object',
+        namespace: ''
+      },
+      type: 'tabs'
+    };
+
+    const overriddenTabsType = openmct2.types.get('tabs');
+    overriddenTabsType.definition.initialize(tabsObject);
+
+    expect(tabsObject.keep_alive).toBeTrue();
+
+    return resetApplicationState(openmct2);
   });
 
   describe('the view', function () {

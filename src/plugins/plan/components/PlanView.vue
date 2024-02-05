@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -47,6 +47,7 @@
         :width="group.width"
         :is-nested="options.isChildObject"
         :status="status"
+        @activity-selected="selectActivity"
       />
     </div>
   </div>
@@ -58,8 +59,8 @@ import { scaleLinear, scaleUtc } from 'd3-scale';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
-import PlanViewConfiguration from '../PlanViewConfiguration';
-import { getContrastingColor, getValidatedData } from '../util';
+import PlanViewConfiguration from '../PlanViewConfiguration.js';
+import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util.js';
 import ActivityTimeline from './ActivityTimeline.vue';
 
 const PADDING = 1;
@@ -134,7 +135,7 @@ export default {
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
     if (this.domainObject.type === 'plan') {
-      this.planData = getValidatedData(this.domainObject);
+      this.setPlanData(this.domainObject);
     }
 
     const canvas = document.createElement('canvas');
@@ -177,6 +178,9 @@ export default {
     this.planViewConfiguration.destroy();
   },
   methods: {
+    setPlanData(domainObject) {
+      this.planData = getValidatedData(domainObject);
+    },
     activityNameFitsRect(activityName, rectWidth) {
       return this.getTextWidth(activityName) + TEXT_LEFT_PADDING < rectWidth;
     },
@@ -215,9 +219,7 @@ export default {
             callback: () => {
               this.removeFromComposition(this.planObject);
               this.planObject = domainObject;
-              this.planData = getValidatedData(domainObject);
-              this.setStatus(this.openmct.status.get(domainObject.identifier));
-              this.setScaleAndGenerateActivities();
+              this.handleSelectFileChange();
               dialog.dismiss();
             }
           },
@@ -237,9 +239,7 @@ export default {
       } else {
         this.planObject = domainObject;
         this.swimlaneVisibility = this.configuration.swimlaneVisibility;
-        this.planData = getValidatedData(domainObject);
-        this.setStatus(this.openmct.status.get(domainObject.identifier));
-        this.setScaleAndGenerateActivities();
+        this.handleSelectFileChange(domainObject);
       }
     },
     handleConfigurationChange(newConfiguration) {
@@ -259,8 +259,10 @@ export default {
 
       this.setScaleAndGenerateActivities();
     },
-    handleSelectFileChange() {
-      this.planData = getValidatedData(this.domainObject);
+    handleSelectFileChange(domainObject) {
+      const planDomainObject = domainObject || this.domainObject;
+      this.setPlanData(planDomainObject);
+      this.setStatus(this.openmct.status.get(planDomainObject.identifier));
       this.setScaleAndGenerateActivities();
     },
     removeFromComposition(domainObject) {
@@ -416,7 +418,7 @@ export default {
       return currentRow || SWIMLANE_PADDING;
     },
     generateActivities() {
-      const groupNames = Object.keys(this.planData);
+      const groupNames = getValidatedGroups(this.domainObject, this.planData);
 
       if (!groupNames.length) {
         return;
@@ -430,7 +432,11 @@ export default {
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
-        rawActivities.forEach((rawActivity) => {
+        if (rawActivities === undefined) {
+          return;
+        }
+
+        rawActivities.forEach((rawActivity, index) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
           }
@@ -477,13 +483,10 @@ export default {
           const activity = {
             color: color,
             textColor: textColor,
-            name: rawActivity.name,
             exceeds: {
               start: this.xScale(this.viewBounds.start) > this.xScale(rawActivity.start),
               end: this.xScale(this.viewBounds.end) < this.xScale(rawActivity.end)
             },
-            start: rawActivity.start,
-            end: rawActivity.end,
             row: currentRow,
             textLines: textLines,
             textStart: textStart,
@@ -492,7 +495,11 @@ export default {
             rectStart: rectX1,
             rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
             rectWidth: rectWidth,
-            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow)
+            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow),
+            selection: {
+              groupName,
+              index
+            }
           };
           activitiesByRow[currentRow].push(activity);
         });
@@ -569,6 +576,31 @@ export default {
       const activityName = activity.name.toLowerCase().replace(/ /g, '-');
 
       return `${groupName}-${activityName}-${activity.start}-${activity.end}-${row}`;
+    },
+    selectActivity({ event, selection }) {
+      const element = event.currentTarget;
+      const multiSelect = event.metaKey;
+      const { groupName, index } = selection;
+      const rawActivity = this.planData[groupName][index];
+      this.openmct.selection.select(
+        [
+          {
+            element: element,
+            context: {
+              type: 'activity',
+              activity: rawActivity
+            }
+          },
+          {
+            element: this.openmct.layout.$refs.browseObject.$el,
+            context: {
+              item: this.domainObject,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        multiSelect
+      );
     }
   }
 };
