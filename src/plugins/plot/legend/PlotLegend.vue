@@ -30,7 +30,7 @@
     <div
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
-      @click="expandLegend"
+      @click="toggleLegend"
     ></div>
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
@@ -165,6 +165,8 @@ export default {
     } else {
       this.registerListeners(this.config);
     }
+    this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
+    this.initialize();
   },
   mounted() {
     this.loaded = true;
@@ -181,6 +183,21 @@ export default {
     this.stopListening();
   },
   methods: {
+    initialize() {
+      if (this.domainObject.type === 'telemetry.plot.stacked') {
+        this.objectComposition = this.openmct.composition.get(this.domainObject);
+        this.objectComposition.on('add', this.addTelemetryObject);
+        this.objectComposition.on('remove', this.removeTelemetryObject);
+        this.objectComposition.load();
+      } else {
+        this.registerListeners(this.config);
+      }
+    },
+    changeExpandDefault() {
+      this.isLegendExpanded = this.config.legend.model.expandByDefault;
+      this.legend.set('expanded', this.isLegendExpanded);
+      this.$emit('expanded', this.isLegendExpanded);
+    },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -211,7 +228,6 @@ export default {
       this.seriesModels[this.seriesModels.length] = series;
       console.debug('🗺️ Adding series to PlotLegend', series);
     },
-
     removeSeries(plotSeries) {
       this.stopListening(plotSeries);
 
@@ -220,7 +236,7 @@ export default {
       );
       this.seriesModels.splice(seriesIndex, 1);
     },
-    expandLegend() {
+    toggleLegend() {
       this.isLegendExpanded = !this.isLegendExpanded;
       this.legend.set('expanded', this.isLegendExpanded);
       this.$emit('expanded', this.isLegendExpanded);
