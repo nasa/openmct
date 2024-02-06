@@ -37,7 +37,7 @@
       >
         <label class="c-toggle-switch">
           <input type="checkbox" :checked="isApplied" @change="applyTestData" />
-          <span class="c-toggle-switch__slider"></span>
+          <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Data</span>
         </label>
       </div>
@@ -50,7 +50,11 @@
           <span class="c-cs-test__label">Set</span>
           <span class="c-cs-test__controls">
             <span class="c-cdef__control">
-              <select v-model="testInput.telemetry" @change="updateMetadata(testInput)">
+              <select
+                v-model="testInput.telemetry"
+                aria-label="Test Data Telemetry Selection"
+                @change="updateMetadata(testInput)"
+              >
                 <option value="">- Select Telemetry -</option>
                 <option
                   v-for="(telemetryOption, index) in telemetry"
@@ -62,7 +66,11 @@
               </select>
             </span>
             <span v-if="testInput.telemetry" class="c-cdef__control">
-              <select v-model="testInput.metadata" @change="updateTestData">
+              <select
+                v-model="testInput.metadata"
+                aria-label="Test Data Metadata Selection"
+                @change="updateTestData"
+              >
                 <option value="">- Select Field -</option>
                 <option
                   v-for="(option, index) in telemetryMetadataOptions[getId(testInput.telemetry)]"
@@ -79,6 +87,7 @@
                 placeholder="Enter test input"
                 type="text"
                 class="c-cdef__control__input"
+                aria-label="Test Data Input"
                 @change="updateTestData"
               />
             </span>
