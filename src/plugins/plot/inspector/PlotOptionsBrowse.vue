@@ -79,7 +79,10 @@
           </div>
           <div class="grid-cell value">{{ showLegendsForChildren ? 'Yes' : 'No' }}</div>
         </li>
-        <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
+        <li
+          v-if="!isStackedPlotObject || (isStackedPlotObject && !showLegendsForChildren)"
+          class="grid-row"
+        >
           <div
             class="grid-cell label"
             title="The position of the legend relative to the plot display area."
@@ -88,13 +91,19 @@
           </div>
           <div class="grid-cell value capitalize">{{ position }}</div>
         </li>
-        <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
+        <li
+          v-if="!isStackedPlotObject || (isStackedPlotObject && !showLegendsForChildren)"
+          class="grid-row"
+        >
           <div class="grid-cell label" title="Hide the legend when the plot is small">
             Hide when plot small
           </div>
           <div class="grid-cell value">{{ hideLegendWhenSmall ? 'Yes' : 'No' }}</div>
         </li>
-        <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
+        <li
+          v-if="!isStackedPlotObject || (isStackedPlotObject && !showLegendsForChildren)"
+          class="grid-row"
+        >
           <div class="grid-cell label" title="Show the legend expanded by default">
             Expand by Default
           </div>
@@ -102,13 +111,19 @@
             {{ expandByDefault ? 'Yes' : 'No' }}
           </div>
         </li>
-        <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
+        <li
+          v-if="!isStackedPlotObject || (isStackedPlotObject && !showLegendsForChildren)"
+          class="grid-row"
+        >
           <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
             Show when collapsed:
           </div>
           <div class="grid-cell value">{{ valueToShowWhenCollapsed.replace('nearest', '') }}</div>
         </li>
-        <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
+        <li
+          v-if="!isStackedPlotObject || (isStackedPlotObject && !showLegendsForChildren)"
+          class="grid-row"
+        >
           <div class="grid-cell label" title="What to display in the legend when it's expanded.">
             Show when expanded:
           </div>
