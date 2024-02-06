@@ -3,7 +3,7 @@
     <div class="c-user-control-panel__header">
       <div class="c-user-control-panel__title">Mission Status</div>
       <button
-        aria-label="Close"
+        aria-label="Close Mission Status Panel"
         class="c-icon-button c-icon-button--sm t-close-btn icon-x"
         @click.stop="onDismiss"
       ></button>
@@ -18,7 +18,7 @@
           <select
             :id="action"
             v-model="missionActionStatusMap[action]"
-            name="setMissionActionStatus"
+            :name="`${action} status`"
             @change="onChangeStatus(action)"
           >
             <option
