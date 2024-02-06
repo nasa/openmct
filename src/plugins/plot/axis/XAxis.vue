@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <mct-ticks :axis-type="'xAxis'" :position="'left'" />
+    <MctTicks :axis-type="'xAxis'" :position="'left'" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
@@ -44,8 +44,12 @@
 <script>
 import configStore from '../configuration/ConfigStore.js';
 import eventHelpers from '../lib/eventHelpers.js';
+import MctTicks from '../MctTicks.vue';
 
 export default {
+  components: {
+    MctTicks
+  },
   inject: ['openmct', 'domainObject'],
   props: {
     seriesModel: {

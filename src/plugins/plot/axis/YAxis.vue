@@ -60,7 +60,7 @@
       </option>
     </select>
 
-    <mct-ticks
+    <MctTicks
       :axis-id="id"
       :axis-type="'yAxis'"
       class="gl-plot-ticks"
