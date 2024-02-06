@@ -25,16 +25,16 @@
     <div class="c-message__icon" :class="['u-icon-bg-color-' + iconClass]"></div>
     <div class="c-message__text">
       <!-- Uses flex-column -->
-      <div v-if="title" class="c-message__title" aria-label="Dialog title">
+      <div v-if="title" class="c-message__title">
         {{ title }}
       </div>
 
-      <div v-if="hint" class="c-message__hint" aria-label="Dialog hint">
+      <div v-if="hint" class="c-message__hint">
         {{ hint }}
         <span v-if="timestamp">[{{ timestamp }}]</span>
       </div>
 
-      <div v-if="message" class="c-message__action-text" aria-label="Dialog message">
+      <div v-if="message" class="c-message__action-text">
         {{ message }}
       </div>
       <slot></slot>
