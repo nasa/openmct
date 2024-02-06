@@ -22,7 +22,7 @@
 import percySnapshot from '@percy/playwright';
 import { fileURLToPath } from 'url';
 
-import { expect, test } from '../../pluginFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 
 test.describe('Mission Status Visual Tests @a11y', () => {
   const GO = '1';
@@ -49,5 +49,9 @@ test.describe('Mission Status Visual Tests @a11y', () => {
     ).toBeVisible();
     await page.getByLabel('Dismiss').click();
     await percySnapshot(page, `Mission status panel w/ non-default status (theme: '${theme}')`);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
   });
 });
