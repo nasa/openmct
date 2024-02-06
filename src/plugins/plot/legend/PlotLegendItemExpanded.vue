@@ -22,7 +22,7 @@
 <template>
   <tr
     class="plot-legend-item"
-    :aria-label="`Plot Legend Item for ${nameWithUnit}`"
+    :aria-label="`Plot Legend Item for ${domainObject?.name}`"
     :class="{
       'is-stale': isStale,
       'is-status--missing': isMissing

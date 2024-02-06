@@ -26,6 +26,7 @@
       <div class="grid-cell value">
         <input
           v-model="showLegendsForChildren"
+          aria-label="Show Legends For Children"
           type="checkbox"
           @change="updateForm('showLegendsForChildren')"
         />

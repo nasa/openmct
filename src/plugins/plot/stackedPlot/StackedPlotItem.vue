@@ -217,8 +217,8 @@ export default {
       return this.childObject;
     },
     checkPlotConfiguration() {
-      // If the object has its own configuration (like an overlay plot), don't initializatie a stacked plot configuration
-      // and instead use its configuration direcly.
+      // If the object has its own configuration (like an overlay plot), don't initialize a stacked plot configuration
+      // and instead use its configuration directly.
       // Otherwise ensure we've got a stacked plot item configuration ready for us.
       if (
         !this.openmct.objects.isMissing(this.childObject) &&
