@@ -69,20 +69,23 @@ export default class PreviewAction extends EventEmitter {
       }
     );
 
-    let overlay = this._openmct.overlays.overlay({
+    const overlay = this._openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
         {
           label: 'Done',
-          callback: () => overlay.dismiss()
+          callback: () => {
+            overlay.dismiss();
+          }
         }
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
         destroy();
         this.emit('isVisible', false);
+        overlay.dismiss();
       }
     });
 
