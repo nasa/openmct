@@ -145,8 +145,6 @@ export default {
     }
   },
   mounted() {
-    console.debug('🗺️ Creating PlotLegendItemExpanded for', this.seriesKeyString);
-    console.debug('🗺️ PlotLegendItemExpanded domain object is ', this.domainObject);
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
@@ -206,9 +204,6 @@ export default {
         return;
       }
       this.seriesModels.push(series);
-      console.debug(
-        `🗺️ PlotLegendItemExpanded Adding ${series.keyString} to models. Now have ${this.seriesModels.lengths} items`
-      );
       this.listenTo(
         series,
         'change:color',

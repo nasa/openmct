@@ -200,7 +200,6 @@ export default {
           return this.configLoaded[id] === true;
         });
       if (this.compositionObjectsConfigLoaded) {
-        console.debug(`🍉 Stacked Plot: All child objects have loaded their configuration`);
         this.listenTo(
           this.config.legend,
           'change:showLegendsForChildren',

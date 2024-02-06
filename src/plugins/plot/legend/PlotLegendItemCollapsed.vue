@@ -121,7 +121,6 @@ export default {
     }
   },
   mounted() {
-    console.debug('🗺️ Creating PlotLegendItemCollapsed for', this.config);
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
@@ -184,9 +183,6 @@ export default {
         return;
       }
       this.seriesModels.push(series);
-      console.debug(
-        `🗺️ PlotLegendItemExpanded Adding ${series.keyString} to models. Now have ${this.seriesModels.lengths} items`
-      );
       this.listenTo(
         series,
         'change:color',

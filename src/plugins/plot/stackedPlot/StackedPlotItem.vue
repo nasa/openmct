@@ -224,10 +224,6 @@ export default {
         !this.openmct.objects.isMissing(this.childObject) &&
         !this.childObject.configuration?.series
       ) {
-        console.debug(
-          `🐻 This appears to be a stacked plot item that needs a configuration`,
-          this.childObject
-        );
         this.ensureStackedSeriesConfigInitialization();
       }
     },
@@ -235,10 +231,6 @@ export default {
       const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
       const existingConfig = configStore.get(configId);
       if (!existingConfig) {
-        console.debug(
-          `🐻 Config is null, initializing new stacked series configuration for `,
-          this.childObject
-        );
         let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
           return this.openmct.objects.areIdsEqual(
             seriesConfig.identifier,
@@ -274,8 +266,6 @@ export default {
           }
         });
         configStore.add(configId, newConfig);
-      } else {
-        console.debug(`🐻 Existing config for ${configId} `, existingConfig);
       }
     }
   }

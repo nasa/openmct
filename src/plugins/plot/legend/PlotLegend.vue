@@ -153,7 +153,6 @@ export default {
   created() {
     eventHelpers.extend(this);
     this.config = this.getConfig();
-    console.debug('🗺️ Creating PlotLegend', this.config);
     this.legend = this.config.legend;
     this.seriesModels = [];
     this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
@@ -231,7 +230,6 @@ export default {
         return;
       }
       this.seriesModels.push(series);
-      console.debug('🗺️ Adding series to PlotLegend', series);
     },
     removeSeries(plotSeries) {
       this.stopListening(plotSeries);
