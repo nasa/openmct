@@ -51,6 +51,7 @@
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
           :series-key-string="seriesObject.keyString"
+          :series-name="seriesObject?.domainObject?.name"
           @legend-hover-changed="legendHoverChanged"
         />
       </div>
@@ -225,7 +226,11 @@ export default {
       config.series.forEach(this.addSeries, this);
     },
     addSeries(series) {
-      this.seriesModels[this.seriesModels.length] = series;
+      const existingSeries = this.getSeries(series.keyString);
+      if (existingSeries) {
+        return;
+      }
+      this.seriesModels.push(series);
       console.debug('🗺️ Adding series to PlotLegend', series);
     },
     removeSeries(plotSeries) {
@@ -235,6 +240,12 @@ export default {
         (series) => series.keyString === plotSeries.keyString
       );
       this.seriesModels.splice(seriesIndex, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
     },
     toggleLegend() {
       this.isLegendExpanded = !this.isLegendExpanded;

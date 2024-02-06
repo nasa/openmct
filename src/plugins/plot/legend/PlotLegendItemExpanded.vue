@@ -22,7 +22,7 @@
 <template>
   <tr
     class="plot-legend-item"
-    :aria-label="`Plot Legend Item for ${domainObject?.name}`"
+    :aria-label="`Plot Legend Item for ${nameWithUnit}`"
     :class="{
       'is-stale': isStale,
       'is-status--missing': isMissing
@@ -104,6 +104,7 @@ export default {
       isMissing: false,
       colorAsHexString: '',
       name: '',
+      nameWithUnit: '',
       unit: '',
       formattedYValue: '',
       formattedXValue: '',
@@ -197,27 +198,35 @@ export default {
       }
     },
     onSeriesAdd(series) {
-      console.debug(`🗺️ PlotLegendItemExpanded Adding ${series.keyString}`);
-      this.seriesModels.push(series);
-      if (series.keyString === this.seriesKeyString) {
-        this.listenTo(
-          series,
-          'change:color',
-          (newColor) => {
-            this.updateColor(newColor);
-          },
-          this
-        );
-        this.listenTo(
-          series,
-          'change:name',
-          () => {
-            this.updateName();
-          },
-          this
-        );
-        this.subscribeToStaleness(series.domainObject);
+      if (series.keyString !== this.seriesKeyString) {
+        return;
       }
+      const existingSeries = this.getSeries(series.keyString);
+      if (existingSeries) {
+        return;
+      }
+      this.seriesModels.push(series);
+      console.debug(
+        `🗺️ PlotLegendItemExpanded Adding ${series.keyString} to models. Now have ${this.seriesModels.lengths} items`
+      );
+      this.listenTo(
+        series,
+        'change:color',
+        (newColor) => {
+          this.updateColor(newColor);
+        },
+        this
+      );
+      this.listenTo(
+        series,
+        'change:name',
+        () => {
+          this.updateName();
+        },
+        this
+      );
+      this.subscribeToStaleness(series.domainObject);
+      this.initialize();
     },
     onSeriesRemove(seriesToRemove) {
       const seriesIndexToRemove = this.seriesModels.findIndex(
