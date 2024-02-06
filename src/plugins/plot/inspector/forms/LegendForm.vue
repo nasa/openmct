@@ -31,7 +31,7 @@
         />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
       <div
         class="grid-cell label"
         title="The position of the legend relative to the plot display area."
@@ -47,7 +47,7 @@
         </select>
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
       <div class="grid-cell label" title="Hide the legend when the plot is small">
         Hide when plot small
       </div>
@@ -59,7 +59,7 @@
         />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
       <div class="grid-cell label" title="Show the legend expanded by default">
         Expand by default
       </div>
@@ -72,7 +72,7 @@
         />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
       <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
         When collapsed show
       </div>
@@ -87,7 +87,7 @@
         </select>
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="isStackedPlotObject && !showLegendsForChildren" class="grid-row">
       <div class="grid-cell label" title="What to display in the legend when it's expanded.">
         When expanded show
       </div>
