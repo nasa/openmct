@@ -28,16 +28,17 @@
       background: rgba($colorHeadFg, 0.2);
       box-shadow: none;
       flex: 1 1 auto;
-      // body.mobile & {
-      //   @include phonePortrait() { // This logic of expanding the search input upon click only happens in mobile portrait mode
-      //     background: $colorHeadBg;
-      //     width: 15%;
-      //     &:hover {
-      //       background-color: rgba($colorHeadFg, 0.2);
-      //       width: 100%;
-      //     }
-      //   }
-      // }
+      body.mobile & {
+        @include phonePortrait() { // This logic of expanding the search input upon click only happens in mobile portrait mode
+          background: $colorHeadBg;
+          width: 15%;
+          &:hover { // When clicked, expand the search bar
+            background-color: rgba($colorHeadFg, 0.2);
+            width: 50vw;
+            transition: width 120ms;
+          }
+        }
+      }
     }
   }
 
@@ -99,10 +100,7 @@
   }
 
   body.mobile & {
-    width: 50%;
-    @include phonePortrait() { // This logic only appears for a mobile portrait mode
-      width: 100%;
-    }
+    width: 50vw;
   }
 }
 
@@ -145,9 +143,9 @@
     }
 
     .c-location {
-      //color: $colorBodyFg;
-      //font-size: 0.9em;
-      //opacity: 0.8;
+      color: $colorBodyFg;
+      font-size: 0.9em;
+      opacity: 0.8;
     }
   }
 
