@@ -43,18 +43,24 @@ export default class VisibilityObserver {
     this.isIntersecting = true;
     this.calledOnce = false;
     const options = {
-      root: rootContainer,
-      rootMargin: '0px',
-      threshold: 1.0
+      root: rootContainer
     };
     this.#observer = new IntersectionObserver(this.#observerCallback, options);
     this.lastUnfiredFunc = null;
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
 
+  #inOverlay() {
+    return this.#element.closest('.js-overlay') !== null;
+  }
+
   #observerCallback = ([entry]) => {
     if (entry.target === this.#element) {
-      this.isIntersecting = entry.isIntersecting;
+      if (this.#inOverlay() && !entry.isIntersecting) {
+        this.isIntersecting = true;
+      } else {
+        this.isIntersecting = entry.isIntersecting;
+      }
       if (this.isIntersecting && this.lastUnfiredFunc) {
         window.requestAnimationFrame(this.lastUnfiredFunc);
         this.lastUnfiredFunc = null;
