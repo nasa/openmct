@@ -51,7 +51,6 @@
           :highlights="highlights"
           :value-to-show-when-collapsed="valueToShowWhenCollapsed"
           :series-key-string="seriesObject.keyString"
-          :series-name="seriesObject?.domainObject?.name"
           @legend-hover-changed="legendHoverChanged"
         />
       </div>
