@@ -31,7 +31,10 @@
       <div class="c-cs__header-label c-section__label">Test Data</div>
     </div>
     <div v-if="expanded" class="c-cs__content">
-      <div class="c-cs__test-data__controls c-cdef__controls" :disabled="!telemetry.length">
+      <div
+        class="c-cs__test-data__controls c-cdef__controls"
+        :class="{ disabled: !telemetry.length }"
+      >
         <label class="c-toggle-switch">
           <input type="checkbox" :checked="isApplied" @change="applyTestData" />
           <span class="c-toggle-switch__slider"></span>
