@@ -22,8 +22,20 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas id="2dContext" :style="canvasStyle" class="js-overlay-canvas" role="img"></canvas>
-    <canvas id="webglContext" :style="canvasStyle" class="js-main-canvas" role="img"></canvas>
+    <canvas
+      id="2dContext"
+      :style="canvasStyle"
+      class="js-overlay-canvas"
+      role="img"
+      aria-label="Overlay Canvas"
+    ></canvas>
+    <canvas
+      id="webglContext"
+      :style="canvasStyle"
+      class="js-main-canvas"
+      role="img"
+      aria-label="Plot Canvas"
+    ></canvas>
     <div ref="limitArea" class="js-limit-area" aria-hidden="true">
       <limit-label
         v-for="(limitLabel, index) in visibleLimitLabels"
@@ -202,9 +214,7 @@ export default {
     this.drawnOnce = false;
     const rootContainer = this.openmct.element;
     const options = {
-      root: rootContainer,
-      rootMargin: '0px',
-      threshold: 1.0
+      root: rootContainer
     };
     this.visibilityObserver = new IntersectionObserver(this.visibilityChanged, options);
     eventHelpers.extend(this);
@@ -286,11 +296,16 @@ export default {
       // and we need to use the Open MCT root element as the root of the intersection observer.
       if (entry.target === this.chartContainer) {
         const wasVisible = this.chartVisible;
-        this.chartVisible = entry.isIntersecting;
-        if (!this.chartVisible) {
-          // destroy the chart
+        const isNowVisible = entry.isIntersecting;
+        const chartInOverlayWindow = this.chartContainer?.closest('.js-overlay') !== null;
+
+        if (!isNowVisible && !chartInOverlayWindow) {
+          this.chartVisible = false;
           this.destroyCanvas();
-        } else if (!wasVisible && this.chartVisible) {
+        } else if (!isNowVisible && chartInOverlayWindow) {
+          this.chartVisible = true;
+        } else if (!wasVisible && isNowVisible) {
+          this.chartVisible = true;
           // rebuild the chart
           this.buildCanvasElements();
           const canvasInitialized = this.readyCanvasForDrawing();
@@ -298,8 +313,8 @@ export default {
             this.draw();
           }
           this.$emit('plot-reinitialize-canvas');
-        } else if (wasVisible && this.chartVisible) {
-          // ignore, moving on
+        } else {
+          this.chartVisible = isNowVisible;
         }
       }
     },
