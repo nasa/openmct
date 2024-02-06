@@ -155,6 +155,15 @@ export default {
     this.legend = this.config.legend;
     this.seriesModels = [];
     this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
+
+    if (this.domainObject.type === 'telemetry.plot.stacked') {
+      this.objectComposition = this.openmct.composition.get(this.domainObject);
+      this.objectComposition.on('add', this.addTelemetryObject);
+      this.objectComposition.on('remove', this.removeTelemetryObject);
+      this.objectComposition.load();
+    } else {
+      this.registerListeners(this.config);
+    }
     this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
     this.initialize();
   },
@@ -215,7 +224,11 @@ export default {
       config.series.forEach(this.addSeries, this);
     },
     addSeries(series) {
-      this.seriesModels[this.seriesModels.length] = series;
+      const existingSeries = this.getSeries(series.keyString);
+      if (existingSeries) {
+        return;
+      }
+      this.seriesModels.push(series);
     },
     removeSeries(plotSeries) {
       this.stopListening(plotSeries);
@@ -224,6 +237,12 @@ export default {
         (series) => series.keyString === plotSeries.keyString
       );
       this.seriesModels.splice(seriesIndex, 1);
+    },
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
     },
     toggleLegend() {
       this.isLegendExpanded = !this.isLegendExpanded;
