@@ -308,6 +308,7 @@
 
     &__progress {
         fill: $colorInProgressFgEm;
+        transform: translateX(50%) translateY(50%);
     }
 
     &__sweep-hand {
