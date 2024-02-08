@@ -26,12 +26,13 @@
       <div class="grid-cell value">
         <input
           v-model="showLegendsForChildren"
+          aria-label="Show Legends For Children"
           type="checkbox"
           @change="updateForm('showLegendsForChildren')"
         />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="showLegendDetails" class="grid-row">
       <div
         class="grid-cell label"
         title="The position of the legend relative to the plot display area."
@@ -47,7 +48,7 @@
         </select>
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="showLegendDetails" class="grid-row">
       <div class="grid-cell label" title="Hide the legend when the plot is small">
         Hide when plot small
       </div>
@@ -59,15 +60,20 @@
         />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="showLegendDetails" class="grid-row">
       <div class="grid-cell label" title="Show the legend expanded by default">
         Expand by default
       </div>
       <div class="grid-cell value">
-        <input v-model="expandByDefault" type="checkbox" @change="updateForm('expandByDefault')" />
+        <input
+          v-model="expandByDefault"
+          aria-label="Expand By Default"
+          type="checkbox"
+          @change="updateForm('expandByDefault')"
+        />
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="showLegendDetails" class="grid-row">
       <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
         When collapsed show
       </div>
@@ -82,7 +88,7 @@
         </select>
       </div>
     </li>
-    <li class="grid-row">
+    <li v-if="showLegendDetails" class="grid-row">
       <div class="grid-cell label" title="What to display in the legend when it's expanded.">
         When expanded show
       </div>
@@ -168,6 +174,11 @@ export default {
       return this.path.find(
         (pathObject, pathObjIndex) =>
           pathObjIndex === 0 && pathObject?.type === 'telemetry.plot.stacked'
+      );
+    },
+    showLegendDetails() {
+      return (
+        !this.isStackedPlotObject || (this.isStackedPlotObject && !this.showLegendsForChildren)
       );
     }
   },

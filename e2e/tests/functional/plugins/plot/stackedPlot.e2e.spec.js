@@ -257,6 +257,56 @@ test.describe('Stacked Plot', () => {
 
     await assertAggregateLegendIsVisible(page);
   });
+
+  test('can toggle between aggregate and per child legends', async ({ page }) => {
+    // make some an overlay plot
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      parent: stackedPlot.uuid
+    });
+
+    // make some SWGs for the overlay plot
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(stackedPlot.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Inspector Views').getByRole('checkbox').uncheck();
+    await page.getByLabel('Expand By Default').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // reload and ensure the legend is still expanded
+    await page.reload();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change to collapsed by default
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand By Default').uncheck();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change it to individual legends
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Show Legends For Children').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(4);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+  });
 });
 
 /**
