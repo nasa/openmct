@@ -63,6 +63,66 @@ test.describe('Overlay Plot', () => {
     await expect(seriesColorSwatch).toHaveCSS('background-color', 'rgb(255, 166, 61)');
   });
 
+  test('Plot legend expands by default', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7403'
+    });
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(overlayPlot.url);
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Assert that the legend is collapsed by default
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeVisible();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
+    await expect(page.getByLabel('Expand by Default')).toHaveText('No');
+
+    expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
+
+    // Change the legend to expand by default
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand By Default').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    // Assert that the legend is now open
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
+
+    // Assert that the legend is expanded on page load
+    await page.reload();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
+    await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
+  });
+
   test('Limit lines persist when series is moved to another Y Axis and on refresh', async ({
     page
   }) => {

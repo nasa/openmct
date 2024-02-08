@@ -28,9 +28,9 @@ const DEFAULT_NAMESPACE = '';
 const LEGACY_SPACE = 'mct';
 
 export default function CouchPlugin(options) {
-  function normalizeOptions(unnnormalizedOptions) {
+  function normalizeOptions(unnormalizedOptions) {
     const normalizedOptions = {};
-    if (typeof unnnormalizedOptions === 'string') {
+    if (typeof unnormalizedOptions === 'string') {
       normalizedOptions.databases = [
         {
           url: options,
@@ -41,19 +41,19 @@ export default function CouchPlugin(options) {
           indicator: true
         }
       ];
-    } else if (!unnnormalizedOptions.databases) {
+    } else if (!unnormalizedOptions.databases) {
       normalizedOptions.databases = [
         {
-          url: unnnormalizedOptions.url,
+          url: unnormalizedOptions.url,
           namespace: DEFAULT_NAMESPACE,
           additionalNamespaces: [LEGACY_SPACE],
           readOnly: false,
-          useDesignDocuments: unnnormalizedOptions.useDesignDocuments,
+          useDesignDocuments: unnormalizedOptions.useDesignDocuments,
           indicator: true
         }
       ];
     } else {
-      normalizedOptions.databases = unnnormalizedOptions.databases;
+      normalizedOptions.databases = unnormalizedOptions.databases;
     }
 
     // final sanity check, ensure we have all options
