@@ -8,7 +8,9 @@
 .c-message {
   display: flex;
   align-items: center;
-
+  body.mobile & { // Centers confirmation dialog on screen.
+    margin-top: 40vh; 
+  }
   > * + * {
     margin-left: $interiorMarginLg;
   }
