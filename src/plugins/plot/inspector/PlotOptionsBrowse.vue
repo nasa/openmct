@@ -79,7 +79,7 @@
           </div>
           <div class="grid-cell value">{{ showLegendsForChildren ? 'Yes' : 'No' }}</div>
         </li>
-        <li class="grid-row">
+        <li v-if="showLegendDetails" class="grid-row">
           <div
             class="grid-cell label"
             title="The position of the legend relative to the plot display area."
@@ -88,25 +88,27 @@
           </div>
           <div class="grid-cell value capitalize">{{ position }}</div>
         </li>
-        <li class="grid-row">
+        <li v-if="showLegendDetails" class="grid-row">
           <div class="grid-cell label" title="Hide the legend when the plot is small">
             Hide when plot small
           </div>
           <div class="grid-cell value">{{ hideLegendWhenSmall ? 'Yes' : 'No' }}</div>
         </li>
-        <li class="grid-row">
+        <li v-if="showLegendDetails" class="grid-row">
           <div class="grid-cell label" title="Show the legend expanded by default">
             Expand by Default
           </div>
-          <div class="grid-cell value">{{ expandByDefault ? 'Yes' : 'No' }}</div>
+          <div aria-label="Expand by Default" class="grid-cell value">
+            {{ expandByDefault ? 'Yes' : 'No' }}
+          </div>
         </li>
-        <li class="grid-row">
+        <li v-if="showLegendDetails" class="grid-row">
           <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
             Show when collapsed:
           </div>
           <div class="grid-cell value">{{ valueToShowWhenCollapsed.replace('nearest', '') }}</div>
         </li>
-        <li class="grid-row">
+        <li v-if="showLegendDetails" class="grid-row">
           <div class="grid-cell label" title="What to display in the legend when it's expanded.">
             Show when expanded:
           </div>
@@ -164,6 +166,11 @@ export default {
           pathObjIndex === 0 && pathObject.type === 'telemetry.plot.stacked'
       );
     },
+    showLegendDetails() {
+      return (
+        !this.isStackedPlotObject || (this.isStackedPlotObject && !this.showLegendsForChildren)
+      );
+    },
     yAxesWithSeries() {
       return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
@@ -174,9 +181,8 @@ export default {
     if (!this.isStackedPlotObject) {
       this.initYAxesConfiguration();
       this.registerListeners();
-    } else {
-      this.initLegendConfiguration();
     }
+    this.initLegendConfiguration();
 
     this.loaded = true;
   },
