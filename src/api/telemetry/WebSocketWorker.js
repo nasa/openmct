@@ -245,7 +245,6 @@ export default function installWorker() {
     }
 
     routeMessageToHandler(data) {
-      //Implement batching here
       if (this.#messageBatcher.shouldBatchMessage(data)) {
         this.#messageBatcher.addMessageToBatch(data);
       } else {
@@ -267,12 +266,14 @@ export default function installWorker() {
     #maxBatchSize;
     #readyForNextBatch;
     #worker;
+    #throttledSendNextBatch;
 
     constructor(worker) {
       this.#maxBatchSize = 10;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), 1000);
     }
     #resetBatch() {
       this.#batch = {};
@@ -310,18 +311,19 @@ export default function installWorker() {
       const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
       let batch = this.#batch[batchId];
       if (batch === undefined) {
+        this.#hasBatch = true;
         batch = this.#batch[batchId] = [message];
       } else {
         batch.push(message);
       }
       if (batch.length > this.#maxBatchSize) {
+        console.log(`Exceeded max batch size of ${this.#maxBatchSize} for ${batchId}. Dropping value.`);
         batch.shift();
-        this.#batch.dropped = this.#batch.dropped || true;
+        this.#batch.dropped = true;
       }
+
       if (this.#readyForNextBatch) {
-        this.#sendNextBatch();
-      } else {
-        this.#hasBatch = true;
+        this.#throttledSendNextBatch();
       }
     }
     setMaxBatchSize(maxBatchSize) {
@@ -334,15 +336,24 @@ export default function installWorker() {
      * any new data is available.
      */
     readyForNextBatch() {
+      const now = Date.now();
+      const elapsed = now - this.sent;
+      console.debug(`${Date.now()} Ready for next batch after ${elapsed}ms`);
+      if (elapsed > 1000) {
+        //console.warn(`Warning, telemetry batch processing took ${elapsed}ms`);
+      }
       if (this.#hasBatch) {
-        this.#sendNextBatch();
+        this.#throttledSendNextBatch();
       } else {
         this.#readyForNextBatch = true;
       }
     }
     #sendNextBatch() {
       const batch = this.#batch;
+      batch.number = Math.round(Math.random() * 100000);
       this.#resetBatch();
+      this.sent = Date.now();
+      console.debug(`${Date.now()} Sending batch ${batch.number}`);
       this.#worker.postMessage({
         type: 'batch',
         batch
@@ -350,6 +361,33 @@ export default function installWorker() {
       this.#readyForNextBatch = false;
       this.#hasBatch = false;
     }
+  }
+
+  function throttle(callback, wait) {
+    let last = 0;
+    let throttling = false;
+
+    return function (...args) {
+      if (throttling) {
+        return;
+      }
+
+      const now = performance.now();
+      const timeSinceLast = now - last;
+
+      if (timeSinceLast >= wait) {
+        last = now;
+        callback(...args);
+      } else if (!throttling) {
+        throttling = true;
+
+        setTimeout(() => {
+          last = performance.now();
+          throttling = false;
+          callback(...args);
+        }, wait - timeSinceLast);
+      }
+    };
   }
 
   const websocket = new ResilientWebSocket();

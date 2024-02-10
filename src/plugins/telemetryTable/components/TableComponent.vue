@@ -498,11 +498,17 @@ export default {
   },
   created() {
     this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
+    const throttledFunc = _.throttle(
+      () => {
+        this.updateVisibleRows(throttledFunc.cancel);
+      },
+      1000,
+      { leading: true, trailing: false }
+    );
+    this.throttledUpdateVisibleRows = throttledFunc;
   },
   mounted() {
     this.csvExporter = new CSVExporter();
-    this.rowsAdded = _.throttle(this.rowsAdded, 200);
-    this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
     this.scroll = _.throttle(this.scroll, 100);
 
     if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
@@ -515,8 +521,6 @@ export default {
       });
     }
 
-    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
-
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
     this.table.on('refresh', this.clearRowsAndRerender);
@@ -526,8 +530,8 @@ export default {
 
     this.table.tableRows.on('add', this.rowsAdded);
     this.table.tableRows.on('remove', this.rowsRemoved);
-    this.table.tableRows.on('sort', this.updateVisibleRows);
-    this.table.tableRows.on('filter', this.updateVisibleRows);
+    this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.on('filter', this.throttledUpdateVisibleRows);
 
     this.openmct.time.on('bounds', this.boundsChanged);
 
@@ -540,7 +544,7 @@ export default {
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
-    this.pollForResize();
+    //this.pollForResize();
     this.calculateScrollbarWidth();
 
     this.table.initialize();
@@ -555,8 +559,8 @@ export default {
 
     this.table.tableRows.off('add', this.rowsAdded);
     this.table.tableRows.off('remove', this.rowsRemoved);
-    this.table.tableRows.off('sort', this.updateVisibleRows);
-    this.table.tableRows.off('filter', this.updateVisibleRows);
+    this.table.tableRows.off('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.off('filter', this.throttledUpdateVisibleRows);
 
     this.table.configuration.off('change', this.updateConfiguration);
 
@@ -575,9 +579,12 @@ export default {
         this.loadFinishResolve = resolve;
       });
     },
-    updateVisibleRows() {
+    updateVisibleRows(cancelOutstandingInvocations) {
       if (!this.updatingView) {
         this.updatingView = this.renderWhenVisible(() => {
+          // Cancel any other pending updates to avoid unnecessary callbacks in 1s time.
+          // Otherwise we get superfluous delayed updates that waste CPU cycles.
+          cancelOutstandingInvocations();
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
@@ -684,7 +691,7 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
       this.synchronizeScrollX();
 
       if (this.shouldAutoScroll()) {
@@ -757,11 +764,11 @@ export default {
         this.initiateAutoScroll();
       }
 
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
     },
     rowsRemoved(rows) {
       this.setHeight();
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
     },
     /**
      * Calculates height based on total number of rows, and sets table height.
@@ -908,7 +915,7 @@ export default {
     },
     clearRowsAndRerender() {
       this.visibleRows = [];
-      this.$nextTick().then(this.updateVisibleRows);
+      this.$nextTick().then(this.throttledUpdateVisibleRows);
     },
     pause(byButton) {
       if (byButton) {

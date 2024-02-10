@@ -169,7 +169,11 @@ class BatchingWebSocket extends EventTarget {
 
   #routeMessageToHandler(message) {
     if (message.data.type === 'batch') {
-      if (message.data.batch.dropped === true && !this.#showingRateLimitNotification) {
+      this.start = Date.now();
+      performance.mark('batch-received');
+      const batch = message.data.batch;
+      console.debug(`${Date.now()} received batch ${batch.number} from worker`);
+      if (batch.dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
@@ -179,15 +183,49 @@ class BatchingWebSocket extends EventTarget {
           this.#showingRateLimitNotification = false;
         });
       }
-      this.dispatchEvent(new CustomEvent('batch', { detail: message.data.batch }));
-      setTimeout(() => {
-        this.#readyForNextBatch();
-      }, this.#rate);
+
+      this.dispatchEvent(new CustomEvent('batch', { detail: batch }));
+      this.#waitUntilIdleAndRequestNextBatch(batch);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else {
       throw new Error(`Unknown message type: ${message.data.type}`);
     }
+  }
+
+  #waitUntilIdleAndRequestNextBatch(batch) {
+    // eslint-disable-next-line compat/compat
+    requestIdleCallback(
+      (state) => {
+        const now = Date.now();
+        const waitedFor = now - this.start;
+        if (state.didTimeout === true) {
+          if (document.visibilityState === 'visible') {
+            console.warn(`Event loop is too busy to process batch ${batch.number}.`);
+            this.#waitUntilIdleAndRequestNextBatch(batch);
+          } else {
+            console.debug('Inactive tab, assuming ready for next batch');
+            // After ingesting a telemetry batch, wait until the event loop is idle again before
+            // informing the worker we are ready for another batch.
+            console.debug(`${Date.now()} Sending ready signal to worker due to timeout for batch ${batch.number}`);
+            performance.mark('batch-processed');
+            performance.measure('batch-processing-time', 'batch-received', 'batch-processed');
+            this.#readyForNextBatch();
+          }
+        } else {
+          performance.mark('batch-processed');
+          performance.measure('batch-processing-time', 'batch-received', 'batch-processed');
+          if (waitedFor > 1000) {
+            console.warn(`Warning, batch processing took ${waitedFor}ms for batch ${batch.number}`);
+          }
+          // After ingesting a telemetry batch, wait until the event loop is idle again before
+          // informing the worker we are ready for another batch.
+          console.debug(`${Date.now()} Sending ready signal to worker due to idle event loop for batch ${batch.number}`);
+          this.#readyForNextBatch();
+        }
+      },
+      { timeout: 1000 }
+    );
   }
 }
 

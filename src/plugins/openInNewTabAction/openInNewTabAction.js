@@ -33,6 +33,6 @@ export default class OpenInNewTab {
   }
   invoke(objectPath, urlParams = undefined) {
     let url = objectPathToUrl(this._openmct, objectPath, urlParams);
-    window.open(url);
+    window.open(url, undefined, "noopener");
   }
 }
