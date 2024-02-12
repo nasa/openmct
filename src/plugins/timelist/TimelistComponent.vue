@@ -63,6 +63,7 @@
           <list-item
             v-for="item in sortedItems"
             :key="item.key"
+            :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
             :item="item"
             :item-properties="itemProperties"
             @click.stop="setSelectionForActivity(item, $event.currentTarget)"
