@@ -298,7 +298,7 @@ test.describe('Basic Condition Set Use', () => {
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.getByLabel('Edit Object').click();
@@ -382,7 +382,7 @@ test.describe('Basic Condition Set Use', () => {
   test('ConditionSet has correct outputs when test data is enabled', async ({ page }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.getByLabel('Edit Object').click();
@@ -424,17 +424,17 @@ test.describe('Basic Condition Set Use', () => {
     const secondCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=1'
     );
-    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
 
     const secondCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=1'
     );
-    secondCriterionMetadata.selectOption({ label: 'Sine' });
+    await secondCriterionMetadata.selectOption({ label: 'Sine' });
 
     const secondCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=1'
     );
-    secondCriterionComparison.selectOption({ label: 'is less than' });
+    await secondCriterionComparison.selectOption({ label: 'is less than' });
 
     const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
@@ -442,10 +442,10 @@ test.describe('Basic Condition Set Use', () => {
     // Enable test data
     await page.getByLabel('Apply Test Data').nth(1).click();
     const testDataTelemetry = page.locator('[aria-label="Test Data Telemetry Selection"] >> nth=0');
-    testDataTelemetry.selectOption({ label: exampleTelemetry.name });
+    await testDataTelemetry.selectOption({ label: exampleTelemetry.name });
 
     const testDataMetadata = page.locator('[aria-label="Test Data Metadata Selection"] >> nth=0');
-    testDataMetadata.selectOption({ label: 'Sine' });
+    await testDataMetadata.selectOption({ label: 'Sine' });
 
     const testInput = page.locator('[aria-label="Test Data Input"] >> nth=0');
     await testInput.fill('0');
