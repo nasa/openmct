@@ -13,12 +13,6 @@ function progToDegrees(progVal) {
 function renderProgress(progressPercent, element) {
   let startAngleInDegrees = 0;
   let endAngleInDegrees = progToDegrees(progressPercent);
-  // Check if the arc forms a full circle
-  const isFullCircle = Math.abs(endAngleInDegrees - startAngleInDegrees) === 360;
-
-  if (isFullCircle) {
-    endAngleInDegrees--;
-  }
 
   // Convert angles to radians for calculations
   const startAngleInRadians = startAngleInDegrees * DEGREES_TO_RADIANS;
@@ -45,7 +39,7 @@ export function updateProgress(start, end, timestamp, element) {
       progressPercent = (1 - (end - timestamp) / duration) * 100;
     }
   }
-  if (progressPercent < 100) {
+  if (progressPercent < 100 && progressPercent > 0) {
     // If the remaining percent is less than update_per_cycle, round up to 100%.
     // Otherwise, increment by update_per_cycle.
     progressPercent =
