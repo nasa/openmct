@@ -73,7 +73,7 @@
     "resolve-url-loader": "5.0.0",
     "sanitize-html": "2.11.0",
     "sass": "1.68.0",
-    "sass-loader": "14.0.0",
+    "sass-loader": "14.1.0",
     "sinon": "17.0.0",
     "style-loader": "3.3.3",
     "terser-webpack-plugin": "5.3.9",
