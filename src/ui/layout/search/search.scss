@@ -50,9 +50,15 @@
     max-height: 500px;
     top: $formInputH;
     z-index: 60;
-    body.mobile & {
-      min-width: 95vw;
-      min-height: 95vh;
+    body.mobile & { // Makes search in mobile look less like an overlay, and more fullscreen.
+      position: absolute;
+      top: 25px;
+      left: -12px;
+      height: calc(100vh - 22px);
+      min-width: 100vw;
+      max-height: none;
+      border-radius: 0px;
+      box-shadow: none;
     }
   }
 
