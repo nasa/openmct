@@ -55,7 +55,7 @@ function processArguments() {
     switch (val) {
       case '--help':
         console.log(
-          'Usage: restore.js  [--backupFilename pathToBackupJSON] [--dbName name] [--debug] <CouchDB URL> \nFor authentication, set the environment variables COUCHDB_USERNAME and COUCHDB_PASSWORD. \n'
+          'Usage: restore.js  [--backupFilename pathToBackupJSON] [--dbName name] [--serverUrl url] [--debug] <CouchDB URL> \nFor authentication, set the environment variables COUCHDB_USERNAME and COUCHDB_PASSWORD. \n'
         );
         helpRequested = true;
         break;
