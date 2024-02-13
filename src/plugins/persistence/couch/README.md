@@ -231,7 +231,7 @@ npm run restore:openmct
 ```
 Note you will need to modify `package.json` to ensure the URL and authorization is correct.
 
-# Restoring/Updating an Existing CouchDB database
+## Restoring/Updating an Existing CouchDB database
 One can restore or update an existing CouchDB database by running:
 ```
 npm run upsert:openmct -- --dbName SOME_DB_NAME --backupFilename /path/to/backup.json
@@ -239,8 +239,8 @@ npm run upsert:openmct -- --dbName SOME_DB_NAME --backupFilename /path/to/backup
 
 Note the backup file is a JSON file generated from the previously mentioned script. Running this
 will take every Open MCT object in the backup, and either insert it as new, or if the object already
-exists, update it with the backup version. Note this script does not restore design documents or other
-non Open MCT objects.
+exists, update it with the backup version. Neither IDs, nor namespaces are touched.
+This script does not restore design documents or other non Open MCT objects.
 
 ```
 npm run upsert:openmct -- --help
