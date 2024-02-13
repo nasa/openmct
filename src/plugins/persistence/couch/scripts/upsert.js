@@ -145,7 +145,6 @@ async function getExistingDocsIdToRevMap({ serverUrl, databaseName, username, pa
   }
   console.debug(`Found ${existingDocs.length} existing documents on ${baseUrl}`);
 
-  // transform existinDocs to a map of id to rev
   const idToRevMap = existingDocs.reduce((acc, doc) => {
     acc[doc._id] = doc._rev;
     return acc;
@@ -154,7 +153,7 @@ async function getExistingDocsIdToRevMap({ serverUrl, databaseName, username, pa
   return idToRevMap;
 }
 
-async function prepareBackupDocuments({ backupFilename, existingDocsidToRevMap }) {
+async function prepareBackupDocuments({ backupFilename, existingDocsIdToRevMap }) {
   // load backup file
   const rawBackup = await fs.readFile(backupFilename);
   const backupJSON = JSON.parse(rawBackup);
@@ -165,7 +164,7 @@ async function prepareBackupDocuments({ backupFilename, existingDocsidToRevMap }
   const docsToRestore = [];
   backupJSON.forEach((backupCouchDocument) => {
     if (backupCouchDocument.model && backupCouchDocument._id) {
-      const existingDocRev = existingDocsidToRevMap[backupCouchDocument._id];
+      const existingDocRev = existingDocsIdToRevMap[backupCouchDocument._id];
       const docToRestore = {
         model: backupCouchDocument.model,
         _id: backupCouchDocument._id
@@ -187,7 +186,7 @@ async function prepareBackupDocuments({ backupFilename, existingDocsidToRevMap }
 }
 
 async function performUpsert({ backupFilename, serverUrl, databaseName, username, password }) {
-  const existingDocsidToRevMap = await getExistingDocsIdToRevMap({
+  const existingDocsIdToRevMap = await getExistingDocsIdToRevMap({
     serverUrl,
     databaseName,
     username,
@@ -197,7 +196,7 @@ async function performUpsert({ backupFilename, serverUrl, databaseName, username
   const { docsToRestore, newDocumentsToAdd, existingDocumentsToUpdate } =
     await prepareBackupDocuments({
       backupFilename,
-      existingDocsidToRevMap
+      existingDocsIdToRevMap
     });
 
   const restoreOptions = {
